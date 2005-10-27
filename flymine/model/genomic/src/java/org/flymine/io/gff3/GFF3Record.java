@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import org.intermine.util.StringUtil;
 
@@ -379,15 +381,19 @@ public class GFF3Record
      * @return a GFF line
      */
     public String toGFF3() {
-        return sequenceID + "\t" + ((source == null) ? "." : source) + "\t"
-            + type + "\t" + start + "\t" + end + "\t"
-            + ((score == null) ? "." : score.toString()) + "\t"
-            + ((strand == null) ? "." : strand) + "\t"
-            + ((phase == null) ? "." : phase) + "\t"
-            + writeAttributes(attributes);
+        try {
+            return URLEncoder.encode(sequenceID, "UTF-8") + "\t" + ((source == null) ? "." : source) + "\t"
+                + type + "\t" + start + "\t" + end + "\t"
+                + ((score == null) ? "." : score.toString()) + "\t"
+                + ((strand == null) ? "." : strand) + "\t"
+                + ((phase == null) ? "." : phase) + "\t"
+                + writeAttributes();
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("error while encoding: " + sequenceID, e);
+        }
     }
 
-    private String writeAttributes(Map attributes) {
+    private String writeAttributes() {
         StringBuffer sb = new StringBuffer();
         boolean first = true;
         Iterator iter = attributes.entrySet().iterator();
@@ -399,10 +405,28 @@ public class GFF3Record
             first = false;
             String listValue;
             if (entry.getValue() instanceof List) {
-                listValue = StringUtil.join((List) entry.getValue(), ",");
+                List oldList = (List) entry.getValue();
+                List encodedList = new ArrayList(oldList);
+
+                for (int i = 0; i < encodedList.size(); i++) {
+                    Object oldValue = encodedList.get(i);
+                    String newValue;
+                    try {
+                        newValue = URLEncoder.encode("" + oldValue, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException("error while encoding: " + oldValue, e);
+                    }
+                    encodedList.set(i, newValue);
+                }
+
+                listValue = StringUtil.join(encodedList, ",");
             } else {
-                listValue = "" + entry.getValue();
-            }
+                try {
+                    listValue = URLEncoder.encode("" + entry.getValue(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("error while encoding: " + entry.getValue(), e);
+                }
+            }            
             sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
