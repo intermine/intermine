@@ -71,7 +71,8 @@ public class ExportQueryAction extends InterMineAction
         }
         
         response.setContentType("text/plain; charset=us-ascii");
-        String xml = PathQueryBinding.marshal(query, "", query.getModel().getName());
+        String modelName = query.getModel().getName();
+        String xml = PathQueryBinding.marshal(query, (name != null ? name : ""), modelName);
         xml = XmlUtil.indentXmlSimple(xml);
         response.getWriter().write(xml);
         return null;
