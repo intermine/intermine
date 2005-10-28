@@ -26,53 +26,36 @@ run: build-phenotype-production build-orthologues-production build-protein_struc
 
 dump: load-stage-2
 
-run: build-flyreg-production
-run: build-long_oligo-production
-run: analyse-db-production
-run: build-tiling_path-production
+run: build-flyreg-production build-long_oligo-production analyse-db-production build-tiling_path-production
 
 dump: load-stage-3
 
-run: build-drosdel-production
+run: build-drosdel-production build-homophila-production
 
-dump: load-stage-4
-
-run: build-homophila-production
-
-dump: homophila
+dump: drosdel+homophila
 
 run: build-interpro-production
 
 dump: interpro
 
 run: build-mage-production
-
-dump: load-stage-5-load-complete
-
 run: build-cdnaclone-bdgp-production
 
-dump: load-stage-6-load-complete
+dump: mage+cdnaclone
 
-run: read-flybase-chromosome-fasta calculate-locations
-run: create-references
+run: read-flybase-chromosome-fasta calculate-locations create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
 #run: homophila-post-process
 run: create-indexes-production-attribute
 
 dump: postprocess-1
 
-run: set-collection-counts set-name-and-wildtypefunction
+run: set-collection-counts set-name-and-wildtypefunction create-overlap-relations-flymine
 
-dump: postprocess-2
+dump: postprocess-2-overlap
 
-run: create-overlap-relations-flymine
+run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
+run: create-flybase-to-uniprot-refs update-publications grant-db-production
 
-dump: postprocess-3-overlap
-
-run: create-symmetrical-relation-references
-run: transfer-sequences read-flybase-cds-fasta
-run: create-flybase-to-uniprot-refs update-publications
-run: grant-db-production
-
-dump: postprocess-4
+dump: complete
 
