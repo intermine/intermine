@@ -126,7 +126,7 @@ public class InterproDataTranslator extends DataTranslator
     if (srcItemClassName.equalsIgnoreCase("cv_database")
             && "InterPro".equalsIgnoreCase(srcItem.getAttribute("dbname").getValue())) {
 
-      LOG.info("SKIPPING STORE FOR THE CV_DATABASE.InterPro ITEM!");
+      LOG.debug("SKIPPING STORE FOR THE CV_DATABASE.InterPro ITEM!");
       //NOTE: we can only get away with doing this since no other items of interest in the
       // interpro schema point to this cv_database item!!!!
     } else {
@@ -221,21 +221,21 @@ public class InterproDataTranslator extends DataTranslator
       interproIdAttribute.setName("interproId");
       interproIdAttribute.setValue(entryItem.getAttribute("entry_ac").getValue());
       tgtItem.addAttribute(interproIdAttribute);
-      LOG.info("ADDED AN INTERPRO ID:" + interproIdAttribute.getValue() + " TO A METHOD ITEM");
+      LOG.debug("ADDED AN INTERPRO ID:" + interproIdAttribute.getValue() + " TO A METHOD ITEM");
 
       //CHECK THE ENTRY RELATING TO THIS METHOD TO SEE IF IT IS A FAMILY OR AN EQIVALENT DOMAIN...
       tryAndSetEntryTypeInAnEntry(entryItem);
 
       if (entryItem.getAttribute(ABBREV).getValue().equalsIgnoreCase(FAMILY)) {
 
-        LOG.info("SETTING A METHOD TO BE A PROTEINFAMILY");
+        LOG.debug("SETTING A METHOD TO BE A PROTEINFAMILY");
         tgtItem.setClassName("http://www.flymine.org/model/genomic#ProteinFamily");
       } else if (entryItem.getAttribute(ABBREV).getValue().equalsIgnoreCase(DOMAIN)) {
 
-        LOG.info("SETTING A METHOD TO BE A PROTEINDOMAIN");
+        LOG.debug("SETTING A METHOD TO BE A PROTEINDOMAIN");
         tgtItem.setClassName("http://www.flymine.org/model/genomic#ProteinDomain");
       } else {
-        LOG.info("IGNORED AN METHOD-ENTRY MAPPING WITH TYPE:"
+        LOG.debug("IGNORED AN METHOD-ENTRY MAPPING WITH TYPE:"
                 + entryItem.getAttribute(ABBREV).getValue());
       }
 
