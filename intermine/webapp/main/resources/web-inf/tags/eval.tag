@@ -19,6 +19,6 @@
       request.setAttribute(evalVariable, ex);
    } catch (Exception e) {
       application.log("eval.tag: no value found for \"" + expr + "\": " + e.getClass()); 
-      request.setAttribute(evalVariable, "[no value]");
+      request.setAttribute(evalVariable, "");
    }
 %>
