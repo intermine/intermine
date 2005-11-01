@@ -157,7 +157,10 @@ public abstract class WebUtil
 
     /**
      * Make a copy of a Results object, but with a different batch size.
-     * @throws ObjectStoreException 
+     * @param oldResults the original Results objects
+     * @param newBatchSize the new batch size
+     * @return a new Results object with a new batch size
+     * @throws ObjectStoreException if there is a problem while creating the new Results object
      */
     public static Results changeResultBatchSize(Results oldResults, int newBatchSize)
         throws ObjectStoreException {
