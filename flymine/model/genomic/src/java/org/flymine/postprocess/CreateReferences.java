@@ -22,7 +22,6 @@ import org.intermine.sql.Database;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;

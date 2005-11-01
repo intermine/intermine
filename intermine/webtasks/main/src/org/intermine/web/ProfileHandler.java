@@ -43,8 +43,8 @@ class ProfileHandler extends DefaultHandler
     private Map savedTemplates;
     private List items;
     private Map idObjectMap;
-	private IdUpgrader idUpgrader;
-	
+    private IdUpgrader idUpgrader;
+
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
      * InterMineBagBinding.InterMineBagHandler.  If "template-queries" it will be an
@@ -57,11 +57,13 @@ class ProfileHandler extends DefaultHandler
     /**
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
+     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
+     * correspond to object in old bags.
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         super();
         this.profileManager = profileManager;
-		this.idUpgrader = idUpgrader;
+        this.idUpgrader = idUpgrader;
         items = new ArrayList();
     }
 
@@ -103,14 +105,14 @@ class ProfileHandler extends DefaultHandler
             subHandler.startElement(uri, localName, qName, attrs);
         }
     }
-    
+
     /**
      * @see DefaultHandler#endElement
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
         if (qName.equals("items")) {
-            items = ((FullHandler) subHandler).getItems(); 
+            items = ((FullHandler) subHandler).getItems();
             idObjectMap = new HashMap();
             Model model = profileManager.getObjectStore().getModel();
             List objects;

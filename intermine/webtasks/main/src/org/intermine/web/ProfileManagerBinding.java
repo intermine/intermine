@@ -62,13 +62,14 @@ public class ProfileManagerBinding
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param os ObjectStore used to resolve object ids
-     * @param upgrader 
+     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
+     * correspond to object in old bags.
      */    
     public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-    		PkQueryIdUpgrader idUpgrader) {
+                                 PkQueryIdUpgrader idUpgrader) {
         try {
             ProfileManagerHandler profileManagerHandler =
-            	new ProfileManagerHandler(profileManager, idUpgrader);
+                new ProfileManagerHandler(profileManager, idUpgrader);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,13 +85,14 @@ public class ProfileManagerBinding
  */
 class ProfileManagerHandler extends DefaultHandler
 {
-	private ProfileHandler profileHandler = null;
-	private ProfileManager profileManager = null;
-	private IdUpgrader idUpgrader;
+    private ProfileHandler profileHandler = null;
+    private ProfileManager profileManager = null;
+    private IdUpgrader idUpgrader;
     
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
+     * @param idUpgrader 
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         super();

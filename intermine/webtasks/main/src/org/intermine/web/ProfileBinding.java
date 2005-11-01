@@ -10,7 +10,6 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.dataloader.DataLoaderHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -211,12 +210,12 @@ public class ProfileBinding
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os) {
         try {
             ProfileHandler profileHandler =
-            	new ProfileHandler(profileManager, new IdUpgrader() {
-					public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
-						throw new RuntimeException("Shouldn't call getNewIds() in a"
-								+ " running webapp");
-					}
-            	});
+                new ProfileHandler(profileManager, new IdUpgrader() {
+                    public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
+                        throw new RuntimeException("Shouldn't call getNewIds() in a"
+                                                   + " running webapp");
+                    }
+                });
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {
