@@ -63,7 +63,7 @@ public class PortalQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
+
         String extId = request.getParameter("externalid");
         String origin = request.getParameter("origin");
 
@@ -86,7 +86,7 @@ public class PortalQueryAction extends InterMineAction
         if (template == null) {
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");
         }
-        
+
         // Populate template form bean
         TemplateForm tf = new TemplateForm();
         tf.setAttributeOps("1", op.toString());
@@ -99,11 +99,11 @@ public class PortalQueryAction extends InterMineAction
         SessionMethods.loadQuery(queryCopy, request.getSession());
         // Add a message to welcome the user
         SessionMethods.recordMessage(properties.getProperty("portal.welcome" + origin), session);
-        
+
         // Set collapsed/uncollapsed state of object details UI
         Map collapsed = SessionMethods.getCollapsedMap(session);
         collapsed.put("fields", Boolean.TRUE);
-        collapsed.put("further", Boolean.TRUE);
+        collapsed.put("further", Boolean.FALSE);
         collapsed.put("summary", Boolean.FALSE);
 
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
