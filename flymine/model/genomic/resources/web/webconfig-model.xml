@@ -58,6 +58,8 @@
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -67,7 +69,9 @@
   <class className="org.flymine.model.genomic.Exon">
     <fields>
       <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="gene.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
+      <fieldconfig fieldExpr="gene.identifier" showInSummary="true" showInInlineCollection="false" showInResults="true"/>
     </fields>
   </class>
 
@@ -76,6 +80,7 @@
       <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="organismDbId" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="symbol" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="wildTypeFunction" doNotTruncate="true" />
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>

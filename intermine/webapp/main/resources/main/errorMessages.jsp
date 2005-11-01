@@ -33,7 +33,7 @@
 <logic:messagesPresent message="true">
   <div class="topBar messages">
     <html:messages id="message" message="true">
-      <c:out value="${message}"/><br/>
+      <c:out value="${message}" escapeXml="false"/><br/>
     </html:messages>
   </div>
   <br/>
