@@ -5,7 +5,7 @@ package org.intermine.dataconversion;
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE currentFile for more
+ * be distributed with the code.  See the LICENSE file for more
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
@@ -53,7 +53,7 @@ public abstract class FileConverter extends DataConverter
 
     /**
      * Set the current File that is being processed.  Called by FileConverterTask.execute().
-     * @param currentFile
+     * @param currentFile the current File that is being processed
      */
     public void setCurrentFile(File currentFile) {
         this.currentFile = currentFile;

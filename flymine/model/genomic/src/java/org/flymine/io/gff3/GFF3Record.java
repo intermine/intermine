@@ -10,7 +10,6 @@ package org.flymine.io.gff3;
  *
  */
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -394,7 +393,8 @@ public class GFF3Record
      */
     public String toGFF3() {
         try {
-            return URLEncoder.encode(sequenceID, "UTF-8") + "\t" + ((source == null) ? "." : source) + "\t"
+            return URLEncoder.encode(sequenceID, "UTF-8") + "\t"
+                + ((source == null) ? "." : source) + "\t"
                 + type + "\t" + start + "\t" + end + "\t"
                 + ((score == null) ? "." : score.toString()) + "\t"
                 + ((strand == null) ? "." : strand) + "\t"

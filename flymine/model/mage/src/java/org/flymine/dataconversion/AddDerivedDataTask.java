@@ -13,7 +13,6 @@ package org.flymine.dataconversion;
 import java.io.File;
 import java.io.FileReader;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -41,7 +40,7 @@ public class AddDerivedDataTask extends Task
     /**
      * File to write the updated MAGE-ML
      *
-     * @param srcFile updated MAGE-ML to write to
+     * @param tgtFile updated MAGE-ML to write to
      */
     public void setTgtFile(File tgtFile) {
         this.tgtFile = tgtFile;
