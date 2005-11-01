@@ -16,7 +16,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 
 /**
- * Bag object id upgrader.
+ * Bag object id upgrader - find old objects in a new ObjectStore.
  * 
  * @author kim
  */
