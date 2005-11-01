@@ -46,11 +46,13 @@ public class InlineResultsTable
     protected ClassDescriptor cld;
     protected List columns = null;
     // a list of list of values for the table
-    protected List tableRows = null;
     protected Model model;
     protected int size = -1;
     protected WebConfig webConfig;
     protected Map webProperties;
+
+    // a list of the expressions to use for each column
+    private List expressions = null;
 
     /**
      * Construct a new InlineResultsTable object
@@ -96,18 +98,17 @@ public class InlineResultsTable
     }
 
     /**
-     * Get the rows of the table
-     * @return the rows of the table
-     * @throws Exception if an error occurs accessing the ObjectStore
+     * Return a List of configured expressions (from the FieldConfig objects) - one for each column.
+     * @return the expression List
      */
-    public List getRows() throws Exception {
-        if (tableRows == null) {
+    public List getExpressions() {
+        if (expressions == null) {
             initialise();
         }
-
-        return tableRows;
+        
+        return expressions;
     }
-
+    
     /**
      * Get the class descriptors of each object displayed in the table
      * @return the set of class descriptors for each row
@@ -156,10 +157,10 @@ public class InlineResultsTable
      * in the tableRows List will always be in the same order as the elements of the columns List.
      */
     protected void initialise() {
-        tableRows = new ArrayList();
         columns = new ArrayList();
+        expressions = new ArrayList();
         subList = new ArrayList();
-
+        
         Iterator resultsIter = resultsAsList.subList(0, getSize()).iterator();
 
         while (resultsIter.hasNext()) {
@@ -180,37 +181,8 @@ public class InlineResultsTable
 
                 if (!columns.contains(fc)) {
                     columns.add(fc);
+                    expressions.add(fc.getFieldExpr());
                 }
-            }
-
-            // add a row that contains the fields of the current object but add a null where this
-            // object doesn't have the given field
-            Iterator columnIter = columns.iterator();
-
-            List newRow = new ArrayList();
-
-            while (columnIter.hasNext()) {
-                FieldConfig fc = (FieldConfig) columnIter.next();
-
-                if (objectFieldConfigs.contains(fc)) {
-                    newRow.add(fc.getFieldExpr());
-                } else {
-                    newRow.add(null);
-                }
-            }
-
-            tableRows.add(newRow);
-        }
-
-        // now make sure that all rows are the same length by adding nulls to the ends of the short
-        // rows
-        Iterator tableRowIter = tableRows.iterator();
-
-        while (tableRowIter.hasNext()) {
-            List row = (List) tableRowIter.next();
-
-            while (row.size() < columns.size()) {
-                row.add(null);
             }
         }
     }

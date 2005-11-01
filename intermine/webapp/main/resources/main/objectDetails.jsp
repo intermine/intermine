@@ -219,9 +219,10 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <c:forEach items="${collection.table.rows}" var="row" varStatus="status">
+                              <c:forEach items="${collection.table.rowObjects}" 
+                                         var="thisRowObject" varStatus="status">
                                 <%-- request scope for im:eval --%>
-                                <c:set var="thisRowObject" value="${collection.table.rowObjects[status.index]}"
+                                <c:set var="thisRowObject" value="${thisRowObject}" 
                                        scope="request"/>
                                 <tr>
                                   <td width="10px">
@@ -229,12 +230,10 @@
                                       <span class="type">${cld.unqualifiedName}</span>
                                     </c:forEach>
                                   </td>
-                                  <c:forEach items="${row}" var="expr">
+                                  <c:forEach items="${collection.table.expressions}" var="expr">
                                     <td>
                                        <c:choose>
-
                                         <c:when test="${!empty expr}">
-
                                           <im:eval evalExpression="thisRowObject.${expr}" evalVariable="outVal"/>
                                           <span class="value">${outVal}</span>
 
