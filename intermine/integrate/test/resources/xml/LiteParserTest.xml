@@ -1,5 +1,0 @@
-<object class="org.intermine.model.testmodel.Employee" implements="org.intermine.model.testmodel.Employable">
-  <field name="id" value="1234"/>
-  <field name="name" value="Employee1"/>
-  <reference name="department" value="5678"/>
-</object>
