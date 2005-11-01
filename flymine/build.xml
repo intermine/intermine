@@ -1462,7 +1462,10 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-mage integrationWriter="integration.production" source="os.mage-translated" sourceName="mage" ignoreDuplicates="false"/>
+    <load-mage integrationWriter="integration.production" 
+               source="os.mage-translated" 
+               sourceName="mage" 
+               ignoreDuplicates="false"/>
   </target>
 
   <target name="build-mage-production" depends="retrieve-mage, translate-mage, load-mage"/>
@@ -1994,7 +1997,7 @@
         <!-- compile-genomic-model-->
         <!-- compile-genomic-human-model-->
     <taskdef name="db-insert-model"
-             classname="org.interminetask.StoreMetadataTask">
+             classname="org.intermine.task.StoreMetadataTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
     <db-insert-model database="db.production" modelName="genomic"/>
@@ -3231,7 +3234,7 @@
     <property name="t1dmine.data" value="model/genomic/data/t1dmine"/>
 
     <load-xml-data integrationWriter="integration.production"
-                   xmlFile="${t1dmine.data}/databases.xml" sourceName="static"/>
+                   xmlFile="${t1dmine.data}/datasets.xml" sourceName="static"/>
     <load-xml-data integrationWriter="integration.production"
                    xmlFile="${t1dmine.data}/organisms.xml" sourceName="static"/>
     <load-xml-data integrationWriter="integration.production"
@@ -3561,11 +3564,15 @@
       <!--antcall target="analyse-db-production"/-->
       <!--antcall target="create-chromosome-locations-and-lengths"/>
       <antcall target="analyse-db-production"/>
-      <antcall target="create-overlap-relations"/>
+      <antcall target="create-overlap-relations-t1dmine"/>
       <antcall target="analyse-db-production"/>
       <antcall target="create-symmetrical-relation-references"/>
       <antcall target="analyse-db-production"/>
       <antcall target="make-spanning-locations"/>
+      <antcall target="analyse-db-production"/>
+      <antcall target="update-orthologues"/>
+      <antcall target="analyse-db-production"/>     
+      <antcall target="set-collection-counts"/>
       <antcall target="analyse-db-production"/--> 
   </target>
 
@@ -4362,11 +4369,16 @@
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
 
  <!--mage data for stem cell-->
- <target name="retrieve-mage-stemcell" depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
+ <target name="retrieve-mage-stemcell" 
+         depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <fileset dir="${shared.data}/mage/t1dmine/E-EMBL-1"/>
+      <!--fileset dir="${shared.data}/human/mage/E-EMBL-1"/-->
+      <fileset dir="${shared.data}/human/mage/E-MEXP-337"/>
+      <!--fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
+      <fileset dir="${shared.data}/human/mage/E-MEXP-70"/>
+      <fileset dir="${shared.data}/human/mage/E-SMDB-3450"/-->
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
@@ -4383,7 +4395,9 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" param1="Signal med ratio">
+                  clsName="org.flymine.dataconversion.MageConverter" 
+                  model="mage" 
+                  quantitationtypes="Log2Ratio">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -4401,14 +4415,60 @@
     </ant>
   </target>
 
+  <target name="translate-mage-stemcell" 
+          depends="convert-mage, compile-genomic-java, compile-mage-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.mage-tgt-items-std"/>
+    </ant>
+    <copy file="${model}/mage/mage_mappings" toDir="${build.model}/mage"/>
+    <copy file="${model}/genomic/resources/t1dmine/mage_config.properties" toDir="${build.model}/genomic"/>
+    <echo message="CLASSPATH: ${models.class.path}"/>
+    <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <translate-data translator="org.flymine.dataconversion.MageDataTranslator"
+                    source="os.mage-src-items"
+                    target="osw.mage-tgt-items"
+                    srcModel="mage"
+                    tgtModel="genomic"/>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.mage-tgt-items-std"/>
+    </ant>
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+  
+  <target name="load-mage-stemcell" depends = "prepare-build-model, copy-t1dmine-config">
+    <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <load-mage integrationWriter="integration.production" 
+               source="os.mage-translated" 
+               sourceName="mage" 
+               ignoreDuplicates="false"/>
+  </target>
+
+  <target name="build-mage-stemcell-production" 
+          depends="retrieve-mage-stemcell, translate-mage-stemcell, load-mage-stemcell"/>
+
+  
+
 
 <!-- CDNACLONE/image PIPELINE --> 
   <target name="retrieve-cdnaclone-image" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <convert-file clsName="org.flymine.dataconversion.CDNACloneConverter"
-                  osName="osw.cdnaclone-tgt-items" model="cdnaclone">
+    <convert-file clsName="org.flymine.dataconversion.ImageCloneConverter"
+                  osName="osw.cdnaclone-tgt-items" 
+                  model="cdnaclone">
       <fileset dir="${shared.data}/human/imageClones/" includes="UnigeneSetRZPD3.1.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -4418,8 +4478,17 @@
     </ant>
   </target>
 
+  <target name="load-cdnaclone-image" depends="copy-t1dmine-config">
+    <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <load-cdnaclone integrationWriter="integration.production" 
+                    source="os.cdnaclone-translated" 
+                    sourceName="cdnaclone"/>
+  </target>
+ 
   <!-- load CDNAclone image data into production -->
-  <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone"/>
+  <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone-image"/>
 
   
   <target name="create-so-name-to-classname-map" depends="compile-genomic-java">
