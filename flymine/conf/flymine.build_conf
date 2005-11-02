@@ -45,7 +45,7 @@ dump: mage+cdnaclone
 
 run: read-flybase-chromosome-fasta calculate-locations create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
-#run: homophila-post-process
+run: homophila-post-process
 run: create-indexes-production-attribute
 
 dump: postprocess-1
@@ -54,8 +54,11 @@ run: set-collection-counts set-name-and-wildtypefunction create-overlap-relation
 
 dump: postprocess-2-overlap
 
-run: create-symmetrical-relation-references transfer-sequences read-flybase-cds-fasta
-run: create-flybase-to-uniprot-refs update-publications grant-db-production
+run: create-symmetrical-relation-references
+
+# run in its own process - it's a memory hog
+run: transfer-sequences
+run: read-flybase-cds-fasta create-flybase-to-uniprot-refs update-publications grant-db-production
 
 dump: complete
 
