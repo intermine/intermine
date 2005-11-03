@@ -10,10 +10,10 @@ package org.flymine.postprocess;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Annotation;
@@ -106,11 +106,11 @@ public class HomophilaPostProcess
             Disease disease = (Disease) rr.get(1);
             LOG.debug("gene = " + gene.getIdentifier() + "  disease = " + disease.getOmimId());
             
-            List newCollection = new ArrayList();
+            Set newCollection = new HashSet();
             newCollection.add(disease);
             try {
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(gene);
-                List oldCollection = (List) TypeUtil.getFieldValue(tempObject, "omimDiseases");
+                Set oldCollection = (Set) TypeUtil.getFieldValue(tempObject, "omimDiseases");
                 newCollection.addAll(oldCollection);
                 TypeUtil.setFieldValue(tempObject, "omimDiseases", newCollection);
                 osw.store(tempObject);
@@ -188,7 +188,7 @@ public class HomophilaPostProcess
         cs.addConstraint(gdc);
         
         q.setConstraint(cs);
-        
+
         ((ObjectStoreInterMineImpl) os).precompute(q);
         Results res = new Results(q, os, os.getSequence());
 
