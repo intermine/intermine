@@ -2091,13 +2091,16 @@
   <!-- LOAD PRODUCTION DATA -->
 
   <!-- Translates and loads ensembl drosophila data -->
-  <target name="build-ensembl-drosophila-production" depends="retrieve-ensembl-drosophila,translate-ensembl-drosophila,load-ensembl-drosophila"/>
+  <target name="build-ensembl-drosophila-production" 
+          depends="retrieve-ensembl-drosophila,translate-ensembl-drosophila,load-ensembl-drosophila"/>
 
   <!-- Translates and loads ensembl anopheles data -->
-  <target name="build-ensembl-anopheles-production" depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
+  <target name="build-ensembl-anopheles-production" 
+          depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
 
   <!-- Retrieve and load orthologue data -->
-  <target name="build-orthologues-production" depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid"/>
+  <target name="build-orthologues-production" 
+          depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="production-build"
@@ -2238,7 +2241,10 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" xmlFile="${build.tmp}/publications.xml" sourceName="pubmed" ignoreDuplicates="true"/>
+    <load-xml-data integrationWriter="integration.production" 
+                   xmlFile="${build.tmp}/publications.xml" 
+                   sourceName="pubmed" 
+                   ignoreDuplicates="true"/>
   </target>
 
  <target name="add-licences" depends="compile-genomic-java-from-db">
@@ -3257,7 +3263,7 @@
   </target>
 
 
- <!-- MERGED GENOMIC HUMAN MODEL  -->
+ <!-- MERGED GENOMIC T1DMine MODEL  -->
 
  <!-- create human genomic model from core and all additions files -->
   <target name="create-production-model-t1dmine"
@@ -3346,7 +3352,10 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-human integrationWriter="integration.production" source="os.ensembl-human-translated" sourceName="ensembl-human" /><!--queryClass="org.flymine.model.genomic.Synonym"/-->
+    <load-human integrationWriter="integration.production" 
+                source="os.ensembl-human-translated" 
+                sourceName="ensembl-human" />
+               <!--queryClass="org.flymine.model.genomic.Synonym"/-->
   </target>
 
   <!--LOAD PRODUCTION DATA  -->
@@ -3528,12 +3537,15 @@
   <target name="t1dmine-production-build"
           depends="create-production-model-t1dmine, compile-genomic-model-t1dmine,jar-genomic,
                    build-db-production-t1dmine, load-static-t1dmine,
-                   build-ensembl-human-production, build-go-production-human,build-go-production-mouse,
-                   build-tfbs-production, build-firstef-production,
+                   build-ensembl-human-production, 
+                   build-go-production-human,build-go-production-mouse,build-orthologues-production-mouse,
+                   build-tfbs-production, 
+                   build-firstef-production,build-mousechain-production, build-opposumchain-production,
                    build-regions-production, build-disease-regions-production, build-ensembl-disease-production, 
-                   build-mousechain-production, build-opposumchain-production,
+                   build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
+                   build-gene-synonyms-for-embl-production,
                    build-tfbscluster-production, build-cns-production,
-                   build-orthologues-production-mouse,
+                   build-mage-stemcell-production, build-cdnaclone-image-production,
                    analyse-db-production, grant-db-production"/>
 
 
@@ -3573,6 +3585,7 @@
       <antcall target="update-orthologues"/>
       <antcall target="analyse-db-production"/>     
       <antcall target="set-collection-counts"/>
+      <antcall target="update-publications"/>
       <antcall target="analyse-db-production"/--> 
   </target>
 
