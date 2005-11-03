@@ -127,12 +127,9 @@ public class FilterChadoTask extends Task
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
             || type.equals("scaffold") || type.equals("chromosome_arm")
             || type.equals("chromosome") || type.equals("mature_peptide")
-            || type.equals("oligo") || type.equals("BAC")
-            || type.equals("chromosome_band")) {
+            || type.equals("oligo") || type.equals("BAC")) {
             return false;
         }
         return true;
     }
-
-
 }
