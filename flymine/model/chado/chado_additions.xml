@@ -28,9 +28,6 @@
     <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="introns" ordered="true"/>
     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.PointMutation" is-interface="true">
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
-  </class>
   <class name="org.flymine.model.genomic.UTR" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
