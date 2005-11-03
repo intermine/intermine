@@ -44,8 +44,6 @@ public class RNAiConverter extends FileConverter
     protected Map experimentalResults = new HashMap();
     protected Map organisms = new HashMap();
     protected Map annotationEvidence = new HashMap();
-    protected Map geneAnnotation = new HashMap();
-    protected Map phenotypeAnnotation = new HashMap();
 
     protected Item dataSource, dataSet;
     protected int id = 0;
@@ -142,18 +140,6 @@ public class RNAiConverter extends FileConverter
             experimentalResultCollection.addRefId(experimentalResultId);
             evidences.add(experimentalResultId);
         }
-        Set geneAnnotations = (Set) geneAnnotation.get(gene.getIdentifier());
-        if (!geneAnnotations.contains(annotationKey)) {
-            ReferenceList annotationCollection = gene.getCollection("annotations");
-            annotationCollection.addRefId(annotation.getIdentifier());
-            geneAnnotations.add(annotationKey);
-        }
-        Set phenotypeAnnotations = (Set) phenotypeAnnotation.get(phenotype.getIdentifier());
-        if (!phenotypeAnnotations.contains(annotationKey)) {
-            ReferenceList annotationCollection = phenotype.getCollection("annotations");
-            annotationCollection.addRefId(annotation.getIdentifier());
-            phenotypeAnnotations.add(annotationKey);
-        }
     }
 
     /**
@@ -163,16 +149,7 @@ public class RNAiConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs when storing the Item
      */
     protected void addSynonym(Item gene, String syn) throws ObjectStoreException {
-        ReferenceList refs = gene.getCollection("synonyms");
-        if (refs == null) {
-            refs = new ReferenceList();
-            refs.setName("synonyms");
-            gene.addCollection(refs);
-        }
         Item synonym = newSynonym(syn, gene);
-        if (!refs.getRefIds().contains(synonym.getIdentifier())) {
-            refs.addRefId(synonym.getIdentifier());
-        }
     }
 
     /**
@@ -191,6 +168,8 @@ public class RNAiConverter extends FileConverter
         if (item == null) {
             item = newItem("Gene");
             item.addAttribute(new Attribute("identifier", sequenceName));
+            // identifier needs to be a Synonym for quick search to work
+            addSynonym(item, sequenceName);
             if ((commonName != null) && (!"".equals(commonName))) {
                 item.addAttribute(new Attribute("name", commonName));
             }
@@ -201,10 +180,6 @@ public class RNAiConverter extends FileConverter
             if ((synonym2 != null) && (!"".equals(synonym2))) {
                 addSynonym(item, synonym2);
             }
-            ReferenceList annotationCollection = new ReferenceList();
-            annotationCollection.setName("annotations");
-            item.addCollection(annotationCollection);
-            geneAnnotation.put(item.getIdentifier(), new HashSet());
             genes.put(sequenceName, item);
         }
         return item;
@@ -294,10 +269,6 @@ public class RNAiConverter extends FileConverter
         if (phenotype == null) {
             phenotype = newItem("Phenotype");
             phenotype.addAttribute(new Attribute("RNAiCode", code));
-            ReferenceList annotationCollection = new ReferenceList();
-            annotationCollection.setName("annotations");
-            phenotype.addCollection(annotationCollection);
-            phenotypeAnnotation.put(phenotype.getIdentifier(), new HashSet());
             phenotypes.put(code, phenotype);
         }
         return phenotype;
