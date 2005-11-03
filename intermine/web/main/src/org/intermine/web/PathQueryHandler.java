@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -32,11 +33,12 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class PathQueryHandler extends DefaultHandler
 {
-    Map queries;
-    String queryName;
-    char gencode;
-    PathQuery query;
-    PathNode node;
+    private Map queries;
+    private String queryName;
+    private char gencode;
+    private PathNode node;
+    private Map alternativeViews = new HashMap();
+    protected PathQuery query;
 
     /**
      * Constructor
@@ -51,11 +53,17 @@ class PathQueryHandler extends DefaultHandler
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
+        if (qName.equals("alternative-view")) {
+            String name = attrs.getValue("name");
+            List view = StringUtil.tokenize(attrs.getValue("view"));
+            alternativeViews.put(name, view);
+        }
         if (qName.equals("query")) {
-            queryName = attrs.getValue("name");
-            // reset generated codes
-            gencode = 'A';
             Model model;
+            // reset things
+            gencode = 'A';
+            alternativeViews = new HashMap();
+            queryName = attrs.getValue("name");
             try {
                 model = Model.getInstanceByName(attrs.getValue("model"));
             } catch (Exception e) {
@@ -112,6 +120,10 @@ class PathQueryHandler extends DefaultHandler
         if (qName.equals("query")) {
             query.checkValidity();
             query.syncLogicExpression("and"); // always and for old queries
+            for (Iterator iter = alternativeViews.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                query.addAlternativeView((String) entry.getKey(), (List) entry.getValue());
+            }
             queries.put(queryName, query);
         }
     }

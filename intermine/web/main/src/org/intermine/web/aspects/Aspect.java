@@ -1,4 +1,4 @@
-package org.intermine.web.dataset;
+package org.intermine.web.aspects;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
  * 
  * @author Thomas Riley
  */
-public class DataSet
+public class Aspect
 {
-    /** Name of the DataSet. */
+    /** Name of the aspect. */
     private String name;
     /** Subtitle. */
     private String subTitle;
@@ -37,8 +37,8 @@ public class DataSet
     private String iconImage;
     /** Path to large image. */
     private String largeImage;
-    /** List of DataSetSources. */
-    private List dataSetSources = new ArrayList();
+    /** List of AspectSources. */
+    private List aspectSources = new ArrayList();
     /** Comma seperated list of starting-point class names. */
     private List startingPoints = new ArrayList();
     
@@ -75,20 +75,20 @@ public class DataSet
     }
 
     /**
-     * Get the DataSetSources.
-     * @return the DataSetSources
-     * @see org.intermine.web.dataset.DataSetSource
+     * Get the AspectSources.
+     * @return the AspectSources
+     * @see org.intermine.web.dataset.AspectSource
      */
-    public List getDataSetSources() {
-        return dataSetSources;
+    public List getAspectSources() {
+        return aspectSources;
     }
 
     /**
-     * Add a DataSetSource.
-     * @param dataSetSource the DataSetSource to add
+     * Add a AspectSource.
+     * @param aspectSource the AspectSource to add
      */
-    public void addDataSetSource(DataSetSource dataSetSource) {
-        this.dataSetSources.add(dataSetSource);
+    public void addAspectSource(AspectSource aspectSource) {
+        this.aspectSources.add(aspectSource);
     }
 
     /**

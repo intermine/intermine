@@ -15,21 +15,25 @@
 
 function enterPath(path)
 {
-  setStyle(path, "#fff");
+  setStyle(path, 1);
 }
 
 function exitPath(path)
 {
-  setStyle(path, "#E7F1FB");
+  setStyle(path, 0);
 }
 
-function setStyle(path, style)
+function setStyle(path, inside)
 {
   var a = null;
   <c:forEach var="prefix" items="${prefixes}" varStatus="status">
-    a = document.getElementById("${prefix}"+path);
+    a = document.getElementById("${prefix}" + path);
     if (a != null) {
-      a.style.background = style;
+      if (inside) {
+        a.style.borderColor = "#444";
+      } else {
+        a.style.borderColor = "#BBB";
+      }
     }
   </c:forEach>
 }

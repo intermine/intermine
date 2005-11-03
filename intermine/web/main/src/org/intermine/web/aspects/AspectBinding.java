@@ -1,4 +1,4 @@
-package org.intermine.web.dataset;
+package org.intermine.web.aspects;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -25,49 +25,49 @@ import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 /**
- * Routines for unmarshaling DataSet objects from XML.
+ * Routines for unmarshaling Aspect objects from XML.
  * 
- * @see org.intermine.web.dataset.DataSet
+ * @see org.intermine.web.dataset.Aspect
  * @author Thomas Riley
  */
-public class DataSetBinding
+public class AspectBinding
 {
-    private static final Logger LOG = Logger.getLogger(DataSetBinding.class);
+    private static final Logger LOG = Logger.getLogger(AspectBinding.class);
     
     /**
      * Read in data set configuration from XML. The keys (set names) in the returned map
      * are ordered to match the ordering in the XML file.
      * 
      * @param reader data set xml reader
-     * @return Map from set name to DataSet object
+     * @return Map from set name to Aspect object
      */
     public static Map unmarshal(Reader reader) {
         Digester digester = new Digester();
-        digester.addObjectCreate("data-sets", "java.util.ArrayList");
-        digester.addObjectCreate("data-sets/data-set", "org.intermine.web.dataset.DataSet");
-        digester.addSetProperties("data-sets/data-set");
-        digester.addCallMethod("data-sets/data-set/subtitle", "setSubTitle", 0);
-        digester.addCallMethod("data-sets/data-set/icon-image", "setIconImage", 0);
-        digester.addCallMethod("data-sets/data-set/large-image", "setLargeImage", 0);
-        digester.addCallMethod("data-sets/data-set/tile-name", "setTileName", 0);
-        digester.addCallMethod("data-sets/data-set/intro-text", "setIntroText", 0);
-        digester.addCallMethod("data-sets/data-set/starting-points", "setStartingPoints", 0);
-        digester.addObjectCreate("data-sets/data-set/data-source",
-                "org.intermine.web.dataset.DataSetSource");
-        digester.addSetProperties("data-sets/data-set/data-source");
-        digester.addSetNext("data-sets/data-set/data-source", "addDataSetSource",
-                "org.intermine.web.dataset.DataSetSource");
-        digester.addSetNext("data-sets/data-set", "add", "java.lang.Object");
+        digester.addObjectCreate("aspects", "java.util.ArrayList");
+        digester.addObjectCreate("aspects/aspect", "org.intermine.web.aspects.Aspect");
+        digester.addSetProperties("aspects/aspect");
+        digester.addCallMethod("aspects/aspect/subtitle", "setSubTitle", 0);
+        digester.addCallMethod("aspects/aspect/icon-image", "setIconImage", 0);
+        digester.addCallMethod("aspects/aspect/large-image", "setLargeImage", 0);
+        digester.addCallMethod("aspects/aspect/tile-name", "setTileName", 0);
+        digester.addCallMethod("aspects/aspect/intro-text", "setIntroText", 0);
+        digester.addCallMethod("aspects/aspect/starting-points", "setStartingPoints", 0);
+        digester.addObjectCreate("aspects/aspect/aspect-source",
+                "org.intermine.web.aspects.AspectSource");
+        digester.addSetProperties("aspects/aspect/aspect-source");
+        digester.addSetNext("aspects/aspect/aspect-source", "addAspectSource",
+                "org.intermine.web.aspects.AspectSource");
+        digester.addSetNext("aspects/aspect", "add", "java.lang.Object");
         try {
             List list = (List) digester.parse(reader);
             if (list == null) {
-                LOG.error("Failed to unmashal datasets (digester returned null)");
+                LOG.error("Failed to unmashal aspects (digester returned null)");
                 return Collections.EMPTY_MAP;
             }
             Map map = new LinkedHashMap();
             Iterator iter = list.iterator();
             while (iter.hasNext()) {
-                DataSet set = (DataSet) iter.next();
+                Aspect set = (Aspect) iter.next();
                 map.put(set.getName(), set);
             }
             return map;
@@ -84,7 +84,7 @@ public class DataSetBinding
      * Read data set configuration from an input stream.
      * 
      * @param is an InputStream to the XML document
-     * @return Map from data set name to DataSet object
+     * @return Map from data set name to Aspect object
      * @see #unmarshal(Reader)
      */
     public static Map unmarhsal(InputStream is) {

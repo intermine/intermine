@@ -99,9 +99,10 @@ public class MainController extends TilesAction
         // constraint display values
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
-        request.setAttribute("viewPaths", listToMap(query.getView()));
-        request.setAttribute("viewPathOrder", createIndexMap(query.getView()));
-        request.setAttribute("viewPathTypes", getPathTypes(query.getView(), query));
+        List view = SessionMethods.getEditingView(session);
+        request.setAttribute("viewPaths", listToMap(view));
+        request.setAttribute("viewPathOrder", createIndexMap(view));
+        request.setAttribute("viewPathTypes", getPathTypes(view, query));
         Map prefixes = getViewPathLinkPaths(query);
         request.setAttribute("viewPathLinkPrefixes", prefixes);
         request.setAttribute("viewPathLinkPaths", getPathTypes(prefixes.values(), query));

@@ -10,17 +10,16 @@ package org.intermine.web.bag;
  *
  */
 
-import org.intermine.web.bag.IdUpgrader;
-import org.intermine.model.testmodel.Department;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 
 
 /**

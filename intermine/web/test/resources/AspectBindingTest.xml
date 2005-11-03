@@ -1,6 +1,6 @@
 
-<data-sets>
-  <data-set name="source1">
+<aspects>
+  <aspect name="source1">
     <subtitle>subtitle1</subtitle>
     <icon-image>iconImage1</icon-image>
     <large-image>largeImage1</large-image>
@@ -9,10 +9,10 @@
       introText1
     </intro-text>
     <starting-points>Class1 Class2</starting-points>
-    <data-source name="dataSource1.1" url="dataSource1.1URL"/>
-    <data-source name="dataSource1.2" url="dataSource1.2URL"/>
-  </data-set>
-  <data-set name="source2">
+    <aspect-source name="dataSource1.1" url="dataSource1.1URL"/>
+    <aspect-source name="dataSource1.2" url="dataSource1.2URL"/>
+  </aspect>
+  <aspect name="source2">
     <subtitle>subtitle2</subtitle>
     <icon-image>iconImage2</icon-image>
     <large-image>largeImage2</large-image>
@@ -21,7 +21,7 @@
     <intro-text>
       introText2
     </intro-text>
-    <data-source name="dataSource2.1" url="dataSource2.1URL"/>
-    <data-source name="dataSource2.2" url="dataSource2.2URL"/>
-  </data-set>
-</data-sets>
+    <aspect-source name="dataSource2.1" url="dataSource2.1URL"/>
+    <aspect-source name="dataSource2.2" url="dataSource2.2URL"/>
+  </aspect>
+</aspects>

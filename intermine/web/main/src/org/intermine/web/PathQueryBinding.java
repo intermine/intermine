@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.util.LinkedHashMap;
 import java.io.Reader;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.io.StringWriter;
 
@@ -70,6 +71,13 @@ public class PathQueryBinding
             writer.writeAttribute("view", StringUtil.join(query.getView(), " "));
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
+            }
+            for (Iterator j = query.getAlternativeViews().entrySet().iterator(); j.hasNext();) {
+                Map.Entry entry = (Map.Entry) j.next();
+                writer.writeStartElement("alternative-view");
+                writer.writeAttribute("name", entry.getKey().toString());
+                writer.writeAttribute("view", StringUtil.join((List) entry.getValue(), " "));
+                writer.writeEndElement();
             }
             for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
                 PathNode node = (PathNode) j.next();

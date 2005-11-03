@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -43,9 +45,10 @@ public class PathQuery
     protected ResultsInfo info;
     protected ArrayList problems = new ArrayList();
     protected LogicExpression constraintLogic = null;
+    protected Map alternativeViews = new TreeMap();
     
     /**
-     * Constructor
+     * Construct a new instance of PathQuery.
      * @param model the Model on which to base this query
      */
     public PathQuery(Model model) {
@@ -157,6 +160,40 @@ public class PathQuery
      */
     public List getView() {
         return view;
+    }
+    
+    /**
+     * Get alternative select list by name.
+     * @param name view name
+     * @return List of Strings
+     */
+    public List getAlternativeView(String name) {
+        return (List) alternativeViews.get(name);
+    }
+    
+    /**
+     * Get alternative select lists as an unmodifiable Map from name to List.
+     * @return alternative select lists
+     */
+    public Map getAlternativeViews() {
+        return Collections.unmodifiableMap(alternativeViews);
+    }
+    
+    /**
+     * Add an alternative select list.
+     * @param name view name
+     * @param view the select list
+     */
+    public void addAlternativeView(String name, List view) {
+        alternativeViews.put(name, view);
+    }
+    
+    /**
+     * Remove alternative select list by name
+     * @param name view name
+     */
+    public void removeAlternativeView(String name) {
+        alternativeViews.remove(name);
     }
 
     /**
@@ -273,6 +310,10 @@ public class PathQuery
         if (problems != null) {
             query.problems = new ArrayList(problems);
         }
+        for (Iterator i = getAlternativeViews().entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            query.addAlternativeView((String) entry.getKey(), (List) entry.getValue());
+        }
         query.setConstraintLogic(getConstraintLogic());
         return query;
     }
@@ -313,7 +354,8 @@ public class PathQuery
         return (o instanceof PathQuery)
             && model.equals(((PathQuery) o).model)
             && nodes.equals(((PathQuery) o).nodes)
-            && view.equals(((PathQuery) o).view);
+            && view.equals(((PathQuery) o).view)
+            && alternativeViews.equals(((PathQuery) o).getAlternativeViews());
     }
 
     /**

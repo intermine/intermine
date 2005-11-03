@@ -15,11 +15,11 @@
     <tr>
       <td width="99%">
       	<c:choose>
-      	  <c:when test="${!empty DATASETS}">
+      	  <c:when test="${!empty ASPECTS}">
       	    <div class="body">
-              <fmt:message key="begin.dataset.intro"/>
+              <fmt:message key="begin.aspect.intro"/>
         	    </div>
-      	    <tiles:insert page="/dataSetIcons.jsp"/>
+      	    <tiles:insert page="/aspectIcons.jsp"/>
       	  </c:when>
       	  <c:otherwise>
       	  	<c:forEach items="${CATEGORIES}" var="category">

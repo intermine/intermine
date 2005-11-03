@@ -1,4 +1,4 @@
-package org.intermine.web.dataset;
+package org.intermine.web.aspects;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -8,18 +8,18 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-public class DataSetBindingTest extends TestCase
+public class AspectBindingTest extends TestCase
 {
     public void testUnmarshal() {
         Reader reader = new InputStreamReader(getClass().getClassLoader()
-                .getResourceAsStream("DataSetBindingTest.xml"));
-        Map sets = DataSetBinding.unmarshal(reader);
+                .getResourceAsStream("AspectBindingTest.xml"));
+        Map sets = AspectBinding.unmarshal(reader);
         assertNotNull(sets);
         assertEquals(2, sets.keySet().size());
         
         Iterator iter = sets.values().iterator();
-        DataSet set1 = (DataSet) iter.next();
-        DataSet set2 = (DataSet) iter.next();
+        Aspect set1 = (Aspect) iter.next();
+        Aspect set2 = (Aspect) iter.next();
         assertNotNull(set1);
         assertNotNull(set2);
         
@@ -28,11 +28,11 @@ public class DataSetBindingTest extends TestCase
         assertEquals("iconImage1", set1.getIconImage());
         assertEquals("largeImage1", set1.getLargeImage());
         assertEquals("tile1", set1.getTileName());
-        assertEquals(2, set1.getDataSetSources().size());
+        assertEquals(2, set1.getAspectSources().size());
         assertEquals(Arrays.asList(new String[]{"Class1", "Class2"}), set1.getStartingPoints());
         
-        DataSetSource source1 = (DataSetSource) set1.getDataSetSources().get(0);
-        DataSetSource source2 = (DataSetSource) set1.getDataSetSources().get(1);
+        AspectSource source1 = (AspectSource) set1.getAspectSources().get(0);
+        AspectSource source2 = (AspectSource) set1.getAspectSources().get(1);
         assertEquals("dataSource1.1", source1.getName());
         assertEquals("dataSource1.2", source2.getName());
         assertEquals("dataSource1.1URL", source1.getUrl());
@@ -43,11 +43,11 @@ public class DataSetBindingTest extends TestCase
         assertEquals("iconImage2", set2.getIconImage());
         assertEquals("largeImage2", set2.getLargeImage());
         assertEquals("tile2", set2.getTileName());
-        assertEquals(2, set2.getDataSetSources().size());
+        assertEquals(2, set2.getAspectSources().size());
         assertEquals(Arrays.asList(new String[]{"Class3", "Class4"}), set2.getStartingPoints());
         
-        source1 = (DataSetSource) set2.getDataSetSources().get(0);
-        source2 = (DataSetSource) set2.getDataSetSources().get(1);
+        source1 = (AspectSource) set2.getAspectSources().get(0);
+        source2 = (AspectSource) set2.getAspectSources().get(1);
         assertEquals("dataSource2.1", source1.getName());
         assertEquals("dataSource2.2", source2.getName());
         assertEquals("dataSource2.1URL", source1.getUrl());

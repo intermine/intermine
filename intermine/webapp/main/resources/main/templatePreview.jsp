@@ -5,7 +5,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-  <c:if test="${TEMPLATE_BUILD_STATE != null}">
+<!-- templatePreview.jsp -->
+
+<c:if test="${TEMPLATE_BUILD_STATE != null}">
+
+  <im:heading id="template-preview" initial="${true}">
+    Template preview
+  </im:heading>
+
+  <im:body id="template-preview">
     <div align="center">
       <div id="tmplPreview">
         <div class="previewTitle">
@@ -15,7 +23,10 @@
           <tiles:put name="builder" value="yes"/>
         </tiles:insert>
       </div>
-      
+    </div>
+  </im:body>
+  
+    <div align="center">
       <table border="0">
         <tr>
           <td>
@@ -28,7 +39,7 @@
             <c:if test="${!empty PROFILE.username}">
               <c:if test="${!empty QUERY}">
                 <fmt:message key="${TEMPLATE_BUILD_STATE.updatingTemplate == null ?
-                                  'templateBuilder.save' : 'templateBuilder.update'}" var="saveLabel"/>
+                    'templateBuilder.save' : 'templateBuilder.update'}" var="saveLabel"/>
                 <form method="link" action="<html:rewrite action="/createTemplate"/>">
                   <input type="submit" value="${saveLabel}"/>
                 </form>
@@ -39,4 +50,8 @@
       </table>
       <br/>
     </div>
-  </c:if>
+  
+</c:if>
+  
+<!-- /templatePreview.jsp -->
+  

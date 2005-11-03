@@ -10,5 +10,6 @@
 	<classpathentry kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-tasks"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/struts.jar"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

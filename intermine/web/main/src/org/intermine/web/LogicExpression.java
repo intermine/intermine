@@ -57,7 +57,7 @@ public class LogicExpression
             // The root context
             parser.expr();
             ast = parser.getAST();
-            new antlr.DumpASTVisitor().visit(ast);
+            //new antlr.DumpASTVisitor().visit(ast);
             if (ast.getText().equals("or")) {
                 root = new Or(ast, true);
             } else if (ast.getText().equals("and")) {

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.Constants;
 import org.intermine.web.Constraint;
@@ -16,11 +15,6 @@ import org.intermine.web.TemplateQuery;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.util.MessageResources;
 
 import servletunit.struts.MockStrutsTestCase;
 

@@ -17,13 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.web.aspects.Aspect;
+
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.dataset.DataSet;
 
 /**
  * Contoller for a single data set tile embedded in a page. Expects the request parameter
@@ -32,9 +33,9 @@ import org.intermine.web.dataset.DataSet;
  * 
  * @author Thomas Riley
  */
-public class DataSetController extends TilesAction
+public class AspectController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(DataSetController.class);
+    private static final Logger LOG = Logger.getLogger(AspectController.class);
     
     /**
      * @see TilesAction#execute
@@ -47,13 +48,13 @@ public class DataSetController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Map dataSets = (Map) servletContext.getAttribute(Constants.DATASETS);
-        DataSet set = (DataSet) dataSets.get(request.getParameter("name"));
+        Map aspects = (Map) servletContext.getAttribute(Constants.ASPECTS);
+        Aspect set = (Aspect) aspects.get(request.getParameter("name"));
         if (set == null) {
-            LOG.error("no such data set: " + request.getParameter("name"));
+            LOG.error("no such aspect: " + request.getParameter("name"));
             return null;
         }
-        context.putAttribute("dataSet", set);
+        context.putAttribute("aspect", set);
         return null;
     }
 }

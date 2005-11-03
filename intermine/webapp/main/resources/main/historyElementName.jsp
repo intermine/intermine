@@ -38,7 +38,7 @@ window.onload = function() {
                     </td>
                     <td align="right" valign="middle" width="1">
                     <html:link action="/history?action=rename&amp;name=${name}&type=${type}">
-                      <img border="0" src="images/edit.gif" width="13" height="13" alt="x"/>
+                      <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
                     </html:link>
                     </td>
                   </c:otherwise>
