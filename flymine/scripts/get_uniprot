@@ -43,9 +43,14 @@ open F, $local_release_notes_copy
 my $version;
 
 while (my $line = <F>) {
-  if ($line =~ /UniProt Release (\S+)/) {
+  print $line;
+  if ($line =~ /UniProt.*Release (\S+)/) {
     $version = $1;
   }
+}
+
+if (!defined $version) {
+  die "can't find version number in release notes\n";
 }
 
 close F;
