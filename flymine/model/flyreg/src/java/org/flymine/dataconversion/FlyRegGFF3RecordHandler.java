@@ -64,7 +64,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         String factorGeneName = (String) ((List) record.getAttributes().get("Factor")).get(0);
 
-        if (!factorGeneName.toLowerCase().equals("unknown")) {
+        if (!factorGeneName.toLowerCase().equals("unknown")
+            && !factorGeneName.toLowerCase().equals("unspecified")) {
             Item gene;
 
             if (geneIdMap.containsKey(factorGeneName)) {
@@ -82,7 +83,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         String targetGeneName = (String) ((List) record.getAttributes().get("Target")).get(0);
 
-        if (!targetGeneName.toLowerCase().equals("unknown")) {
+        if (!targetGeneName.toLowerCase().equals("unknown")
+            && !targetGeneName.toLowerCase().equals("unspecified")) {
             Item gene;
 
             if (geneIdMap.containsKey(targetGeneName)) {
