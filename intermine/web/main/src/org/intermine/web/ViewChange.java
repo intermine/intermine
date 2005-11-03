@@ -45,7 +45,8 @@ public class ViewChange extends DispatchAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
-        query.getView().remove(path);
+        List view = SessionMethods.getEditingView(session);
+        view.remove(path);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
@@ -69,7 +70,7 @@ public class ViewChange extends DispatchAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         int index = Integer.parseInt(request.getParameter("index"));
 
-        List view = query.getView();
+        List view = SessionMethods.getEditingView(session);
         Object o = view.get(index - 1);
         view.set(index - 1, view.get(index));
         view.set(index, o);
@@ -96,7 +97,7 @@ public class ViewChange extends DispatchAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         int index = Integer.parseInt(request.getParameter("index"));
 
-        List view = query.getView();
+        List view = SessionMethods.getEditingView(session);
         Object o = view.get(index + 1);
         view.set(index + 1, view.get(index));
         view.set(index, o);

@@ -6,7 +6,7 @@
 
 <c:choose>
   <c:when test="${fn:startsWith(fn:trim(body), 'http://')}">
-    <a href="${body}" class="value">
+    <a href="${body}" class="value extlink">
   </c:when>
   <c:otherwise>
     <span class="value">

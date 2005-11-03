@@ -25,6 +25,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Static helper routines related to templates.
  *
@@ -95,7 +97,8 @@ public class TemplateHelper
                     getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
                     Object constraintValue = tf.getBag(key);
                     nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                                                new Constraint(constraintOp, constraintValue));
+                            new Constraint(constraintOp, constraintValue, false,
+                                    c.getDescription(), c.getCode(), c.getIdentifier()));
                 } else {
                     // Parse user input
                     String op = (String) tf.getAttributeOps(key);
@@ -104,10 +107,16 @@ public class TemplateHelper
                     
                     // In query copy, replace old constraint with new one
                     nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                                                  new Constraint(constraintOp, constraintValue));
+                            new Constraint(constraintOp, constraintValue, false,
+                                    c.getDescription(), c.getCode(), c.getIdentifier()));
                 }
                 j++;
             }
+        }
+        
+        // Set the desired view list
+        if (!StringUtils.isEmpty(tf.getView())) {
+            queryCopy.setView(template.getQuery().getAlternativeView(tf.getView()));
         }
         
         return queryCopy;

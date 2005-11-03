@@ -6,37 +6,37 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- dataSetPopup.jsp -->
+<!-- aspectPopup.jsp -->
 
 <html:xhtml/>
 
 <script type="text/javascript">
   <!--//<![CDATA[
-    function changeDataSet() {
-      var url = '${requestScope['javax.servlet.include.context_path']}/dataSet.do?';
-      var set = document.dataSetForm.name.options[document.dataSetForm.name.selectedIndex].value;
+    function changeaspect() {
+      var url = '${requestScope['javax.servlet.include.context_path']}/aspect.do?';
+      var set = document.aspectForm.name.options[document.aspectForm.name.selectedIndex].value;
       url += 'name=' + set;
       document.location.href=url;
     }
     //]]>-->
 </script>
 
-<form action="<html:rewrite action="/dataSet"/>" name="dataSetForm">
+<form action="<html:rewrite action="/aspect"/>" name="aspectForm">
         <%-- Page size controls --%>
-        <fmt:message key="dataset.starting.point"/>
-        <select name="name" onchange="changeDataSet()" class="dataSetSelect">
-          <c:forEach items="${DATASETS}" var="entry">
+        <fmt:message key="aspect.starting.point"/>
+        <select name="name" onchange="changeaspect()" class="aspectSelect">
+          <c:forEach items="${ASPECTS}" var="entry">
             <c:set var="set" value="${entry.value}"/>
             <option value="${set.name}"
-              <c:if test="${dataSet.name == set.name}">
+              <c:if test="${aspect.name == set.name}">
                 selected
               </c:if>
             >${set.name}</option>
           </c:forEach>
         </select>
         <noscript>
-          <input type="submit" value="<fmt:message key="button.change"/>" class="dataSetSelect"/>
+          <input type="submit" value="<fmt:message key="button.change"/>" class="aspectSelect"/>
         </noscript>
 </form>
 
-<!-- /dataSetPopup.jsp -->
+<!-- /aspectPopup.jsp -->

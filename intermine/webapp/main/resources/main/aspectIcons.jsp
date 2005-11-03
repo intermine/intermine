@@ -6,26 +6,26 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- dataSetIcons -->
+<!-- aspectIcons -->
 
-<div class="dataSetIcons">
+<div class="aspectIcons">
   <table border="0" width="100" cellspacing="0" cellpadding="0">
     <tr>
       <td width="33%" valign="top">
-        <c:forEach var="entry" items="${DATASETS}" varStatus="status">
+        <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
           <c:set var="set" value="${entry.value}"/>
           
           <table border="0">
             <tr>
               <td>
-               <html:link action="/dataSet?name=${set.name}">
+               <html:link action="/aspect?name=${set.name}">
                  <img src="${set.iconImage}" class="dsIconImage"/>
                </html:link>
              </td>
              <td>
                        
              <div class="dsIconLabel">
-               <html:link action="/dataSet?name=${set.name}">
+               <html:link action="/aspect?name=${set.name}">
                  ${set.name}
                </html:link>
              </div>
@@ -41,7 +41,7 @@
            </tr>
           </table>
 
-          <c:if test="${fn:length(DATASETS) != status.count}">
+          <c:if test="${fn:length(aspectS) != status.count}">
             <td/>
             <c:if test="${status.count % 3 == 0}">
               <tr/>
@@ -55,4 +55,4 @@
   </table>
 </div>
 
-<!-- /dataSetIcons -->
+<!-- /aspectIcons -->

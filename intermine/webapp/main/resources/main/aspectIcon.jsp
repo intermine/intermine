@@ -4,9 +4,13 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<fmt:message key="dataSet.title" var="pageTitle">
-  <fmt:param value="${param.name}"/>
-</fmt:message>
-<c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
+<!-- aspectIcon.jsp -->
 
+<html:xhtml/>
+<img src="${ASPECTS[aspect.name].iconImage}" width="18" height="18" class="dsSmallIconImage" align="top"/>
+
+<span class="aspectTitle">${aspect.name}</span>
+
+<!-- /aspectIcon.jsp -->

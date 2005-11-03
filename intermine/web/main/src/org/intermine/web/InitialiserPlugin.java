@@ -36,8 +36,8 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.aspects.AspectBinding;
 import org.intermine.web.config.WebConfig;
-import org.intermine.web.dataset.DataSetBinding;
 
 import org.apache.log4j.Logger;
 
@@ -86,7 +86,7 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         
         loadWebConfig(servletContext, os);
-        loadDataSetsConfig(servletContext, os);
+        loadAspectsConfig(servletContext, os);
 
         //loadClassCategories(servletContext, os);
         loadClassDescriptions(servletContext, os);
@@ -105,16 +105,16 @@ public class InitialiserPlugin implements PlugIn
      * @param servletContext the servlet cnotext
      * @param os the main objectstore
      */
-    private void loadDataSetsConfig(ServletContext servletContext, ObjectStore os)
+    private void loadAspectsConfig(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         Map dataSets = new LinkedHashMap();
-        InputStream is = servletContext.getResourceAsStream("/WEB-INF/datasets.xml");
+        InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
-            LOG.info("Unable to find /WEB-INF/datasets.xml, there will be no dataset homepages");
-            servletContext.setAttribute(Constants.DATASETS, Collections.EMPTY_MAP);
+            LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
+            servletContext.setAttribute(Constants.ASPECTS, Collections.EMPTY_MAP);
         } else {
-            Map sets = DataSetBinding.unmarhsal(is);
-            servletContext.setAttribute(Constants.DATASETS, sets);
+            Map sets = AspectBinding.unmarhsal(is);
+            servletContext.setAttribute(Constants.ASPECTS, sets);
             servletContext.setAttribute(Constants.CATEGORIES,
                     Collections.unmodifiableSet(sets.keySet()));
         }

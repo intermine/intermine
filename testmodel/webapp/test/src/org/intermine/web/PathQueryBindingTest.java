@@ -10,9 +10,12 @@ package org.intermine.web;
  *
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,8 @@ public class PathQueryBindingTest extends TestCase
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
                                                 true, "age is greater than 10", null, "age_gt_10"));
+        employeesWithOldManagers.addAlternativeView("altView1", Arrays.asList(new Object[]{"Employee.name", "Employee.age"}));
+        employeesWithOldManagers.addAlternativeView("altView2", Arrays.asList(new Object[]{"Employee.name"}));
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
 
         //vatNumberInBag
@@ -75,6 +80,15 @@ public class PathQueryBindingTest extends TestCase
         vatNumber.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
         expected.put("vatNumberInBag", vatNumberInBag);
 
+        assertEquals(expected, savedQueries);
+        
+        // Test marshallings
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        String xml = PathQueryBinding.marshal(employeesWithOldManagers, "employeesWithOldManagers", "testmodel");
+        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())));
+        expected = new LinkedHashMap();
+        expected.put("employeesWithOldManagers", employeesWithOldManagers);
+        
         assertEquals(expected, savedQueries);
     }
 }

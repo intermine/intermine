@@ -149,8 +149,8 @@
     <action path="/results"
             forward="results.page"/>
     
-    <action path="/dataSet"
-            forward="dataSet.page"/>
+    <action path="/aspect"
+            forward="aspect.page"/>
     
     <action path="/importQuery"
             forward="importQuery.page"/>
@@ -525,8 +525,8 @@
     <action path="/initExport"
             type="org.intermine.web.ExportController"/>
 
-    <action path="/initDataSet"
-            type="org.intermine.web.DataSetController"/>
+    <action path="/initAspect"
+            type="org.intermine.web.AspectController"/>
 
     <action path="/initBagBuild"
             type="org.intermine.web.BuildBagController"

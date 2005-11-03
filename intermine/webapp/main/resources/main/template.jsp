@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- template.jsp -->
@@ -201,6 +202,45 @@
         </c:forEach>
       </c:forEach>
     </table>
+    
+    <c:if test="${!empty templateQuery.query.alternativeViews}">
+      <p>
+        Select an output table format:
+      </p>
+      <table border="0" cellspacing="5">
+        <tr>
+          <td>
+            <html:radio property="view" value=""/>
+          </td>
+          <td>
+            <fmt:message key="view.defaultOutput"/>
+          </td>
+          <td>
+            <c:forEach items="${templateQuery.query.view}" var="item">
+              <im:unqualify className="${item}" var="text"/>
+              <span class="templateOutputSummaryItem">${text}</span>
+            </c:forEach>
+          </td>
+        </tr>
+        <c:forEach var="entry" items="${templateQuery.query.alternativeViews}">
+          <tr>    
+            <td>
+              <html:radio property="view" value="${entry.key}"/>
+            </td>
+            <td>
+              ${entry.key}
+            </td>
+            <td>
+              <c:forEach items="${entry.value}" var="item">
+                <im:unqualify className="${item}" var="text"/>
+                <span class="templateOutputSummaryItem">${text}</span>
+              </c:forEach>
+            </td>
+          </tr>
+        </c:forEach>
+      </table>
+    </c:if>
+    
     <c:if test="${empty previewTemplate}">
       <br/>
       <html:hidden property="templateName"/>

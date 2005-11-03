@@ -1,4 +1,4 @@
-package org.intermine.web.dataset;
+package org.intermine.web.aspects;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -15,9 +15,9 @@ package org.intermine.web.dataset;
  * hyperlinks are displayed on data set homepages.
  * 
  * @author Thomas Riley
- * @see org.intermine.web.dataset.DataSet
+ * @see org.intermine.web.dataset.Aspect
  */
-public class DataSetSource
+public class AspectSource
 {
     /** Name of source. */
     private String sourceName;

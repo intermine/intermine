@@ -39,6 +39,7 @@ public class TemplateForm extends ActionForm
     protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
     protected Map selectedBags, bagOps;
     protected String templateType, templateName;
+    protected String view;
     
     /**
      * Constructor
@@ -196,6 +197,22 @@ public class TemplateForm extends ActionForm
     }
 
     /**
+     * Get the selected alternative view name.
+     * @return selected alternative view name
+     */
+    public String getView() {
+        return view;
+    }
+    
+    /**
+     * Set the selected alternative view name.
+     * @param view selected alternative view name
+     */
+    public void setView(String view) {
+        this.view = view;
+    }
+    
+    /**
      * Get the template type.
      * @return the template type
      */
@@ -286,5 +303,6 @@ public class TemplateForm extends ActionForm
         bagOps = new HashMap();
         templateName = null;
         templateType = null;
+        view = "";
     }
 }

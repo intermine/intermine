@@ -10,8 +10,10 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -379,6 +381,7 @@ public class MainChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        session.removeAttribute(Constants.EDITING_VIEW);
         return mapping.findForward("query");
     }
 
@@ -401,9 +404,130 @@ public class MainChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
-        query.getView().add(toPath(prefix, path));
+        List view = SessionMethods.getEditingView(session);
+        view.add(toPath(prefix, path));
 
         return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
+    }
+    
+    /**
+     * Select a different view to edit.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward selectView(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String name = request.getParameter("name");
+
+        session.setAttribute(Constants.EDITING_VIEW, name);
+
+        return new ForwardParameters(mapping.findForward("query")).forward();
+    }
+    
+    /**
+     * Select the default view to edit.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward selectDefaultView(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+
+        session.removeAttribute(Constants.EDITING_VIEW);
+
+        return new ForwardParameters(mapping.findForward("query")).forward();
+    }
+    
+    /**
+     * Select the default view to edit.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward renameView(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String oldName = request.getParameter("oldName");
+        String newName = request.getParameter("newName");
+        
+        List view = query.getAlternativeView(oldName);
+        query.removeAlternativeView(oldName);
+        query.addAlternativeView(newName, view);
+        session.setAttribute(Constants.EDITING_VIEW, newName);
+
+        return new ForwardParameters(mapping.findForward("query")).forward();
+    }
+    
+    /**
+     * Delete an alternative view.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward deleteView(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String name = request.getParameter("name");
+        
+        query.removeAlternativeView(name);
+        session.removeAttribute(Constants.EDITING_VIEW);
+
+        return new ForwardParameters(mapping.findForward("query")).forward();
+    }
+    
+    /**
+     * Delete an alternative view.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward newView(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String name = request.getParameter("name");
+        
+        query.addAlternativeView(name, new ArrayList());
+        session.setAttribute(Constants.EDITING_VIEW, name);
+
+        return new ForwardParameters(mapping.findForward("query")).forward();
     }
 
     /**

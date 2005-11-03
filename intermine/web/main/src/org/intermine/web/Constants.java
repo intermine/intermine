@@ -57,11 +57,6 @@ public interface Constants
     public static final String CLASS_TEMPLATE_EXPRS = "CLASS_TEMPLATE_EXPRS";
     
     /**
-     * ServletContext attribute maps category name to List of class names.
-     */
-    //public static final String CATEGORY_CLASSES = "CATEGORY_CLASSES";
-    
-    /**
      * ServletContext attribute, List of category names.
      */
     public static final String CATEGORIES = "CATEGORIES";
@@ -104,6 +99,11 @@ public interface Constants
     public static final String QUERY = "QUERY";
     
     /**
+     * Session attribute - name of current select list being edited or null for default.
+     */
+    public static final String EDITING_VIEW = "EDITING_VIEW";
+    
+    /**
      * Session attribute set of type TemplateBuildState present when query
      * builder is in template building mode.
      */
@@ -116,9 +116,9 @@ public interface Constants
     public static final String OBJECT_DETAILS_TRAIL = "OBJECT_DETAILS_TRAIL";
 
     /**
-     * Servlet context attribute - map from data set name to DataSet object.
+     * Servlet context attribute - map from aspect set name to Aspect object.
      */
-    public static final String DATASETS = "DATASETS";
+    public static final String ASPECTS = "ASPECTS";
     
     /**
      * Session attribute equals Boolean.TRUE when logged in user is superuser.

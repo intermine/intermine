@@ -1,6 +1,6 @@
 
-<data-sets>
-  <data-set name="People">
+<aspects>
+  <aspect name="People">
     <subtitle>People sub-title</subtitle>
     <icon-image>peopleIcon.jpg</icon-image>
     <large-image>people.jpg</large-image>
@@ -14,10 +14,10 @@
       other languages have a plural word meaning "people" that has no singular.
     </intro-text>
     <starting-points>Employee Manager CEO Contractor Secretary</starting-points>
-    <data-source name="Database One" url="http://www.databaseone.com"/>
-    <data-source name="Database Two" url="http://www.databasetwo.com"/>
-  </data-set>
-  <data-set name="Entities">
+    <aspect-source name="Database One" url="http://www.databaseone.com"/>
+    <aspect-source name="Database Two" url="http://www.databasetwo.com"/>
+  </aspect>
+  <aspect name="Entities">
     <subtitle>Entities sub-title</subtitle>
     <icon-image>entitiesIcon.jpg</icon-image>
     <large-image>entities.jpg</large-image>
@@ -34,7 +34,7 @@
       not refer to anything animate. The distinctive propriety of an entity rationally
       yields the existence of the relatively distinct entities.
     </intro-text>
-    <data-source name="Database One" url="http://www.databaseone.com"/>
-    <data-source name="Database Two" url="http://www.databasetwo.com"/>
-  </data-set>
-</data-sets>
+    <aspect-source name="Database One" url="http://www.databaseone.com"/>
+    <aspect-source name="Database Two" url="http://www.databasetwo.com"/>
+  </aspect>
+</aspects>

@@ -63,6 +63,7 @@ public class AddToBagAction extends InterMineAction
                 ((InterMineIdBag) existingBag).add(id);
                 profile.saveBag(bagName, existingBag);
                 SessionMethods.invalidateBagTable(session, bagName);
+                recordMessage(new ActionMessage("bag.addedToBag", bagName), request);
             }
         } else {
             recordError(new ActionMessage("bag.noSuchBag"), request);

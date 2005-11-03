@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.intermine.objectstore.ObjectStore;
@@ -99,11 +101,19 @@ public class SessionMethods
         throws Exception {
         final ServletContext servletContext = session.getServletContext();
         final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        final PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        final PathQuery query = (PathQuery) ((PathQuery) session.getAttribute(Constants.QUERY))
+                                                            .clone();
         final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         final ObjectStoreInterMineImpl ios = (os instanceof ObjectStoreInterMineImpl)
                                              ? (ObjectStoreInterMineImpl) os : null;
         
+        // Support running queries from the template builder with alternative
+        // select lists
+        List view = SessionMethods.getEditingView(session);
+        if (view != null && view.size() > 0) {
+            query.setView(view);
+        }
+                                             
         // A reference to this runnable is used as a token for registering
         // a cancelling the running query
         
@@ -217,6 +227,25 @@ public class SessionMethods
         session.setAttribute("path", path);
         session.removeAttribute("prefix");
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        session.removeAttribute(Constants.EDITING_VIEW);
+    }
+    
+    /**
+     * Get the view list that the user is currently editing.
+     * @param session current session
+     * @return view list
+     */
+    public static List getEditingView(HttpSession session) {
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        if (query == null) {
+            throw new IllegalStateException("No query on session");
+        }
+        String viewName = (String) session.getAttribute(Constants.EDITING_VIEW);
+        if (StringUtils.isEmpty(viewName)) {
+            return query.getView();
+        } else {
+            return query.getAlternativeView(viewName);
+        }
     }
     
     /**
