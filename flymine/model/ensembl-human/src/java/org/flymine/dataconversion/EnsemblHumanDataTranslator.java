@@ -718,9 +718,12 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     tgtItem.addAttribute(new Attribute("accession", accession));
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
-                } else if (dbname.equals("Uniprot/SWISSPROT") ||(dbname.equals("Uniprot/SWISSPROT_predicted")
-                    || dbname.equals("Uniprot/SPTREMBL") || dbname.equals("Uniprot/SPTREMBL_predicted")
-                    || dbname.equals("RefSeq_peptide") || dbname.equals("RefSeq_peptide_predicted")) {
+                } else if (dbname.equals("Uniprot/SWISSPROT")
+                           || dbname.equals("Uniprot/SWISSPROT_predicted")
+                           || dbname.equals("Uniprot/SPTREMBL")
+                           || dbname.equals("Uniprot/SPTREMBL_predicted")
+                           || dbname.equals("RefSeq_peptide")
+                           || dbname.equals("RefSeq_peptide_predicted")) {
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
 
                 }
