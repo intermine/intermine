@@ -98,7 +98,7 @@ class ProfileManagerHandler extends DefaultHandler
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         super();
         this.profileManager = profileManager;
-		this.idUpgrader = idUpgrader;
+        this.idUpgrader = idUpgrader;
     }
 
     /**
