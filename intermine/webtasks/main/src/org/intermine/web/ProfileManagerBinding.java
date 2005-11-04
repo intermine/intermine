@@ -92,7 +92,8 @@ class ProfileManagerHandler extends DefaultHandler
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
-     * @param idUpgrader 
+     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
+     * correspond to object in old bags.
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         super();
