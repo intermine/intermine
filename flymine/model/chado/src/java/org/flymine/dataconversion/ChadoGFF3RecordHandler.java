@@ -164,6 +164,9 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             Item translation = getItemFactory().makeItem(null, tgtNs + "Translation", "");
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
+            if (feature.getAttribute("symbol") != null) {
+                translation.setAttribute("symbol", feature.getAttribute("symbol").getValue());
+            }
             translation.addCollection(new ReferenceList("evidence",
                     Arrays.asList(new Object[] {getDataSet().getIdentifier()})));
 
