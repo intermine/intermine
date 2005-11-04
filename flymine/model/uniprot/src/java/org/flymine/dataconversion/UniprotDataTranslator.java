@@ -68,13 +68,13 @@ public class UniprotDataTranslator extends DataTranslator
     private FileWriter fw = null;
     private boolean outputIdentifiers = false;
     private Map identifierToOrganismDbId = new HashMap();
-    
+
     private Item uniprotDataSet;
     private Reference uniprotDataSetRef;
 
     private Set geneIdentifiers = new HashSet();
 
-    private static final String SRC_NS = "http://www.flymine.org/model/uniprot#";
+    private static final String SRC_NS = "http://www.flymine.org/model#";
 
     /**
      * @see DataTranslator
@@ -84,7 +84,7 @@ public class UniprotDataTranslator extends DataTranslator
         super(srcItemReader, mapping, srcModel, tgtModel);
         this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
-        
+
         uniprotDataSet = createItem("DataSet");
         // TODO: the dataset name shouldn't be hard coded:
         uniprotDataSet.addAttribute(new Attribute("title", "UniProt data set"));
@@ -366,11 +366,9 @@ public class UniprotDataTranslator extends DataTranslator
                 //             where designation = primary gene name
                 String geneOrganismDbId = null;
                 if (taxonId == 7227) { // D. melanogaster
-                    // do not set CG numbers from Uniprot - there are conflicting combinations of
-                    // FBgn/CG identifiers with ensembl
-                    geneIdentifier = null;
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "FlyBase", geneNames);
-                    if (geneOrganismDbId != null) {
+                    // For fly data use CGxxx as key instead of FBgnxxx
+                    if (geneIdentifier != null) {
                         createGene = true;
                         dbId = getDataSourceId("FlyBase");
                     }
