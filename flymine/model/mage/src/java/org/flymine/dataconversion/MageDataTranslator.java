@@ -1209,7 +1209,7 @@ public class MageDataTranslator extends DataTranslator
                                 if (defaultPc != null) {
                                     sample.setAttribute("primaryCharacteristic",
                                                         defaultPc);
-                                    sample.setAttribute("primaryCharacteristicType", "N/A");
+                                    sample.setAttribute("primaryCharacteristicType", "Sample");
                                 }
                             }
                         }
