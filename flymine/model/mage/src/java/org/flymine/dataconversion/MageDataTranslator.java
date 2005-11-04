@@ -1093,6 +1093,7 @@ public class MageDataTranslator extends DataTranslator
             if (assayToExperiment.containsKey(assayId)) {
                 experimentId = (String) assayToExperiment.get(assayId);
                 maResult.setReference("experiment", experimentId);
+                maResult.setReference("analysis", experimentId);
             }
         }
 
