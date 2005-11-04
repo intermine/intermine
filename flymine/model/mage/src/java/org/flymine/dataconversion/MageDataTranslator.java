@@ -1186,17 +1186,28 @@ public class MageDataTranslator extends DataTranslator
 
                         String expName = (String) assayToExpName.get(mbaIds.iterator().next());
                         String primaryCharacteristic = getConfig(expName, "primaryCharacteristic");
+                        List types = new ArrayList();
+                        StringTokenizer toke = new StringTokenizer(primaryCharacteristic, " ");
+                        while (toke.hasMoreTokens()) {
+                            types.add(toke.nextToken());
+                        }
 
                         Map chars = (Map) sampleToChars.get(sampleId);
                         if (chars != null) {
                             Iterator charIter = chars.entrySet().iterator();
                             while (charIter.hasNext()) {
                                 Map.Entry entry = (Map.Entry) charIter.next();
-                                if (entry.getKey().equals(primaryCharacteristic)) {
-                                    sample.setAttribute("primaryCharacteristicType",
-                                           primaryCharacteristic);
-                                    sample.setAttribute("primaryCharacteristic",
-                                           (String) entry.getValue());
+                                Iterator typeIter = types.iterator();
+                                // check possible primaryCharacteristicTypes in order
+                                while (typeIter.hasNext()
+                                       && !sample.hasAttribute("primaryCharacteristicType")) {
+                                    String type = (String) typeIter.next();
+                                    if (entry.getKey().equals(type)) {
+                                        sample.setAttribute("primaryCharacteristicType",
+                                                            type);
+                                        sample.setAttribute("primaryCharacteristic",
+                                                            (String) entry.getValue());
+                                    }
                                 }
                             }
                             // Set a default value for primaryCharacteristic

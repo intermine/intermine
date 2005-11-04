@@ -673,25 +673,37 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
-        Item sample = createTgtItem("Sample", "0_1", "");
-        translator.samplesById.put("0_1", sample);
+        Item sample1 = createTgtItem("Sample", "0_1", "");
+        translator.samplesById.put("0_1", sample1);
+
+        Item sample2 = createTgtItem("Sample", "0_2", "");
+        translator.samplesById.put("0_2", sample2);
 
         translator.sampleToTreatments.put("0_1", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"})));
 
         translator.sampleToLabeledExtracts.put("0_1", new HashSet(Collections.singleton("2_1")));
         translator.labeledExtractToMicroArrayAssays.put("2_1", Collections.singleton("3_1"));
-        //translator.measuredBioAssayToMicroArrayAssay.put("3_1", "4_1");
+        translator.sampleToLabeledExtracts.put("0_2", new HashSet(Collections.singleton("2_2")));
+        translator.labeledExtractToMicroArrayAssays.put("2_2", Collections.singleton("3_2"));
         translator.assayToExpName.put("3_1", "E-FLYC-1");
-        HashMap charMap = new HashMap();
-        charMap.put("colour", "pink");
-        translator.sampleToChars.put("0_1", charMap);
+        translator.assayToExpName.put("3_2", "E-FLYC-1");
+        HashMap charMap1 = new HashMap();
+        charMap1.put("colour", "pink");
+        translator.sampleToChars.put("0_1", charMap1);
+        HashMap charMap2 = new HashMap();
+        charMap2.put("size", "medium");
+        translator.sampleToChars.put("0_2", charMap2);
 
-        Item expSample = createTgtItem("Sample", "0_1", "");
-        expSample.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"})));
-        expSample.setAttribute("primaryCharacteristicType", "colour");
-        expSample.setAttribute("primaryCharacteristic", "pink");
+        Item expSample1 = createTgtItem("Sample", "0_1", "");
+        expSample1.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"})));
+        expSample1.setAttribute("primaryCharacteristicType", "colour");
+        expSample1.setAttribute("primaryCharacteristic", "pink");
+        Item expSample2 = createTgtItem("Sample", "0_2", "");
+        expSample2.setAttribute("primaryCharacteristicType", "size");
+        expSample2.setAttribute("primaryCharacteristic", "medium");
         Map exp = new HashMap();
-        exp.put("0_1", expSample);
+        exp.put("0_1", expSample1);
+        exp.put("0_2", expSample2);
 
         translator.processSamples();
         assertEquals(exp, translator.samplesById);
