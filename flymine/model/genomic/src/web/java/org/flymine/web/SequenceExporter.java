@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.OutputStream;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.struts.action.ActionForm;
@@ -80,21 +81,8 @@ public class SequenceExporter implements TableExporter
 
         List columns = pt.getColumns();
 
-        Column featureColumn = null;
-
-        // find and remember the first valid Sequence-containing column
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                Object columnType = ((Column) columns.get(i)).getType();
-                if (columnType instanceof ClassDescriptor) {
-                    if (validType(((ClassDescriptor) columnType).getType())) {
-                        featureColumn = column;
-                        break;
-                    }
-                }
-            }
-        }
+        // the first column that contains exportable features
+        Column featureColumn = getFeatureColumn(pt);
 
         int realFeatureIndex = featureColumn.getIndex();
 
@@ -148,11 +136,17 @@ public class SequenceExporter implements TableExporter
                     LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
                     flyMineSequence = FlyMineSequenceFactory.make(feature);
                 } else {
-                    Protein protein = (Protein) object;
-                    flyMineSequence = FlyMineSequenceFactory.make(protein);
+                    if (object instanceof Protein) {
+                        Protein protein = (Protein) object;
+                        flyMineSequence = FlyMineSequenceFactory.make(protein);
+                    } else {
+                        // just ignore other objects
+                        continue;
+                    }
                 }
 
                 if (flyMineSequence == null) {
+                    // the object doesn't have a sequence
                     continue;
                 }
 
@@ -208,26 +202,11 @@ public class SequenceExporter implements TableExporter
     }
 
     /**
+     * @throws ObjectStoreException 
      * @see org.intermine.web.TableExporter#canExport
      */
     public boolean canExport(PagedTable pt) {
-        List columns = pt.getColumns();
-        int sequenceCount = 0;
-
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                Object columnType = ((Column) columns.get(i)).getType();
-
-                if (columnType instanceof ClassDescriptor) {
-                    ClassDescriptor cd = (ClassDescriptor) columnType;
-                    if (validType(cd.getType())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return getFeatureColumn(pt) != null;
     }
 
     /**
@@ -238,5 +217,61 @@ public class SequenceExporter implements TableExporter
     protected boolean validType(Class type) {
         return (LocatedSequenceFeature.class.isAssignableFrom(type)
                 || Protein.class.isAssignableFrom(type));
+    }
+
+    /**
+     * Return the first column that contains features that can be exported.  It first checks the
+     * Column objects from the PagedTable.
+     * 
+     * If there are no LocatedSequenceFeature or Protein columns it checks the visible rows of the
+     * Results objects and returns the first Column that contains a LocatedSequenceFeature or
+     * Protein.  This is needed, for example, when the user select BioEntity and constrains the
+     * identifier to "zen" - the Results contain only Genes, but the column type is BioEntity.
+     * @throws ObjectStoreException 
+     */
+    private Column getFeatureColumn(PagedTable pt) {
+        List columns = pt.getColumns();
+
+        // find and remember the first valid Sequence-containing column
+        for (int i = 0; i < columns.size(); i++) {
+            Column column = (Column) columns.get(i);
+            if (column.isVisible()) {
+                Object columnType = ((Column) columns.get(i)).getType();
+                if (columnType instanceof ClassDescriptor) {
+                    if (validType(((ClassDescriptor) columnType).getType())) {
+                        return column;
+                    }
+                }
+            }
+        }
+
+        // search the visible rows for any validType()s
+        List rowList = pt.getRows();
+
+        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+            Column thisColumn = (Column) columns.get(columnIndex);
+
+            if (!thisColumn.isVisible()) {
+                continue;
+            }
+
+            // the column order from PagedTable.getList() isn't necessarily the order that
+            // the user has chosen for the columns
+            int realColumnIndex = thisColumn.getIndex();
+
+            Iterator rowListIter = rowList.iterator();
+
+            while (rowListIter.hasNext()) {
+                List row = (List) rowListIter.next();
+          
+                Object o = row.get(realColumnIndex);
+                
+                if (validType(o.getClass())) {
+                    return thisColumn;
+                }
+            }
+        }
+        
+        return null;
     }
 }
