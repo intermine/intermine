@@ -1,6 +1,5 @@
-
-<data-sets>
-  <data-set name="Gene Expression">
+<aspects>
+  <aspect name="Gene Expression">
     <subtitle></subtitle>
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
@@ -9,9 +8,9 @@
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
     <starting-points>MicroArrayExperiment CDNAClone Gene</starting-points>
-    </data-set>
+    </aspect>
 
-  <data-set name="Protein Interactions">
+  <aspect name="Protein Interactions">
     <subtitle></subtitle>
     <icon-image>model/proteinInteraction.gif</icon-image>
     <large-image>model/proteinInteraction.gif</large-image>
@@ -23,9 +22,9 @@
     </intro-text>
     <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
     <tile-name>model/proteinInteraction.jsp</tile-name>
-  </data-set>
+  </aspect>
 
-  <data-set name="Protein Structure">
+  <aspect name="Protein Structure">
     <subtitle>3-D protein&lt;br/&gt;structures</subtitle>
     <icon-image>model/pstructure.gif</icon-image>
     <large-image>model/pstructure.gif</large-image>
@@ -34,10 +33,10 @@
     </intro-text>
     <starting-points>Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain ProteinFamily</starting-points>
     <tile-name>model/proteinStructure.jsp</tile-name>
-    </data-set>
+    </aspect>
 
 <!--
-  <data-set name="Anopheles">
+  <aspect name="Anopheles">
     <subtitle></subtitle>
     <icon-image>model/anopheles.gif</icon-image>
     <large-image>model/anopheles.gif</large-image>
@@ -45,10 +44,10 @@
     <intro-text>
     </intro-text>
     <starting-points></starting-points>
-  </data-set>
+  </aspect>
 -->
 
-  <data-set name="Binding Sites">
+  <aspect name="Binding Sites">
     <subtitle></subtitle>
     <icon-image>model/bindingSites.png</icon-image>
     <large-image>model/bindingSites.png</large-image>
@@ -57,9 +56,9 @@
     </intro-text>
     <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
     <tile-name>model/bindingSites.jsp</tile-name>
-  </data-set>
+  </aspect>
 
-  <data-set name="INDAC">
+  <aspect name="INDAC">
     <subtitle>Long Oligos</subtitle>
     <icon-image>model/indac.png</icon-image>
     <large-image>model/indac.png</large-image>
@@ -68,9 +67,9 @@
     </intro-text>
     <tile-name>model/indac.jsp</tile-name>
     <starting-points>Transcript Gene MicroarrayOligo</starting-points>
-  </data-set>
+  </aspect>
 
-  <data-set name="Tiling Path">
+  <aspect name="Tiling Path">
     <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
     <large-image>model/tilingPath.png</large-image>
@@ -79,9 +78,9 @@
     </intro-text>
     <tile-name>model/tilingPath.jsp</tile-name>
     <starting-points>PCRProduct Primer TilingPathSpan Chromosome Location</starting-points>
-  </data-set>
+  </aspect>
 
-  <data-set name="Genomics">
+  <aspect name="Genomics">
     <subtitle></subtitle>
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
@@ -90,9 +89,9 @@
     </intro-text>
         <tile-name>model/genomics.jsp</tile-name>
     <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
-  </data-set>
+  </aspect>
 
-  <data-set name="Gene Ontology">
+  <aspect name="Gene Ontology">
     <subtitle></subtitle>
     <icon-image>model/geneOntology.png</icon-image>
     <large-image>model/geneOntology.png</large-image>
@@ -125,10 +124,10 @@
     </intro-text>
     <starting-points>Gene GOTerm</starting-points>
     <tile-name>model/GO.jsp</tile-name>
-    </data-set>
+    </aspect>
 
 <!--
-  <data-set name="Homophila">
+  <aspect name="Homophila">
     <subtitle>Human Disease&lt;br/&gt;to Drosophila</subtitle>
     <icon-image>model/homophila.gif</icon-image>
     <large-image>model/homophila.gif</large-image>
@@ -137,10 +136,10 @@
     </intro-text>
      <tile-name>model/homophila.jsp</tile-name>
      <starting-points>Gene Disease</starting-points>
-  </data-set>
+  </aspect>
 -->
 
-  <data-set name="Proteins">
+  <aspect name="Proteins">
     <subtitle></subtitle>
     <icon-image>model/proteins.png</icon-image>
     <large-image>model/proteins.png</large-image>
@@ -149,9 +148,9 @@
     </intro-text>
      <tile-name>model/proteins.jsp</tile-name>
      <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
-  </data-set>
+  </aspect>
 
-  <data-set name="Comparative Genomics">
+  <aspect name="Comparative Genomics">
     <subtitle>Orthologues&lt;br/&gt;and Paralogues</subtitle>
     <icon-image>model/comparativeGenomics.png</icon-image>
     <large-image>model/comparativeGenomics.png</large-image>
@@ -164,9 +163,9 @@
     </intro-text>
      <tile-name>model/inparanoid.jsp</tile-name>
      <starting-points>Gene Orthologue Paralogue</starting-points>
-  </data-set>
+  </aspect>
 
-  <data-set name="DrosDel">
+  <aspect name="DrosDel">
     <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
     <icon-image>model/drosdel.gif</icon-image>
     <large-image>model/drosdel.gif</large-image>
@@ -175,9 +174,9 @@
     </intro-text>
      <tile-name>model/drosdel.jsp</tile-name>
      <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
-  </data-set>
+  </aspect>
 
-  <data-set name="RNAi">
+  <aspect name="RNAi">
     <subtitle></subtitle>
     <icon-image>model/rnai.png</icon-image>
     <large-image>model/rnai.png</large-image>
@@ -186,7 +185,7 @@
     </intro-text>
      <tile-name>model/RNAi.jsp</tile-name>
      <starting-points>RNAiExperiment Phenotype Gene</starting-points>
-  </data-set>
+  </aspect>
 
 
-</data-sets>
+</aspects>
