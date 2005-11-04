@@ -119,14 +119,14 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testMicroArrayExperiment()throws Exception {
         Item srcItem1 = createSrcItem("Experiment", "61_748", "");
         srcItem1.setAttribute("identifier", "E-FLYC-1");
-        srcItem1.addCollection(new ReferenceList("descriptions", new ArrayList(Arrays.asList(new Object[]{"12_749", "12_750"}))));
-        srcItem1.addCollection(new ReferenceList("bioAssays", new ArrayList(Arrays.asList(new Object[]{"0_1", "1_1"}))));
+        srcItem1.setCollection("descriptions", new ArrayList(Arrays.asList(new Object[]{"12_749", "12_750"})));
+        srcItem1.setCollection("bioAssays", new ArrayList(Arrays.asList(new Object[]{"0_1", "1_1"})));
 
         Item srcItem2 = createSrcItem("Description", "12_749", "");
         srcItem2.addAttribute(new Attribute("text", "experiment description"));
 
         Item srcItem3 = createSrcItem("Description", "12_750", "");
-        srcItem3.addCollection(new ReferenceList("bibliographicReferences", new ArrayList(Arrays.asList(new Object[]{"62_751"}))));
+        srcItem3.setCollection("bibliographicReferences", new ArrayList(Arrays.asList(new Object[]{"62_751"})));
 
         Item srcItem4 = createSrcItem("MeasuredBioAssay", "0_1", "");
 
@@ -157,22 +157,20 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testTranslateMicroArrayAssay() throws Exception{
         Item srcItem1 = createSrcItem("DerivedBioAssay", "57_709", "");
-        srcItem1.addCollection(new ReferenceList("derivedBioAssayData", new ArrayList(Arrays.asList(new Object[]{"58_710"}))));
-        srcItem1.addCollection(new ReferenceList("derivedBioAssayMap", new ArrayList(Arrays.asList(new Object[]{"1_1"}))));
+        srcItem1.setCollection("derivedBioAssayData", new ArrayList(Arrays.asList(new Object[]{"58_710"})));
+        srcItem1.setCollection("derivedBioAssayMap", new ArrayList(Arrays.asList(new Object[]{"1_1"})));
 
         Item srcItem2 = createSrcItem("DerivedBioAssayData", "58_710", "");
         srcItem2.addReference(new Reference("bioDataValues", "58_739"));
 
         Item srcItem3= createSrcItem("BioDataTuples", "58_739", "");
-        srcItem3.addCollection(new ReferenceList("bioAssayTupleData", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744"}))));
+        srcItem3.setCollection("bioAssayTupleData", new ArrayList(Arrays.asList(new Object[]{"58_740", "58_744"})));
 
         Item srcItem4 = createSrcItem("Experiment", "61_748", "");
-        srcItem4.addCollection(new ReferenceList("bioAssays", new ArrayList(Arrays.asList(new Object[]
-                          {"57_709", "2_1", "2_2"}))));
-                                                                                          //{"57_709"}))));
+        srcItem4.setCollection("bioAssays", new ArrayList(Arrays.asList(new Object[] {"57_709", "2_1", "2_2"})));
 
         Item srcItem5 = createSrcItem("BioAssayMap", "1_1", "");
-        srcItem5.addCollection(new ReferenceList("sourceBioAssays", new ArrayList(Arrays.asList(new Object[]{"2_1", "2_2"}))));
+        srcItem5.setCollection("sourceBioAssays", new ArrayList(Arrays.asList(new Object[]{"2_1", "2_2"})));
 
         Item srcItem6 = createSrcItem("MeasuredBioAssay", "2_1", "");
         Item srcItem61 = createSrcItem("MeasuredBioAssay", "2_2", "");
@@ -231,8 +229,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem3.setReference("bioAssayCreation", "3_1");
 
         Item srcItem4 = createSrcItem("Hybridization", "3_1", "");
-        srcItem4.addCollection(new ReferenceList("sourceBioMaterialMeasurements",
-                               new ArrayList(Arrays.asList(new Object[] {"4_1", "4_2"}))));
+        srcItem4.setCollection("sourceBioMaterialMeasurements",
+                               new ArrayList(Arrays.asList(new Object[] {"4_1", "4_2"})));
 
         Item srcItem5 = createSrcItem("BioMaterialMeasurement", "4_1", "");
         srcItem5.setReference("bioMaterial", "5_1");
@@ -262,8 +260,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslateTreatment() throws Exception {
         Item srcItem1 = createSrcItem("Treatment", "0_1", "");
         srcItem1.setReference("action","1_1");
-        srcItem1.addCollection(new ReferenceList("protocolApplications",
-                                                 new ArrayList(Collections.singleton("2_1"))));
+        srcItem1.setCollection("protocolApplications", new ArrayList(Collections.singleton("2_1")));
 
         Item srcItem2 = createSrcItem("OntologyEntry", "1_1", "");
         srcItem2.setAttribute("category", "Action");
@@ -271,8 +268,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item srcItem3 = createSrcItem("ProtocolApplication", "2_1", "");
         srcItem3.setReference("protocol", "3_1");
-        srcItem3.addCollection(new ReferenceList("parameterValues",
-                                                 new ArrayList(Collections.singleton("4_1"))));
+        srcItem3.setCollection("parameterValues", new ArrayList(Collections.singleton("4_1")));
 
         Item srcItem4 = createSrcItem("Protocol", "3_1", "");
         srcItem4.setAttribute("name", "protocol 1");
@@ -321,15 +317,64 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, tgtIw.getItems());
     }
 
+    public void testTranslateTreatmentSampleLabels() throws Exception {
+        Item srcItem0 = createSrcItem("LabeledExtract", "7_1", "");
+        srcItem0.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"0_1"})));
+
+        Item srcItem1 = createSrcItem("Treatment", "0_1", "");
+        srcItem1.setReference("action","1_1");
+        srcItem1.setCollection("protocolApplications", new ArrayList(Collections.singleton("2_1")));
+        srcItem1.setCollection("sourceBioMaterialMeasurements", new ArrayList(Arrays.asList(new Object[] {"6_1"})));
+
+        Item srcItem2 = createSrcItem("OntologyEntry", "1_1", "");
+        srcItem2.setAttribute("category", "Action");
+        srcItem2.setAttribute("value", "labeling");
+
+        Item srcItem3 = createSrcItem("ProtocolApplication", "2_1", "");
+        srcItem3.setCollection("parameterValues", new ArrayList(Collections.singleton("4_1")));
+
+        Item srcItem4 = createSrcItem("ParameterValue", "4_1", "");
+        srcItem4.setAttribute("value", "cy3");
+        srcItem4.setReference("parameterType", "5_1");
+
+        Item srcItem5 = createSrcItem("Parameter", "5_1", "");
+        srcItem5.setAttribute("name", "Label used");
+
+        Item srcItem6 = createSrcItem("BioMaterialMeasurement", "6_1", "");
+        srcItem6.setReference("bioMaterial", "7_2");
+
+        Item srcItem7 = createSrcItem("BioSample", "7_2", "");
+        srcItem7.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"0_2"})));
+
+        Item srcItem8 = createSrcItem("Treatment", "0_2", "");
+        srcItem8.setCollection("sourceBioMaterialMeasurements", new ArrayList(Arrays.asList(new Object[] {"6_2"})));
+
+        Item srcItem9 = createSrcItem("BioMaterialMeasurement", "6_2", "");
+        srcItem9.setReference("bioMaterial", "8_1");
+
+        Item srcItem10 = createSrcItem("BioSource", "8_1", "");
+
+        Set src = new HashSet(Arrays.asList(new Object[] {srcItem0, srcItem1, srcItem2, srcItem3, srcItem4, srcItem5, srcItem6, srcItem7, srcItem8, srcItem9, srcItem10}));
+        Map srcMap = writeItems(src);
+
+        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
+                                                               mapping, srcModel, getTargetModel(tgtNs));
+
+        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+        translator.translate(tgtIw);
+
+        Map expSampleToLabel = new HashMap();
+        expSampleToLabel.put("8_1", "cy3");
+        assertEquals(expSampleToLabel, translator.sampleToLabel);
+    }
+
 
     public void testTranslateReporter() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
-        srcItem1.addCollection(new ReferenceList("featureReporterMaps",
-                                                 new ArrayList(Collections.singleton("1_1"))));
+        srcItem1.setCollection("featureReporterMaps", new ArrayList(Collections.singleton("1_1")));
 
         Item srcItem2 = createSrcItem("FeatureReporterMap", "1_1", "");
-        srcItem2.addCollection(new ReferenceList("featureInformationSources",
-                                                 new ArrayList(Collections.singleton("2_1"))));
+        srcItem2.setCollection("featureInformationSources", new ArrayList(Collections.singleton("2_1")));
 
         Item srcItem3 = createSrcItem("FeatureInformation", "2_1", "");
         srcItem3.setReference("feature", "3_1");
@@ -382,8 +427,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslateReporterMaterial() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
         srcItem1.setAttribute("name", "GH1234");
-        srcItem1.addCollection(new ReferenceList("immobilizedCharacteristics",
-                                                 new ArrayList(Arrays.asList(new Object[] {"1_1"}))));
+        srcItem1.setCollection("immobilizedCharacteristics",
+                                                 new ArrayList(Arrays.asList(new Object[] {"1_1"})));
 
         Item srcItem2 = createSrcItem("BioSequence", "1_1", "");
         srcItem2.setReference("type", "2_1");
@@ -423,13 +468,12 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslateReporterBioSequence() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
         srcItem1.setAttribute("name", "GH1234");
-        srcItem1.addCollection(new ReferenceList("immobilizedCharacteristics",
-                                                 new ArrayList(Arrays.asList(new Object[] {"1_1"}))));
+        srcItem1.setCollection("immobilizedCharacteristics",
+                               new ArrayList(Arrays.asList(new Object[] {"1_1"})));
 
         Item srcItem2 = createSrcItem("BioSequence", "1_1", "");
         srcItem2.setReference("type", "2_1");
-        srcItem2.addCollection(new ReferenceList("sequenceDatabases",
-                                                 new ArrayList(Arrays.asList(new Object[] {"3_1"}))));
+        srcItem2.setCollection("sequenceDatabases", new ArrayList(Arrays.asList(new Object[] {"3_1"})));
 
         Item srcItem3 = createSrcItem("OntologyEntry", "2_1", "");
         srcItem3.setAttribute("category", "BioSequenceType");
@@ -462,30 +506,24 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     public void testSearchTreatments() throws Exception {
 
         Item srcItem1 = createSrcItem("LabeledExtract", "0_1", "");
-        srcItem1.addCollection(new ReferenceList("treatments",
-                                                 new ArrayList(Arrays.asList(new Object[] {"1_1"}))));
+        srcItem1.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"1_1"})));
 
         Item srcItem2 = createSrcItem("Treatment", "1_1", "");
-        srcItem2.addCollection(new ReferenceList("sourceBioMaterialMeasurements",
-                                                 new ArrayList(Arrays.asList(new Object[] {"2_1"}))));
+        srcItem2.setCollection("sourceBioMaterialMeasurements", new ArrayList(Arrays.asList(new Object[] {"2_1"})));
 
         Item srcItem3 = createSrcItem("BioMaterialMeasurement", "2_1", "");
         srcItem3.setReference("bioMaterial", "0_2");
 
         Item srcItem4 = createSrcItem("LabeledExtract", "0_2", "");
-        srcItem4.addCollection(new ReferenceList("treatments",
-                                                 new ArrayList(Arrays.asList(new Object[] {"1_2"}))));
+        srcItem4.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"1_2"})));
 
         Item srcItem5 = createSrcItem("Treatment", "1_2", "");
-        srcItem5.addCollection(new ReferenceList("sourceBioMaterialMeasurements",
-                                                 new ArrayList(Arrays.asList(new Object[] {"2_2"}))));
+        srcItem5.setCollection("sourceBioMaterialMeasurements", new ArrayList(Arrays.asList(new Object[] {"2_2"})));
 
         Item srcItem6 = createSrcItem("BioMaterialMeasurement", "2_2", "");
         srcItem6.setReference("bioMaterial", "3_1");
 
         Item srcItem7 = createSrcItem("BioSource", "3_1", "");
-
-
 
         Set srcItems = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2, srcItem3, srcItem4, srcItem5, srcItem6, srcItem7}));
         Map srcMap = writeItems(srcItems);
@@ -494,7 +532,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
         // call with top level LabeledExtract and empty list
         List treatments = new ArrayList();
-        translator.searchTreatments(srcItem1, treatments);
+        translator.searchTreatments(srcItem1, treatments, false);
 
         List expTreatments = new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"}));
         assertEquals(expTreatments, treatments);
@@ -580,7 +618,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expResult.setReference("assay", "5_1");
         expResult.setReference("reporter", "3_1");
         expResult.setReference("experiment", "6_1");
-        expResult.addCollection(new ReferenceList("samples", new ArrayList(Collections.singleton("6_1"))));
+        expResult.setCollection("samples", new ArrayList(Collections.singleton("6_1")));
 
         assertEquals(expResult, translator.processMicroArrayResult(rh));
 
@@ -649,7 +687,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.sampleToChars.put("0_1", charMap);
 
         Item expSample = createTgtItem("Sample", "0_1", "");
-        expSample.addCollection(new ReferenceList("treatments", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"}))));
+        expSample.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"})));
         expSample.setAttribute("primaryCharacteristicType", "colour");
         expSample.setAttribute("primaryCharacteristic", "pink");
         Map exp = new HashMap();
@@ -676,6 +714,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         sample2.setAttribute("primaryCharacteristic", "green");
         translator.samplesById.put(sample2.getIdentifier(), sample2);
 
+        translator.assayToExpName.put("0_1", "E-FLYC-1");
+        translator.sampleToLabel.put("1_1", "cy3");
+        translator.sampleToLabel.put("1_2", "cy5");
+
         Item expAssay = createTgtItem("MicroArrayAssay", "0_1", "");
         expAssay.setAttribute("sample1", "colour: pink");
         expAssay.setAttribute("sample2", "colour: green");
@@ -692,8 +734,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         srcItem1.setAttribute("identifier", "S:BioSource:FLYC:10");
         srcItem1.setAttribute("name", "BioSource name");
         srcItem1.setReference("materialType", "1_3");
-        srcItem1.addCollection(new ReferenceList("characteristics",
-                                                 new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"}))));
+        srcItem1.setCollection("characteristics",
+                               new ArrayList(Arrays.asList(new Object[] {"1_1", "1_2"})));
 
         Item srcItem2 = createSrcItem("OntologyEntry", "1_1", "");
         srcItem2.setAttribute("category", "Organism");
@@ -718,7 +760,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expItem1.setAttribute("name", "BioSource name");
         expItem1.setAttribute("materialType", "genomic DNA");
         expItem1.setReference("organism", "-1_1");
-        expItem1.addCollection(new ReferenceList("characteristics", new ArrayList(Collections.singleton("-1_2"))));
+        expItem1.setCollection("characteristics", new ArrayList(Collections.singleton("-1_2")));
 
         Item expItem2 = createTgtItem("Organism", "-1_1", "");
         expItem2.setAttribute("name", "Giraffe");

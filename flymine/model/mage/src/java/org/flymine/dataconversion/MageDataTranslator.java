@@ -95,6 +95,7 @@ public class MageDataTranslator extends DataTranslator
     protected Set materialIdTypes = new HashSet();
     protected Map expIdNames = new HashMap();
     protected Map cloneToResults = new HashMap();
+    protected Map sampleToLabel = new HashMap();
 
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
@@ -117,7 +118,6 @@ public class MageDataTranslator extends DataTranslator
 
         readConfig();
         LOG.info(config);
-        LOG.info("materialIdTypes: " + materialIdTypes);
     }
 
 
@@ -194,11 +194,6 @@ public class MageDataTranslator extends DataTranslator
 
         super.translate(tgtItemWriter);
 
-        //LOG.error("materialToIdTypes: " + materialIdTypes);
-        //LOG.error("expIdNames: " + expIdNames);
-        //LOG.error("cloneIds: " + cloneIds);
-
-        LOG.error("sampleToLabeledExtracts: " + sampleToLabeledExtracts);
         Iterator i;
 
         i = processOrganism().iterator();
@@ -522,12 +517,6 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
-        int size = microArrayResults.size();
-        if (size % 1000 == 0) {
-            LOG.error("microArrayResults.size() = " + size);
-        }
-
-
         // TODO need to set this at the end when we can relate to correct Experiment
         //tgtItem.setReference("analysis", getExperimentId());
 
@@ -729,7 +718,7 @@ public class MageDataTranslator extends DataTranslator
         // From LabeledExtract decending through treatments will eventually
         // find the BioSource that was used.  This is what we create a Sample
         // from and has details attached to it as OntlogyTerms
-        String sampleId = searchTreatments(srcItem, new ArrayList());
+        String sampleId = searchTreatments(srcItem, new ArrayList(), false);
         // map from sample to top level LabeledExtract
         if (sampleId != null) {
             Set extracts = (Set) sampleToLabeledExtracts.get(sampleId);
@@ -740,7 +729,13 @@ public class MageDataTranslator extends DataTranslator
             extracts.add(srcItem.getIdentifier());
 
             // Find and record the label used for this Sample
-
+            String label = searchTreatments(srcItem, new ArrayList(), true);
+            if (label != null) {
+                sampleToLabel.put(sampleId, label);
+            } else {
+                throw new IllegalArgumentException("Unable to find label for sample: "
+                                                   + sampleId);
+            }
         }
     }
 
@@ -750,13 +745,12 @@ public class MageDataTranslator extends DataTranslator
      * Recurse into source BioMaterials and add their treatments.
      * @param bioMaterial = item bioMaterial
      * @param treatments = list treatments
+     * @param findLabel true if looking for the label on the extract instead of the sample
      * @return string of treatments
      * @throws ObjectStoreException if anything goes wrong
      */
-    protected String searchTreatments(Item bioMaterial, List treatments)
+    protected String searchTreatments(Item bioMaterial, List treatments, boolean findLabel)
         throws ObjectStoreException {
-        // TODO check if BioSource (genomic:Sample) and create map from sample to top
-        // level LabeledExtract.  Sample needs collection of treatments.
 
         // LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
         //.treatments.sourceBioMaterialMeasurements.bioMaterial.
@@ -766,27 +760,63 @@ public class MageDataTranslator extends DataTranslator
         // PATH is recursive - duplicate a number of times?  Refactor easier prefetch
         // PATH LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial
 
-        //LOG.error("bioMaterial: " + bioMaterial.getAttribute("identifier").getValue()
-        //          + ", identifier: " + bioMaterial.getIdentifier());
+
+        // always exit once we get to BioSource - even if looking for label and none found
         if (bioMaterial.getClassName().equals(srcNs + "BioSource")) {
             // if this is sample then put list of treatments in a map
-            sampleToTreatments.put(bioMaterial.getIdentifier(), treatments);
-            return bioMaterial.getIdentifier();
+            if (!findLabel) {
+                sampleToTreatments.put(bioMaterial.getIdentifier(), treatments);
+                return bioMaterial.getIdentifier();
+            } else {
+                return null;
+            }
         }
 
         if (bioMaterial.hasCollection("treatments")) {
-            // first see if this is the labelling step
-//             if (bioMaterial.hasCollection("actions")) {
-//                 Iterator actionIter = getCollection(bioMaterial, "actions");
-//                 while (actionIter.hasNext()) {
-
-//                 }
-//             }
             Iterator treatmentIter = getCollection(bioMaterial, "treatments");
             while (treatmentIter.hasNext()) {
                 Item treatment = (Item) treatmentIter.next();
 
-                // put id on collection
+                if (findLabel) {
+                    boolean isLabelling = false;
+                    // first see if this is the labelling step
+                    if (treatment.hasReference("action")) {
+                        Item action = getReference(treatment, "action");
+                        if ("labeling".equals(action.getAttribute("value").getValue())) {
+                            isLabelling = true;
+                        }
+                    }
+
+                    // Find value of parameter with type 'Label used'
+                    if (isLabelling && treatment.hasCollection("protocolApplications")) {
+                        Iterator protIter = getCollection(treatment, "protocolApplications");
+                        while (protIter.hasNext()) {
+                            Item appItem = (Item) protIter.next();
+
+                            if (appItem.hasCollection("parameterValues")) {
+                                Iterator paramIter = getCollection(appItem, "parameterValues");
+                                while (paramIter.hasNext()) {
+                                    Item valueItem = (Item) paramIter.next();
+                                    String value = null;
+                                    if (valueItem.hasAttribute("value")) {
+                                        value = valueItem.getAttribute("value").getValue();
+                                    }
+
+                                    Item srcParam = getReference(valueItem, "parameterType");
+                                    if (srcParam.hasAttribute("name")) {
+                                        if ("Label used".equals(srcParam.getAttribute("name")
+                                                                .getValue())
+                                            && value != null) {
+                                            return value;
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+
                 treatments.add(treatment.getIdentifier());
 
                 // search for source bio material and nested treatments
@@ -797,7 +827,7 @@ public class MageDataTranslator extends DataTranslator
                         if (sourceMaterial.hasReference("bioMaterial")) {
                             // recurse into next BioMaterial
                             return searchTreatments(getReference(sourceMaterial, "bioMaterial"),
-                                                    treatments);
+                                                    treatments, findLabel);
                         }
                     }
                 }
@@ -901,13 +931,6 @@ public class MageDataTranslator extends DataTranslator
             Iterator protIter = getCollection(srcItem, "protocolApplications");
             while (protIter.hasNext()) {
                 Item appItem = (Item) protIter.next();
-                // now allow a collection of protocols
-//                 if (tgtItem.hasReference("protocol")) {
-//                     throw new IllegalArgumentException(
-//                           "Treatment has more than one ProtocolApplication: "
-//                           //+ srcItem.getAttribute("name").getValue()
-//                           + ", " + srcItem.getIdentifier());
-//                 }
                 if (appItem.hasReference("protocol")) {
                     tgtItem.addToCollection("protocols",
                                appItem.getReference("protocol").getRefId());
@@ -975,7 +998,6 @@ public class MageDataTranslator extends DataTranslator
      * @return assay only once for the same item
      */
     protected Set processMicroArrayAssays() {
-        //        LOG.error ("assayToSamples " + assayToSamples);
         Iterator assayIter = assays.iterator();
         while (assayIter.hasNext()) {
             Item assay = (Item) assayIter.next();
@@ -988,16 +1010,39 @@ public class MageDataTranslator extends DataTranslator
                 List sampleIds = (List) assayToSamples.get(assayId);
                 assay.addCollection(new ReferenceList("samples", sampleIds));
 
-                if (sampleIds.size() > 0) {
-                    String summary =  getSampleSummary((String) sampleIds.get(0));
-                    if (summary != null) {
-                        assay.setAttribute("sample1", summary);
-                    }
+                if (sampleIds.size() != 2) {
+                    LOG.warn("Did not find exactly two samples for "
+                             + " assay: " + assay.getIdentifier() + ", "
+                             + assay.getAttribute("name").getValue()
+                             + ".  Samples found: " + sampleIds);
                 }
-                if (sampleIds.size() > 1) {
-                    String summary =  getSampleSummary((String) sampleIds.get(1));
-                    if (summary != null) {
-                        assay.setAttribute("sample2", summary);
+
+                String experimentName = (String) assayToExpName.get(assayId);
+                if (experimentName == null) {
+                    throw new IllegalArgumentException("Unable to find experiment name for assay: "
+                                                      + assayId);
+                }
+                String sample1Label = getConfig(experimentName, "sample1");
+                String sample2Label = getConfig(experimentName, "sample2");
+
+                if (sample1Label == null || sample2Label == null) {
+                    throw new IllegalArgumentException("Unable to find sample label configration. "
+                                                      + "sample1 was " + sample1Label + " "
+                                                      + "sample2 was " + sample2Label);
+                }
+
+                Iterator sampleIter = sampleIds.iterator();
+                while (sampleIter.hasNext()) {
+                    String sampleId = (String) sampleIter.next();
+                    String label = (String) sampleToLabel.get(sampleId);
+                    if (label.equals(sample1Label)) {
+                        assay.setAttribute("sample1", getSampleSummary(sampleId));
+                    } else if (label.equals(sample2Label)) {
+                        assay.setAttribute("sample2", getSampleSummary(sampleId));
+                    } else {
+                        throw new IllegalArgumentException("Unable to match label (" + label + ")"
+                                                           + " with sample1 (" + sample1Label + ")"
+                                                           + " or sample2 (" + sample2Label + ").");
                     }
                 }
             }
@@ -1047,7 +1092,6 @@ public class MageDataTranslator extends DataTranslator
             }
             if (assayToExperiment.containsKey(assayId)) {
                 experimentId = (String) assayToExperiment.get(assayId);
-                //LOG.error("experimentId: " + experimentId);
                 maResult.setReference("experiment", experimentId);
             }
         }
@@ -1063,7 +1107,6 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
-        //LOG.error("reportedId: " + reporterId);
         if (reporterId != null) {
             if (!maResult.hasReference("reporter")) {
                 maResult.setReference("reporter", reporterId);
@@ -1114,8 +1157,6 @@ public class MageDataTranslator extends DataTranslator
      * @return sample
      */
     protected Collection processSamples() {
-        //LOG.error("sampleToLabeledExtracts " + sampleToLabeledExtracts);
-        //LOG.error("labeledExtractToMeasuredBioAssay " + labeledExtractToMeasuredBioAssay);
         Iterator sampleIter = samplesById.values().iterator();
         while (sampleIter.hasNext()) {
             Item sample = (Item) sampleIter.next();
@@ -1334,7 +1375,6 @@ public class MageDataTranslator extends DataTranslator
         Set descSet;
         ItemPath path;
         String srcNs = "http://www.flymine.org/model/mage#";
-        LOG.info("srcNs: " + srcNs);
 
         descSet = new HashSet();
         path = new ItemPath("Experiment.descriptions", srcNs);
