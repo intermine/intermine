@@ -617,6 +617,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expResult.setAttribute("isControl", "true");
         expResult.setReference("assay", "5_1");
         expResult.setReference("reporter", "3_1");
+        expResult.setReference("analysis", "6_1");
         expResult.setReference("experiment", "6_1");
         expResult.setCollection("samples", new ArrayList(Collections.singleton("6_1")));
 
