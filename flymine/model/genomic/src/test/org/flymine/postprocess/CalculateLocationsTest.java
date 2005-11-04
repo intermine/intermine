@@ -414,14 +414,17 @@ public class CalculateLocationsTest extends TestCase {
     public void testCreateSpanningLocations() throws Exception {
         Exon exon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon1.setId(new Integer(107));
-
         Exon exon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon2.setId(new Integer(108));
+        Exon exon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon3.setId(new Integer(109));
 
-        Location exon1OnChr = createLocation(getChromosome(), exon1, 1, 51, 100, Location.class);
+        Location exon1OnChr = createLocation(getChromosome(), exon1, 1, 51, 100, Location.class); 
         exon1OnChr.setId(new Integer(1010));
         Location exon2OnChr = createLocation(getChromosome(), exon2, 1, 201, 250, Location.class);
-        exon1OnChr.setId(new Integer(1011));
+        exon2OnChr.setId(new Integer(1011));
+        Location exon3OnChr = createLocation(getChromosome(), exon3, 1, 201, 400, Location.class);
+        exon3OnChr.setId(new Integer(1012));
 
         Transcript trans1 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
@@ -432,19 +435,23 @@ public class CalculateLocationsTest extends TestCase {
         trans2.setId(new Integer(202));
 
         Location trans2OnChr = createLocation(getChromosome(), trans2, 1, 61, 300, Location.class);
-        exon1OnChr.setId(new Integer(1011));
 
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setId(new Integer(301));
 
         exon1.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans1})));
         exon2.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans1})));
+
+        // the location of exon3 should be ignored by createSpanningLocations() because trans2
+        // already has a location
+        exon3.setTranscripts(new HashSet(Arrays.asList(new Object [] {trans2})));
+
         trans1.setGene(gene);
         trans2.setGene(gene);
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     getChromosome(), gene, trans1, trans2,
-                                                    exon1, exon2,
+                                                    exon1, exon2, exon3,
                                                     exon1OnChr, exon2OnChr, trans2OnChr
                                                 }));
 
@@ -464,6 +471,13 @@ public class CalculateLocationsTest extends TestCase {
         Location resTrans1Location = (Location) resTrans1.getObjects().iterator().next();
         assertEquals(51, resTrans1Location.getStart().intValue());
         assertEquals(250, resTrans1Location.getEnd().intValue());
+
+        Transcript resTrans2 = (Transcript) os.getObjectById(new Integer(202));
+
+        assertEquals(1, resTrans2.getObjects().size());
+        Location resTrans2Location = (Location) resTrans2.getObjects().iterator().next();
+        assertEquals(61, resTrans2Location.getStart().intValue());
+        assertEquals(300, resTrans2Location.getEnd().intValue());
 
         Gene resGene = (Gene) os.getObjectById(new Integer(301));
         assertEquals(1, resGene.getObjects().size());
