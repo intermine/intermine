@@ -230,8 +230,9 @@ public class MainChange extends DispatchAction
         ConstraintOp op = c.getOp();
         
         if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL
-                && op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
-            session.setAttribute("editingConstraintValue", c.getValue());
+            && op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
+            session.setAttribute("editingConstraintValue",
+                                 WebUtil.wildcardSqlToUser("" + c.getValue()));
             session.setAttribute("editingConstraintOperand", c.getOp().getIndex());
         } else {
             session.removeAttribute("editingConstraintValue");
