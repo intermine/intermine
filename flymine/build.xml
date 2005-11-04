@@ -1859,6 +1859,7 @@
                    xmlFile="${flymine.data}/ontologies.xml" sourceName="static"/>
   </target>
 
+
   <target name="filter-uniprot" depends="prepare-build-model, compile-uniprot-java">
     <taskdef
       name="filter-uniprot"
@@ -1866,7 +1867,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <filter-uniprot tgtDir="${build.tmp}" organisms="7227 6239 7165 180454">
+  <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454">
       <fileset dir="${shared.data}/uniprot/5.7">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
@@ -1906,7 +1907,7 @@
     </ant>
   </target>
 
-  <target name="translate-uniprot" depends="prepare-build-model, compile-uniprot-java, compile-genomic-java">
+  <target name="translate-uniprot" depends="prepare-build-model, compile-uniprot-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1941,6 +1942,31 @@
 
     <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="true"/>
   </target>
+
+  <target name="filter-uniprot-dros" depends="prepare-build-model, compile-uniprot-java">
+    <taskdef
+      name="filter-uniprot"
+      classname="org.flymine.dataconversion.UniprotFilterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <filter-uniprot tgtDir="${build.tmp}" organisms="7227">
+      <fileset dir="${shared.data}/uniprot/5.7">
+        <include name="uniprot_sprot*"/>
+        <include name="uniprot_trembl*"/>
+      </fileset>
+    </filter-uniprot>
+  </target>
+
+  <target name="load-uniprot-dros"  depends="copy-flymine-config">
+    <taskdef name="load-uniprot" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot-dros" ignoreDuplicates="true"/>
+  </target>
+
+  <target name="build-uniprot-dros-production" depends="filter-uniprot-dros, retrieve-uniprot, translate-uniprot, load-uniprot-dros"/>
 
   <target name="build-uniprot-production" depends="filter-uniprot, retrieve-uniprot, translate-uniprot, load-uniprot"/>
 

@@ -10,6 +10,7 @@ run: build-ensembl-anopheles-production
 
 dump: anopheles
 
+run: build-uniprot-dros-production
 run: build-uniprot-production
 
 dump: uniprot
