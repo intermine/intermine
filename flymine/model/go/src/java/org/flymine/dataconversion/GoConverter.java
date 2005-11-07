@@ -46,7 +46,7 @@ public class GoConverter extends FileConverter
 
     protected Map productWrapperMap = new HashMap();
     protected Map goTerms = new HashMap();
-    protected Map databases = new HashMap();
+    protected Map datasources = new HashMap();
     protected Map publications = new HashMap();
     protected Map organisms = new HashMap();
     protected Map termIdNameMap = new HashMap();
@@ -131,7 +131,7 @@ public class GoConverter extends FileConverter
             GoTermProduct key = new GoTermProduct(productId, goId, goEvidence, qualifier);
 
             if (!holderMap.containsKey(key)) {
-                Item newDatabase = newDatabase(array[14]);
+                Item newDatasource = newDatasource(array[14]);
                 Item newPublication = newPublication(array[5]);
                 Item newGoTerm = newGoTerm(goId);
 
@@ -140,15 +140,14 @@ public class GoConverter extends FileConverter
                 ItemWrapper newProductWrapper = newProduct(productId, array[11], newOrganism);
                 String pwKey = newProductWrapper.getKey();
 
-                if(productWrapperMap.containsKey(pwKey)){
-                    newProductWrapper = (ItemWrapper)productWrapperMap.get(pwKey);
-                }
-                else{
+                if (productWrapperMap.containsKey(pwKey)) {
+                    newProductWrapper = (ItemWrapper) productWrapperMap.get(pwKey);
+                } else {
                     productWrapperMap.put(newProductWrapper.getKey(), newProductWrapper);
                 }
 
                 GoAnnoWithParentsPlaceHolder newPlaceHolder = new GoAnnoWithParentsPlaceHolder(
-                        qualifier, newDatabase, newPublication, goEvidence, newProductWrapper,
+                        qualifier, newDatasource, newPublication, goEvidence, newProductWrapper,
                         newGoTerm, array[7]
                 );
 
@@ -174,21 +173,21 @@ public class GoConverter extends FileConverter
         //Now create and store all the new items...
         //First put everything on a stack so we don't have to hold too many items in memory
         Stack holderStack = new Stack();
-        for(Iterator holderIt = holderMap.values().iterator(); holderIt.hasNext();){
+        for (Iterator holderIt = holderMap.values().iterator(); holderIt.hasNext();) {
 
             holderStack.push(holderIt.next());
         }
         holderMap = null;
 
-        while(! holderStack.isEmpty()){
+        while (!holderStack.isEmpty()) {
 
             GoAnnoWithParentsPlaceHolder nextPlaceHolder =
-                    (GoAnnoWithParentsPlaceHolder)holderStack.pop();
+                    (GoAnnoWithParentsPlaceHolder) holderStack.pop();
 
             GoAnnotationItemWithParentSet annoWithParents =
                     newGoAnnotationWithParentTerms(nextPlaceHolder);
 
-            LOG.warn("NEXT GAIWPS:" + annoWithParents.toPeteString());
+            LOG.warn("NEXT GAIWPS:" + annoWithParents.toUsefulLogString());
 
             //store the new anno item...
             doStore(annoWithParents.getGoAnnotationItem(), STORE_ONE);
@@ -206,9 +205,9 @@ public class GoConverter extends FileConverter
             }
         }
 
-        for(Iterator gpIt = productWrapperMap.values().iterator(); gpIt.hasNext();) {
+        for (Iterator gpIt = productWrapperMap.values().iterator(); gpIt.hasNext();) {
 
-            Item nextGeneProduct = ((ItemWrapper)gpIt.next()).getItem();
+            Item nextGeneProduct = ((ItemWrapper) gpIt.next()).getItem();
             doStore(nextGeneProduct, STORE_FOUR);
         }
     }
@@ -218,31 +217,30 @@ public class GoConverter extends FileConverter
      */
     public void close() throws ObjectStoreException {
         store(goTerms.values());
-        store(databases.values());
+        store(datasources.values());
         store(publications.values());
         store(organisms.values());
     }
 
 
     /**
-     * Create a new annotation item linking a geneProduct with a term, with evidence code, database and
-     * publication
+     * Create a new annotation item linking a geneProduct with a term - with evidence code -
+     * datasource and publication
      *
+     * >------------------------- OLD PARAMS NOW IN THE placeHolder OBJECT -------------------------
      * @ param qualifier   qualifier (eg NOT) or null
-     * @ param database    the database
+     * @ param datasource    the datasource
      * @ param publication the publication
      * @ param goEvidence  the goEvidence
      * @ param geneProduct     the geneProduct - typically a protein or a gene item
      * @ param goTerm      the goTerm
      * @ param withText    String from the 'with' column of gene_associationfile
-     * @return the annotation
-     * @throws ObjectStoreException if problem storing 'with' BioEntities
-     *                              Replacement for the above
-     * /
-    protected GoAnnotationItemWithParentSet newGoAnnotationWithParentTerms(
-            String qualifier, Item database, Item publication, String goEvidence, Item geneProduct,
-            Item goTerm, String withText) throws ObjectStoreException {
-    */
+     * @return a GoAnnotation item with its parent items in a Set.
+     * @throws ObjectStoreException if problems...
+     * >--------------------------------------------------------------------------------------------
+     *
+     * @param placeHolder Holds the previous params so we can store the GoAnnotation objects later.
+     * */
     protected GoAnnotationItemWithParentSet newGoAnnotationWithParentTerms(
             GoAnnoWithParentsPlaceHolder placeHolder) throws ObjectStoreException {
 
@@ -299,7 +297,7 @@ public class GoConverter extends FileConverter
 
         ReferenceList references = new ReferenceList();
         references.setName("evidence");
-        references.addRefId(placeHolder.getDatabase().getIdentifier());
+        references.addRefId(placeHolder.getDatasource().getIdentifier());
         if (placeHolder.getPublication() != null) {
             references.addRefId(placeHolder.getPublication().getIdentifier());
         }
@@ -310,8 +308,7 @@ public class GoConverter extends FileConverter
                     "goAnnotation", currentGoItem);
             placeHolder.getGeneProductWrapper().getItem().addToCollection(
                     "allGoAnnotation", currentGoItem);
-        }
-        else{
+        } else {
             LOG.warn("Skipping setting go & allGo annotation collection for a:"
                     + placeHolder.getGeneProductWrapper().getItem().getClassName() + " with ident:"
                     + placeHolder.getGeneProductWrapper().getItem().getIdentifier());
@@ -441,12 +438,12 @@ public class GoConverter extends FileConverter
      * @param itemToStore self titled...
      * @param callSource info string so I can work out where the method was called from...
      * */
-    private void doStore(Item itemToStore, String callSource) throws ObjectStoreException{
+    private void doStore(Item itemToStore, String callSource) throws ObjectStoreException {
 
         Attribute identAttr = itemToStore.getAttribute("identifier");
         String i2sId = itemToStore.getIdentifier();
 
-        if(storedItemMap.containsKey(itemToStore.getIdentifier())){
+        if (storedItemMap.containsKey(itemToStore.getIdentifier())) {
 
             StringBuffer bigLogMsg = new StringBuffer();
 
@@ -457,17 +454,17 @@ public class GoConverter extends FileConverter
             bigLogMsg.append(" id_attr:");
             bigLogMsg.append(identAttr != null ? identAttr.getValue() : NO_ID_ATTR);
             bigLogMsg.append(" previous_id_attr:");
-            bigLogMsg.append(storedItemMap.get(i2sId) != null ? storedItemMap.get(i2sId) : "no_prev_attr");
+            bigLogMsg.append(storedItemMap.get(i2sId) != null
+                    ? storedItemMap.get(i2sId) : "no_prev_attr");
             bigLogMsg.append(" are attrs the same:");
 
-            if(identAttr != null){
+            if (identAttr != null) {
                 bigLogMsg.append(identAttr.getValue().equalsIgnoreCase(
                             storedItemMap.get(i2sId).toString()) ? "true" : "false");
             }
 
             LOG.error(bigLogMsg.toString());
-        }
-        else{
+        } else {
 
             LOG.warn("doStore " + callSource
                     + " called on a new item:" + itemToStore.getClassName()
@@ -540,13 +537,13 @@ public class GoConverter extends FileConverter
     }
 
     /**
-     * Create a new DataSource item given a database code
+     * Create a new DataSource item given a datasource code
      *
      * @param code the code
-     * @return the database
+     * @return the datasource
      */
-    protected Item newDatabase(String code) {
-        Item item = (Item) databases.get(code);
+    protected Item newDatasource(String code) {
+        Item item = (Item) datasources.get(code);
         if (item == null) {
             item = createItem("DataSource");
             String title = null;
@@ -574,7 +571,7 @@ public class GoConverter extends FileConverter
                         + "' not recognised");
             }
             item.addAttribute(new Attribute("name", title));
-            databases.put(code, item);
+            datasources.put(code, item);
         }
         return item;
     }
@@ -644,7 +641,7 @@ public class GoConverter extends FileConverter
     {
 
         private String qualifier;
-        private Item database;
+        private Item datasource;
         private Item publication;
         private String goEvidence;
         private ItemWrapper geneProduct;
@@ -653,16 +650,25 @@ public class GoConverter extends FileConverter
 
         private ArrayList extraPublicationList;
 
-        private GoAnnoWithParentsPlaceHolder(){
+        private GoAnnoWithParentsPlaceHolder() {
             extraPublicationList = new ArrayList();
         }
 
+        /**
+         * @param qualifier   qualifier (eg NOT) or null
+         * @param datasource  the datasource
+         * @param publication the publication
+         * @param goEvidence  the goEvidence
+         * @param product     the product - typically a protein or a gene item
+         * @param goTerm      the goTerm
+         * @param withText    String from the 'with' column of gene_associationfile
+         * */
         public GoAnnoWithParentsPlaceHolder(
-                String qualifier, Item database, Item publication, String goEvidence,
+                String qualifier, Item datasource, Item publication, String goEvidence,
                 ItemWrapper product, Item goTerm, String withText) {
             this();
             this.qualifier = qualifier;
-            this.database = database;
+            this.datasource = datasource;
             this.publication = publication;
             this.goEvidence = goEvidence;
             this.geneProduct = product;
@@ -670,34 +676,59 @@ public class GoConverter extends FileConverter
             this.withText = withText;
         }
 
+        /**
+         * @return the qualifier as a String
+         * */
         public String getQualifier() {
             return qualifier;
         }
 
-        public Item getDatabase() {
-            return database;
+        /**
+         * @return the datasource item that represents we are sourcing the go annotations from.
+         * */
+        public Item getDatasource() {
+            return datasource;
         }
 
+        /**
+         * @return the related Publication item
+         * */
         public Item getPublication() {
             return publication;
         }
 
+        /**
+         * @return the go evidence String
+         * */
         public String getGoEvidence() {
             return goEvidence;
         }
 
+        /**
+         * @return an ItemWrapper that allows us to store the gene in a map to ensure it is only
+         * stored once - and after all the GoAnnotation items have been related to it.
+         * */
         public ItemWrapper getGeneProductWrapper() {
             return geneProduct;
         }
 
+        /**
+         * @return the go term that the go annotation object is linking to
+         * */
         public Item getGoTerm() {
             return goTerm;
         }
 
+        /**
+         * @return some more details
+         * */
         public String getWithText() {
             return withText;
         }
 
+        /**
+         * @return a list of any extra publication items that we want to link to this go annotation.
+         * */
         public ArrayList getExtraPublicationList() {
             return extraPublicationList;
         }
@@ -737,8 +768,10 @@ public class GoConverter extends FileConverter
             return parentItems;
         }
 
-
-        public String toPeteString(){
+        /**
+         * @return a string that is usefull for debugging...
+         * */
+        public String toUsefulLogString() {
 
             StringBuffer tsBuff = new StringBuffer();
 
@@ -747,16 +780,16 @@ public class GoConverter extends FileConverter
             tsBuff.append("\nGOANNOITEM: "
                     + item.getClassName() + " "
                     + item.getAttribute("identifier").getValue() + " "
-                    + (item.getIdentifier()!= null ? item.getIdentifier() : "no_id")
+                    + (item.getIdentifier() != null ? item.getIdentifier() : "no_id")
                     + "\n"
             );
 
-            for(Iterator piit = parentItems.iterator(); piit.hasNext(); ){
-                item = (Item)piit.next();
+            for (Iterator piit = parentItems.iterator(); piit.hasNext(); ) {
+                item = (Item) piit.next();
                 tsBuff.append("NEXTPARENT: "
                         + item.getClassName() + " " 
                         + item.getAttribute("identifier").getValue() + " "
-                        + (item.getIdentifier()!= null ? item.getIdentifier() : "no_id")
+                        + (item.getIdentifier() != null ? item.getIdentifier() : "no_id")
                         + "\n"
                 );
             }
@@ -784,10 +817,16 @@ public class GoConverter extends FileConverter
             this.item = item;
         }
 
+        /**
+         * @return the key string that we will use in a map to id the object
+         * */
         public String getKey() {
             return key;
         }
 
+        /**
+         * @return the item in question
+         * */
         public Item getItem() {
             return item;
         }
@@ -845,7 +884,7 @@ public class GoConverter extends FileConverter
         /**
          * @see Object#toString()
          */
-        public String toString(){
+        public String toString() {
 
             StringBuffer toStringBuff = new StringBuffer();
 
