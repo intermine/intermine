@@ -182,36 +182,36 @@ public class OboParserTest extends TestCase
         assertEquals(0, term.getSynonyms().size());
     }
     
-    public void testIsObselete() {
+    public void testIsObsolete() {
         Map tagValues;
         
         tagValues = new MultiHashMap();
         tagValues.put("is_obsolete", "true");
-        assertTrue(parser.isObselete(tagValues));
+        assertTrue(parser.isObsolete(tagValues));
         
         tagValues = new MultiHashMap();
         tagValues.put("is_obsolete", "TRUE");
-        assertTrue(parser.isObselete(tagValues));
+        assertTrue(parser.isObsolete(tagValues));
         
         tagValues = new MultiHashMap();
         tagValues.put("is_obsolete", "true");
         tagValues.put("is_obsolete", "false");
-        assertTrue(parser.isObselete(tagValues));
+        assertTrue(parser.isObsolete(tagValues));
         
         tagValues = new MultiHashMap();
         tagValues.put("is_obsolete", "FALSE");
-        assertFalse(parser.isObselete(tagValues));
+        assertFalse(parser.isObsolete(tagValues));
         
         tagValues = new MultiHashMap();
         tagValues.put("is_obsolete", "false");
-        assertFalse(parser.isObselete(tagValues));
+        assertFalse(parser.isObsolete(tagValues));
         
         tagValues = new MultiHashMap();
         tagValues.put("is_obsolete", "FALSE");
         tagValues.put("is_obsolete", "true");
-        assertFalse(parser.isObselete(tagValues));
+        assertFalse(parser.isObsolete(tagValues));
         
         tagValues = new MultiHashMap();
-        assertFalse(parser.isObselete(tagValues));
+        assertFalse(parser.isObsolete(tagValues));
     }
 }
