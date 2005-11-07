@@ -34,6 +34,7 @@
             <link rel="alternate" type="application/rss+xml" href="{concat($basedir, '/', @file)}" title="News"/>
         </xsl:for-each>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <script type="text/javascript" src="{$basedir}/style/footer.js">;</script>
       </head>
       
       <body>
