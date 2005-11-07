@@ -1,5 +1,9 @@
 package org.intermine.ontology;
 
+import java.util.Set;
+import java.util.Collection;
+import java.util.HashSet;
+
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -21,7 +25,8 @@ public class OboTerm extends DagTerm
 {
     private String namespace = "";
     private String description = "";
-    
+    private Set allParentIds = null;
+
     /**
      * Construct with an id and name.
      * @param id the id of this DAG term, may not be changed after construction
@@ -61,5 +66,24 @@ public class OboTerm extends DagTerm
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Get the terms parents as a set.
+     * @return a set of all the parents of this term.
+     * */
+    public Set getAllParentIds() {
+        return allParentIds;
+    }
+
+    /**
+     * Adds more parent ids to the set of parent ids for this item.
+     * @param parentIds A collection of some parent go term ids to add to the set of parent ids
+     * */
+    protected void addToAllParentIds(Collection parentIds){
+        if(allParentIds == null){
+            allParentIds = new HashSet();
+        }
+        allParentIds.addAll(parentIds);
     }
 }
