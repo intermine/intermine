@@ -106,6 +106,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (destId == null) {
             // query database by primary key for equivalent objects
             if (obj instanceof ProxyReference) {
+
+                LOG.info("IDMAP CONTENTS:" + idMap.toString());
+
                 throw new IllegalArgumentException("Given a ProxyReference, but id not in ID Map."
                                                    + " Source object ID: " + obj.getId()
                                                    + (idMap.size() < 100 ? ", idMap = " : ""));
@@ -296,7 +299,18 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             if (type == FROM_DB) {
                                 destCol.add(colObj);
                             } else {
-                                destCol.add(store(colObj, source, skelSource, SKELETON));
+                                try{
+                                    destCol.add(store(colObj, source, skelSource, SKELETON));
+                                }catch(RuntimeException bob){
+                                    if (colObj instanceof ProxyReference) {
+                                        LOG.warn("colObj: " + colObj + ", " + ((ProxyReference) colObj).getObject());
+                                    }
+                                    LOG.warn("destCol = " + destCol);
+                                    LOG.warn("col = " + col);
+                                    LOG.warn("fieldName:" + field.getName()
+                                            + " classDescriptionName:" + field.getClassDescriptor().getName(), bob);
+                                     throw bob;
+                                }
                             }
                         }
                     }
