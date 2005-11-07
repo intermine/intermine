@@ -29,7 +29,7 @@ import org.apache.tools.ant.Task;
 
 public class CreateOverlapRelationsTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
+    private static final Logger LOG = Logger.getLogger(CreateOverlapRelationsTask.class);
 
     protected String objectStoreWriter, classNamesToIgnore;
     protected ObjectStoreWriter osw;
