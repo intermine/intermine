@@ -61,6 +61,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map organismMap = new HashMap();
 
     private Map dbs = new HashMap();
+    private Map pubs = new HashMap();
     private Map dbRefs = new HashMap();
     private String srcNs;
 
@@ -206,6 +207,11 @@ public class MageDataTranslator extends DataTranslator
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
 
+        i = pubs.values().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
         // needs to be called before other processXX methods
         i = processSamples().iterator();
         while (i.hasNext()) {
@@ -256,22 +262,6 @@ public class MageDataTranslator extends DataTranslator
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
-                // TODO publication data in file from FlyChip not correct, add pubmed id from
-                // config?
-                // TODO add the lab which ran the experiment
-                // mage: BibliographicReference flymine:Publication
-//                 if (className.equals("BibliographicReference")) {
-//                     Set authors = createAuthors(srcItem);
-//                     List authorIds = new ArrayList();
-//                     Iterator j = authors.iterator();
-//                     while (j.hasNext()) {
-//                         Item author = (Item) j.next();
-//                         authorIds.add(author.getIdentifier());
-//                         result.add(author);
-//                     }
-//                     ReferenceList authorsRef = new ReferenceList("authors", authorIds);
-//                     tgtItem.addCollection(authorsRef);
-//                 } else
                 if (className.equals("DataSource")) {
                     Attribute attr = srcItem.getAttribute("name");
                     if (attr != null) {
@@ -319,28 +309,6 @@ public class MageDataTranslator extends DataTranslator
         return result;
     }
 
-    /**
-     * @param srcItem = mage:BibliographicReference
-     * @return author set
-     */
-    protected Set createAuthors(Item srcItem) {
-        Set result = new HashSet();
-        if (srcItem.hasAttribute("authors")) {
-            Attribute authorsAttr = srcItem.getAttribute("authors");
-            if (authorsAttr != null) {
-                String authorStr = authorsAttr.getValue();
-                StringTokenizer st = new StringTokenizer(authorStr, ";");
-                while (st.hasMoreTokens()) {
-                    String name = st.nextToken().trim();
-                    Item author = createItem(tgtNs + "Author", "");
-                    author.addAttribute(new Attribute("name", name));
-                    result.add(author);
-                }
-            }
-        }
-        return result;
-    }
-
 
     /**
      * @param srcItem = mage:Experiment
@@ -383,27 +351,11 @@ public class MageDataTranslator extends DataTranslator
                         desFlag = true;
                     }
                 }
-// TODO publication data in mage files not very good - get pubmed id from config?
-//                 if (desItem.hasCollection("bibliographicReferences")) {
-//                     ReferenceList publication = desItem.getCollection(
-//                                                   "bibliographicReferences");
-//                     if (publication != null) {
-//                         if (!isSingleElementCollection(publication)) {
-//                             throw new IllegalArgumentException("Experiment description
-//                                           collection ("
-//                                 + desItem.getIdentifier()
-//                                 + ") has more than one bibliographicReference");
-//                         } else {
-//                             if (pubFlag) {
-//                                 LOG.error("Already set publication for MicroArrayExperiment, "
-//                                       + " srcItem = " + srcItem.getIdentifier());
-//                             } else {
-//                                 tgtItem.setReference("publication", getFirstId(publication));
-//                                 pubFlag = true;
-//                             }
-//                         }
-//                     }
-//                 }
+                // TODO fetch pubmed id from config?
+                String pmid = ((String) getConfig(exptName, "pmid")).trim();
+                if (pmid != null && !pmid.equals("")) {
+                    tgtItem.setReference("publication", getPublication(pmid).getIdentifier());
+                }
             }
         }
 
@@ -508,23 +460,17 @@ public class MageDataTranslator extends DataTranslator
 
         if (srcItem.hasAttribute("value")) {
             String value = srcItem.getAttribute("value").getValue().trim();
+            // only store if a numerical value, ignore errors
             if (StringUtil.allDigits(value)) {
                 tgtItem.setAttribute("value", value);
-                // only store if a numerical value, ignore errors
-                //microArrayResults.add(tgtItem);
                 holder.value = value;
                 microArrayResults.add(holder);
             }
         }
 
-        // TODO need to set this at the end when we can relate to correct Experiment
-        //tgtItem.setReference("analysis", getExperimentId());
-
-
         // PATH BioAssayDatum.quatitationType.scale
         if (srcItem.hasReference("bioAssay")) {
             holder.assayId = identifierToInt(srcItem.getReference("bioAssay").getRefId());
-            //tgtItem.setReference("assay", srcItem.getReference("bioAssay").getRefId());
         }
 
         if (srcItem.hasReference("designElement")) {
@@ -535,15 +481,12 @@ public class MageDataTranslator extends DataTranslator
 
         if (srcItem.hasReference("reporter")) {
             holder.reporterId = identifierToInt(srcItem.getReference("reporter").getRefId());
-            //tgtItem.setReference("reporter", srcItem.getReference("reporter").getRefId());
         }
 
         if (srcItem.hasReference("quantitationType")) {
             Item qtItem = getReference(srcItem, "quantitationType");
 
             if (qtItem.hasAttribute("name")) {
-                //tgtItem.setAttribute("type", "(Normalised) "
-                //                  + qtItem.getAttribute("name").getValue());
                 holder.type = "(Normalised) " + qtItem.getAttribute("name").getValue().intern();
             } else {
                 LOG.warn("QuantitationType ( " + qtItem.getIdentifier()
@@ -555,8 +498,6 @@ public class MageDataTranslator extends DataTranslator
                 || qtItem.getClassName().endsWith("SpecializedQuantitationType")) {
                 if (qtItem.hasReference("scale")) {
                     Item oeItem = getReference(qtItem, "scale");
-
-                    //tgtItem.setAttribute("scale", oeItem.getAttribute("value").getValue());
                     holder.scale = oeItem.getAttribute("value").getValue().intern();
                 } else {
                     LOG.warn("QuantitationType (" + qtItem.getIdentifier()
@@ -568,8 +509,6 @@ public class MageDataTranslator extends DataTranslator
                     Item msItem = getReference(qtItem, "targetQuantitationType");
                     if (msItem.hasReference("scale")) {
                         Item oeItem = getReference(msItem, "scale");
-
-                        //tgtItem.setAttribute("scale", oeItem.getAttribute("value").getValue());
                         holder.scale = oeItem.getAttribute("value").getValue().intern();
                     } else {
                         LOG.warn("QuantitationType (" + msItem.getIdentifier()
@@ -1264,6 +1203,20 @@ public class MageDataTranslator extends DataTranslator
             dbs.put(dbName, db);
         }
         return db;
+    }
+
+    /**
+     * @param pmid pubmed id read from config
+     * @return publication item
+     */
+    private Item getPublication(String pmid) {
+        Item pub = (Item) pubs.get(pmid);
+        if (pub == null) {
+            pub = createItem(tgtNs + "Publication", "");
+            pub.setAttribute("pubMedId", pmid);
+            pubs.put(pmid, pub);
+        }
+        return pub;
     }
 
     /**
