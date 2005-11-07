@@ -315,6 +315,7 @@ div.viewpath {
   float: left;
   text-align: center;
   font-size: 11px;
+  cursor:pointer; cursor:hand
 }
 div.viewpathDisabled {
   background: #bbb;

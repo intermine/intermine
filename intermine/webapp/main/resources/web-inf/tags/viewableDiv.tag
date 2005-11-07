@@ -2,6 +2,7 @@
 <%@ attribute name="viewPaths" type="java.util.Map" required="true" %>
 <%@ attribute name="path" required="true" %>
 <%@ attribute name="idPrefix" required="true" %>
+<%@ attribute name="idPostfix" required="false" %>
 <%@ attribute name="test" type="java.lang.Boolean" required="false" %>
 <%@ attribute name="disabled" type="java.lang.Boolean" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -19,11 +20,15 @@
                 to viewablejs (see viewablejs.tag)
 --%>
 
+
+
 <c:if test="${viewPaths[path] && (empty test || test)}">
-  <div class="viewpath" id="${idPrefix}${fn:replace(path,".","")}"
+  <div class="viewpath" id="${idPrefix}${fn:replace(path,".","")}${idPostfix}"
+                        name="${idPrefix}${fn:replace(path,".","")}"
     <c:if test="${empty disabled || !disabled}">
           onmouseover="enterPath('${fn:replace(path,".","")}')"
           onmouseout="exitPath('${fn:replace(path,".","")}')"
+          onmousedown="exitPath('${fn:replace(path,".","")}'); disblePathHighlighting()"
     </c:if>
     >
 </c:if>

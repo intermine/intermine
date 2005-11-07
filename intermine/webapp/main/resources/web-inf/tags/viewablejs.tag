@@ -13,8 +13,12 @@
 <script type="text/javascript">
 <!--
 
+var highlightingEnabled = true;
+
 function enterPath(path)
 {
+  if (!highlightingEnabled)
+    return;
   setStyle(path, 1);
 }
 
@@ -34,9 +38,30 @@ function setStyle(path, inside)
       } else {
         a.style.borderColor = "#BBB";
       }
+    } else {
+      a = document.getElementsByName("${prefix}" + path);
+      if (a != null && a.length > 0) {
+        if (inside) {
+          a[0].style.borderColor = "#444";
+        } else {
+          a[0].style.borderColor = "#BBB";
+        }
+      }
     }
   </c:forEach>
 }
+
+function disblePathHighlighting() {
+  highlightingEnabled = false;
+}
+
+function enablePathHighlighting() {
+  highlightingEnabled = true;
+}
+
+/* Install document mouse up handler to reenable highlighting */
+
+Event.observe(document, "mouseup", enablePathHighlighting);
 
 //-->
 </script>
