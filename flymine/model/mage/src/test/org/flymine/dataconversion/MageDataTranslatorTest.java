@@ -98,24 +98,6 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
 //      }
 
-    public void testCreateAuthors() throws Exception {
-
-        Item srcItem = createSrcItem("BibliographicReference", "0_0", "");
-        srcItem.addAttribute(new Attribute("authors", " William Whitfield; FlyChip Facility"));
-
-        Item exp1 = createTgtItem( "Author", "-1_1", "");
-        exp1.addAttribute(new Attribute("name", "William Whitfield"));
-        Item exp2 = createTgtItem("Author", "-1_2", "");
-        exp2.addAttribute(new Attribute("name", "FlyChip Facility"));
-
-        Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2}));
-
-        MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-        assertEquals(expected, translator.createAuthors(srcItem));
-    }
-
-
     public void testMicroArrayExperiment()throws Exception {
         Item srcItem1 = createSrcItem("Experiment", "61_748", "");
         srcItem1.setAttribute("identifier", "E-FLYC-1");
@@ -140,11 +122,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
         Item expectedItem =createTgtItem("MicroArrayExperiment", "-1_1", "");
-        expectedItem.addAttribute(new Attribute("name", "Experiment 1"));
-
-        expectedItem.addAttribute(new Attribute("description", "experiment description"));
-        // not linking to broken publications in mage
-        //expectedItem.addReference(new Reference("publication", "62_751"));
+        expectedItem.setAttribute("name", "Experiment 1");
+        expectedItem.setAttribute("description", "experiment description");
+        expectedItem.setReference("publication", "-1_2");
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
 
         assertEquals(expected, translator.translateItem(srcItem1));
