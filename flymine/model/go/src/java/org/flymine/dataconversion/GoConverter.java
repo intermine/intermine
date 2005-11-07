@@ -15,11 +15,7 @@ import java.io.Reader;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -40,13 +36,15 @@ import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse a go annotation file into Items
+ *
  * @author Andrew Varley
+ * @author Peter Mclaren - some additions to record the parents of a go term.
  */
 public class GoConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected ItemWrapper product = null;
+    protected Map productWrapperMap = new HashMap();
     protected Map goTerms = new HashMap();
     protected Map databases = new HashMap();
     protected Map publications = new HashMap();
@@ -55,13 +53,24 @@ public class GoConverter extends FileConverter
     protected int id = 0;
     protected File ontology;
     protected Map withTypes = new HashMap();
-    protected Map annotations = new HashMap();
+
     protected ItemFactory itemFactory;
+
+    private OboParser oboParser = null;
+
+    /*Some Debugging vars*/
+    private HashMap storedItemMap = new HashMap();
+    private static final String STORE_ONE = "store_1";
+    private static final String STORE_TWO = "store_2";
+    private static final String STORE_THREE = "store_3";
+    private static final String STORE_FOUR = "store_4";
+    private static final String NO_ID_ATTR = "NO_ID_ATTR";
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
      * Constructor
+     *
      * @param writer the ItemWriter used to handle the resultant items
      * @throws Exception if an error occurs in storing or finding Model
      */
@@ -74,6 +83,7 @@ public class GoConverter extends FileConverter
 
     /**
      * Set the GO ontology file to be read from DAG format.
+     *
      * @param ontology the GO ontology file
      */
     public void setOntology(File ontology) {
@@ -81,9 +91,13 @@ public class GoConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process
-     */
+     * {@inheritDoc}
+     * */
     public void process(Reader reader) throws ObjectStoreException, IOException {
+
+        Map holderMap = new HashMap();
+        //Set geneProductSet = new HashSet();
+
         if (ontology == null) {
             throw new BuildException("ontology must be specified");
         }
@@ -91,14 +105,16 @@ public class GoConverter extends FileConverter
             if (ontology.getName().endsWith(".ontology") || ontology.getName().endsWith(".dag")) {
                 termIdNameMap = new DagParser().getTermIdNameMap(new FileReader(ontology));
             } else if (ontology.getName().endsWith(".obo")) {
-                termIdNameMap = new OboParser().getTermIdNameMap(new FileReader(ontology));
+                oboParser = new OboParser();
+                termIdNameMap = oboParser.getTermIdNameMap(new FileReader(ontology));
             } else {
-                throw new IllegalArgumentException("Don't know how to deal with ontology file"
+                throw new IllegalArgumentException("Don't know how to deal with ontology file:"
                         + ontology.getAbsolutePath());
             }
         } catch (Exception e) {
             throw new IOException("" + e);
         }
+
         BufferedReader br = new BufferedReader(reader);
         String line;
         while ((line = br.readLine()) != null) {
@@ -114,27 +130,89 @@ public class GoConverter extends FileConverter
 
             GoTermProduct key = new GoTermProduct(productId, goId, goEvidence, qualifier);
 
-            Item annotation = (Item) annotations.get(key);
-            if (!annotations.containsKey(key)) {
-                annotation = newAnnotation(qualifier,
-                                           newDatabase(array[14]),
-                                           newPublication(array[5]),
-                                           goEvidence,
-                                           newProduct(productId, array[11],
-                                                      newOrganism(array[12])),
-                                           newGoTerm(goId),
-                                           array[7]);
-                annotations.put(key, annotation);
+            if (!holderMap.containsKey(key)) {
+                Item newDatabase = newDatabase(array[14]);
+                Item newPublication = newPublication(array[5]);
+                Item newGoTerm = newGoTerm(goId);
+
+                Item newOrganism = newOrganism(array[12]);
+
+                ItemWrapper newProductWrapper = newProduct(productId, array[11], newOrganism);
+                String pwKey = newProductWrapper.getKey();
+
+                if(productWrapperMap.containsKey(pwKey)){
+                    newProductWrapper = (ItemWrapper)productWrapperMap.get(pwKey);
+                }
+                else{
+                    productWrapperMap.put(newProductWrapper.getKey(), newProductWrapper);
+                }
+
+                GoAnnoWithParentsPlaceHolder newPlaceHolder = new GoAnnoWithParentsPlaceHolder(
+                        qualifier, newDatabase, newPublication, goEvidence, newProductWrapper,
+                        newGoTerm, array[7]
+                );
+
+                holderMap.put(key, newPlaceHolder);
+                LOG.warn("PROCESS - NEW KEY:" + key.toString());
+
             } else {
-                Item pub = newPublication(array[5]);
-                if (pub != null) {
-                    annotation.addToCollection("evidence", pub.getIdentifier());
+
+                GoAnnoWithParentsPlaceHolder holder =
+                        (GoAnnoWithParentsPlaceHolder) holderMap.get(key);
+
+                Item extraPubItem = newPublication(array[5]);
+
+                if (extraPubItem != null) {
+
+                    holder.getExtraPublicationList().add(extraPubItem);
+                }
+
+                LOG.warn("PROCESS - OLD KEY:" + key.toString());
+            }
+        }
+
+        //Now create and store all the new items...
+        //First put everything on a stack so we don't have to hold too many items in memory
+        Stack holderStack = new Stack();
+        for(Iterator holderIt = holderMap.values().iterator(); holderIt.hasNext();){
+
+            holderStack.push(holderIt.next());
+        }
+        holderMap = null;
+
+        while(! holderStack.isEmpty()){
+
+            GoAnnoWithParentsPlaceHolder nextPlaceHolder =
+                    (GoAnnoWithParentsPlaceHolder)holderStack.pop();
+
+            GoAnnotationItemWithParentSet annoWithParents =
+                    newGoAnnotationWithParentTerms(nextPlaceHolder);
+
+            LOG.warn("NEXT GAIWPS:" + annoWithParents.toPeteString());
+
+            //store the new anno item...
+            doStore(annoWithParents.getGoAnnotationItem(), STORE_ONE);
+
+            if (annoWithParents != null && annoWithParents.getParentItems() != null) {
+
+                //Store all the parent anno items for the current anno item as well
+                for (Iterator annoParentIt = annoWithParents.getParentItems().iterator();
+                     annoParentIt.hasNext();) {
+
+                    Item pNext = ((Item) annoParentIt.next());
+
+                    doStore(pNext, STORE_TWO);
                 }
             }
-            writer.store(ItemHelper.convert(annotation));
+        }
+
+        for(Iterator gpIt = productWrapperMap.values().iterator(); gpIt.hasNext();) {
+
+            Item nextGeneProduct = ((ItemWrapper)gpIt.next()).getItem();
+            doStore(nextGeneProduct, STORE_FOUR);
         }
     }
-
+    
     /**
      * @see FileConverter#close
      */
@@ -145,58 +223,175 @@ public class GoConverter extends FileConverter
         store(organisms.values());
     }
 
+
     /**
-     * Create a new annotation item linking a product with a term, with evidence code, database and
+     * Create a new annotation item linking a geneProduct with a term, with evidence code, database and
      * publication
-     * @param qualifier qualifier (eg NOT) or null
-     * @param dataSource the dataSource
-     * @param publication the publication
-     * @param goEvidence the goEvidence
-     * @param product the product
-     * @param goTerm the goTerm
-     * @param withText String from the 'with' column of gene_associationfile
+     *
+     * @ param qualifier   qualifier (eg NOT) or null
+     * @ param database    the database
+     * @ param publication the publication
+     * @ param goEvidence  the goEvidence
+     * @ param geneProduct     the geneProduct - typically a protein or a gene item
+     * @ param goTerm      the goTerm
+     * @ param withText    String from the 'with' column of gene_associationfile
      * @return the annotation
      * @throws ObjectStoreException if problem storing 'with' BioEntities
-     */
-    protected Item newAnnotation(String qualifier, Item dataSource, Item publication,
-                                 String goEvidence, Item product, Item goTerm,
-                                 String withText) throws ObjectStoreException {
-        Item item = createItem("GOAnnotation");
-        if (!"".equals(qualifier)) {
-            item.addAttribute(new Attribute("qualifier", qualifier));
+     *                              Replacement for the above
+     * /
+    protected GoAnnotationItemWithParentSet newGoAnnotationWithParentTerms(
+            String qualifier, Item database, Item publication, String goEvidence, Item geneProduct,
+            Item goTerm, String withText) throws ObjectStoreException {
+    */
+    protected GoAnnotationItemWithParentSet newGoAnnotationWithParentTerms(
+            GoAnnoWithParentsPlaceHolder placeHolder) throws ObjectStoreException {
+
+        boolean isProductTypeGene = (
+                placeHolder.getGeneProductWrapper().getItem().getClassName().indexOf("Gene")
+                >= 0 ? true : false);
+
+        //Holds a map of all the goterms which act as keys for their respective set of parent terms.
+        Map goTermId2ParentTermIdSetsMap = null;
+
+        //do we have an obo based ontology file ?
+        if (oboParser != null) {
+
+            try {
+                goTermId2ParentTermIdSetsMap = oboParser.getTermToParentTermSetMap();
+            } catch (Exception e) {
+                LOG.error("GoConverter - unable to get parent term map from the OboParser!", e);
+            }
         }
-        String goId = goTerm.getAttribute("identifier").getValue();
-        item.setAttribute("identifier", goId);
+
+        //------------------------- Produce a new GOAnnotation object -------------------------
+        String goId = placeHolder.getGoTerm().getAttribute("identifier").getValue();
+
+        Item currentGoItem = newGoAnnotationItem(
+                goId, "true", placeHolder.getGoEvidence(), placeHolder.getGoTerm().getIdentifier(),
+                placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
+                placeHolder.getGoTerm().getIdentifier());
+
+        //If the qualifier is not a NOT.
+        if (!"".equals(placeHolder.getQualifier())) {
+            currentGoItem.addAttribute(new Attribute("qualifier", placeHolder.getQualifier()));
+        }
+
         if (termIdNameMap.containsKey(goId)) {
-            item.setAttribute("name", (String) termIdNameMap.get(goId));
+            currentGoItem.setAttribute("name", (String) termIdNameMap.get(goId));
         }
-        item.setAttribute("evidenceCode", goEvidence);
-        item.setReference("subject", product.getIdentifier());
-        item.setReference("property", goTerm.getIdentifier());
-        if (!"".equals(withText)) {
-            item.setAttribute("withText", withText);
-            List with = createWithObjects(withText);
+
+        if (!"".equals(placeHolder.getWithText())) {
+            currentGoItem.setAttribute("withText", placeHolder.getWithText());
+            List with = createWithObjects(placeHolder.getWithText());
             if (with.size() != 0) {
                 List idList = new ArrayList();
                 Iterator withIter = with.iterator();
                 while (withIter.hasNext()) {
-                    Item withObject = (Item) withIter.next();
-                    writer.store(ItemHelper.convert(withObject));
-                    idList.add(withObject.getIdentifier());
+                    Item withObj = (Item) withIter.next();
+
+                    doStore(withObj, STORE_THREE);
+
+                    idList.add(withObj.getIdentifier());
                 }
-                item.addCollection(new ReferenceList("with", idList));
+                currentGoItem.addCollection(new ReferenceList("with", idList));
             }
         }
 
-        item.setReference("assignedBy", dataSource.getIdentifier());
-
-        if (publication != null) {
-            ReferenceList references = new ReferenceList();
-            references.setName("evidence");
-            references.addRefId(publication.getIdentifier());
-            item.addCollection(references);
+        ReferenceList references = new ReferenceList();
+        references.setName("evidence");
+        references.addRefId(placeHolder.getDatabase().getIdentifier());
+        if (placeHolder.getPublication() != null) {
+            references.addRefId(placeHolder.getPublication().getIdentifier());
         }
-        return item;
+        currentGoItem.addCollection(references);
+
+        if (isProductTypeGene) {
+            placeHolder.getGeneProductWrapper().getItem().addToCollection(
+                    "goAnnotation", currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection(
+                    "allGoAnnotation", currentGoItem);
+        }
+        else{
+            LOG.warn("Skipping setting go & allGo annotation collection for a:"
+                    + placeHolder.getGeneProductWrapper().getItem().getClassName() + " with ident:"
+                    + placeHolder.getGeneProductWrapper().getItem().getIdentifier());
+        }
+
+        //-------------- PRODUCE THE SET OF PARENT TERM LINKING GOANNOTATION OBJECTS ---------------
+        Set parentItems = new HashSet();
+
+        //If the go term has some parent terms we will want to create a GoAnnotation object
+        // for each of them as well.
+        if (goTermId2ParentTermIdSetsMap != null
+                && goTermId2ParentTermIdSetsMap.containsKey(goId)) {
+
+            //loop over the set of Id's and create a GoAnnotation object that links the gene
+            // geneProduct, the infered parent term and the current go term items.
+            Set parentTermIdsSet = (Set) goTermId2ParentTermIdSetsMap.get(goId);
+
+            if (parentTermIdsSet != null) {
+
+                for (Iterator parentIdIter = parentTermIdsSet.iterator(); parentIdIter.hasNext();) {
+
+                    LOG.debug("GoConverter - parents are being set for go a term:" + goId);
+
+                    String nextParentTermGoId = parentIdIter.next().toString();
+                    Item nextParentGoTermItem = null;
+
+                    //have we already seen this parent term ? if not we need to create a parent term
+                    if (goTerms.containsKey(nextParentTermGoId)) {
+                        nextParentGoTermItem = (Item) goTerms.get(nextParentTermGoId);
+                    } else {
+                        nextParentGoTermItem = newGoTerm(nextParentTermGoId);
+                    }
+
+                    Item parentItem = newGoAnnotationItem(
+                            nextParentTermGoId, "false", placeHolder.getGoEvidence(),
+                            placeHolder.getGoTerm().getIdentifier(),
+                            placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
+                            nextParentGoTermItem.getIdentifier()
+                    );
+
+                    if (termIdNameMap.containsKey(nextParentTermGoId)) {
+                        parentItem.setAttribute(
+                                "name", (String) termIdNameMap.get(nextParentTermGoId));
+                    }
+
+                    parentItems.add(parentItem);
+
+                    if (isProductTypeGene) {
+                        placeHolder.getGeneProductWrapper().getItem().addToCollection(
+                                "allGoAnnotation", parentItem);
+                    }
+                }
+            } else {
+                LOG.debug("GoConverter - skipping setting parents for go term:" + goId);
+            }
+        }
+
+        return new GoAnnotationItemWithParentSet(currentGoItem, parentItems);
+    }
+
+    /**
+     * Create a new go annotation item
+     *
+     * @param identifier          the identifier i.e. GO:0000001 etc etc
+     * @param isPrimaryAssignment a boolean expressed as a string indicating that this is the
+     * actual reference between
+     * @return the go annotation item
+     */
+    private Item newGoAnnotationItem(
+            String identifier, String isPrimaryAssignment, String evidenceCode,
+            String actualGoTerm, String subject, String property) {
+
+        Item goAnnoItem = createItem("GOAnnotation");
+        goAnnoItem.setAttribute("identifier", identifier);
+        goAnnoItem.setAttribute("isPrimaryAssignment", isPrimaryAssignment);
+        goAnnoItem.setAttribute("evidenceCode", evidenceCode);
+        goAnnoItem.setReference("actualGoTerm", actualGoTerm);
+        goAnnoItem.setReference("subject", subject);
+        goAnnoItem.setReference("property", property);
+        return goAnnoItem;
     }
 
 
@@ -205,10 +400,10 @@ public class GoConverter extends FileConverter
     }
 
 
-
     /**
      * Given the 'with' text from a gene_association entry parse for recognised identifier
      * types and create Gene or Protein items accordingly.
+     *
      * @param withText string from the gene_association entry
      * @return a list of Items
      */
@@ -240,17 +435,68 @@ public class GoConverter extends FileConverter
         return with;
     }
 
+    /**
+     * Puts all the store calls in one spot to make debuging a bit easier...
+     *
+     * @param itemToStore self titled...
+     * @param callSource info string so I can work out where the method was called from...
+     * */
+    private void doStore(Item itemToStore, String callSource) throws ObjectStoreException{
+
+        Attribute identAttr = itemToStore.getAttribute("identifier");
+        String i2sId = itemToStore.getIdentifier();
+
+        if(storedItemMap.containsKey(itemToStore.getIdentifier())){
+
+            StringBuffer bigLogMsg = new StringBuffer();
+
+            bigLogMsg.append("doStore ");
+            bigLogMsg.append(callSource);
+            bigLogMsg.append(" has seen this item id before:");
+            bigLogMsg.append(i2sId);
+            bigLogMsg.append(" id_attr:");
+            bigLogMsg.append(identAttr != null ? identAttr.getValue() : NO_ID_ATTR);
+            bigLogMsg.append(" previous_id_attr:");
+            bigLogMsg.append(storedItemMap.get(i2sId) != null ? storedItemMap.get(i2sId) : "no_prev_attr");
+            bigLogMsg.append(" are attrs the same:");
+
+            if(identAttr != null){
+                bigLogMsg.append(identAttr.getValue().equalsIgnoreCase(
+                            storedItemMap.get(i2sId).toString()) ? "true" : "false");
+            }
+
+            LOG.error(bigLogMsg.toString());
+        }
+        else{
+
+            LOG.warn("doStore " + callSource
+                    + " called on a new item:" + itemToStore.getClassName()
+                    + " id:"   + i2sId
+                    + " id_attr:" + (identAttr != null ? identAttr.getValue() : NO_ID_ATTR)
+            );
+
+            storedItemMap.put(
+                    i2sId,
+                    (identAttr != null ? identAttr.getValue() : NO_ID_ATTR)
+            );
+        }
+
+        writer.store(ItemHelper.convert(itemToStore));
+    }
+
+
 
     /**
-     * Create a new product of a certain type (gene or protein) of a certain organism
+     * Create a new geneProduct of a certain type (gene or protein) of a certain organism
+     *
      * @param identifier the identifier
-     * @param type the type
-     * @param organism the organism
-     * @return the product
+     * @param type       the type
+     * @param organism   the organism
+     * @return the geneProduct
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected Item newProduct(String identifier, String type, Item organism)
-        throws ObjectStoreException {
+    protected ItemWrapper newProduct(String identifier, String type, Item organism)
+            throws ObjectStoreException {
         String key = identifier + type + (organism == null ? "" : organism.getIdentifier());
         String idField = null;
         String clsName = null;
@@ -265,25 +511,21 @@ public class GoConverter extends FileConverter
             clsName = "Protein";
             idField = "primaryAccession";
         } else {
-            LOG.warn("Unrecognised product type '" + type + "'");
+            LOG.warn("Unrecognised geneProduct type '" + type + "'");
         }
-        Item item;
-        if ((clsName != null) && (product == null || !product.key.equals(key))) {
-            item = createItem(clsName);
-            item.addAttribute(new Attribute(idField, identifier));
-            if (organism != null) {
-                item.addReference(new Reference("organism", organism.getIdentifier()));
-            }
-            writer.store(ItemHelper.convert(item));
-            product = new ItemWrapper(key, item);
-        } else {
-            item = product.item;
+
+        Item product = createItem(clsName);
+        if (organism != null) {
+            product.addReference(new Reference("organism", organism.getIdentifier()));
         }
-        return item;
+        product.addAttribute(new Attribute(idField, identifier));
+
+        return new ItemWrapper(key, product);
     }
 
     /**
      * Create a new go term
+     *
      * @param identifier the identifier
      * @return the go term
      */
@@ -299,6 +541,7 @@ public class GoConverter extends FileConverter
 
     /**
      * Create a new DataSource item given a database code
+     *
      * @param code the code
      * @return the database
      */
@@ -328,7 +571,7 @@ public class GoConverter extends FileConverter
                 title = "SWALL";
             } else {
                 throw new IllegalArgumentException("Database with code '" + code
-                                                   + "' not recognised");
+                        + "' not recognised");
             }
             item.addAttribute(new Attribute("name", title));
             databases.put(code, item);
@@ -336,9 +579,9 @@ public class GoConverter extends FileConverter
         return item;
     }
 
-
     /**
      * Create a new publication given list of codes
+     *
      * @param codes the codes
      * @return the publication
      */
@@ -362,6 +605,7 @@ public class GoConverter extends FileConverter
 
     /**
      * Create a new organism given a taxonomy id
+     *
      * @param taxonId the taxonId
      * @return the organism
      */
@@ -381,11 +625,144 @@ public class GoConverter extends FileConverter
 
     /**
      * Convenience method for creating a new Item
+     *
      * @param className the name of the class
      * @return a new Item
      */
     protected Item createItem(String className) {
+
         return itemFactory.makeItem(alias(className) + "_" + (id++), GENOMIC_NS + className, "");
+    }
+
+    /**
+     * Class that saves information for making GoAnnotationItemWithParentSet objects until the
+     * entire file is processed.
+     *
+     * Was introduced to avoid storing the same item more than once...
+     * */
+    class GoAnnoWithParentsPlaceHolder
+    {
+
+        private String qualifier;
+        private Item database;
+        private Item publication;
+        private String goEvidence;
+        private ItemWrapper geneProduct;
+        private Item goTerm;
+        private String withText;
+
+        private ArrayList extraPublicationList;
+
+        private GoAnnoWithParentsPlaceHolder(){
+            extraPublicationList = new ArrayList();
+        }
+
+        public GoAnnoWithParentsPlaceHolder(
+                String qualifier, Item database, Item publication, String goEvidence,
+                ItemWrapper product, Item goTerm, String withText) {
+            this();
+            this.qualifier = qualifier;
+            this.database = database;
+            this.publication = publication;
+            this.goEvidence = goEvidence;
+            this.geneProduct = product;
+            this.goTerm = goTerm;
+            this.withText = withText;
+        }
+
+        public String getQualifier() {
+            return qualifier;
+        }
+
+        public Item getDatabase() {
+            return database;
+        }
+
+        public Item getPublication() {
+            return publication;
+        }
+
+        public String getGoEvidence() {
+            return goEvidence;
+        }
+
+        public ItemWrapper getGeneProductWrapper() {
+            return geneProduct;
+        }
+
+        public Item getGoTerm() {
+            return goTerm;
+        }
+
+        public String getWithText() {
+            return withText;
+        }
+
+        public ArrayList getExtraPublicationList() {
+            return extraPublicationList;
+        }
+    }
+
+    /**
+     * Class to hold the current GoAnnotation Item and the set of its parent terms.
+     */
+    class GoAnnotationItemWithParentSet
+    {
+
+        private Item goAnnotationItem;
+        private Set parentItems;
+
+        /**
+         * Constructor
+         *
+         * @param goAnnotationItem - current go term of interest
+         * @param parentItems - set of current items parent terms
+         * */
+        GoAnnotationItemWithParentSet(Item goAnnotationItem, Set parentItems) {
+            this.goAnnotationItem = goAnnotationItem;
+            this.parentItems = parentItems;
+        }
+
+        /**
+         * @return Get the current go term.
+         * */
+        Item getGoAnnotationItem() {
+            return goAnnotationItem;
+        }
+
+        /**
+         * @return Get the parent go term set for the current go term.
+         * */
+        Set getParentItems() {
+            return parentItems;
+        }
+
+
+        public String toPeteString(){
+
+            StringBuffer tsBuff = new StringBuffer();
+
+            Item item = goAnnotationItem;
+
+            tsBuff.append("\nGOANNOITEM: "
+                    + item.getClassName() + " "
+                    + item.getAttribute("identifier").getValue() + " "
+                    + (item.getIdentifier()!= null ? item.getIdentifier() : "no_id")
+                    + "\n"
+            );
+
+            for(Iterator piit = parentItems.iterator(); piit.hasNext(); ){
+                item = (Item)piit.next();
+                tsBuff.append("NEXTPARENT: "
+                        + item.getClassName() + " " 
+                        + item.getAttribute("identifier").getValue() + " "
+                        + (item.getIdentifier()!= null ? item.getIdentifier() : "no_id")
+                        + "\n"
+                );
+            }
+
+            return tsBuff.toString();
+        }
     }
 
     /**
@@ -398,17 +775,26 @@ public class GoConverter extends FileConverter
 
         /**
          * Constructor
-         * @param key the key
+         *
+         * @param key  the key
          * @param item the Item
          */
         ItemWrapper(String key, Item item) {
             this.key = key;
             this.item = item;
         }
+
+        public String getKey() {
+            return key;
+        }
+
+        public Item getItem() {
+            return item;
+        }
     }
 
     /**
-     * Identify a GoTerm/product pair with evidence code and qualifier
+     * Identify a GoTerm/geneProduct pair with evidence code and qualifier
      */
     class GoTermProduct
     {
@@ -419,9 +805,10 @@ public class GoConverter extends FileConverter
 
         /**
          * Constructor
+         *
          * @param productId gene/protein identifier
-         * @param goId GO term id
-         * @param code evidence code
+         * @param goId      GO term id
+         * @param code      evidence code
          * @param qualifier qualifier
          */
         GoTermProduct(String productId, String goId, String code, String qualifier) {
@@ -438,9 +825,9 @@ public class GoConverter extends FileConverter
             if (o instanceof GoTermProduct) {
                 GoTermProduct go = (GoTermProduct) o;
                 return productId.equals(go.productId)
-                    && goId.equals(go.goId)
-                    && code.equals(go.code)
-                    && qualifier.equals(go.qualifier);
+                        && goId.equals(go.goId)
+                        && code.equals(go.code)
+                        && qualifier.equals(go.qualifier);
             }
             return false;
         }
@@ -450,9 +837,28 @@ public class GoConverter extends FileConverter
          */
         public int hashCode() {
             return (3 * productId.hashCode())
-                + (5 * goId.hashCode())
-                + (7 * code.hashCode())
-                + (11 * qualifier.hashCode());
+                    + (5 * goId.hashCode())
+                    + (7 * code.hashCode())
+                    + (11 * qualifier.hashCode());
+        }
+
+        /**
+         * @see Object#toString()
+         */
+        public String toString(){
+
+            StringBuffer toStringBuff = new StringBuffer();
+
+            toStringBuff.append("GoTermProduct - productId:");
+            toStringBuff.append(productId);
+            toStringBuff.append(" goId:");
+            toStringBuff.append(goId);
+            toStringBuff.append(" code:");
+            toStringBuff.append(code);
+            toStringBuff.append(" qualifier:");
+            toStringBuff.append(qualifier);
+
+            return  toStringBuff.toString();
         }
     }
 
@@ -467,7 +873,8 @@ public class GoConverter extends FileConverter
 
         /**
          * Constructor
-         * @param clsName the classname
+         *
+         * @param clsName   the classname
          * @param fieldName name of field to set
          */
         WithType(String clsName, String fieldName) {
