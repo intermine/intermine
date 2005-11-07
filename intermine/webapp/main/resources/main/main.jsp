@@ -183,21 +183,6 @@
       </div>
       <div class="body">
       <div>
-        <div style="float: right; margin-left:5px;background: #f5f5f5;padding: 3px;border:1px solid #888; font-size: 10px;">
-          <html:form action="/mainAction">
-          <span style="white-space: nowrap">
-          <i>Default logic:</i>
-            <select name="operator" side="1" style="font-size: 10px;" onchange="this.form.submit()">
-              <option value="and" ${DEFAULT_OPERATOR == 'and' ? 'selected' : ''} >and</option>
-              <option value="or" ${DEFAULT_OPERATOR == 'or' ? 'selected' : ''} >or</option>
-            </select>
-            <input type="hidden" name="defaultOperator" value="1"/>
-            <noscript>
-              <input type="submit" value="Change" style="font-size: 10px;"/>
-            </noscript>
-          </span>
-          </html:form>
-        </div>
         <fmt:message key="query.currentquery.detail"/>
       </div>
       <br/>
@@ -423,7 +408,7 @@
         <c:if test="${editingConstraintIndex != null}">
           <html:hidden property="cindex" value="${editingConstraintIndex}"/>
         </c:if>
-      	
+      
         <c:if test="${TEMPLATE_BUILD_STATE != null && (editingTemplateConstraint)}"> <%-- || param.deletePath != null)}"> --%>
           <c:set var="constraint" value="${editingNode.constraints[editingConstraintIndex]}" scope="request"/>
           <tiles:insert page="constraintSettings.jsp"/>
@@ -433,6 +418,14 @@
         
         <div class="heading"><fmt:message key="query.constrain"/><im:helplink key="query.help.constrain"/></div>
         <div class="body">
+        
+          <c:if test="${editingConstraintIndex == null && fn:length(QUERY.allConstraints) > 0}">
+            <p align="center">
+            <html:radio property="operator" value="and"/>AND&nbsp;&nbsp;
+            <html:radio property="operator" value="or"/>OR
+            </p>
+          </c:if>
+        
           <c:choose>
             <c:when test="${empty editingNode.fieldName}">
               <span class="type">

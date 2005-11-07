@@ -10,10 +10,7 @@
 <!-- view.jsp -->
 <html:xhtml/>
 
-
-
-  
-  <style>
+<style>
  
 .viewTable td.topLeft {
   border-right: 1px solid #bbb;
@@ -29,7 +26,6 @@
 .viewTable td.tab {
   border-top: 1px solid #bbb;
   border-right: 1px solid #bbb;
-  spacing-right: 3px;
 }
 
 .viewTable td.selected {
@@ -77,7 +73,7 @@
   text-decoration: underline;
 }
     
-  </style>
+</style>
   
 
 <a name="showing"></a>
@@ -238,15 +234,15 @@
 </c:choose>
     
   <c:if test="${!empty viewList}">
-    <p>
       <div style="clear:left">
+        <p style="padding-top:0px">
         <html:form action="/viewAction">
           <html:submit property="action">
             <fmt:message key="view.showresults"/>
           </html:submit>
         </html:form>
+        </p>
       </div>
-    </p>
     
       <script type="text/javascript">
         
@@ -263,18 +259,6 @@
         function recordCurrentOrder() {
           previousOrder = Sortable.serialize('viewDivs');
           previousOrder = previousOrder.replace(/viewDivs/g, 'oldOrder');
-        }
-        
-        function moveLeft(element) {
-          var container = element.parentNode;
-          container.insertBefore(element, element.previousSibling);
-          reorderOnServer();
-        }
-        
-        function moveRight(element) {
-          var container = element.parentNode;
-          container.insertAfter(element, element.previousSibling);
-          reorderOnServer();
         }
         
         /**
