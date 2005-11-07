@@ -99,15 +99,23 @@
 
 <div class="view">
   <div class="body">
-        
-<c:choose>
-  <c:when test="${TEMPLATE_BUILD_STATE != null}">
-    <c:if test="${fn:length(viewList) > 1}">
+  
+  <c:if test="${fn:length(viewList) > 1}">
+    <noscript>
       <div>
         <fmt:message key="view.columnOrderingTip"/>
       </div>
-    </c:if>
+    </noscript>
+    <script type="text/javascript">
+    <!--
+    document.write('<fmt:message key="view.columnOrderingTip.jscript"/>');
+    // -->
+    </script>
     <p>
+  </c:if>
+  
+<c:choose>
+  <c:when test="${TEMPLATE_BUILD_STATE != null}">
     <table cellpadding="5" cellspacing="0" border="0" class="viewTable" width="100%">
       <tr>
         <td class="topLeft" nowrap>
@@ -239,6 +247,51 @@
         </html:form>
       </div>
     </p>
+    
+      <script type="text/javascript">
+        
+        var previousOrder = '';
+        
+        Sortable.create('viewDivs', {
+          tag:'div', constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
+            reorderOnServer();
+          }
+        });
+        
+        recordCurrentOrder();
+        
+        function recordCurrentOrder() {
+          previousOrder = Sortable.serialize('viewDivs');
+          previousOrder = previousOrder.replace(/viewDivs/g, 'oldOrder');
+        }
+        
+        function moveLeft(element) {
+          var container = element.parentNode;
+          container.insertBefore(element, element.previousSibling);
+          reorderOnServer();
+        }
+        
+        function moveRight(element) {
+          var container = element.parentNode;
+          container.insertAfter(element, element.previousSibling);
+          reorderOnServer();
+        }
+        
+        /**
+         * Send the previous order and the new order to the server.
+         */
+        function reorderOnServer() {
+          var newOrder = Sortable.serialize('viewDivs');
+          //$('ser').innerHTML=newOrder;
+          new Ajax.Request('<html:rewrite action="/viewChange"/>', {
+            parameters:'method=reorder&'+previousOrder+'&'+newOrder,
+            asynchronous:true
+          });
+          recordCurrentOrder();
+        }
+        
+      </script>
+      
   </c:if>
   
   </div>

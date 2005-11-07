@@ -7,8 +7,9 @@
 
 <!-- viewLine.jsp -->
 
+      <div id="viewDivs">
         <c:forEach var="path" items="${viewList}" varStatus="status">
-          <im:viewableDiv path="${path}" viewPaths="${viewPaths}" idPrefix="showing">
+          <im:viewableDiv path="${path}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}">
             <div>
                   <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[path]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[path]]}">
                     ${fn:replace(path, ".", " > ")}
@@ -17,10 +18,11 @@
             <div>
               <span class="type"><small>${viewPathTypes[path]}</small></span>
             </div>
-            <div style="white-space:nowrap">
+            <div style="white-space:nowrap;">
+              <noscript>
               <c:choose>
                 <c:when test="${status.first}">
-                  <img style="margin-right: 5px" border="0" align="middle" 
+                    <img style="margin-right: 5px" border="0" align="middle" 
                        src="images/blank13x13.gif" alt=" " width="13" height="13"/>
                 </c:when>
                 <c:otherwise>
@@ -38,6 +40,7 @@
                   
                 </c:otherwise>
               </c:choose>                
+              </noscript>
 
               <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
                 <fmt:param value="${path}"/>
@@ -48,9 +51,10 @@
                              title="${removeFromViewTitle}">
                     <img border="0" align="middle" 
                          src="images/cross.gif" width="13" height="13" 
-                         alt="${removeFromViewString}"/>
+                         alt="${removeFromViewString}" style="margin-top: 3px;"/>
                   </html:link>
-                
+              
+              <noscript>
               <c:choose>
                 <c:when test="${status.last}">
                   <img style="margin-left: 5px" border="0" align="middle" 
@@ -71,9 +75,14 @@
                       
                 </c:otherwise>
               </c:choose>
+              </noscript>
+              
             </div>
           </im:viewableDiv>
         </c:forEach>
+      </div>
+      
+      <p><span id="ser"></span></p>
       
 <!-- viewLine.jsp -->
 
