@@ -30,7 +30,7 @@ flags:
  -r attempt to restart just after the last dump point _without_ loading a dump
 
 example:
-  $0 /tmp/production_dump
+  $0 gollum /tmp/production_dump
 EOF
 }
 
