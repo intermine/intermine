@@ -379,6 +379,7 @@
             type="org.intermine.web.history.ModifyQueryAction"
             name="modifyQueryForm"
             parameter="action"
+            scope="request"
             input="history">
       <forward name="history" path="/history.do" redirect="true"/>
     </action>
@@ -387,6 +388,7 @@
             type="org.intermine.web.history.ModifyBagAction"
             name="modifyBagForm"
             parameter="action"
+            scope="request"
             input="history">
       <forward name="history" path="/history.do" redirect="true"/>
     </action>
@@ -395,6 +397,7 @@
             type="org.intermine.web.history.ModifyTemplateAction"
             name="modifyTemplateForm"
             parameter="action"
+            scope="request"
             input="history">
       <forward name="history" path="/history.do" redirect="true"/>
     </action>
