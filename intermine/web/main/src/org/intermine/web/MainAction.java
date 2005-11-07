@@ -123,12 +123,12 @@ public class MainAction extends InterMineAction
             query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
         }
         
-        if (request.getParameter("defaultOperator") != null) {
-            session.setAttribute(Constants.DEFAULT_OPERATOR, request.getParameter("operator"));
+        if (cindex != null) {
+            session.setAttribute(Constants.DEFAULT_OPERATOR, mf.getOperator());
         }
         
         if (query.getAllConstraints().size() == previousConstraintCount + 1) {
-            query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
+            query.syncLogicExpression(mf.getOperator());
         }
         
         mf.reset(mapping, request);

@@ -42,6 +42,7 @@ public class MainForm extends ActionForm
     protected String loopQueryOp, loopQueryValue;
 
     protected String path;
+    protected String operator;
     protected String nullConstraint;
     protected Object parsedAttributeValue;
     
@@ -179,6 +180,22 @@ public class MainForm extends ActionForm
         this.path = path;
     }
 
+    /**
+     * Get the operator.
+     * @return "and" or "or"
+     */
+    public String getOperator() {
+        return operator;
+    }
+    
+    /**
+     * Set the operator, "and" or "or"
+     * @param operator the operator
+     */
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+    
     /**
      * Get the null/not null constraint value. Returned value will be
      * either "NULL" or "NotNULL".
@@ -350,5 +367,6 @@ public class MainForm extends ActionForm
         templateLabel = "";
         templateId = "";
         editable = false;
+        operator = (String) request.getSession().getAttribute(Constants.DEFAULT_OPERATOR);
     }
 }
