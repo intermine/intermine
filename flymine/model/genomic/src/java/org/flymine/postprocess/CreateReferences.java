@@ -146,16 +146,12 @@ public class CreateReferences
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-        LOG.info("insertReferences stage 13 - now deprecated - "
-                + "this function is now performed by the GoConverter !!!");
-        // Gene.goAnnotations
-        //createGOAnnotationCollection();
 
-        LOG.info("insertReferences stage 14");
+        LOG.info("insertReferences stage 13");
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
-        LOG.info("insertReferences stage 15");
+        LOG.info("insertReferences stage 14");
         // Gene.microArrayResults
         createMicroArrayResultsCollection();
 
@@ -627,86 +623,6 @@ public class CreateReferences
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
             ClassDescriptor cld = model.getClassDescriptorByName(Annotation.class.getName());
-            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-        }
-    }
-
-    /**
-     * Creates a collection of GOAnnotation objects on Genes.
-     * @throws Exception if anything goes wrong
-     * @deprecated no longer needed as this is done in the GoConverter now ???
-     */
-    protected void createGOAnnotationCollection() throws Exception {
-        Query q = new Query();
-
-        q.setDistinct(false);
-
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-        q.addToOrderBy(qcGene);
-
-        QueryClass qcGOAnnotation = new QueryClass(GOAnnotation.class);
-        q.addFrom(qcGOAnnotation);
-        q.addToSelect(qcGOAnnotation);
-        q.addToOrderBy(qcGOAnnotation);
-
-        QueryCollectionReference geneAnnCol =
-            new QueryCollectionReference(qcGene, "annotations");
-        ContainsConstraint ccGeneAnnotations =
-            new ContainsConstraint(geneAnnCol, ConstraintOp.CONTAINS, qcGOAnnotation);
-        q.setConstraint(ccGeneAnnotations);
-
-        ObjectStore os = osw.getObjectStore();
-
-        ((ObjectStoreInterMineImpl) os).precompute(q);
-        Results res = new Results(q, os, os.getSequence());
-        res.setBatchSize(500);
-
-        int count = 0;
-        Gene lastGene = null;
-        Set newCollection = new HashSet();
-
-        osw.beginTransaction();
-
-        Iterator resIter = res.iterator();
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            Gene thisGene = (Gene) rr.get(0);
-            GOAnnotation goAnnotation = (GOAnnotation) rr.get(1);
-
-            if (lastGene == null || !thisGene.getId().equals(lastGene.getId())) {
-                if (lastGene != null) {
-                    // clone so we don't change the ObjectStore cache
-                    Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
-                    TypeUtil.setFieldValue(tempGene, "goAnnotation", newCollection);
-                    osw.store(tempGene);
-                    count++;
-                }
-
-                newCollection = new HashSet();
-            }
-
-            newCollection.add(goAnnotation);
-
-            lastGene = thisGene;
-        }
-
-        if (lastGene != null) {
-            // clone so we don't change the ObjectStore cache
-            Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
-            TypeUtil.setFieldValue(tempGene, "goAnnotation", newCollection);
-            osw.store(tempGene);
-            count++;
-        }
-        LOG.info("Created " + count + " Gene.goAnnotation collections in");
-        osw.commitTransaction();
-
-
-        // now ANALYSE tables relating to class that has been altered - may be rows added
-        // to indirection tables
-        if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(GOAnnotation.class.getName());
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }

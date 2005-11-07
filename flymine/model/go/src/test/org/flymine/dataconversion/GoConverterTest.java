@@ -12,31 +12,39 @@ package org.flymine.dataconversion;
 
 import junit.framework.TestCase;
 
-import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.TargetItemsTestCase;
-import org.intermine.dataconversion.FileConverter;
+//import org.intermine.dataconversion.TargetItemsTestCase;
+//import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.metadata.Model;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+//import com.hp.hpl.jena.ontology.OntModel;
+//import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class GoConverterTest extends TestCase
 {
+
+    public static void main(String[] args) {
+
+        GoConverterTest goConverterTest = new GoConverterTest("GoConverterTest");
+        try {
+            goConverterTest.setUp();
+            goConverterTest.testTranslate();
+            goConverterTest.testOboTranslate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private File goFile;
+    private File goOboFile;
+
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     public GoConverterTest(String arg) {
@@ -46,10 +54,17 @@ public class GoConverterTest extends TestCase
     public void setUp() throws Exception {
         goFile = File.createTempFile("go-tiny", ".ontology");
         Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.ontology"));
+        writeTempFile(goFile, goReader);
 
-        FileWriter fileWriter = new FileWriter(goFile);
+        goOboFile = File.createTempFile("go-tiny", ".obo");
+        Reader goOboReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.obo"));
+        writeTempFile(goOboFile, goOboReader);
+    }
+
+    private void writeTempFile(File outFile, Reader srcFileReader) throws Exception{
+        FileWriter fileWriter = new FileWriter(outFile);
         int c;
-        while ((c = goReader.read()) > 0) {
+        while ((c = srcFileReader.read()) > 0) {
             fileWriter.write(c);
         }
         fileWriter.close();
@@ -57,18 +72,41 @@ public class GoConverterTest extends TestCase
 
     public void tearDown() throws Exception {
         goFile.delete();
+        goOboFile.delete();
     }
 
     public void testTranslate() throws Exception {
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/GoConverterTest_src.txt"));
+        translateCommon(goFile, "/resources/test/GoConverterTest_src.txt",
+                "/resources/test/GoConverterTest_tgt.xml", false, false);
+    }
+
+    public void testOboTranslate() throws Exception {
+
+        translateCommon(goOboFile, "/resources/test/GoConverterOboTest_src.txt",
+                "/resources/test/GoConverterOboTest_tgt.xml", false, false);
+
+    }
+
+    private void translateCommon(File onotologyFile, String srcFile, String tgtFile,
+                                 boolean verbose, boolean writeItemFile) throws Exception{
+
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(srcFile));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
-        converter.setOntology(goFile);
+        converter.setOntology(onotologyFile);
         converter.process(reader);
         converter.close();
 
-        //System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), writer.getItems()));
-        assertEquals(new HashSet(getExpectedItems()), writer.getItems());
+        if(verbose){
+            System.out.println(DataTranslatorTestCase.printCompareItemSets(
+                    new HashSet(getExpectedItems(tgtFile)), writer.getItems()));
+        }
+
+        assertEquals(new HashSet(getExpectedItems(tgtFile)), writer.getItems());
+
+        if(writeItemFile){
+            writeItemCollectionOutToFile(getExpectedItems(tgtFile), "GoConverterTestItemFile", "xml", true);
+        }
     }
 
     public void testCreateWithObjects() throws Exception {
@@ -86,7 +124,38 @@ public class GoConverterTest extends TestCase
         assertEquals(expected, converter.createWithObjects("FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612"));
     }
 
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("resources/test/GoConverterTest_tgt.xml"));
+    protected Collection getExpectedItems( String targetFile ) throws Exception {
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream(targetFile));
+    }
+
+    /*
+        Use this to write out a test file for comparing the source data with...
+    */
+    private void writeItemCollectionOutToFile(Collection itemCollection, String fileName, String suffix,
+                                              boolean includeItemsTag){
+
+        try {
+            File itemLogFile =File.createTempFile(fileName, suffix);
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(itemLogFile, true));
+
+            if(includeItemsTag){
+                writer.write("<items>\n");
+            }
+
+            for( Iterator icit = itemCollection.iterator(); icit.hasNext(); ){
+                writer.write(icit.next().toString() + "\n");
+            }
+
+            if(includeItemsTag){
+                writer.write("</items>\n\n");
+            }
+
+            writer.flush();
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
