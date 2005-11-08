@@ -143,6 +143,12 @@
     </collection>
   </item>
   <item id="-1_40" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="CG2803"/>
+    <reference name="source" ref_id="-1_37"/>
+    <reference name="subject" ref_id="-1_38"/>
+  </item>
+  <item id="-1_41" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="Tina-1"/>
     <reference name="source" ref_id="-1_4"/>
@@ -179,6 +185,7 @@
     <attribute name="name" value="FlyBase"/>
   </item>
   <item id="-1_38" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="CG2803"/>
     <attribute name="organismDbId" value="FBgn0035083"/>
     <reference name="organism" ref_id="-1_27"/>
     <collection name="evidence">
@@ -187,6 +194,7 @@
     <collection name="synonyms">
       <reference ref_id="-1_39"/>
       <reference ref_id="-1_40"/>
+      <reference ref_id="-1_41"/>
     </collection>
   </item>
   <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">

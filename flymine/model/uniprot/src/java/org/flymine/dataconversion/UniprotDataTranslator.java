@@ -74,7 +74,7 @@ public class UniprotDataTranslator extends DataTranslator
 
     private Set geneIdentifiers = new HashSet();
 
-    private static final String SRC_NS = "http://www.flymine.org/model#";
+    private static final String SRC_NS = "http://www.flymine.org/model/uniprot#";
 
     /**
      * @see DataTranslator
