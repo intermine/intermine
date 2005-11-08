@@ -2,15 +2,6 @@
     <item id="1_9" class="http://www.flymine.org/model/genomic#GOTerm">
         <attribute name="identifier" value="GO:0000001"/>
     </item>
-    <item id="4_14" class="http://www.flymine.org/model/genomic#GOAnnotation">
-        <attribute name="evidenceCode" value="NAS"/>
-        <attribute name="identifier" value="GO:0000001"/>
-        <attribute name="isPrimaryAssignment" value="false"/>
-        <attribute name="name" value="root term 1"/>
-        <reference name="actualGoTerm" ref_id="1_1"/>
-        <reference name="property" ref_id="1_9"/>
-        <reference name="subject" ref_id="3_3"/>
-    </item>
     <item id="4_10" class="http://www.flymine.org/model/genomic#GOAnnotation">
         <attribute name="evidenceCode" value="NAS"/>
         <attribute name="identifier" value="GO:0000001"/>
@@ -19,6 +10,19 @@
         <reference name="actualGoTerm" ref_id="1_6"/>
         <reference name="property" ref_id="1_9"/>
         <reference name="subject" ref_id="3_3"/>
+    </item>
+    <item id="4_15" class="http://www.flymine.org/model/genomic#GOAnnotation">
+        <attribute name="evidenceCode" value="NAS"/>
+        <attribute name="identifier" value="GO:0000004"/>
+        <attribute name="isPrimaryAssignment" value="true"/>
+        <attribute name="name" value="child term a"/>
+        <attribute name="withText" value="FLYBASE:Grip84;"/>
+        <reference name="actualGoTerm" ref_id="1_1"/>
+        <reference name="property" ref_id="1_1"/>
+        <reference name="subject" ref_id="3_3"/>
+        <collection name="evidence">
+            <reference ref_id="0_0"/>
+        </collection>
     </item>
     <item id="4_12" class="http://www.flymine.org/model/genomic#GOAnnotation">
         <attribute name="evidenceCode" value="NAS"/>
@@ -29,11 +33,33 @@
         <reference name="property" ref_id="1_4"/>
         <reference name="subject" ref_id="3_3"/>
     </item>
+    <item id="4_13" class="http://www.flymine.org/model/genomic#GOAnnotation">
+        <attribute name="evidenceCode" value="NAS"/>
+        <attribute name="identifier" value="GO:0000005"/>
+        <attribute name="isPrimaryAssignment" value="true"/>
+        <attribute name="name" value="child term b"/>
+        <attribute name="withText" value="FLYBASE:Grip85;"/>
+        <reference name="actualGoTerm" ref_id="1_4"/>
+        <reference name="property" ref_id="1_4"/>
+        <reference name="subject" ref_id="3_3"/>
+        <collection name="evidence">
+            <reference ref_id="0_0"/>
+        </collection>
+    </item>
     <item id="1_6" class="http://www.flymine.org/model/genomic#GOTerm">
         <attribute name="identifier" value="GO:0000011"/>
     </item>
     <item id="0_0" class="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="FlyBase"/>
+    </item>
+    <item id="4_14" class="http://www.flymine.org/model/genomic#GOAnnotation">
+        <attribute name="evidenceCode" value="NAS"/>
+        <attribute name="identifier" value="GO:0000001"/>
+        <attribute name="isPrimaryAssignment" value="false"/>
+        <attribute name="name" value="root term 1"/>
+        <reference name="actualGoTerm" ref_id="1_4"/>
+        <reference name="property" ref_id="1_9"/>
+        <reference name="subject" ref_id="3_3"/>
     </item>
     <item id="1_1" class="http://www.flymine.org/model/genomic#GOTerm">
         <attribute name="identifier" value="GO:0000004"/>
@@ -46,19 +72,6 @@
         <attribute name="withText" value="FLYBASE:Grip86;"/>
         <reference name="actualGoTerm" ref_id="1_6"/>
         <reference name="property" ref_id="1_6"/>
-        <reference name="subject" ref_id="3_3"/>
-        <collection name="evidence">
-            <reference ref_id="0_0"/>
-        </collection>
-    </item>
-    <item id="4_13" class="http://www.flymine.org/model/genomic#GOAnnotation">
-        <attribute name="evidenceCode" value="NAS"/>
-        <attribute name="identifier" value="GO:0000004"/>
-        <attribute name="isPrimaryAssignment" value="true"/>
-        <attribute name="name" value="child term a"/>
-        <attribute name="withText" value="FLYBASE:Grip84;"/>
-        <reference name="actualGoTerm" ref_id="1_1"/>
-        <reference name="property" ref_id="1_1"/>
         <reference name="subject" ref_id="3_3"/>
         <collection name="evidence">
             <reference ref_id="0_0"/>
@@ -86,6 +99,15 @@
             <reference ref_id="4_15"/>
         </collection>
     </item>
+    <item id="4_16" class="http://www.flymine.org/model/genomic#GOAnnotation">
+        <attribute name="evidenceCode" value="NAS"/>
+        <attribute name="identifier" value="GO:0000001"/>
+        <attribute name="isPrimaryAssignment" value="false"/>
+        <attribute name="name" value="root term 1"/>
+        <reference name="actualGoTerm" ref_id="1_1"/>
+        <reference name="property" ref_id="1_9"/>
+        <reference name="subject" ref_id="3_3"/>
+    </item>
     <item id="4_11" class="http://www.flymine.org/model/genomic#GOAnnotation">
         <attribute name="evidenceCode" value="NAS"/>
         <attribute name="identifier" value="GO:0000004"/>
@@ -93,28 +115,6 @@
         <attribute name="name" value="child term a"/>
         <reference name="actualGoTerm" ref_id="1_6"/>
         <reference name="property" ref_id="1_1"/>
-        <reference name="subject" ref_id="3_3"/>
-    </item>
-    <item id="4_15" class="http://www.flymine.org/model/genomic#GOAnnotation">
-        <attribute name="evidenceCode" value="NAS"/>
-        <attribute name="identifier" value="GO:0000005"/>
-        <attribute name="isPrimaryAssignment" value="true"/>
-        <attribute name="name" value="child term b"/>
-        <attribute name="withText" value="FLYBASE:Grip85;"/>
-        <reference name="actualGoTerm" ref_id="1_4"/>
-        <reference name="property" ref_id="1_4"/>
-        <reference name="subject" ref_id="3_3"/>
-        <collection name="evidence">
-            <reference ref_id="0_0"/>
-        </collection>
-    </item>
-    <item id="4_16" class="http://www.flymine.org/model/genomic#GOAnnotation">
-        <attribute name="evidenceCode" value="NAS"/>
-        <attribute name="identifier" value="GO:0000001"/>
-        <attribute name="isPrimaryAssignment" value="false"/>
-        <attribute name="name" value="root term 1"/>
-        <reference name="actualGoTerm" ref_id="1_4"/>
-        <reference name="property" ref_id="1_9"/>
         <reference name="subject" ref_id="3_3"/>
     </item>
     <item id="2_2" class="http://www.flymine.org/model/genomic#Organism">
