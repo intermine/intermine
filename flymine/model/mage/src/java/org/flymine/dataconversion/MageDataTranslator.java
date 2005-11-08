@@ -743,7 +743,7 @@ public class MageDataTranslator extends DataTranslator
 
                                     Item srcParam = getReference(valueItem, "parameterType");
                                     if (srcParam.hasAttribute("name")) {
-                                        if ("Label used".equals(srcParam.getAttribute("name")
+                                        if ("Label used".equalsIgnoreCase(srcParam.getAttribute("name")
                                                                 .getValue())
                                             && value != null) {
                                             return value;
