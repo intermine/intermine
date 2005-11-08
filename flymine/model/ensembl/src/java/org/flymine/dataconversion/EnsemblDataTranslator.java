@@ -306,6 +306,7 @@ public class EnsemblDataTranslator extends DataTranslator
                         result.add(synonym);
                     }
                 } else if ("translation".equals(className)) {
+                    tgtItem.addReference(organismRef);
                     // if protein can be created it will be put in proteins collection and stored
                     // at end of translating
                     Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
