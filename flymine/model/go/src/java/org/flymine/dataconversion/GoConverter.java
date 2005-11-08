@@ -44,22 +44,22 @@ public class GoConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Map productWrapperMap = new HashMap();
-    protected Map goTerms = new HashMap();
-    protected Map datasources = new HashMap();
-    protected Map publications = new HashMap();
-    protected Map organisms = new HashMap();
-    protected Map termIdNameMap = new HashMap();
+    protected Map productWrapperMap = new LinkedHashMap();
+    protected Map goTerms = new LinkedHashMap();
+    protected Map datasources = new LinkedHashMap();
+    protected Map publications = new LinkedHashMap();
+    protected Map organisms = new LinkedHashMap();
+    protected Map termIdNameMap = new LinkedHashMap();
     protected int id = 0;
     protected File ontology;
-    protected Map withTypes = new HashMap();
+    protected Map withTypes = new LinkedHashMap();
 
     protected ItemFactory itemFactory;
 
     private OboParser oboParser = null;
 
     /*Some Debugging vars*/
-    private HashMap storedItemMap = new HashMap();
+    private Map storedItemMap = new LinkedHashMap();
     private static final String STORE_ONE = "store_1";
     private static final String STORE_TWO = "store_2";
     private static final String STORE_THREE = "store_3";
@@ -95,8 +95,7 @@ public class GoConverter extends FileConverter
      * */
     public void process(Reader reader) throws ObjectStoreException, IOException {
 
-        Map holderMap = new HashMap();
-        //Set geneProductSet = new HashSet();
+        Map holderMap = new LinkedHashMap();
 
         if (ontology == null) {
             throw new BuildException("ontology must be specified");
@@ -221,7 +220,6 @@ public class GoConverter extends FileConverter
         store(publications.values());
         store(organisms.values());
     }
-
 
     /**
      * Create a new annotation item linking a geneProduct with a term - with evidence code -
