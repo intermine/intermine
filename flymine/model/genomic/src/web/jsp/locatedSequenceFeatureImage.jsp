@@ -6,7 +6,9 @@
 <!-- locatedSequenceFeatureImage.jsp -->
 <fmt:setBundle basename="model"/>
 
-<c:if test="${!empty object.chromosomeLocation || cld.unqualifiedName == 'Chromosome'}">
+
+<c:if test="${(!empty object.chromosomeLocation || cld.unqualifiedName == 'Chromosome') && object.organism.abbreviation != 'MM' && object.organism.abbreviation != 'MD'&& object.organism.abbreviation != 'RN'}">
+
   <c:set var="type" value="${cld.unqualifiedName}s"/>
   
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript' 
