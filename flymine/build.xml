@@ -1589,10 +1589,10 @@
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/">
-        <include name="flybase/2005-08-22/gene_association.fb"/>
-        <include name="wormbase/2005-04-06/gene_association.wb"/>
-        <include name="uniprot/2005-07-25/gene_association_ag"/>
-        <include name="uniprot/2005-07-25/gene_association_agp"/>
+        <include name="flybase/2005-11-05/gene_association.fb"/>
+        <include name="wormbase/2005-10-25/gene_association.wb"/>
+        <include name="uniprot/2005-10-20/gene_association_ag"/>
+        <include name="uniprot/2005-10-20/gene_association_agp"/>
      </fileset>
     </convert-file>
 
