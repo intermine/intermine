@@ -184,7 +184,8 @@ public class PsiDataTranslator extends DataTranslator
 
                     interaction.addReference(new Reference("experiment", exptType.getIdentifier()));
 
-
+                    interaction.addCollection(new ReferenceList("evidence",
+                            Arrays.asList(new Object[] {dataSource.getIdentifier()})));
 
                     addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
                     result.add(interaction);
@@ -222,7 +223,6 @@ public class PsiDataTranslator extends DataTranslator
         }
         return result;
     }
-
 
 
     private Item createProteinInteraction(
