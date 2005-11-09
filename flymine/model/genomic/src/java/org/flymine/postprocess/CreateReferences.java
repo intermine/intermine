@@ -155,6 +155,9 @@ public class CreateReferences
         // Gene.microArrayResults
         createMicroArrayResultsCollection();
 
+        LOG.info("insertReferences stage 15");
+        createUtrRefs();
+
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
@@ -717,7 +720,96 @@ public class CreateReferences
         }
     }
 
+    /**
+     * Read the UTRs collection of MRNA then set the fivePrimeUTR and threePrimeUTR fields with the
+     * corresponding UTRs.
+     * @throws Exception if anything goes wrong
+     */
+    protected void createUtrRefs() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
 
+        QueryClass qcMRNA = new QueryClass(MRNA.class);
+        q.addFrom(qcMRNA);
+        q.addToSelect(qcMRNA);
+        q.addToOrderBy(qcMRNA);
+
+        QueryClass qcUTR = new QueryClass(UTR.class);
+        q.addFrom(qcUTR);
+        q.addToSelect(qcUTR);
+        q.addToOrderBy(qcUTR);
+
+        QueryCollectionReference mrnaUtrsRef =
+            new QueryCollectionReference(qcMRNA, "UTRs");
+        ContainsConstraint mrnaUtrsConstraint =
+            new ContainsConstraint(mrnaUtrsRef, ConstraintOp.CONTAINS, qcUTR);
+
+        q.setConstraint(mrnaUtrsConstraint);
+
+        ObjectStore os = osw.getObjectStore();
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+
+        int count = 0;
+        MRNA lastMRNA = null;
+
+        FivePrimeUTR fivePrimeUTR = null;
+        ThreePrimeUTR threePrimeUTR = null;
+
+        osw.beginTransaction();
+
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            MRNA mrna = (MRNA) rr.get(0);
+            UTR utr = (UTR) rr.get(1);
+
+            if (lastMRNA != null && !mrna.getId().equals(lastMRNA.getId())) {
+                // clone so we don't change the ObjectStore cache
+                MRNA tempMRNA = (MRNA) PostProcessUtil.cloneInterMineObject(lastMRNA);
+                if (fivePrimeUTR != null) {
+                    TypeUtil.setFieldValue(tempMRNA, "fivePrimeUTR", fivePrimeUTR);
+                    fivePrimeUTR = null;
+                }
+                if (threePrimeUTR != null) {
+                    TypeUtil.setFieldValue(tempMRNA, "threePrimeUTR", threePrimeUTR);
+                    threePrimeUTR = null;
+                }
+                osw.store(tempMRNA);
+                count++;
+            }
+
+            if (utr instanceof FivePrimeUTR) {
+                fivePrimeUTR = (FivePrimeUTR) utr;
+            } else {
+                threePrimeUTR = (ThreePrimeUTR) utr;
+            }
+
+            lastMRNA = mrna;
+        }
+
+        if (lastMRNA != null) {
+            // clone so we don't change the ObjectStore cache
+            MRNA tempMRNA = (MRNA) PostProcessUtil.cloneInterMineObject(lastMRNA);
+            TypeUtil.setFieldValue(tempMRNA, "fivePrimeUTR", fivePrimeUTR);
+            TypeUtil.setFieldValue(tempMRNA, "threePrimeUTR", threePrimeUTR);
+            osw.store(tempMRNA);
+            count++;
+        }
+        LOG.info("Stored MRNA " + count + " times (" + count * 2 + " fields set)");
+        osw.commitTransaction();
+
+
+        // now ANALYSE tables relating to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(MRNA.class.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+    
     /**
      * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
      *  Protein and GOTerm.

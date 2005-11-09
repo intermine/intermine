@@ -20,21 +20,26 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Annotation;
+import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Evidence;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.GOTerm;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.Orthologue;
 import org.flymine.model.genomic.Phenotype;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.RankedRelation;
 import org.flymine.model.genomic.Relation;
 import org.flymine.model.genomic.SimpleRelation;
+import org.flymine.model.genomic.ThreePrimeUTR;
 import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.OverlapRelation;
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.UTR;
+
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -96,6 +101,13 @@ public class CreateReferencesTest extends TestCase {
     private Annotation storedPhenotypeAnnotation = null;
     private Evidence storedPhenotypeEvidence = null;
     private OverlapRelation storedOverlapRelation = null;
+    private MRNA storedMRNA1 = null;
+    private MRNA storedMRNA2 = null;
+    private UTR storedUTR1 = null;
+    private UTR storedUTR2 = null;
+    private UTR storedUTR3 = null;
+    private UTR storedUTR4 = null;
+
     private ItemFactory itemFactory;
 
     private static final Logger LOG = Logger.getLogger(CreateReferencesTest.class);
@@ -223,6 +235,59 @@ public class CreateReferencesTest extends TestCase {
         actualIDs.add(((Gene) ofIter.next()).getId());
 
         assertEquals(expectedIDs, actualIDs);
+    }
+
+    public void testCreateUtrRefs() throws Exception {
+        storedMRNA1 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
+        storedMRNA1.setIdentifier("mrna1");
+        storedMRNA1.setId(new Integer(1000));
+        storedMRNA2 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
+        storedMRNA2.setIdentifier("mrna2");
+        storedMRNA2.setId(new Integer(1001));
+
+        storedUTR1 = (UTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
+        storedUTR1.setIdentifier("utr1-threePrimeUTR");
+        storedUTR2 = (UTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
+        storedUTR2.setIdentifier("utr2-fivePrimeUTR");
+        storedUTR3 = (UTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
+        storedUTR3.setIdentifier("utr3-threePrimeUTR");
+        storedUTR4 = (UTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
+        storedUTR4.setIdentifier("utr4-fivePrimeUTR");
+
+        storedMRNA1.setUTRs(new HashSet(Arrays.asList(new Object[] {
+                                                          storedUTR1, storedUTR2
+                                                      })));
+        storedMRNA2.setUTRs(new HashSet(Arrays.asList(new Object[] {
+                                                          storedUTR3, storedUTR4
+                                                      })));
+                                                      
+        Set toStore = new HashSet(Arrays.asList(new Object[] {
+                                                    storedMRNA1,
+                                                    storedMRNA2,
+                                                    storedUTR1,
+                                                    storedUTR2,
+                                                    storedUTR3,
+                                                    storedUTR4,
+                                                }));
+                                                
+        Iterator i = toStore.iterator();
+        osw.beginTransaction();
+        while (i.hasNext()) {
+            InterMineObject object = (InterMineObject) i.next();
+            osw.store(object);
+        }
+        osw.commitTransaction();
+
+        CreateReferences cr = new CreateReferences(osw);
+        cr.createUtrRefs();
+
+        MRNA dbMRNA1 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1000)); 
+        MRNA dbMRNA2 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1001));
+       
+        assertEquals(storedUTR1.getIdentifier(), dbMRNA1.getThreePrimeUTR().getIdentifier());
+        assertEquals(storedUTR2.getIdentifier(), dbMRNA1.getFivePrimeUTR().getIdentifier());
+        assertEquals(storedUTR3.getIdentifier(), dbMRNA2.getThreePrimeUTR().getIdentifier());
+        assertEquals(storedUTR4.getIdentifier(), dbMRNA2.getFivePrimeUTR().getIdentifier());
     }
 
     private void compareChromosomeLSFResultsToExpected() throws Exception {

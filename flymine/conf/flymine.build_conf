@@ -44,6 +44,7 @@ run: build-cdnaclone-bdgp-production
 
 dump: mage+cdnaclone
 
+run: create-utr-references
 run: read-flybase-chromosome-fasta calculate-locations create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
 run: homophila-post-process

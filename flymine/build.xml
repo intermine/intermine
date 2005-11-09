@@ -2242,6 +2242,13 @@
               objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="create-utr-references" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="create-utr-references" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="make-spanning-locations" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
