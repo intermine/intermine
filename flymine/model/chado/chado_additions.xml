@@ -15,6 +15,8 @@
   <class name="org.flymine.model.genomic.MRNA" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
+    <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
+    <reference name="threePrimeUTR" referenced-type="org.flymine.model.genomic.ThreePrimeUTR"/>
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNAs" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.Transcript" is-interface="true">
