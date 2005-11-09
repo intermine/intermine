@@ -94,8 +94,24 @@ public class FilterChadoTask extends Task
      */
     private void filterGFF3(BufferedReader in, BufferedWriter out) throws IOException {
         Iterator iter = GFF3Parser.parse(in);
+      RECORD:
         while (iter.hasNext()) {
             GFF3Record record = (GFF3Record) iter.next();
+
+            // ignore protein_binding_sites from FlyBase that are also in FlyReg - get them from
+            // FlyReg instead
+            if (record.getType().equals("protein_binding_site")) {
+                if (record.getDbxrefs() != null) {
+                    Iterator dbxrefIter = record.getDbxrefs().iterator();
+                    while (dbxrefIter.hasNext()) {
+                        String dbxref = (String) dbxrefIter.next();
+                        if (dbxref.startsWith("FlyReg")) {
+                            continue RECORD;
+                        }
+                    }
+                }
+            }
+
             if (typeToKeep(record.getType())) {
                 // if the Name is just the ID plus "-hsp", set the ID to the Name and then remove
                 // the Name
