@@ -127,6 +127,10 @@ public class PostProcessTask extends Task
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertSymmetricalRelationReferences()");
                 cr.insertSymmetricalRelationReferences();
+            } else if ("create-utr-references".equals(operation)) {
+                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
+                LOG.info("Starting CreateReferences.createUtrRefs()");
+                cr.createUtrRefs();
             } else if ("fetch-contig-sequences-human".equals(operation)) {
                 if (ensemblDb == null) {
                     throw new BuildException("ensemblDb attribute is not set");
