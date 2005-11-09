@@ -121,17 +121,28 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
-        Item expectedItem =createTgtItem("MicroArrayExperiment", "-1_1", "");
+        Item expectedItem = createTgtItem("MicroArrayExperiment", "-1_1", "");
+        expectedItem.setAttribute("identifier", "E-FLYC-1");
         expectedItem.setAttribute("name", "Experiment 1");
         expectedItem.setAttribute("description", "experiment description");
         expectedItem.setReference("publication", "-1_2");
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem}));
+
+        Item expectedDataSet = createTgtItem("DataSet", "-1_3", "");
+        expectedDataSet.setAttribute("title", "E-FLYC-1");
+        expectedDataSet.setAttribute("description", "Experiment 1");
+        expectedDataSet.setReference("dataSource", "-1_4");
+
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expectedItem, expectedDataSet}));
 
         assertEquals(expected, translator.translateItem(srcItem1));
 
         Map expAssayToExpName = new HashMap();
         expAssayToExpName.put("0_1", "E-FLYC-1");
         assertEquals(expAssayToExpName, translator.assayToExpName);
+
+        Map expExptToDataSet = new HashMap();
+        expExptToDataSet.put("-1_1", "-1_3");
+        assertEquals(expExptToDataSet, translator.exptToDataSet);
     }
 
 
@@ -165,12 +176,16 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item expItem1 = createTgtItem("MicroArrayAssay", "2_1", "");
         expItem1.setReference("experiment", "-1_1");
-        Item expItem11 = createTgtItem("MicroArrayAssay", "2_2", "");
-        expItem11.setReference("experiment", "-1_1");
+        Item expItem2 = createTgtItem("MicroArrayAssay", "2_2", "");
+        expItem2.setReference("experiment", "-1_1");
+        Item expItem3 = createTgtItem("MicroArrayExperiment", "-1_1", "");
+        Item expItem4 = createTgtItem("DataSet", "-1_2", "");
+        expItem4.setReference("dataSource", "-1_3");
+        Item expItem5 = createTgtItem("DataSource", "-1_3", "");
+        expItem5.setAttribute("name", "ArrayExpress");
 
-        Item expItem2 = createTgtItem("MicroArrayExperiment", "-1_1", "");
 
-        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem11, expItem2}));
+        HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2, expItem3, expItem4, expItem5}));
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -180,7 +195,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Set expAssays = new HashSet();
         expAssays.add(expItem1);
-        expAssays.add(expItem11);
+        expAssays.add(expItem2);
         assertEquals(expAssays, translator.assays);
         //System.out.println("assert2 expAssays " + translator.assays);
 
@@ -575,16 +590,12 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
-        //Item result = createTgtItem("MicroArrayResult", "0_1", "");
-        //result.setReference("assay", "5_1");
         MageDataTranslator.ResultHolder rh = translator.new ResultHolder(1);
         rh.assayId = 1;
         translator.resultNs = "0_";
         translator.assayNs = "5_";
-        //translator.microArrayResults.add(result);
         translator.microArrayResults.add(rh);
 
-        //translator.bioAssayDataToAssay.put("1_1", "5_1");
         translator.assayToSamples.put("5_1", new ArrayList(Collections.singleton("6_1")));
         translator.controls.add("3_1");
 
@@ -592,6 +603,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.featureToReporter.put("2_1", "3_1");
         translator.assayToExperiment.put("5_1", "6_1");
         translator.reporterToMaterial.put("3_1", "7_1");
+        translator.exptToDataSet.put("6_1", "-1_1");
 
         Item expResult = createTgtItem("MicroArrayResult", "0_1", "");
         expResult.setAttribute("isControl", "true");
@@ -599,6 +611,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expResult.setReference("reporter", "3_1");
         expResult.setReference("analysis", "6_1");
         expResult.setReference("experiment", "6_1");
+        expResult.setReference("source", "-1_1");
         expResult.setCollection("samples", new ArrayList(Collections.singleton("6_1")));
 
         assertEquals(expResult, translator.processMicroArrayResult(rh));

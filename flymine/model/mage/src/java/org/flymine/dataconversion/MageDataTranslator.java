@@ -97,6 +97,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map expIdNames = new HashMap();
     protected Map cloneToResults = new HashMap();
     protected Map sampleToLabel = new HashMap();
+    protected Map exptToDataSet = new HashMap();
 
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
@@ -270,6 +271,7 @@ public class MageDataTranslator extends DataTranslator
                     storeTgtItem = false;
                 } else if (className.equals("Experiment")) {
                     translateMicroArrayExperiment(srcItem, tgtItem);
+                    result.add(createDataSetFromExperiment(tgtItem));
                 } else if (className.equals("MeasuredBioAssay")) {
                     if (assayNs == null) {
                         assayNs = namespaceFromIdentifier(tgtItem.getIdentifier());
@@ -310,6 +312,27 @@ public class MageDataTranslator extends DataTranslator
     }
 
 
+
+    /**
+     * Given an experiment item create a corresponding DataSet and add entry
+     * in map from one to the other.
+     * @param expt the experiment item
+     * @return the created DataSet
+     */
+    protected Item createDataSetFromExperiment(Item expt) {
+        Item dataSet = createItem(tgtNs + "DataSet", "");
+        dataSet.setReference("dataSource", getDb("ArrayExpress").getIdentifier());
+
+        if (expt.hasAttribute("identifier")) {
+            dataSet.setAttribute("title", expt.getAttribute("identifier").getValue());
+        }
+        if (expt.hasAttribute("name")) {
+            dataSet.setAttribute("description", expt.getAttribute("name").getValue());
+        }
+        exptToDataSet.put(expt.getIdentifier(), dataSet.getIdentifier());
+        return dataSet;
+    }
+
     /**
      * @param srcItem = mage:Experiment
      * @param tgtItem = flymine: MicroArrayExperiment
@@ -322,17 +345,19 @@ public class MageDataTranslator extends DataTranslator
         String exptName = null;
         if (srcItem.hasAttribute("identifier")) {
             exptName = srcItem.getAttribute("identifier").getValue();
+            tgtItem.setAttribute("identifier", exptName);
             String propName = getConfig(exptName, "experimentName");
             if (propName != null) {
                 tgtItem.setAttribute("name", propName);
             }
         }
 
+
+
         // may have already created references to experiment
         tgtItem.setIdentifier(getExperimentId(exptName));
 
         expIdNames.put(tgtItem.getIdentifier(), exptName);
-
 
         // PATH Experiment.descriptions.bibliographicReferences
         if (srcItem.hasCollection("descriptions")) {
@@ -743,8 +768,9 @@ public class MageDataTranslator extends DataTranslator
 
                                     Item srcParam = getReference(valueItem, "parameterType");
                                     if (srcParam.hasAttribute("name")) {
-                                        if ("Label used".equalsIgnoreCase(srcParam.getAttribute("name")
-                                                                .getValue())
+                                        if ("Label used".equalsIgnoreCase(srcParam
+                                                                          .getAttribute("name")
+                                                                          .getValue())
                                             && value != null) {
                                             return value;
                                         }
@@ -1033,8 +1059,12 @@ public class MageDataTranslator extends DataTranslator
                 experimentId = (String) assayToExperiment.get(assayId);
                 maResult.setReference("experiment", experimentId);
                 maResult.setReference("analysis", experimentId);
+
+                // source refrence to DataSet
+                maResult.setReference("source", (String) exptToDataSet.get(experimentId));
             }
         }
+
 
         // MicroArrayResult.isControl
         String reporterId = null;
@@ -1198,8 +1228,7 @@ public class MageDataTranslator extends DataTranslator
         Item db = (Item) dbs.get(dbName);
         if (db == null) {
             db = createItem(tgtNs + "DataSource", "");
-            Attribute title = new Attribute("name", dbName);
-            db.addAttribute(title);
+            db.setAttribute("name", dbName);
             dbs.put(dbName, db);
         }
         return db;
@@ -1219,18 +1248,6 @@ public class MageDataTranslator extends DataTranslator
         return pub;
     }
 
-    /**
-     * @param dbName = databaseName
-     * @return databaseReference
-     */
-    private Reference getSourceRef(String dbName) {
-        Reference sourceRef = (Reference) dbRefs.get(dbName);
-        if (sourceRef == null) {
-             sourceRef = new Reference("source", getDb(dbName).getIdentifier());
-             dbRefs.put(dbName, sourceRef);
-        }
-        return sourceRef;
-    }
 
     /**
      * @return identifier for experimentItem assume only one experiment item presented
