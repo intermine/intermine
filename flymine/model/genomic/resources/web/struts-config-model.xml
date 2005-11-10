@@ -1,1 +1,6 @@
 <!-- this comment is here to prevent ant from setting model.struts.config to null -->
+
+    <action path="/sequenceExporter"
+            type="org.flymine.web.SequenceExporter"/>
+    
+    

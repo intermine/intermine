@@ -7,7 +7,7 @@
 <fmt:setBundle basename="model"/>
 
 <c:set var="seenIdentifiers" value=""/>
-
+<%--
 <c:if test="${!empty object.synonyms}">
   <fmt:message key="synonyms.external.links"/>:
   <div style="margin-left: 20px">
@@ -45,4 +45,5 @@
     </table>
   </div>
 </c:if>
+--%>
 <!-- /geneLong.jsp -->
