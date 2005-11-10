@@ -30,9 +30,12 @@ import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.Annotation;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.util.StringUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
@@ -52,8 +55,45 @@ import org.flymine.biojava.FlyMineSequenceFactory;
  *
  * @author Kim Rutherford
  */
-public class SequenceExporter implements TableExporter
+public class SequenceExporter extends InterMineAction implements TableExporter
 {
+    /**
+     * This action is invoked directly to export LocatedSequenceFeatures.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        ObjectStore os = (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
+        FlyMineSequence flyMineSequence = null;
+        
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition ",
+                           "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
+        
+        InterMineObject obj = os.getObjectById(new Integer(request.getParameter("object")));
+        
+        if (obj instanceof LocatedSequenceFeature) {
+            flyMineSequence = FlyMineSequenceFactory.make((LocatedSequenceFeature) obj);
+            Annotation annotation = flyMineSequence.getAnnotation();
+            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                    ((BioEntity) obj).getIdentifier());
+            OutputStream out = response.getOutputStream();
+            SeqIOTools.writeFasta(out, flyMineSequence);
+        }
+        
+        return null;
+    }
+    
     /**
      * Method called to export a PagedTable object using the BioJava sequence and feature writers.
      * @param mapping The ActionMapping used to select this instance
