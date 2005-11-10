@@ -176,7 +176,7 @@ public class PsiDataTranslator extends DataTranslator
                                     tgtItem.addAttribute(new Attribute("confidenceDesc", value));
                                 }
                             } else {
-                                LOG.info("Skipped an Attribute - looking for 'author-confidence'");
+                                LOG.debug("Skipped an Attribute - looking for 'author-confidence'");
                             }
                         }
                     }
@@ -277,7 +277,7 @@ public class PsiDataTranslator extends DataTranslator
             if ("shortLabel".equalsIgnoreCase(nextNameAttr.getName())) {
                 iShortName = nextNameAttr.getValue();
                 interaction.setAttribute("shortName", iShortName);
-                LOG.info("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
+                LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
                 shortLabelFound = true;
             }
         }
@@ -287,7 +287,7 @@ public class PsiDataTranslator extends DataTranslator
 
         if (conf != null) {
 
-            LOG.info("CONFIDENCE TAG FOUND IN INTERACTION:"
+            LOG.debug("CONFIDENCE TAG FOUND IN INTERACTION:"
                     + (iShortName != null ? iShortName : interaction.getIdentifier()));
 
             tgtExperimentalResult.addAttribute(
@@ -296,7 +296,7 @@ public class PsiDataTranslator extends DataTranslator
             tgtExperimentalResult.addAttribute(
                     new Attribute("confidenceValue", conf.getAttribute("value").getValue()));
         } else {
-            LOG.info("NO CONFIDENCE TAG FOUND IN INTERACTION:"
+            LOG.debug("NO CONFIDENCE TAG FOUND IN INTERACTION:"
                     + (iShortName != null ? iShortName : interaction.getIdentifier()));
         }
 
@@ -372,7 +372,7 @@ public class PsiDataTranslator extends DataTranslator
             result.add(tgtProteinInteractionRegion);
             result.add(psiDagTerm);
         } else {
-            LOG.info("Skipping creating a ProteinRegion as the psi term MI:0117 was not found!");
+            LOG.debug("Skipping creating a ProteinRegion as the psi term MI:0117 was not found!");
         }
     }
 
