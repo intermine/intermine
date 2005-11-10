@@ -122,6 +122,14 @@ public class GoConverter extends FileConverter
             }
             String[] array = line.split("\t", -1); //keep trailing empty Strings
 
+            // We only want to create GOAnnotation objects applied to genes and proteins
+            // some file entries apply to type 'transcript' and possibly others
+            if (!("gene".equalsIgnoreCase(array[11])
+                  || "protein".equalsIgnoreCase(array[11]))) {
+                LOG.info("Ignored line with type: " + array[11]);
+                continue;
+            }
+
             String qualifier = array[3];
             String goEvidence = array[6];
             String productId = array[1];
@@ -210,7 +218,7 @@ public class GoConverter extends FileConverter
             doStore(nextGeneProduct, STORE_FOUR);
         }
     }
-    
+
     /**
      * @see FileConverter#close
      */
@@ -307,7 +315,7 @@ public class GoConverter extends FileConverter
             placeHolder.getGeneProductWrapper().getItem().addToCollection(
                     "allGoAnnotation", currentGoItem);
         } else {
-            LOG.warn("Skipping setting go & allGo annotation collection for a:"
+            LOG.debug("Skipping setting go & allGo annotation collection for a:"
                     + placeHolder.getGeneProductWrapper().getItem().getClassName() + " with ident:"
                     + placeHolder.getGeneProductWrapper().getItem().getIdentifier());
         }
@@ -464,7 +472,7 @@ public class GoConverter extends FileConverter
             LOG.error(bigLogMsg.toString());
         } else {
 
-            LOG.warn("doStore " + callSource
+            LOG.debug("doStore " + callSource
                     + " called on a new item:" + itemToStore.getClassName()
                     + " id:"   + i2sId
                     + " id_attr:" + (identAttr != null ? identAttr.getValue() : NO_ID_ATTR)
@@ -506,7 +514,7 @@ public class GoConverter extends FileConverter
             clsName = "Protein";
             idField = "primaryAccession";
         } else {
-            LOG.warn("Unrecognised geneProduct type '" + type + "'");
+            throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
         }
 
         Item product = createItem(clsName);
@@ -785,7 +793,7 @@ public class GoConverter extends FileConverter
             for (Iterator piit = parentItems.iterator(); piit.hasNext(); ) {
                 item = (Item) piit.next();
                 tsBuff.append("NEXTPARENT: "
-                        + item.getClassName() + " " 
+                        + item.getClassName() + " "
                         + item.getAttribute("identifier").getValue() + " "
                         + (item.getIdentifier() != null ? item.getIdentifier() : "no_id")
                         + "\n"
