@@ -151,7 +151,7 @@ public class GoConverter extends FileConverter
                 );
 
                 holderMap.put(key, newPlaceHolder);
-                LOG.warn("PROCESS - NEW KEY:" + key.toString());
+                LOG.debug("PROCESS - NEW KEY:" + key.toString());
 
             } else {
 
@@ -165,7 +165,7 @@ public class GoConverter extends FileConverter
                     holder.getExtraPublicationList().add(extraPubItem);
                 }
 
-                LOG.warn("PROCESS - OLD KEY:" + key.toString());
+                LOG.debug("PROCESS - OLD KEY:" + key.toString());
             }
         }
 
@@ -186,7 +186,7 @@ public class GoConverter extends FileConverter
             GoAnnotationItemWithParentSet annoWithParents =
                     newGoAnnotationWithParentTerms(nextPlaceHolder);
 
-            LOG.warn("NEXT GAIWPS:" + annoWithParents.toUsefulLogString());
+            LOG.debug("NEXT GAIWPS:" + annoWithParents.toUsefulLogString());
 
             //store the new anno item...
             doStore(annoWithParents.getGoAnnotationItem(), STORE_ONE);
