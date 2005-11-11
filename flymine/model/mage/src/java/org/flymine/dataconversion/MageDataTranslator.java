@@ -377,9 +377,10 @@ public class MageDataTranslator extends DataTranslator
                     }
                 }
                 // TODO fetch pubmed id from config?
-                String pmid = ((String) getConfig(exptName, "pmid")).trim();
+                String pmid = getConfig(exptName, "pmid");
                 if (pmid != null && !pmid.equals("")) {
-                    tgtItem.setReference("publication", getPublication(pmid).getIdentifier());
+                    tgtItem.setReference("publication",
+                                         getPublication(pmid.trim()).getIdentifier());
                 }
             }
         }
