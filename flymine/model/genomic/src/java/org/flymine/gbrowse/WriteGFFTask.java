@@ -148,12 +148,11 @@ public class WriteGFFTask extends Task
 
                 if (!currentChr.getIdentifier().endsWith("_random")
                     && !currentChr.getIdentifier().equals("M")
-                    &&  currentChr.getOrganism().getAbbreviation().equals("HS")) {
-                    try {
-                        writeChromosomeFasta(destinationDirectory, currentChr);
-                    } catch (NullPointerException e) {
-                        System.err.println("NullPointerException for " + currentChr.getIdentifier());
-                    }
+                    && !currentChr.getOrganism().getAbbreviation().equals("MM")
+                    && !currentChr.getOrganism().getAbbreviation().equals("MD")
+                    && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
+
+                    writeChromosomeFasta(destinationDirectory, currentChr);
 
                     File gffFile = chromosomeGFFFile(destinationDirectory, currentChr);
                     if (gffWriter != null) {
@@ -182,7 +181,10 @@ public class WriteGFFTask extends Task
 
             if (!currentChr.getIdentifier().endsWith("_random")
                 && !currentChr.getIdentifier().equals("M")
-                &&  currentChr.getOrganism().getAbbreviation().equals("HS")) {
+                && !currentChr.getOrganism().getAbbreviation().equals("MM")
+                && !currentChr.getOrganism().getAbbreviation().equals("MD")
+                && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
+
                 String identifier = feature.getIdentifier();
 
                 String featureType = getFeatureName(feature);
@@ -202,7 +204,9 @@ public class WriteGFFTask extends Task
 
         if (!currentChr.getIdentifier().endsWith("_random")
             && !currentChr.getIdentifier().equals("M")
-            &&  currentChr.getOrganism().getAbbreviation().equals("HS")) {
+            && !currentChr.getOrganism().getAbbreviation().equals("MM")
+            && !currentChr.getOrganism().getAbbreviation().equals("MD")
+            && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
             writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
                                      seenTranscriptParts, synonymMap);
         }
