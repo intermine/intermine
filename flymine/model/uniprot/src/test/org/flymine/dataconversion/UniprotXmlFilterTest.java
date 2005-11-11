@@ -24,7 +24,15 @@ import org.custommonkey.xmlunit.XMLUnit;
 
 public class UniprotXmlFilterTest extends XMLTestCase
 {
+    File tmpFile;
 
+    public void setUp() throws Exception {
+        tmpFile = File.createTempFile("uniprot_filter_tmp", "");
+    }
+
+    public void tearDown() {
+        tmpFile.delete();
+    }
 
     public void testFilter() throws Exception {
         Set organisms = new HashSet();
@@ -34,8 +42,6 @@ public class UniprotXmlFilterTest extends XMLTestCase
         BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
                                       .getResourceAsStream("test/UniprotXmlFilterTest_src.xml")));
 
-        //File tmpFile = File.createTempFile("uniprot_xml_filter_tmp", ".xml");
-        File tmpFile = new File("uniprot_tmp.xml");
         BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
         filter.filter(srcReader, out);
         out.flush();
@@ -43,11 +49,6 @@ public class UniprotXmlFilterTest extends XMLTestCase
 
         InputStreamReader expectedReader = new InputStreamReader(getClass().getClassLoader()
                                       .getResourceAsStream("test/UniprotXmlFilterTest_tgt.xml"));
-//         BufferedReader t = new BufferedReader(expectedReader);
-//         String line = null;
-//         while ((line = t.readLine()) != null) {
-//             System.out.println(line);
-//         }
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(expectedReader, new FileReader(tmpFile));
     }

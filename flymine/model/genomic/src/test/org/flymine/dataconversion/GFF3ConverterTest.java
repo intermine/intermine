@@ -68,9 +68,9 @@ public class GFF3ConverterTest extends TestCase {
         converter.parse(srcReader);
         converter.store();
 
-        FileWriter writerSrc = new FileWriter(new File("gff_items.xml"));
-        writerSrc.write(FullRenderer.render(writer.getItems()));
-        writerSrc.close();
+        //FileWriter writerSrc = new FileWriter(new File("gff_items.xml"));
+        //writerSrc.write(FullRenderer.render(writer.getItems()));
+        //writerSrc.close();
 
         Set expected = new HashSet(getExpectedItems());
 
@@ -82,7 +82,6 @@ public class GFF3ConverterTest extends TestCase {
         }
 
         assertEquals(expected, writer.getItems());
-
     }
 
 

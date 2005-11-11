@@ -45,7 +45,8 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
     MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
     translator.translate(tgtIw);
 
-    writeTgtFile(tgtIw);
+    // uncomment to write out a new copy of tgt items
+    //writeTgtFile(tgtIw);
 
 
     String expectedNotActual = "in expected, not actual: " + compareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems());
@@ -97,20 +98,6 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
   }
 
   private void writeMessageToTestLogFile(String message) throws Exception {
-
-    File testLogFile = new File("interpro_test_result.log");
-
-    //purge the previous log file...
-    if (testLogFile.exists()) {
-      testLogFile.delete();
-    }
-
-    FileWriter fw = new FileWriter(testLogFile);
-
-    fw.write(message);
-    fw.flush();
-    fw.close();
+      System.err.println(message);
   }
-
-
 }
