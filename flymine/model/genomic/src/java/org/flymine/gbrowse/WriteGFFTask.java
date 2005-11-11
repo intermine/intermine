@@ -147,8 +147,13 @@ public class WriteGFFTask extends Task
                 currentChr = (Chromosome) os.getObjectById(resultChrId);
 
                 if (!currentChr.getIdentifier().endsWith("_random")
-                    && !currentChr.getIdentifier().equals("M")) {
-                    writeChromosomeFasta(destinationDirectory, currentChr);
+                    && !currentChr.getIdentifier().equals("M")
+                    &&  currentChr.getOrganism().getAbbreviation().equals("HS")) {
+                    try {
+                        writeChromosomeFasta(destinationDirectory, currentChr);
+                    } catch (NullPointerException e) {
+                        System.err.println("NullPointerException for " + currentChr.getIdentifier());
+                    }
 
                     File gffFile = chromosomeGFFFile(destinationDirectory, currentChr);
                     if (gffWriter != null) {
@@ -176,7 +181,8 @@ public class WriteGFFTask extends Task
             }
 
             if (!currentChr.getIdentifier().endsWith("_random")
-                && !currentChr.getIdentifier().equals("M")) {
+                && !currentChr.getIdentifier().equals("M")
+                &&  currentChr.getOrganism().getAbbreviation().equals("HS")) {
                 String identifier = feature.getIdentifier();
 
                 String featureType = getFeatureName(feature);
@@ -195,7 +201,8 @@ public class WriteGFFTask extends Task
         }
 
         if (!currentChr.getIdentifier().endsWith("_random")
-                    && !currentChr.getIdentifier().equals("M")) {
+            && !currentChr.getIdentifier().equals("M")
+            &&  currentChr.getOrganism().getAbbreviation().equals("HS")) {
             writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
                                      seenTranscriptParts, synonymMap);
         }
@@ -418,14 +425,14 @@ public class WriteGFFTask extends Task
      * Return a String representation of the attributes Map. Taken from BioJava's
      * SimpleGFFRecord.java
      * @param attMap the Map of attributes
-     * @return a String representation of the attributes 
+     * @return a String representation of the attributes
      */
     static String stringifyAttributes(Map attMap) {
         StringBuffer sBuff = new StringBuffer();
         Iterator ki = attMap.keySet().iterator();
         while (ki.hasNext()) {
             String key = (String) ki.next();
-    
+
             List values = (List) attMap.get(key);
             if (values.size() == 0) {
                 sBuff.append(key);
@@ -437,7 +444,7 @@ public class WriteGFFTask extends Task
                     sBuff.append(" \"" + value + "\"");
                     if (ki.hasNext() || vi.hasNext()) {
                         sBuff.append(";");
-                        
+
                     }
                     if (vi.hasNext()) {
                         sBuff.append(" ");
@@ -534,15 +541,18 @@ public class WriteGFFTask extends Task
 
         PrintStream printStream = new PrintStream(fileStream);
         printStream.println(">" + chromosomeFileNamePrefix(chr));
-
-        String residues = chromosomeSequence.getResidues();
-
-        // code from BioJava's FastaFormat class:
-        int length = residues.length();
-        for (int pos = 0; pos < length; pos += 60) {
-            int end = Math.min(pos + 60, length);
-            printStream.println(residues.substring(pos, end));
+        try {
+            String residues = chromosomeSequence.getResidues();
+               // code from BioJava's FastaFormat class:
+            int length = residues.length();
+            for (int pos = 0; pos < length; pos += 60) {
+                int end = Math.min(pos + 60, length);
+                printStream.println(residues.substring(pos, end));
+            }
+        } catch (NullPointerException e) {
+            System.err.println("null pointer exception writting fasta for " + chr.getIdentifier());
         }
+
 
         printStream.close();
         fileStream.close();
