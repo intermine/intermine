@@ -1393,7 +1393,7 @@
     <delete dir="${build}/tmp/mage"/>
 
     <!-- Timecourse data is a special case it needs normalised data to be added to files first -->
-    <!--antcall target="retrieve-mage-timecourse"/-->
+    <antcall target="retrieve-mage-timecourse"/>
 
     <copy todir="${build.tmp}/mage">
       <fileset dir="${shared.data}/mage/E-FLYC-1"/>
