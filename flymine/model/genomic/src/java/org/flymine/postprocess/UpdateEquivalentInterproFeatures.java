@@ -75,7 +75,7 @@ public class UpdateEquivalentInterproFeatures
         pdq.setConstraint(cs);
 
         //keep a map of interpro id's to sets of their child ProteinFeature objects...
-        LOG.info("UpdateEquivalentInterproFeatures - BUILDING FEATURE PAIRS");
+        LOG.debug("UpdateEquivalentInterproFeatures - BUILDING FEATURE PAIRS");
         Map proteinFeaturePairsMappedByInterproId = null;
         try {
             proteinFeaturePairsMappedByInterproId = buildInterproIdIndexedMapFromQuery(pdq);
@@ -84,11 +84,11 @@ public class UpdateEquivalentInterproFeatures
         }
 
         //ok, now we need to map the domains to each other - but NOT to themselves!!!
-        LOG.info("UpdateEquivalentInterproFeatures - SETTING EQUIVALENT FEATURE MAPPINGS");
+        LOG.debug("UpdateEquivalentInterproFeatures - SETTING EQUIVALENT FEATURE MAPPINGS");
         setEquivalentProteinFeatureMappings(proteinFeaturePairsMappedByInterproId);
 
         //ok, now we should store any data...
-        LOG.info("UpdateEquivalentInterproFeatures - STORING RESULTS");
+        LOG.debug("UpdateEquivalentInterproFeatures - STORING RESULTS");
         storeEquivalentFeatures(proteinFeaturePairsMappedByInterproId);
     }
 
@@ -120,7 +120,7 @@ public class UpdateEquivalentInterproFeatures
                         LOG.warn("SKIPPING A ProteinFeature ALREADY MAPPED TO INTERPROID:"
                                 + pd1.getInterproId());
                     } else {
-                        LOG.info("MAPPING* INTERPRO_ID:" + pd1.getInterproId() + " ID1:"
+                        LOG.debug("MAPPING* INTERPRO_ID:" + pd1.getInterproId() + " ID1:"
                                 + pd1.getId() + " TO ID2:" + pd2.getId());
 
                         mappedFeaturePairs.add(new ProteinFeaturePair(
@@ -131,7 +131,7 @@ public class UpdateEquivalentInterproFeatures
                     }
                 } else {
                     Collection newFeaturePairs = new ArrayList();
-                    LOG.info("MAPPING@ INTERPRO_ID:" + pd1.getInterproId() + " ID1:"
+                    LOG.debug("MAPPING@ INTERPRO_ID:" + pd1.getInterproId() + " ID1:"
                             + pd1.getId() + " TO ID2:" + pd2.getId());
 
                     newFeaturePairs.add(new ProteinFeaturePair(
@@ -150,8 +150,8 @@ public class UpdateEquivalentInterproFeatures
         for (Iterator ipidit = pdMap.keySet().iterator(); ipidit.hasNext();) {
 
             Object nextIpId = ipidit.next();
-            LOG.info("INTERPROID:" + nextIpId.toString() + " HAS THIS MANY FEATURE PAIRS:"
-                    + ((Collection) pdMap.get(nextIpId)).size());
+            LOG.debug("INTERPROID:" + nextIpId.toString() + " HAS THIS MANY FEATURE PAIRS:"
+                      + ((Collection) pdMap.get(nextIpId)).size());
         }
 
         return pdMap;
@@ -192,7 +192,7 @@ public class UpdateEquivalentInterproFeatures
                     }
 
                 } else {
-                    LOG.info("SKIPPING A SELF REFERENCE IN PROTEINFEATURE.EQUIVALENTFEATURES!");
+                    LOG.debug("SKIPPING A SELF REFERENCE IN PROTEINFEATURE.EQUIVALENTFEATURES!");
                 }
             }
 
