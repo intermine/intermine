@@ -147,6 +147,10 @@ public class TransferSequences
                 continue;
             }
 
+            if (feature instanceof ChromosomeBand) {
+                continue;
+            }
+
             Chromosome chr = (Chromosome) os.getObjectById(chrId);
             Sequence chromosomeSequence = chr.getSequence();
 
