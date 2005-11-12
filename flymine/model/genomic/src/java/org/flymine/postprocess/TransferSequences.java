@@ -181,6 +181,21 @@ public class TransferSequences
         String chromosomeSequenceString = chromosomeSequence.getResidues();
         int startPos = locationOnChr.getStart().intValue() - 1;
         int endPos = startPos + charsToCopy;
+
+        if (startPos < 0 || endPos < 0) {
+            return "";
+
+// TODO XXX FIXME - uncomment this
+//             throw new RuntimeException("in TransferSequences.getSubSequence(): locationOnChr " + locationOnChr +
+//                                        "\n  startPos: " + startPos + " endPos " + endPos
+//                                        + "\n chromosomeSequence.substr(0,1000) " +
+//                                        chromosomeSequenceString.substring(0,1000) + "\n location.getObject() " 
+//                                        + locationOnChr.getObject().toString()
+//                                        + " location.getSubject() " + locationOnChr.getSubject().toString() + " "
+//                                        + "\n location.getSubject().getId() " + locationOnChr.getSubject().getId() +
+//                                        "\n location.getObject().getId() ");
+        }
+
         String subSeqString = new String(chromosomeSequenceString.substring(startPos, endPos));
 
         if (locationOnChr.getStrand().intValue() == -1) {
