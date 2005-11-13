@@ -134,6 +134,11 @@ public class WriteGFFTask extends Task
             BioEntity feature = (BioEntity) rr.get(1);
             Location loc = (Location) rr.get(2);
 
+            // TODO XXX FIXME - see #628
+            if (feature instanceof ChromosomeBand) {
+                continue;
+            }
+
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 synonymMap = makeSynonymMap(os, resultChrId);
 
