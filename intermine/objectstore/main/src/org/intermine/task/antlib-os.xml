@@ -20,4 +20,7 @@
     <typedef
         name="model-output"
         classname="org.intermine.task.ModelOutputTask"/>
+    <typedef
+        name="generate-wsdd"
+        classname="org.intermine.objectstore.webservice.ser.GenerateWSDDTask"/>
 </antlib>
