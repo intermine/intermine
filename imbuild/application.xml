@@ -14,8 +14,6 @@
   <!-- INIT -->
 
   <target name="-pre-init" depends="webapp.-pre-init">
-    <!-- Any generated files WEB-INF files should be placed in this directory -->
-    <property name="build.webinf.dir" location="${build.dir}/web-inf"/>
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
@@ -28,7 +26,6 @@
     <!-- Start with base intermine webapp war -->
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
     <!-- Concatenate local build.properties with web.properties -->
-    <mkdir dir="${build.webinf.dir}"/>
     <copy tofile="${build.webinf.dir}/web.properties.tmp"
           file="resources/web.properties"
           overwrite="true" verbose="true"/>
