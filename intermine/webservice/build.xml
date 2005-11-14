@@ -1,0 +1,20 @@
+
+<project name="intermine-webservice" default="default" basedir=".">
+  
+  <description>build, test, package intermine-webservice</description>
+  <import file="../../imbuild/webapp.xml"/>
+  <import file="../../imbuild/task.xml"/>
+  
+	<property name="generating.code" value="true"/>
+	
+	<target name="do-generate">
+    <generate-wsdd destfile="${build.dir}/server-config.wsdd.fragment"/>
+    <loadfile srcFile="${build.dir}/server-config.wsdd.fragment" property="generated.wsdd"/>
+    <filter token="WSDD_INCLUDE" value="${generated.wsdd}"/>
+    <copy todir="${build.webinf.dir}" filtering="true" overwrite="true" file="${basedir}/server-config.wsdd"/>
+   </target>
+
+	<target name="-init-generate" depends="library.-init-generate, -init-task-xml"/>
+
+</project>
+
