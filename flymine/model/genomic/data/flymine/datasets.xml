@@ -51,7 +51,7 @@
   <item id="21" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
     <attribute name="description" value="The FlyBase Drosophila melanogaster genome data set"/>
-    <attribute name="version" value="4.2"/>
+    <attribute name="version" value="4.2.1"/>
     <attribute name="url" value="http://www.flybase.org"/>
     <reference name="dataSource" ref_id="20"/>
   </item>
