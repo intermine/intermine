@@ -25,12 +25,12 @@
   <!-- used by build-model.xml -->
   <property name="packagename" value="org.flymine.model"/>
 
-  <property name="intermine.path" location="../intermine"/>
-  <property name="old-intermine.path" location="../old-intermine"/>
+  <property name="intermine.path" location="${basedir}/../intermine"/>
+  <property name="old-intermine.path" location="${basedir}/../old-intermine"/>
   <property name="intermine.dist.path" location="${intermine.path}/dist"/>
   <!--property name="intermine.jar.path" location="${intermine.dist.path}/intermine-all.jar"/-->
-  <property name="intermine.war.path" location="../intermine/webapp/main/dist/intermine-webapp.war"/>
-  <property name="webservice.war.path" location="${intermine.dist.path}/webapp/webservice.war"/>
+  <property name="intermine.war.path" location="${basedir}/../intermine/webapp/main/dist/intermine-webapp.war"/>
+  <property name="webservice.war.path" location="${basedir}/../intermine/webservice/dist/intermine-webservice.war"/>
   <property name="webservice-client.jar.path" location="${intermine.dist.path}/webservice-client.jar"/>
 
   <!-- libraries and binaries -->
@@ -2970,24 +2970,33 @@
     </jar>
   </target>
 
-  <target name="build-production-webservice" depends="jar-genomic">
+  <target name="build-production-webservice" depends="prepare"> <!-- depends="jar-genomic" -->
     <unwar src="${webservice.war.path}" dest="${build.webapp}/webservice">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
+				<include name="WEB-INF/web.xml"/>
       </patternset>
     </unwar>
     <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>
-    <copy file="${webservice.war.path}" todir="${dist.webapp}"/>
-    <war destfile="${dist.webapp}/webservice.war" update="true">
+    <copy file="${webservice.war.path}" toFile="${dist.webapp}/webservice.war"/>
+		<war destfile="${dist.webapp}/webservice.war" webxml="${build.webapp}/webservice/WEB-INF/web.xml" update="true">
       <lib dir="${dist}" includes="intermine-genomic.jar" />
       <classes file="${resources}/webapp/default.intermine.properties"/>
       <classes file="${build.tmp}/WEB-INF/intermine.properties"/>
     </war>
   </target>
 
-  <target name="release-webservice"
+  <target name="release-webservice" depends="prepare"
           description="release the webservice to the server">
     <ant antfile="${build}/build-webapp.xml" target="release-webservice" inheritRefs="true">
+      <property name="war" value="${dist.webapp}/webservice.war"/>
+      <reference torefid="class.path" refid="webservice.class.path"/>
+    </ant>
+  </target>
+
+	<target name="remove-webservice" depends="prepare"
+          description="release the webservice to the server">
+    <ant antfile="${build}/build-webapp.xml" target="remove-webservice" inheritRefs="true">
       <property name="war" value="${dist.webapp}/webservice.war"/>
       <reference torefid="class.path" refid="webservice.class.path"/>
     </ant>
