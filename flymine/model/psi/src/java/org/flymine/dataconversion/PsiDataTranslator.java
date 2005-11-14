@@ -81,8 +81,9 @@ public class PsiDataTranslator extends DataTranslator
 
     private Item getDataSetFromNamesType(Item namesTypeItem) {
         String shortName = namesTypeItem.getAttribute("shortLabel").getValue();
-        String fullName = namesTypeItem.getAttribute("fullName").getValue();
-                    
+
+        Attribute fullNameAttr = namesTypeItem.getAttribute("fullName");
+
         Item dataSetItem;
                     
         if (dataSetMap.containsKey(shortName)) {
@@ -90,7 +91,13 @@ public class PsiDataTranslator extends DataTranslator
         } else {
             dataSetItem = createItem("DataSet");
             dataSetItem.addAttribute(new Attribute("title", shortName));
-            dataSetItem.addAttribute(new Attribute("description", fullName));
+            if (fullNameAttr != null) {
+
+                dataSetItem.addAttribute(new Attribute("description", fullNameAttr.getValue()));
+            }
+            else {
+                LOG.debug("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
+            }
             dataSetItem.setReference("dataSource", dataSource);
                    
             dataSetMap.put(shortName, dataSetItem);
