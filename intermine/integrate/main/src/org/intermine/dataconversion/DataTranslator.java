@@ -107,7 +107,7 @@ public class DataTranslator
      * @param mergeSpec the properties
      * @param srcModel the source model
      * @param tgtNs the target namespace
-     * @returns a set of Equivalences
+     * @return a set of Equivalences
      */
     private static Set buildEquivalences(Properties mergeSpec, Model srcModel, String tgtNs) {
         Set equivalences = new HashSet();
@@ -578,7 +578,7 @@ public class DataTranslator
         }
 
         // if a reverse reference supplied add to newItem
-        if (!revRefName.equals("")) {
+        if (revRefName != null && revRefName.length() > 0) {
             if (revIsMany) {
                 ReferenceList col = newItem.getCollection(revRefName);
                 if (col != null) {

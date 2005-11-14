@@ -147,14 +147,17 @@ public class InterproDataTranslator extends DataTranslator {
 
                 for (Iterator i = translated.iterator(); i.hasNext();) {
                     Item tgtItem = (Item) i.next();
-                    Item synonym = null;
+                    Item interProSynonym = null;
+                    Item databaseSynonym = null;
 
                     if (PROTEIN.equals(srcItemClassName)) {
                         processProteinItem(srcItem, tgtItem);
                     } else if (METHOD.equals(srcItemClassName)) {
-                        synonym = processMethodItem(srcItem, tgtItem);
+                        Item[] synonyms = processMethodItem(srcItem, tgtItem);
+                        interProSynonym = synonyms[0];
+                        databaseSynonym = synonyms[1];
                     } else if (ENTRY.equals(srcItemClassName)) {
-                        synonym = processEntryItem(srcItem, tgtItem);
+                        interProSynonym = processEntryItem(srcItem, tgtItem);
                     } else if (MATCHES.equals(srcItemClassName)) {
                         processMatchesItem(srcItem, tgtItem);
                     } else if (COMMON_ANNOTATION.equals(srcItemClassName)) {
@@ -162,8 +165,11 @@ public class InterproDataTranslator extends DataTranslator {
                     }
 
                     result.add(tgtItem);
-                    if(synonym != null){
-                        result.add(synonym);
+                    if(interProSynonym != null){
+                        result.add(interProSynonym);
+                    }
+                    if(databaseSynonym != null){
+                        result.add(databaseSynonym);
                     }
                 }
             }
@@ -218,7 +224,7 @@ public class InterproDataTranslator extends DataTranslator {
         }
     }
 
-    private Item processMethodItem(
+    private Item[] processMethodItem(
             org.intermine.xml.full.Item srcItem, org.intermine.xml.full.Item tgtItem)
             throws ObjectStoreException {
 
@@ -331,12 +337,24 @@ public class InterproDataTranslator extends DataTranslator {
             tgtItem.addAttribute(nuNameAttribute);
         }
 
-        Item synonym = createSynonym(
+        Item interproSynonym = createSynonym(tgtItem.getIdentifier(), "identifier",
+                tgtItem.getAttribute("interproId").getValue(), interproDataSourceReference);
+
+        addReferencedItem(tgtItem, interproSynonym, "synonyms", true, null, false);
+
+        Item extraDatabaseSynonym = createSynonym(
                 tgtItem.getIdentifier(), "identifier",
                 tgtItem.getAttribute("identifier").getValue(),
                 new org.intermine.xml.full.Reference("source", cvdbRefSrc.getRefId()));
 
-        return synonym;
+        addReferencedItem(tgtItem, extraDatabaseSynonym, "synonyms", true, null, false);
+
+        Item[] items = new Item[2];
+
+        items[0] = interproSynonym;
+        items[1] = extraDatabaseSynonym;
+
+        return items;
     }
 
     private Item processEntryItem(
@@ -425,10 +443,12 @@ public class InterproDataTranslator extends DataTranslator {
                 ENTRY_FROM_ENTRY_TO_COMP_VIA_ENTRY_TWO, srcItem, tgtItem, ENTRY1, FOUNDIN);
 
 
-        Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
+        Item interproSynonym = createSynonym(tgtItem.getIdentifier(), "identifier",
                 tgtItem.getAttribute("identifier").getValue(), interproDataSourceReference);
 
-        return synonym;
+         addReferencedItem(tgtItem, interproSynonym, "synonyms", true, null, false);
+
+        return interproSynonym;
     }
 
     private void processMatchesItem(
