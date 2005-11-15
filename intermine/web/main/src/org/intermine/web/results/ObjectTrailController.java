@@ -14,9 +14,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
+import org.intermine.web.SessionMethods;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
@@ -24,15 +32,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
-import org.intermine.metadata.ClassDescriptor;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.web.Constants;
-import org.intermine.web.SessionMethods;
-import org.intermine.objectstore.ObjectStore;
+import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller for the object trail tile.
@@ -109,13 +110,12 @@ public class ObjectTrailController extends TilesAction
     
     /**
      * Create trail element label. Label is a list of each leaf class name.
-     *
      * @param object the intermine object associated with the trail element
      * @param model the model
      * @return label for TrailElement
      */
     protected static String createTrailLabel(InterMineObject object, Model model) {
-        Iterator iter = ObjectViewController.getLeafClds(object.getClass(), model).iterator();
+        Iterator iter = DisplayObject.getLeafClds(object.getClass(), model).iterator();
         String label = "";
         while (iter.hasNext()) {
             label += ((ClassDescriptor) iter.next()).getUnqualifiedName() + " ";

@@ -121,7 +121,7 @@ public class InlineResultsTable
                 // special case for ProxyReference from DisplayReference objects
                 o = ((ProxyReference) o).getObject();
             }
-            types.add(ObjectViewController.getLeafClds(o.getClass(), cld.getModel()));
+            types.add(DisplayObject.getLeafClds(o.getClass(), cld.getModel()));
         }
         return types;
     }
@@ -195,7 +195,7 @@ public class InlineResultsTable
     protected List getRowFieldConfigs(Object rowObject) {
         List returnFieldConfigs = new ArrayList();
 
-        Set objectClassDescriptors = ObjectViewController.getLeafClds(rowObject.getClass(), model);
+        Set objectClassDescriptors = DisplayObject.getLeafClds(rowObject.getClass(), model);
 
         Iterator classDescriptorsIter = objectClassDescriptors.iterator();
 

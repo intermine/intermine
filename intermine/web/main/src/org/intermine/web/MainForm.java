@@ -42,7 +42,7 @@ public class MainForm extends ActionForm
     protected String loopQueryOp, loopQueryValue;
 
     protected String path;
-    protected String operator;
+    protected String operator = "and";
     protected String nullConstraint;
     protected Object parsedAttributeValue;
     
@@ -367,6 +367,6 @@ public class MainForm extends ActionForm
         templateLabel = "";
         templateId = "";
         editable = false;
-        operator = (String) request.getSession().getAttribute(Constants.DEFAULT_OPERATOR);
+        operator = SessionMethods.getDefaultOperator(request.getSession());
     }
 }

@@ -14,29 +14,27 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.PrimaryKeyUtil;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.Constants;
+
+import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.tiles.ComponentContext;
-
-import org.intermine.metadata.Model;
-import org.intermine.metadata.PrimaryKeyUtil;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.Constants;
-import org.intermine.objectstore.ObjectStore;
-
-import org.apache.log4j.Logger;
+import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Implementation of <strong>TilesAction</strong> that assembles data for displaying an object.
@@ -107,27 +105,8 @@ public class ObjectViewController extends TilesAction
                 }
                 context.putAttribute("primaryKeyFields", primaryKeyFields);
             }
-            leafClds = getLeafClds(o.getClass(), model);
-        } else {
-            leafClds = new HashSet();
         }
-
-        context.putAttribute("leafClds", leafClds);
 
         return null;
-    }
-
-    /**
-     * Get the class descriptors for a Class in the Model
-     * @param c the Class
-     * @param model the Model
-     * @return the Set of ClassDescriptors
-     */
-    public static Set getLeafClds(Class c, Model model) {
-        Set leafClds = new HashSet();
-        for (Iterator i = DynamicUtil.decomposeClass(c).iterator(); i.hasNext();) {
-            leafClds.add(model.getClassDescriptorByName(((Class) i.next()).getName()));
-        }
-        return leafClds;
     }
 }
