@@ -275,7 +275,6 @@
                           <c:out value=" ${constraintDisplayValues[constraint]}"/>
                         </c:otherwise>
                       </c:choose>
-                      (<b>${constraint.code}</b>)
                     </span>
                     <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
                     <html:link action="/mainChange?method=removeConstraint&amp;path=${node.path}&amp;index=${status.index}"
@@ -307,6 +306,9 @@
                             title="<fmt:message key="templateBuilder.constraintNotEditable"/>"/>
                         </c:otherwise>
                       </c:choose>
+                    </c:if>
+                    <c:if test="${fn:length(QUERY.allConstraints) > 1}">
+                      (<b>${constraint.code}</b>)
                     </c:if>
                   </div>
                   <c:if test="${TEMPLATE_BUILD_STATE != null && constraint.editable && node.attribute}">
@@ -348,7 +350,6 @@
         </c:otherwise>
       </c:choose>
       </div>
-      <br/>
       <div class="heading">
         <fmt:message key="query.constraintLogic"/>
       </div>
@@ -420,10 +421,10 @@
         <div class="body">
         
           <c:if test="${editingConstraintIndex == null && fn:length(QUERY.allConstraints) > 0}">
-            <p align="center">
+            <div align="center">
             <html:radio property="operator" value="and"/>AND&nbsp;&nbsp;
             <html:radio property="operator" value="or"/>OR
-            </p>
+            </div>
           </c:if>
         
           <c:choose>
@@ -515,7 +516,7 @@
           
           <c:choose>
             <c:when test="${editingNode.attribute}">
-              <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" height="65">
+              <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" >
                 <tr>
                   <c:choose>
                     <c:when test="${editingNode.type == 'boolean'}">
@@ -658,8 +659,6 @@
           
         </div>
         
-        
-        
         <script type="text/javascript">
         <!--
         initConstraintForm(0, document.getElementById('mainForm').attributeOp,
@@ -667,8 +666,9 @@
             document.getElementById('mainForm').attributeValue);
         //-->
         </script>
+        
         </div>
-        <div style="text-align:right">
+        <div class="body" style="text-align:right">
           <script language="JavaScript">
           <!--
             <c:choose>

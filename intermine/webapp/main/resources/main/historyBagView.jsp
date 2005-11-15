@@ -8,11 +8,12 @@
 <!-- historyBagView.jsp -->
 <html:xhtml/>
 
-<im:heading id="bagHistory">
-  <fmt:message key="query.savedbags.header"/>
-</im:heading>
 
 <im:body id="bagHistory">
+
+	<p>
+    <fmt:message key="history.savedbags.help"/>
+  </p>
 
   <c:choose>
     <c:when test="${empty PROFILE.savedBags}">
@@ -23,9 +24,7 @@
     <c:otherwise>
 
       <html:form action="/modifyBag">
-        <p>
-          <fmt:message key="history.savedbags.help"/>
-        </p>
+        
         <table class="results history" cellspacing="0">
           <tr>
             <th>

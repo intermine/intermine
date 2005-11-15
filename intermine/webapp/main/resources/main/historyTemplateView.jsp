@@ -8,11 +8,14 @@
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 
-  <im:heading id="savedTemplates">
-    <fmt:message key="history.savedtemplates.header"/>
-  </im:heading>
   <im:body id="savedTemplates">
   
+		<p>
+      <fmt:message key="history.savedtemplates.help"/>
+      <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.html"/>
+      [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
+    </p>
+		
     <%-- Choose the queries to display --%>
     <c:choose>
       <c:when test="${empty PROFILE.savedTemplates}">
@@ -21,11 +24,7 @@
         </div>
       </c:when>
       <c:otherwise>
-        <p>
-          <fmt:message key="history.savedtemplates.help"/>
-          <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.html"/>
-          [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
-        </p>
+        
         <html:form action="/modifyTemplate">
         <table class="results history" cellspacing="0">
           <tr>
@@ -53,7 +52,7 @@
               
               <c:choose>
                 <c:when test="${!savedTemplate.value.valid}">
-                  <td align="left" nowrap">
+                  <td align="left" nowrap>
                     <html:link action="/templateProblems?name=${savedTemplate.key}&amp;type=user" styleClass="brokenTmplLink">
                     <strike>${savedTemplate.value.name}</strike>
                     </html:link>
@@ -99,20 +98,19 @@
         <br/>
       </c:otherwise>
     </c:choose>
-    
-  </im:body>
   
-<c:if test="${IS_SUPERUSER}">
-  <span class="smallnote">
-    <c:if test="${!empty PROFILE.savedTemplates}">
-      <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
-        <fmt:message key="begin.exportTemplates"/>
-      </html:link><br/>
-    </c:if>
-    <html:link action="/import" titleKey="begin.importTemplatesDesc">
-      <fmt:message key="begin.importTemplates"/>
-    </html:link>
-  </span>
-</c:if>
+		<c:if test="${IS_SUPERUSER}">
+		  <span class="smallnote">
+		    <c:if test="${!empty PROFILE.savedTemplates}">
+		      <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
+		        <fmt:message key="begin.exportTemplates"/>
+		      </html:link><br/>
+		    </c:if>
+		    <html:link action="/import" titleKey="begin.importTemplatesDesc">
+		      <fmt:message key="begin.importTemplates"/>
+		    </html:link>
+		  </span>
+		</c:if>
+  </im:body>
 
 <!-- /historyTemplates.jsp -->

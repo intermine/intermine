@@ -70,19 +70,21 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   background-color: #f5f5f5;
   padding: 1px;
   padding-left: 5px;
-  margin: 5px;
-  margin-bottom: -1px;
+  margin-top: 8px;
+  margin-right: 8px;
+  margin-left: 8px;
+  margin-bottom: 4px;
   font-size: 13px;
   color: black;
   white-space: nowrap;
 }
 
-
-.box .body {
+.body {
   font-size: 12px;
-  margin: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
+  margin-top: 9px;
+  margin-right: 12px;
+  margin-left: 12px;
+  margin-bottom: 10px;
 }
 
 .boxbody {
@@ -105,10 +107,10 @@ table.box th {
   border-bottom: 1px solid #888;
 }
 
-table.box > tbody > tr > td {
-  padding: 5px;
+/*table.box > tbody > tr > td {
+  -padding: 5px;
   background: white;
-}
+}*/
 
 table.history > tbody > tr > td {
   font-size: 11px;
@@ -258,7 +260,7 @@ table.query {
 }
 
 table.query td.modelbrowse {
-  border-right: 1px solid black;
+  border-right: 1px solid #888;
 }
 
 table.results {
@@ -287,7 +289,6 @@ table.noborder, table.noborder td, table.noborder th {
   border: 1px solid #bbb;
   padding-top: 1px;
   padding-bottom: 1px;
-  padding-right: px;
   padding-left: 3px;
   margin-left: 3px;
   margin-right: 3px;
@@ -315,7 +316,8 @@ div.viewpath {
   float: left;
   text-align: center;
   font-size: 11px;
-  cursor:pointer; cursor:hand
+  cursor: pointer;
+  cursor: hand;
 }
 div.viewpathDisabled {
   background: #bbb;
@@ -453,17 +455,15 @@ hr.tmplSeperator {
 
 .box .buildmenu .body {
   border: 1px solid #888;
-  height: 10;
   font-size: 12px;
-  padding: 4px;
-  margin-top: 5px;
+  padding: 5px;
 }
 
 
 /* object details trail navigator styles */
 
 .objectTrail {
-  font-size: 11px;
+  margin-bottom: 1px;
 }
 
 .objectTrailLink {
@@ -510,7 +510,6 @@ img.searchHeatImg {
 
 .dsIconImage {
   border: 1px solid #222;
-  margin-left: 5px;
   margin-bottom: 5px;
 }
 
@@ -617,3 +616,101 @@ a.constraintId {
   color: green;
 }
 
+
+.viewTable td.topLeft {
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+  font-style: italic;
+  font-size: 11px;
+}
+
+.viewTable td {
+  
+}
+
+.viewTable td.tab {
+  border-top: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+}
+
+.viewTable td.selected {
+  font-weight: bold;
+  border-right: 1px solid #bbb;
+  border-top: 1px solid #aaa;
+}
+
+.viewTable td.not-selected {
+  border-bottom: 1px solid #aaa;
+  color: #555;
+}
+
+.viewTable td.tab-space {
+  border-bottom: 1px solid #aaa;
+}
+
+.viewTable td.viewLabelCell {
+  border-top: 1px solid #bbb;
+}
+
+.viewTable td.viewTableView {
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  border-left: 1px solid #999;
+  padding-bottom: 0px;
+  padding-right: 0px;
+}
+
+.viewTable td.viewTableView, .viewTable td.viewLabelCell, .viewTable td.selected {
+  background-color: #f8f8f8;
+}
+
+.viewTable div.viewActionLinks {
+  margin-top: -3px;
+  margin-bottom: 3px;
+}
+
+.viewTable td.not-selected a:link {
+}
+
+.viewTable td.not-selected a:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+
+
+.histTabTable td.topLeft {
+  border-right: 1px solid #888;
+  border-bottom: 1px solid #888;
+}
+
+.histTabTable td.tab {
+  border-top: 1px solid #888;
+  border-right: 1px solid #888;
+}
+
+.histTabTable td.selected {
+  font-weight: bold;
+  border-right: 1px solid #888;
+  border-top: 1px solid #888;
+}
+
+.histTabTable td.not-selected {
+  border-bottom: 1px solid #888;
+  background-color: #f5f5f5;
+}
+
+.histTabTable td.tab-space {
+  border-bottom: 1px solid #888;
+}
+
+.histTabTable td.not-selected a:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+
+img.fasta {
+  margin-top: 3px;
+  vertical-align: text-bottom;
+}

@@ -6,7 +6,6 @@
 <im:viewablejs idPrefixes="nav,browser,query,showing"/>
 
 <tiles:get name="main"/>
-<br/>
 <tiles:get name="view"/>
 <tiles:insert page="templateSettings.jsp"/>
 <tiles:insert page="templatePreview.jsp"/>

@@ -82,7 +82,6 @@
         </c:forEach>
       </div>
       
-      <p><span id="ser"></span></p>
       
 <!-- viewLine.jsp -->
 

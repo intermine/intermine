@@ -14,50 +14,51 @@
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr>
       <td width="99%">
-      	<c:choose>
-      	  <c:when test="${!empty ASPECTS}">
-      	    <div class="body">
-              <fmt:message key="begin.aspect.intro"/>
-        	    </div>
-      	    <tiles:insert page="/aspectIcons.jsp"/>
-      	  </c:when>
-      	  <c:otherwise>
-      	  	<c:forEach items="${CATEGORIES}" var="category">
-              <c:if test="${!empty CATEGORY_CLASSES[category]}">
-                <div class="heading"><c:out value="${category}"/></div>
-                <div class="body">
-                  <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-                  <c:forEach items="${classes}" var="classname" varStatus="status">
-                    <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-                    ${classname}</a><c:if test="${!status.last}">,</c:if>
-                  </c:forEach>
-                  <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-                    <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-                  </c:if>
-                </div>
-                <im:vspacer height="5"/>
-              </c:if>
-            </c:forEach>
-      	  </c:otherwise>
-      	</c:choose>
-        <%--
-        <c:forEach items="${CATEGORIES}" var="category">
-          <c:if test="${!empty CATEGORY_CLASSES[category]}">
-            <div class="heading"><c:out value="${category}"/></div>
-            <div class="body">
-              <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-              <c:forEach items="${classes}" var="classname" varStatus="status">
-                <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-                ${classname}</a><c:if test="${!status.last}">,</c:if>
-              </c:forEach>
-              <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-                <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-              </c:if>
-            </div>
-            <im:vspacer height="5"/>
-          </c:if>
-        </c:forEach>
-        --%>
+				<div class="body">
+      		<c:choose>
+	      	  <c:when test="${!empty ASPECTS}">
+	              <fmt:message key="begin.aspect.intro"/>
+	        	  
+	      	    <tiles:insert page="/aspectIcons.jsp"/>
+	      	  </c:when>
+	      	  <c:otherwise>
+	      	  	<c:forEach items="${CATEGORIES}" var="category">
+	              <c:if test="${!empty CATEGORY_CLASSES[category]}">
+	                <div class="heading"><c:out value="${category}"/></div>
+	                <div class="body">
+	                  <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
+	                  <c:forEach items="${classes}" var="classname" varStatus="status">
+	                    <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
+	                    ${classname}</a><c:if test="${!status.last}">,</c:if>
+	                  </c:forEach>
+	                  <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+	                    <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
+	                  </c:if>
+	                </div>
+	                <im:vspacer height="5"/>
+	              </c:if>
+	            </c:forEach>
+	      	  </c:otherwise>
+	      	</c:choose>
+				</div>
+	        <%--
+	        <c:forEach items="${CATEGORIES}" var="category">
+	          <c:if test="${!empty CATEGORY_CLASSES[category]}">
+	            <div class="heading"><c:out value="${category}"/></div>
+	            <div class="body">
+	              <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
+	              <c:forEach items="${classes}" var="classname" varStatus="status">
+	                <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
+	                ${classname}</a><c:if test="${!status.last}">,</c:if>
+	              </c:forEach>
+	              <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+	                <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
+	              </c:if>
+	            </div>
+	            <im:vspacer height="5"/>
+	          </c:if>
+	        </c:forEach>
+	        --%>
         
       </td>
       <td valign="top" align="right" nowrap="nowrap" width="1%" class="buildmenu">

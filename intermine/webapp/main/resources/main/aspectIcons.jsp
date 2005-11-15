@@ -8,7 +8,7 @@
 
 <!-- aspectIcons -->
 
-<div class="aspectIcons">
+<div class="body">
   <table border="0" width="100" cellspacing="0" cellpadding="0">
     <tr>
       <td width="33%" valign="top">
