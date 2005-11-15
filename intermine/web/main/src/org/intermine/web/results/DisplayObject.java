@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
@@ -73,7 +75,22 @@ public class DisplayObject
         this.webConfig = webConfig;
         this.webProperties = webProperties;
 
-        clds = ObjectViewController.getLeafClds(object.getClass(), model);
+        clds = getLeafClds(object.getClass(), model);
+    }
+    
+    /**
+     * Get the set of leaf ClassDescriptors for a given InterMineObject class.
+     * @param clazz object type
+     * @param model model
+     * @return Set of ClassDescriptor objects
+     */
+    public static Set getLeafClds(Class clazz, Model model) {
+        Set leafClds = new HashSet();
+        for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
+            j.hasNext();) {
+            leafClds.add(model.getClassDescriptorByName(((Class) j.next()).getName()));
+        }
+        return leafClds;
     }
 
     /**

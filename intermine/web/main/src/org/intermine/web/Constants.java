@@ -74,6 +74,11 @@ public interface Constants
     public static final String OBJECT_STORE_SUMMARY = "OBJECT_STORE_SUMMARY";
 
     /**
+     * Session attribute, name of tab selected on history page.
+     */
+    public static final String HISTORY_PAGE = "HISTORY_PAGE";
+    
+    /**
      * ServletContext attribute used to store the WebConfig object for the Model.
      */
     public static final String WEBCONFIG = "WEBCONFIG";
@@ -198,4 +203,9 @@ public interface Constants
      * Session attribute that holds a map from class name to map from field name to Boolean.TRUE.
      */
     public static final String EMPTY_FIELD_MAP = "EMPTY_FIELD_MAP";
+
+    /**
+     * Servlet attribute. Map from class name to Set of leaf class descriptors.
+     */
+    public static final String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
 }

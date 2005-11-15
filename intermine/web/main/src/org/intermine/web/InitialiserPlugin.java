@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.aspects.AspectBinding;
 import org.intermine.web.config.WebConfig;
+import org.intermine.web.results.DisplayObject;
 
 import org.apache.log4j.Logger;
 
@@ -181,7 +183,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Summarize the ObjectStore to get class counts
      */
-    private void summarizeObjectStore(ServletContext servletContext, ObjectStore os)
+    private void summarizeObjectStore(ServletContext servletContext, final ObjectStore os)
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =
@@ -242,6 +244,19 @@ public class InitialiserPlugin implements PlugIn
             }
         }
         servletContext.setAttribute(Constants.EMPTY_FIELD_MAP, emptyFields);
+        // Build map interface that takes an object and returns set of leaf class descriptors
+        Map leafDescriptorsMap = new AbstractMap() {
+            public Set entrySet() {
+                return null;
+            }
+            public Object get(Object key) {
+                if (key == null) {
+                    return Collections.EMPTY_SET;
+                }
+                return DisplayObject.getLeafClds(key.getClass(), os.getModel());
+            }
+        };
+        servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
     }
 
     /**
