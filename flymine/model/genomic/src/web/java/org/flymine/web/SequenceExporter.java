@@ -73,7 +73,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ObjectStore os = (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os =
+            (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
         FlyMineSequence flyMineSequence = null;
         
         response.setContentType("text/plain");
@@ -305,8 +306,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 List row = (List) rowListIter.next();
           
                 Object o = row.get(realColumnIndex);
-                
-                if (validType(o.getClass())) {
+
+                if (o != null && validType(o.getClass())) {
                     return thisColumn;
                 }
             }
