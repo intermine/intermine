@@ -118,8 +118,8 @@ class PathQueryHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
-            query.checkValidity();
             query.syncLogicExpression("and"); // always and for old queries
+            query.checkValidity();
             for (Iterator iter = alternativeViews.entrySet().iterator(); iter.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 query.addAlternativeView((String) entry.getKey(), (List) entry.getValue());
