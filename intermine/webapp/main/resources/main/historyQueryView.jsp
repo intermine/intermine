@@ -21,11 +21,13 @@
   </c:otherwise>
 </c:choose>
 
-  <im:heading id="${type}">
-    <fmt:message key="${type == 'saved' ? 'history.savedqueries.header' : 'history.history.header'}"/>
-  </im:heading>
-  <im:body id="${type}">
   
+  <im:body id="${type}">
+  	
+		<p>
+      <fmt:message key="${messageKey}"/>
+    </p>
+
     <%-- Choose the queries to display --%>
     <c:choose>
       <c:when test="${empty queryMap}">
@@ -34,9 +36,7 @@
         </div>
       </c:when>
       <c:otherwise>
-        <p>
-          <fmt:message key="${messageKey}"/>
-        </p>
+        
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
         <table class="results history" cellspacing="0">
@@ -141,7 +141,7 @@
                     |
                   </c:if>
                 </c:if>
-                <html:link action="/exportQuery?name=${savedQuery.key}&type=${type}"
+                <html:link action="/exportQuery?name=${savedQuery.key}&amp;type=${type}"
                            titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>

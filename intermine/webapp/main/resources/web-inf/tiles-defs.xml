@@ -129,10 +129,7 @@
     <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition> 
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
-  <definition name="history.tile" path="/history.jsp">
-    <put name="historyBagView" value="historyBagView.jsp"/>
-    <put name="historyQueryView" value="historyQueryView.jsp"/>
-  </definition>
+  <definition name="history.tile" path="/history.jsp" controllerUrl="/initHistory.do"/>
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>

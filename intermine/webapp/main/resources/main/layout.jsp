@@ -66,7 +66,7 @@
       
       <div id="feedbackFormDivButton">
         <im:vspacer height="11"/>
-        <div class="body expandButton">
+        <div class="expandButton">
            <a href="#" onclick="showFeedbackForm();return false">
              <b><fmt:message key="feedbackBox.title"/></b>
            </a>

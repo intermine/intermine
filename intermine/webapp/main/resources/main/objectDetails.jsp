@@ -101,6 +101,14 @@
               </c:if>
             </c:forEach>
           </table>
+          
+          <c:forEach items="${LEAF_DESCRIPTORS_MAP[object.object]}" var="cld2">
+            <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
+              <c:set var="cld2" value="${cld2}" scope="request"/>
+              <p><tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/></p>
+            </c:if>
+          </c:forEach>
+          
         </im:body>
 
         <c:forEach items="${object.clds}" var="cld">
@@ -171,6 +179,17 @@
                             <img border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
                             <span class="collectionField">${fieldName}</span>
                           </html:link>
+                          <c:if test="${collection.size == 1}">
+                                    <c:forEach items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}" var="cld2">
+                                      <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
+                                        <c:set var="cld2" value="${cld2}" scope="request"/>
+                                        <c:set var="backup" value="${object}"/>
+                                        <c:set var="object" value="${thisRowObject}" scope="request"/>
+                                        <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
+                                        <c:set var="object" value="${backup}"/>
+                                      </c:if>
+                                    </c:forEach>
+                          </c:if>
                         </c:when>
                         <c:otherwise>
                           <span class="nullStrike">
@@ -225,9 +244,18 @@
                                 <c:set var="thisRowObject" value="${thisRowObject}" 
                                        scope="request"/>
                                 <tr>
-                                  <td width="10px">
+                                  <td width="1%" nowrap>
                                     <c:forEach items="${collection.table.types[status.index]}" var="cld">
                                       <span class="type">${cld.unqualifiedName}</span>
+                                    </c:forEach>
+                                    <c:forEach items="${LEAF_DESCRIPTORS_MAP[thisRowObject]}" var="cld2">
+                                      <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
+                                        <c:set var="cld2" value="${cld2}" scope="request"/>
+                                        <c:set var="backup" value="${object}"/>
+                                        <c:set var="object" value="${thisRowObject}" scope="request"/>
+                                        <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
+                                        <c:set var="object" value="${backup}"/>
+                                      </c:if>
                                     </c:forEach>
                                   </td>
                                   <c:forEach items="${collection.table.expressions}" var="expr">
@@ -247,7 +275,7 @@
                                       </c:choose>
                                     </td>
                                   </c:forEach>
-                                  <td width="10px">
+                                  <td width="10px" nowrap>
                                     [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}_${collection.table.ids[status.index]}">
                                       <fmt:message key="results.details"/>
                                     </html:link>]

@@ -496,6 +496,9 @@
     <action path="/initBegin"
             type="org.intermine.web.BeginController"/>
 
+  	<action path="/initHistory"
+	          type="org.intermine.web.history.HistoryController"/>
+
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
             name="iqlQueryForm"/>

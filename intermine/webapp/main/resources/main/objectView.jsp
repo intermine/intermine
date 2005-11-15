@@ -9,6 +9,8 @@
 
 <!-- objectView.jsp -->
 <html:xhtml/>
+<c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
+${leafClds}
 <div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
