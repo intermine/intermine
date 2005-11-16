@@ -545,26 +545,32 @@ public class WriteGFFTask extends Task
 
         Sequence chromosomeSequence = chr.getSequence();
 
-        FileOutputStream fileStream =
-            new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
-
-        PrintStream printStream = new PrintStream(fileStream);
-        printStream.println(">" + chromosomeFileNamePrefix(chr));
-        try {
+        if (chromosomeSequence == null) {
+            LOG.warn("cannot find any sequence for chromosome " + chr.getIdentifier());
+        } else {
             String residues = chromosomeSequence.getResidues();
-               // code from BioJava's FastaFormat class:
-            int length = residues.length();
-            for (int pos = 0; pos < length; pos += 60) {
-                int end = Math.min(pos + 60, length);
-                printStream.println(residues.substring(pos, end));
+
+            if (residues == null) {
+                LOG.warn("cannot find any sequence residues for chromosome "
+                         + chr.getIdentifier());
+            } else {
+                FileOutputStream fileStream =
+                    new FileOutputStream(chromosomeFastaFile(destinationDirectory, chr));
+
+                PrintStream printStream = new PrintStream(fileStream);
+                printStream.println(">" + chromosomeFileNamePrefix(chr));
+
+                // code from BioJava's FastaFormat class:
+                int length = residues.length();
+                for (int pos = 0; pos < length; pos += 60) {
+                    int end = Math.min(pos + 60, length);
+                    printStream.println(residues.substring(pos, end));
+                }
+
+                printStream.close();
+                fileStream.close();
             }
-        } catch (NullPointerException e) {
-            System.err.println("null pointer exception writting fasta for " + chr.getIdentifier());
         }
-
-
-        printStream.close();
-        fileStream.close();
     }
 
     private File chromosomeFastaFile(File destinationDirectory, Chromosome chr) {

@@ -145,6 +145,7 @@ public class WriteGFFTaskTest extends TestCase
         storedOrganism = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         storedOrganism.setGenus("Drosophila");
         storedOrganism.setSpecies("melanogaster");
+        storedOrganism.setAbbreviation("DM");
 
         String residues =
             "ggcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtct" +

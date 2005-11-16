@@ -190,13 +190,17 @@ public class TransferSequences
             return "";
 
 // TODO XXX FIXME - uncomment this
-//             throw new RuntimeException("in TransferSequences.getSubSequence(): locationOnChr " + locationOnChr +
-//                                        "\n  startPos: " + startPos + " endPos " + endPos
+//             throw new RuntimeException("in TransferSequences.getSubSequence(): locationOnChr "
+//                                        + locationOnChr
+//                                        + "\n  startPos: " + startPos + " endPos " + endPos
 //                                        + "\n chromosomeSequence.substr(0,1000) " +
-//                                        chromosomeSequenceString.substring(0,1000) + "\n location.getObject() " 
+//                                        chromosomeSequenceString.substring(0,1000)
+//                                        + "\n location.getObject() " 
 //                                        + locationOnChr.getObject().toString()
-//                                        + " location.getSubject() " + locationOnChr.getSubject().toString() + " "
-//                                        + "\n location.getSubject().getId() " + locationOnChr.getSubject().getId() +
+//                                        + " location.getSubject() " +
+//                                        locationOnChr.getSubject().toString() + " "
+//                                        + "\n location.getSubject().getId() " +
+//                                        locationOnChr.getSubject().getId() +
 //                                        "\n location.getObject().getId() ");
         }
 

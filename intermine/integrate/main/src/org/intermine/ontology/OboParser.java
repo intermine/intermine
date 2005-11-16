@@ -23,9 +23,11 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Thomas Riley
- * @author Peter Mclaren - 5/6/05 - added some functionality to allow terms to find all their parent terms.
+ * @author Peter Mclaren - 5/6/05 - added some functionality to allow terms to find all their parent
+ * terms.
  */
-public class OboParser {
+public class OboParser
+{
     private static final Logger LOG = Logger.getLogger(OboParser.class);
 
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
@@ -78,7 +80,8 @@ public class OboParser {
     }
 
     /**
-     * Process all terms - starting from the roots and work our way down to the bottom of the graph setting parents.
+     * Process all terms - starting from the roots and work our way down to the bottom of the graph
+     * setting parents.
      *
      * @return the map of all terms mapped to a set of all their parents.
      * @throws Exception if the rootTerms have not been created yet or if anything else goes wrong.
@@ -96,10 +99,12 @@ public class OboParser {
     private Map getTermToParentTermSetMap(Map rootTermMap, Map termMap) throws Exception {
 
         if (rootTermMap == null || rootTermMap.size() == 0) {
-            throw new Exception("OboParser.getTermToParentTermSetMap() - call OboParser.getTermIdNameMap() first!");
+            throw new Exception("OboParser.getTermToParentTermSetMap() - "
+                                + "call OboParser.getTermIdNameMap() first!");
         }
 
-        //Iterate over the root term elements -- assuming that we might have more than one root element!
+        //Iterate over the root term elements -- assuming that we might have more than one root
+        //element!
         for (Iterator rootKeyIter = rootTermMap.keySet().iterator(); rootKeyIter.hasNext();) {
 
             Stack currentBranchStack = new Stack();
@@ -108,7 +113,8 @@ public class OboParser {
             setParentTermsViaOntologyDepthSearch(currentBranchStack, (OboTerm) currentRootTerm);
         }
 
-        //Ok now we can do some work here to iterate over the root terms and set their children to point to them...
+        //Ok now we can do some work here to iterate over the root terms and set their children to
+        //point to them...
         Map termToParentTermSetMap = new HashMap(termMap.size());
 
         //loop over all the terms and build a map of their ids pointing to their parent set.
@@ -138,7 +144,8 @@ public class OboParser {
         //does the current term have any child terms?
         Set currentChildren = nextTerm.getChildren();
 
-        //if we still have more children to iterate over, better recurse down the tree to the next level...
+        //if we still have more children to iterate over, better recurse down the tree to the next
+        //level...
         if (currentChildren != null && currentChildren.size() > 0) {
 
             //recurse over each child of the current stack...
@@ -149,7 +156,8 @@ public class OboParser {
             }
         }
 
-        //ok we've reached the bottom of this part of the graph - pop the current (nextTerm) term off the graph.
+        //ok we've reached the bottom of this part of the graph - pop the current (nextTerm) term
+        //off the graph.
         currentBranchStack.pop();
     }
 
@@ -205,7 +213,7 @@ public class OboParser {
         in.close();
 
         LOG.info("Found " + tagValuesList.size() + " root terms");
-        
+
         // Just build all the OboTerms disconnected
         for (Iterator iter = tagValuesList.iterator(); iter.hasNext();) {
             Map tvs = (Map) iter.next();
@@ -218,10 +226,10 @@ public class OboParser {
                 LOG.debug("Skipping obselete term " + id + " : " + name);
             }
         }
-        
+
         // Copy all terms into rootTerms map - non-root terms will be removed
         rootTerms = new HashMap(terms);
-        
+
         // Now connect them all together
         for (Iterator iter = tagValuesList.iterator(); iter.hasNext();) {
             Map tvs = (Map) iter.next();
@@ -267,8 +275,9 @@ public class OboParser {
                         DagTerm pt = (DagTerm) terms.get(bits[1]);
                         LOG.debug(term + " part_of " + pt);
                         if (pt == null) {
-                            LOG.warn("child term (" + term + ") in OBO file refers to a non-existant "
-                                    + "parent (" + bits[1] + ")");
+                            LOG.warn("child term (" + term
+                                     + ") in OBO file refers to a non-existant "
+                                     + "parent (" + bits[1] + ")");
                             continue;
                         }
                         pt.addComponent(term);

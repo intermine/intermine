@@ -43,6 +43,7 @@ public class XPathSelect extends Task
 
     /**
      * Set the file to write to.
+     * @param xmlFile the File to read
      */
     public void setFile(File xmlFile) {
         this.xmlFile = xmlFile;
@@ -50,6 +51,7 @@ public class XPathSelect extends Task
 
     /**
      * Set the XPath expression.
+     * @param expression the XPath expression to apply to the contents of the file.
      */
     public void setExpression(String expression) {
         this.expression = expression;
@@ -57,6 +59,7 @@ public class XPathSelect extends Task
 
     /**
      * Specify the property to set when the XPath expression matches.
+     * @param propName the property to set
      */
     public void setPropName(String propName) {
         this.propName = propName;
@@ -64,6 +67,7 @@ public class XPathSelect extends Task
 
     /**
      * Execute the task.
+     * @throws BuildException if the is a problem while executing
      */
     public void execute() throws BuildException {
         if (xmlFile == null) {
@@ -91,14 +95,14 @@ public class XPathSelect extends Task
 
             returnResult = null;
             Node n;
-            while ((n = nl.nextNode())!= null) {
+            while ((n = nl.nextNode()) != null) {
                 StringWriter stringWriter = new StringWriter();
                 serializer.transform(new DOMSource(n), new StreamResult(stringWriter));
                 if (returnResult == null) {
                     returnResult = stringWriter.toString();
                 } else {
-                    throw new BuildException("XPath expression (" + expression +
-                                             ") matched more than once");
+                    throw new BuildException("XPath expression (" + expression
+                                             + ") matched more than once");
                 }
             }
 
