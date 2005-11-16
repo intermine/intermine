@@ -193,7 +193,7 @@ public class Dependencies extends Task
             }
             
             if (executeTargets /*&& (mainDep || test)*/) {
-                System.out.println("Executing " + theTarget + " on " + depName + "...");
+                System .out.println("Executing " + theTarget + " on " + depName + "...");
                 
                 // Run target if specified
                 Ant ant = new Ant();
@@ -248,7 +248,8 @@ public class Dependencies extends Task
     public String calcThisProjectName() throws BuildException {
         try {
             File dir = getProject().getBaseDir().getCanonicalFile();
-            File wspace = new File(workspaceBaseDir.replace('/', File.separatorChar)).getCanonicalFile();
+            File wspace =
+                new File(workspaceBaseDir.replace('/', File.separatorChar)).getCanonicalFile();
             String projName = "";
             while (!dir.equals(wspace)) {
                 if (projName.length() > 0) {
@@ -267,15 +268,15 @@ public class Dependencies extends Task
      * @param projects
      */
     private void describeDependencies(List projects, String label) {
-        System.out.println("---- " + label
+        System .out.println("---- " + label
                 + " ---------------------------------------------".substring(label.length()));
         for (int i = projects.size() - 1; i >= 0; i--) {
-            System.out.println(" " + projects.get(i));
+            System .out.println(" " + projects.get(i));
         }
         if (projects.size() == 0) {
-            System.out.println(" None.");
+            System .out.println(" None.");
         }
-        System.out.println("---------------------------------------------------");
+        System .out.println("---------------------------------------------------");
     }
     
     /**
@@ -285,7 +286,7 @@ public class Dependencies extends Task
      * @param projects accumulation of project names found
      */
     protected void followProjectDependencies(File projDir, List projects) {
-        //System.out.println("following " + projDir.getAbsolutePath());
+        // System .out.println("following " + projDir.getAbsolutePath());
         // Load project properties
         Properties properties = loadProjectProperties(projDir);
         String deps = properties.getProperty(type + ".dependencies");
@@ -305,16 +306,14 @@ public class Dependencies extends Task
      */
     protected void iterateOverDependencies(String depsString, List projects) {
         String deps[] = depsString.split(",");
-        for (int i=0 ; i<deps.length ; i++) {
+        for (int i = 0; i < deps.length; i++) {
             String dep = deps[i].trim();
             if (dep.length() > 0) {
                 if (projects.contains(dep)) {
                     // remove from current position and add to end
-                    //System.out.println("Removed earlier dependency on " + dep);
                     projects.remove(dep);
                     projects.add(dep);
                 } else {
-                    //System.out.println("Adding " + dep);
                     projects.add(dep);
                 }
                 

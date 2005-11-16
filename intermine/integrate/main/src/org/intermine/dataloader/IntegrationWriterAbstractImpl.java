@@ -301,15 +301,17 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             } else {
                                 try{
                                     destCol.add(store(colObj, source, skelSource, SKELETON));
-                                }catch(RuntimeException bob){
+                                } catch (RuntimeException bob) {
                                     if (colObj instanceof ProxyReference) {
-                                        LOG.warn("colObj: " + colObj + ", " + ((ProxyReference) colObj).getObject());
+                                        LOG.warn("colObj: " + colObj + ", "
+                                                 + ((ProxyReference) colObj).getObject());
                                     }
                                     LOG.warn("destCol = " + destCol);
                                     LOG.warn("col = " + col);
                                     LOG.warn("fieldName:" + field.getName()
-                                            + " classDescriptionName:" + field.getClassDescriptor().getName(), bob);
-                                     throw bob;
+                                             + " classDescriptionName:"
+                                             + field.getClassDescriptor().getName(), bob);
+                                    throw bob;
                                 }
                             }
                         }

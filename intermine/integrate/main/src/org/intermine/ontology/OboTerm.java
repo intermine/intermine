@@ -1,9 +1,5 @@
 package org.intermine.ontology;
 
-import java.util.Set;
-import java.util.Collection;
-import java.util.HashSet;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -14,6 +10,9 @@ import java.util.HashSet;
  *
  */
 
+import java.util.Set;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Extension of DagTerm that adds a namespace attribute that is specific to the OBO
@@ -80,8 +79,8 @@ public class OboTerm extends DagTerm
      * Adds more parent ids to the set of parent ids for this item.
      * @param parentIds A collection of some parent go term ids to add to the set of parent ids
      * */
-    protected void addToAllParentIds(Collection parentIds){
-        if(allParentIds == null){
+    protected void addToAllParentIds(Collection parentIds) {
+        if (allParentIds == null) {
             allParentIds = new HashSet();
         }
         allParentIds.addAll(parentIds);

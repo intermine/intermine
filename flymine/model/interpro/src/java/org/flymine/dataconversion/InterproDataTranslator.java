@@ -13,8 +13,6 @@ package org.flymine.dataconversion;
 import java.util.*;
 
 import org.intermine.InterMineException;
-import org.intermine.model.fulldata.ReferenceList;
-import org.intermine.model.fulldata.Reference;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.ItemHelper;
@@ -31,8 +29,8 @@ import org.apache.log4j.Logger;
  *
  * @author Peter Mclaren
  */
-public class InterproDataTranslator extends DataTranslator {
-
+public class InterproDataTranslator extends DataTranslator
+{
     protected static final String PARENTFEATURES = "parentFeatures";
     protected static final String CHILDFEATURES = "childFeatures";
     protected static final String CONTAINS = "contains";
@@ -165,10 +163,10 @@ public class InterproDataTranslator extends DataTranslator {
                     }
 
                     result.add(tgtItem);
-                    if(interProSynonym != null){
+                    if (interProSynonym != null) {
                         result.add(interProSynonym);
                     }
-                    if(databaseSynonym != null){
+                    if (databaseSynonym != null) {
                         result.add(databaseSynonym);
                     }
                 }

@@ -92,10 +92,8 @@ public class PsiDataTranslator extends DataTranslator
             dataSetItem = createItem("DataSet");
             dataSetItem.addAttribute(new Attribute("title", shortName));
             if (fullNameAttr != null) {
-
                 dataSetItem.addAttribute(new Attribute("description", fullNameAttr.getValue()));
-            }
-            else {
+            } else {
                 LOG.debug("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
             }
             dataSetItem.setReference("dataSource", dataSource);
