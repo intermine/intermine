@@ -12,12 +12,28 @@
 
   <!-- Property setup targets -->
   <!-- buildtime and runtime settings -->
-  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
 
-  <property file="${build.properties.local}"/>
+  <!-- set ${release} with -Drelease=something on the command line to choose a
+       different set of properties files -->
+
+  <property name="build.properties.local.base" 
+            value="${user.home}/build.properties.${ant.project.name}"/>
+  <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
+             else="${user.home}/build.properties.${ant.project.name}">
+    <available file="${build.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${build.properties.local}" property="build.properties.local.present"/>
+  <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
+
+  <property name="runtime.properties.local.base" value="${user.home}/flymine.properties" />
+  <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
+             else="${user.home}/build.properties.${ant.project.name}">
+    <available file="${runtime.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
+  <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
+  
   <property file="build.properties"/>
-
-  <property name="runtime.properties.local" value="${user.home}/flymine.properties" />
 
   <!-- used by build-model.xml -->
   <property name="namespace" value="http://www.flymine.org/model"/>
