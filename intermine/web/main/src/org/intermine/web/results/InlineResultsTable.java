@@ -45,6 +45,7 @@ public class InlineResultsTable
     protected List subList;
     protected ClassDescriptor cld;
     protected List columns = null;
+    protected List columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
     protected int size = -1;
@@ -95,6 +96,20 @@ public class InlineResultsTable
             columnNames.add(((FieldConfig) columnIter.next()).getFieldExpr());
         }
         return Collections.unmodifiableList(columnNames);
+    }
+
+    /**
+     * Return the full name of the field shown in this column in ClassName.fieldName format.
+     * eg. Gene.organismDbId
+     * Currently returns null if the FieldConfig for the column contains a complex expression,
+     * that is one the follows a reference eg. organism.shortName
+     */
+    public List getColumnFullNames() {
+        if (columnFullNames == null) {
+            initialise();
+        }
+
+        return columnFullNames;
     }
 
     /**
@@ -157,7 +172,8 @@ public class InlineResultsTable
      * in the tableRows List will always be in the same order as the elements of the columns List.
      */
     protected void initialise() {
-        columns = new ArrayList();
+        columns = new ArrayList(); 
+        columnFullNames = new ArrayList();
         expressions = new ArrayList();
         subList = new ArrayList();
         
@@ -173,6 +189,14 @@ public class InlineResultsTable
 
             subList.add(o);
 
+            Set clds = DisplayObject.getLeafClds(o.getClass(), cld.getModel());
+
+            ClassDescriptor theClass = null;
+            
+            if (clds.size() == 1) {
+                theClass = (ClassDescriptor) clds.iterator().next();
+            }
+
             List objectFieldConfigs = getRowFieldConfigs(o);
             Iterator objectFieldConfigIter = objectFieldConfigs.iterator();
 
@@ -181,7 +205,17 @@ public class InlineResultsTable
 
                 if (!columns.contains(fc)) {
                     columns.add(fc);
+
+                    String expr = fc.getFieldExpr();
+
                     expressions.add(fc.getFieldExpr());
+                    // only add full column names for simple expressions - ie. ones that specify a
+                    // field in the current class
+                    if (theClass != null && expr.indexOf(".") == -1) {
+                        columnFullNames.add(theClass.getUnqualifiedName() + "." + expr);
+                    } else {
+                        columnFullNames.add(null);
+                    }
                 }
             }
         }
