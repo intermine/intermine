@@ -8,7 +8,7 @@
     <mkdir dir="${gen.src.dir}/org/intermine/dataconversion"/>
     <antlr target="${src.dir}/org/intermine/dataconversion/itempath.g"
            outputdirectory="${gen.src.dir}/org/intermine/dataconversion">
-      <classpath refid="main.class.path"/>
+      <classpath refid="project.compile.path"/>
     </antlr>
   </target>
 </project>

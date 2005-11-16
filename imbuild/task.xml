@@ -7,7 +7,7 @@
      | Import this file and call the target -init-task-xml to have access
      | to database/objectstore/web related tasks. The classpath used to load the
      | tasks is called task.class.path and is defined with the target -define-task-classpath.
-     | By default, this classpath extends main.class.path and adds the location
+     | By default, this classpath extends project.compile.path and adds the location
      | ${build.task.dir} directory. Put things in ${build.task.dir} that are expected
      | to be on the classpath while running tasks. Override -define-task-classpath to
      | alter the classpath defined.
@@ -19,7 +19,7 @@
      |    org/intermine/task/antlib-web.xml
      |
      | It only loads tasks from these xml files if they are available as resources
-     | on main.class.path.
+     | on project.compile.path.
      |
      | Before calling -init-task-xml, these properties should be defined:
      |
@@ -66,7 +66,7 @@
     <!-- Override to alter the classpath created -->
     <path id="task.class.path">
       <pathelement location="${build.task.dir}"/>
-      <path refid="main.class.path"/>
+      <path refid="project.execute.path"/>
     </path>
   </target>
 

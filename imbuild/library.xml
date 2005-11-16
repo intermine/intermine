@@ -65,10 +65,10 @@
   <target name="-init-deps" depends="-pre-init-deps">
     <echo>${ant.project.name}</echo>
     <dependencies basedir="${library.xml.basedir}/.."/>
-    <!--property name="cp" refid="main.class.path.artifact.fileset"/>
+    <!--property name="cp" refid="project.compile.path.artifact.fileset"/>
     <echo>${cp}</echo>
-    <property name="cp" refid="main.class.path"/>
-    <echo message="main.class.path classpath is ${cp}"/-->
+    <property name="cp" refid="project.compile.path"/>
+    <echo message="project.compile.path classpath is ${cp}"/-->
   </target>
   
   <!-- CODE GENERATION -->
@@ -143,7 +143,7 @@
             splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}"
             windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
             additionalparam="${javadoc.additionalparam}" failonerror="true">
-      <classpath refid="main.class.path"/>
+      <classpath refid="project.compile.path"/>
       <sourcepath>
         <pathelement location="${src.dir}"/>
       </sourcepath>
@@ -178,7 +178,7 @@
         <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
-          <classpath refid="main.class.path"/>
+          <classpath refid="project.compile.path"/>
           <formatter type="xml" tofile="${build.checkstyle.dir}/checkstyle_report.xml" />
           <customize/>
           <property key="checkstyle.header.file" value="${library.xml.basedir}/checkstyle/copyright_header.txt"/>
@@ -210,7 +210,7 @@
     <macrodef name="javac" uri="http://www.intermine.org/ns/im-lib-proj/1">
       <attribute name="srcdir" default="${src.dir}"/>
       <attribute name="destdir" default="${build.classes.dir}"/>
-      <attribute name="classpath" default="main.class.path"/>
+      <attribute name="classpath" default="project.compile.path"/>
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
@@ -236,7 +236,7 @@
  
   <target name="dot" depends="init, -init-deps">
     <path id="dot.class.path">
-      <path refid="main.class.path"/>
+      <path refid="project.compile.path"/>
       <pathelement location="${library.xml.basedir}/lib/ant-tasks.jar"/>
       <pathelement location="${main.build.classes.dir}"/>
     </path>

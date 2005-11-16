@@ -21,6 +21,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
+import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
@@ -33,20 +34,24 @@ public class Dependencies extends Task
 {
     /** Base directory that all projects are relative to. */
     private String workspaceBaseDir;
-    /** Main classpath. */
-    private Path mainPath;
+    /** Compile classpath (does not include artifacts, includes class files and libs). */
+    private Path compilePath;
+    /** Execute classpath (includes libs and artifacts) */
+    private Path executePath;
     /** Main classpath represented as FileSet. */
-    private FileSet mainFileSet;
+    private FileSet compileFileSet;
+    /** Deploy classpath represented as FileSet. */
+    private FileSet executeFileSet;
     /** Target to run for each dependent project (optional). */
     private String target;
     /**  */
-    private String pathid = "main.class.path";
+    //private String pathid = "main.class.path";
     /** Whether or not to build project dependencies (default is true). */
     private boolean build = true;
     /** Whether or not to fully traverse dependency graph (default is false). */
     private boolean nofollow = false;
     /** Type of depenency to load from project.properties (default is "compile"). */
-    private String type = "compile";
+    private String type = "project";
     
     /**
      * Base directory that all projects are assumed relative to.
@@ -98,10 +103,10 @@ public class Dependencies extends Task
      * will be this value with ".fileset" appended.
      * 
      * @param id id for class path
-     */
+     *
     public void setPathid(String id) {
         pathid = id;
-    }
+    }*/
     
     /**
      * Set the dependency type. This is basically a way to alter the property read from
@@ -134,23 +139,32 @@ public class Dependencies extends Task
             throw new BuildException("basedir attribute required");
         }
         
+        String compilePathId = type + ".compile.path";
+        String executePathId = type + ".execute.path";
+        
         // Don't run twice if target not specified.
-        if (getProject().getReference(pathid) != null && target == null) {
+        if (getProject().getReference(compilePathId) != null && target == null) {
             return;
         }
         
-        mainPath = new Path(getProject());
-        mainFileSet = new FileSet();
-        mainFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
-        mainFileSet.setProject(getProject());
-        String includes = "";
+        compilePath = new Path(getProject());
+        executePath = new Path(getProject());
+        compileFileSet = new FileSet();
+        compileFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
+        compileFileSet.setProject(getProject());
+        executeFileSet = new FileSet();
+        executeFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
+        executeFileSet.setProject(getProject());
+        String compileIncludes = "";
+        String executeIncludes = "";
         
         FileSet artifactFileSet = new FileSet();
         artifactFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
         artifactFileSet.setProject(getProject());
         String artifactIncludes = "";
         
-        getProject().addReference(pathid, mainPath);
+        getProject().addReference(compilePathId, compilePath);
+        getProject().addReference(executePathId, executePath);
         
         // Gather list of projects, removing redundancy
         List projects = new ArrayList();
@@ -170,18 +184,19 @@ public class Dependencies extends Task
         }
         
         // Deal with this projects libs
-        {
-            // Add lib/main/*.jar
-            FileSet fileset = new FileSet();
-            fileset.setDir(getProject().getBaseDir());
-            fileset.setIncludes("lib/*.jar");
-            fileset.setProject(getProject());
-            mainPath.addFileset(fileset);
-            
-            String thisProj = calcThisProjectName();
-            
-            includes += thisProj + "/lib/*.jar ";
-        }
+      
+        // Add lib/main/*.jar
+        FileSet fileset = new FileSet();
+        fileset.setDir(getProject().getBaseDir());
+        fileset.setIncludes("lib/*.jar");
+        fileset.setProject(getProject());
+        compilePath.addFileset(fileset);
+        executePath.addFileset(fileset);
+
+        String thisProj = calcThisProjectName();
+
+        compileIncludes += thisProj + "/lib/*.jar ";
+        executeIncludes += thisProj + "/lib/*.jar ";
         
         for (int i = allProjects.size() - 1; i >= 0; i--) {
             String depName = (String) allProjects.get(i);
@@ -212,29 +227,42 @@ public class Dependencies extends Task
                 ant.execute();
             }
             
-            // Add lib/main/*.jar
-            FileSet fileset = new FileSet();
+            // Add dist/*.jar, dist/*.war
+            fileset = new FileSet();
             fileset.setDir(projDir);
-            fileset.setIncludes("dist/*.jar,dist/*.war");
+            fileset.setIncludes("dist/*.jar, dist/*.war");
             fileset.setProject(getProject());
-            mainPath.addFileset(fileset);
+            executePath.addFileset(fileset);
             
-            includes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
+            DirSet dirset = new DirSet();
+            dirset.setDir(projDir);
+            dirset.setIncludes("build/classes");
+            compilePath.addDirset(dirset);
+            
+            executeIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
             artifactIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
+            compileIncludes += depName + "/build/classes/ ";
             
             // Add lib/main/*.jar
             fileset = new FileSet();
             fileset.setDir(projDir);
             fileset.setIncludes("lib/*.jar");
             fileset.setProject(getProject());
-            mainPath.addFileset(fileset);
+            executePath.addFileset(fileset);
+            compilePath.addFileset(fileset);
             
-            includes += depName + "/lib/*.jar ";
+            compileIncludes += depName + "/lib/*.jar ";
+            executeIncludes += depName + "/lib/*.jar ";
         }
         
-        if (includes.length() > 0) {
-            mainFileSet.setIncludes(includes);
-            getProject().addReference(pathid + ".fileset", mainFileSet);
+        if (compileIncludes.length() > 0) {
+            compileFileSet.setIncludes(compileIncludes);
+            getProject().addReference(compilePathId + ".fileset", compileFileSet);
+        }
+        
+        if (executeIncludes.length() > 0) {
+            executeFileSet.setIncludes(executeIncludes);
+            getProject().addReference(executePathId +".fileset", executeFileSet);
         }
         
         if (artifactIncludes.length() > 0) {
@@ -242,7 +270,7 @@ public class Dependencies extends Task
         } else {
             artifactFileSet.setIncludes("nothing");
         }
-        getProject().addReference(pathid + ".artifact.fileset", artifactFileSet);
+        getProject().addReference(type + ".artifact.fileset", artifactFileSet);
     }
     
     public String calcThisProjectName() throws BuildException {
@@ -289,6 +317,10 @@ public class Dependencies extends Task
         // System .out.println("following " + projDir.getAbsolutePath());
         // Load project properties
         Properties properties = loadProjectProperties(projDir);
+        String type = this.type;
+        if (type.equals("project")) {
+            type = "compile";
+        }
         String deps = properties.getProperty(type + ".dependencies");
         
         if (deps != null && deps.trim().length() > 0) {
@@ -311,13 +343,15 @@ public class Dependencies extends Task
             if (dep.length() > 0) {
                 if (projects.contains(dep)) {
                     // remove from current position and add to end
+                    //System .out.println("Removed earlier dependency on " + dep);
                     projects.remove(dep);
                     projects.add(dep);
                 } else {
+                    //System .out.println("Adding " + dep);
                     projects.add(dep);
                 }
                 
-                if (!nofollow && type.equals("compile")) {
+                if (!nofollow) {
                     followProjectDependencies(getProjectBaseDir(dep), projects);
                 }
             }

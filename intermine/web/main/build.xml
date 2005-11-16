@@ -10,7 +10,7 @@
     <mkdir dir="${gen.src.dir}/org/intermine/web"/>
     <antlr target="${src.dir}/org/intermine/web/logic.g"
            outputdirectory="${gen.src.dir}/org/intermine/web">
-      <classpath refid="main.class.path"/>
+      <classpath refid="project.compile.path"/>
     </antlr>
   </target>
   
