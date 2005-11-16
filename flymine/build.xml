@@ -33,6 +33,7 @@
   <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
   <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
   
+  <property file="${build.properties.local}"/>
   <property file="build.properties"/>
 
   <!-- used by build-model.xml -->
