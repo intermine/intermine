@@ -27,7 +27,7 @@
 
   <property name="runtime.properties.local.base" value="${user.home}/flymine.properties" />
   <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
-             else="${user.home}/build.properties.${ant.project.name}">
+             else="${user.home}/${ant.project.name}.properties">
     <available file="${runtime.properties.local.base}.${release}"/>
   </condition>
   <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
