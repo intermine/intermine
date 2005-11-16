@@ -73,7 +73,7 @@ public class PsiDataTranslator extends DataTranslator
         super.translate(tgtItemWriter);
 
         Iterator iter = dataSetMap.values().iterator();
-        
+
         while (iter.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) iter.next()));
         }
@@ -85,7 +85,7 @@ public class PsiDataTranslator extends DataTranslator
         Attribute fullNameAttr = namesTypeItem.getAttribute("fullName");
 
         Item dataSetItem;
-                    
+
         if (dataSetMap.containsKey(shortName)) {
             dataSetItem = (Item) dataSetMap.get(shortName);
         } else {
@@ -94,10 +94,9 @@ public class PsiDataTranslator extends DataTranslator
             if (fullNameAttr != null) {
                 dataSetItem.addAttribute(new Attribute("description", fullNameAttr.getValue()));
             } else {
-                LOG.debug("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
+                LOG.error("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
             }
             dataSetItem.setReference("dataSource", dataSource);
-                   
             dataSetMap.put(shortName, dataSetItem);
         }
 
@@ -159,7 +158,7 @@ public class PsiDataTranslator extends DataTranslator
                     Item namesType = getReference((Item) experimentRefsIter.next(), "names");
 
                     Item dataSet = getDataSetFromNamesType(namesType);
-                    
+
                     tgtItem.setReference("source", dataSet);
 
                     // set confidence from attributeList
@@ -267,24 +266,29 @@ public class PsiDataTranslator extends DataTranslator
         }
 
 
-        Reference namesRef = srcInteractionElementItem.getReference("names");
-        org.intermine.model.fulldata.Item namesItem =
-                this.srcItemReader.getItemById(namesRef.getRefId());
-
+        Reference namesRef ;
         boolean shortLabelFound = false;
         String iShortName = null;
 
-        for (Iterator nameIt = namesItem.getAttributes().iterator();
-            nameIt.hasNext() && !shortLabelFound;) {
+        if (srcInteractionElementItem.hasReference("names")) {
+            namesRef = srcInteractionElementItem.getReference("names");
+            org.intermine.model.fulldata.Item namesItem =
+                this.srcItemReader.getItemById(namesRef.getRefId());
 
-            org.intermine.model.fulldata.Attribute nextNameAttr
+            for (Iterator nameIt = namesItem.getAttributes().iterator();
+                 nameIt.hasNext() && !shortLabelFound;) {
+
+                org.intermine.model.fulldata.Attribute nextNameAttr
                     = (org.intermine.model.fulldata.Attribute) nameIt.next();
-            if ("shortLabel".equalsIgnoreCase(nextNameAttr.getName())) {
-                iShortName = nextNameAttr.getValue();
-                interaction.setAttribute("shortName", iShortName);
-                LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
-                shortLabelFound = true;
+                if ("shortLabel".equalsIgnoreCase(nextNameAttr.getName())) {
+                    iShortName = nextNameAttr.getValue();
+                    interaction.setAttribute("shortName", iShortName);
+                    LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
+                    shortLabelFound = true;
+                }
             }
+        } else {
+            LOG.error("No names reference for srcItem " +srcInteractionElementItem.getIdentifier());
         }
 
         //<confidence unit="author-confidence" value="D"/>
@@ -548,5 +552,5 @@ public class PsiDataTranslator extends DataTranslator
         paths.put("http://www.flymine.org/model/psi#CvType", Collections.singleton(desc));
 
         return paths;
-    }    
+    }
 }
