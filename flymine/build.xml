@@ -2892,7 +2892,7 @@
       <include name="web.properties"/>
       <include name="objectstoresummary.properties"/>
       <include name="classDescriptions.properties"/>
-      <include name="datasets.xml"/>
+      <include name="aspects.xml"/>
       <include name="soClassName.properties"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
