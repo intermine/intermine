@@ -25,12 +25,12 @@
   
   <target name="-pre-jar">
     <dependencies basedir="${library.xml.basedir}/.." buildDependencies="false"
-                  type="deploy" pathid="deploy.class.path"/>
+                  type="deploy" noFollow="true"/>
     <!-- copy all dependencies into build/lib -->
     <mkdir dir="${web.lib.dir}"/>
     <mkdir dir="${build.webinf.dir}"/>
     <copy todir="${web.lib.dir}" flatten="true">
-      <fileset refid="deploy.class.path.fileset"/>
+      <fileset refid="deploy.execute.path.fileset"/>
     </copy>
   </target>
   

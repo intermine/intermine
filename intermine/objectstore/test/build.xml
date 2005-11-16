@@ -35,7 +35,7 @@
     <path id="task.class.path">
       <pathelement location="${build.task.dir}"/>
       <pathelement location="${build.test.resources.dir}"/>
-      <path refid="main.class.path"/>
+      <path refid="project.execute.path"/>
     </path>
   </target>
   

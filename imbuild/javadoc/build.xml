@@ -10,7 +10,7 @@
             splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}"
             windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
             additionalparam="${javadoc.additionalparam}" failonerror="true">
-      <classpath refid="main.class.path"/>
+      <classpath refid="project.compile.path"/>
       <sourcepath>
         <pathelement location="../../intermine/objectstore/main/src"/>
         <pathelement location="../../intermine/integrate/main/src"/>

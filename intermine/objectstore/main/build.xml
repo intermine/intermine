@@ -10,11 +10,11 @@
     <mkdir dir="${gen.src.dir}/org/intermine/objectstore/query/iql"/>
     <antlr target="${src.dir}/org/intermine/sql/query/intermine_sql.g"
            outputdirectory="${gen.src.dir}/org/intermine/sql/query">
-      <classpath refid="main.class.path"/>
+      <classpath refid="project.compile.path"/>
     </antlr>
     <antlr target="${src.dir}/org/intermine/objectstore/query/iql/intermine_iql.g"
            outputdirectory="${gen.src.dir}/org/intermine/objectstore/query/iql">
-      <classpath refid="main.class.path"/>
+      <classpath refid="project.compile.path"/>
     </antlr>
   </target>
   
