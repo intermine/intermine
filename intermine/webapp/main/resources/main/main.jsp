@@ -188,7 +188,7 @@
       <br/>
       <c:choose>
         <c:when test="${empty QUERY.nodes}">
-          <fmt:message key="query.empty"/>
+          <div class="smallnote altmessage"><fmt:message key="query.empty"/></div>
         </c:when>
         <c:otherwise>
           <c:forEach var="entry" items="${QUERY.nodes}" varStatus="status">
