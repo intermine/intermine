@@ -54,6 +54,9 @@
                 <tr>
                   <td>
                     <b><span class="attributeField">${expr}</span></b>
+                    <c:forEach items="${object.clds}" var="cld">
+                      <im:typehelp type="${cld.unqualifiedName}.${expr}"/>
+                    </c:forEach>
                   </td>
                   <td>
                     <c:choose>                      
@@ -229,8 +232,13 @@
                                 <td width="10px">
                                   <fmt:message key="objectDetails.class"/>
                                 </td>
-                                <c:forEach items="${collection.table.columnNames}" var="fd">
-                                  <td><span class="attributeField">${fd}</span></td>
+                                <c:forEach items="${collection.table.columnNames}" var="fd"
+                                           varStatus="status">
+                                  <td>
+                                    <span class="attributeField" style="white-space:nowrap">
+                                      ${fd} <im:typehelp type="${collection.table.columnFullNames[status.index]}"/>
+                                    </span>
+                                  </td>
                                 </c:forEach>
                                 <td width="10px">
                                   &nbsp;<%--for IE--%>
