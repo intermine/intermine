@@ -41,15 +41,14 @@
         
         <ul>
           <li>
-            <im:querylink text="TFbinding sites" skipBuilder="true">
+            <im:querylink text="TF binding sites" skipBuilder="true">
               <query name="" model="genomic"
-                     view="TFBindingSite TFBindingSite.gene TFBindingSite.factor TFBindingSite.chromosomeLocation"/>
+                     view="TFBindingSite TFBindingSite.factors TFBindingSite.chromosomeLocation"/>
             </im:querylink>
           </li>
           <li>
             <im:querylink text="TFBSCluster" skipBuilder="true">
-              <query name="" model="genomic"
-                     view="TFBSCluster TFBSCluster.gene TFBindingSite.gene TFBindingSite.chromosomeLocation"/>
+              <query name="" model="genomic" view="TFBSCluster TFBSCluster.geneDistances"/> 
             </im:querylink>
           </li>
           <li>

@@ -42,21 +42,11 @@
     <intro-text>
     DNA and Protein binding sites.
     </intro-text>
-    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
+    <starting-points>Gene TFBindingSite TFBSCluster ConservedRegion NcConservedRegion</starting-points>
     <tile-name>model/stemcellmine/bindingSites.jsp</tile-name>
   </aspect>
 
-  <!--aspect name="INDAC">
-    <subtitle>Long Oligos</subtitle>
-    <icon-image>model/indac.png</icon-image>
-    <large-image>model/indac.png</large-image>
-    <intro-text>
-     Long oligos from the International Drosophila array consortium.
-    </intro-text>
-    <tile-name>model/indac.jsp</tile-name>
-    <starting-points>Transcript Gene MicroarrayOligo</starting-points>
-  </aspect-->
-
+  
   <!--aspect name="Tiling Path">
     <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
@@ -76,7 +66,7 @@
      Genome annotation data.
     </intro-text>
         <tile-name>model/stemcellmine/genomics.jsp</tile-name>
-    <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
+    <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TFBindingSite Promoter CpGIsland</starting-points>
   </aspect>
 
   <aspect name="Gene Ontology">
@@ -114,18 +104,6 @@
     <tile-name>model/stemcellmine/geneOntology.jsp</tile-name>
     </aspect>
 
-<!--
-  <aspect name="Homophila">
-    <subtitle>Human Disease&lt;br/&gt;to Drosophila</subtitle>
-    <icon-image>model/homophila.gif</icon-image>
-    <large-image>model/homophila.gif</large-image>
-      <intro-text>
-    Homophila Human Disease to Drosophila Database (version 2.1).
-    </intro-text>
-     <tile-name>model/homophila.jsp</tile-name>
-     <starting-points>Gene Disease</starting-points>
-  </aspect>
--->
 
   <!--aspect name="Proteins">
     <subtitle></subtitle>
@@ -149,7 +127,7 @@
     duplication).
     </intro-text>
      <tile-name>model/stemcellmine/inparanoid.jsp</tile-name>
-     <starting-points>Gene Orthologue Paralogue</starting-points>
+     <starting-points>Gene Orthologue Paralogue CrossGenomeMatch</starting-points>
   </aspect>
 
    <!--aspect name="RNAi">
