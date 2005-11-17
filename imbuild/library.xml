@@ -218,7 +218,7 @@
           <classpath refid="@{classpath}"/>
         </depend>
         <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="${javac.compiler}"
-           source="${javac.source}" target="${javac.target}" debuglevel="${javac.debug}"
+           source="${javac.source}" target="${javac.target}"
            includeantruntime="false">
           <classpath refid="@{classpath}"/>
           <compilerarg line="${javac.compilerargs}"/>
