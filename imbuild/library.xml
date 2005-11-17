@@ -214,8 +214,11 @@
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
+        <depend srcdir="@{srcdir}" destdir="@{destdir}" closure="yes" dump="yes">
+          <classpath refid="@{classpath}"/>
+        </depend>
         <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="${javac.compiler}"
-           deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}"
+           source="${javac.source}" target="${javac.target}" debuglevel="${javac.debug}"
            includeantruntime="false">
           <classpath refid="@{classpath}"/>
           <compilerarg line="${javac.compilerargs}"/>
