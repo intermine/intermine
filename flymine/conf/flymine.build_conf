@@ -31,13 +31,9 @@ run: build-flyreg-production build-long_oligo-production analyse-db-production b
 
 dump: load-stage-3
 
-run: build-drosdel-production build-homophila-production
+run: build-drosdel-production build-homophila-production build-interpro-production
 
-dump: drosdel+homophila
-
-run: build-interpro-production
-
-dump: interpro
+dump: drosdel+homophila+interpro
 
 run: build-mage-production
 run: build-cdnaclone-bdgp-production
@@ -63,4 +59,6 @@ run: transfer-sequences
 run: read-flybase-cds-fasta create-flybase-to-uniprot-refs update-publications grant-db-production
 
 dump: complete
+
+run: acceptance-tests
 
