@@ -32,75 +32,36 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="D. melanogaster : A. gambiae" skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue Orthologue.object Orthologue.subjectTranslation">
-                <node path="Orthologue" type="Orthologue">
-                </node>
-                <node path="Orthologue.object" type="Gene">
-                </node>
-                <node path="Orthologue.object.organism" type="Organism">
-                </node>
-                <node path="Orthologue.object.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster">
-                  </constraint>
-                </node>
-                <node path="Orthologue.subjectTranslation" type="Translation">
-                </node>
-                <node path="Orthologue.subjectTranslation.organism" type="Organism">
-                </node>
-                <node path="Orthologue.subjectTranslation.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae sensu stricto">
-                  </constraint>
-                </node>
-              </query>
+            <im:querylink text="H. sapiens : M. musculus" skipBuilder="true">
+              <query name="" model="genomic" view="Orthologue Orthologue.objectTranslation Orthologue.subjectTranslation"/>
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="D. melanogaster : C. elegans" skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue Orthologue.object Orthologue.subject">
-                <node path="Orthologue" type="Orthologue">
+            <im:querylink text="CrossGenomeMatch for Mouse" skipBuilder="true">
+              <query name="" model="genomic" view="CrossGenomeMatch CrossGenomeMatch.chromosomeLocation CrossGenomeMatch.targetLocatedSequenceFeatureLocation">
+                <node path="CrossGenomeMatch" type="CrossGenomeMatch">
                 </node>
-                <node path="Orthologue.object" type="Gene">
+                <node path="CrossGenomeMatch.targetOrganism" type="Organism">
                 </node>
-                <node path="Orthologue.object.organism" type="Organism">
-                </node>
-                <node path="Orthologue.object.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster">
-                  </constraint>
-                </node>
-                <node path="Orthologue.subject" type="Gene">
-                </node>
-                <node path="Orthologue.subject.organism" type="Organism">
-                </node>
-                <node path="Orthologue.subject.organism.name" type="String">
-                  <constraint op="=" value="Caenorhabditis elegans">
-                  </constraint>
-                </node>
-              </query>
+                <node path="CrossGenomeMatch.targetOrganism.abbreviation" type="String">
+                 <constraint op="=" value="MM" description="" identifier="" code="A">
+                 </constraint>
+               </node>
+             </query>         
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="A. gambiae : C. elegans" skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue Orthologue.object Orthologue.subjectTranslation">
-                <node path="Orthologue" type="Orthologue">
+            <im:querylink text="CrossGenomeMatch for Opposum" skipBuilder="true">
+              <query name="" model="genomic" view="CrossGenomeMatch CrossGenomeMatch.chromosomeLocation CrossGenomeMatch.targetLocatedSequenceFeatureLocation">
+                <node path="CrossGenomeMatch" type="CrossGenomeMatch">
                 </node>
-                <node path="Orthologue.object" type="Gene">
+                <node path="CrossGenomeMatch.targetOrganism" type="Organism">
                 </node>
-                <node path="Orthologue.object.organism" type="Organism">
-                </node>
-                <node path="Orthologue.object.organism.name" type="String">
-                  <constraint op="=" value="Caenorhabditis elegans">
-                  </constraint>
-                </node>
-                <node path="Orthologue.subjectTranslation" type="Translation">
-                </node>
-                <node path="Orthologue.subjectTranslation.organism" type="Organism">
-                </node>
-                <node path="Orthologue.subjectTranslation.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae sensu stricto">
-                  </constraint>
-                </node>
-              </query>
+                <node path="CrossGenomeMatch.targetOrganism.abbreviation" type="String">
+                 <constraint op="=" value="MD" description="" identifier="" code="A">
+                 </constraint>
+               </node>
+             </query>         
             </im:querylink>
           </li>
         </ul>
