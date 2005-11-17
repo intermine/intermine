@@ -4623,5 +4623,14 @@
          sourceName="ensembl-human"/>
   </target>-->
 
-</project>
+  <target name="acceptance-tests" depends="init-paths">
+    <taskdef name="acceptance-tests" classname="org.intermine.task.AcceptanceTestTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
 
+    <acceptance-tests configFile="model/genomic/resources/test/flymine_acceptance_test.conf"
+                      outputFile="build/test/acceptance_test.html"
+                      database="db.production"/>
+
+  </target>    
+</project>
