@@ -299,7 +299,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             if (type == FROM_DB) {
                                 destCol.add(colObj);
                             } else {
-                                try{
+                                try {
                                     destCol.add(store(colObj, source, skelSource, SKELETON));
                                 } catch (RuntimeException bob) {
                                     if (colObj instanceof ProxyReference) {
