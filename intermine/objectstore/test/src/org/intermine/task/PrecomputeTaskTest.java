@@ -70,7 +70,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
     }
 
     /**
-     * Test that PrecomputeTask creates the
+     * Test that PrecomputeTask creates the right pre-computed tables
      */
     public void testExecute() throws Exception {
         DummyPrecomputeTask task = new DummyPrecomputeTask();
