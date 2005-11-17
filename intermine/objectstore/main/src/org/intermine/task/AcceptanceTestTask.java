@@ -468,8 +468,6 @@ class AcceptanceTestResult
     }
     
     private List copyResults(AcceptanceTest test, ResultSet rs) throws SQLException {
-        System.err.println ("copying results in: " + test.getSql());
-
         List returnList = new ArrayList();
         
         int columnCount = rs.getMetaData().getColumnCount();
@@ -480,7 +478,6 @@ class AcceptanceTestResult
                 for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
                     rowCopy.add(rs.getObject(columnIndex));
                 } 
-                System.err.println ("row: " + rowCopy);
                 returnList.add(rowCopy);
             }
         }
