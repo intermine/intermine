@@ -85,6 +85,9 @@ public class DisplayObject
      * @return Set of ClassDescriptor objects
      */
     public static Set getLeafClds(Class clazz, Model model) {
+        if (!InterMineObject.class.isAssignableFrom(clazz)) {
+            return Collections.EMPTY_SET;
+        }
         Set leafClds = new HashSet();
         for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
             j.hasNext();) {
