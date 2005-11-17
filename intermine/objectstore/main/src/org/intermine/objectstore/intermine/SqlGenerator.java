@@ -62,6 +62,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.UnknownTypeValue;
+import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
 import org.intermine.util.AlwaysMap;
@@ -196,35 +197,8 @@ public class SqlGenerator
                         }
                         // Now we need to work out if this field is a primitive type or a object
                         // type (that can accept null values).
-                        boolean hasNulls = true;
-                        if (firstOrderBy instanceof QueryField) {
-                            FromElement qc = ((QueryField) firstOrderBy).getFromElement();
-                            if (qc instanceof QueryClass) {
-                                if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
-                                    hasNulls = false;
-                                } else {
-                                    AttributeDescriptor desc = (AttributeDescriptor) schema
-                                        .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
-                                                .getType()).get(((QueryField) firstOrderBy)
-                                                .getFieldName());
-                                    if (desc.isPrimitive()) {
-                                        hasNulls = false;
-                                    }
-                                }
-                            }
-                        }
-                        SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                    ConstraintOp.GREATER_THAN, new QueryValue(value));
-                        String sql;
-                        if (hasNulls) {
-                            ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
-                            cs.addConstraint(sc);
-                            cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                        ConstraintOp.IS_NULL));
-                            sql = generate(q, schema, db, cs, QUERY_NORMAL, bagTableNames);
-                        } else {
-                            sql = generate(q, schema, db, sc, QUERY_NORMAL, bagTableNames);
-                        }
+                        Constraint c = getOffsetConstraint(q, firstOrderBy, value, schema);
+                        String sql = generate(q, schema, db, c, QUERY_NORMAL, bagTableNames);
                         cacheEntry.setLast(start, sql);
                     }
                     SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
@@ -248,35 +222,8 @@ public class SqlGenerator
                 }
                 // Now we need to work out if this field is a primitive type or a object
                 // type (that can accept null values).
-                boolean hasNulls = true;
-                if (firstOrderBy instanceof QueryField) {
-                    FromElement qc = ((QueryField) firstOrderBy).getFromElement();
-                    if (qc instanceof QueryClass) {
-                        if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
-                            hasNulls = false;
-                        } else {
-                            AttributeDescriptor desc = (AttributeDescriptor) schema
-                                .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
-                                        .getType()).get(((QueryField) firstOrderBy)
-                                        .getFieldName());
-                            if (desc.isPrimitive()) {
-                                hasNulls = false;
-                            }
-                        }
-                    }
-                }
-                SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                            ConstraintOp.GREATER_THAN, new QueryValue(value));
-                String sql;
-                if (hasNulls) {
-                    ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
-                    cs.addConstraint(sc);
-                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                ConstraintOp.IS_NULL));
-                    sql = generate(q, schema, db, cs, QUERY_NORMAL, bagTableNames);
-                } else {
-                    sql = generate(q, schema, db, sc, QUERY_NORMAL, bagTableNames);
-                }
+                Constraint offsetConstraint = getOffsetConstraint(q, firstOrderBy, value, schema);
+                String sql = generate(q, schema, db, offsetConstraint, QUERY_NORMAL, bagTableNames);
                 if (cacheEntry == null) {
                     cacheEntry = new CacheEntry(start, sql);
                     schemaCache.put(q, cacheEntry);
@@ -288,6 +235,57 @@ public class SqlGenerator
         } catch (ObjectStoreException e) {
             LOG.error("Error while registering offset for query " + q + ": " + e);
         }
+    }
+
+
+    /**
+     * Create a constraint to add to the main query to deal with offset - this is based on
+     * the first element in the order by (field) and a given value (x).  If the order by
+     * element cannot have null values this is: 'field > x'.  If field can have null values
+     * *and* it has not already been constrained as 'NOT NULL' in the main query it is:
+     * '(field > x or field IS NULL'.
+     * @param q the Query
+     * @param firstOrderBy the offset element of the query's order by list
+     * @param value a value, such that adding a WHERE component first_order_field &gt; value with
+     *        OFFSET 0 is equivalent to the original query with OFFSET offset
+     * @param schema the DatabaseSchema in which to look up metadata
+     * @return the constraint(s) to add to the main query
+     */
+    protected static Constraint getOffsetConstraint(Query q, QueryNode firstOrderBy,
+                                                  Object value, DatabaseSchema schema) {
+        boolean hasNulls = true;
+        if (firstOrderBy instanceof QueryField) {
+            FromElement qc = ((QueryField) firstOrderBy).getFromElement();
+            if (qc instanceof QueryClass) {
+                if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
+                    hasNulls = false;
+                } else {
+                    AttributeDescriptor desc = (AttributeDescriptor) schema
+                        .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
+                        .getType()).get(((QueryField) firstOrderBy)
+                                        .getFieldName());
+                    if (desc.isPrimitive()) {
+                        hasNulls = false;
+                    }
+                }
+            }
+        }
+        SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                  ConstraintOp.GREATER_THAN, new QueryValue(value));
+        if (hasNulls) {
+            // if the query aready constrains the first order by field to be
+            // not null it doesn't make sense to add a costraint to null
+            CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint(firstOrderBy);
+            ConstraintHelper.traverseConstraints(q.getConstraint(), check);
+            if (!check.exists()) {
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+                cs.addConstraint(sc);
+                cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                                      ConstraintOp.IS_NULL));
+                return cs;
+            }
+        }
+        return sc;
     }
 
     /**
@@ -729,7 +727,7 @@ public class SqlGenerator
     public static final int SAFENESS_ANTISAFE = -1;
     /** Safeness value indicating a situation unsafe for ContainsConstraint */
     public static final int SAFENESS_UNSAFE = 0;
-    
+
     /**
      * Converts a Constraint object into a String suitable for putting in an SQL query.
      *
@@ -1708,3 +1706,6 @@ public class SqlGenerator
         }
     }
 }
+
+
+
