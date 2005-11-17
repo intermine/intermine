@@ -552,7 +552,7 @@ public class QueryTest extends TestCase
         q2.addWhere(new SubQueryConstraint(f1, q3));
         assertEquals(q2, q1);
     }
-    
+
     public void testWhereConstraintSet() throws Exception {
         q1 = new Query("select table1.field1 from table1 where (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
         q2 = new Query();
@@ -569,7 +569,7 @@ public class QueryTest extends TestCase
         q2.addWhere(cs1);
         assertEquals(q2, q1);
     }
-    
+
     public void testWhereNottedConstraintSet() throws Exception {
         q1 = new Query("select table1.field1 from table1 where not (table1.field1 = table1.field2 or table1.field1 = table1.field3)");
         q2 = new Query();
@@ -1081,5 +1081,22 @@ public class QueryTest extends TestCase
         assertEquals("SELECT COALESCE(t.a, 53) AS b FROM t", q1.getSQLString());
         assertEquals("SELECT COALESCE(t.a, 53) AS b FROM t", q2.getSQLString());
         assertEquals(q1, q2);
+    }
+
+    // bug where 'field IS NOT NULL' is converted to 'field IS NULL'
+    public void testIsNotNullBugFails() throws Exception {
+        String sql1 = "SELECT DISTINCT a2_.identifier AS a1_ FROM Gene AS a2_, Organism AS a3_ WHERE (a2_.organismId = a3_.id OR a2_.identifier IS NOT NULL) OR 'ENSANGG00000018976' < a2_.identifier ORDER BY a2_.identifier LIMIT 10000 OFFSET 1";
+        System.out.println("sql1 = " + sql1);
+        Query q1 = new Query(sql1);
+        System.out.println("q1 = " + q1);
+        assertTrue(q1.toString().indexOf("IS NOT NULL") > 0);
+    }
+
+    public void testIsNotNullBugWorks() throws Exception {
+        String sql1 = "SELECT DISTINCT a2_.identifier AS a1_ FROM Gene AS a2_, Organism AS a3_ WHERE a2_.organismId = a3_.id OR a2_.identifier IS NOT NULL OR 'ENSANGG00000018976' < a2_.identifier ORDER BY a2_.identifier LIMIT 10000 OFFSET 1";
+        System.out.println("sql1 = " + sql1);
+        Query q1 = new Query(sql1);
+        System.out.println("q1 = " + q1);
+        assertTrue(q1.toString().indexOf("IS NOT NULL") > 0);
     }
 }
