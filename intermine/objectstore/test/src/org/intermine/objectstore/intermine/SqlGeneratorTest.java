@@ -34,6 +34,7 @@ import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.FromElement;
@@ -373,7 +374,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             // TODO: extend sql so that it can represent these
             if (!(type.startsWith("Empty") || "SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
-                // optimiser. 
+                // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
             }
         }
@@ -550,6 +551,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         }
     }
 
+
     public void testRegisterOffset() throws Exception {
         DatabaseSchema schema = getSchema();
         Query q = new Query();
@@ -607,6 +609,24 @@ public class SqlGeneratorTest extends SetupDataTestCase
         SqlGenerator.registerOffset(q, 5, schema, db, new Integer(34), Collections.EMPTY_MAP);
         assertEquals("SELECT DISTINCT a1_.age AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.age > 34 ORDER BY a1_.age OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
     }
+
+    // Large offset code adds constraint that value > x and is not null to deal with ordering in postgres
+    // check that is doesn't break the query by adding 'value is null' when the query already contains
+    // 'value is null'
+    public void testRegisterOffset3() throws Exception {
+        DatabaseSchema schema = getSchema();
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        q.addToSelect(f);
+        SimpleConstraint sc = new SimpleConstraint(f, ConstraintOp.IS_NOT_NULL);
+        q.setConstraint(sc);
+        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.name IS NOT NULL ORDER BY a1_.name", SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+        SqlGenerator.registerOffset(q, 5, schema, db, "flibble", Collections.EMPTY_MAP);
+        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.name IS NOT NULL AND a1_.name > 'flibble' ORDER BY a1_.name OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+    }
+
 
     public void testForPrecomp() throws Exception {
         DatabaseSchema schema = getSchema();
