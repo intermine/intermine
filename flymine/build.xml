@@ -145,7 +145,7 @@
     <!-- set the classpath for the build - basically everything in lib -->
     <path id="base.class.path">
       <pathelement path="${build.resources}"/>
-      <path refid="project.compile.path"/>
+      <path refid="project.execute.path"/>
       <pathelement path="${build.java}"/>
       <fileset dir="${lib}">
         <patternset refid="lib.build"/>
