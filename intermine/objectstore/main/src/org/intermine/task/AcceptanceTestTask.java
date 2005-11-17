@@ -149,34 +149,42 @@ public class AcceptanceTestTask extends Task
                 pw.println("<h3>Description: " + atr.getTest().getNote() + "</h3>");
             }
             if (atr.isSuccessful()) {
-                pw.println("Result: <font color=\"green\">successful</font>");
+                pw.println("<p>Result: <font color=\"green\">successful</font></p>");
             } else {
-                pw.println("Result: <font color=\"red\">FAILED</font>");
+                pw.println("<p>Result: <font color=\"red\">FAILED</font></p>");
             }
             
-            if ((atr.getTest().getType().equals(AcceptanceTest.NO_RESULTS_TEST)
-                || atr.getTest().getType().equals(AcceptanceTest.RESULTS_REPORT))
-                && atr.getResults().size() > 0) {
-                pw.println("<table border=1>");
-                Iterator resultsIter = atr.getResults().iterator();
-                while (resultsIter.hasNext()) {
-                    List row = (List) resultsIter.next();
-                    pw.println("<tr>");
-                    Iterator rowIter = row.iterator();
-                    while (rowIter.hasNext()) {
-                        pw.println("<td>");
-                        Object o = rowIter.next();
-                        if (o != null) {
-                            pw.println(o);
-                        } else {
-                            pw.println("<font color=\"grey\" size=\"-1\">null</font>");
+            if (atr.getException() == null) {
+                if ((atr.getTest().getType().equals(AcceptanceTest.NO_RESULTS_TEST)
+                     || atr.getTest().getType().equals(AcceptanceTest.RESULTS_REPORT))
+                    && atr.getResults().size() > 0) {
+                    pw.println("<table border=1>");
+                    Iterator resultsIter = atr.getResults().iterator();
+                    while (resultsIter.hasNext()) {
+                        List row = (List) resultsIter.next();
+                        pw.println("<tr>");
+                        Iterator rowIter = row.iterator();
+                        while (rowIter.hasNext()) {
+                            pw.println("<td>");
+                            Object o = rowIter.next();
+                            if (o != null) {
+                                pw.println(o);
+                            } else {
+                                pw.println("<font color=\"grey\" size=\"-1\">null</font>");
+                            }
+                            pw.println("</td>");
                         }
-                        pw.println("</td>");
+                        pw.println("</tr>");
                     }
-                    pw.println("</tr>");
+                    pw.println("</table>");
                 }
-                pw.println("</table>");
+            } else {
+                pw.println("<p>SQLException while executing SQL:</p>");
+                pw.println("<pre>");
+                atr.getException().printStackTrace(pw);
+                pw.println("</pre>");
             }
+            
             pw.println("<hr>");
         }
         pw.println("</ul></body></html>");
@@ -467,6 +475,14 @@ class AcceptanceTestResult
         return results;
     }
     
+    /**
+     * Return the SQLException exception (if any) that occurred when the test SQL was run.
+     * @return the SQLException or null if there was no exception
+     */
+    public SQLException getException() {
+        return sqlException;
+    }
+
     private List copyResults(AcceptanceTest test, ResultSet rs) throws SQLException {
         List returnList = new ArrayList();
         
