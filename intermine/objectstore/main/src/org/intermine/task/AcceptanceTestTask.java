@@ -47,6 +47,11 @@ public class AcceptanceTestTask extends Task
     private File configFile;
 
     /**
+     * Prefix of the ticket pages in Trac.
+     */
+    public static final String TRAC_TICKET_URL_PREFIX = "http://trac.flymine.org/ticket/";
+
+    /**
      * Set the File to read configuration from
      * @param configFile the config File
      */
@@ -91,7 +96,22 @@ public class AcceptanceTestTask extends Task
             System.err .println("Processing configuration file: " + configFile.getName());
             LineNumberReader reader = new LineNumberReader(new FileReader(configFile));            
             List testResults = runAllTests(db, reader);
-            processResults(testResults, outputFile);
+
+            FileWriter fw;
+            try {
+                fw = new FileWriter(outputFile);
+            } catch (IOException e) {
+                throw new BuildException("failed to open outout file: " + outputFile, e);
+            }
+            PrintWriter pw = new PrintWriter(fw);
+            
+            processResults(testResults, pw);
+
+            try {
+                fw.close();
+            } catch (IOException e) {
+                throw new BuildException("couldn't close " + outputFile, e);
+            }
         } catch (Exception e) {
             throw new BuildException(e);
         }
@@ -125,28 +145,51 @@ public class AcceptanceTestTask extends Task
         return testResults;
     }
     
-    private void processResults(List testResults, File outputFile) throws BuildException {
-        Iterator testResultsIter = testResults.iterator();
-
-        FileWriter fw;
-        try {
-            fw = new FileWriter(outputFile);
-        } catch (IOException e) {
-            throw new BuildException("failed to open outout file: " + outputFile, e);
-        }
-        PrintWriter pw = new PrintWriter(fw);
-        
+    /**
+     * Write a formatted HTML summary of the given AcceptanceTestResult objects to the PrintWriter.
+     * @param testResults a List of AcceptanceTestResult objects
+     * @param pw the PrintWriter
+     */
+    protected void processResults(List testResults, PrintWriter pw) {
         pw.println("<html>");
         pw.println("<head><title>Acceptance Test Results</title></head>");
         pw.println("<body>");
+        pw.println("<h2>Failing tests:</h2>");
+        pw.println("<p>");
         
+        int testCount = 0;
+
+        for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
+            AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
+
+            pw.println("<ul>");
+            
+            if (!atr.isSuccessful()) {
+                pw.println("<li><a href=\"#test" + testCount + "\">");
+                pw.println(atr.getTest().getSql());
+                pw.println("</a></li>");
+            }
+
+            pw.println("</ul>");
+
+            testCount++;
+        }
+        
+        pw.println("</p>");
+
+        testCount = 0;
+
+        Iterator testResultsIter = testResults.iterator();
+
         while (testResultsIter.hasNext()) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
-            pw.println("<h2>Testing: " + atr.getTest().getSql() + "</h2>");
+            pw.println("<h2><a name=\"test" + testCount + "\">Testing: <font size=\"-1\">"
+                       + atr.getTest().getSql() + "</font></a></h2>");
             pw.println("<h3>test type: " + atr.getTest().getType() + "</h3>");
             if (atr.getTest().getNote() != null) {
-                pw.println("<h3>Description: " + atr.getTest().getNote() + "</h3>");
+                String hyperlinkedDescription = hyperLinkNote(atr.getTest().getNote());
+                pw.println("<h3>Description: " +  hyperlinkedDescription + "</h3>");
             }
             if (atr.isSuccessful()) {
                 pw.println("<p>Result: <font color=\"green\">successful</font></p>");
@@ -186,14 +229,23 @@ public class AcceptanceTestTask extends Task
             }
             
             pw.println("<hr>");
+
+            testCount++;
         }
         pw.println("</ul></body></html>");
         pw.close();
-        try {
-            fw.close();
-        } catch (IOException e) {
-            throw new BuildException("couldn't close " + outputFile, e);
-        }
+
+    }
+
+    
+    /**
+     * Return a hyperlinked version of the given note.
+     * @param note the note
+     * @return note with trac ticket number (eg. #123) changed to links to trac
+     */
+    public static String hyperLinkNote(String note) {
+        String replacement = "<a href=\"" + TRAC_TICKET_URL_PREFIX + "$1\">#$1</a>";
+        return note.replaceAll("#(\\d+)", replacement);
     }
 
     /**
@@ -232,7 +284,7 @@ public class AcceptanceTestTask extends Task
             }
 
             // must be inside the braces now
-            Pattern linePattern = Pattern.compile("^\\s*(\\S+)\\s*:\\s*(\\S.*)");
+            Pattern linePattern = Pattern.compile("^\\s*(\\S+)\\s*:\\s*(\\S.*?)(;?)\\s*$");
             Matcher lineMatcher = linePattern.matcher(line);
 
             if (lineMatcher.matches()) {
