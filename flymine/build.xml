@@ -15,7 +15,7 @@
 
   <!-- set ${release} with -Drelease=something on the command line to choose a
        different set of properties files -->
-
+ 
   <property name="build.properties.local.base" 
             value="${user.home}/build.properties.${ant.project.name}"/>
   <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
@@ -24,7 +24,7 @@
   </condition>
   <available file="${build.properties.local}" property="build.properties.local.present"/>
   <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
-
+  
   <property name="runtime.properties.local.base" value="${user.home}/flymine.properties" />
   <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
              else="${runtime.properties.local.base}">
@@ -209,7 +209,7 @@
       <pathelement location="${build.model}/interpro"/>
       <pathelement location="${build.model}/cdnaclone"/>
       
-      <!--t1dmine specific model-->
+      <!--t1dmine/stemcell specific model-->
       <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/firstef"/>
       <pathelement location="${build.model}/tfbs"/>
@@ -219,7 +219,8 @@
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
       <pathelement location="${build.model}/opposumchain"/>
-     
+      
+
       <fileset dir="${model}">
         <patternset refid="lib.models"/>
       </fileset>
@@ -623,8 +624,15 @@
   <target name="build-interpro-production" depends="init-paths, build-interpro-prod-database, retrieve-interpro, translate-interpro, load-interpro, update-equivalent-interpro-features"/>
 
   <target name="build-interpro-prod-database" depends="prepare-build-model">
-    <copy todir="${build.resources}" file="${model}/interpro/resources/buildInterproSummaryDbFromInterproReleaseDb.sql" overwrite="true"/>
-    <sql classpathref="models.class.path" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://gollum:3306/interpro_prod" userid="rns" password="rns" src="${build.resources}/buildInterproSummaryDbFromInterproReleaseDb.sql"/>
+    <copy todir="${build.resources}" 
+          file="${model}/interpro/resources/buildInterproSummaryDbFromInterproReleaseDb.sql" 
+          overwrite="true"/>
+    <sql classpathref="models.class.path" 
+         driver="com.mysql.jdbc.Driver" 
+         url="jdbc:mysql://gollum:3306/interpro_prod" 
+         userid="rns" 
+         password="rns" 
+         src="${build.resources}/buildInterproSummaryDbFromInterproReleaseDb.sql"/>
   </target>
 
   <target name="build-db-interpro-src-items" depends="prepare-build-model">
@@ -650,7 +658,8 @@
     </ant>
   </target>
 
-  <target name="translate-interpro" depends="prepare-build-model, compile-interpro-java, compile-genomic-java-from-db">
+  <target name="translate-interpro" 
+          depends="prepare-build-model, compile-interpro-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -2834,6 +2843,7 @@
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
     <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
     <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
+    <property name ="aspects.properties.file" value="model/genomic/resources/web/aspects.xml"/>
 
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
@@ -2888,13 +2898,14 @@
       <fileset file="${build.properties.local}" />
     </concat>
     <copy todir="${build.tmp}" file="${resources}/webapp/flymine/classDescriptions.properties"/>
+    <copy todir="${build.tmp}" file="${aspects.properties.file}"/>
     <patternset id="flymine-global-web-properties-patternset">
       <include name="global.web.properties"/>
       <include name="web.properties"/>
       <include name="objectstoresummary.properties"/>
       <include name="classDescriptions.properties"/>
-      <include name="aspects.xml"/>
       <include name="soClassName.properties"/>
+      <include name="aspects.xml"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-webinf" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
@@ -3110,7 +3121,7 @@
   <target name="load-gbrowse-data-mysql"
           description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec executable="/bin/sh">
-      <arg line="-c 'bp_bulk_load_gff.pl -create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
+      <arg line="-c 'bp_bulk_load_gff.pl --maxfeature 1000000000 --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
     </exec>
   </target>
 
@@ -3144,6 +3155,15 @@
     </ant>
   </target>
 
+  <target name="create-so-name-to-classname-map" depends="compile-genomic-java">
+    <taskdef name="create-so-name-to-classname-map" 
+             classname="org.flymine.task.SOClassNameMapMakerTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <create-so-name-to-classname-map soFile="${model}/so/sofa.obo"
+                                     outputFile="${build.tmp}/soClassName.properties"/>
+  </target>
   <!-- ============================================================================== -->
 
   <!-- Targets for the non-model Java -->
@@ -4562,16 +4582,36 @@
   <!-- load CDNAclone image data into production -->
   <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone-image"/>
 
-  
-  <target name="create-so-name-to-classname-map" depends="compile-genomic-java">
-    <taskdef name="create-so-name-to-classname-map" 
-             classname="org.flymine.task.SOClassNameMapMakerTask">
+  <!--psi intact for stemcell PIPILINE -->
+  <target name="retrieve-psi-intact-stemcell" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.psi-src-items-std"/>
+    </ant>
+    <taskdef name="convert-xml" classname="org.intermine.task.XmlConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-
-    <create-so-name-to-classname-map soFile="${model}/so/sofa.obo"
-                                     outputFile="${build.tmp}/soClassName.properties"/>
+    <convert-xml schema="${model}/psi/psi.xsd"
+                 model="psi"
+                 osName="osw.psi-src-items">
+      <fileset dir="${shared.data}/human/psi">
+        <include name="rual/*.xml"/>
+       </fileset>
+    </convert-xml>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.psi-src-items-std"/>
+    </ant>
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+    </ant>
   </target>
+
+ 
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
@@ -4609,10 +4649,23 @@
      <property name="model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
-     <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
+     <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>     
   </target>
 
-  <!-- insert the testmodel data into the database
+
+ <target name="build-production-webapp-stemcell"
+          depends="stemcell-model-style, build-production-webapp">
+  </target>
+
+  <target name ="stemcell-model-style">
+     <property name="model.css.file" value = "model/genomic/resources/web/stemcellmine/model.css"/>
+     <property name="webapp.properties.file" value="${resources}/webapp/stemcellmine/global.web.properties"/>
+     <property name ="web.properties.file" value ="model/genomic/resources/web/stemcellmine/web.properties"/>
+     <property name ="log4j.properties.file" value ="${resources}/webapp/stemcellmine/log4j.properties"/>
+     <property name ="aspects.properties.file" value="model/genomic/resources/web/stemcellmine/aspects.xml"/>
+  </target>
+
+  <!-- insert the testmodel data into the database-->
   <target name="insert-data-unittest"
           depends="build-db-genomic-test, create-indexes-genomic-test, copy-t1dmine-config, ensembl-human-test">
     <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
@@ -4621,7 +4674,7 @@
     <insert-xml-data integrationWriter="integration.genomic-test"
          xmlFile="${build}/model/ensembl-human/resources/test/EnsemblDataTranslatorFunctionalTest_tgt.xml"
          sourceName="ensembl-human"/>
-  </target>-->
+  </target>
 
   <target name="acceptance-tests" depends="init-paths">
     <taskdef name="acceptance-tests" classname="org.intermine.task.AcceptanceTestTask">
