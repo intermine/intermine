@@ -2033,6 +2033,20 @@
       </fileset>
     </copy>
   </target>
+
+ <target name="copy-stemcell-config" depends="prepare-build-model">
+    <property name="model.name" value="genomic"/>
+    <copy todir="${build.model}/${model.name}" failonerror="false">
+      <fileset dir="${model}/${model.name}/resources">
+        <include name="*.properties"/>
+        <include name="*.sql"/>
+      </fileset>
+      <fileset dir="${model}/${model.name}/resources/stemcell">
+        <include name="*.properties"/>
+        <include name="*.sql"/>
+      </fileset>
+    </copy>
+  </target>
   <!-- NOTE - following target updates model and other metadata in production database.
        If the model has changed then this can be really bad.  Should be used with extreme caution if
        absolutely confident that changes will not put model/details out of sync with schema. -->
