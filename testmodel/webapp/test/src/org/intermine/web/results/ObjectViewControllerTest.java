@@ -92,15 +92,18 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectView");
 
-        getRequest().setAttribute("object", new Department());
+        Department department = new Department();
+        getRequest().setAttribute("object", department);
         getRequest().setAttribute("viewType", "summary");
         actionPerform();
 
         Model model = Model.getInstanceByName("testmodel");
-        assertNotNull(componentContext.getAttribute("leafClds"));
-        assertTrue(((Collection) componentContext.getAttribute("leafClds")).contains(model.getClassDescriptorByName(Department.class.getName())));
-        assertFalse(((Collection) componentContext.getAttribute("leafClds")).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
-        assertFalse(((Collection) componentContext.getAttribute("leafClds")).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
+        
+        Map leafDescs = (Map) getSession().getServletContext().getAttribute(Constants.LEAF_DESCRIPTORS_MAP);
+        assertNotNull(leafDescs);
+        assertTrue(((Set) leafDescs.get(department)).contains(model.getClassDescriptorByName(Department.class.getName())));
+        assertFalse(((Set) leafDescs.get(department)).contains(model.getClassDescriptorByName(RandomInterface.class.getName())));
+        assertFalse(((Set) leafDescs.get(department)).contains(model.getClassDescriptorByName(InterMineObject.class.getName())));
         Map primaryKeyFields = (Map) componentContext.getAttribute("primaryKeyFields");
         assertNotNull(primaryKeyFields);
         LinkedHashMap testFieldNames = new LinkedHashMap();
@@ -116,6 +119,8 @@ public class ObjectViewControllerTest extends MockStrutsTestCase
         getRequest().setAttribute("object", "test string");
         actionPerform();
 
-        assertEquals(0, ((Collection) componentContext.getAttribute("leafClds")).size());
+        Map leafDescs = (Map) getSession().getServletContext().getAttribute(Constants.LEAF_DESCRIPTORS_MAP);
+        assertNotNull(leafDescs);
+        assertEquals(0, ((Set) leafDescs.get("test string")).size());
     }
 }
