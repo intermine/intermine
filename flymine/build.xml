@@ -3301,7 +3301,7 @@
   </target>
 
 
-  <!-- =============== TIDMINE TARGETS ======================================== -->
+  <!-- ============================== TIDMINE/STEM CELL TARGETS ================================================= -->
 
  <target name="compile-genomic-java-t1dmine" depends="compile-flymine-java, compile-genomic-model-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
@@ -3326,6 +3326,21 @@
                    xmlFile="${t1dmine.data}/ontologies.xml" sourceName="static"/>
   </target>
 
+  <target name="load-static-stemcell" depends="prepare-build-model, copy-stemcell-config">
+    <taskdef name="load-xml-data"
+             classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <property name="stemcellmine.data" value="model/genomic/data/stemcellmine"/>
+
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${stemcellmine.data}/datasets.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${stemcellmine.data}/organisms.xml" sourceName="static"/>
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${stemcellmine.data}/ontologies.xml" sourceName="static"/>
+  </target>
   <!-- ENSEMBL HUMAN  CORE MODEL GENERATION -->
 
   <!-- convert ensembl human zargo to InterMine model -->
