@@ -15,8 +15,10 @@
     function changeaspect() {
       var url = '${requestScope['javax.servlet.include.context_path']}/aspect.do?';
       var set = document.aspectForm.name.options[document.aspectForm.name.selectedIndex].value;
-      url += 'name=' + set;
-      document.location.href=url;
+      if (set) {
+        url += 'name=' + set;
+        document.location.href=url;
+      }
     }
     //]]>-->
 </script>
@@ -25,6 +27,9 @@
         <%-- Page size controls --%>
         <fmt:message key="aspect.starting.point"/>
         <select name="name" onchange="changeaspect()" class="aspectSelect">
+          <c:if test="${aspect == null}">
+            <option value="" selected>-- Choose aspect --</option>
+          </c:if>
           <c:forEach items="${ASPECTS}" var="entry">
             <c:set var="set" value="${entry.value}"/>
             <option value="${set.name}"
