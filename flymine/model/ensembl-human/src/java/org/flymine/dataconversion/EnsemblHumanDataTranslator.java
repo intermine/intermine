@@ -191,11 +191,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs, identifier));
                                                         // display_xref
                                                         // display_xref.external_db
-                    // if no organismDbId set to be same as identifier
-                    if (!tgtItem.hasAttribute("organismDbId")) {
-                        tgtItem.addAttribute(new Attribute("organismDbId",
-                               tgtItem.getAttribute("identifier").getValue()));
-                    }
+
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(getOrgRef());
                     addReferencedItem(tgtItem, getEnsemblDb(), "evidence", true, "", false);
@@ -725,9 +721,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                            || dbname.equals("RefSeq_peptide")
                            || dbname.equals("RefSeq_peptide_predicted")) {
                     tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
-
                 }
             }
+        } else {
+            tgtItem.addAttribute(new Attribute("identifier", geneIdentifier));
         }
         return synonyms;
     }
