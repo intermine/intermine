@@ -103,6 +103,7 @@ public class InlineResultsTable
      * eg. Gene.organismDbId
      * Currently returns null if the FieldConfig for the column contains a complex expression,
      * that is one the follows a reference eg. organism.shortName
+     * @return the List of column full names
      */
     public List getColumnFullNames() {
         if (columnFullNames == null) {
