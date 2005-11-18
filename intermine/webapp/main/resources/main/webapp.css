@@ -188,6 +188,12 @@ table td {
   font-size: 11px;
   color: #999;
 }
+.links .menu-logged-in-item {
+  font-size: 11px;
+  color: #777;
+  float: right;
+  padding-right: 6px;
+}
 .topBar {
   background: white;
   padding: 6px;
