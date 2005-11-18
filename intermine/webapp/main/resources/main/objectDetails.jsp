@@ -187,7 +187,7 @@
                                       <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
                                         <c:set var="cld2" value="${cld2}" scope="request"/>
                                         <c:set var="backup" value="${object}"/>
-                                        <c:set var="object" value="${thisRowObject}" scope="request"/>
+                                        <c:set var="object" value="${collection.table.rowObjects[0]}" scope="request"/>
                                         <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
                                         <c:set var="object" value="${backup}"/>
                                       </c:if>
