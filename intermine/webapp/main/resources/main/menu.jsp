@@ -5,6 +5,11 @@
 <!-- menu.jsp -->
 <html:xhtml/>
 <div class="links">
+  <span class="menu-logged-in-item">
+    <c:if test="${!empty PROFILE.username}">
+      ${PROFILE.username}
+    </c:if>
+  </span>
   <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
       <fmt:message key="menu.home"/>
@@ -67,6 +72,7 @@
       <fmt:message key="menu.help"/>
     </html:link>
   </span>
+  
 </div>
 
 <!-- /menu.jsp -->
