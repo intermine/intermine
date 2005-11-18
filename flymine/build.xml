@@ -4735,7 +4735,7 @@
     </taskdef>
 
     <acceptance-tests configFile="model/genomic/resources/test/flymine_acceptance_test.conf"
-                      outputFile="build/test/acceptance_test.html"
+                      outputFile="results/acceptance_test.html"
                       database="db.production"/>
 
   </target>    
