@@ -22,13 +22,21 @@
           <tiles:insert name="${topLeftTile}"/>
         </c:if>
         ${title}
+        <c:if test="${!empty helpUrl}">
+          <span class="help">
+          [<html:link href="${helpUrl}">
+            <fmt:message key="begin.link.help"/>
+          </html:link>]
+          </span>
+        </c:if>
       </th>
       <th class="help" align="right" nowrap="nowrap">
         <c:choose>
           <c:when test="${!empty helpUrl}">
-            [<html:link href="${helpUrl}">
+            <!--[<html:link href="${helpUrl}">
               <fmt:message key="begin.link.help"/>
-            </html:link>]
+            </html:link>]-->
+            <tiles:insert page="/aspectPopup.jsp"/>
           </c:when>
           <c:when test="${!empty topRightTile}">
             <tiles:insert name="${topRightTile}"/>
