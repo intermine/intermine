@@ -97,11 +97,11 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
     
     public void testReadOneTest3() throws Exception {
         String expSql = "select * from intermineobject";
-        String expNote = "some note";
+        String expNote = "some note referring to ticket #123";
         String expMaxResults = "10";
         String testConf =
             "no-results {\n"
-            + "  sql: " + expSql + "\n"
+            + "  sql: " + expSql + "; \n"
             + "  note: " + expNote + "\n"
             + "  max-results: " + expMaxResults + "\n"
             + "}\n";
@@ -115,9 +115,17 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
         assertEquals(new Integer(10), test.getMaxResults());  
     }
     
+    public void testHyperlinking() throws Exception {
+        String note = "some note referring to ticket #123";
+        String expNote = "some note referring to ticket <a href=\"" 
+            + AcceptanceTestTask.TRAC_TICKET_URL_PREFIX + "123\">#123</a>";
+        String hyperlinkedNote = AcceptanceTestTask.hyperLinkNote(note);
+        assertEquals(expNote, hyperlinkedNote);
+    }
+    
     public void testReadOneTestError1() throws Exception {
         String testConf =
-            "no-results {\n"
+            "no-results {\n"            
              + "}\n";
         
         StringReader sr = new StringReader(testConf);
