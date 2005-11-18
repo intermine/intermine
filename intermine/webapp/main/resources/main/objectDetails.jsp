@@ -52,7 +52,7 @@
               <c:if test="${object.fieldConfigMap[expr].showInSummary}">
                 <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
                 <tr>
-                  <td>
+                  <td nowrap>
                     <b><span class="attributeField">${expr}</span></b>
                     <c:forEach items="${object.clds}" var="cld">
                       <im:typehelp type="${cld.unqualifiedName}.${expr}"/>
@@ -171,7 +171,7 @@
                   <td width="10px">
                     <div style="white-space:nowrap">
                       <c:choose>
-                        <c:when test="${verbose}">
+                        <c:when test="${verbose && collection.size > 0}">
                           <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
                             <img border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
                             <span class="collectionField">${fieldName}</span>
@@ -217,7 +217,7 @@
                     </c:if>
                   </td>
                 </tr>
-                <c:if test="${verbose}">
+                <c:if test="${verbose && collection.size > 0}">
                   <tr>
                     <td colspan="2">
                       <table border="0" cellspacing="0" cellpadding="0" width="100%">
