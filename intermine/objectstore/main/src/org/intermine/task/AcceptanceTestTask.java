@@ -21,12 +21,17 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +46,6 @@ import org.apache.tools.ant.Task;
 
 public class AcceptanceTestTask extends Task
 {
-    private List fileSets = new ArrayList();
     private String database;
     private File outputFile;
     private File configFile;
@@ -74,7 +78,7 @@ public class AcceptanceTestTask extends Task
     public void setDatabase(String database) {
         this.database = database;
     }
-    
+
     /**
      * @see Task#execute
      */
@@ -82,19 +86,19 @@ public class AcceptanceTestTask extends Task
         if (database == null) {
             throw new BuildException("database attribute is not set");
         }
-        
+
         if (configFile == null) {
             throw new BuildException("configFile attribute is not set");
         }
-        
+
         if (outputFile == null) {
             throw new BuildException("outputFile attribute is not set");
         }
-        
-        try {            
+
+        try {
             Database db = DatabaseFactory.getDatabase(database);
             System.err .println("Processing configuration file: " + configFile.getName());
-            LineNumberReader reader = new LineNumberReader(new FileReader(configFile));            
+            LineNumberReader reader = new LineNumberReader(new FileReader(configFile));
             List testResults = runAllTests(db, reader);
 
             FileWriter fw;
@@ -104,7 +108,7 @@ public class AcceptanceTestTask extends Task
                 throw new BuildException("failed to open outout file: " + outputFile, e);
             }
             PrintWriter pw = new PrintWriter(fw);
-            
+
             processResults(testResults, pw);
 
             try {
@@ -116,7 +120,7 @@ public class AcceptanceTestTask extends Task
             throw new BuildException(e);
         }
     }
-    
+
     /**
      * Run all the tests and return a List of AcceptanceTestResult objects.
      * @param db the Database to run the queries against
@@ -132,19 +136,19 @@ public class AcceptanceTestTask extends Task
 
         try {
             AcceptanceTest test;
-                    
+
             while ((test = readOneTestConfig(configReader)) != null) {
-                AcceptanceTestResult testResult = runTest(con, test);                            
+                AcceptanceTestResult testResult = runTest(con, test);
                 testResults.add(testResult);
             }
         } catch (FileNotFoundException e) {
             throw new BuildException("problem reading file - file not found: "
                                      + configFile, e);
         }
-        
+
         return testResults;
     }
-    
+
     /**
      * Write a formatted HTML summary of the given AcceptanceTestResult objects to the PrintWriter.
      * @param testResults a List of AcceptanceTestResult objects
@@ -156,26 +160,33 @@ public class AcceptanceTestTask extends Task
         pw.println("<body>");
         pw.println("<h2>Failing tests:</h2>");
         pw.println("<p>");
-        
+
         int testCount = 0;
+
+        boolean seenFailure = false;
 
         for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
             pw.println("<ul>");
-            
+
             if (!atr.isSuccessful()) {
                 pw.println("<li><a href=\"#test" + testCount + "\">");
                 pw.println(atr.getTest().getSql());
                 pw.println("</a></li>");
+                seenFailure = true;
             }
 
             pw.println("</ul>");
 
             testCount++;
         }
-        
-        pw.println("</p>");
+
+        if (!seenFailure) {
+            pw.println("None");
+        }
+
+        pw.println("</p><hr/>");
 
         testCount = 0;
 
@@ -196,30 +207,12 @@ public class AcceptanceTestTask extends Task
             } else {
                 pw.println("<p>Result: <font color=\"red\">FAILED</font></p>");
             }
-            
+
             if (atr.getException() == null) {
                 if ((atr.getTest().getType().equals(AcceptanceTest.NO_RESULTS_TEST)
                      || atr.getTest().getType().equals(AcceptanceTest.RESULTS_REPORT))
                     && atr.getResults().size() > 0) {
-                    pw.println("<table border=1>");
-                    Iterator resultsIter = atr.getResults().iterator();
-                    while (resultsIter.hasNext()) {
-                        List row = (List) resultsIter.next();
-                        pw.println("<tr>");
-                        Iterator rowIter = row.iterator();
-                        while (rowIter.hasNext()) {
-                            pw.println("<td>");
-                            Object o = rowIter.next();
-                            if (o != null) {
-                                pw.println(o);
-                            } else {
-                                pw.println("<font color=\"grey\" size=\"-1\">null</font>");
-                            }
-                            pw.println("</td>");
-                        }
-                        pw.println("</tr>");
-                    }
-                    pw.println("</table>");
+                    outputTable(pw, atr, atr.getResults());
                 }
             } else {
                 pw.println("<p>SQLException while executing SQL:</p>");
@@ -227,17 +220,66 @@ public class AcceptanceTestTask extends Task
                 atr.getException().printStackTrace(pw);
                 pw.println("</pre>");
             }
-            
+
             pw.println("<hr>");
 
             testCount++;
         }
+
+        testResultsIter = testResults.iterator();
+
+        while (testResultsIter.hasNext()) {
+            AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
+
+            Iterator trackerIdIter = atr.getTrackerMap().keySet().iterator();
+
+            while (trackerIdIter.hasNext()) {
+                Integer id = (Integer) trackerIdIter.next();
+                List trackerRows = (List) atr.getTrackerMap().get(id);
+
+                pw.println("<h2><a name=\"object" + id + "\">Tracker entries for "
+                           + id + "</a></h2>");
+                outputTable(pw, atr, trackerRows);
+                pw.println("<hr>");
+            }
+        }
+
         pw.println("</ul></body></html>");
         pw.close();
-
     }
 
-    
+    private void outputTable(PrintWriter pw, AcceptanceTestResult atr, List results) {
+        pw.println("<table border=1>");
+        Iterator resultsIter = results.iterator();
+        while (resultsIter.hasNext()) {
+            List row = (List) resultsIter.next();
+            pw.println("<tr>");
+            Iterator rowIter = row.iterator();
+            while (rowIter.hasNext()) {
+                pw.println("<td>");
+                Object o = rowIter.next();
+                if (o != null) {
+                    if (o instanceof Integer) {
+                        Integer id = (Integer) o;
+                        List trackerRows = (List) atr.getTrackerMap().get(id);
+                        if (trackerRows == null) {
+                            pw.println(id);
+                        } else {
+                            pw.println("<a href=\"#object" + id + "\">" + id + "</a>");
+                        }
+                    } else {
+                        pw.println(o);
+                    }
+                } else {
+                    pw.println("<font color=\"grey\" size=\"-1\">null</font>");
+                }
+                pw.println("</td>");
+            }
+            pw.println("</tr>");
+        }
+        pw.println("</table>");
+    }
+
     /**
      * Return a hyperlinked version of the given note.
      * @param note the note
@@ -262,7 +304,7 @@ public class AcceptanceTestTask extends Task
         Integer maxResults = null;
         String line;
         while ((line = (configReader.readLine())) != null) {
-            if (line.matches("^\\s*#|^\\s*$")) {
+            if (line.matches("\\s*#.*|\\s*")) {
                 continue;
             }
 
@@ -320,11 +362,11 @@ public class AcceptanceTestTask extends Task
                                       + configReader.getLineNumber());
             }
         }
-        
+
         // end of file
         return null;
     }
-    
+
     private AcceptanceTestResult runTest(Connection con, AcceptanceTest test) {
         Statement sm = null;
         ResultSet rs = null;
@@ -332,7 +374,7 @@ public class AcceptanceTestTask extends Task
             sm = con.createStatement();
             rs = sm.executeQuery(test.getSql());
 
-            AcceptanceTestResult atr = new AcceptanceTestResult(test, rs);
+            AcceptanceTestResult atr = new AcceptanceTestResult(test, rs, con);
             return atr;
         } catch (SQLException e) {
             return new AcceptanceTestResult(test, e);
@@ -361,8 +403,8 @@ class AcceptanceTest
      * the default number of result line to save
      */
     public static final int DEFAULT_MAX_RESULTS = 20;
-    
-    String type = null;
+
+    private String type = null;
     private String sql = null;
     private Integer maxResults;
     private String note;
@@ -371,22 +413,22 @@ class AcceptanceTest
      * Type of test when some results are expected.
      */
     static final String SOME_RESULTS_TEST = "some-results";
-    
+
     /**
      * Type of test when no results are expected.
      */
     static final String NO_RESULTS_TEST = "no-results";
-    
+
     /**
      * Type of test when meaning save and display the results of running a query
      */
     static final String RESULTS_REPORT = "results-report";
-    
+
     /**
      * Type of test that false if the ResultSet isn't a one-row set with just true as the result.
      */
     static final String ASSERT_TEST = "assert";
-    
+
     /**
      * Create a new AcceptanceTest object.
      * @param type the type of the test
@@ -402,11 +444,11 @@ class AcceptanceTest
             && !type.equals(AcceptanceTest.RESULTS_REPORT)) {
             throw new RuntimeException("unknown test type: " + type);
         }
-        
+
         this.type = type;
         this.sql = sql;
         this.note = note;
-        
+
         if (maxResults == null) {
             this.maxResults = new Integer(DEFAULT_MAX_RESULTS);
         } else {
@@ -428,7 +470,7 @@ class AcceptanceTest
     public String getType() {
         return type;
     }
-    
+
     /**
      * Return the sql parameter that was passed to the constructor.
      * @return the sql parameter that was passed to the constructor.
@@ -436,11 +478,11 @@ class AcceptanceTest
     public String getSql() {
         return sql;
     }
-    
+
     /**
      * Return the note parameter that was passed to the constructor.
      * @return the note parameter that was passed to the constructor.
-     */ 
+     */
    public String getNote() {
         return note;
     }
@@ -460,24 +502,88 @@ class AcceptanceTest
  */
 class AcceptanceTestResult
 {
-    AcceptanceTest test;
-    SQLException sqlException = null;
-    List results = null;
+    private AcceptanceTest test;
+    private SQLException sqlException = null;
+    private List results = null;
+    // a Map from InterMine ID to the corresponding entries in the tracker table
+    private Map trackerMap = new HashMap();
 
     /**
      * Create a new AcceptanceTestResult object.
      * @param test the AcceptanceTest that generated this AcceptanceTestResult
      * @param rs the ResultSet generated by the query for this test
+     * @param con the database Connection - used to lookup IDs in the tracker table
      */
-    AcceptanceTestResult(AcceptanceTest test, ResultSet rs) {
+    AcceptanceTestResult(AcceptanceTest test, ResultSet rs, Connection con) {
         this.test = test;
         try {
-            results = copyResults(test, rs);
+            results = copyResults(rs, test.getMaxResults().intValue());
+
+            DatabaseMetaData dbMetadata = con.getMetaData();
+            ResultSet trackerTableResults = dbMetadata.getTables(null, null, "tracker", null);
+            
+            if (trackerTableResults.next()) {
+                // we have a tracker table
+                ResultSetMetaData metadata = rs.getMetaData();
+            
+                for (int i = 1; i <= metadata.getColumnCount(); i++) {
+                    if (metadata.getColumnType(i) == Types.INTEGER
+                        && metadata.getColumnName(i).equals("id")) {
+                        // look up each ID in the tracker table and save the results
+                        Iterator rowIter = results.iterator();
+                        while (rowIter.hasNext()) {
+                            List row = (List) rowIter.next();
+                            Integer id = (Integer) row.get(i - 1);
+                            List trackerRows = getTrackerRows(id, con);
+                        
+                            trackerMap.put(id, trackerRows);                            
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             sqlException = e;
         }
     }
-    
+
+    /**
+     * Return the Map from InterMine ID to the corresponding entries in the tracker table.  Only
+     * IDs seen in query results will appear in the keySet of the Map.
+     * @return the tracker Map
+     */
+    public Map getTrackerMap() {
+        return trackerMap;
+    }
+
+    /**
+     * Get the rows from the tracker table that refer to the given id
+     * @return the results as a List of Lists or null if there is an SQLException (which is stored
+     * in sqlException)
+     */
+    private List getTrackerRows(Integer id, Connection con) {
+        Statement sm = null;
+        ResultSet rs = null;
+        try {
+            sm = con.createStatement();
+            rs = sm.executeQuery("select * from tracker where objectid = " + id);
+            return copyResults(rs, -1);
+        } catch (SQLException e) {
+            sqlException = e;
+            return null;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (sm != null) {
+                    sm.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("exception while closing Statement or ResultSet", e);
+            }
+        }
+    }
+
     /**
      * Create a new AcceptanceTestResult object.
      * @param test the AcceptanceTest that generated this AcceptanceTestResult
@@ -517,16 +623,16 @@ class AcceptanceTestResult
             throw new RuntimeException("unkown test type: " + test.getType());
         }
     }
-    
+
     /**
-     * Return a List of Lists containing the results generated by the query for this test.  Only 
+     * Return a List of Lists containing the results generated by the query for this test.  Only
      * the first maxResults rows are returned.
      * @return the query results
      */
     public List getResults() {
         return results;
     }
-    
+
     /**
      * Return the SQLException exception (if any) that occurred when the test SQL was run.
      * @return the SQLException or null if there was no exception
@@ -535,21 +641,23 @@ class AcceptanceTestResult
         return sqlException;
     }
 
-    private List copyResults(AcceptanceTest test, ResultSet rs) throws SQLException {
+    private static List copyResults(ResultSet rs, int maxRows) throws SQLException {
         List returnList = new ArrayList();
-        
+
         int columnCount = rs.getMetaData().getColumnCount();
-        
-        for (int rowIndex = 0; rowIndex < test.getMaxResults().intValue(); rowIndex++) {
+
+        for (int rowIndex = 0; maxRows == -1 || rowIndex < maxRows; rowIndex++) {
             if (rs.next()) {
                 List rowCopy = new ArrayList();
                 for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
                     rowCopy.add(rs.getObject(columnIndex));
-                } 
+                }
                 returnList.add(rowCopy);
+            } else {
+                break;
             }
         }
-        
+
         return returnList;
     }
 
