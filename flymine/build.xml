@@ -3359,7 +3359,7 @@
 
  <!-- MERGED GENOMIC T1DMine MODEL  -->
 
- <!-- create human genomic model from core and all additions files -->
+ <!-- create t1d genomic model from core and all additions files -->
   <target name="create-production-model-t1dmine"
           depends="remove-genomic, prepare-build-model,
                 merge-psi-model, merge-rnai-model,
@@ -3368,7 +3368,7 @@
                 merge-firstef-model, merge-region-model,merge-diseaseregion-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-ensembl-disease-model,
-                merge-tfbscluster-model, merge-mage-model, merge-cdnaclone-model,
+                merge-mage-model, merge-cdnaclone-model,
                 merge-orthologue-model,
                 merge-chado-model, merge-shortcuts">  
   </target>
@@ -3376,6 +3376,30 @@
 
   <!-- create java objects for the genomic human model-->
   <target name="compile-genomic-model-t1dmine" depends="create-production-model-t1dmine">
+    <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+ <!-- MERGED GENOMIC StemCellMine MODEL  -->
+
+ <!-- create stem cell genomic model from core and all additions files -->
+  <target name="create-production-model-stemcell"
+          depends="remove-genomic, prepare-build-model,
+                merge-psi-model, merge-rnai-model,
+                merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
+                merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
+                merge-firstef-model, merge-region-model,merge-diseaseregion-model,
+                merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
+                merge-tfbscluster-model, merge-mage-model, merge-cdnaclone-model,
+                merge-orthologue-model,
+                merge-chado-model, merge-shortcuts">  
+  </target>
+
+
+  <!-- create java objects for the genomic stemcell model-->
+  <target name="compile-genomic-model-stemcell" depends="create-production-model-stemcell">
     <ant antfile="${build}/build-model.xml" target="compile-model-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
