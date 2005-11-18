@@ -266,7 +266,7 @@ public class PsiDataTranslator extends DataTranslator
         }
 
 
-        Reference namesRef ;
+        Reference namesRef;
         boolean shortLabelFound = false;
         String iShortName = null;
 
@@ -288,7 +288,8 @@ public class PsiDataTranslator extends DataTranslator
                 }
             }
         } else {
-            LOG.error("No names reference for srcItem " +srcInteractionElementItem.getIdentifier());
+            LOG.error("No names reference for srcItem "
+                      + srcInteractionElementItem.getIdentifier());
         }
 
         //<confidence unit="author-confidence" value="D"/>
