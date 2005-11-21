@@ -488,6 +488,9 @@
             type="org.intermine.web.PortalQueryAction">
       <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
     </action>
+    
+    <action path="/ping"
+            type="org.intermine.web.HeartbeatAction"/>
 
     <!-- Controllers -->
     <action path="/initMain"
