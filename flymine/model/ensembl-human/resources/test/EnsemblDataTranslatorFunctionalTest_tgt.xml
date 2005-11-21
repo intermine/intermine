@@ -27,8 +27,8 @@
     <reference name="subject" ref_id="3_478"/>
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="embl"/>
-    <attribute name="url" value="http://www.ebi.ac.uk/embl"/>
+    <attribute name="name" value="ensembl"/>
+    <attribute name="url" value="http://www.ensembl.org"/>
   </item>
   <item id="23_2" class="http://www.flymine.org/model/genomic#RepeatRegion">
     <attribute name="consensus" value="N"/>
@@ -75,10 +75,10 @@
   <item id="-1_18" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="TFIP11"/>
-    <reference name="source" ref_id="-1_5"/>
+    <reference name="source" ref_id="-1_6"/>
     <reference name="subject" ref_id="4_327"/>
   </item>
-  <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="-1_6" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="HUGO"/>
     <attribute name="url" value="http://www.hugo-international.org/"/>
   </item>
@@ -89,7 +89,7 @@
   <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="accession"/>
     <attribute name="value" value="18944"/>
-    <reference name="source" ref_id="-1_5"/>
+    <reference name="source" ref_id="-1_6"/>
     <reference name="subject" ref_id="4_949"/>
   </item>
   <item id="-1_48" class="http://www.flymine.org/model/genomic#Chromosome">
@@ -250,14 +250,13 @@
   <item id="11_4" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="tRNAscan"/>
   </item>
-  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="ensembl"/>
-    <attribute name="url" value="http://www.ensembl.org"/>
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="Ensembl Homo Sapiens"/>
   </item>
   <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="KRTAP20-2"/>
-    <reference name="source" ref_id="-1_5"/>
+    <reference name="source" ref_id="-1_6"/>
     <reference name="subject" ref_id="4_949"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Transcript">
@@ -327,7 +326,7 @@
       <reference ref_id="-1_37"/>
     </collection>
   </item>
-  <item id="-1_6" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="RefSeq"/>
     <attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq/"/>
   </item>
@@ -439,7 +438,7 @@
   <item id="-1_14" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="accession"/>
     <attribute name="value" value="NP_653217"/>
-    <reference name="source" ref_id="-1_6"/>
+    <reference name="source" ref_id="-1_5"/>
     <reference name="subject" ref_id="4_1"/>
   </item>
   <item id="22_327" class="http://www.flymine.org/model/genomic#Synonym">
@@ -494,7 +493,7 @@
   <item id="-1_19" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="accession"/>
     <attribute name="value" value="17165"/>
-    <reference name="source" ref_id="-1_5"/>
+    <reference name="source" ref_id="-1_6"/>
     <reference name="subject" ref_id="4_327"/>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
