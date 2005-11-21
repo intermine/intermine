@@ -70,6 +70,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   background-color: #f5f5f5;
   padding: 1px;
   padding-left: 5px;
+  padding-right: 5px;
   margin-top: 8px;
   margin-right: 8px;
   margin-left: 8px;

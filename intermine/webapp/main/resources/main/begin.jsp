@@ -17,8 +17,7 @@
 				<div class="body">
       		<c:choose>
 	      	  <c:when test="${!empty ASPECTS}">
-	              <fmt:message key="begin.aspect.intro"/>
-	        	  
+	            <p><fmt:message key="begin.aspect.intro"/></p>
 	      	    <tiles:insert page="/aspectIcons.jsp"/>
 	      	  </c:when>
 	      	  <c:otherwise>
