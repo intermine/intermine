@@ -47,7 +47,10 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   font-size: 1.2em;
   font-weight: normal;
   margin: 3px;
-  padding: 0;
+}
+
+ul {
+  margin-left: -10px;
 }
 
 .version {
@@ -524,6 +527,15 @@ img.searchHeatImg {
   border: 1px solid #222;
   margin-left: 2px;
   margin-right: 2px;
+}
+
+table.aspectIconsTable {
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+
+td.aspectIconCell {
+  padding-right: 7px;
 }
 
 .aspectSources {
