@@ -32,18 +32,13 @@
       </th>
       <th class="help" align="right" nowrap="nowrap">
         <c:choose>
-          <c:when test="${!empty helpUrl}">
-            <!--[<html:link href="${helpUrl}">
-              <fmt:message key="begin.link.help"/>
-            </html:link>]-->
-            <tiles:insert page="/aspectPopup.jsp"/>
-          </c:when>
           <c:when test="${!empty topRightTile}">
             <tiles:insert name="${topRightTile}"/>
           </c:when>
-          <c:otherwise>
-          	&nbsp;
-          </c:otherwise>
+          <c:when test="${!shownAspectsPopup}">
+          	<tiles:insert page="/aspectPopup.jsp"/>
+          	<c:set scope="request" var="shownAspectsPopup" value="${true}"/>
+          </c:when>
         </c:choose>
       </th>
     </tr>

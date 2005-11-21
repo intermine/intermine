@@ -14,8 +14,8 @@
   <!--//<![CDATA[
     function changeaspect() {
       var url = '${requestScope['javax.servlet.include.context_path']}/aspect.do?';
-      var set = document.aspectForm.name.options[document.aspectForm.name.selectedIndex].value;
-      if (set) {
+      var set = document.getElementById('aspectSelector').options[document.getElementById('aspectSelector').selectedIndex].value;
+      if (set != '') {
         url += 'name=' + set;
         document.location.href=url;
       }
@@ -26,7 +26,7 @@
 <form action="<html:rewrite action="/aspect"/>" name="aspectForm">
         <%-- Page size controls --%>
         <fmt:message key="aspect.starting.point"/>
-        <select name="name" onchange="changeaspect()" class="aspectSelect">
+        <select name="name" onchange="changeaspect()" id="aspectSelector" class="aspectSelect">
           <c:if test="${aspect == null}">
             <option value="" selected>-- Choose aspect --</option>
           </c:if>
