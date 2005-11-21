@@ -8,7 +8,7 @@
     <attribute name="length" value="33983"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_54" class="http://www.flymine.org/model/genomic#Synonym">
@@ -26,7 +26,7 @@
     <reference name="object" ref_id="-1_38"/>
     <reference name="subject" ref_id="3_478"/>
   </item>
-  <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="ensembl"/>
     <attribute name="url" value="http://www.ensembl.org"/>
   </item>
@@ -39,7 +39,7 @@
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_33"/>
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_34"/>
@@ -51,7 +51,7 @@
     <reference name="chromosome" ref_id="-1_32"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_31"/>
@@ -60,7 +60,7 @@
   <item id="-1_30" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="score" value="59.85"/>
     <reference name="analysis" ref_id="11_4"/>
-    <reference name="source" ref_id="-1_2"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
   <item id="22_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
@@ -84,7 +84,7 @@
   </item>
   <item id="-1_17" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <reference name="analysis" ref_id="11_70"/>
-    <reference name="source" ref_id="-1_2"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
   <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="accession"/>
@@ -97,7 +97,7 @@
     <attribute name="length" value="105311216"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_47" class="http://www.flymine.org/model/genomic#Location">
@@ -125,7 +125,7 @@
     <attribute name="name" value="D1S243"/>
     <attribute name="right_primer" value="GCTCCAGCGTCATGGACT"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_52"/>
@@ -140,7 +140,7 @@
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_17"/>
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_16"/>
@@ -177,7 +177,7 @@
     <attribute name="length" value="191741"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Synonym">
@@ -206,7 +206,7 @@
     <attribute name="length" value="123768"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_10" class="http://www.flymine.org/model/genomic#Comment">
@@ -217,7 +217,7 @@
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_30"/>
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_28"/>
@@ -230,7 +230,7 @@
   <item id="-1_33" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <attribute name="score" value="23.0"/>
     <reference name="analysis" ref_id="11_2"/>
-    <reference name="source" ref_id="-1_2"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
   <item id="-1_41" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="3329"/>
@@ -250,9 +250,10 @@
   <item id="11_4" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
     <attribute name="algorithm" value="tRNAscan"/>
   </item>
-  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="Ensembl Homo Sapiens"/>
-  </item>
+    <reference name="dataSource" ref_id="-1_2"/> 
+ </item>
   <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="KRTAP20-2"/>
@@ -264,7 +265,7 @@
     <reference name="gene" ref_id="4_1"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_39"/>
@@ -288,14 +289,14 @@
     <attribute name="length" value="49396972"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="ENSE00001383955"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_41"/>
@@ -319,7 +320,7 @@
     <reference name="gene" ref_id="4_327"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_36"/>
@@ -344,7 +345,7 @@
     <attribute name="length" value="171941"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_50" class="http://www.flymine.org/model/genomic#Chromosome">
@@ -352,7 +353,7 @@
     <attribute name="length" value="170914576"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_32" class="http://www.flymine.org/model/genomic#Chromosome">
@@ -360,7 +361,7 @@
     <attribute name="length" value="245522847"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_52" class="http://www.flymine.org/model/genomic#Location">
@@ -377,7 +378,7 @@
     <attribute name="length" value="123768"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_45" class="http://www.flymine.org/model/genomic#Location">
@@ -396,7 +397,7 @@
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_22"/>
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_20"/>
@@ -429,7 +430,7 @@
     <reference name="startExon" ref_id="0_2654"/>
     <reference name="transcript" ref_id="3_478"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="subjects">
       <reference ref_id="-1_26"/>
@@ -487,7 +488,7 @@
     <attribute name="length" value="185132"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="-1_19" class="http://www.flymine.org/model/genomic#Synonym">
@@ -504,7 +505,7 @@
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_13"/>
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
     <collection name="objects">
       <reference ref_id="-1_11"/>
@@ -526,7 +527,7 @@
   </item>
   <item id="-1_13" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <reference name="analysis" ref_id="11_70"/>
-    <reference name="source" ref_id="-1_2"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
   <item id="-1_55" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
@@ -536,14 +537,14 @@
   </item>
   <item id="-1_22" class="http://www.flymine.org/model/genomic#ComputationalResult">
     <reference name="analysis" ref_id="11_70"/>
-    <reference name="source" ref_id="-1_2"/>
+    <reference name="source" ref_id="-1_3"/>
   </item>
   <item id="-1_21" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="21"/>
     <attribute name="length" value="46976097"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
   <item id="11_3" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
@@ -554,7 +555,7 @@
     <attribute name="length" value="191741"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
     </collection>
   </item>
 </items>

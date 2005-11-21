@@ -11,7 +11,7 @@
  <reference ref_id="-1_12"/>
  </collection>
  <collection name="evidence">
- <reference ref_id="-1_2"/>
+ <reference ref_id="-1_3"/>
  </collection>
 </item> 
 
@@ -40,7 +40,7 @@
 <attribute name="identifier" value="Transcript1"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
-<reference ref_id="-1_2"/>
+<reference ref_id="-1_3"/>
 </collection>
 <collection name="objects">
 <reference ref_id="-1_15"/>
@@ -52,7 +52,7 @@
 <attribute name="identifier" value="Transcript2"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
-<reference ref_id="-1_2"/>
+<reference ref_id="-1_3"/>
 </collection>
 <collection name="objects">
 <reference ref_id="-1_20"/>
@@ -85,7 +85,7 @@
 <attribute name="length" value="2461200"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
-<reference ref_id="-1_2"/>
+<reference ref_id="-1_3"/>
 </collection>
 </item>
 
@@ -94,11 +94,11 @@
 <attribute name="length" value="1124612"/>
 <reference name="organism" ref_id="-1_1"/>
 <collection name="evidence">
-<reference ref_id="-1_2"/>
+<reference ref_id="-1_3"/>
 </collection>
 </item>
  
-<item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource"> 
+<item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource"> 
 <attribute name="name" value="ensembl"/> 
 <attribute name="url" value="http://www.ensembl.org"/>
 </item>
