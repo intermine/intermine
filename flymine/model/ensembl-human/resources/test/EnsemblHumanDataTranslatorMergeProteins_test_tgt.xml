@@ -1,0 +1,138 @@
+<items>
+<item id="-1_11" class="http://www.flymine.org/model/genomic#Protein">
+ <attribute name="primaryAccession" value="Q1001"/>
+ <reference name="organism" ref_id="-1_1"/>
+ <reference name="transcript" ref_id="2_1"/>
+ <collection name="subjects">
+ <reference ref_id="-1_13"/>
+ <reference ref_id="-1_19"/>
+ </collection>
+ <collection name="synonyms">
+ <reference ref_id="-1_12"/>
+ </collection>
+ <collection name="evidence">
+ <reference ref_id="-1_2"/>
+ </collection>
+</item> 
+
+<item id="-1_12" class="http://www.flymine.org/model/genomic#Synonym">
+ <attribute name="type" value="accession"/>
+ <attribute name="value" value="Q1001"/>
+ <reference name="source" ref_id="-1_4"/>
+ <reference name="subject" ref_id="-1_11"/>
+</item>
+
+<item id="1_6" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="Transcript1"/>
+<reference name="source" ref_id="-1_2"/>
+<reference name="subject" ref_id="1_1"/>
+</item>
+
+<item id="2_6" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="Transcript2"/>
+<reference name="source" ref_id="-1_2"/>
+<reference name="subject" ref_id="2_1"/>
+</item>
+
+<item id="1_1" class="http://www.flymine.org/model/genomic#Transcript">
+<attribute name="identifier" value="Transcript1"/>
+<reference name="organism" ref_id="-1_1"/>
+<collection name="evidence">
+<reference ref_id="-1_2"/>
+</collection>
+<collection name="objects">
+<reference ref_id="-1_15"/>
+<reference ref_id="-1_16"/>
+</collection>
+</item>  
+ 
+ <item id="2_1" class="http://www.flymine.org/model/genomic#Transcript">
+<attribute name="identifier" value="Transcript2"/>
+<reference name="organism" ref_id="-1_1"/>
+<collection name="evidence">
+<reference ref_id="-1_2"/>
+</collection>
+<collection name="objects">
+<reference ref_id="-1_20"/>
+<reference ref_id="-1_21"/>
+</collection>
+</item>   
+
+<item id="-1_16" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="900"/>
+<attribute name="endIsPartial" value="false"/>
+<attribute name="start" value="100"/>
+<attribute name="startIsPartial" value="false"/>
+<attribute name="strand" value="1"/>
+<reference name="object" ref_id="-1_10"/>
+<reference name="subject" ref_id="1_1"/>
+</item>
+
+<item id="-1_21" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="9001"/>
+<attribute name="endIsPartial" value="false"/>
+<attribute name="start" value="1001"/>
+<attribute name="startIsPartial" value="false"/>
+<attribute name="strand" value="1"/>
+<reference name="object" ref_id="-1_14"/>
+<reference name="subject" ref_id="2_1"/>
+</item>
+
+<item id="-1_10" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="1"/>
+<attribute name="length" value="2461200"/>
+<reference name="organism" ref_id="-1_1"/>
+<collection name="evidence">
+<reference ref_id="-1_2"/>
+</collection>
+</item>
+
+<item id="-1_14" class="http://www.flymine.org/model/genomic#Chromosome">
+<attribute name="identifier" value="1"/>
+<attribute name="length" value="1124612"/>
+<reference name="organism" ref_id="-1_1"/>
+<collection name="evidence">
+<reference ref_id="-1_2"/>
+</collection>
+</item>
+ 
+<item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="ensembl"/> 
+<attribute name="url" value="http://www.ensembl.org"/>
+</item>
+
+
+<item id="-1_4" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="UniProt"/> 
+<attribute name="url" value="http://www.uniprot.org/"/>
+</item>
+
+ 
+<item id="-1_5" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="RefSeq"/> 
+<attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq/"/>
+</item>
+
+<item id="-1_6" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="HUGO"/> 
+<attribute name="url" value="http://www.hugo-international.org/"/>
+</item>
+
+<item id="-1_7" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="GenBank"/> 
+<attribute name="url" value="http://www.ncbi.nlm.nih.gov/genbank"/>
+</item>
+
+<item id="-1_8" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="GDB"/> 
+<attribute name="url" value="http://gdbwww.gdb.org/"/>
+</item>
+
+<item id="-1_9" class="http://www.flymine.org/model/genomic#DataSource"> 
+<attribute name="name" value="UniSTS"/> 
+<attribute name="url" value="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=unists"/>
+</item>
+
+</items>
