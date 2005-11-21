@@ -8,7 +8,7 @@
 
 <!-- aspectIcons -->
 
-  <table border="0" width="100" cellspacing="0" cellpadding="0">
+  <table class="aspectIconsTable" border="0" width="100" cellspacing="0" cellpadding="0">
     <tr>
       <td width="33%" valign="top">
         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
@@ -21,7 +21,7 @@
                  <img src="${set.iconImage}" class="dsIconImage"/>
                </html:link>
              </td>
-             <td>
+             <td class="aspectIconCell">
                        
              <div class="dsIconLabel">
                <html:link action="/aspect?name=${set.name}">
