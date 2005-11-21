@@ -105,14 +105,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         organism.addAttribute(new Attribute("species", "sapiens"));
         orgRef = new Reference("organism", organism.getIdentifier());
 
-        ensemblDs = createItem(tgtNs + "DataSet", "");
-        ensemblDs.addAttribute(new Attribute("title", "Ensembl Homo Sapiens"));
-        ensemblDsRef = new Reference("source", ensemblDs.getIdentifier());
-
         ensemblDb = createItem(tgtNs + "DataSource", "");
         ensemblDb.addAttribute(new Attribute("name", "ensembl"));
         ensemblDb.addAttribute(new Attribute("url", "http://www.ensembl.org"));
         ensemblRef = new Reference("source", ensemblDb.getIdentifier());
+
+        ensemblDs = createItem(tgtNs + "DataSet", "");
+        ensemblDs.addAttribute(new Attribute("title", "Ensembl Homo Sapiens"));
+        ensemblDs.addReference(new Reference("dataSource", ensemblDb.getIdentifier()));
+        ensemblDsRef = new Reference("source", ensemblDs.getIdentifier());
 
         uniprotDb = createItem(tgtNs + "DataSource", "");
         uniprotDb.addAttribute(new Attribute("name", "UniProt"));
@@ -282,7 +283,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     if (className.endsWith("translation_stable_id")) {
                         storeTgtItem = false;
                     } else {
-                        tgtItem.addReference(ensemblDsRef);
+                        tgtItem.addReference(ensemblRef);
                         tgtItem.addAttribute(new Attribute("type", "identifier"));
                     }
                 } else if ("repeat_feature".equals(className)) {
@@ -846,10 +847,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             } else  if (source.equals("unists")) {
                 ref = unistsRef;
             } else {
-                ref = ensemblDsRef;
+                ref = ensemblRef;
             }
         } else {
-            ref = ensemblDsRef;
+            ref = ensemblRef;
         }
 
         int createItem = 1;

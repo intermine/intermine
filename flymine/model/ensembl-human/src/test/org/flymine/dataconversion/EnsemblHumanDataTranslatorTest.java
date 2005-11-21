@@ -44,7 +44,10 @@ import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 
+import org.apache.log4j.Logger;
+
 public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
+    protected static final Logger LOG=Logger.getLogger(EnsemblHumanDataTranslatorTest.class);
     private String tgtNs = "http://www.flymine.org/model/genomic#";
     private ItemFactory ensemblItemFactory;
     private ItemFactory genomicItemFactory;
@@ -141,7 +144,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         exp1.addAttribute(new Attribute("organismDbId", "ENSG00000193436"));
         exp1.addAttribute(new Attribute("identifier", "ENSG00000193436"));
         exp1.addReference(new Reference("organism", "-1_1"));
-        exp1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_13", "-1_2"}))));
+        exp1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_13", "-1_3"}))));
         exp1.addReference(new Reference("comment", "-1_10"));
         exp1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_11"))));
 
@@ -152,7 +155,7 @@ public class EnsemblHumanDataTranslatorTest extends DataTranslatorTestCase {
         exp2.addReference(new Reference("object", "-1_12"));
 
         Item exp3 = createTgtItem(tgtNs + "ComputationalResult", "-1_13", "");
-        exp3.addReference(new Reference("source", "-1_2"));
+        exp3.addReference(new Reference("source", "-1_3"));
         exp3.addReference(new Reference("analysis", "1_100"));
 
         Item exp4 = createTgtItem(tgtNs + "Comment", "-1_10", "");
