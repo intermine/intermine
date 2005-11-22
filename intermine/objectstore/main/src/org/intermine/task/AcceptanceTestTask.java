@@ -80,6 +80,7 @@ public class AcceptanceTestTask extends Task
     }
 
     /**
+     * @throws BuildException if a problem occurs
      * @see Task#execute
      */
     public void execute() throws BuildException {
@@ -97,7 +98,7 @@ public class AcceptanceTestTask extends Task
 
         try {
             Database db = DatabaseFactory.getDatabase(database);
-            System.err .println("Processing configuration file: " + configFile.getName());
+            System.err .println("Processing configuration file: " + configFile.getCanonicalPath());
             LineNumberReader reader = new LineNumberReader(new FileReader(configFile));
             List testResults = runAllTests(db, reader);
 
@@ -212,7 +213,7 @@ public class AcceptanceTestTask extends Task
                 if ((atr.getTest().getType().equals(AcceptanceTest.NO_RESULTS_TEST)
                      || atr.getTest().getType().equals(AcceptanceTest.RESULTS_REPORT))
                     && atr.getResults().size() > 0) {
-                    outputTable(pw, atr, atr.getResults());
+                    outputTable(pw, atr, atr.getColumnLabels(), atr.getResults());
                 }
             } else {
                 pw.println("<p>SQLException while executing SQL:</p>");
@@ -239,7 +240,7 @@ public class AcceptanceTestTask extends Task
 
                 pw.println("<h2><a name=\"object" + id + "\">Tracker entries for "
                            + id + "</a></h2>");
-                outputTable(pw, atr, trackerRows);
+                outputTable(pw, atr, null, trackerRows);
                 pw.println("<hr>");
             }
         }
@@ -248,8 +249,17 @@ public class AcceptanceTestTask extends Task
         pw.close();
     }
 
-    private void outputTable(PrintWriter pw, AcceptanceTestResult atr, List results) {
+    private void outputTable(PrintWriter pw, AcceptanceTestResult atr, List columnHeadings,
+                             List results) {
         pw.println("<table border=1>");
+        if (columnHeadings != null) {
+            pw.println("<tr>");
+            Iterator columnHeadingsIter = columnHeadings.iterator();
+            while (columnHeadingsIter.hasNext()) {
+                pw.println("<th>" + columnHeadingsIter.next() + "</th>");
+            }            
+            pw.println("</tr>");
+        }
         Iterator resultsIter = results.iterator();
         while (resultsIter.hasNext()) {
             List row = (List) resultsIter.next();
@@ -372,6 +382,7 @@ public class AcceptanceTestTask extends Task
         ResultSet rs = null;
         try {
             sm = con.createStatement();
+            sm.setFetchSize(1000);
             rs = sm.executeQuery(test.getSql());
 
             AcceptanceTestResult atr = new AcceptanceTestResult(test, rs, con);
@@ -505,6 +516,7 @@ class AcceptanceTestResult
     private AcceptanceTest test;
     private SQLException sqlException = null;
     private List results = null;
+    private List columnLabels = null;
     // a Map from InterMine ID to the corresponding entries in the tracker table
     private Map trackerMap = new HashMap();
 
@@ -519,16 +531,21 @@ class AcceptanceTestResult
         try {
             results = copyResults(rs, test.getMaxResults().intValue());
 
+            ResultSetMetaData metadata = rs.getMetaData();
+            columnLabels = new ArrayList();
+            for (int i = 1; i <= metadata.getColumnCount(); i++) {
+                columnLabels.add(metadata.getColumnLabel(i));
+            }
+            
             DatabaseMetaData dbMetadata = con.getMetaData();
             ResultSet trackerTableResults = dbMetadata.getTables(null, null, "tracker", null);
             
             if (trackerTableResults.next()) {
                 // we have a tracker table
-                ResultSetMetaData metadata = rs.getMetaData();
             
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     if (metadata.getColumnType(i) == Types.INTEGER
-                        && metadata.getColumnName(i).equals("id")) {
+                        && metadata.getColumnLabel(i).equals("id")) {
                         // look up each ID in the tracker table and save the results
                         Iterator rowIter = results.iterator();
                         while (rowIter.hasNext()) {
@@ -566,7 +583,7 @@ class AcceptanceTestResult
         try {
             sm = con.createStatement();
             rs = sm.executeQuery("select * from tracker where objectid = " + id);
-            return copyResults(rs, -1);
+            return copyResults(rs, 100);
         } catch (SQLException e) {
             sqlException = e;
             return null;
@@ -632,7 +649,15 @@ class AcceptanceTestResult
     public List getResults() {
         return results;
     }
-
+    
+    /**
+     * Return a List of the column labels.
+     * @return the column labels.
+     */
+    public List getColumnLabels() {
+        return columnLabels;
+    }
+    
     /**
      * Return the SQLException exception (if any) that occurred when the test SQL was run.
      * @return the SQLException or null if there was no exception
