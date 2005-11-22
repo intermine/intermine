@@ -10,10 +10,12 @@ package org.intermine.metadata;
  *
  */
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +42,7 @@ public class ClassDescriptor
     private final Set attDescriptors;
     private final Set refDescriptors;
     private final Set colDescriptors;
-    private final Map fieldDescriptors = new HashMap();
+    private final Map fieldDescriptors = new LinkedHashMap();
     private Map allFieldDescriptors = new LinkedHashMap();
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
@@ -81,27 +83,27 @@ public class ClassDescriptor
 
         this.isInterface = isInterface;
 
+        // build maps of names to FieldDescriptors
+
         attDescriptors = new LinkedHashSet(atts);
         refDescriptors = new LinkedHashSet(refs);
         colDescriptors = new LinkedHashSet(cols);
 
-        // build maps of names to FieldDescriptors
+        List fieldDescriptorList = new ArrayList();
+        fieldDescriptorList.addAll(atts);
+        fieldDescriptorList.addAll(refs);
+        fieldDescriptorList.addAll(cols);
 
-        Set fieldDescriptorSet = new LinkedHashSet();
-        fieldDescriptorSet.addAll(atts);
-        fieldDescriptorSet.addAll(refs);
-        fieldDescriptorSet.addAll(cols);
-
-        Iterator fieldDescriptorIter = fieldDescriptorSet.iterator();
+        Iterator fieldDescriptorIter = fieldDescriptorList.iterator();
         while (fieldDescriptorIter.hasNext()) {
             FieldDescriptor fieldDescriptor = (FieldDescriptor) fieldDescriptorIter.next();
             try {
                 fieldDescriptor.setClassDescriptor(this);
+                fieldDescriptors.put(fieldDescriptor.getName(), fieldDescriptor);
             } catch (IllegalStateException e) {
                 throw new IllegalArgumentException("FieldDescriptor '" + fieldDescriptor.getName()
                                                    + "' has already had ClassDescriptor set");
             }
-            fieldDescriptors.put(fieldDescriptor.getName(), fieldDescriptor);
         }
     }
     

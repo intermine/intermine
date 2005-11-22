@@ -182,17 +182,17 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.String atd1;" + ENDL
             + INDENT + "public java.lang.String getAtd1() { return atd1; }" + ENDL
             + INDENT + "public void setAtd1(java.lang.String atd1) { this.atd1 = atd1; }" + ENDL + ENDL
-            + INDENT + "// Col: package.name.Class1.cod1" + ENDL
-            + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
-            + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
-            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
-            + INDENT + "public void addCod1(package.name.Class2 arg) { cod1.add(arg); }" + ENDL + ENDL
             + INDENT + "// Ref: package.name.Class1.rfd1" + ENDL
             + INDENT + "protected org.intermine.model.InterMineObject rfd1;" + ENDL
             + INDENT + "public package.name.Class2 getRfd1() { if (rfd1 instanceof org.intermine.objectstore.proxy.ProxyReference) { return ((package.name.Class2) ((org.intermine.objectstore.proxy.ProxyReference) rfd1).getObject()); }; return (package.name.Class2) rfd1; }" + ENDL
             + INDENT + "public void setRfd1(package.name.Class2 rfd1) { this.rfd1 = rfd1; }" + ENDL
             + INDENT + "public void proxyRfd1(org.intermine.objectstore.proxy.ProxyReference rfd1) { this.rfd1 = rfd1; }" + ENDL
             + INDENT + "public org.intermine.model.InterMineObject proxGetRfd1() { return rfd1; }" + ENDL + ENDL
+            + INDENT + "// Col: package.name.Class1.cod1" + ENDL
+            + INDENT + "protected java.util.Set cod1 = new java.util.HashSet();" + ENDL
+            + INDENT + "public java.util.Set getCod1() { return cod1; }" + ENDL
+            + INDENT + "public void setCod1(java.util.Set cod1) { this.cod1 = cod1; }" + ENDL
+            + INDENT + "public void addCod1(package.name.Class2 arg) { cod1.add(arg); }" + ENDL + ENDL
             + INDENT + "// Attr: org.intermine.model.InterMineObject.id" + ENDL
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
