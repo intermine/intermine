@@ -54,6 +54,7 @@ public class FileReadTask extends Task
     private String oswAlias;
     private List fileSets = new ArrayList();
     private ObjectStoreWriter osw;
+    private Map idMap = null;
 
     /**
      * The ObjectStoreWriter alias to use when querying and creating objects.
@@ -129,7 +130,10 @@ public class FileReadTask extends Task
      * @return the ID Map
      */
     public Map getIdMap(ObjectStore os) {
-        return buildIdMap(os);
+        if (idMap == null) {
+            idMap = buildIdMap(os);
+        }
+        return idMap;
     }
 
     /**

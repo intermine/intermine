@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -44,6 +45,21 @@ import org.biojava.bio.seq.io.SeqIOTools;
 
 public class FastaReadTask extends FileReadTask
 {
+    /**
+     * If set, append this suffix to identifiers from the FASTA file when looking for the object in
+     * the ObjectStore
+     */
+    private String idSuffix = null;
+
+    /**
+     * Set the suffix to add to identifiers from the FASTA file when looking for the object in the
+     * ObjectStore.
+     * @param idSuffix the suffix
+     */
+    public void setIdSuffix(String idSuffix) {
+        this.idSuffix = idSuffix;
+    }
+
     /**
      * Create a FlyMine Sequence object for the InterMineObject of the given ID.
      */
@@ -104,10 +120,10 @@ public class FastaReadTask extends FileReadTask
         if (getKeyFieldName() == null) {
             throw new BuildException("keyFieldName not set");
         }
-        
+
         ObjectStore os = getObjectStoreWriter().getObjectStore();
         
-        Map idMap = getIdMap(os);
+        Map idMap = new HashMap(getIdMap(os));
         
         Iterator fileSetIter = getFileSets().iterator();
         
@@ -128,8 +144,11 @@ public class FastaReadTask extends FileReadTask
                     
                     while (iter.hasNext()) {
                         Sequence seq = iter.nextSequence();
-                        
-                        Integer flymineId = (Integer) idMap.get(seq.getName());
+                        String identifier = seq.getName();
+                        if (idSuffix != null) {
+                            identifier += idSuffix;
+                        }
+                        Integer flymineId = (Integer) idMap.get(identifier);
                         
                         if (flymineId == null) {
                             System.err .println("Identifier not found in FlyMine: "
@@ -138,7 +157,7 @@ public class FastaReadTask extends FileReadTask
                             setSequence(flymineId, seq);
                             // remove now so that at the end of the run we know which IDs don't have
                             // sequence in the FASTA files
-                            idMap.remove(seq.getName());
+                            idMap.remove(identifier);
                         }
                     }
                 } catch (BioException e) {
