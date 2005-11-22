@@ -22,7 +22,7 @@ a
 }
 
 table.results tr.even {
-  background: #d4a2ad;
+  background: #ebe4ec;
 }
 
 table.box th {
@@ -30,15 +30,15 @@ table.box th {
 }
 
 table.templateBuilder th {
-  background: #E8D1B9;
+  background: #d4a2ad;
 }
 
 table.refSummary thead tr td {
-  background: #E8D1B9;
+  background: #d4a2ad;
 }
 
 .box .heading, .heading2 {
-   background-color: #d4a2ad;
+   background-color: #ebe4ec;
   
 }
 
