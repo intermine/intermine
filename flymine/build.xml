@@ -2817,7 +2817,7 @@
     </taskdef>
 
     <read-fasta className="org.flymine.model.genomic.CDS" keyFieldName="identifier" 
-                organismAbbreviation="DM" oswAlias="osw.production">
+                organismAbbreviation="DM" oswAlias="osw.production" idSuffix="_CDS">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-CDS-*.fasta"/>
       </fileset>
