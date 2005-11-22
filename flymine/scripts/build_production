@@ -165,14 +165,17 @@ sub dump_db
   my $user = shift;
   my $pass = shift;
   my $host = shift;
+  my $port = shift;
   my $out_file = shift;
 
   my @params = ('-U', $user, '-h', $host, '-W', '-f', $out_file, $db);
 
+  if (defined $port) {
+    unshift @params, "-p", $port;
+  }
+
   log_and_print `date`, "\n\n";
   log_and_print "\ndumping: @dump_command @params\n";
-
-
 
   my $exp = new Expect;
 
@@ -194,9 +197,14 @@ sub load_db
   my $user = shift;
   my $pass = shift;
   my $host = shift;
+  my $port = shift;
   my $in_file = shift;
 
   my @params = ('-U', $user, '-h', $host, '-f', $in_file, $db);
+
+  if (defined $port) {
+    unshift @params, "-p", $port;
+  }
 
   log_and_print `date`, "\n\n";
   log_and_print "\nloading: @psql_command @params\n";
@@ -287,9 +295,16 @@ my $prod_host = get_prop_val "db.production.datasource.serverName", $flymine_pro
 my $prod_db = get_prop_val "db.production.datasource.databaseName", $flymine_properties;
 my $prod_user = get_prop_val "db.production.datasource.user", $flymine_properties;
 my $prod_pass = get_prop_val "db.production.datasource.password", $flymine_properties;
+my $prod_port;
+
+if ($prod_host =~ /(.+):(\d+)/) {
+  $prod_host = $1;
+  $prod_port = $2;
+}
 
 log_message "read properties:";
 log_message "  prod_host: $prod_host";
+log_message "  prod_port: " . (defined($prod_port) ? $prod_port : "default");
 log_message "  prod_db: $prod_db";
 log_message "  prod_user: $prod_user";
 log_message "  prod_pass: $prod_pass";
@@ -307,7 +322,7 @@ if ($load_last || $restart) {
   if (defined $restart_dump_suffix) {
     if ($load_last) {
       log_and_print "\nrestarting from $dump_file_name\n";
-      load_db $prod_db, $prod_user, $prod_pass, $prod_host, $dump_file_name;
+      load_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $dump_file_name;
     } else {
       log_and_print "\nrestarting build at stage: $restart_dump_suffix - NOT loading dump\n";
     }
@@ -339,7 +354,8 @@ for my $action (@actions) {
         if (@action_args != 1) {
           die "dump: needs one parameter at: $action: @action_args\n";
         }
-        dump_db $prod_db, $prod_user, $prod_pass, $prod_host, "$dump_file_prefix.$action_args[0]";
+        dump_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
+                "$dump_file_prefix.$action_args[0]";
       } else {
         die qq{unknown action "$action_type"\n};
       }
