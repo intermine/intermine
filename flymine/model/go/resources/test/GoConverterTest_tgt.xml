@@ -7,7 +7,7 @@
         <attribute name="withText" value="INTERPRO:IPR001128"/>
         <reference name="actualGoTerm" ref_id="2_5"/>
         <reference name="property" ref_id="2_5"/>
-        <reference name="subject" ref_id="4_6"/>
+        <reference name="subject" ref_id="4_4"/>
         <collection name="evidence">
             <reference ref_id="0_0"/>
             <reference ref_id="1_1"/>
@@ -18,6 +18,7 @@
     </item>
     <item id="5_17" class="http://www.flymine.org/model/genomic#Gene">
         <attribute name="organismDbId" value="FBgn0026430"/>
+        <reference name="organism" ref_id="3_9"/>
     </item>
     <item id="1_11" class="http://www.flymine.org/model/genomic#Publication">
         <attribute name="pubMedId" value="10000000"/>
@@ -38,6 +39,7 @@
     </item>
     <item id="5_18" class="http://www.flymine.org/model/genomic#Gene">
         <attribute name="organismDbId" value="FBgn0001612"/>
+        <reference name="organism" ref_id="3_9"/>
     </item>
     <item id="4_4" class="http://www.flymine.org/model/genomic#Protein">
         <attribute name="primaryAccession" value="At4g36380"/>
@@ -108,9 +110,6 @@
     </item>
     <item id="1_14" class="http://www.flymine.org/model/genomic#Publication">
         <attribute name="pubMedId" value="20000000"/>
-    </item>
-    <item id="4_6" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="At4g36380"/>
     </item>
     <item id="3_9" class="http://www.flymine.org/model/genomic#Organism">
         <attribute name="taxonId" value="7227"/>

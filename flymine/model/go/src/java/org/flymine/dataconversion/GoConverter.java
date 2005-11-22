@@ -286,13 +286,14 @@ public class GoConverter extends FileConverter
 
         if (!"".equals(placeHolder.getWithText())) {
             currentGoItem.setAttribute("withText", placeHolder.getWithText());
-            List with = createWithObjects(placeHolder.getWithText());
+            String organismRef = placeHolder.getGeneProductWrapper().getItem()
+                .getReference("organism").getRefId();
+            List with = createWithObjects(placeHolder.getWithText(), organismRef);
             if (with.size() != 0) {
                 List idList = new ArrayList();
                 Iterator withIter = with.iterator();
                 while (withIter.hasNext()) {
                     Item withObj = (Item) withIter.next();
-
                     doStore(withObj, STORE_THREE);
 
                     idList.add(withObj.getIdentifier());
@@ -408,9 +409,10 @@ public class GoConverter extends FileConverter
      * types and create Gene or Protein items accordingly.
      *
      * @param withText string from the gene_association entry
+     * @param organismRef identifier of organism to reference
      * @return a list of Items
      */
-    protected List createWithObjects(String withText) {
+    protected List createWithObjects(String withText, String organismRef) {
         List with = new ArrayList();
         try {
             String[] elements = withText.split("; |, ");
@@ -426,6 +428,7 @@ public class GoConverter extends FileConverter
                         WithType wt = (WithType) withTypes.get(prefix);
                         Item item = createItem(wt.clsName);
                         item.setAttribute(wt.fieldName, value);
+                        item.setReference("organism", organismRef);
                         with.add(item);
 
                     }
@@ -500,7 +503,11 @@ public class GoConverter extends FileConverter
      */
     protected ItemWrapper newProduct(String identifier, String type, Item organism)
             throws ObjectStoreException {
-        String key = identifier + type + (organism == null ? "" : organism.getIdentifier());
+        if (organism == null) {
+            throw new IllegalArgumentException("No organism provided when creating " + type
+                                               + ": " + identifier);
+        }
+        String key = identifier + type + organism.getIdentifier();
         String idField = null;
         String clsName = null;
         if ("gene".equals(type)) {
@@ -518,9 +525,8 @@ public class GoConverter extends FileConverter
         }
 
         Item product = createItem(clsName);
-        if (organism != null) {
-            product.addReference(new Reference("organism", organism.getIdentifier()));
-        }
+        product.addReference(new Reference("organism", organism.getIdentifier()));
+
         product.addAttribute(new Attribute(idField, identifier));
 
         return new ItemWrapper(key, product);
@@ -614,7 +620,7 @@ public class GoConverter extends FileConverter
      */
     protected Item newOrganism(String taxonId) {
         if (taxonId.equals("taxon:")) {
-            return null;
+            throw new IllegalArgumentException("No taxon id supplied when creatin organism");
         }
         taxonId = taxonId.split(":")[1];
         Item item = (Item) organisms.get(taxonId);

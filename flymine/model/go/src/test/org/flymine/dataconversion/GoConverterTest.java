@@ -16,16 +16,12 @@ import java.io.*;
 import java.util.*;
 
 import org.intermine.dataconversion.MockItemWriter;
-//import org.intermine.dataconversion.TargetItemsTestCase;
-//import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.metadata.Model;
 
-//import com.hp.hpl.jena.ontology.OntModel;
-//import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class GoConverterTest extends TestCase
 {
@@ -117,11 +113,13 @@ public class GoConverterTest extends TestCase
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         Item gene1 = tgtItemFactory.makeItem("0_0", GENOMIC_NS + "Gene", "");
         gene1.setAttribute("organismDbId", "FBgn0026430");
+        gene1.setReference("organism", "1_1");
         expected.add(gene1);
         Item gene2 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
         gene2.setAttribute("organismDbId", "FBgn0001612");
+        gene2.setReference("organism", "1_1");
         expected.add(gene2);
-        assertEquals(expected, converter.createWithObjects("FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612"));
+        assertEquals(expected, converter.createWithObjects("FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", "1_1"));
     }
 
     protected Collection getExpectedItems( String targetFile ) throws Exception {
