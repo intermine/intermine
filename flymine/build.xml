@@ -4772,7 +4772,7 @@
          sourceName="ensembl-human"/>
   </target>
 
-  <target name="acceptance-tests" depends="init-paths">
+  <target name="acceptance-tests" depends="prepare">
     <taskdef name="acceptance-tests" classname="org.intermine.task.AcceptanceTestTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
