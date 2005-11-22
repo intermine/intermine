@@ -9,12 +9,12 @@ Current Data
 <DL>
 <DT><I>H. sapiens</I></DT>
 <DD>
-GO annotations for <I>H. sapiens</I> gene products assigned by ?.<BR>
+GO annotations for <I>H. sapiens</I> gene products assigned <A HREF="by www.ebi.uniprot.org/index.shtml">UniProt</A>.<BR>
 The gene association file is downloaded from <A HREF="http://www.geneontology.org/GO.current.annotations.shtml">www.geneontology.org</A>.<BR>
 </DD>
 <DT><I>M. musculus</I></DT>
 <DD>
-GO annotations for <I>M. musculus</I> gene products assigned by ? .<BR>
+GO annotations for <I>M. musculus</I> gene products assigned by <A HREF="http://www.informatics.jax.org/">MGI</A>.<BR>
 The gene association file is downloaded from <A HREF="http://www.geneontology.org/GO.current.annotations.shtml">www.geneontology.org</A>.<BR>
 </DD>
 </DL>
