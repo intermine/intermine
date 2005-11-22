@@ -82,10 +82,7 @@ public class FastaReadTask extends FileReadTask
         flymineSequence.setResidues(bioJavaSequence.seqString());
 
         lsf.setSequence(flymineSequence);
-        
-        if (lsf instanceof Chromosome) {
-            ((Chromosome) lsf).setLength(new Integer(bioJavaSequence.length()));
-        }
+        lsf.setLength(new Integer(bioJavaSequence.length()));
 
         try {
             getObjectStoreWriter().store(flymineSequence);
