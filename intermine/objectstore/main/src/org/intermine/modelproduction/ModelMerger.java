@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -434,7 +435,7 @@ public class ModelMerger
      * @return cloned set of CollectionDescriptors
      */
     protected static Set cloneCollectionDescriptors(Set refs) {
-        Set copy = new HashSet();
+        Set copy = new LinkedHashSet();
         for (Iterator iter = refs.iterator(); iter.hasNext(); ) {
             CollectionDescriptor ref = (CollectionDescriptor) iter.next();
             copy.add(cloneCollectionDescriptor(ref));
