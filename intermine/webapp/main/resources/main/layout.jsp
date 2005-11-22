@@ -68,7 +68,7 @@
         <im:vspacer height="11"/>
         <div class="expandButton">
            <a href="#" onclick="showFeedbackForm();return false">
-             <b><fmt:message key="feedbackBox.title"/></b>
+             <b>${WEB_PROPERTIES["feedback.title"]}</b>
            </a>
       	</div>
       </div>
