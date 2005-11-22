@@ -1336,7 +1336,10 @@
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-psi integrationWriter="integration.production" source="os.psi-translated" sourceName="psi-intact" ignoreDuplicates="true"/>
+    <load-psi integrationWriter="integration.production" 
+              source="os.psi-translated" 
+              sourceName="psi-intact" 
+              ignoreDuplicates="true"/>
   </target>
 
   <!--target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-hybrigenics, translate-psi, load-psi-hybrigenics, retrieve-psi-intact, translate-psi, load-psi-intact"/-->
@@ -3404,7 +3407,7 @@
                 merge-psi-model, merge-rnai-model,
                 merge-ensembl-human-model, merge-phenotype-model, merge-go-model,
                 merge-uniprot-model, merge-protein_structure-model, merge-tfbs-model,
-                merge-firstef-model, merge-region-model,merge-diseaseregion-model,
+                merge-firstef-model, merge-region-model,
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-tfbscluster-model, merge-mage-model, merge-cdnaclone-model,
                 merge-orthologue-model,
@@ -4664,7 +4667,19 @@
     </ant>
   </target>
 
+  <target name="load-psi-intact-stemcell" depends="copy-stemcell-config">
+    <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <load-psi integrationWriter="integration.genomic-test" 
+              source="os.psi-translated" 
+              sourceName="psi-intact" 
+              ignoreDuplicates="true"/>
+  </target>
  
+  <target name="build-psi-intact-production-stemcell" 
+          depends="retrieve-psi-intact-stemcell, translate-psi, load-psi-intact-stemcell"/>
+
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
@@ -4706,6 +4721,34 @@
   </target>
 
 
+ <!--//Stem Cell Mine//=============STEMCELL==============-->
+  <target name="build-db-userprofile-stemcell" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="userprofile"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.userprofile-production"/>
+      <property name="objectstore.name" value="os.userprofile-production"/>
+    </ant>
+    <antcall target="load-default-templates-stemcell"/>
+  </target>
+
+  <!-- load default global template queries for stemcell-->
+  <target name="load-default-templates-stemcell" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="insert-default-templates" classname="org.intermine.web.task.LoadDefaultTemplatesTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <insert-default-templates templatesXml="model/genomic/resources/web/stemcellmine/template-queries.xml"
+                              username="${webapp.superuser}" osAlias="os.production"
+                              userProfileAlias="osw.userprofile-production"/>
+  </target>
+
  <target name="build-production-webapp-stemcell"
           depends="stemcell-model-style, build-production-webapp">
   </target>
@@ -4720,7 +4763,7 @@
 
   <!-- insert the testmodel data into the database-->
   <target name="insert-data-unittest"
-          depends="build-db-genomic-test, create-indexes-genomic-test, copy-t1dmine-config, ensembl-human-test">
+          depends="build-db-genomic-test, create-indexes-genomic-test, copy-stemcell-config, ensembl-human-test">
     <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
