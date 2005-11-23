@@ -317,9 +317,9 @@ my $restart_dump_suffix = undef;
 if ($load_last || $restart) {
   $restart_dump_suffix = get_restart_dump_suffix($dump_file_prefix, @actions);
 
-  my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
-
   if (defined $restart_dump_suffix) {
+    my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
+
     if ($load_last) {
       log_and_print "\nrestarting from $dump_file_name\n";
       load_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $dump_file_name;
