@@ -36,8 +36,8 @@ public class CreateIndexesTaskTest extends TestCase
         List expected = new ArrayList();
         expected.add("create index Department__key on Department(name, companyId, id)");
         expected.add("create index Department__key__nulls on Department((name IS NULL))");
-        expected.add("create index Department__manager on Department(managerId, id)");
         expected.add("create index Department__company on Department(companyId, id)");
+        expected.add("create index Department__manager on Department(managerId, id)");
 
         CreateIndexesTask task = new CreateIndexesTask();
         task.setAlias("os.unittest");
@@ -102,9 +102,9 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index CEO__salary on CEO(salary)");
         expected.add("create index CEO__title on CEO(lower(title))");
         expected.add("create index CEO__title__nulls on CEO((title IS NULL))");
+        expected.add("create index CEO__fullTime on CEO(fullTime)");
         expected.add("create index CEO__age on CEO(age)");
         expected.add("create index CEO__end on CEO(intermine_end)");
-        expected.add("create index CEO__fullTime on CEO(fullTime)");
         expected.add("create index CEO__name on CEO(lower(name))");
         expected.add("create index CEO__name__nulls on CEO((name IS NULL))");
         expected.add("create index CEO__seniority on CEO(seniority)");
