@@ -671,7 +671,7 @@
     <query name="FlyBaseProteinBindingSites" model="genomic" view="ProteinBindingSite ProteinBindingSite.chromosomeLocation.object.identifier ProteinBindingSite.chromosomeLocation.start ProteinBindingSite.chromosomeLocation.end">
       <node path="ProteinBindingSite" type="ProteinBindingSite">
       </node>
-      <node path="ProteinBindingSite.evidence" type="Database">
+      <node path="ProteinBindingSite.evidence" type="DataSet">
       </node>
       <node path="ProteinBindingSite.evidence.title" type="String">
         <constraint op="=" value="FlyBase" description="List all the protein binding sites annotated by:" identifier="" editable="true">
