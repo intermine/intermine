@@ -366,7 +366,7 @@ table.results tr.even {
   font-size: 13px;
 }
 .nullStrike {
-  text-decoration: line-through;
+/* see #643:    text-decoration: line-through; */
   color: grey;
 }
 .constraint {
