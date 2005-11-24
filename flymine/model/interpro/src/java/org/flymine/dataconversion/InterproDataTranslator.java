@@ -69,13 +69,15 @@ public class InterproDataTranslator extends DataTranslator
     protected static final String EVIDENCE = "evidence";
     protected static final String SOURCE = "source";
 
-
     protected static final Logger LOG = Logger.getLogger(InterproDataTranslator.class);
 
+    
     //Maintains a map of any organisms that we have had to create indexed by the ncbi tax id
     private TreeMap organisms;
     //little evidence tag item...
     private org.intermine.xml.full.Item interproEvidenceItem = null;
+
+    private HashMap dbNameToDbSourceItemMap;
 
     private Item interproDataSource = null;
     private org.intermine.xml.full.Reference interproDataSourceReference = null;
@@ -96,6 +98,9 @@ public class InterproDataTranslator extends DataTranslator
         interproDataSource.addAttribute(new Attribute("name", "InterPro"));
         interproDataSourceReference =
                 new org.intermine.xml.full.Reference("source", interproDataSource.getIdentifier());
+
+        dbNameToDbSourceItemMap = new HashMap();
+        dbNameToDbSourceItemMap.put("InterPro", new DataSourceUsageCounter(interproDataSource));
     }
 
     /**
@@ -115,7 +120,20 @@ public class InterproDataTranslator extends DataTranslator
             }
         }
 
-        tgtItemWriter.store(ItemHelper.convert(interproDataSource));
+        for (Iterator dsIt = dbNameToDbSourceItemMap.values().iterator(); dsIt.hasNext(); ) {
+
+            DataSourceUsageCounter counter = (DataSourceUsageCounter)dsIt.next();
+
+            Item nextDataSource = counter.getDataSource();
+
+            if (counter.getUseageCount() > 0 || nextDataSource == interproDataSource ){
+                LOG.debug("STORE USED DATASOURCE - ID:" + nextDataSource.getIdentifier()
+                        + " TIMES_USED:" + counter.getUseageCount());
+                tgtItemWriter.store(ItemHelper.convert(nextDataSource));
+            } else {
+                LOG.debug("SKIPPED UNUSED DATASOURCE:" + nextDataSource.getIdentifier());
+            }
+        }
 
         //add our internally created Interpro evidence object here...
         tgtItemWriter.store(ItemHelper.convert(getInterproEvidenceItem()));
@@ -127,7 +145,7 @@ public class InterproDataTranslator extends DataTranslator
     protected Collection translateItem(Item srcItem)
             throws ObjectStoreException, InterMineException {
 
-        Collection result = new HashSet();
+        Set result = new HashSet();
         String srcItemClassName = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
 
@@ -149,7 +167,7 @@ public class InterproDataTranslator extends DataTranslator
                     Item databaseSynonym = null;
 
                     if (PROTEIN.equals(srcItemClassName)) {
-                        processProteinItem(srcItem, tgtItem);
+                        databaseSynonym = processProteinItem(srcItem, tgtItem);
                     } else if (METHOD.equals(srcItemClassName)) {
                         Item[] synonyms = processMethodItem(srcItem, tgtItem);
                         interProSynonym = synonyms[0];
@@ -160,12 +178,18 @@ public class InterproDataTranslator extends DataTranslator
                         processMatchesItem(srcItem, tgtItem);
                     } else if (COMMON_ANNOTATION.equals(srcItemClassName)) {
                         processCommonAnnotationItem(srcItem, tgtItem);
+                    } else if (CV_DATABASE.equals(srcItemClassName)){
+                        processCVDatabaseItem(srcItem);
                     }
 
-                    result.add(tgtItem);
+                    if (tgtItem != null) {
+                        result.add(tgtItem);
+                    }
+
                     if (interProSynonym != null) {
                         result.add(interProSynonym);
                     }
+
                     if (databaseSynonym != null) {
                         result.add(databaseSynonym);
                     }
@@ -175,7 +199,7 @@ public class InterproDataTranslator extends DataTranslator
         return result;
     }
 
-    private void processProteinItem(
+    private Item processProteinItem(
             org.intermine.xml.full.Item srcItem, org.intermine.xml.full.Item tgtItem)
             throws ObjectStoreException {
 
@@ -185,10 +209,12 @@ public class InterproDataTranslator extends DataTranslator
         if (taxItem != null) {
 
             tgtItem.setReference("organism", taxItem.getIdentifier());
-            LOG.debug("PROTEIN.PROTEIN_AC:" + srcItem.getAttribute("protein_ac")
-                    + " has tax_id:" + taxItem.getAttribute("taxa_id"));
+            LOG.debug("PROTEIN.PROTEIN_AC:"
+                    + srcItem.getAttribute("protein_ac").getValue()
+                    + " has tax_id:" + taxItem.getAttribute("taxa_id").getValue());
         } else {
-            LOG.warn("!!! PROTEIN.PROTEIN_AC:" + srcItem.getAttribute("protein_ac")
+            LOG.warn("!!! PROTEIN.PROTEIN_AC:"
+                    + srcItem.getAttribute("protein_ac").getValue()
                     + " has does NOT have a taxonomy object ref !!!");
         }
 
@@ -220,6 +246,12 @@ public class InterproDataTranslator extends DataTranslator
 
             tgtItem.addToCollection(PROTEINFEATURES, nextEntry);
         }
+
+        Item dataSourceItem = setupCvDbDataSrcEvidenceRef(srcItem, tgtItem, PROTEIN);
+
+        Item extraDatabaseSynonym = setupExtraDataSrcSynonym(dataSourceItem, tgtItem, METHOD);
+
+        return extraDatabaseSynonym;
     }
 
     private Item[] processMethodItem(
@@ -240,19 +272,17 @@ public class InterproDataTranslator extends DataTranslator
             interproIdAttribute.setName("interproId");
             interproIdAttribute.setValue(entryItem.getAttribute("entry_ac").getValue());
             tgtItem.addAttribute(interproIdAttribute);
-            LOG.debug("ADDED AN INTERPRO ID:"
-                    + interproIdAttribute.getValue() + " TO A METHOD ITEM");
 
             //CHECK THE ENTRY RELATING TO THIS METHOD TO SEE IF IT IS A FAMILY OR AN EQIV DOMAIN...
             tryAndSetEntryTypeInAnEntry(entryItem);
 
             if (entryItem.getAttribute(ABBREV).getValue().equalsIgnoreCase(FAMILY)) {
 
-                LOG.debug("SETTING A METHOD TO BE A PROTEINFAMILY");
+                LOG.debug("SETTING METHOD AS PROTEINFAMILY ID:" + interproIdAttribute.getValue());
                 tgtItem.setClassName("http://www.flymine.org/model/genomic#ProteinFamily");
             } else if (entryItem.getAttribute(ABBREV).getValue().equalsIgnoreCase(DOMAIN)) {
 
-                LOG.debug("SETTING A METHOD TO BE A PROTEINDOMAIN");
+                LOG.debug("SETTING METHOD AS PROTEINDOMAIN ID:" + interproIdAttribute.getValue());
                 tgtItem.setClassName("http://www.flymine.org/model/genomic#ProteinDomain");
             } else {
                 LOG.debug("IGNORED AN METHOD-ENTRY MAPPING WITH TYPE:"
@@ -275,22 +305,10 @@ public class InterproDataTranslator extends DataTranslator
 
             tgtItem.addToCollection(EVIDENCE, cvEvidenceItem);
 
-        //CHECK THE ENTRY RELATING TO THIS METHOD TO SEE IF IT IS A FAMILY OR AN EQIVALENT DOMAIN...
+        //CHECK THE ENTRY RELATING TO THIS METHOD TO SEE IF IT IS A FAMILY OR AN EQUIVALENT DOMAIN.
         } else {
             LOG.warn("METHOD WITH NO MAPPED CV_EVIDENCE ITEM FOUND - "
                     + "CHECK THE METHOD & ENTRY2METHOD & CV_EVIDENCE TABLES!");
-        }
-
-        //CHECK THAT THERE IS A REFERENCE TO THE CV_DATABASE ITEM FOR THIS METHOD ITEM -
-        // WARN IF NONE FOUND!
-        org.intermine.xml.full.Reference cvdbRefSrc = srcItem.getReference(CV_DATABASE);
-        if (cvdbRefSrc != null) {
-
-            org.intermine.xml.full.Item cvdbItem =
-                    ItemHelper.convert(this.srcItemReader.getItemById(cvdbRefSrc.getRefId()));
-            tgtItem.addToCollection(EVIDENCE, cvdbItem);
-        } else {
-            LOG.warn("!!! FOUND A METHOD WITHOUT A REFERENCED CV_DATABASE !!!");
         }
 
         //Fill in the proteins collection which we can reach via the matches table...
@@ -339,13 +357,10 @@ public class InterproDataTranslator extends DataTranslator
                 tgtItem.getAttribute("interproId").getValue(), interproDataSourceReference);
 
         addReferencedItem(tgtItem, interproSynonym, "synonyms", true, null, false);
+        addToCollection(tgtItem, EVIDENCE, interproDataSource);
 
-        Item extraDatabaseSynonym = createSynonym(
-                tgtItem.getIdentifier(), "identifier",
-                tgtItem.getAttribute("identifier").getValue(),
-                new org.intermine.xml.full.Reference("source", cvdbRefSrc.getRefId()));
-
-        addReferencedItem(tgtItem, extraDatabaseSynonym, "synonyms", true, null, false);
+        Item dataSourceItem = setupCvDbDataSrcEvidenceRef(srcItem, tgtItem, METHOD);
+        Item extraDatabaseSynonym = setupExtraDataSrcSynonym(dataSourceItem, tgtItem, METHOD);
 
         Item[] items = new Item[2];
 
@@ -444,7 +459,10 @@ public class InterproDataTranslator extends DataTranslator
         Item interproSynonym = createSynonym(tgtItem.getIdentifier(), "identifier",
                 tgtItem.getAttribute("identifier").getValue(), interproDataSourceReference);
 
-         addReferencedItem(tgtItem, interproSynonym, "synonyms", true, null, false);
+        addReferencedItem(tgtItem, interproSynonym, "synonyms", true, null, false);
+
+        addToCollection(tgtItem, "evidence", interproDataSource);
+
 
         return interproSynonym;
     }
@@ -456,11 +474,17 @@ public class InterproDataTranslator extends DataTranslator
         //CHECK THAT THERE IS A REFERENCE TO THE CV_DATABASE ITEM FOR THIS MATCHES ITEM -
         // WARN IF NONE FOUND!
         org.intermine.xml.full.Reference cvdbRefSrc = srcItem.getReference(CV_DATABASE);
+        Item dataSourceItem = null;
+
         if (cvdbRefSrc != null) {
 
             org.intermine.xml.full.Item cvdbItem =
                     ItemHelper.convert(this.srcItemReader.getItemById(cvdbRefSrc.getRefId()));
-            tgtItem.addToCollection(EVIDENCE, cvdbItem);
+
+            dataSourceItem =
+                    procureDataSourceItem(cvdbItem.getAttribute("dbname").getValue(), false);
+
+            tgtItem.addToCollection(EVIDENCE, dataSourceItem);
         } else {
             LOG.warn("!!! FOUND A MATCHES ITEM WITHOUT A REFERENCED CV_DATABASE ITEM !!!");
         }
@@ -484,6 +508,96 @@ public class InterproDataTranslator extends DataTranslator
         tgtItem.setReference(SOURCE, getInterproEvidenceItem().getIdentifier());
     }
 
+    private void processCVDatabaseItem(org.intermine.xml.full.Item srcItem) {
+
+        String dbName = srcItem.getAttribute("dbname").getValue();
+
+        if (dbNameToDbSourceItemMap.containsKey(dbName)) {
+            LOG.debug("Skipping creating DataSource for a database we have already seen:" + dbName);
+        } else {
+            procureDataSourceItem(dbName, true);
+        }
+    }
+
+    private Item procureDataSourceItem(String dbName, boolean calledViaProcessCVDatabaseItem) {
+
+        Item dataSource = null;
+
+        if (! dbNameToDbSourceItemMap.containsKey(dbName)) {
+
+            dataSource = createItem("DataSource");
+            dataSource.addAttribute(new Attribute("name", dbName));
+            dbNameToDbSourceItemMap.put(dbName, new DataSourceUsageCounter(dataSource));
+
+        } else {
+
+            DataSourceUsageCounter useCntr =
+                (DataSourceUsageCounter)dbNameToDbSourceItemMap.get(dbName);
+
+            dataSource = useCntr.getDataSource();
+
+            //Dont increment calls directly from the tranlsate/process methods as we only want
+            // to count actual usages of the items - unlikely - but just in case
+            if (!calledViaProcessCVDatabaseItem) {
+                useCntr.incrementUsageCount();
+            }
+        }
+
+        return dataSource;
+    }
+
+    /**
+     * Establishs a Datasource evidence item for source items that refer directly to the cv_database
+     * table in the interpro schema of which the PROTEIN and METHOD tables are of current interest.
+     *
+     * Also the call to procureDataSourceItem ensures that the datasource item will actually be
+     * created as the interpro_mappings file no longer handles the cv_database -- datasource item
+     * conversion.
+     * */
+    private Item setupCvDbDataSrcEvidenceRef(Item srcItem, Item tgtItem, String callerStr)
+            throws ObjectStoreException {
+
+        //CHECK THAT THERE IS A REFERENCE TO THE CV_DATABASE ITEM FOR THIS METHOD ITEM -
+        // WARN IF NONE FOUND!
+        org.intermine.xml.full.Reference cvdbRefSrc = srcItem.getReference(CV_DATABASE);
+        Item dataSourceItem = null;
+
+        if (cvdbRefSrc != null) {
+
+            org.intermine.xml.full.Item cvdbItem
+                    = ItemHelper.convert(this.srcItemReader.getItemById(cvdbRefSrc.getRefId()));
+
+            dataSourceItem =
+                    procureDataSourceItem(cvdbItem.getAttribute("dbname").getValue(), false);
+
+            tgtItem.addToCollection(EVIDENCE, dataSourceItem);
+
+        } else {
+            LOG.warn("!!! FOUND A " + callerStr + " WITHOUT A REFERENCED CV_DATABASE !!!");
+        }
+
+        return dataSourceItem;
+    }
+
+    private Item setupExtraDataSrcSynonym(Item dataSourceItem, Item tgtItem, String callerStr) {
+
+        Item extraDatabaseSynonym = null;
+
+        if (dataSourceItem != null) {
+
+            extraDatabaseSynonym = createSynonym(
+                    tgtItem.getIdentifier(), "identifier",
+                    tgtItem.getAttribute("identifier").getValue(),
+                    new org.intermine.xml.full.Reference("source", dataSourceItem.getIdentifier()));
+
+            addReferencedItem(tgtItem, extraDatabaseSynonym, "synonyms", true, null, false);
+
+        } else {
+            LOG.warn("SKIPPING SYNONYM CREATION FOR THE CURRENT " + callerStr + " ITEM!");
+        }
+
+        return extraDatabaseSynonym;
+    }
 
     //Private helper method to assist in setting any reverse self relations in the
     // ProteinFamily object.
@@ -929,5 +1043,30 @@ public class InterproDataTranslator extends DataTranslator
 
         return entrySet;
     }
+
+    class DataSourceUsageCounter {
+
+        private Item dataSource;
+        private int useageCount;
+
+        DataSourceUsageCounter(Item dataSource) {
+            this.dataSource = dataSource;
+            useageCount = 0;
+        }
+
+        Item getDataSource() {
+            return dataSource;
+        }
+
+        synchronized void incrementUsageCount(){
+            useageCount ++;
+        }
+
+        synchronized int getUseageCount() {
+            return useageCount;
+        }
+    }
+
+
 
 }
