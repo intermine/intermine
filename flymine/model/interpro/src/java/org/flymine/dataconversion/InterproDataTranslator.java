@@ -122,11 +122,11 @@ public class InterproDataTranslator extends DataTranslator
 
         for (Iterator dsIt = dbNameToDbSourceItemMap.values().iterator(); dsIt.hasNext(); ) {
 
-            DataSourceUsageCounter counter = (DataSourceUsageCounter)dsIt.next();
+            DataSourceUsageCounter counter = (DataSourceUsageCounter) dsIt.next();
 
             Item nextDataSource = counter.getDataSource();
 
-            if (counter.getUseageCount() > 0 || nextDataSource == interproDataSource ){
+            if (counter.getUseageCount() > 0 || nextDataSource == interproDataSource) {
                 LOG.debug("STORE USED DATASOURCE - ID:" + nextDataSource.getIdentifier()
                         + " TIMES_USED:" + counter.getUseageCount());
                 tgtItemWriter.store(ItemHelper.convert(nextDataSource));
@@ -178,7 +178,7 @@ public class InterproDataTranslator extends DataTranslator
                         processMatchesItem(srcItem, tgtItem);
                     } else if (COMMON_ANNOTATION.equals(srcItemClassName)) {
                         processCommonAnnotationItem(srcItem, tgtItem);
-                    } else if (CV_DATABASE.equals(srcItemClassName)){
+                    } else if (CV_DATABASE.equals(srcItemClassName)) {
                         processCVDatabaseItem(srcItem);
                     }
 
@@ -523,7 +523,7 @@ public class InterproDataTranslator extends DataTranslator
 
         Item dataSource = null;
 
-        if (! dbNameToDbSourceItemMap.containsKey(dbName)) {
+        if (!dbNameToDbSourceItemMap.containsKey(dbName)) {
 
             dataSource = createItem("DataSource");
             dataSource.addAttribute(new Attribute("name", dbName));
@@ -532,7 +532,7 @@ public class InterproDataTranslator extends DataTranslator
         } else {
 
             DataSourceUsageCounter useCntr =
-                (DataSourceUsageCounter)dbNameToDbSourceItemMap.get(dbName);
+                (DataSourceUsageCounter) dbNameToDbSourceItemMap.get(dbName);
 
             dataSource = useCntr.getDataSource();
 
@@ -1044,24 +1044,40 @@ public class InterproDataTranslator extends DataTranslator
         return entrySet;
     }
 
-    class DataSourceUsageCounter {
+    /**
+     * Holds a datasource item & a manual count of how many times the item has been used.
+     * */
+    class DataSourceUsageCounter
+    {
 
         private Item dataSource;
         private int useageCount;
 
+        /**
+         * @param dataSource - the item to count for.
+         * */
         DataSourceUsageCounter(Item dataSource) {
             this.dataSource = dataSource;
             useageCount = 0;
         }
 
+        /**
+         * @return The datasource item that we are counting for.
+         * */
         Item getDataSource() {
             return dataSource;
         }
 
-        synchronized void incrementUsageCount(){
-            useageCount ++;
+        /**
+         * Increments the useage counter by 1 for this item.
+         * */
+        synchronized void incrementUsageCount() {
+            useageCount++;
         }
 
+        /**
+         * @return the current value of our usage counter.
+         * */
         synchronized int getUseageCount() {
             return useageCount;
         }
