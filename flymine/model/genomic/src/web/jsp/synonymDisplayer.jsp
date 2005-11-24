@@ -13,15 +13,21 @@
   <div style="margin-left: 20px">
     <table cellpadding="4">
       <c:forEach items="${object.synonyms}" var="thisSynonym">
-        <c:set var="sourceName" value="${thisSynonym.source.name}"/>
+
+        <c:set var="sourceName" value="${fn:replace(thisSynonym.source.name, ' ', '_')}"/>
         <c:set var="genus" value="${object.organism.genus}"/>
         <c:set var="species" value="${object.organism.species}"/>
-        <c:set var="linkProperty"
-               value="${sourceName}.${genus}.${species}.url.prefix"/>
-
+        <c:choose>
+            <c:when test='${genus == null || species == null}'>
+                <c:set var="linkProperty" value="${sourceName}.url.prefix"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="linkProperty" value="${sourceName}.${genus}.${species}.url.prefix"/>
+            </c:otherwise>
+        </c:choose>
+        <br>
         <c:set var="href" value="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"/>
-
-        <c:if test="${!empty WEB_PROPERTIES[linkProperty] 
+        <c:if test="${!empty WEB_PROPERTIES[linkProperty]
                       && (thisSynonym.type == 'identifier' 
                           || ((thisSynonym.type == 'name' || thisSynonym.type == 'accession')
                                && sourceName == 'HUGO'))
