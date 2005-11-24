@@ -51,10 +51,10 @@ public class EnsemblDataTranslator extends DataTranslator
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblDataTranslator.class);
 
-    private Item ensemblDb;
-    private Reference ensemblRef;
-    private Item emblDb;
-    private Reference emblRef;
+    private Item ensemblDataSet;
+    private Reference ensemblDataSetRef;
+    private Item emblDataSource;
+    private Reference emblDataSourceRef;
     private Item uniprotDb;
     private Reference uniprotRef;
     private Item flybaseDb;
@@ -86,18 +86,18 @@ public class EnsemblDataTranslator extends DataTranslator
         organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
         organismRef = new Reference("organism", organism.getIdentifier());
 
-        ensemblDb = createItem("DataSet");
+        ensemblDataSet = createItem("DataSet");
         // TODO: the dataset name shouldn't be hard coded:
-        ensemblDb.addAttribute(new Attribute("title", "Ensembl Anopheles"));
-        ensemblRef = new Reference("source", ensemblDb.getIdentifier());
+        ensemblDataSet.addAttribute(new Attribute("title", "Ensembl Anopheles"));
+        ensemblDataSetRef = new Reference("source", ensemblDataSet.getIdentifier());
 
         ensemblSource = createItem("DataSource");
         ensemblSource.addAttribute(new Attribute("name", "ensembl"));
         ensemblSourceRef = new Reference("source", ensemblSource.getIdentifier());
 
-        emblDb = createItem("DataSource");
-        emblDb.addAttribute(new Attribute("name", "embl"));
-        emblRef = new Reference("source", emblDb.getIdentifier());
+        emblDataSource = createItem("DataSource");
+        emblDataSource.addAttribute(new Attribute("name", "embl"));
+        emblDataSourceRef = new Reference("source", emblDataSource.getIdentifier());
 
         uniprotDb = createItem("DataSource");
         uniprotDb.addAttribute(new Attribute("name", "UniProt"));
@@ -111,8 +111,8 @@ public class EnsemblDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
         tgtItemWriter.store(ItemHelper.convert(organism));
         tgtItemWriter.store(ItemHelper.convert(ensemblSource));
-        tgtItemWriter.store(ItemHelper.convert(ensemblDb));
-        tgtItemWriter.store(ItemHelper.convert(emblDb));
+        tgtItemWriter.store(ItemHelper.convert(ensemblDataSet));
+        tgtItemWriter.store(ItemHelper.convert(emblDataSource));
         tgtItemWriter.store(ItemHelper.convert(uniprotDb));
 
         super.translate(tgtItemWriter);
@@ -162,7 +162,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 Item tgtItem = (Item) i.next();
                 if ("karyotype".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     if (tgtItem.hasAttribute("identifier")) {
                         Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
                                 tgtItem.getAttribute("identifier").getValue(), ensemblSourceRef);
@@ -178,7 +178,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     if (stableId != null) {
                         moveField(stableId, tgtItem, "stable_id", "identifier");
                     }
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     // more than one item representing same exon -> store up in map
                     Item location = createLocation(srcItem, tgtItem, "contig", "contig", true);
                     if (srcItem.hasAttribute("nonUniqueId")) {
@@ -190,12 +190,12 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("simple_feature".equals(className)) {
                     tgtItem.addReference(organismRef);
                     tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                 } else if ("repeat_feature".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
                     result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
                     promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
@@ -204,7 +204,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
                 } else if ("gene".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     // gene name should be its stable id (or identifier if none)
                     Item stableId = null;
                     stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
@@ -225,7 +225,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
                 } else if ("contig".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     if (tgtItem.hasAttribute("identifier")) {
                         Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
                                    tgtItem.getAttribute("identifier").getValue(), ensemblSourceRef);
@@ -234,7 +234,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 } else if ("transcript".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     // SimpleRelation between Gene and Transcript
                     result.add(createSimpleRelation(tgtItem.getReference("gene").getRefId(),
                                                     tgtItem.getIdentifier()));
@@ -275,7 +275,7 @@ public class EnsemblDataTranslator extends DataTranslator
                                                         translation.getIdentifier()));
                     }
                     cds.addReference(organismRef);
-                    addReferencedItem(cds, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(cds, ensemblDataSet, "evidence", true, "", false);
                     Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
                                                  cds.getAttribute("identifier").getValue(),
                                                  ensemblSourceRef);
@@ -293,12 +293,13 @@ public class EnsemblDataTranslator extends DataTranslator
                 // stable_ids become syonyms, need ensembl DataSet as evidence
                 } else if (className.endsWith("_stable_id")) {
                     // TODO: should this be:
-                    // addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
-                    tgtItem.addToCollection("evidence", ensemblDb);
+                    // addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
+                    tgtItem.addToCollection("evidence", ensemblDataSet);
                     tgtItem.addAttribute(new Attribute("type", "identifier"));
+                    tgtItem.addReference(ensemblSourceRef);
                 } else if ("chromosome".equals(className)) {
                     tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDb, "evidence", true, "", false);
+                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
                     if (tgtItem.hasAttribute("identifier")) {
                         Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
                                 tgtItem.getAttribute("identifier").getValue(), ensemblSourceRef);
@@ -425,10 +426,10 @@ public class EnsemblDataTranslator extends DataTranslator
         Item result = createItem(tgtNs + "ComputationalResult", "");
         moveField(srcItem, result, "analysis", "analysis");
         moveField(srcItem, result, "score", "score");
-        result.addReference(ensemblRef);
+        result.addReference(ensemblDataSetRef);
         ReferenceList evidence = new ReferenceList("evidence",
                                      Arrays.asList(new Object[] {result.getIdentifier(),
-                                                   ensemblDb.getIdentifier()}));
+                                                   ensemblDataSet.getIdentifier()}));
         tgtItem.addCollection(evidence);
         return result;
     }
@@ -452,7 +453,7 @@ public class EnsemblDataTranslator extends DataTranslator
             supercontig.addCollection(subjects);
             supercontig.addCollection(new ReferenceList("objects",
                            new ArrayList(Collections.singletonList(chrLoc.getIdentifier()))));
-            addReferencedItem(supercontig, ensemblDb, "evidence", true, "", false);
+            addReferencedItem(supercontig, ensemblDataSet, "evidence", true, "", false);
             supercontig.addReference(organismRef);
             supercontigs.put(name, supercontig);
             scLocs.put(name, chrLoc);
@@ -542,7 +543,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     synonyms.add(synonym);
                 } else if (dbname.equals("protein_id") || dbname.equals("prediction_SPTREMBL")) {
                     Item synonym = createSynonym(protein.getIdentifier(), "identifier", accession,
-                                                 emblRef);
+                                                 emblDataSourceRef);
                     addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
                 }
@@ -565,7 +566,7 @@ public class EnsemblDataTranslator extends DataTranslator
         Item chosenProtein = (Item) proteins.get(primaryAcc);
         if (chosenProtein == null && primaryAcc != null) {
             protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
-            addReferencedItem(protein, ensemblDb, "evidence", true, "", false);
+            addReferencedItem(protein, ensemblDataSet, "evidence", true, "", false);
 
             // set up additional references/collections
             protein.addReference(organismRef);
