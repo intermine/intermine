@@ -1,12 +1,10 @@
 ExperimentalResult = InteractionElementType
-Organism = HostOrganism_ExperimentType, Organism_ProteinInteractorType
-Organism.taxonId = Organism_ProteinInteractorType.ncbiTaxId, HostOrganism_ExperimentType.ncbiTaxId
+Organism = Organism_ProteinInteractorType
+Organism.taxonId = Organism_ProteinInteractorType.ncbiTaxId
 Protein = ProteinInteractorType
 Protein.organism = ProteinInteractorType.organism
 ProteinInteractionExperiment = ExperimentType
 ProteinInteractionExperiment.featureDetection = ExperimentType.featureDetection
-ProteinInteractionExperiment.hostOrganism = ExperimentType.hostOrganism
 ProteinInteractionExperiment.interactionDetection = ExperimentType.interactionDetection
 ProteinInteractionExperiment.participantDetection = ExperimentType.participantDetection
-#ProteinInteractionExperiment.xref = ExperimentType.xref
 ProteinInteractionTerm = CvType

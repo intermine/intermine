@@ -79,30 +79,6 @@ public class PsiDataTranslator extends DataTranslator
         }
     }
 
-    private Item getDataSetFromNamesType(Item namesTypeItem) {
-        String shortName = namesTypeItem.getAttribute("shortLabel").getValue();
-
-        Attribute fullNameAttr = namesTypeItem.getAttribute("fullName");
-
-        Item dataSetItem;
-
-        if (dataSetMap.containsKey(shortName)) {
-            dataSetItem = (Item) dataSetMap.get(shortName);
-        } else {
-            dataSetItem = createItem("DataSet");
-            dataSetItem.addAttribute(new Attribute("title", shortName));
-            if (fullNameAttr != null) {
-                dataSetItem.addAttribute(new Attribute("description", fullNameAttr.getValue()));
-            } else {
-                LOG.error("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
-            }
-            dataSetItem.setReference("dataSource", dataSource);
-            dataSetMap.put(shortName, dataSetItem);
-        }
-
-        return dataSetItem;
-    }
-
     /**
      * @see DataTranslator#translateItem
      */
@@ -141,7 +117,22 @@ public class PsiDataTranslator extends DataTranslator
                         }
                     }
 
-                    //experimentIdToExperiment.put(srcItem.getIdentifier(), tgtItem);
+                    Item hostOrganismItem = getReference(srcItem, "hostOrganism");
+                    if (hostOrganismItem != null) {
+
+                        String hostOrgFullName  = findNameInNamesList(hostOrganismItem, "fullName");
+
+                        if (hostOrgFullName != null) {
+                            tgtItem.setAttribute("hostOrganism", hostOrgFullName);
+                            LOG.debug("PIE.hostOrganism:" + hostOrgFullName);
+                        } else {
+                            LOG.warn("NO FULLNAME FOUND FOR THIS HOST_ORGANISM!");
+                        }
+                    } else {
+                        LOG.warn("NO HOST_ORGANISM FOUND FOR SRC_ITEM:" + srcItem.getIdentifier());
+                    }
+
+
 
                 } else if ("InteractionElementType".equals(className)) {
 
@@ -228,6 +219,31 @@ public class PsiDataTranslator extends DataTranslator
         return result;
     }
 
+    private Item getDataSetFromNamesType(Item namesTypeItem) {
+        String shortName = namesTypeItem.getAttribute("shortLabel").getValue();
+
+        Attribute fullNameAttr = namesTypeItem.getAttribute("fullName");
+
+        Item dataSetItem;
+
+        if (dataSetMap.containsKey(shortName)) {
+            dataSetItem = (Item) dataSetMap.get(shortName);
+        } else {
+            dataSetItem = createItem("DataSet");
+            dataSetItem.addAttribute(new Attribute("title", shortName));
+            if (fullNameAttr != null) {
+
+                dataSetItem.addAttribute(new Attribute("description", fullNameAttr.getValue()));
+            } else {
+                LOG.debug("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
+            }
+            dataSetItem.setReference("dataSource", dataSource);
+
+            dataSetMap.put(shortName, dataSetItem);
+        }
+
+        return dataSetItem;
+    }
 
     private Item createProteinInteraction(
             Item srcInteractionElementItem, Item tgtExperimentalResult, Collection result,
@@ -265,30 +281,13 @@ public class PsiDataTranslator extends DataTranslator
             result.add(interactor);
         }
 
+        String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");
 
-        Reference namesRef;
-        boolean shortLabelFound = false;
-        String iShortName = null;
-
-        if (srcInteractionElementItem.hasReference("names")) {
-            namesRef = srcInteractionElementItem.getReference("names");
-            org.intermine.model.fulldata.Item namesItem =
-                this.srcItemReader.getItemById(namesRef.getRefId());
-
-            for (Iterator nameIt = namesItem.getAttributes().iterator();
-                 nameIt.hasNext() && !shortLabelFound;) {
-
-                org.intermine.model.fulldata.Attribute nextNameAttr
-                    = (org.intermine.model.fulldata.Attribute) nameIt.next();
-                if ("shortLabel".equalsIgnoreCase(nextNameAttr.getName())) {
-                    iShortName = nextNameAttr.getValue();
-                    interaction.setAttribute("shortName", iShortName);
-                    LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
-                    shortLabelFound = true;
-                }
-            }
+        if (iShortName != null) {
+            interaction.setAttribute("shortName", iShortName);
+            LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
         } else {
-            LOG.error("No names reference for srcItem "
+            LOG.debug("No names reference for srcItem "
                       + srcInteractionElementItem.getIdentifier());
         }
 
@@ -296,7 +295,6 @@ public class PsiDataTranslator extends DataTranslator
         Item conf = getReference(srcInteractionElementItem, "confidence");
 
         if (conf != null) {
-
             LOG.debug("CONFIDENCE TAG FOUND IN INTERACTION:"
                     + (iShortName != null ? iShortName : interaction.getIdentifier()));
 
@@ -311,6 +309,47 @@ public class PsiDataTranslator extends DataTranslator
         }
 
         return interaction;
+    }
+
+    /**
+     * Iterate over the names list in the supplied source item
+     * (which can come from many parts of the data file) in order to
+     * find the supplied name type - eg fullName or shortLabel etc etc
+     *
+     * @return The located name as a String or as a null.
+     * */
+    private String findNameInNamesList(Item itemWithSomeNames, String nameType)
+            throws ObjectStoreException {
+
+        if (itemWithSomeNames == null) {
+            LOG.debug("An 'itemWithSomeNames' is null!");
+            return null;
+        }
+
+        Reference namesRef = itemWithSomeNames.getReference("names");
+
+        if (namesRef == null) {
+            LOG.debug("An 'itemWithSomeNames' has no 'names'!" + itemWithSomeNames.getIdentifier());
+            return null;
+        }
+
+        org.intermine.model.fulldata.Item namesItem =
+                this.srcItemReader.getItemById(namesRef.getRefId());
+
+        boolean shortLabelFound = false;
+        String iShortName = null;
+
+        for (Iterator nameIt = namesItem.getAttributes().iterator();
+             nameIt.hasNext() && !shortLabelFound;) {
+
+            org.intermine.model.fulldata.Attribute nextNameAttr
+                    = (org.intermine.model.fulldata.Attribute) nameIt.next();
+            if (nameType.equalsIgnoreCase(nextNameAttr.getName())) {
+                iShortName = nextNameAttr.getValue();
+                shortLabelFound = true;
+            }
+        }
+        return iShortName;
     }
 
     private void createProteinRegion(Item interaction, Item participant, Collection result,
