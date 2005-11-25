@@ -278,6 +278,8 @@ public class PsiDataTranslator extends DataTranslator
             interactor.setReference("protein", proteinRef.getRefId());
             interactor.setReference("interaction", interaction.getIdentifier());
 
+            interaction.addToCollection("interactors", interactor);
+
             result.add(interactor);
         }
 
@@ -413,6 +415,8 @@ public class PsiDataTranslator extends DataTranslator
 
             tgtProteinInteractionRegion.addReference(
                     new Reference("interaction", interaction.getIdentifier()));
+
+            interaction.addToCollection("interactingRegions", tgtProteinInteractionRegion);
 
             result.add(tgtProteinRegion);
             result.add(tgtLocation);
