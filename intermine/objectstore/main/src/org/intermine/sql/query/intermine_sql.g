@@ -271,7 +271,7 @@ n_abstract_constraint: n_constraint | n_not_constraint
 
 n_constraint: #( CONSTRAINT abstract_value comparison_op abstract_value ) ;
 
-n_null_constraint: #( NULL_CONSTRAINT abstract_value );
+n_null_constraint: #( NULL_CONSTRAINT abstract_value ("not")? );
 
 n_not_constraint: #( NOT_CONSTRAINT n_abstract_constraint ) ;
 
