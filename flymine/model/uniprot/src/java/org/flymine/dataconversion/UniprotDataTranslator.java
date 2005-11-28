@@ -101,7 +101,7 @@ public class UniprotDataTranslator extends DataTranslator
          q.addFrom(qc1);
          q.addToSelect(qc1);
          SimpleConstraint sc1 = new SimpleConstraint(new QueryField(qc1, "className"),
-                                   ConstraintOp.EQUALS, new QueryValue(SRC_NS + "EntryType"));
+                                   ConstraintOp.EQUALS, new QueryValue(SRC_NS + "Entry"));
          q.setConstraint(sc1);
          // TODO batch size usually 1000, increase again if ObjectStoreItemPathFollowingImpl query
          // generation creates queries that can use bag temprorary tables more effectively
@@ -149,9 +149,9 @@ public class UniprotDataTranslator extends DataTranslator
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
         // This Item should be an EntryType and only have proteins associated with one organism.
-        if (!(SRC_NS + "EntryType").equals(srcItem.getClassName())) {
+        if (!(SRC_NS + "Entry").equals(srcItem.getClassName())) {
             throw new IllegalArgumentException("Attempted to translate and Uniprot source Item that"
-                                               + " is not of class " + SRC_NS + "EntryType");
+                                               + " is not of class " + SRC_NS + "Entry");
         }
 
         // First things first: find out the taxonid of the organism of this entry.
@@ -190,7 +190,6 @@ public class UniprotDataTranslator extends DataTranslator
             // find name and set all names as synonyms
             List proteinNames = getItemsInCollection(srcItem.getCollection("names"));
             String proteinName = (String) getAttributeValue((Item) proteinNames.get(0), "name");
-
             protein.addAttribute(new Attribute("identifier", proteinName));
             protein.addReference(organismReference);
             retval.add(createSynonym(protein.getIdentifier(), "identifier",
@@ -671,63 +670,63 @@ public class UniprotDataTranslator extends DataTranslator
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
         Set descs = new HashSet();
-        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("entryType.organisms");
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("entry.organisms");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("organisms",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
-                "entryType.organisms.dbReference");
+                "entry.organisms.dbReference");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("dbReference",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
-        desc = new ItemPrefetchDescriptor("entryType.accessions");
+        desc = new ItemPrefetchDescriptor("entry.accessions");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("accessions",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descs.add(desc);
-        desc = new ItemPrefetchDescriptor("entryType.comments");
+        desc = new ItemPrefetchDescriptor("entry.comments");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("comments",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descs.add(desc);
-        desc = new ItemPrefetchDescriptor("entryType.protein");
+        desc = new ItemPrefetchDescriptor("entry.protein");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("protein",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2 = new ItemPrefetchDescriptor("entryType.protein.names");
+        desc2 = new ItemPrefetchDescriptor("entry.protein.names");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
-        desc = new ItemPrefetchDescriptor("entryType.references");
+        desc = new ItemPrefetchDescriptor("entry.references");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("references",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2 = new ItemPrefetchDescriptor("entryType.references.citation");
+        desc2 = new ItemPrefetchDescriptor("entry.references.citation");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("citation",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
-                "entryType.references.citation.dbReferences");
+                "entry.references.citation.dbReferences");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("dbReferences",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc2.addPath(desc3);
         descs.add(desc);
-        desc = new ItemPrefetchDescriptor("entryType.dbReferences");
+        desc = new ItemPrefetchDescriptor("entry.dbReferences");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("dbReferences",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addConstraint(new FieldNameAndValue("type", "FlyBase", false));
-        desc2 = new ItemPrefetchDescriptor("entryType.dbReferences.propertys");
+        desc2 = new ItemPrefetchDescriptor("entry.dbReferences.propertys");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("propertys",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
-        desc = new ItemPrefetchDescriptor("entryType.genes");
+        desc = new ItemPrefetchDescriptor("entry.genes");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("genes",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2 = new ItemPrefetchDescriptor("entryType.genes.names");
+        desc2 = new ItemPrefetchDescriptor("entry.genes.names");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
 
-        paths.put(SRC_NS + "EntryType", descs);
+        paths.put(SRC_NS + "Entry", descs);
         return paths;
     }
 }
