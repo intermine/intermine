@@ -430,6 +430,9 @@ public class XmlMetaData
                 //handle nested groups
                 processContentModelGroup((Group) struc, isCollection);
                 break;
+            case Structure.MODELGROUP:
+                processContentModelGroup(((ModelGroup) struc).getReference(), isCollection);
+                break;
             default:
                 break;
             }

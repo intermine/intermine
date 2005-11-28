@@ -60,7 +60,9 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -140,11 +142,11 @@ public class XmlSchemaParser implements ModelParser
      * @throws Exception if Model not created successfully
      */
     public Model process(Reader reader) throws Exception {
-        classes = new HashSet();
+        classes = new LinkedHashSet();
         processed = new HashSet();
-        attributes = new HashMap();
-        references = new HashMap();
-        collections = new HashMap();
+        attributes = new LinkedHashMap();
+        references = new LinkedHashMap();
+        collections = new LinkedHashMap();
         fieldNamesMap = new HashMap();
         clsStack = new Stack();
         refsStack = new Stack();
@@ -200,11 +202,6 @@ public class XmlSchemaParser implements ModelParser
         while (structures.hasMoreElements()) {
             ElementDecl e = (ElementDecl) structures.nextElement();
             processElementDecl(e);
-        }
-
-        structures = schema.getModelGroups();
-        while (structures.hasMoreElements()) {
-            processGroup((ModelGroup) structures.nextElement());
         }
     }
 
@@ -293,6 +290,8 @@ public class XmlSchemaParser implements ModelParser
                 ModelGroup mg = (ModelGroup) group;
                 if (mg.isReference() && (mg.getReference().getParticleCount() == 0)) {
                     return;
+                } else {
+                    processContentModel(mg.getReference(), false);
                 }
             } else {
                 return;
@@ -466,6 +465,8 @@ public class XmlSchemaParser implements ModelParser
         } else if (cmGroup instanceof ComplexType) {
             cmGroupDescription = ((ComplexType) cmGroup).getName();
         }
+
+
         LOG.debug("Entering processContentModel(" + cmGroupDescription + ", "
                 + origIsCollection + ")");
 
@@ -570,6 +571,9 @@ public class XmlSchemaParser implements ModelParser
                        || (cmGroup instanceof ModelGroup))) {
                         processGroup((Group) struc);
                     }
+                break;
+            case Structure.MODELGROUP:
+                processContentModel(((ModelGroup) struc).getReference(), isCollection);
                 break;
             default:
                 break;

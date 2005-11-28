@@ -6,10 +6,9 @@
     <xs:element name="department" maxOccurs="unbounded">
      <xs:complexType>
       <xs:sequence>
-       <xs:element name="manager" type="employee"/>
-       <xs:element name="employee" type="employee" maxOccurs="unbounded"/>
+        <xs:group ref="managerAndEmployee"/>
       </xs:sequence>
-      <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
      </xs:complexType>
     </xs:element>
     <xs:element name="address">
@@ -73,4 +72,13 @@
  <xs:complexType name="employable">
   <xs:attribute name="name" type="xs:string"/>
  </xs:complexType>
+
+ <xs:group name="managerAndEmployee">
+   <xs:sequence>
+     <xs:element name="manager" type="employee"/>
+     <xs:element name="employee" type="employee" maxOccurs="unbounded"/>
+   </xs:sequence>
+ </xs:group>
 </xs:schema>
+
+
