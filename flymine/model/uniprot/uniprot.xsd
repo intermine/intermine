@@ -421,7 +421,7 @@
                     <xs:element name="experiments" type="xs:integer" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:choice>
-            <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="1">
+            <xs:element name="note" type="xs:string" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation>If a CC line type contains a "NOTE=", the text of that note is stored in this element.</xs:documentation>
                 </xs:annotation>
