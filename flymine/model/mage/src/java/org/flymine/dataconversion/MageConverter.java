@@ -39,6 +39,7 @@ import org.biomage.Experiment.Experiment;
 import org.biomage.Experiment.Experiment_package;
 import org.biomage.DesignElement.Feature;
 import org.biomage.DesignElement.Reporter;
+import org.biomage.DesignElement.CompositeSequence;
 import org.biomage.Description.OntologyEntry;
 import org.biomage.BioAssay.BioAssay;
 import org.biomage.BioAssay.BioAssay_package;
@@ -52,6 +53,7 @@ import org.biomage.BioAssayData.BioAssayDimension;
 import org.biomage.BioAssayData.DesignElementDimension;
 import org.biomage.BioAssayData.FeatureDimension;
 import org.biomage.BioAssayData.ReporterDimension;
+import org.biomage.BioAssayData.CompositeSequenceDimension;
 import org.biomage.BioAssayData.DerivedBioAssayData;
 import org.biomage.BioAssayData.DataExternal;
 import org.biomage.BioAssayData.QuantitationTypeDimension;
@@ -149,9 +151,10 @@ public class MageConverter extends FileConverter
             //createItem(mageReader.getMAGEobj());
 
         } finally {
-            f.delete();
-            dtd.delete();
+             f.delete();
+             dtd.delete();
         }
+        //LOG.info("mageReader.getMAGEobj "+ mageReader.getMAGEobj());
         return mageReader.getMAGEobj();
     }
 
@@ -210,6 +213,7 @@ public class MageConverter extends FileConverter
             && !className.endsWith("_package")) {
             if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")
                 && !cls.getName().equals("org.biomage.DesignElement.Feature")
+                //&& !cls.getName().equals("org.biomage.DesignElement.CompositeSequence")
                 && !cls.getName().equals("org.biomage.DesignElement.Reporter")) {
                 item.setIdentifier(alias(className) + "_" + (id++));
                 seenMap.put(obj, item);
@@ -220,7 +224,7 @@ public class MageConverter extends FileConverter
         }
 
         opCount++;
-        if (opCount % 1000 == 0) {
+        if (opCount % 10000 == 0) {
             long now = System.currentTimeMillis();
             LOG.info("Converted " + opCount + " objects - running at "
                      + (60000000 / (now - time)) + " (avg "
@@ -323,6 +327,7 @@ public class MageConverter extends FileConverter
             BioDataCube.Order order = bdc.getOrder(); //DBQ
             // Order 2 = DBQ, if anyhting different this code *may* not work so throw
             // an exception just in case.
+            System.err .println("BioDataCube.Order " + order.getValue());
             if (order.getValue() != 2) {
                 throw new IllegalArgumentException("BioDataCube has order other than DBQ "
                                                    + "(was: " + order.getValue() + ")."
@@ -336,14 +341,15 @@ public class MageConverter extends FileConverter
                 rowNames = ((FeatureDimension) ddimension).getContainedFeatures();
             } else if (ddimension instanceof ReporterDimension) {
                 rowNames = ((ReporterDimension) ddimension).getReporters();
-            } // could also be CompositeSequenceDimension
-
+            } else if (ddimension instanceof CompositeSequenceDimension) {
+                rowNames = ((CompositeSequenceDimension) ddimension).getCompositeSequences();
+            }
 
             BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension();  //B
             HasBioAssays.BioAssays_list colTypes = bdimension.getBioAssays();
 
             QuantitationTypeDimension qdimension =
-                     (QuantitationTypeDimension) bad.getQuantitationTypeDimension();
+                (QuantitationTypeDimension) bad.getQuantitationTypeDimension();//Q
             List qtList = qdimension.getQuantitationTypes();
 
             boolean emptyFile = false;
@@ -352,6 +358,7 @@ public class MageConverter extends FileConverter
                 emptyFile = true;
                 LOG.warn("Ignoring empty data file: " + fileName);
             }
+
             System.err .println("Reading data from: " + fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
@@ -372,7 +379,7 @@ public class MageConverter extends FileConverter
                 String s = br.readLine();
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
-                    MeasuredBioAssay mba = (MeasuredBioAssay) j.next();
+                    DerivedBioAssay dba = (DerivedBioAssay) j.next();
                     for (Iterator k = qtList.iterator(); k.hasNext();) {
                         QuantitationType qt = (QuantitationType) k.next();
                         String value = st.nextToken();
@@ -387,9 +394,11 @@ public class MageConverter extends FileConverter
                                                createItem(feature).getIdentifier());
                             } else if (feature instanceof Reporter) {
                                 datum.setReference("reporter", createItem(feature).getIdentifier());
+                            } else if (feature instanceof CompositeSequence) {
+                                datum.setReference("compositeSequence", createItem(feature).getIdentifier());
                             }
                             datum.setAttribute("value", value);
-                            datum.setReference("bioAssay", createItem(mba).getIdentifier());
+                            datum.setReference("bioAssay", createItem(dba).getIdentifier());
                             storeItem(datum);
                         }
                     }
