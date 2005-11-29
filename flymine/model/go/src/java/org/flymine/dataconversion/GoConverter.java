@@ -53,6 +53,7 @@ public class GoConverter extends FileConverter
     protected int id = 0;
     protected File ontology;
     protected Map withTypes = new LinkedHashMap();
+    protected Map synonymTypes = new HashMap();
 
     protected ItemFactory itemFactory;
 
@@ -64,6 +65,7 @@ public class GoConverter extends FileConverter
     private static final String STORE_TWO = "store_2";
     private static final String STORE_THREE = "store_3";
     private static final String STORE_FOUR = "store_4";
+    private static final String STORE_FIVE = "store_5";
     private static final String NO_ID_ATTR = "NO_ID_ATTR";
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
@@ -79,6 +81,8 @@ public class GoConverter extends FileConverter
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         addWithType("FB", "Gene", "organismDbId");
         addWithType("UniProt", "Protein", "primaryAccession");
+        synonymTypes.put("protein", "accession");
+        synonymTypes.put("gene", "identifier");
     }
 
     /**
@@ -134,6 +138,7 @@ public class GoConverter extends FileConverter
             String goEvidence = array[6];
             String productId = array[1];
             String goId = array[4];
+            String type = array[11];
 
             GoTermProduct key = new GoTermProduct(productId, goId, goEvidence, qualifier);
 
@@ -144,13 +149,20 @@ public class GoConverter extends FileConverter
 
                 Item newOrganism = newOrganism(array[12]);
 
-                ItemWrapper newProductWrapper = newProduct(productId, array[11], newOrganism);
+                ItemWrapper newProductWrapper = newProduct(productId, type, newOrganism);
                 String pwKey = newProductWrapper.getKey();
 
                 if (productWrapperMap.containsKey(pwKey)) {
                     newProductWrapper = (ItemWrapper) productWrapperMap.get(pwKey);
                 } else {
                     productWrapperMap.put(newProductWrapper.getKey(), newProductWrapper);
+                    // not seen this product before so create and store Synonym
+                    Item synonym = newSynonym(newProductWrapper.item.getIdentifier(),
+                                              (String) synonymTypes.get(type),
+                                              productId,
+                                              newDatasource.getIdentifier());
+                    writer.store(ItemHelper.convert(synonym));
+
                 }
 
                 GoAnnoWithParentsPlaceHolder newPlaceHolder = new GoAnnoWithParentsPlaceHolder(
@@ -414,6 +426,8 @@ public class GoConverter extends FileConverter
      */
     protected List createWithObjects(String withText, String organismRef) {
         List with = new ArrayList();
+        // TODO should this do a lookup to see if gene/protein has already
+        // been created
         try {
             String[] elements = withText.split("; |, ");
             for (int i = 0; i < elements.length; i++) {
@@ -430,7 +444,6 @@ public class GoConverter extends FileConverter
                         item.setAttribute(wt.fieldName, value);
                         item.setReference("organism", organismRef);
                         with.add(item);
-
                     }
                 }
             }
@@ -502,7 +515,7 @@ public class GoConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected ItemWrapper newProduct(String identifier, String type, Item organism)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         if (organism == null) {
             throw new IllegalArgumentException("No organism provided when creating " + type
                                                + ": " + identifier);
@@ -516,7 +529,6 @@ public class GoConverter extends FileConverter
             }
             clsName = "Gene";
             idField = "organismDbId";
-
         } else if ("protein".equals(type)) {
             clsName = "Protein";
             idField = "primaryAccession";
@@ -531,6 +543,8 @@ public class GoConverter extends FileConverter
 
         return new ItemWrapper(key, product);
     }
+
+
 
     /**
      * Create a new go term
@@ -632,6 +646,16 @@ public class GoConverter extends FileConverter
         return item;
     }
 
+    private Item newSynonym(String subjectId, String type, String value, String sourceId) {
+        Item synonym = createItem("Synonym");
+        synonym.setReference("subject", subjectId);
+        synonym.setAttribute("type", type);
+        synonym.setAttribute("value", value);
+        synonym.setReference("source", sourceId);
+        return synonym;
+    }
+
+
     /**
      * Convenience method for creating a new Item
      *
@@ -639,7 +663,6 @@ public class GoConverter extends FileConverter
      * @return a new Item
      */
     protected Item createItem(String className) {
-
         return itemFactory.makeItem(alias(className) + "_" + (id++), GENOMIC_NS + className, "");
     }
 
