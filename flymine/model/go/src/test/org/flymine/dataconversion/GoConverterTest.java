@@ -25,19 +25,6 @@ import org.intermine.metadata.Model;
 
 public class GoConverterTest extends TestCase
 {
-
-    public static void main(String[] args) {
-
-        GoConverterTest goConverterTest = new GoConverterTest("GoConverterTest");
-        try {
-            goConverterTest.setUp();
-            goConverterTest.testTranslate();
-            goConverterTest.testOboTranslate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private File goFile;
     private File goOboFile;
 
@@ -73,13 +60,13 @@ public class GoConverterTest extends TestCase
 
     public void testTranslate() throws Exception {
         translateCommon(goFile, "/resources/test/GoConverterTest_src.txt",
-                "/resources/test/GoConverterTest_tgt.xml", false, false);
+                "/resources/test/GoConverterTest_tgt.xml", true, false);
     }
 
     public void testOboTranslate() throws Exception {
 
         translateCommon(goOboFile, "/resources/test/GoConverterOboTest_src.txt",
-                "/resources/test/GoConverterOboTest_tgt.xml", false, false);
+                "/resources/test/GoConverterOboTest_tgt.xml", true, false);
 
     }
 
