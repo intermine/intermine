@@ -379,7 +379,7 @@ public class MageConverter extends FileConverter
                 String s = br.readLine();
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = colTypes.iterator(); j.hasNext();) {
-                    DerivedBioAssay dba = (DerivedBioAssay) j.next();
+                    BioAssay ba = (BioAssay) j.next();
                     for (Iterator k = qtList.iterator(); k.hasNext();) {
                         QuantitationType qt = (QuantitationType) k.next();
                         String value = st.nextToken();
@@ -398,7 +398,8 @@ public class MageConverter extends FileConverter
                                 datum.setReference("compositeSequence", createItem(feature).getIdentifier());
                             }
                             datum.setAttribute("value", value);
-                            datum.setReference("bioAssay", createItem(dba).getIdentifier());
+
+                            datum.setReference("bioAssay", createItem(ba).getIdentifier());
                             storeItem(datum);
                         }
                     }
