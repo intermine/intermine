@@ -197,9 +197,21 @@
       <reference ref_id="-1_37"/>
     </collection>
   </item>
+  <item id="12_11168" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="length" value="48"/>
+    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+  </item>
   <item id="-1_32" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="3_1"/>
     <reference name="subject" ref_id="-1_29"/>
+  </item>
+  <item id="12_11169" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="length" value="48"/>
+    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+  </item>
+  <item id="12_11167" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="length" value="48"/>
+    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
   </item>
   <item id="18_1" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="X"/>
@@ -325,9 +337,6 @@
     <reference name="object" ref_id="1_11167"/>
     <reference name="subject" ref_id="0_1"/>
   </item>
-  <item id="12_11168" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
-  </item>
   <item id="0_2" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="ENSANGE00000019936"/>
     <reference name="organism" ref_id="-1_1"/>
@@ -391,9 +400,6 @@
     <attribute name="value" value="1A"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="19_160"/>
-  </item>
-  <item id="12_11167" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
   </item>
   <item id="19_160" class="http://www.flymine.org/model/genomic#ChromosomeBand">
     <attribute name="identifier" value="1A"/>
@@ -473,9 +479,6 @@
   <item id="-1_30" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="-1_29"/>
     <reference name="subject" ref_id="4_1"/>
-  </item>
-  <item id="12_11169" class="http://www.flymine.org/model/genomic#Sequence">
-    <attribute name="residues" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="ensembl"/>

@@ -318,8 +318,9 @@ public class UniprotDataTranslator extends DataTranslator
                 Item srcSeq = ItemHelper.convert(srcItemReader.getItemById(seqRef.getRefId()));
                 if (srcSeq != null) {
                     Item sequence = createItem(tgtNs + "Sequence", "");
-                    sequence.addAttribute(new Attribute("residues",
-                                                  srcSeq.getAttribute("sequence").getValue()));
+                    String residues = srcSeq.getAttribute("sequence").getValue();
+                    sequence.addAttribute(new Attribute("residues", residues));
+                    sequence.addAttribute(new Attribute("length", "" + residues.length()));
                     retval.add(sequence);
                     protein.addReference(new Reference("sequence", sequence.getIdentifier()));
                 }
