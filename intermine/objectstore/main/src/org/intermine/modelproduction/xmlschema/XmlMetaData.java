@@ -343,6 +343,10 @@ public class XmlMetaData
         LOG.debug("pushing path: " + path);
         paths.push(path);
 
+        if (eDecl.isReference()) {
+            processElementDecl(eDecl.getReference(), isCollection);
+        }
+
         String clsName = null;
         XMLType xmlType = eDecl.getType();
 

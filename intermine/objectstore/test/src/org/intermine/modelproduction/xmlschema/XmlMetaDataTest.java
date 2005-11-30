@@ -27,30 +27,30 @@ public class XmlMetaDataTest extends TestCase
         Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("xmlschematest.xsd"));
         xmlInfo = new XmlMetaData(xsdReader);
     }
-    
+
     public void testReferenceElements() throws Exception {
         assertTrue(xmlInfo.isReferenceElement("company/department/employee/businessAddress"));
         assertTrue(xmlInfo.isReferenceElement("company/department/manager/businessAddress"));
-        assertTrue(xmlInfo.isReferenceElement("company/addressBook/address"));
-        
+        assertTrue(xmlInfo.isReferenceElement("addressBook/address"));
+
         assertEquals("ref", xmlInfo.getReferenceElementField("company/department/employee/businessAddress"));
         assertEquals("ref", xmlInfo.getReferenceElementField("company/department/manager/businessAddress"));
-        assertEquals("ref", xmlInfo.getReferenceElementField("company/addressBook/address"));
+        assertEquals("ref", xmlInfo.getReferenceElementField("addressBook/address"));
     }
-    
-    public void testKeyRef() throws Exception { 
+
+    public void testKeyRef() throws Exception {
         assertEquals("addressKey", xmlInfo.getReferencingKeyName("company/department/employee/businessAddress", "ref"));
     }
-    
+
     public void testKey() throws Exception {
         assertEquals("company/address", xmlInfo.getKeyPath("addressKey"));
         assertEquals("id", xmlInfo.getKeyField("addressKey"));
     }
-    
+
     public void testKeyFields() throws Exception {
         assertTrue(xmlInfo.getKeyFields("company/address").contains("id"));
     }
-    
+
     public void testClassNames() throws Exception {
         // check correct class names returned for all paths
         assertEquals("Company", xmlInfo.getClsNameFromXPath("company"));
@@ -60,7 +60,7 @@ public class XmlMetaDataTest extends TestCase
         assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/address"));
         assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/department/manager/businessAddress"));
         assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/department/employee/businessAddress"));
-        assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/addressBook/address"));
+        assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("addressBook/address"));
     }
 }
 
