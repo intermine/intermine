@@ -644,6 +644,15 @@
     </ant>
   </target>
 
+  <target name="build-db-interpro-tgt-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.interpro-tgt-items-std"/>
+    </ant>
+  </target>
+
   <target name="retrieve-interpro" depends="convert-interpro, build-db-interpro-src-items">
     <taskdef name="retrieve-interpro" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
@@ -658,7 +667,7 @@
     </ant>
   </target>
 
-  <target name="translate-interpro" 
+  <target name="translate-interpro"
           depends="prepare-build-model, compile-interpro-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1285,6 +1294,7 @@
       <fileset dir="${shared.data}/psi">
         <include name="caeel*.xml"/>
         <include name="drome*.xml"/>
+        <include name="yeast*.xml"/>
       </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1343,7 +1353,7 @@
   </target>
 
   <!--target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-hybrigenics, translate-psi, load-psi-hybrigenics, retrieve-psi-intact, translate-psi, load-psi-intact"/-->
-  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-intact, translate-psi, load-psi-intact"/>
+  <target name="build-psi-production" depends="retrieve-psi-dag, load-psi-dag, retrieve-psi-intact, translate-psi, load-psi-intact, link-related-proteins-and-interactions"/>
 
   <!-- TAXONOMY PIPELINE -->
 
@@ -2222,6 +2232,12 @@
 
 
   <!-- ========== POST PROCESSING TARGETS ========== -->
+  <target name="link-related-proteins-and-interactions" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="link-related-proteins-and-interactions" objectStoreWriter="osw.production"/>
+  </target>
 
   <target name="update-equivalent-interpro-features" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
@@ -2855,7 +2871,8 @@
   <!-- WEBAPP TARGETS -->
 
   <target name="build-production-webapp"
-          depends="prepare-build-model, compile-flymine-java, create-so-name-to-classname-map">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java">
+          <!-- depends="prepare-build-model, compile-flymine-java, create-so-name-to-classname-map" -->
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
     <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>

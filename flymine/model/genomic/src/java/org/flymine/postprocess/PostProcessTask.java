@@ -188,6 +188,10 @@ public class PostProcessTask extends Task
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();
+            //Links proteins and interactions together directly rather than via an indirection class
+            } else if ("link-related-proteins-and-interactions".equals(operation)) {
+                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
+                cr.linkProteinToProtenInteractionAndRelatedProteins();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
