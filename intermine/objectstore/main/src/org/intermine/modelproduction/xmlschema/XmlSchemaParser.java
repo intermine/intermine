@@ -234,6 +234,10 @@ public class XmlSchemaParser implements ModelParser
             path = (String) paths.peek() + "/" + path;
         }
 
+        if (eDecl.isReference()) {
+            return eDecl.getReferenceName();
+        }
+
         XMLType xmlType = eDecl.getType();
 
         if (xmlType != null && xmlType.isComplexType()) {
@@ -485,14 +489,11 @@ public class XmlSchemaParser implements ModelParser
             case Structure.ELEMENT:
                 ElementDecl eDecl = (ElementDecl) struc;
                 LOG.debug("Found ElementDecl with maxOccurs " + eDecl.getMaxOccurs());
-                if (eDecl.isReference()) {
-                    continue;
-                }
                 XMLType xmlType = eDecl.getType();
                 String refType = null;
                 String fieldName = null;
-                if (xmlType.isComplexType()) {
-                    refType = processElementDecl(eDecl);
+                if (xmlType.isComplexType() || eDecl.isReference()) {
+                    refType = StringUtil.capitalise(processElementDecl(eDecl));
                     if (refType == null) {
                         LOG.debug("processElementDecl returned null for clsName:" + clsName
                             + " element name:" + eDecl.getName());

@@ -3,6 +3,7 @@
  <xs:element name="company">
   <xs:complexType>
    <xs:sequence>
+    <xs:element ref="addressBook" maxOccurs="1"/>
     <xs:element name="department" maxOccurs="unbounded">
      <xs:complexType>
       <xs:sequence>
@@ -18,17 +19,6 @@
         <xs:attribute name="id" type="xs:ID" use="required"/>
        </xs:extension>
       </xs:simpleContent>
-     </xs:complexType>
-    </xs:element>
-    <xs:element name="addressBook">
-     <xs:complexType>
-      <xs:sequence>
-       <xs:element name="address" maxOccurs="unbounded">
-        <xs:complexType>
-         <xs:attribute name="ref" type="xs:string"/>
-        </xs:complexType>
-       </xs:element>
-      </xs:sequence>
      </xs:complexType>
     </xs:element>
    </xs:sequence>
@@ -47,8 +37,20 @@
     <xs:selector xpath="department/manager/businessAddress"/>
     <xs:field xpath="@ref"/>
   </xs:keyref>
+ </xs:element>
+
+ <xs:element name="addressBook">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="address" maxOccurs="unbounded">
+     <xs:complexType>
+      <xs:attribute name="ref" type="xs:string"/>
+     </xs:complexType>
+    </xs:element>
+   </xs:sequence>
+  </xs:complexType>
   <xs:keyref name="addressBookAddressRef" refer="addressKey">
-    <xs:selector xpath="addressBook/address"/>
+    <xs:selector xpath="address"/>
     <xs:field xpath="@ref"/>
   </xs:keyref>
  </xs:element>

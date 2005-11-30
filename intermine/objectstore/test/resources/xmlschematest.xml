@@ -9,8 +9,8 @@
     <attribute name="vatNumber" type="java.lang.Integer"/>
     <attribute name="name" type="java.lang.String"/>
     <reference name="address" referenced-type="org.intermine.model.xmlschematest.Address_Company"/>
-    <reference name="addressBook" referenced-type="org.intermine.model.xmlschematest.AddressBook_Company"/>
-    <collection name="departments" referenced-type="org.intermine.model.xmlschematest.Department_Company" ordered="true"/>
+    <reference name="addressBook" referenced-type="org.intermine.model.xmlschematest.AddressBook"/>
+    <collection name="departments" referenced-type="org.intermine.model.xmlschematest.Department_Company"/>
   </class>
   <class name="org.intermine.model.xmlschematest.Employable" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
@@ -18,13 +18,13 @@
   <class name="org.intermine.model.xmlschematest.Department_Company" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <reference name="manager" referenced-type="org.intermine.model.xmlschematest.Employee"/>
-    <collection name="employees" referenced-type="org.intermine.model.xmlschematest.Employee" ordered="true"/>
+    <collection name="employees" referenced-type="org.intermine.model.xmlschematest.Employee"/>
   </class>
   <class name="org.intermine.model.xmlschematest.Address_Company" is-interface="true">
     <attribute name="address" type="java.lang.String"/>
     <attribute name="identifier" type="java.lang.String"/>
   </class>
-  <class name="org.intermine.model.xmlschematest.AddressBook_Company" is-interface="true">
-    <collection name="addresss" referenced-type="org.intermine.model.xmlschematest.Address_Company" ordered="true"/>
+  <class name="org.intermine.model.xmlschematest.AddressBook" is-interface="true">
+    <collection name="addresss" referenced-type="org.intermine.model.xmlschematest.Address_Company"/>
   </class>
 </model>
