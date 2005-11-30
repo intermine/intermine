@@ -11,7 +11,6 @@ package org.intermine.metadata;
  */
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
@@ -106,7 +105,7 @@ public class ClassDescriptor
             }
         }
     }
-    
+
     /**
      * Returns the fully qualified class name described by this ClassDescriptor.
      * @return qualified name of the described Class
@@ -137,7 +136,7 @@ public class ClassDescriptor
         copy.remove("org.intermine.model.InterMineObject");
         return copy;
     }
-    
+
     /**
      * Returns unqualified name of class described by this ClassDescriptor.
      * @return unqualified name of the described Class
