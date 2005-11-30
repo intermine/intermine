@@ -111,7 +111,9 @@ public class TransferSequences
         Sequence sequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         sequence.setResidues(new String(featureBases));
+        sequence.setLength(featureBases.length);
         feature.setSequence(sequence);
+        feature.setLength(new Integer(featureBases.length));
         osw.store(feature);
         osw.store(sequence);
     }

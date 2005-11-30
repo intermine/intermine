@@ -328,6 +328,10 @@ public class EnsemblDataTranslator extends DataTranslator
                         tgtItem.addAttribute(new Attribute("identifier",
                                                            srcItem.getIdentifier()));
                     }
+                } else if ("dna".equals(className)) {
+                    tgtItem.setAttribute("length",
+                                         "" + tgtItem.getAttribute("residues").getValue().length());
+
                 }
 
                 if (storeTgtItem) {

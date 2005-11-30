@@ -80,6 +80,7 @@ public class FastaReadTask extends FileReadTask
             (org.flymine.model.genomic.Sequence) newObject;
 
         flymineSequence.setResidues(bioJavaSequence.seqString());
+        flymineSequence.setLength(bioJavaSequence.length());
 
         lsf.setSequence(flymineSequence);
         lsf.setLength(new Integer(bioJavaSequence.length()));
