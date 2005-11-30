@@ -13,6 +13,7 @@ package org.flymine.postprocess;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.HashMap;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -128,18 +129,12 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        // Protein.interactions
-        insertReferences(Protein.class, ProteinInteraction.class, "subjects", "interactions");
-        LOG.info("insertReferences stage 11");
-        // Protein.interactions
-        insertReferences(Protein.class, ProteinInteraction.class, "objects", "interactions");
-
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 12");
+        LOG.info("insertReferences stage 11");
         insertGeneAnnotationReferences();
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -147,15 +142,15 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 13");
+        LOG.info("insertReferences stage 12");
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
-        LOG.info("insertReferences stage 14");
+        LOG.info("insertReferences stage 13");
         // Gene.microArrayResults
         createMicroArrayResultsCollection();
 
-        LOG.info("insertReferences stage 15");
+        LOG.info("insertReferences stage 14");
         createUtrRefs();
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -596,7 +591,7 @@ public class CreateReferences
      */
     protected void insertGeneAnnotationReferences()
         throws Exception {
-        LOG.info("Beginning insertGeneAnnotationReferences()");
+        LOG.debug("Beginning insertGeneAnnotationReferences()");
 
         osw.beginTransaction();
 
@@ -619,7 +614,7 @@ public class CreateReferences
             count++;
         }
 
-        LOG.info("Created " + count + " new Annotations on Genes");
+        LOG.debug("Created " + count + " new Annotations on Genes");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -884,6 +879,153 @@ public class CreateReferences
         return res.iterator();
     }
 
+    /**
+     * Performs the business of linking Proteins to ProteinInteractions as well as other proteins
+     * that are related back to the protein via the interaction object.
+     *
+     * @throws Exception - if there is a problem...
+     * */
+    public void linkProteinToProtenInteractionAndRelatedProteins() throws Exception {
+
+        Query q = new Query();
+
+        q.setDistinct(false);
+
+        QueryClass proteinQC = new QueryClass(Protein.class);
+        q.addToSelect(proteinQC);
+        q.addFrom(proteinQC);
+        q.addToOrderBy(proteinQC);
+
+        QueryClass interactorQC = new QueryClass(ProteinInteractor.class);
+        q.addFrom(interactorQC);
+
+        QueryClass interactionQC = new QueryClass(ProteinInteraction.class);
+        q.addToSelect(interactionQC);
+        q.addFrom(interactionQC);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference proteinToInteractorRef =
+                new QueryCollectionReference(proteinQC, "interactionRoles");
+        ContainsConstraint proteinInteractorConstraint =
+                new ContainsConstraint(proteinToInteractorRef, ConstraintOp.CONTAINS, interactorQC);
+        cs.addConstraint(proteinInteractorConstraint);
+
+        QueryCollectionReference interactionToInteractorRef =
+                new QueryCollectionReference(interactionQC, "interactors");
+        ContainsConstraint interactionInteractorConstraint =
+                new ContainsConstraint(interactionToInteractorRef,
+                        ConstraintOp.CONTAINS, interactorQC);
+        cs.addConstraint(interactionInteractorConstraint);
+
+        q.setConstraint(cs);
+
+        ObjectStore os = osw.getObjectStore();
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+
+        HashMap proteinToInteractionsMap = new HashMap();
+        HashMap interactionToProteinsMap = new HashMap();
+
+        LOG.debug("CHECKING linkProteinToProtenInteractionAndRelatedProteins RESULTS");
+        for (Iterator resIter = res.iterator(); resIter.hasNext();) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            Protein protein = (Protein) rr.get(0);
+            ProteinInteraction interaction = (ProteinInteraction) rr.get(1);
+
+            addProteinAndInterationPairToMap(protein, interaction, proteinToInteractionsMap, true);
+            addProteinAndInterationPairToMap(protein, interaction, interactionToProteinsMap, false);
+
+            LOG.debug("PROTEIN:" + protein.getPrimaryAccession()
+                    + " -> INTERACTION:" + interaction.getShortName());
+        }
+
+        osw.beginTransaction();
+
+        LOG.debug("Setting values for interaction.proteins");
+        for (Iterator i2pIt = interactionToProteinsMap.keySet().iterator(); i2pIt.hasNext();) {
+            ProteinInteraction nextInteraction = (ProteinInteraction) i2pIt.next();
+            Set nextProteinSet = (Set) interactionToProteinsMap.get(nextInteraction);
+            nextInteraction.setProteins(nextProteinSet);
+            osw.store(nextInteraction);
+            LOG.debug("INTERACTION:" + nextInteraction.getShortName()
+                    + " HAS THIS MANY PROTEINS:" + nextProteinSet.size());
+
+        }
+
+        LOG.debug("Setting values for protein.proteinInteractions");
+        for (Iterator p2iIt = proteinToInteractionsMap.keySet().iterator(); p2iIt.hasNext();) {
+            Protein nextProtein = (Protein) p2iIt.next();
+            Set nextInteractionSet = (Set) proteinToInteractionsMap.get(nextProtein);
+            nextProtein.setProteinInteractions(nextInteractionSet);
+            //Don't store the proteins here as we still have work to do on them
+            LOG.debug("PROTEIN:" + nextProtein.getPrimaryAccession()
+                    + " HAS THIS MANY INTERACTIONS:" + nextInteractionSet.size());
+        }
+
+        LOG.debug("Setting values for protein.interactingProteins");
+        for (Iterator p2iIt2 = proteinToInteractionsMap.keySet().iterator(); p2iIt2.hasNext();) {
+            Protein nextProtein = (Protein) p2iIt2.next();
+            Set interactingProteinSet = new HashSet();
+            //Explicitly add the starting protein so we can remove it blindly later.
+            interactingProteinSet.add(nextProtein);
+
+            Set nextInteractionSet = (Set) proteinToInteractionsMap.get(nextProtein);
+
+            for (Iterator iIt = nextInteractionSet.iterator(); iIt.hasNext(); ) {
+                ProteinInteraction nextInteraction = (ProteinInteraction) iIt.next();
+                Set nextInteractingProteinSet = (Set) interactionToProteinsMap.get(nextInteraction);
+                interactingProteinSet.addAll(nextInteractingProteinSet);
+            }
+
+            //TODO: DO WE WANT TO ADD/REMOVE SELF REFS ? I.E. WHERE A PROTEIN INTERACTS WITH ITSELF
+            //Explictly remove the starting protein so it wont refer to itself - for the moment!.
+            interactingProteinSet.remove(nextProtein);
+            nextProtein.setInteractingProteins(interactingProteinSet);
+            osw.store(nextProtein);
+            LOG.debug("PROTEIN:" + nextProtein.getPrimaryAccession()
+                    + " HAS THIS MANY RELATED PROTEINS:" + interactingProteinSet.size());
+        }
+        osw.commitTransaction();
+    }
+
+    /**
+     * Little helper method for the linkProteinToProtenInteractionAndRelatedProteins method.
+     *
+     * @param protein - a protein
+     * @param interaction - an interaction the protein appeared in
+     * @param map - either a protein-interactions map or vice versa
+     * @param useProteinAsTheKey - a boolean indicating which sort of map we have to deal with
+     * */
+    private void addProteinAndInterationPairToMap(Protein protein, ProteinInteraction interaction,
+                                                  HashMap map, boolean useProteinAsTheKey) {
+
+        //Treat the protein as the key
+        if (useProteinAsTheKey) {
+
+            if (map.containsKey(protein)) {
+                Set interactionSet = (Set) map.get(protein);
+                interactionSet.add(interaction);
+            } else {
+                Set newInteractionSet = new HashSet();
+                newInteractionSet.add(interaction);
+                map.put(protein, newInteractionSet);
+            }
+        //Treat the interaction as the key
+        } else {
+
+            if (map.containsKey(interaction)) {
+                Set proteinSet = (Set) map.get(interaction);
+                proteinSet.add(protein);
+            } else {
+                Set newProteinSet = new HashSet();
+                newProteinSet.add(protein);
+                map.put(interaction, newProteinSet);
+            }
+        }
+    }
 
 
 }

@@ -45,6 +45,8 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Peter Mclaren - Modifications to cater for complex interactions
  */
+
+
 public class PsiDataTranslator extends DataTranslator
 {
     private Item dataSource;
@@ -256,10 +258,6 @@ public class PsiDataTranslator extends DataTranslator
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             Item participant = (Item) i.next();
 
-            Reference proteinRef =
-                    new Reference("protein",
-                            participant.getReference("proteinInteractorRef").getRefId());
-
             if (getReference(participant, "featureList") != null) {
                 createProteinRegion(interaction, participant, result, dataSetItem);
             }
@@ -275,11 +273,13 @@ public class PsiDataTranslator extends DataTranslator
 
             Item interactor = createItem("ProteinInteractor");
             interactor.setAttribute("role", role);
+
+            Reference proteinRef =
+                    new Reference("protein",
+                            participant.getReference("proteinInteractorRef").getRefId());
             interactor.setReference("protein", proteinRef.getRefId());
             interactor.setReference("interaction", interaction.getIdentifier());
-
             interaction.addToCollection("interactors", interactor);
-
             result.add(interactor);
         }
 
