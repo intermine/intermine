@@ -10,8 +10,17 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
@@ -23,13 +32,17 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.InputStreamReader;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
@@ -41,7 +54,7 @@ import org.intermine.web.bag.InterMinePrimitiveBag;
 public class BuildBagAction extends InterMineLookupDispatchAction
 {
     /**
-     * Action for creating a bag of Strings from a text field.
+     * Action for creating a bag of Strings from identifiers in text field.
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -57,6 +70,51 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                                        HttpServletRequest request,
                                        HttpServletResponse response)
         throws Exception {
+        return makeBag(mapping, form, request, response, null);
+    }
+
+    /**
+     * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward makeObjectBag(ActionMapping mapping,
+                                       ActionForm form,
+                                       HttpServletRequest request,
+                                       HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String templateName = properties.getProperty("begin.browse.template");
+        return makeBag(mapping, form, request, response, templateName);
+    }
+
+    /**
+     * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    private ActionForward makeBag(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 String converterTemplateName)
+        throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -65,7 +123,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
-        InterMineBag bag = new InterMinePrimitiveBag();
+        InterMineBag identifierBag = new InterMinePrimitiveBag();
         String trimmedText = buildBagForm.getText().trim();
         FormFile formFile = buildBagForm.getFormFile();
 
@@ -92,9 +150,9 @@ public class BuildBagAction extends InterMineLookupDispatchAction
             StringTokenizer st = new StringTokenizer(thisLine, " \n\t,");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-                bag.add(token);
+                identifierBag.add(token);
 
-                if (bag.size() > maxBagSize) {
+                if (identifierBag.size() > maxBagSize) {
                     ActionMessage actionMessage =
                         new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                     recordError(actionMessage, request);
@@ -102,12 +160,60 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                     return mapping.findForward("buildBag");
                 }
             }
-        }
+        }        
 
         String newBagName = buildBagForm.getBagName();
-        profile.saveBag(newBagName, bag);
+
+        InterMineBag bagToSave = null;
         
-        recordMessage(new ActionMessage("bagBuild.saved", newBagName), request);
+        if (converterTemplateName != null) {
+            Integer inOp = ConstraintOp.IN.getIndex();
+            TemplateQuery template =
+                TemplateHelper.findTemplate(request, converterTemplateName, "global");
+
+            if (template == null) {
+                throw new IllegalStateException("Could not find template \"" + 
+                                                converterTemplateName + "\"");
+            }
+
+            InterMineIdBag idBag = new InterMineIdBag();
+
+            String queryBagName = "id_bag_name";
+
+            // Map from bag name to bag for passing to makeQuery
+            Map bagMap = new HashMap();
+            bagMap.put(queryBagName, identifierBag);
+            
+            // Populate template form bean
+            TemplateForm tf = new TemplateForm();
+            tf.setBagOp("1", inOp.toString());
+            tf.setBag("1", queryBagName);
+            
+            tf.setUseBagConstraint("1", true);
+            tf.parseAttributeValues(template, session, new ActionErrors(), false);
+
+            PathQuery pathQuery = TemplateHelper.templateFormToQuery(tf, template);
+            Query query = MainHelper.makeQuery(pathQuery, bagMap);
+            Results results = os.execute(query);
+
+            Iterator resultsIter = results.iterator();
+            
+            while (resultsIter.hasNext()) {
+                ResultsRow rr = (ResultsRow) resultsIter.next();
+                InterMineObject o = (InterMineObject) (rr.get(0));
+                
+                idBag.add(o.getId().intValue());
+            }
+
+            bagToSave = idBag;
+        } else {
+            bagToSave = identifierBag;
+        }
+
+        profile.saveBag(newBagName, bagToSave);
+
+        recordMessage(new ActionMessage("bagBuild.saved", newBagName,
+                                        new Integer(bagToSave.size())), request);
 
         return mapping.findForward("buildBag");
     }
@@ -121,6 +227,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("bagBuild.makeStringBag", "makeStringBag");
+        map.put("bagBuild.makeObjectBag", "makeObjectBag");
         return map;
     }
 }
