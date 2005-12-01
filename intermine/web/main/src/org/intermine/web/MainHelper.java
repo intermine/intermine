@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -52,9 +55,21 @@ import org.intermine.web.bag.InterMineIdBag;
 /**
  * Helper methods for main controller and main action
  * @author Mark Woodbridge
+ * @author Thomas Riley
  */
 public class MainHelper
 {
+    /**
+     * Move an attribute from the session to the request, removing it from the session.
+     * @param attributeName the attribute name
+     * @param request the current request
+     */
+    static void moveToRequest(String attributeName, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        request.setAttribute(attributeName, session.getAttribute(attributeName));
+        session.removeAttribute(attributeName);
+    }
+    
     /**
      * Given a path, render a set of metadata Nodes to the relevant depth
      * @param path of form Gene.organism.name

@@ -50,6 +50,15 @@ public class PathNode extends Node
     }
 
     /**
+     * Get Constraint by index.
+     * @param index index
+     * @return Constraint
+     */
+    public Constraint getConstraint(int index) {
+        return (Constraint) constraints.get(index);
+    }
+    
+    /**
      * Sets the value of constraints
      *
      * @param constraints value to assign to constraints
@@ -57,7 +66,24 @@ public class PathNode extends Node
     public void setConstraints(List constraints) {
         this.constraints = constraints;
     }
-
+    
+    /**
+     * Change a constraint value.
+     * 
+     * @param constraint an existing constrain under this node
+     * @param value constraint value
+     * @return the new Constraint object
+     */
+    public Constraint setConstraintValue(Constraint constraint, Object value) {
+        if (!constraints.contains(constraint)) {
+            throw new IllegalArgumentException("constraint not present on node");
+        }
+        int index = constraints.indexOf(constraint);
+        constraints.set(index, new Constraint(constraint.getOp(), value, constraint.isEditable(),
+                        constraint.getDescription(), constraint.getCode(),
+                        constraint.getIdentifier()));
+        return (Constraint) constraints.get(index);
+    }
 
     /**
      * Removes a constraint from list

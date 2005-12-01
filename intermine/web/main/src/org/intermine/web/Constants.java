@@ -113,12 +113,6 @@ public interface Constants
      * builder is in template building mode.
      */
     public static final String TEMPLATE_BUILD_STATE = "TEMPLATE_BUILD_STATE";
-    
-    /**
-     * Session attribute storing a bean exposing the user's trail through the object details
-     * pages.
-     */
-    public static final String OBJECT_DETAILS_TRAIL = "OBJECT_DETAILS_TRAIL";
 
     /**
      * Servlet context attribute - map from aspect set name to Aspect object.
@@ -208,4 +202,9 @@ public interface Constants
      * Servlet attribute. Map from class name to Set of leaf class descriptors.
      */
     public static final String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
+
+    /**
+     * Servlet attribute. Map from MultiKey(experiment, gene) id to temp file name.
+     */
+    public static final String GRAPH_CACHE = "GRAPH_CACHE";
 }

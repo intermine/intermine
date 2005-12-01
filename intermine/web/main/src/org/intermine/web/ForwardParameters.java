@@ -10,9 +10,13 @@ package org.intermine.web;
  *
  */
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForward;
 
@@ -25,6 +29,8 @@ import org.apache.struts.action.ActionForward;
  */
 public class ForwardParameters
 {
+    private static final Logger LOG = Logger.getLogger(ForwardParameters.class);
+    
     /** Original ActionForward. */
     protected ActionForward af;
     /** Map from parameter name to parameter value. */
@@ -39,6 +45,17 @@ public class ForwardParameters
      */
     public ForwardParameters(ActionForward af) {
         this.af = af;
+    }
+    
+    /**
+     * Creates a new instance of ForwardParameters with a given path and
+     * redirect settings.
+     *
+     * @param path the forward path
+     * @param redirect whether or not forward redirects the client
+     */
+    public ForwardParameters(String path, boolean redirect) {
+        af = new ActionForward(path, redirect);
     }
     
     /**
@@ -77,7 +94,12 @@ public class ForwardParameters
             if (path.length() > 0) {
                 path += "&";
             }
-            path += entry.getKey() + "=" + entry.getValue();
+            try {
+                path += entry.getKey() + "="
+                    + URLEncoder.encode((String) entry.getValue(), "UTF-8");
+            } catch (UnsupportedEncodingException err) {
+                LOG.error(err);
+            }
         }
         if (path.length() > 0) {
             path = "?" + path;

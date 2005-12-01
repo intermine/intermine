@@ -99,6 +99,8 @@ public class InitialiserPlugin implements PlugIn
         loadSuperUserDetails(servletContext);
         servletContext.setAttribute(Constants.TEMPLATE_REPOSITORY,
                 new TemplateRepository(servletContext));
+        
+        servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
     }
 
     /**

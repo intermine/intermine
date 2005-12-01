@@ -24,21 +24,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.util.TypeUtil;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.util.TypeUtil;
 
 /**
- * Controller for the main tile
+ * Controller for the main query builder tile. Generally, request attributes that are
+ * required by multiple tiles on the query builder are synthesized here.
+ * 
  * @author Mark Woodbridge
+ * @author Thomas Riley
+ * @see org.intermine.web.MainConstraintController
+ * @see org.intermine.web.MainPathsController
  */
 public class MainController extends TilesAction
 {
@@ -51,53 +55,30 @@ public class MainController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        populateRequest(request, response);
+        return null;
+    }
+    
+    /**
+     * Populate the request with the necessary attributes to render the query builder page.
+     * This method is static so that it can be called from the AJAX actions in MainChange.java
+     * @param request the current request
+     * @param response the current response
+     * @see MainChange
+     */
+    public static void populateRequest(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
-                                               getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
         // set up the metadata
-        context.putAttribute("nodes",
+        request.setAttribute("nodes",
                              MainHelper.makeNodes((String) session.getAttribute("path"), model));
-        
-        //set up the node on which we are editing constraints
-        if (session.getAttribute("editingNode") != null) {
-            moveToRequest("editingNode", request);
-            moveToRequest("editingConstraintIndex", request);
-            moveToRequest("editingTemplateConstraint", request);
-            moveToRequest("editingConstraintValue", request);
-            moveToRequest("editingConstraintOperand", request);
-            
-            PathNode node = (PathNode) request.getAttribute("editingNode");
-            if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
-                request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss));
-            } else {
-                // loop query arguments
-                ArrayList paths = new ArrayList();
-                Map displayPaths = new HashMap();
-                Iterator iter = query.getNodes ().values ().iterator ();
-                while (iter.hasNext ()) {
-                    PathNode anode = (PathNode) iter.next();
-                    if (anode != node && anode.getType().equals (node.getType())) {
-                        paths.add(anode.getPath());
-                    }
-                }
-
-                Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
-                request.setAttribute ("loopQueryOps", attributeOps);
-                request.setAttribute ("loopQueryPaths", paths);
-            }
-            if (profile.getSavedBags().size() > 0) {
-                request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-            }
-        }
 
         // constraint display values
-        request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         List view = SessionMethods.getEditingView(session);
         request.setAttribute("viewPaths", listToMap(view));
@@ -123,14 +104,6 @@ public class MainController extends TilesAction
         }
         request.setAttribute("navigation", navigation);
         request.setAttribute("navigationPaths", navigationPaths);
-
-        return null;
-    }
-
-    private void moveToRequest(String attributeName, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        request.setAttribute(attributeName, session.getAttribute(attributeName));
-        session.removeAttribute(attributeName);
     }
     
     /**
