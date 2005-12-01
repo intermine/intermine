@@ -17,7 +17,7 @@
       <c:set var="maxLength" value="60"/>
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
-          ${fn:substring(object, 0, maxLength)} ...
+          <im:abbreviate value="${object}" length="${maxLength}"/>
         </c:when>
         <c:otherwise>
           <c:out value="${object}" default="${nullFieldText}"/>

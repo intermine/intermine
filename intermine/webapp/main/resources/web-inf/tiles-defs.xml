@@ -124,6 +124,8 @@
     <put name="view" value="view.tile"/>
   </definition>
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
+  <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
+  <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
   <definition name="view.tile" path="/view.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
@@ -141,6 +143,10 @@
   <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
     <put name="preview" value="template.tile"/>
   </definition>
+  
+  <!-- don't (re)move this - it's used for importing any model-specific actions -->
+  <!--@MODEL_INCLUDE@-->
+  
 </tiles-definitions>
 
 

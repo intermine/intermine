@@ -215,6 +215,8 @@
             type="org.intermine.web.MainChange"
             parameter="method">
       <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="browserLines" path="/mainBrowserLines.jsp"/>
+      <forward name="mainConstraint" path="mainConstraint.tile"/>
     </action>
     
     <action path="/viewChange"
@@ -437,7 +439,7 @@
             scope="request"
             input="query">
       <forward name="classChooser" path="classChooser.page"/>
-      <forward name="query" path="query.page"/>
+      <forward name="query" path="/query.do" redirect="true"/>
     </action>
 
     <action path="/mainAction"
@@ -495,6 +497,12 @@
     <!-- Controllers -->
     <action path="/initMain"
             type="org.intermine.web.MainController"/>
+
+    <action path="/initMainConstraint"
+            type="org.intermine.web.MainConstraintController"/>
+            
+    <action path="/initMainPaths"
+            type="org.intermine.web.MainPathsController"/>
 
     <action path="/initBegin"
             type="org.intermine.web.BeginController"/>

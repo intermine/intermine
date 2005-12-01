@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -131,6 +132,15 @@ public class PathQuery
      */
     public Map getNodes() {
         return nodes;
+    }
+    
+    /**
+     * Get a PathNode by path.
+     * @param path a path
+     * @return the PathNode for path path
+     */
+    public PathNode getNode(String path) {
+        return (PathNode) nodes.get(path);
     }
     
     /**
@@ -435,7 +445,7 @@ public class PathQuery
         }
         setConstraintLogic(logic);
     }
-
+    
     /**
      * Remove some constraint code from the logic expression.
      * @param code the code to remove
@@ -451,5 +461,32 @@ public class PathQuery
      */
     public LogicExpression getLogic() {
         return constraintLogic;
+    }
+    
+    /**
+     * Serialise this query in XML format.
+     * @param name query name to put in xml
+     * @return PathQuery in XML format
+     */
+    public String toXml(String name) {
+        return PathQueryBinding.marshal(this, name, model.getName());
+    }
+    
+    /**
+     * Serialise to XML with no name.
+     * @see #toXml(String)
+     */
+    public String toXml() {
+        return PathQueryBinding.marshal(this, "", model.getName());
+    }
+    
+    /**
+     * Rematerialise single query from XML.
+     * @param xml PathQuery XML
+     * @return a PathQuery object
+     */
+    public static PathQuery fromXml(String xml) {
+        Map queries = PathQueryBinding.unmarshal(new StringReader(xml));
+        return (PathQuery) queries.values().iterator().next();
     }
 }

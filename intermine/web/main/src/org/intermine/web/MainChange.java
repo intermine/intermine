@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -94,7 +95,6 @@ public class MainChange extends DispatchAction
         // remove the node and it's children
         for (Iterator i = keys.iterator(); i.hasNext();) {
             String testPath = (String) i.next();
-
 
             if (testPath.startsWith(path)) {
                 removeOneNode(pathQuery, testPath);
@@ -309,11 +309,8 @@ public class MainChange extends DispatchAction
         session.removeAttribute("editingConstraintIndex");
         session.removeAttribute("editingConstraintValue");
         session.removeAttribute("editingConstraintOperand");
-        //and change metadata view if relevant
-        if (!node.isAttribute()) {
-            session.setAttribute("prefix", path);
-            session.setAttribute("path", node.getType());
-        }
+        
+        request.setAttribute("deletePath", deletePath); // for ajax
         
         return new ForwardParameters(mapping.findForward("query"))
             .addParameter("deletePath", deletePath)
@@ -547,4 +544,91 @@ public class MainChange extends DispatchAction
         }
         return path;
     }
+    
+    /**
+     * AJAX request - expand
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward expand(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        changePath(mapping, form, request, response);
+        MainController.populateRequest(request, response);
+        
+        // Please improve me - only build relevant Nodes in first place
+        
+        List newNodes = new ArrayList();
+        Collection nodes = (Collection) request.getAttribute("nodes");
+        for (Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            Node node = (Node) iter.next();
+            if (node.getPath().startsWith(request.getParameter("path") + ".")) {
+                newNodes.add(node);
+            }
+        }
+        request.setAttribute("nodes", newNodes);
+        request.setAttribute("noTreeIds", Boolean.TRUE);
+        return mapping.findForward("browserLines");
+    }
+    
+    /**
+     * AJAX request - collapse
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward collapse(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        changePath(mapping, form, request, response);
+        return null;
+    }
+    
+    /**
+     * AJAX request - show constraint panel
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward newConstraint(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        addPath(mapping, form, request, response);
+        return mapping.findForward("mainConstraint");
+    }
+    
+    /**
+     * AJAX request - edit an existing constraint
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward ajaxEditConstraint(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        editConstraint(mapping, form, request, response);
+        return mapping.findForward("mainConstraint");
+    }
+    
 }

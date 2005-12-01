@@ -57,7 +57,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             
             if (!request.isRequestedSessionIdValid()
                 && request.getAttribute(Globals.MESSAGE_KEY) == null
-                && !START_PATHS.contains(processPath(request, response))) {
+                && !START_PATHS.contains(processPath(request, response))
+                && !processPath(request, response).startsWith("/init")) {
                 ActionMessages messages = new ActionMessages();
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
                              new ActionMessage("errors.session.nosession"));
