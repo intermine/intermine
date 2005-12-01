@@ -131,7 +131,7 @@
     </taskdef>
     <model-generation type="xmi"
                       modelName="${model.name}"
-                      nameSpace="${namespace}"
+                      namespace="${namespace}/${model.name}"
                       pkg="${packagename}.${model.name}"
                       source="${build.model.dir.tmp}/${model.name}_.xmi"
                       destDir="${build.model.dir}"/>
@@ -145,7 +145,7 @@
     <model-generation type="xmlschema"
                       modelName="${model.name}"
                       pkg="${packagename}.${model.name}"
-                      namespace="${namespace}"
+                      namespace="${namespace}/${model.name}"
                       source="${model}/${model.name}/${model.name}.xsd"
                       destDir="${build.model}/${model.name}" />
   </target>
