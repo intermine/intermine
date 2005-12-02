@@ -103,10 +103,9 @@
       </c:choose>
       <c:choose>
         <c:when test="${viewPaths[fullpath] == null && !isNull}">
-          <im:mainchange method="addToView" params="path=${node.path}"
-                     title="${selectNodeTitle}">
+          <html:link action="/mainChange?method=addToView&amp;path=${node.path}" title="${selectNodeTitle}">
             <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
-          </im:mainchange>
+          </html:link>
         </c:when>
         <c:otherwise>
           <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
