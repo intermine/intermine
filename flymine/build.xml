@@ -1,6 +1,23 @@
 <project name="flymine" default="help" basedir=".">
   <description>FlyMine build file</description>
 
+  <property name="build.properties.local.base" 
+            value="${user.home}/build.properties.${ant.project.name}"/>
+  <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
+             else="${build.properties.local.base}">
+    <available file="${build.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${build.properties.local}" property="build.properties.local.present"/>
+  <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
+  
+  <property name="runtime.properties.local.base" value="${user.home}/${ant.project.name}.properties" />
+  <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
+             else="${runtime.properties.local.base}">
+    <available file="${runtime.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
+  <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
+  
   <!-- Import intermine build tasks -->
   <taskdef resource="org/intermine/task/antlib.xml" classpath="../imbuild/lib/ant-tasks.jar"/>
   <taskdef resource="checkstyletask.properties" classpath="../imbuild/lib/checkstyle-all-3.0b1.jar"/>
