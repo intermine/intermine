@@ -1,4 +1,7 @@
 <project name="flymine-www" default="transform-site" basedir=".">
+  <!-- import common build library -->
+  <import file="../../imbuild/library.xml"/>
+
   <property name="common" location="../common"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="${common}/site"/>
