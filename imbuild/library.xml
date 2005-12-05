@@ -10,7 +10,7 @@
   <available file="${build.properties.local}" property="build.properties.local.present"/>
   <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
   
-  <property name="runtime.properties.local.base" value="${user.home}/flymine.properties" />
+  <property name="runtime.properties.local.base" value="${user.home}/${ant.project.name}.properties" />
   <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
              else="${runtime.properties.local.base}">
     <available file="${runtime.properties.local.base}.${release}"/>
