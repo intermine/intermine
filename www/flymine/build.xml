@@ -1,7 +1,22 @@
 <project name="flymine-www" default="transform-site" basedir=".">
-  <!-- import common build library -->
-  <import file="../../imbuild/library.xml"/>
 
+  <property name="build.properties.local.base" 
+            value="${user.home}/build.properties.flymine"/>
+  <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
+             else="${build.properties.local.base}">
+    <available file="${build.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${build.properties.local}" property="build.properties.local.present"/>
+  <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
+  
+  <property name="runtime.properties.local.base" value="${user.home}/flymine.properties" />
+  <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
+             else="${runtime.properties.local.base}">
+    <available file="${runtime.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
+  <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
+  
   <property name="common" location="../common"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="${common}/site"/>
@@ -14,7 +29,6 @@
   <property name="common.xslt" location="${common}/xslt"/>
   <property name="cache.dtd" location="${common}/dtd"/>
   <property name="output.extension" value="html"/>
-  <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
   <property name="branding" value="flymine"/>
 
   <target name="prepare">
