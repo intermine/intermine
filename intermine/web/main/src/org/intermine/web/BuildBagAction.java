@@ -16,11 +16,9 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
@@ -172,8 +170,8 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                 TemplateHelper.findTemplate(request, converterTemplateName, "global");
 
             if (template == null) {
-                throw new IllegalStateException("Could not find template \"" + 
-                                                converterTemplateName + "\"");
+                throw new IllegalStateException("Could not find template \"" 
+                                                + converterTemplateName + "\"");
             }
 
             InterMineIdBag idBag = new InterMineIdBag();
