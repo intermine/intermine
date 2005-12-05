@@ -2972,6 +2972,26 @@
     <antcall target="load-default-templates"/>
   </target>
 
+  <target name="create-indexes-userprofile-production"
+          depends="prepare-build-model, compile-genomic-model-from-db">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.userprofile-production"/>
+      <property name="objectstore.name" value="os.userprofile-production"/>
+    </ant>
+  </target>
+
+  <target name="create-indexes-userprofile-production-attribute"
+          depends="prepare-build-model, compile-genomic-model-from-db">
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.userprofile-production"/>
+      <property name="create.attribute.indexes" value="true"/>
+    </ant>
+  </target>
+
   <!-- load default global template queries -->
   <target name="load-default-templates" depends="prepare-build-model">
     <copy todir="${build.resources}"
