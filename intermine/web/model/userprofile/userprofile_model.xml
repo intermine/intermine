@@ -1,0 +1,28 @@
+<model name="userprofile" namespace="http://www.intermine.org/model/userprofile#">
+  <class name="org.intermine.model.userprofile.UserProfile" is-interface="false">
+    <attribute name="username" type="java.lang.String"/>
+    <attribute name="password" type="java.lang.String"/>
+    <collection name="savedBags" referenced-type="org.intermine.model.userprofile.SavedBag" reverse-reference="userProfile"/>
+    <collection name="savedQuerys" referenced-type="org.intermine.model.userprofile.SavedQuery" reverse-reference="userProfile"/>
+    <collection name="savedTemplateQuerys" referenced-type="org.intermine.model.userprofile.SavedTemplateQuery" reverse-reference="userProfile"/>
+    <collection name="tags" referenced-type="org.intermine.model.userprofile.Tag" reverse-reference="userProfile"/>
+  </class>
+  <class name="org.intermine.model.userprofile.SavedBag" is-interface="false">
+    <attribute name="bag" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedBags"/>
+  </class>
+  <class name="org.intermine.model.userprofile.SavedQuery" is-interface="false">
+    <attribute name="query" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedQuerys"/>
+  </class>
+  <class name="org.intermine.model.userprofile.SavedTemplateQuery" is-interface="false">
+    <attribute name="templateQuery" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedTemplateQuerys"/>
+  </class>
+  <class name="org.intermine.model.userprofile.Tag" is-interface="false">
+    <attribute name="tagName" type="java.lang.String"/>
+    <attribute name="objectIdentifier" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="tags"/>
+  </class>
+</model>

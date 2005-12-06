@@ -10,24 +10,39 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,12 +69,12 @@ public class ProfileManager
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
-     * @param upgrader 
      * @throws ObjectStoreException if the user profile database cannot be found
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS)
         throws ObjectStoreException {
         this.os = os;
+        makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
     }
 
@@ -166,16 +181,13 @@ public class ProfileManager
             SavedBag bag = (SavedBag) i.next();
             try {
                 savedBags.putAll(InterMineBagBinding.unmarshal(
-                        new StringReader(bag.getBag()), os, new IdUpgrader() {
-
-                            public Set getNewIds(InterMineObject oldObject,
-                                    ObjectStore os) {
-                                throw new RuntimeException(
-                                        "Shouldn't call getNewIds() in a"
-                                                + " running webapp");
-                            }
-
-                        }));
+                    new StringReader(bag.getBag()), os, new IdUpgrader() {
+                        public Set getNewIds(InterMineObject oldObject,
+                                             ObjectStore os) {
+                            throw new RuntimeException("Shouldn't call getNewIds() in a"
+                                                       + " running webapp");
+                        }
+                    }));
             } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
@@ -193,7 +205,7 @@ public class ProfileManager
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
                         savedQueries.put(name, new org.intermine.web.SavedQuery(name, null,
-                                (PathQuery) entry.getValue()));
+                                                                  (PathQuery) entry.getValue()));
                     }
                 } else {
                     savedQueries.putAll(queries);
@@ -240,8 +252,8 @@ public class ProfileManager
                         osw.delete((InterMineObject) i.next());
                     }
 
-                    for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
-                                                                                i.hasNext();) {
+                    for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); 
+                         i.hasNext();) {
                         osw.delete((InterMineObject) i.next());
                     }
                 } else {
@@ -309,7 +321,7 @@ public class ProfileManager
      * @param username the username
      * @return the relevant UserProfile
      */
-    protected UserProfile getUserProfile(String username) {
+    public UserProfile getUserProfile(String username) {
         UserProfile profile = new UserProfile();
         profile.setUsername(username);
         Set fieldNames = new HashSet();
@@ -346,4 +358,174 @@ public class ProfileManager
 
         return usernames;
     }
+
+    /**
+     * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
+     * wildcards.
+     * @param tagName the tag name - any String
+     * @param objectIdentifier an object identifier that is appropriate for the given tag type
+     * (eg. "Department.name" for the "collection" type)
+     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
+     * @param userProfile the UserProfile this tag is associated with
+     * @return the matching Tags
+     */
+    public List getTags(String tagName, String objectIdentifier, String type,
+                        UserProfile userProfile) {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Tag.class);
+
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        
+        if (tagName != null) {
+            QueryValue qv = new QueryValue(tagName);
+            QueryField qf = new QueryField(qc, "tagName");
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            cs.addConstraint(c);
+        }
+        
+        if (objectIdentifier != null) {
+            QueryValue qv = new QueryValue(objectIdentifier);
+            QueryField qf = new QueryField(qc, "objectIdentifier");
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            cs.addConstraint(c);
+        }
+        
+        if (type != null) {
+            QueryValue qv = new QueryValue(type);
+            QueryField qf = new QueryField(qc, "type");
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            cs.addConstraint(c);
+        }
+        
+        if (userProfile != null) {
+            QueryClass userProfileQC = new QueryClass(UserProfile.class);
+            q.addFrom(userProfileQC);
+            QueryValue qv = new QueryValue(userProfile.getId());
+            QueryField qf = new QueryField(userProfileQC, "id");
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            cs.addConstraint(c);
+
+            QueryObjectReference qr = new QueryObjectReference(qc, "userProfile");
+
+            ContainsConstraint cc =
+                new ContainsConstraint(qr, ConstraintOp.CONTAINS, userProfileQC);
+            cs.addConstraint(cc);
+        }
+        q.setConstraint(cs);
+        
+        ObjectStore os = osw.getObjectStore();
+
+        SingletonResults results = new SingletonResults(q, os, os.getSequence());
+
+        return results;
+    }
+
+
+    private final Map tagCheckers = new HashMap();
+    
+    /**
+     * Add a new tag.  The format of objectIdentifier depends on the tag type.
+     * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
+     * "ClassName.fieldName".
+     * @param tagName the tag name - any String
+     * @param objectIdentifier an object identifier that is appropriate for the given tag type
+     * (eg. "Department.name" for the "collection" type)
+     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
+     * @param userProfile the UserProfile to associate this tag with
+     */
+    public void addTag(String tagName, String objectIdentifier, String type,
+                       UserProfile userProfile) {
+        if (tagName == null) {
+            throw new RuntimeException("tagName cannot be null");
+        }
+        if (objectIdentifier == null) {
+            throw new RuntimeException("objectIdentifier cannot be null");
+        }
+        if (type == null) {
+            throw new RuntimeException("type cannot be null");
+        }
+        if (userProfile == null) {
+            throw new RuntimeException("userProfile cannot be null");
+        }
+        if (!tagCheckers.containsKey(type)) {
+            throw new RuntimeException("unknown tag type: " + type);
+        }
+        ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type, userProfile);
+        Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        tag.setTagName(tagName);
+        tag.setObjectIdentifier(objectIdentifier);
+        tag.setType(type);
+        tag.setUserProfile(userProfile);
+
+        try {
+            osw.store(tag);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("cannot set tag", e);
+        }
+    }
+    
+    private void makeTagCheckers(final Model model) {
+        TagChecker fieldChecker = new TagChecker() {
+            void isValid(String tagName, String objectIdentifier, String type,
+                         UserProfile userProfile) {
+                int dotIndex = objectIdentifier.indexOf('.');
+                if (dotIndex == -1) {
+                    throw new RuntimeException("tried to tag an unknown field: " 
+                                               + objectIdentifier);
+                }
+                String className = objectIdentifier.substring(0, dotIndex);
+                String fieldName = objectIdentifier.substring(dotIndex + 1);
+
+                ClassDescriptor cd =
+                    model.getClassDescriptorByName(model.getPackageName() + "." + className);
+                if (cd == null) {
+                    throw new RuntimeException("unknown class name \"" + className
+                                               + "\" while tagging: " + objectIdentifier);
+                }
+                FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
+                if (fd == null) {
+                    throw new RuntimeException("unknown field name \"" + fieldName
+                                               + "\" in class \"" + className
+                                               + "\" while tagging: " + objectIdentifier);
+                    
+                }
+                
+                if (type.equals("collection") && !fd.isCollection()) {
+                    throw new RuntimeException(objectIdentifier + " is not a collection");
+                }
+                if (type.equals("reference") && !fd.isReference()) {
+                    throw new RuntimeException(objectIdentifier + " is not a reference");
+                }
+                if (type.equals("attribute") && !fd.isAttribute()) {
+                    throw new RuntimeException(objectIdentifier + " is not a attribute");
+                }
+            }
+        };
+        tagCheckers.put("collection", fieldChecker);
+        tagCheckers.put("reference", fieldChecker);
+        tagCheckers.put("attribute", fieldChecker);
+    }
 }
+
+/**
+ * A class for check the validity of tags.
+ * @author kmr
+ */
+abstract class TagChecker
+{
+    /**
+     * Returns true if and only the given arguments are valid fields for a tag of this type.
+     * @param tagName the name of the new tag
+     * @param type the tag type (eg. "collection", "bag")
+     * @param objectIdentifier the String version of the identifier of the object to tag (eg.
+     * "Department.name")
+     * @param userProfile the UserProfile to associate this tag with
+     * @throws RuntimeException if the this parameters are inconsistent
+     */
+    abstract void isValid(String tagName, String type, String objectIdentifier, 
+                          UserProfile userProfile);
+}
+
