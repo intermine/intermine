@@ -39,6 +39,8 @@ public class XmlConverterFunctionalTest extends TestCase {
         mockIw.close();
 
         Set tgtItems = getTgtItems();
+
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(tgtItems, mockIw.getItems()));
         assertEquals(tgtItems, mockIw.getItems());
     }
 

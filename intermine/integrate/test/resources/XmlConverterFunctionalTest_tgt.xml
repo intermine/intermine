@@ -4,6 +4,7 @@
 <attribute name="vatNumber" value="1234"/>
 <reference name="address" ref_id="0_4"/>
 <reference name="addressBook" ref_id="0_9"/>
+<reference name="bank" ref_id="0_10"/>
 <collection name="departments">
 <reference ref_id="0_2"/>
 <reference ref_id="0_6"/>
@@ -54,5 +55,8 @@
 </item>
 <item id="0_4" class="http://www.intermine.org/model/xmlschematest#Address_Company">
 <attribute name="address" value="Company Street"/>
+</item>
+<item id="0_10" class="http://www.intermine.org/model/xmlschematest#Bank">
+<attribute name="name" value="bank1"/>
 </item>
 </items>
