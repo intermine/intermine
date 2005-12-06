@@ -19,6 +19,7 @@ import java.util.HashMap;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
@@ -94,7 +95,8 @@ public class ProfileTest extends TestCase
     }
 
     public void testSaveWithManager() throws Exception {
-        ProfileManager profileManager = new DummyProfileManager(null);
+        ProfileManager profileManager =
+            new DummyProfileManager(ObjectStoreFactory.getObjectStore("os.userprofile-test"));
         Profile profile = new Profile(profileManager, "bob", "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
@@ -127,7 +129,8 @@ public class ProfileTest extends TestCase
     }
     
     public void testDeleteWithManager() throws Exception {
-        ProfileManager profileManager = new DummyProfileManager(null);
+        ProfileManager profileManager =
+            new DummyProfileManager(ObjectStoreFactory.getObjectStore("os.userprofile-test"));
         Profile profile = new Profile(profileManager, "bob", "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
