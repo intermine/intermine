@@ -32,35 +32,22 @@ import java.io.Reader;
 import java.io.IOException;
 
 import org.biomage.tools.xmlutils.MAGEReader;
-import org.biomage.QuantitationType.QuantitationType_package;
 import org.biomage.QuantitationType.QuantitationType;
-import org.biomage.QuantitationType.Ratio;
-import org.biomage.Experiment.Experiment;
-import org.biomage.Experiment.Experiment_package;
 import org.biomage.DesignElement.Feature;
 import org.biomage.DesignElement.Reporter;
 import org.biomage.DesignElement.CompositeSequence;
-import org.biomage.Description.OntologyEntry;
 import org.biomage.BioAssay.BioAssay;
-import org.biomage.BioAssay.BioAssay_package;
-import org.biomage.BioAssay.DerivedBioAssay;
-import org.biomage.BioAssay.MeasuredBioAssay;
-import org.biomage.BioAssayData.BioAssayData_package;
-import org.biomage.BioAssayData.BioAssayData;
-import org.biomage.BioAssayData.MeasuredBioAssayData;
 import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.BioAssayDimension;
 import org.biomage.BioAssayData.DesignElementDimension;
 import org.biomage.BioAssayData.FeatureDimension;
 import org.biomage.BioAssayData.ReporterDimension;
 import org.biomage.BioAssayData.CompositeSequenceDimension;
-import org.biomage.BioAssayData.DerivedBioAssayData;
-import org.biomage.BioAssayData.DataExternal;
 import org.biomage.BioAssayData.QuantitationTypeDimension;
 import org.biomage.Interface.HasBioAssays;
 import org.biomage.DesignElement.DesignElement;
-import org.biomage.ArrayDesign.PhysicalArrayDesign;
 import org.biomage.Common.MAGEJava;
+import org.biomage.Common.Identifiable;
 
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
@@ -90,6 +77,7 @@ public class MageConverter extends FileConverter
     protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
 
     protected HashMap seenMap;
+    protected HashMap refMap;
     protected HashMap padIdentifiers = new HashMap();
     protected HashMap featureIdentifiers = new HashMap();
     protected HashMap reporterIdentifiers = new HashMap();
@@ -109,13 +97,13 @@ public class MageConverter extends FileConverter
      * @see FileConverter#process
      */
     public void process(Reader reader) throws Exception {
-
         seenMap = new LinkedHashMap();
+        refMap = new LinkedHashMap();
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
 
-        createItem(MageConverter.readMage(reader));
+        createItem(MageConverter.readMage(reader), true);
     }
 
     /**
@@ -148,7 +136,6 @@ public class MageConverter extends FileConverter
             fileWriter.close();
 
             mageReader = new MAGEReader(f.getAbsolutePath());
-            //createItem(mageReader.getMAGEobj());
 
         } finally {
              f.delete();
@@ -175,8 +162,11 @@ public class MageConverter extends FileConverter
      * @see FileConverter#process
      */
     public void close() throws Exception {
+
         long now = System.currentTimeMillis();
         storeItems(padIdentifiers.values());
+        //System.err .println("padIdentifiers.keys() " + padIdentifiers.keySet());
+        //System.err .println("padIdentifiers.values() " + padIdentifiers.values());
         LOG.info("store padIdentifiers " + padIdentifiers.values().size()
                  + " in " + (System.currentTimeMillis() - now) + " ms");
 
@@ -196,28 +186,53 @@ public class MageConverter extends FileConverter
      * Create an item and associated fields, references and collections
      * given a MAGE object.
      * @param obj a MAGE object to create items for
+     * @param create boolean to create item or not
      * @return the created item
      * @throws Exception if reflection problems occur
      */
-    protected Item createItem(Object obj) throws Exception {
-        if (seenMap.containsKey(obj)) {
-            return (Item) seenMap.get(obj);
-        }
+    protected String createItem(Object obj, boolean create) throws Exception {
         boolean storeItem = true;
+        String objId = null;
+        String itemIdentifier = null;
+
+        if (!create) {
+            return null;
+        }
+
+        if (obj instanceof Identifiable) {
+            objId = ((Identifiable) obj).getIdentifier();
+        }
+
+        if (objId != null && seenMap.containsKey(objId)) {
+            return  (String) seenMap.get(objId);
+        } else if (objId == null && seenMap.containsKey(obj)) {
+            return  (String) seenMap.get(obj);
+        }
+
         Class cls = obj.getClass();
         String className = TypeUtil.unqualifiedName(cls.getName());
         Item item = new Item();
         item.setClassName(MAGE_NS + className);
         item.setImplementations("");
+
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")
             && !className.endsWith("_package")) {
-            if (!cls.getName().equals("org.biomage.ArrayDesign.PhysicalArrayDesign")
-                && !cls.getName().equals("org.biomage.DesignElement.Feature")
-                //&& !cls.getName().equals("org.biomage.DesignElement.CompositeSequence")
-                && !cls.getName().equals("org.biomage.DesignElement.Reporter")) {
-                item.setIdentifier(alias(className) + "_" + (id++));
-                seenMap.put(obj, item);
+            //refMap: key=objId, value=itemIdentifier this map is only used
+            //for storing those objects
+            // are reffed in one xml file but not defined in the same file
+            if (objId != null && refMap.containsKey(objId)) {
+                itemIdentifier = (String) refMap.get(objId);
+            } else {
+                itemIdentifier = alias(className) + "_" + (id++);
             }
+
+            item.setIdentifier(itemIdentifier);
+            if (objId != null) {
+                seenMap.put(objId, item.getIdentifier());
+            } else {
+                seenMap.put(obj, item.getIdentifier());
+            }
+
         } else {
             // don't store the MAGEJava object
             storeItem = false;
@@ -242,9 +257,24 @@ public class MageConverter extends FileConverter
                 if (value != null) {
                     if (Collection.class.isAssignableFrom(m.getReturnType())) {
                         ReferenceList col = new ReferenceList(info.getName());
-                        StringBuffer sb = new StringBuffer();
                         for (Iterator j = ((Collection) value).iterator(); j.hasNext();) {
-                            col.addRefId(createItem(j.next()).getIdentifier());
+                            Object mageObj = j.next();
+                            if (mageObj.getClass().getName().endsWith("NameValueType")
+                                && info.getName().equals("propertySets")) {
+                                HashMap map = new HashMap(TypeUtil.getFieldInfos(
+                                    mageObj.getClass()));
+                                if (map.containsKey("name")
+                                    && checkNameValueType(mageObj, map, "name").equals("Placeholder")
+                                    && map.containsKey("value")
+                                    && checkNameValueType(mageObj, map, "value") == null
+                                    && map.containsKey("type")
+                                    && checkNameValueType(mageObj, map, "type") == null) {
+                                    refMap.put(objId, itemIdentifier);
+                                    createItem(mageObj, false);
+                                }
+                            } else {
+                                col.addRefId(createItem(mageObj, true));
+                            }
                         }
                         if (col.getRefIds().size() > 0) {
                             item.addCollection(col);
@@ -260,7 +290,8 @@ public class MageConverter extends FileConverter
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
                             }
                         } else {
-                            item.setReference(info.getName(), createItem(value).getIdentifier());
+                            item.setReference(info.getName(), createItem(value, true));
+
                         }
                     } else { // if (!info.getName().equals("identifier")) {
                         item.setAttribute(info.getName(), escapeQuotes(value.toString()));
@@ -268,56 +299,58 @@ public class MageConverter extends FileConverter
                     }
                 }
             }
+
         }
 
-        if (className.equals("PhysicalArrayDesign")) {
-            // if item does not have name set it is a placeholder do not want to store
-            PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
-            String padId = pad.getIdentifier();
-            Item padItem = (Item) padIdentifiers.get(padId);
-            if (padItem == null) {
-                item.setIdentifier(alias(className) + "_" + (id++));
-                padIdentifiers.put(padId, item);
-            } else if (pad.getName() != null) {
-                item.setIdentifier(padItem.getIdentifier());
-                padIdentifiers.put(padId, item);
-            } else {
-                item = padItem;
-            }
-            storeItem = false;
-        } else if (className.equals("Feature")) {
-            // Features can appear in both experiment file and array design file
-            // but should only be one item - store in map until end of run.  If
-            // zone is defined the we have Feature from array design file - this
-            // it the one we want to keep.
-            Feature feature = (Feature) obj;
-            String fid = feature.getIdentifier();
-            Item fItem = (Item) featureIdentifiers.get(fid);
-            if (fItem == null) {
-                item.setIdentifier(alias(className) + "_" + (id++));
-                featureIdentifiers.put(fid, item);
-            } else if (feature.getZone() != null) {
-                item.setIdentifier(fItem.getIdentifier());
-                featureIdentifiers.put(fid, item);
-            } else {
-                item = fItem;
-            }
-            storeItem = false;
-        } else if (className.equals("Reporter")) {
-            Reporter reporter = (Reporter) obj;
-            String rid = reporter.getIdentifier();
-            Item rItem = (Item) reporterIdentifiers.get(rid);
-            if (rItem == null) {
-                item.setIdentifier(alias(className) + "_" + (id++));
-                reporterIdentifiers.put(rid, item);
-            } else if (reporter.getName() != null) {
-                item.setIdentifier(rItem.getIdentifier());
-                reporterIdentifiers.put(rid, item);
-            } else {
-                item = rItem;
-            }
-            storeItem = false;
-        } else if (className.equals("DerivedBioAssayData")) {
+ //           if (className.equals("PhysicalArrayDesign")) {
+//              // if item does not have name set it is a placeholder do not want to store
+//              PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
+//              String padId = pad.getIdentifier();
+//              Item padItem = (Item) padIdentifiers.get(padId);
+//              if (padItem == null) {
+//                  item.setIdentifier(alias(className) + "_" + (id++));
+//                  padIdentifiers.put(padId, item);
+//              } else if (pad.getName() != null) {
+//                  item.setIdentifier(padItem.getIdentifier());
+//                  padIdentifiers.put(padId, item);
+//              } else {
+//                  item = padItem;
+//              }
+//              storeItem = false;
+//          } else if (className.equals("Feature")) {
+//              // Features can appear in both experiment file and array design file
+//              // but should only be one item - store in map until end of run.  If
+//              // zone is defined the we have Feature from array design file - this
+//              // it the one we want to keep.
+//              Feature feature = (Feature) obj;
+//              String fid = feature.getIdentifier();
+//              Item fItem = (Item) featureIdentifiers.get(fid);
+//              if (fItem == null) {
+//                  item.setIdentifier(alias(className) + "_" + (id++));
+//                  featureIdentifiers.put(fid, item);
+//              } else if (feature.getZone() != null) {
+//                  item.setIdentifier(fItem.getIdentifier());
+//                  featureIdentifiers.put(fid, item);
+//              } else {
+//                  item = fItem;
+//              }
+//              storeItem = false;
+//          } else if (className.equals("Reporter")) {
+//              Reporter reporter = (Reporter) obj;
+//              String rid = reporter.getIdentifier();
+//              Item rItem = (Item) reporterIdentifiers.get(rid);
+//              if (rItem == null) {
+//                  item.setIdentifier(alias(className) + "_" + (id++));
+//                  reporterIdentifiers.put(rid, item);
+//              } else if (reporter.getName() != null) {
+//                  item.setIdentifier(rItem.getIdentifier());
+//                  reporterIdentifiers.put(rid, item);
+//              } else {
+//                  item = rItem;
+//              }
+//              storeItem = false;
+//          } else
+        if (className.equals("DerivedBioAssayData")) {
             BioAssayData bad = (BioAssayData) obj;
             String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                 .getFilenameURI();
@@ -345,12 +378,13 @@ public class MageConverter extends FileConverter
                 rowNames = ((CompositeSequenceDimension) ddimension).getCompositeSequences();
             }
 
+            QuantitationTypeDimension qdimension =
+                (QuantitationTypeDimension) bad.getQuantitationTypeDimension(); //Q
+            List qtList = qdimension.getQuantitationTypes();
+
+
             BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension();  //B
             HasBioAssays.BioAssays_list colTypes = bdimension.getBioAssays();
-
-            QuantitationTypeDimension qdimension =
-                (QuantitationTypeDimension) bad.getQuantitationTypeDimension();//Q
-            List qtList = qdimension.getQuantitationTypes();
 
             boolean emptyFile = false;
             InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
@@ -370,7 +404,7 @@ public class MageConverter extends FileConverter
             // need to look into re-writing with better access to contents of BioDataCube.
             if ((rowNames.size() > 1) && (colTypes.size() > 1) && (qtList.size() > 1)) {
                 throw new IllegalArgumentException("All dimensions of BioDataCube were > 1 "
-                                                   + "is unlikely that the current code will "
+                                                   + "it is unlikely that the current code will "
                                                    + "work.");
             }
 
@@ -388,18 +422,17 @@ public class MageConverter extends FileConverter
                             storeTuple = true;
                             Item datum = makeItem("BioAssayDatum");
                             dataList.addRefId(datum.getIdentifier());
-                            datum.setReference("quantitationType", createItem(qt).getIdentifier());
+                            datum.setReference("quantitationType", createItem(qt, true));
                             if (feature instanceof Feature) {
-                                datum.setReference("designElement",
-                                               createItem(feature).getIdentifier());
+                                datum.setReference("designElement", createItem(feature, true));
                             } else if (feature instanceof Reporter) {
-                                datum.setReference("reporter", createItem(feature).getIdentifier());
+                                datum.setReference("reporter", createItem(feature, true));
                             } else if (feature instanceof CompositeSequence) {
-                                datum.setReference("compositeSequence", createItem(feature).getIdentifier());
+                                datum.setReference("compositeSequence", createItem(feature, true));
                             }
                             datum.setAttribute("value", value);
 
-                            datum.setReference("bioAssay", createItem(ba).getIdentifier());
+                            datum.setReference("bioAssay", createItem(ba, true));
                             storeItem(datum);
                         }
                     }
@@ -411,127 +444,25 @@ public class MageConverter extends FileConverter
                 item.setReference("bioDataValues", bdt.getIdentifier());
             }
         }
+
         if (storeItem) {
             storeItem(item);
         }
-        return item;
-    }
+        return item.getIdentifier();
+     }
 
 
-    /**
-     * Given MAGE ML describing an experiment and some independently produced normalised
-     * data, create DerivedBioAssay and associated objects and set links to data files.
-     * Files should have same names as existing data files plus some extension (defined
-     * by parameter).  Identifiers are created for the new objects of the form:
-     * classname:FlyMine:x
-     * @param reader access to original MAGE ML files
-     * @param newMageFile file to write altered MAGE ML to
-     * @param extension added to the end of normalised filenames
-     * @throws Exception of anything goes wrong
-     */
-    public static void processDerivedBioAssays(Reader reader, File newMageFile, String extension)
-        throws Exception {
-        MAGEJava mage = MageConverter.readMage(reader);
-        MageConverter.addDerivedBioAssays(mage, extension);
-        FileWriter fw = new FileWriter(newMageFile);
-        mage.writeMAGEML(fw);
-        fw.flush();
-        fw.close();
-    }
+    private String checkNameValueType(Object obj, HashMap map, String key) throws Exception  {
 
-
-    // will alter MAGEJava object in place
-    private static void addDerivedBioAssays(MAGEJava mage, String extension) {
-
-        Map mageIds = new HashMap();
-        Set dbas = new HashSet();
-        BioAssayData_package badPkg = mage.getBioAssayData_package();
-
-        Ratio ratio = new Ratio();
-        ratio.setIdentifier(nextMageIdentifier(mageIds, "QuantitationType"));
-        ratio.setName("Signal med ratio");
-        OntologyEntry dataType = new OntologyEntry();
-        dataType.setValue("Signal med ratio");
-        ratio.setDataType(dataType);
-        OntologyEntry scale = new OntologyEntry();
-        scale.setValue("linar_scale");
-        ratio.setScale(scale);
-        QuantitationType_package qtp = mage.getQuantitationType_package();
-        qtp.addToQuantitationType_list(ratio);
-        QuantitationTypeDimension qtDimension = new QuantitationTypeDimension();
-        qtDimension.setIdentifier(nextMageIdentifier(mageIds, "QuantitationTypeDimension"));
-        qtDimension.addToQuantitationTypes(ratio);
-
-
-        BioAssay_package baPkg = mage.getBioAssay_package();
-        Iterator bioAssayIter = baPkg.getBioAssay_list().iterator();
-        while (bioAssayIter.hasNext()) {
-            BioAssay bioAssay = (BioAssay) bioAssayIter.next();
-            if (bioAssay instanceof MeasuredBioAssay) {
-                DerivedBioAssay dba = new DerivedBioAssay();
-                dba.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssay"));
-
-                Iterator dataIter = ((MeasuredBioAssay) bioAssay)
-                    .getMeasuredBioAssayData().iterator();
-                while (dataIter.hasNext()) {
-                    MeasuredBioAssayData mbad = (MeasuredBioAssayData) dataIter.next();
-                    String fileName = ((BioDataCube) mbad.getBioDataValues()).getDataExternal()
-                        .getFilenameURI() + extension;
-//                  BioDataCube bdc = (BioDataCube)  mbad.getBioDataValues();
-//                  Order order = bdc.getOrder();
-//                  LOG.error ("order for measured biodatacube " + order);
-                    List colTypes = mbad.getQuantitationTypeDimension().getQuantitationTypes();
-                    List rowNames = null;
-
-
-                    // TODO identifiers
-
-                    // TODO BioAssayDimension.bioAssays
-                    // only seems to reference MeasuredBioAssay?
-
-                    DerivedBioAssayData dbad = new DerivedBioAssayData();
-                    dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));
-
-                    // dbad.BioDataValues
-                    //BioDataCube
-                    BioDataCube bdc = new BioDataCube();
-                    bdc.setValueOrder(2);
-                    DataExternal data = new DataExternal();
-                    data.setFilenameURI(fileName);
-                    bdc.setDataExternal(data);
-                    dbad.setBioDataValues(bdc);
-
-                    // dbad.DesignElementDimension
-                    dbad.setDesignElementDimension(mbad.getDesignElementDimension());
-
-                    // dbad.QuantitationTypeDimension
-                    // TODO look at what is done with this in Translator
-                    dbad.setQuantitationTypeDimension(qtDimension);
-
-                    // dbad.BioAssayDimension
-                    dbad.setBioAssayDimension(mbad.getBioAssayDimension());
-
-                    dba.addToDerivedBioAssayData(dbad);
-                    badPkg.addToBioAssayData_list(dbad);
-                    badPkg.addToQuantitationTypeDimension_list(qtDimension);
-                    dbas.add(dba);
-
-                    // TODO BioAssayMap??
-                }
+        TypeUtil.FieldInfo info = (TypeUtil.FieldInfo) map.get(key);
+        Method m = info.getGetter();
+        if (m.getParameterTypes().length == 0) {
+            Object value = m.invoke(obj, null);
+            if (value != null) {
+                return value.toString();
             }
         }
-        Experiment_package expPkg = mage.getExperiment_package();
-
-        Iterator dbaIter = dbas.iterator();
-        while (dbaIter.hasNext()) {
-            DerivedBioAssay bioAssay = (DerivedBioAssay) dbaIter.next();
-            baPkg.addToBioAssay_list(bioAssay);
-            Iterator expIter = expPkg.getExperiment_list().iterator();
-            while (expIter.hasNext()) {
-                Experiment exp = (Experiment) expIter.next();
-                exp.addToBioAssays(bioAssay);
-            }
-        }
+        return null;
     }
 
 

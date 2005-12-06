@@ -4,63 +4,63 @@
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:38"/>
     <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_2" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:39"/>
     <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
+    <reference name="information" ref_id="1_1"/>
+  </item>
+  <item id="0_4" class="http://www.flymine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:40"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_5" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:40"/>
     <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <attribute name="identifier" value="AR:41"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_6" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:42"/>
     <attribute name="name" value="900303 "/>
-    <attribute name="identifier" value="AR:41"/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_7" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:42"/>
     <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <attribute name="identifier" value="AR:43"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_8" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:44"/>
     <attribute name="name" value="900303 "/>
-    <attribute name="identifier" value="AR:43"/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_9" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:44"/>
     <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <attribute name="identifier" value="AR:45"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="0_10" class="http://www.flymine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="name" value="900303 "/>
-    <attribute name="identifier" value="AR:45"/>
-    <reference name="arrayDesign" ref_id="3_4"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_11" class="http://www.flymine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="name" value="900303 "/>
     <attribute name="identifier" value="AR:46"/>
-    <reference name="arrayDesign" ref_id="3_4"/>
+    <reference name="arrayDesign" ref_id="2_3"/>
     <reference name="information" ref_id="1_1"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/mage#ArrayManufacture">
@@ -69,22 +69,17 @@
     <collection name="arrays">
       <reference ref_id="0_0"/>
       <reference ref_id="0_2"/>
-      <reference ref_id="0_5"/>
+     <reference ref_id="0_4"/> 
+     <reference ref_id="0_5"/>
       <reference ref_id="0_6"/>
       <reference ref_id="0_7"/>
       <reference ref_id="0_8"/>
       <reference ref_id="0_9"/>
       <reference ref_id="0_10"/>
-      <reference ref_id="0_11"/>
+ 
     </collection>
   </item>
-  <item id="3_4" class="http://www.flymine.org/model/mage#PhysicalArrayDesign">
+  <item id="2_3" class="http://www.flymine.org/model/mage#PhysicalArrayDesign">
     <attribute name="identifier" value="A-AFFY-1"/> 
-    <collection name="propertySets">
-      <reference ref_id="2_3"/>
-    </collection>
-  </item>
-  <item id="2_3" class="http://www.flymine.org/model/mage#NameValueType">
-    <attribute name="name" value="Placeholder"/>
   </item>
 </items>
