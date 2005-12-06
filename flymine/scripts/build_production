@@ -10,7 +10,7 @@ use warnings;
 use Expect;
 use Getopt::Std;
 
-my $ant_command = "ant";
+my @ant_command = ("ant");
 
 my $dump_file_prefix;
 my $dump_host;
@@ -20,14 +20,15 @@ sub usage
 {
   die <<'EOF';
 usage:
-  $0 [-v] [-l | -r] dump_host dump_file_prefix conf_file
+  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix conf_file
 or
-  $0 [-v] [-l | -r] dump_host dump_file_prefix configuration_name
+  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix configuration_name
 
 flags:
  -v is passed to ant
  -l attempt to restart by reading the last dump file
  -r attempt to restart just after the last dump point _without_ loading a dump
+ -V set the release number to pass to ant (as -Drelease=release_number)
 
 example:
   $0 gollum /tmp/production_dump
@@ -37,10 +38,11 @@ EOF
 my $verbose = 0;
 my $load_last = 0;
 my $restart = 0;
+my $release;
 
 my %opts = ();
 
-getopts('vrl', \%opts);
+getopts('vrlV:', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
@@ -52,6 +54,11 @@ if ($opts{l}) {
 
 if ($opts{r}) {
   $restart = 1;
+}
+
+if ($opts{V}) {
+  $release=$opts{V};
+  push @ant_command, "-Drelease=$release"
 }
 
 if (@ARGV == 3) {
@@ -87,6 +94,9 @@ select $old_handle;
 
 
 my $flymine_properties = "$ENV{HOME}/flymine.properties";
+if (defined $release) {
+  $flymine_properties .= ".$release";
+}
 my @dump_command = qw[pg_dump -c];
 my @psql_command = qw[psql -q];
 
@@ -345,9 +355,9 @@ for my $action (@actions) {
   if ($seen_start_action) {
     if ($action_type eq 'run') {
       if ($verbose) {
-        run_and_check_status $ant_command, "-v", @action_args;
+        run_and_check_status @ant_command, "-v", @action_args;
       } else {
-        run_and_check_status $ant_command, @action_args;
+        run_and_check_status @ant_command, @action_args;
       }
     } else {
       if ($action_type eq 'dump') {
