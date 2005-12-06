@@ -14,6 +14,7 @@ import junit.framework.*;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
@@ -80,6 +81,7 @@ public class MageConverterTest extends TestCase
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
         MageConverter mc = new MageConverter(itemWriter);
+        mc.seenMap = new LinkedHashMap();
         mc.process(reader);
         mc.close();
 
@@ -91,42 +93,52 @@ public class MageConverterTest extends TestCase
     public void testCreateItemAttribute() throws Exception {
         converter.seenMap = new LinkedHashMap();
 
-        BioSequence bio = new BioSequence();
-        bio.setSequence("GATTACA");
-        bio.setIdentifier("bio_identifier");
+        HashMap map = new HashMap();
+        MockItemWriter itemWriter = new MockItemWriter(map);
+        MageConverter mc = new MageConverter(itemWriter);
+
+        String s = "<BioSequence_package><BioSequence_assnlist> <BioSequence identifier=\"bio_identifier\" sequence=\"GATTACA\"></BioSequence></BioSequence_assnlist></BioSequence_package>";
+        StringReader sr = new StringReader(s);
+        mc.process(sr);
+        mc.close();
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
         expected.setIdentifier("0_0");
         expected.setAttribute("sequence", "GATTACA");
         expected.setAttribute("identifier", "bio_identifier");
+        Set expSet = new HashSet(Arrays.asList(new Object[] {expected}));
+        assertEquals(expSet, itemWriter.getItems());
 
-        assertEquals(expected, converter.createItem(bio));
     }
 
-    public void testCreateItemReferenceInnerClass() throws Exception {
-        converter.seenMap = new LinkedHashMap();
+    //ignore this test, MAGEJava has deprecated setNameByValueBasis
+   //   public void testCreateItemReferenceInnerClass() throws Exception {
+//          converter.seenMap = new LinkedHashMap();
 
-        SeqFeature s1 = new SeqFeature();
-        s1.setNameByValueBasis(2);
+//          SeqFeature s1 = new SeqFeature();
+//          s1.setNameByValueBasis(2);
 
-        Item expected = new Item();
-        expected.setClassName(ns + "SeqFeature");
-        expected.setIdentifier("0_0");
-        expected.setAttribute("basis", "both");
-        expected.setAttribute("nameBasis", "both");
-        expected.setAttribute("valueBasis", "2");
+//          Item expected = new Item();
+//          expected.setClassName(ns + "SeqFeature");
+//          expected.setIdentifier("0_0");
+//          expected.setAttribute("basis", "both");
+//          expected.setAttribute("nameBasis", "both");
+//          expected.setAttribute("valueBasis", "2");
 
-        assertEquals(expected, converter.createItem(s1));
-    }
+//          assertEquals(expected, converter.createItem(s1));
+//      }
 
     public void testCreateItemReference() throws Exception {
         converter.seenMap = new LinkedHashMap();
 
-        BioSequence bio = new BioSequence();
-        OntologyEntry o1 = new OntologyEntry();
-        o1.setValue("Term");
-        bio.setPolymerType(o1);
+        HashMap map = new HashMap();
+        MockItemWriter itemWriter = new MockItemWriter(map);
+        MageConverter mc = new MageConverter(itemWriter);
+        String s = "<BioSequence_package><BioSequence_assnlist><BioSequence><PolymerType_assn><OntologyEntry value=\"Term\" ></OntologyEntry></PolymerType_assn></BioSequence></BioSequence_assnlist></BioSequence_package>";
+        StringReader sr = new StringReader(s);
+        mc.process(sr);
+        mc.close();
 
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
@@ -142,21 +154,23 @@ public class MageConverterTest extends TestCase
         ref.setName("polymerType");
         ref.setRefId("1_1");
         expected.addReference(ref);
+        Set expSet = new HashSet(Arrays.asList(new Object[] {expected, item2}));
 
-        assertEquals(expected, converter.createItem(bio));
+        assertEquals(expSet, itemWriter.getItems());
+
     }
 
     public void testCreateItemCollection() throws Exception {
         converter.seenMap = new LinkedHashMap();
 
-        BioSequence bio = new BioSequence();
-        DatabaseEntry d1 = new DatabaseEntry();
-        d1.setURI("www.test1.org");
-        DatabaseEntry d2 = new DatabaseEntry();
-        d2.setURI("www.test2.org");
-        bio.addToSequenceDatabases(d1);
-        bio.addToSequenceDatabases(d2);
+        HashMap map = new HashMap();
+        MockItemWriter itemWriter = new MockItemWriter(map);
+        MageConverter mc = new MageConverter(itemWriter);
+        String s = "<BioSequence_package><BioSequence_assnlist><BioSequence><SequenceDatabases_assnlist><DatabaseEntry URI=\"www.test1.org\"/><DatabaseEntry URI=\"www.test2.org\"/></SequenceDatabases_assnlist></BioSequence></BioSequence_assnlist></BioSequence_package>";
 
+        StringReader sr = new StringReader(s);
+        mc.process(sr);
+        mc.close();
         Item expected = new Item();
         expected.setClassName(ns + "BioSequence");
         expected.setIdentifier("0_0");
@@ -164,7 +178,7 @@ public class MageConverterTest extends TestCase
         item2.setClassName(ns + "DatabaseEntry");
         item2.setIdentifier("1_1");
         Attribute attr1 = new Attribute();
-        attr1.setName("uri");
+        attr1.setName("URI");
         attr1.setValue("www.test1.org");
         item2.addAttribute(attr1);
 
@@ -172,8 +186,8 @@ public class MageConverterTest extends TestCase
         item3.setClassName(ns + "DatabaseEntry");
         item3.setIdentifier("1_2");
         Attribute attr2 = new Attribute();
-        attr2.setName("uri");
-        attr2.setValue("www.test1.org");
+        attr2.setName("URI");
+        attr2.setValue("www.test2.org");
         item3.addAttribute(attr2);
 
         ReferenceList r1 = new ReferenceList();
@@ -181,9 +195,10 @@ public class MageConverterTest extends TestCase
         r1.addRefId("1_1");
         r1.addRefId("1_2");
         expected.addCollection(r1);
+        Set expSet = new HashSet(Arrays.asList(new Object[] {expected, item2, item3}));
 
+        assertEquals(expSet, itemWriter.getItems());
 
-        assertEquals(expected, converter.createItem(bio));
     }
 
     public void testBioAssayData() throws Exception {
@@ -192,112 +207,106 @@ public class MageConverterTest extends TestCase
         // only take two types should skip middle column of file
         mc.setQuantitationtypes("col1, col3");
 
-        MeasuredBioAssay mba = new MeasuredBioAssay();
-        BioAssayDimension dbaDim = new BioAssayDimension();
-        dbaDim.addToBioAssays(mba);
+        mc.seenMap = new LinkedHashMap();
+        String s = "<MAGE-ML>";
+        s += "<BioAssayData_package>";
 
-        DerivedBioAssayData dbad = new DerivedBioAssayData();
-        BioDataCube bdc=new BioDataCube();
+        s += "<BioAssayData_assnlist><DerivedBioAssayData identifier = \"dbad1\">" ;
+        s += "<BioDataValues_assn><BioDataCube order=\"DBQ\"><DataExternal_assn><DataExternal  filenameURI=\"test/mage_example_data\"/></DataExternal_assn></BioDataCube></BioDataValues_assn>" ;
+        s += "<BioAssayDimension_assnref><BioAssayDimension_ref identifier =\"bad1\"/></BioAssayDimension_assnref>";
 
-        bdc.setValueOrder(2);  // DBQ
-        DataExternal df=new DataExternal();
-        bdc.setDataExternal(df);
-        df.setFilenameURI("test/mage_example_data");
-        dbad.setBioAssayDimension(dbaDim);
-        dbad.setBioDataValues(bdc);
+        s += "<QuantitationTypeDimension_assn><QuantitationTypeDimension identifier =\"qtd\">" +
+            "<QuantitationTypes_assnreflist>" +
+             "<MeasuredSignal_ref identifier=\"ms1\"/><MeasuredSignal_ref identifier=\"ms2\"/><MeasuredSignal_ref identifier=\"ms3\"/>" +
+            "</QuantitationTypes_assnreflist>" +
+            "</QuantitationTypeDimension></QuantitationTypeDimension_assn>" ;
 
+        s += "<DesignElementDimension_assn><FeatureDimension identifier=\"fd1\"><ContainedFeatures_assnlist>" +
+            "<Feature identifier = \"f1\"><FeatureLocation_assn><FeatureLocation row=\"1\"  column=\"1\"></FeatureLocation></FeatureLocation_assn></Feature>" +
+            "<Feature identifier = \"f2\"><FeatureLocation_assn><FeatureLocation row=\"1\"  column=\"2\"></FeatureLocation></FeatureLocation_assn></Feature>" +
+            "</ContainedFeatures_assnlist></FeatureDimension></DesignElementDimension_assn>" ;
 
-        QuantitationTypeDimension qtd = new QuantitationTypeDimension();
-        MeasuredSignal qt1 = new MeasuredSignal();
-        qt1.setName("col1");
-        OntologyEntry oe1=new OntologyEntry();
-        oe1.setValue("type1");
-        qt1.setDataType(oe1);
-        qtd.addToQuantitationTypes(qt1);
-        MeasuredSignal qt2 = new MeasuredSignal();
-        qt2.setName("col2");
-        OntologyEntry oe2 = new OntologyEntry();
-        oe2.setValue("type2");
-        qt2.setDataType(oe2);
-        qtd.addToQuantitationTypes(qt2);
-        MeasuredSignal qt3 = new MeasuredSignal();
-        qt3.setName("col3");
-        OntologyEntry oe3=new OntologyEntry();
-        oe3.setValue("type3");
-        qt3.setDataType(oe3);
-        qtd.addToQuantitationTypes(qt3);
-        dbad.setQuantitationTypeDimension(qtd);
+        s += "</DerivedBioAssayData></BioAssayData_assnlist>";
 
-        FeatureDimension fd = new FeatureDimension();
-        FeatureLocation fl1 = new FeatureLocation();
-        fl1.setRow(new Integer (1));
-        fl1.setColumn(new Integer(1));
-        Feature f1 = new Feature();
-        f1.setFeatureLocation(fl1);
-        f1.setIdentifier("f1");
-        fd.addToContainedFeatures(f1);
-        FeatureLocation fl2 = new FeatureLocation();
-        fl2.setRow(new Integer(1));
-        fl2.setColumn(new Integer(2));
-        Feature f2 = new Feature();
-        f2.setFeatureLocation(fl2);
-        f2.setIdentifier("f2");
-        fd.addToContainedFeatures(f2);
-        dbad.setDesignElementDimension(fd);
+        s += "<BioAssayDimension_assnlist><BioAssayDimension identifier=\"bad1\">" +
+            "<BioAssays_assnreflist>" +
+            // "<MeasuredBioAssay_ref identifier=\"mba1\"/>" +
+            "<DerivedBioAssay_ref identifier=\"dba1\"/>" +
+            "</BioAssays_assnreflist>" +
+            "</BioAssayDimension>";
+        s += "</BioAssayDimension_assnlist></BioAssayData_package>";
+
+        s += "<BioAssay_package><BioAssay_assnlist>"
+            // + "<MeasuredBioAssay identifier=\"mba1\"/>"
+            + "<DerivedBioAssay identifier=\"dba1\"><DerivedBioAssayData_assnreflist><DerivedBioAssayData_ref identifier=\"dbad1\"/></DerivedBioAssayData_assnreflist></DerivedBioAssay>"
+            +"</BioAssay_assnlist></BioAssay_package> ";
+
+        s += "<QuantitationType_package><QuantitationType_assnlist>";
+        s += "<MeasuredSignal identifier=\"ms1\" name=\"col1\"><DataType_assn><OntologyEntry category=\"DataType\" value=\"type1\"></OntologyEntry></DataType_assn></MeasuredSignal>";
+        s += "<MeasuredSignal identifier=\"ms2\" name=\"col2\"><DataType_assn><OntologyEntry category=\"DataType\" value=\"type2\"></OntologyEntry></DataType_assn></MeasuredSignal>";
+        s += "<MeasuredSignal identifier=\"ms3\" name=\"col3\"><DataType_assn><OntologyEntry category=\"DataType\" value=\"type3\"></OntologyEntry></DataType_assn></MeasuredSignal>";
+        s += "</QuantitationType_assnlist></QuantitationType_package>";
+
+        s += "</MAGE-ML>";
+        StringReader sr = new StringReader(s);
+        mc.process(sr);
+        mc.close();
+
 
         Item expected = new Item();
         expected.setClassName(ns + "DerivedBioAssayData");
-        expected.setIdentifier("0_0");
+        expected.setIdentifier("2_2");
+        expected.addAttribute(createAttribute("identifier","dbad1"));
         expected.addReference(createReference("bioDataValues","11_17"));
         expected.addReference(createReference("quantitationTypeDimension", "8_10"));
-        expected.addReference(createReference("bioAssayDimension", "1_1"));
+        expected.addReference(createReference("bioAssayDimension", "0_0"));
         expected.addReference(createReference("designElementDimension", "3_3"));
-        mc.seenMap = new LinkedHashMap();
-        assertEquals(expected, mc.createItem(dbad));
 
         Item d=createItems(ns+"BioDataTuples","11_17", "");
         ReferenceList rl=new ReferenceList();
         rl.setName("bioAssayTupleData");
 
         Item d1=createItems(ns+"BioAssayDatum", "12_18","" );
-        d1.addReference(createReference("designElement", "5_5"));
+        d1.addReference(createReference("designElement", "4_4"));
         d1.addReference(createReference("quantitationType", "9_11"));
-        d1.addReference(createReference("bioAssay", "2_2"));
+        d1.addReference(createReference("bioAssay", "1_1"));
         d1.addAttribute(createAttribute("value", "1.006"));
         rl.addRefId(d1.getIdentifier());
 
         Item d2=createItems(ns+"BioAssayDatum", "12_19","" );
-        d2.addReference(createReference("designElement", "5_5"));
+        d2.addReference(createReference("designElement", "4_4"));
         d2.addReference(createReference("quantitationType", "9_15"));
-        d2.addReference(createReference("bioAssay", "2_2"));
+        d2.addReference(createReference("bioAssay","1_1"));
         d2.addAttribute(createAttribute("value", "234"));
         rl.addRefId(d2.getIdentifier());
 
         Item d3=createItems(ns+"BioAssayDatum", "12_20","" );
-        d3.addReference(createReference("designElement", "5_7"));
+        d3.addReference(createReference("designElement", "4_6"));
         d3.addReference(createReference("quantitationType", "9_11"));
-        d3.addReference(createReference("bioAssay", "2_2"));
+        d3.addReference(createReference("bioAssay", "1_1"));
         d3.addAttribute(createAttribute("value", "435.223"));
         rl.addRefId(d3.getIdentifier());
 
         Item d4=createItems(ns+"BioAssayDatum", "12_21","" );
-        d4.addReference(createReference("designElement", "5_7"));
+        d4.addReference(createReference("designElement", "4_6"));
         d4.addReference(createReference("quantitationType", "9_15"));
-        d4.addReference(createReference("bioAssay", "2_2"));
+        d4.addReference(createReference("bioAssay","1_1"));
         d4.addAttribute(createAttribute("value", "523"));
         rl.addRefId(d4.getIdentifier());
         d.addCollection(rl);
 
 
-        Set expSet = new HashSet(Arrays.asList(new Object[] {d, d1, d2, d3, d4}));
+        Set expSet = new HashSet(Arrays.asList(new Object[] {expected, d, d1, d2, d3, d4}));
         Set results = new HashSet();
 
         // only interested in BioAssayDatam and BioDataTuples items
-        mc.close();
+
         Iterator i = itemWriter.getItems().iterator();
         while(i.hasNext()) {
             Item item = (Item) i.next();
-            if (item.getClassName().endsWith("BioAssayDatum") || item.getClassName().endsWith("BioDataTuples")) {
+            if (item.getClassName().endsWith("BioAssayDatum")
+                || item.getClassName().endsWith("BioDataTuples")
+                || item.getClassName().endsWith("DerivedBioAssayData")) {
                 results.add(item);
             }
         }
@@ -307,16 +316,13 @@ public class MageConverterTest extends TestCase
     public void testIgnoreClass() throws Exception {
         converter.seenMap=new LinkedHashMap();
 
-        MAGEJava m1=new MAGEJava();
-        BioSequence bs=new BioSequence();
-        bs.setName("bsName");
-        BioSequence_package bsp=new BioSequence_package();
-        bsp.addToBioSequence_list(bs);
-        m1.setBioSequence_package(bsp);
-
-        OntologyEntry o1 = new OntologyEntry();
-        o1.setValue("Term");
-        bs.setPolymerType(o1);
+        HashMap map = new HashMap();
+        MockItemWriter itemWriter = new MockItemWriter(map);
+        MageConverter mc = new MageConverter(itemWriter);
+        String s = "<MAGE-ML identifier=\"MAGE:EBI\"><BioSequence_package><BioSequence_assnlist><BioSequence name=\"bsName\"><PolymerType_assn><OntologyEntry value=\"Term\" ></OntologyEntry></PolymerType_assn></BioSequence></BioSequence_assnlist></BioSequence_package></MAGE-ML>";
+        StringReader sr = new StringReader(s);
+        mc.process(sr);
+        mc.close();
 
         Item expected1=createItems(ns+"BioSequence", "0_0", "");
         expected1.addReference(createReference("polymerType", "1_1"));
@@ -326,15 +332,7 @@ public class MageConverterTest extends TestCase
 
         Set expSet = new HashSet(Arrays.asList(new Object[] {expected1, expected2}));
 
-        Set results = new HashSet();
-
-        converter.createItem(m1);
-        Iterator i = converter.seenMap.values().iterator();
-        while(i.hasNext()){
-            results.add((Item) i.next());
-        }
-        assertEquals(expSet, results);
-
+        assertEquals(expSet, itemWriter.getItems());
     }
 
     // TODO: No proper test created for this yet

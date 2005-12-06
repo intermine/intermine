@@ -699,8 +699,16 @@ public class MageDataTranslator extends DataTranslator
                 sampleToLabel.put(sampleId, label);
             } else {
                 throw new IllegalArgumentException("Unable to find label for sample: "
-                                                   + sampleId);
+                     + sampleId + " srcItem " + srcItem.getAttribute("identifier").getValue());
             }
+            //  try {
+//                  if (label != null) {
+//                      sampleToLabel.put(sampleId, label);
+//                  }
+//              } catch (IllegalArgumentException e){
+//                  System.err.println("Unable to find label for sample: "+sampleId);
+
+//              }
         }
     }
 
@@ -833,8 +841,7 @@ public class MageDataTranslator extends DataTranslator
                         }
                     } else {
                         Item tgtCharItem = createItem(tgtNs + "SampleCharacteristic", "");
-                        tgtCharItem.setAttribute("type", charItem.getAttribute("category")
-                                                 .getValue());
+                        tgtCharItem.setAttribute("type", category);
                         tgtCharItem.setAttribute("value", value);
                         charItems.add(tgtCharItem);
                         list.add(tgtCharItem.getIdentifier());
@@ -1039,7 +1046,7 @@ public class MageDataTranslator extends DataTranslator
      * @return updated MicroArrayResult
      */
     protected Item processMicroArrayResult(ResultHolder holder) {
-        Item maResult = itemFromResultHolder((ResultHolder) holder);;
+        Item maResult = itemFromResultHolder((ResultHolder) holder);
 
         String maResultId = maResult.getIdentifier();
         String experimentId = null;
