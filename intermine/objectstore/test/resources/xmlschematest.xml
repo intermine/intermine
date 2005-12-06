@@ -8,11 +8,15 @@
   <class name="org.intermine.model.xmlschematest.Company" is-interface="true">
     <attribute name="vatNumber" type="java.lang.Integer"/>
     <attribute name="name" type="java.lang.String"/>
+    <reference name="bank" referenced-type="org.intermine.model.xmlschematest.Bank"/>
+    <reference name="addressBook" referenced-type="org.intermine.model.xmlschematest.AddressBook_Company"/>
     <reference name="address" referenced-type="org.intermine.model.xmlschematest.Address_Company"/>
-    <reference name="addressBook" referenced-type="org.intermine.model.xmlschematest.AddressBook"/>
     <collection name="departments" referenced-type="org.intermine.model.xmlschematest.Department_Company"/>
   </class>
   <class name="org.intermine.model.xmlschematest.Employable" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <class name="org.intermine.model.xmlschematest.Bank" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
   </class>
   <class name="org.intermine.model.xmlschematest.Department_Company" is-interface="true">
@@ -24,7 +28,7 @@
     <attribute name="address" type="java.lang.String"/>
     <attribute name="identifier" type="java.lang.String"/>
   </class>
-  <class name="org.intermine.model.xmlschematest.AddressBook" is-interface="true">
+  <class name="org.intermine.model.xmlschematest.AddressBook_Company" is-interface="true">
     <collection name="addresss" referenced-type="org.intermine.model.xmlschematest.Address_Company"/>
   </class>
 </model>
