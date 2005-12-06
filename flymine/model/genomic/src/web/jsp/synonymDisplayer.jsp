@@ -25,7 +25,6 @@
                 <c:set var="linkProperty" value="${sourceName}.${genus}.${species}.url.prefix"/>
             </c:otherwise>
         </c:choose>
-        <br>
         <c:set var="href" value="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"/>
         <c:if test="${!empty WEB_PROPERTIES[linkProperty]
                       && (thisSynonym.type == 'identifier' 
