@@ -21,4 +21,5 @@
     <address ref="address_1"/>
   </addressBook>
   <address id="address_1" address="Company Street"/>
+  <bank name="bank1"/>
 </company>
