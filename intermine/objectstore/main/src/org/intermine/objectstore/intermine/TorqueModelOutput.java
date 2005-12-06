@@ -94,8 +94,10 @@ public class TorqueModelOutput
     protected String generate() throws ObjectStoreException {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>" + ENDL)
-            .append("<!DOCTYPE database SYSTEM \""
-                    + "http://jakarta.apache.org/turbine/dtd/database.dtd\">" + ENDL)
+            // ignore DTD - could get copy from classpath and write to tempfile adds a
+            // lot of hassle
+            //.append("<!DOCTYPE database SYSTEM \""
+            //        + "http://jakarta.apache.org/turbine/dtd/database.dtd\">" + ENDL)
             .append("<database name=\"\">" + ENDL);
 
         Iterator iter = schema.getModel().getClassDescriptors().iterator();
@@ -129,7 +131,7 @@ public class TorqueModelOutput
             .append(INDENT + INDENT + "<unique-column name=\"key\"/>" + ENDL)
             .append(INDENT + "</unique>" + ENDL)
             .append(INDENT + "</table>" + ENDL);
-        
+
         sb.append("</database>" + ENDL);
         return sb.toString();
     }
