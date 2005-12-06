@@ -31,11 +31,11 @@ public class XmlMetaDataTest extends TestCase
     public void testReferenceElements() throws Exception {
         assertTrue(xmlInfo.isReferenceElement("company/department/employee/businessAddress"));
         assertTrue(xmlInfo.isReferenceElement("company/department/manager/businessAddress"));
-        assertTrue(xmlInfo.isReferenceElement("addressBook/address"));
+        assertTrue(xmlInfo.isReferenceElement("company/addressBook/address"));
 
         assertEquals("ref", xmlInfo.getReferenceElementField("company/department/employee/businessAddress"));
         assertEquals("ref", xmlInfo.getReferenceElementField("company/department/manager/businessAddress"));
-        assertEquals("ref", xmlInfo.getReferenceElementField("addressBook/address"));
+        assertEquals("ref", xmlInfo.getReferenceElementField("company/addressBook/address"));
     }
 
     public void testKeyRef() throws Exception {
@@ -60,7 +60,7 @@ public class XmlMetaDataTest extends TestCase
         assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/address"));
         assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/department/manager/businessAddress"));
         assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/department/employee/businessAddress"));
-        assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("addressBook/address"));
+        assertEquals("Address_Company", xmlInfo.getClsNameFromXPath("company/addressBook/address"));
     }
 }
 
