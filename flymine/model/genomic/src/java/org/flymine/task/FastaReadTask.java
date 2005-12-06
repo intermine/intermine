@@ -15,7 +15,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
 
-import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 
 import java.io.BufferedReader;
