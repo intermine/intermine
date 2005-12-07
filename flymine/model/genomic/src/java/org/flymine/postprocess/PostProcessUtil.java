@@ -287,10 +287,11 @@ public class PostProcessUtil
         res.setBatchSize(500);
         return res.iterator();
     }
-
+    
     /**
-     * Query ObjectStore for all Location object between given object and
-     * subject classes.  Return an iterator over the results ordered by subject.
+     * Query ObjectStore for all Location object between given object (eg. Chromosome) and
+     * subject (eg. Gene) classes.  Return an iterator over the results ordered by subject if
+     * orderBySubject is true, otherwise order by object.
      * @param os the ObjectStore to find the Locations in
      * @param objectCls object type of the Location
      * @param subjectCls subject type of the Location
@@ -299,8 +300,8 @@ public class PostProcessUtil
      * @return a Results object: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
-    public static Results findLocations(ObjectStore os, Class objectCls, Class subjectCls,
-                                        boolean orderBySubject)
+    public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
+                                                 boolean orderBySubject)
         throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
@@ -319,6 +320,47 @@ public class PostProcessUtil
         if (orderBySubject) {
             q.addToOrderBy(qcSub);
         }
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+        q.addToSelect(qcLoc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
+        cs.addConstraint(cc1);
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
+        cs.addConstraint(cc2);
+
+        q.setConstraint(cs);
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+
+        return res;
+    }
+    /**
+     * Query ObjectStore for all Location object between given object (eg. Chromosome) and
+     * subject classes (eg. Gene).  Return an iterator over the results ordered by object
+     * @param os the ObjectStore to find the Locations in
+     * @param objectCls object type of the Location
+     * @param subjectCls subject type of the Location
+     * @return a Results object: object.id, location
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Results findLocations(ObjectStore os, Class objectCls, Class subjectCls)
+        throws ObjectStoreException {
+        // TODO check objectCls and subjectCls assignable to BioEntity
+
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcObj = new QueryClass(objectCls);
+        QueryField qfObj = new QueryField(qcObj, "id");
+        q.addFrom(qcObj);
+        q.addToSelect(qfObj);
+        q.addToOrderBy(qfObj);
+
+        QueryClass qcSub = new QueryClass(subjectCls);
+        q.addFrom(qcSub);
+
         QueryClass qcLoc = new QueryClass(Location.class);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);

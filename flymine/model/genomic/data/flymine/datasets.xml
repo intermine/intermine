@@ -1,18 +1,10 @@
 <?xml version="1.0"?>
 <items>
     <item id="0" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="ensembl"/>
+        <attribute name="name" value="FlyMine"/>
         <attribute name="description"
-            value="The Ensembl eukaryotic genome annotation database"/>
-        <attribute name="url" value="http://www.ensembl.org"/>
-    </item>
-    <item id="1" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Ensembl Anopheles"/>
-        <attribute name="description"
-            value="The Ensembl Anopheles gambiae genome annotation"/>
-        <attribute name="version" value="32.2g"/>
-        <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
-        <reference name="dataSource" ref_id="0"/>
+            value="The FlyMine Drosophila and Anopheles data warehouse"/>
+        <attribute name="url" value="http://www.flymine.org"/>
     </item>
 
     <item id="10" class="" implements="http://www.flymine.org/model/genomic#DataSource">
@@ -297,4 +289,22 @@
             value="To provide structural (and hence implied functional) assignments to protein sequences at the superfamily level."/>
         <attribute name="url" value="http://supfam.mrc-lmb.cam.ac.uk/SUPERFAMILY/"/>
     </item>
+
+    <item id="210" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="ensembl"/>
+        <attribute name="description"
+            value="The Ensembl eukaryotic genome annotation database"/>
+        <attribute name="url" value="http://www.ensembl.org"/>
+    </item>
+    <item id="201" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Ensembl Anopheles"/>
+        <attribute name="description"
+            value="The Ensembl Anopheles gambiae genome annotation"/>
+        <attribute name="version" value="32.2g"/>
+        <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
+        <reference name="dataSource" ref_id="210"/>
+    </item>
+
+
+
 </items>

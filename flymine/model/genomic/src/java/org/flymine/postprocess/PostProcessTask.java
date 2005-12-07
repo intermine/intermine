@@ -156,6 +156,10 @@ public class PostProcessTask extends Task
                 LOG.info("Starting CalculateLocations.createSpanningLocations()");
                 cl.createSpanningLocations(Transcript.class, Exon.class, "exons");
                 cl.createSpanningLocations(Gene.class, Transcript.class, "transcripts");
+            } else if ("create-intergenic-region-features".equals(operation)) {
+                IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
+                LOG.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
+                ig.createIntergenicRegionFeatures();
             } else if ("update-publications".equals(operation)) {
                 if (objectStore == null) {
                     throw new BuildException("objectStore attribute is not set");
