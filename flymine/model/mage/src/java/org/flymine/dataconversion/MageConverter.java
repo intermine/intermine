@@ -37,6 +37,7 @@ import org.biomage.DesignElement.Feature;
 import org.biomage.DesignElement.Reporter;
 import org.biomage.DesignElement.CompositeSequence;
 import org.biomage.BioAssay.BioAssay;
+import org.biomage.BioAssayData.BioAssayData;
 import org.biomage.BioAssayData.BioDataCube;
 import org.biomage.BioAssayData.BioAssayDimension;
 import org.biomage.BioAssayData.DesignElementDimension;
