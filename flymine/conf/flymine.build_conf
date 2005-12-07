@@ -27,7 +27,7 @@ run: build-phenotype-production build-orthologues-production build-protein_struc
 
 dump: load-stage-2
 
-run: build-flyreg-production build-long_oligo-production analyse-db-production build-tiling_path-production
+run: build-flyreg-production build-long_oligo-production analyse-db-production build-tiling_path-production 
 
 dump: load-stage-3
 
@@ -44,6 +44,7 @@ run: create-utr-references
 run: read-flybase-chromosome-fasta calculate-locations create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
 run: homophila-post-process
+run: create-intergenic-region-features
 run: create-indexes-production-attribute
 
 dump: postprocess-1

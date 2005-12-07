@@ -92,7 +92,7 @@ public class CalculateLocations
      * Fix the Locations that connect objectCls and subjectCls objects.
      */
     private void fixPartials(Class objectCls, Class subjectCls) throws Exception {
-        Results results = PostProcessUtil.findLocations(os, objectCls, subjectCls, true);
+        Results results = PostProcessUtil.findLocationAndObjects(os, objectCls, subjectCls, true);
         results.setBatchSize(500);
 
         osw.beginTransaction();
@@ -268,7 +268,7 @@ public class CalculateLocations
 
         // 4. For all BioEntities located on Contigs compute other offsets on all parents
         Results results =
-            PostProcessUtil.findLocations(os, Contig.class, BioEntity.class, false);
+            PostProcessUtil.findLocationAndObjects(os, Contig.class, BioEntity.class, false);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
@@ -972,7 +972,7 @@ public class CalculateLocations
      */
     private void makeChromosomeBandLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocations(os, Chromosome.class, ChromosomeBand.class, true);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, ChromosomeBand.class, true);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
@@ -998,7 +998,7 @@ public class CalculateLocations
      */
     private void makeSupercontigLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocations(os, Chromosome.class, Supercontig.class, true);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Supercontig.class, true);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
@@ -1051,7 +1051,7 @@ public class CalculateLocations
      */
     private void makeContigLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocations(os, Supercontig.class, Contig.class, true);
+            PostProcessUtil.findLocationAndObjects(os, Supercontig.class, Contig.class, true);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
@@ -1243,7 +1243,7 @@ public class CalculateLocations
      * @throws Exception if anything goes wrong
      */
     public void setChromosomeLocationsAndLengths() throws Exception {
-        Results results = PostProcessUtil.findLocations(os, Chromosome.class,
+        Results results = PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
         results.setBatchSize(2000);
         Iterator resIter = results.iterator();

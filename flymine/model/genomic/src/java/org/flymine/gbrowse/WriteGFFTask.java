@@ -106,7 +106,7 @@ public class WriteGFFTask extends Task
     void writeGFF(ObjectStore os, File destinationDirectory)
         throws ObjectStoreException, IOException, IllegalSymbolException {
         Results results =
-            PostProcessUtil.findLocations(os, Chromosome.class, BioEntity.class, false);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, BioEntity.class, false);
 
         results.setBatchSize(2000);
 

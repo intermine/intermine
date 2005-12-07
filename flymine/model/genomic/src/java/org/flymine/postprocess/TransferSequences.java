@@ -62,7 +62,8 @@ public class TransferSequences
         osw.beginTransaction();
         ObjectStore os = osw.getObjectStore();
 
-        Results results = PostProcessUtil.findLocations(os, Chromosome.class, Contig.class, false);
+        Results results = 
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Contig.class, false);
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
 
@@ -130,7 +131,7 @@ public class TransferSequences
         ObjectStore os = osw.getObjectStore();
         osw.beginTransaction();
 
-        Results results = PostProcessUtil.findLocations(os, Chromosome.class,
+        Results results = PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
         results.setBatchSize(500);
 

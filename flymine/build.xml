@@ -2268,6 +2268,13 @@
     <mappings operation="create-oligo-locations" objectStoreWriter="osw.production"/>
   </target>
 
+  <target name="create-intergenic-region-features" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="create-intergenic-region-features" objectStoreWriter="osw.production"/>
+  </target>
+
   <target name="create-overlap-relations-flymine" depends="compile-genomic-java-from-db">
     <taskdef name="create-overlap-relations"
              classname="org.flymine.postprocess.CreateOverlapRelationsTask">
