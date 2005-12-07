@@ -215,6 +215,7 @@ public class MageConverter extends FileConverter
             // are reffed in one xml file but not defined in the same file
             if (objId != null && refMap.containsKey(objId)) {
                 itemIdentifier = (String) refMap.get(objId);
+                storeItem = false;
             } else {
                 itemIdentifier = alias(className) + "_" + (id++);
             }
@@ -394,6 +395,9 @@ public class MageConverter extends FileConverter
             }
         }
 
+        if (seenMap.containsKey(objId)) {
+            storeItem = true;
+        }
         if (storeItem) {
             storeItem(item);
         }
