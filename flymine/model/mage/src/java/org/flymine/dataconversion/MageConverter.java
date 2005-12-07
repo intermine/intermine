@@ -402,6 +402,121 @@ public class MageConverter extends FileConverter
         return null;
     }
 
+    /**
+     * Given MAGE ML describing an experiment and some independently produced normalised
+     * data, create DerivedBioAssay and associated objects and set links to data files.
+     * Files should have same names as existing data files plus some extension (defined
+     * by parameter).  Identifiers are created for the new objects of the form:
+     * classname:FlyMine:x
+     * @param reader access to original MAGE ML files
+     * @param newMageFile file to write altered MAGE ML to
+     * @param extension added to the end of normalised filenames
+     * @throws Exception of anything goes wrong
+     */
+    public static void processDerivedBioAssays(Reader reader, File newMageFile, String extension)
+        throws Exception {
+        MAGEJava mage = MageConverter.readMage(reader);
+        MageConverter.addDerivedBioAssays(mage, extension);
+        FileWriter fw = new FileWriter(newMageFile);
+        mage.writeMAGEML(fw);
+        fw.flush();
+        fw.close();
+    }
+
+
+    // will alter MAGEJava object in place
+    private static void addDerivedBioAssays(MAGEJava mage, String extension) {
+
+        Map mageIds = new HashMap();
+        Set dbas = new HashSet();
+        BioAssayData_package badPkg = mage.getBioAssayData_package();
+
+        Ratio ratio = new Ratio();
+        ratio.setIdentifier(nextMageIdentifier(mageIds, "QuantitationType"));
+        ratio.setName("Signal med ratio");
+        OntologyEntry dataType = new OntologyEntry();
+        dataType.setValue("Signal med ratio");
+        ratio.setDataType(dataType);
+        OntologyEntry scale = new OntologyEntry();
+        scale.setValue("linar_scale");
+        ratio.setScale(scale);
+        QuantitationType_package qtp = mage.getQuantitationType_package();
+        qtp.addToQuantitationType_list(ratio);
+        QuantitationTypeDimension qtDimension = new QuantitationTypeDimension();
+        qtDimension.setIdentifier(nextMageIdentifier(mageIds, "QuantitationTypeDimension"));
+        qtDimension.addToQuantitationTypes(ratio);
+
+
+        BioAssay_package baPkg = mage.getBioAssay_package();
+        Iterator bioAssayIter = baPkg.getBioAssay_list().iterator();
+        while (bioAssayIter.hasNext()) {
+            BioAssay bioAssay = (BioAssay) bioAssayIter.next();
+            if (bioAssay instanceof MeasuredBioAssay) {
+                DerivedBioAssay dba = new DerivedBioAssay();
+                dba.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssay"));
+
+                Iterator dataIter = ((MeasuredBioAssay) bioAssay)
+                    .getMeasuredBioAssayData().iterator();
+                while (dataIter.hasNext()) {
+                    MeasuredBioAssayData mbad = (MeasuredBioAssayData) dataIter.next();
+                    String fileName = ((BioDataCube) mbad.getBioDataValues()).getDataExternal()
+                        .getFilenameURI() + extension;
+//                  BioDataCube bdc = (BioDataCube)  mbad.getBioDataValues();
+//                  Order order = bdc.getOrder();
+//                  LOG.error ("order for measured biodatacube " + order);
+                    List colTypes = mbad.getQuantitationTypeDimension().getQuantitationTypes();
+                    List rowNames = null;
+
+
+                    // TODO identifiers
+
+                    // TODO BioAssayDimension.bioAssays
+                    // only seems to reference MeasuredBioAssay?
+
+                    DerivedBioAssayData dbad = new DerivedBioAssayData();
+                    dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));
+
+                    // dbad.BioDataValues
+                    //BioDataCube
+                    BioDataCube bdc = new BioDataCube();
+                    bdc.setValueOrder(2);
+                    DataExternal data = new DataExternal();
+                    data.setFilenameURI(fileName);
+                    bdc.setDataExternal(data);
+                    dbad.setBioDataValues(bdc);
+
+                    // dbad.DesignElementDimension
+                    dbad.setDesignElementDimension(mbad.getDesignElementDimension());
+
+                    // dbad.QuantitationTypeDimension
+                    // TODO look at what is done with this in Translator
+                    dbad.setQuantitationTypeDimension(qtDimension);
+
+                    // dbad.BioAssayDimension
+                    dbad.setBioAssayDimension(mbad.getBioAssayDimension());
+
+                    dba.addToDerivedBioAssayData(dbad);
+                    badPkg.addToBioAssayData_list(dbad);
+                    badPkg.addToQuantitationTypeDimension_list(qtDimension);
+                    dbas.add(dba);
+
+                    // TODO BioAssayMap??
+                }
+            }
+        }
+        Experiment_package expPkg = mage.getExperiment_package();
+
+        Iterator dbaIter = dbas.iterator();
+        while (dbaIter.hasNext()) {
+            DerivedBioAssay bioAssay = (DerivedBioAssay) dbaIter.next();
+            baPkg.addToBioAssay_list(bioAssay);
+            Iterator expIter = expPkg.getExperiment_list().iterator();
+            while (expIter.hasNext()) {
+                Experiment exp = (Experiment) expIter.next();
+                exp.addToBioAssays(bioAssay);
+            }
+        }
+    }
 
     private static String nextMageIdentifier(Map mageIds, String clsName) {
         Integer nextId = (Integer) mageIds.get(clsName);
