@@ -235,7 +235,7 @@ sub load_db
   log_and_print `date`, "\n\n";
   log_and_print "finished load - now analysing\n\n";
 
-  run_and_check_status "ant", "analyse-db-production";
+  run_and_check_status @ant_command, "analyse-db-production";
 
   log_and_print `date`, "\n\n";
   log_and_print "finished analysing\n\n";
