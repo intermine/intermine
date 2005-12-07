@@ -75,14 +75,23 @@ public class MageConverterTest extends TestCase
     }
 
     public void testConvertMageML() throws Exception {
-        Reader reader = new InputStreamReader(getClass().getClassLoader().
-                 getResourceAsStream("test/mage_ml_example.xml"));
-
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
         MageConverter mc = new MageConverter(itemWriter);
         mc.seenMap = new LinkedHashMap();
+        mc.refMap = new LinkedHashMap();
+
+        Reader reader = new InputStreamReader(getClass().getClassLoader().
+                 getResourceAsStream("test/mage_ml_example.xml"));
+
         mc.process(reader);
+        System.err.println("seenMap " + mc.seenMap);
+        System.err.println("refMap " + mc.refMap);
+        reader = new InputStreamReader(getClass().getClassLoader().
+                 getResourceAsStream("test/mage_ml_example1.xml"));
+        mc.process(reader);
+        System.err.println("seenMap " + mc.seenMap);
+        System.err.println("refMap " + mc.refMap);
         mc.close();
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().

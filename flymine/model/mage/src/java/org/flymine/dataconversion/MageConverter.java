@@ -78,7 +78,7 @@ public class MageConverter extends FileConverter
     protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
 
     protected HashMap seenMap;
-    protected HashMap refMap;
+    protected HashMap refMap = new LinkedHashMap();
     protected HashMap padIdentifiers = new HashMap();
     protected HashMap featureIdentifiers = new HashMap();
     protected HashMap reporterIdentifiers = new HashMap();
@@ -99,7 +99,7 @@ public class MageConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         seenMap = new LinkedHashMap();
-        refMap = new LinkedHashMap();
+
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
@@ -204,6 +204,7 @@ public class MageConverter extends FileConverter
             objId = ((Identifiable) obj).getIdentifier();
         }
 
+        //seenMap: key=objId/Obj value=item.identifier
         if (objId != null && seenMap.containsKey(objId)) {
             return  (String) seenMap.get(objId);
         } else if (objId == null && seenMap.containsKey(obj)) {
