@@ -403,9 +403,14 @@ public class MainHelper
             if ("Date".equals(className)) {
                 cls = Date.class;
             } else {
-                try {
-                    cls = Class.forName("java.lang." + className);
-                } catch (Exception e) {
+                if ("BigDecimal".equals(className)) {
+                    cls = BigDecimal.class;
+                } else {
+                    try {
+                        cls = Class.forName("java.lang." + className);
+                    } catch (Exception e) {
+                        throw new RuntimeException("unknown class: " + className);
+                    }
                 }
             }
         }
