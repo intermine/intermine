@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!--<!DOCTYPE MAGE-ML  SYSTEM "MAGE-ML.dtd">-->
+<MAGE-ML identifier="MAGE:EBI:MIAMExpress:mzenke:DC diff - CDs:48">
+  <ArrayDesign_package>
+     <ArrayDesign_assnlist>
+      <PhysicalArrayDesign identifier="A-AFFY-1"
+                           version="1"
+                           name="EMBL H. sapiens HU51_A_001 array">
+      </PhysicalArrayDesign>
+    </ArrayDesign_assnlist>
+  </ArrayDesign_package>
+</MAGE-ML>
