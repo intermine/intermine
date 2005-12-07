@@ -77,11 +77,8 @@ public class MageConverter extends FileConverter
 
     protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
 
-    protected HashMap seenMap;
+    protected HashMap seenMap = new LinkedHashMap();
     protected HashMap refMap = new LinkedHashMap();
-    protected HashMap padIdentifiers = new HashMap();
-    protected HashMap featureIdentifiers = new HashMap();
-    protected HashMap reporterIdentifiers = new HashMap();
     protected ItemFactory itemFactory;
     protected Set qTypes = new HashSet();
     protected int id = 0;
@@ -98,13 +95,12 @@ public class MageConverter extends FileConverter
      * @see FileConverter#process
      */
     public void process(Reader reader) throws Exception {
-        seenMap = new LinkedHashMap();
-
         opCount = 0;
         time = System.currentTimeMillis();
         start = time;
 
         createItem(MageConverter.readMage(reader), true);
+        LOG.error("refMap " + refMap);
     }
 
     /**
@@ -164,22 +160,6 @@ public class MageConverter extends FileConverter
      */
     public void close() throws Exception {
 
-        long now = System.currentTimeMillis();
-        storeItems(padIdentifiers.values());
-        //System.err .println("padIdentifiers.keys() " + padIdentifiers.keySet());
-        //System.err .println("padIdentifiers.values() " + padIdentifiers.values());
-        LOG.info("store padIdentifiers " + padIdentifiers.values().size()
-                 + " in " + (System.currentTimeMillis() - now) + " ms");
-
-        now = System.currentTimeMillis();
-        storeItems(featureIdentifiers.values());
-        LOG.info("store featureIdentifiers " + featureIdentifiers.values().size()
-                 + " in " + (System.currentTimeMillis() - now) + " ms");
-
-        now = System.currentTimeMillis();
-        storeItems(reporterIdentifiers.values());
-        LOG.info("store reporterIdentifiers " + reporterIdentifiers.values().size()
-                 + " in " + (System.currentTimeMillis() - now) + " ms");
     }
 
 
@@ -204,7 +184,6 @@ public class MageConverter extends FileConverter
             objId = ((Identifiable) obj).getIdentifier();
         }
 
-        //seenMap: key=objId/Obj value=item.identifier
         if (objId != null && seenMap.containsKey(objId)) {
             return  (String) seenMap.get(objId);
         } else if (objId == null && seenMap.containsKey(obj)) {
@@ -229,6 +208,9 @@ public class MageConverter extends FileConverter
             }
 
             item.setIdentifier(itemIdentifier);
+            //seenMap: key=objId/Obj value=item.identifier
+            //seenMap only store item that is defined.
+            //objId will be removed in later stage if not defined
             if (objId != null) {
                 seenMap.put(objId, item.getIdentifier());
             } else {
@@ -272,6 +254,7 @@ public class MageConverter extends FileConverter
                                     && map.containsKey("type")
                                     && checkNameValueType(mageObj, map, "type") == null) {
                                     refMap.put(objId, itemIdentifier);
+                                    seenMap.remove(objId);
                                     createItem(mageObj, false);
                                 }
                             } else {
@@ -304,54 +287,7 @@ public class MageConverter extends FileConverter
 
         }
 
- //           if (className.equals("PhysicalArrayDesign")) {
-//              // if item does not have name set it is a placeholder do not want to store
-//              PhysicalArrayDesign pad = (PhysicalArrayDesign) obj;
-//              String padId = pad.getIdentifier();
-//              Item padItem = (Item) padIdentifiers.get(padId);
-//              if (padItem == null) {
-//                  item.setIdentifier(alias(className) + "_" + (id++));
-//                  padIdentifiers.put(padId, item);
-//              } else if (pad.getName() != null) {
-//                  item.setIdentifier(padItem.getIdentifier());
-//                  padIdentifiers.put(padId, item);
-//              } else {
-//                  item = padItem;
-//              }
-//              storeItem = false;
-//          } else if (className.equals("Feature")) {
-//              // Features can appear in both experiment file and array design file
-//              // but should only be one item - store in map until end of run.  If
-//              // zone is defined the we have Feature from array design file - this
-//              // it the one we want to keep.
-//              Feature feature = (Feature) obj;
-//              String fid = feature.getIdentifier();
-//              Item fItem = (Item) featureIdentifiers.get(fid);
-//              if (fItem == null) {
-//                  item.setIdentifier(alias(className) + "_" + (id++));
-//                  featureIdentifiers.put(fid, item);
-//              } else if (feature.getZone() != null) {
-//                  item.setIdentifier(fItem.getIdentifier());
-//                  featureIdentifiers.put(fid, item);
-//              } else {
-//                  item = fItem;
-//              }
-//              storeItem = false;
-//          } else if (className.equals("Reporter")) {
-//              Reporter reporter = (Reporter) obj;
-//              String rid = reporter.getIdentifier();
-//              Item rItem = (Item) reporterIdentifiers.get(rid);
-//              if (rItem == null) {
-//                  item.setIdentifier(alias(className) + "_" + (id++));
-//                  reporterIdentifiers.put(rid, item);
-//              } else if (reporter.getName() != null) {
-//                  item.setIdentifier(rItem.getIdentifier());
-//                  reporterIdentifiers.put(rid, item);
-//              } else {
-//                  item = rItem;
-//              }
-//              storeItem = false;
-//          } else
+
         if (className.equals("DerivedBioAssayData")) {
             BioAssayData bad = (BioAssayData) obj;
             String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
@@ -433,7 +369,6 @@ public class MageConverter extends FileConverter
                                 datum.setReference("compositeSequence", createItem(feature, true));
                             }
                             datum.setAttribute("value", value);
-
                             datum.setReference("bioAssay", createItem(ba, true));
                             storeItem(datum);
                         }
@@ -505,4 +440,5 @@ public class MageConverter extends FileConverter
             return s.replaceAll("\"", "\\\\\"");
         }
     }
+
 }
