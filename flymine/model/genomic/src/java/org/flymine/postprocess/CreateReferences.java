@@ -129,11 +129,6 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            DatabaseUtil.analyse(db, false);
-        }
-
         LOG.info("insertReferences stage 11");
         insertGeneAnnotationReferences();
 
