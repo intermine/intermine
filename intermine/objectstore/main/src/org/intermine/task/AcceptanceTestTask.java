@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -159,46 +160,69 @@ public class AcceptanceTestTask extends Task
         pw.println("<html>");
         pw.println("<head><title>Acceptance Test Results</title></head>");
         pw.println("<body>");
-        pw.println("<h2>Failing tests:</h2>");
-        pw.println("<p>");
-
+        pw.println("<h1>Acceptance Test Results</h1>");
+        
         int testCount = 0;
-
-        boolean seenFailure = false;
-
+        
+        int failingTestsCount = 0;
+        
         for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
-            pw.println("<ul>");
-
             if (!atr.isSuccessful()) {
-                pw.println("<li><a href=\"#test" + testCount + "\">");
-                pw.println(atr.getTest().getSql());
-                pw.println("</a></li>");
-                seenFailure = true;
+                failingTestsCount++;
             }
 
             pw.println("</ul>");
 
             testCount++;
         }
+        
+        pw.println("<h2>Total tests: " + testCount + "</h2>");
+        if (testCount == 0) {
+            pw.println("</body></html>");
+            return;
+        }
+        pw.println("<h2>Failing tests: " + failingTestsCount + "</h2>");
+        pw.println("<h2>Percentage passed: " 
+                   + 100 * (testCount - failingTestsCount) / testCount + "%</h2>");        
+        
+        int count = 0;
+        
+        if (failingTestsCount > 0 ) {
+            pw.println("<hr/><h2>Failing tests:</h2>");
+            pw.println("<p>");
 
-        if (!seenFailure) {
-            pw.println("None");
+            for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
+                AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
+
+                pw.println("<ul>");
+
+                if (!atr.isSuccessful()) {
+                    pw.println("<li><a href=\"#test" + count + "\">");
+                    pw.println(atr.getTest().getSql());
+                    pw.println("</a></li>");
+                }
+
+                pw.println("</ul>");
+
+                count++;
+            }
         }
 
         pw.println("</p><hr/>");
 
-        testCount = 0;
+        count = 0;
 
         Iterator testResultsIter = testResults.iterator();
 
         while (testResultsIter.hasNext()) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
-            pw.println("<h2><a name=\"test" + testCount + "\">Testing: <font size=\"-1\">"
+            pw.println("<h2><a name=\"test" + count + "\">Testing: <font size=\"-1\">"
                        + atr.getTest().getSql() + "</font></a></h2>");
             pw.println("<h3>test type: " + atr.getTest().getType() + "</h3>");
+            pw.println("<p>(completed in " + atr.getTime()/1000.0 + " seconds)</p>");
             if (atr.getTest().getNote() != null) {
                 String hyperlinkedDescription = hyperLinkNote(atr.getTest().getNote());
                 pw.println("<h3>Description: " +  hyperlinkedDescription + "</h3>");
@@ -224,7 +248,7 @@ public class AcceptanceTestTask extends Task
 
             pw.println("<hr>");
 
-            testCount++;
+            count++;
         }
 
         testResultsIter = testResults.iterator();
@@ -380,15 +404,25 @@ public class AcceptanceTestTask extends Task
     private AcceptanceTestResult runTest(Connection con, AcceptanceTest test) {
         Statement sm = null;
         ResultSet rs = null;
+        long startTime = (new Date()).getTime();
         try {
+            con.setAutoCommit(false);
             sm = con.createStatement();
             sm.setFetchSize(1000);
             rs = sm.executeQuery(test.getSql());
-
-            AcceptanceTestResult atr = new AcceptanceTestResult(test, rs, con);
+            long endTime = (new Date()).getTime();
+            long totalTime = endTime - startTime;
+            AcceptanceTestResult atr = new AcceptanceTestResult(test, rs, totalTime, con);
             return atr;
         } catch (SQLException e) {
-            return new AcceptanceTestResult(test, e);
+            try {
+                con.rollback();
+            } catch (SQLException e2) {
+                throw new RuntimeException("couldn't rollback() transaction", e);
+            }
+            long endTime = (new Date()).getTime();
+            long totalTime = endTime - startTime;
+            return new AcceptanceTestResult(test, e, totalTime);
         } finally {
             try {
                 if (rs != null) {
@@ -519,15 +553,18 @@ class AcceptanceTestResult
     private List columnLabels = null;
     // a Map from InterMine ID to the corresponding entries in the tracker table
     private Map trackerMap = new HashMap();
+    private final long time;
 
     /**
      * Create a new AcceptanceTestResult object.
      * @param test the AcceptanceTest that generated this AcceptanceTestResult
      * @param rs the ResultSet generated by the query for this test
+     * @param time the time in seconds that the test took
      * @param con the database Connection - used to lookup IDs in the tracker table
      */
-    AcceptanceTestResult(AcceptanceTest test, ResultSet rs, Connection con) {
+    AcceptanceTestResult(AcceptanceTest test, ResultSet rs, long time, Connection con) {
         this.test = test;
+        this.time = time;
         try {
             results = copyResults(rs, test.getMaxResults().intValue());
 
@@ -573,6 +610,14 @@ class AcceptanceTestResult
     }
 
     /**
+     * Return the time taken in milliseconds to run the test
+     * @return the time taken
+     */
+    public long getTime() {
+        return time;
+    }
+    
+    /**
      * Get the rows from the tracker table that refer to the given id
      * @return the results as a List of Lists or null if there is an SQLException (which is stored
      * in sqlException)
@@ -605,10 +650,12 @@ class AcceptanceTestResult
      * Create a new AcceptanceTestResult object.
      * @param test the AcceptanceTest that generated this AcceptanceTestResult
      * @param sqlException the exception that occurred when running the test
+     * @param time the time in seconds that the test took
      */
-    AcceptanceTestResult(AcceptanceTest test, SQLException sqlException) {
+    AcceptanceTestResult(AcceptanceTest test, SQLException sqlException, long time) {
         this.test = test;
         this.sqlException = sqlException;
+        this.time = time;
     }
 
     /**
