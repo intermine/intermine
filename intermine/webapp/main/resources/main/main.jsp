@@ -17,7 +17,9 @@
     </td>
     
     <td valign="top">
-      <tiles:insert name="mainPaths.tile"/>
+      <div id="main-paths">
+        <tiles:insert name="mainPaths.tile"/>
+      </div>
       <tiles:insert page="/mainLogic.jsp"/>
     </td>
   </tr>
