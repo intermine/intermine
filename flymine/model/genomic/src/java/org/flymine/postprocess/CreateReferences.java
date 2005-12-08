@@ -217,7 +217,7 @@ public class CreateReferences
                  + createFieldName + ")");
 
         Iterator resIter =
-            PostProcessUtil.findRelations(osw.getObjectStore(),
+            PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           sourceClass, sourceClassFieldName,
                                           connectingClass, connectingClassFieldName,
                                           destinationClass, true);
@@ -303,7 +303,7 @@ public class CreateReferences
                  + createInFirstClass + ")");
 
         Iterator resIter =
-            PostProcessUtil.findRelations(osw.getObjectStore(),
+            PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
                                           connectingClass, connectingClassFieldName,
                                           secondClass, createInFirstClass);
@@ -394,7 +394,7 @@ public class CreateReferences
 
         InterMineObject lastObject = null;
         Set newCollection = new HashSet();
-        Iterator resIter = PostProcessUtil.findRelations(osw.getObjectStore(), thisClass,
+        Iterator resIter = PostProcessUtil.findConnectedClasses(osw.getObjectStore(), thisClass,
                                                          collectionClass, oldCollectionName);
         // results will be: thisClass ; collectionClass  (ordered by thisClass)
         osw.beginTransaction();
