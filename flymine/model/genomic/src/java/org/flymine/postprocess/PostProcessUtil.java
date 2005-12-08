@@ -78,25 +78,25 @@ public class PostProcessUtil
     }
 
     /**
-     * Query ObjectStore for all Relation objects (or specified subclass)
-     * between given object and any subject classes.  Return an iterator ordered
-     * by objectCls.
-     * e.g. Transcript -> Location
+     * Query ObjectStore for all objects that connect the given object and any subject classes.
+     * Return an iterator ordered by objectCls.
+     * e.g. To return Transcript and Location where Transcript.subjects CONTAINS Location pass
+     * Transcript.class, Location.class, "subjects"
      * @param os an ObjectStore to query
-     * @param objectCls object type of the Relation
-     * @param relationCls type of Relation
-     * @param colName name of collection in objectCls
+     * @param mainCls object type of the first class
+     * @param referredCls type of the second
+     * @param colName name of collection in mainCls that contains objects of type referredCls
      * @return an iterator over the results
      * @throws ObjectStoreException if problem reading ObjectStore
      */
-    public static Iterator findRelations(ObjectStore os, Class objectCls, Class relationCls,
-                                         String colName) throws ObjectStoreException {
+    public static Iterator findConnectedClasses(ObjectStore os, Class mainCls, Class referredCls,
+                                                String colName) throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(objectCls);
+        QueryClass qcObj = new QueryClass(mainCls);
         q.addFrom(qcObj);
         q.addToSelect(qcObj);
-        QueryClass qcRel = new QueryClass(relationCls);
+        QueryClass qcRel = new QueryClass(referredCls);
         q.addFrom(qcRel);
         q.addToSelect(qcRel);
         q.addToOrderBy(qcObj);
@@ -116,6 +116,9 @@ public class PostProcessUtil
     /**
      * Return an iterator over the results of a query that connects two classes by a third using
      * arbitrary fields.
+     * eg. To find Genes, Exon pairs where
+     *   "gene.transcripts CONTAINS transcript AND transcript.exons CONTAINS exon"
+     * pass Gene.class, "transcripts", Transcript.class, "exons", Exon.class
      * @param os an ObjectStore to query
      * @param sourceClass the first class in the query
      * @param sourceClassFieldName the field in the sourceClass which should contain the
@@ -131,10 +134,11 @@ public class PostProcessUtil
      * @throws IllegalAccessException if one of the field names doesn't exist in the corresponding
      * class.
      */
-    public static Iterator findRelations(ObjectStore os,
-                                         Class sourceClass, String sourceClassFieldName,
-                                         Class connectingClass, String connectingClassFieldName,
-                                         Class destinationClass, boolean orderBySource)
+    public static Iterator findConnectingClasses(ObjectStore os,
+                                                 Class sourceClass, String sourceClassFieldName,
+                                                 Class connectingClass, 
+                                                 String connectingClassFieldName,
+                                                 Class destinationClass, boolean orderBySource)
         throws ObjectStoreException, IllegalAccessException {
 
         Query q = new Query();
@@ -274,10 +278,8 @@ public class PostProcessUtil
      * @param os an ObjectStore to query
      * @param cls the class to select instances of
      * @return an iterator over the results
-     * @throws ObjectStoreException if problem running query
      */
-    public static Iterator selectObjectsOfClass(ObjectStore os, Class cls)
-        throws ObjectStoreException {
+    public static Iterator selectObjectsOfClass(ObjectStore os, Class cls) {
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qc = new QueryClass(cls);
