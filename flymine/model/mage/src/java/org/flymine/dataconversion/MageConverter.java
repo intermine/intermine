@@ -183,13 +183,14 @@ public class MageConverter extends FileConverter
      * @return the created item
      * @throws Exception if reflection problems occur
      */
-    protected String createItem(Object obj, boolean create) throws Exception {
+    protected int createItem(Object obj, boolean create) throws Exception {
         boolean storeItem = true;
         String objId = null;
-        String itemIdentifier = null;
+        int itemId = -1; //item identifier without namespace
+        Integer intItemId = new Integer(itemId);
 
         if (!create) {
-            return null;
+            return -1;
         }
 
         if (obj instanceof Identifiable) {
@@ -197,9 +198,9 @@ public class MageConverter extends FileConverter
         }
 
         if (objId != null && seenMap.containsKey(objId)) {
-            return  (String) seenMap.get(objId);
+            return  ((Integer) seenMap.get(objId)).intValue();
         } else if (objId == null && seenMap.containsKey(obj)) {
-            return  (String) seenMap.get(obj);
+            return  ((Integer) seenMap.get(obj)).intValue();
         }
 
         Class cls = obj.getClass();
@@ -214,20 +215,21 @@ public class MageConverter extends FileConverter
             //for storing those objects
             // are reffed in one xml file but not defined in the same file
             if (objId != null && refMap.containsKey(objId)) {
-                itemIdentifier = (String) refMap.get(objId);
+                itemId = ((Integer) refMap.get(objId)).intValue();
                 storeItem = false;
             } else {
-                itemIdentifier = alias(className) + "_" + (id++);
+                itemId = id++;
             }
 
-            item.setIdentifier(itemIdentifier);
+            item.setIdentifier(alias(className) + "_" + itemId);
+            intItemId = new Integer(itemId);
             //seenMap: key=objId/Obj value=item.identifier
             //seenMap only store item that is defined.
             //objId will be removed in later stage if not defined
             if (objId != null) {
-                seenMap.put(objId, item.getIdentifier());
+                seenMap.put(objId, intItemId);
             } else {
-                seenMap.put(obj, item.getIdentifier());
+                seenMap.put(obj, intItemId);
             }
 
         } else {
@@ -266,12 +268,12 @@ public class MageConverter extends FileConverter
                                     && checkNameValueType(mageObj, map, "value") == null
                                     && map.containsKey("type")
                                     && checkNameValueType(mageObj, map, "type") == null) {
-                                    refMap.put(objId, itemIdentifier);
+                                    refMap.put(objId, intItemId);
                                     seenMap.remove(objId);
                                     createItem(mageObj, false);
                                 }
                             } else {
-                                col.addRefId(createItem(mageObj, true));
+                                col.addRefId(findItemIdentifier(mageObj, true));
                             }
                         }
                         if (col.getRefIds().size() > 0) {
@@ -288,7 +290,7 @@ public class MageConverter extends FileConverter
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
                             }
                         } else {
-                            item.setReference(info.getName(), createItem(value, true));
+                            item.setReference(info.getName(), findItemIdentifier(value, true));
 
                         }
                     } else { // if (!info.getName().equals("identifier")) {
@@ -373,16 +375,16 @@ public class MageConverter extends FileConverter
                             storeTuple = true;
                             Item datum = makeItem("BioAssayDatum");
                             dataList.addRefId(datum.getIdentifier());
-                            datum.setReference("quantitationType", createItem(qt, true));
+                            datum.setReference("quantitationType", findItemIdentifier(qt, true));
                             if (feature instanceof Feature) {
-                                datum.setReference("designElement", createItem(feature, true));
+                                datum.setReference("designElement", findItemIdentifier(feature, true));
                             } else if (feature instanceof Reporter) {
-                                datum.setReference("reporter", createItem(feature, true));
+                                datum.setReference("reporter", findItemIdentifier(feature, true));
                             } else if (feature instanceof CompositeSequence) {
-                                datum.setReference("compositeSequence", createItem(feature, true));
+                                datum.setReference("compositeSequence", findItemIdentifier(feature, true));
                             }
                             datum.setAttribute("value", value);
-                            datum.setReference("bioAssay", createItem(ba, true));
+                            datum.setReference("bioAssay", findItemIdentifier(ba, true));
                             storeItem(datum);
                         }
                     }
@@ -401,7 +403,7 @@ public class MageConverter extends FileConverter
         if (storeItem) {
             storeItem(item);
         }
-        return item.getIdentifier();
+        return itemId;
      }
 
 
@@ -557,6 +559,12 @@ public class MageConverter extends FileConverter
 
     private void storeItem(Item item) throws Exception {
         writer.store(ItemHelper.convert(item));
+    }
+
+    private String findItemIdentifier(Object obj, boolean create) throws Exception {
+        String classname = TypeUtil.unqualifiedName(obj.getClass().getName());
+        int id = createItem(obj, create);
+        return alias(classname) + "_" + id;
     }
 
     /**
