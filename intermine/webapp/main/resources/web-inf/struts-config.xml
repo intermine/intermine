@@ -217,6 +217,7 @@
       <forward name="query" path="/query.do" redirect="true"/>
       <forward name="browserLines" path="/mainBrowserLines.jsp"/>
       <forward name="mainConstraint" path="mainConstraint.tile"/>
+      <forward name="queryPaths" path="mainPaths.tile"/>
     </action>
     
     <action path="/viewChange"
