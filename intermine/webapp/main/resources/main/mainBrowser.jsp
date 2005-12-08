@@ -8,6 +8,31 @@
 <!-- mainBrowser.jsp -->
 
 <html:xhtml/>
+
+<script>
+  function toggle(id, path) {
+    if ($(id).innerHTML=='') {
+      new Ajax.Updater(id, '<html:rewrite action="/mainChange"/>',
+        {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
+      $('img_'+path).src='images/minus.gif';
+    } else {
+      // still need to call mainChange
+      $('img_'+path).src='images/plus.gif';
+      path = path.substring(0, path.lastIndexOf('.'));
+      new Ajax.Request('<html:rewrite action="/mainChange"/>',
+        {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
+      $(id).innerHTML='';
+    }
+  }
+  
+  function addConstraint(path) {
+    new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
+      {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true});
+    new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
+      {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true});
+  }
+</script>
+
 <div class="heading">
   <fmt:message key="query.currentclass"/><im:helplink key="query.help.browser"/>
 </div>
