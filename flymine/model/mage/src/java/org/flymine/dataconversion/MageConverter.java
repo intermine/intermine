@@ -112,7 +112,8 @@ public class MageConverter extends FileConverter
         start = time;
 
         createItem(MageConverter.readMage(reader), true);
-        LOG.error("refMap " + refMap);
+        LOG.info("refMap.size: " + refMap.size());
+        LOG.info("seenMap.size: " + seenMap.size());
     }
 
     /**
@@ -210,8 +211,6 @@ public class MageConverter extends FileConverter
         item.setImplementations("");
 
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")
-            && !cls.getName().equals("org.biomage.DesignElement.FeatureInformation")
-            && !cls.getName().equals("org.biomage.DesignElement.MismatchInformation")
             && !className.endsWith("_package")) {
             //refMap: key=objId, value=itemIdentifier this map is only used
             //for storing those objects
@@ -276,7 +275,7 @@ public class MageConverter extends FileConverter
                                     seenMap.remove(objId);
                                     createItem(mageObj, false);
                                 }
-                            } else {
+                            } else if (!mageObj.getClass().getName().endsWith("MismatchInformation")){
                                 col.addRefId(findItemIdentifier(mageObj, true));
                             }
                         }
