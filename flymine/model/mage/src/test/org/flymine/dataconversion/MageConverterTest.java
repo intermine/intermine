@@ -96,6 +96,13 @@ public class MageConverterTest extends TestCase
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().
                  getResourceAsStream("test/MAGEConverterTest.xml")));
+        String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, itemWriter.getItems());
+        String actualNotExpected = "in actual, not expected: " + compareItemSets(itemWriter.getItems(), expected);
+
+        if (expectedNotActual.length() > 25) {
+            System.out.println(expectedNotActual);
+            System.out.println(actualNotExpected);
+        }
         assertEquals(expected, itemWriter.getItems());
     }
 
@@ -378,5 +385,21 @@ public class MageConverterTest extends TestCase
         String s1 = "something \"quoted\"";
         String s2 = converter.escapeQuotes(s1);
         assertEquals("something \\\"quoted\\\"", s2);
+    }
+
+    protected Set compareItemSets(Set a, Set b) {
+        Set diff = new HashSet(a);
+        Iterator i = a.iterator();
+        while (i.hasNext()) {
+            Item itemA = (Item) i.next();
+            Iterator j = b.iterator();
+            while (j.hasNext()) {
+                Item itemB = (Item) j.next();
+                if (itemA.equals(itemB)) {
+                    diff.remove(itemA);
+                }
+            }
+        }
+        return diff;
     }
 }
