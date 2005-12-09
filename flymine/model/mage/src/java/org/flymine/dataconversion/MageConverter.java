@@ -256,6 +256,7 @@ public class MageConverter extends FileConverter
             if (m.getParameterTypes().length == 0) {
                 Object value = m.invoke(obj, null);
                 if (value != null) {
+                    String returnName = m.getReturnType().getName();
                     if (Collection.class.isAssignableFrom(m.getReturnType())) {
                         ReferenceList col = new ReferenceList(info.getName());
                         for (Iterator j = ((Collection) value).iterator(); j.hasNext();) {
@@ -265,7 +266,8 @@ public class MageConverter extends FileConverter
                                 HashMap map = new HashMap(TypeUtil.getFieldInfos(
                                     mageObj.getClass()));
                                 if (map.containsKey("name")
-                                    && checkNameValueType(mageObj, map, "name").equals("Placeholder")
+                                    && checkNameValueType(mageObj, map, "name")
+                                    .equals("Placeholder")
                                     && map.containsKey("value")
                                     && checkNameValueType(mageObj, map, "value") == null
                                     && map.containsKey("type")
@@ -281,8 +283,8 @@ public class MageConverter extends FileConverter
                         if (col.getRefIds().size() > 0) {
                             item.addCollection(col);
                         }
-                    } else if (m.getReturnType().getName().startsWith("org.biomage")) {
-                        if (m.getReturnType().getName().startsWith(cls.getName() + "$")) {
+                    } else if (returnName.startsWith("org.biomage")) {
+                        if (returnName.startsWith(cls.getName() + "$")) {
                             Method getName = value.getClass().getMethod("getName", null);
                             String attValue = (String) getName.invoke(value, null);
                             if (attValue != null) {
@@ -291,9 +293,8 @@ public class MageConverter extends FileConverter
                                 LOG.warn("Null value for attribute " + info.getName() + " in Item "
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
                             }
-                        } else if (!m.getReturnType().getName().equals("org.biomage.DesignElement.Position")
-                             && !m.getReturnType().getName().equals("org.biomage.Measurement.DistanceUnit")){
-                            System.out.println("clsname "+m.getReturnType().getName());
+                        } else if (!returnName.equals("org.biomage.DesignElement.Position")
+                             && !returnName.equals("org.biomage.Measurement.DistanceUnit")) {
                             item.setReference(info.getName(), findItemIdentifier(value, true));
 
                         }
@@ -381,11 +382,13 @@ public class MageConverter extends FileConverter
                             dataList.addRefId(datum.getIdentifier());
                             datum.setReference("quantitationType", findItemIdentifier(qt, true));
                             if (feature instanceof Feature) {
-                                datum.setReference("designElement", findItemIdentifier(feature, true));
+                                datum.setReference("designElement",
+                                         findItemIdentifier(feature, true));
                             } else if (feature instanceof Reporter) {
                                 datum.setReference("reporter", findItemIdentifier(feature, true));
                             } else if (feature instanceof CompositeSequence) {
-                                datum.setReference("compositeSequence", findItemIdentifier(feature, true));
+                                datum.setReference("compositeSequence",
+                                         findItemIdentifier(feature, true));
                             }
                             datum.setAttribute("value", value);
                             datum.setReference("bioAssay", findItemIdentifier(ba, true));
