@@ -509,6 +509,9 @@ public class MageDataTranslator extends DataTranslator
             holder.reporterId = identifierToInt(srcItem.getReference("reporter").getRefId());
         }
 
+        // if (srcItem.hasReference("compositeSequence")) {
+        //    holder.reporterId = identifierToInt(srcItem.getReference("compositeSequence").getRefId());
+        //}
         if (srcItem.hasReference("quantitationType")) {
             Item qtItem = getReference(srcItem, "quantitationType");
 

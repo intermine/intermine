@@ -210,6 +210,8 @@ public class MageConverter extends FileConverter
         item.setImplementations("");
 
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")
+            && !cls.getName().equals("org.biomage.DesignElement.FeatureInformation")
+            && !cls.getName().equals("org.biomage.DesignElement.MismatchInformation")
             && !className.endsWith("_package")) {
             //refMap: key=objId, value=itemIdentifier this map is only used
             //for storing those objects
@@ -289,7 +291,9 @@ public class MageConverter extends FileConverter
                                 LOG.warn("Null value for attribute " + info.getName() + " in Item "
                                          + item.getClassName() + " (" + item.getIdentifier() + ")");
                             }
-                        } else {
+                        } else if (!m.getReturnType().getName().equals("org.biomage.DesignElement.Position")
+                             && !m.getReturnType().getName().equals("org.biomage.Measurement.DistanceUnit")){
+                            System.out.println("clsname "+m.getReturnType().getName());
                             item.setReference(info.getName(), findItemIdentifier(value, true));
 
                         }
