@@ -303,7 +303,12 @@ public class DisplayObject
                 tf.parseAttributeValues(template, session, new ActionErrors(), false);
 
                 PathQuery pathQuery = TemplateHelper.templateFormToQuery(tf, template);
-                Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
+                Query query;
+                try {
+                    query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
                 ServletContext servletContext = session.getServletContext();
                 ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
                 Results results;
