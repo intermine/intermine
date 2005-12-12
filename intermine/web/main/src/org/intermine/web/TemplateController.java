@@ -98,7 +98,7 @@ public class TemplateController extends TilesAction
             if (type == null) {
                 type = TemplateHelper.GLOBAL_TEMPLATE;
             }
-            template = TemplateHelper.findTemplate(request, queryName, type);
+            template = TemplateHelper.findTemplate(session, queryName, type);
         }
         
         if (template == null) {

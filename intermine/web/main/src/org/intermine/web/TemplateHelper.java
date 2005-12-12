@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -44,15 +43,15 @@ public class TemplateHelper
     /**
      * Locate TemplateQuery by identifier. The type parameter
      *
-     * @param request     the current http request
+     * @param session     the http session
      * @param identifier  template query identifier/name
      * @param type        type of tempate, either GLOBAL_TEMPLATE, SHARED_TEMPLATE or USER_TEMPLATE
      * @return            the located template query with matching identifier
      */
-    public static TemplateQuery findTemplate(HttpServletRequest request,
+    public static TemplateQuery findTemplate(HttpSession session,
                                              String identifier,
                                              String type) {
-        HttpSession session = request.getSession();
+
         ServletContext servletContext = session.getServletContext();
         Map templates = null;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

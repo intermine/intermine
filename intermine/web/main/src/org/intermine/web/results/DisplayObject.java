@@ -10,6 +10,33 @@ package org.intermine.web.results;
  *
  */
 
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.PrimaryKeyUtil;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.Constraint;
+import org.intermine.web.MainHelper;
+import org.intermine.web.PathQuery;
+import org.intermine.web.TemplateForm;
+import org.intermine.web.TemplateHelper;
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.WebConfig;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,19 +49,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.PrimaryKeyUtil;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.config.FieldConfig;
-import org.intermine.web.config.FieldConfigHelper;
-import org.intermine.web.config.WebConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionErrors;
 
 /**
  * Class to represent an object for display in the webapp
@@ -53,31 +71,41 @@ public class DisplayObject
     private Map references = null;
     private Map collections = null;
     private Map refsAndCollections = null;
+    private Map templateCounts = null;
     private List keyAttributes = null;
     private List keyReferences = null;
     private Map fieldConfigMap = null;
     private List fieldExprs = null;
-
-    Map verbosity = new HashMap();
+    private Map classTemplateExprs = null;
+    private HttpSession session;
+    private Map verbosity = new HashMap();
 
     /**
      * Create a new DisplayObject.
+     * @param session used to get the global and user templates for getTemplateCounts()
      * @param object the object to display
      * @param model the metadata for the object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayObject(InterMineObject object, Model model,
-                         WebConfig webConfig, Map webProperties) throws Exception {
+    public DisplayObject(HttpSession session,
+                         InterMineObject object, Model model,
+                         WebConfig webConfig, Map webProperties)
+        throws Exception {
         this.object = object;
         this.model = model;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
+        this.session = session;
 
+        ServletContext servletContext = session.getServletContext();
+        this.classTemplateExprs = 
+            (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);
+        
         clds = getLeafClds(object.getClass(), model);
     }
-    
+
     /**
      * Get the set of leaf ClassDescriptors for a given InterMineObject class.
      * @param clazz object type
@@ -187,6 +215,115 @@ public class DisplayObject
     }
 
     /**
+     * Return a Map from template name to a count of the number of results will be returned if the\
+     * template is run using this DisplayObject to fill in the editable fields.
+     * @return a Map of template counts
+     */
+    public Map getTemplateCounts() {
+        if (templateCounts == null) {
+            Map newTemplateCounts = new TreeMap();
+            
+            Map templateExprMap = new HashMap();
+
+            for (Iterator i = clds.iterator(); i.hasNext();) {
+                ClassDescriptor cld = (ClassDescriptor) i.next();
+                Map thisCldTemplateExprMap = (Map) classTemplateExprs.get(cld.getName());
+
+                if (thisCldTemplateExprMap != null) {
+                    templateExprMap.putAll(thisCldTemplateExprMap);
+                }
+            }
+
+            Iterator templateNameIter = templateExprMap.keySet().iterator();
+
+            while (templateNameIter.hasNext()) {
+                String templateName = (String) templateNameIter.next();
+
+                List exprList = (List) templateExprMap.get(templateName);
+
+                TemplateQuery template =
+                    TemplateHelper.findTemplate(session, templateName, "global");
+
+                if (template == null) {
+                    throw new IllegalStateException("Could not find template \""
+                                                    + templateName + "\"");
+                }
+
+                List templateConstraints = template.getAllConstraints();
+
+                List editableConstraints = new ArrayList();
+
+                Iterator templateConstraintIter = templateConstraints.iterator();
+
+                while (templateConstraintIter.hasNext()) {
+                    Constraint thisConstraint = (Constraint) templateConstraintIter.next();
+
+                    if (thisConstraint.isEditableInTemplate()) {
+                        editableConstraints.add(thisConstraint);
+                    }
+                }
+
+                if (editableConstraints.size() != exprList.size()) {
+                    continue;
+                }
+
+                TemplateForm tf = new TemplateForm();
+
+                for (int i = 0; i < editableConstraints.size(); i++) {
+                    Constraint thisConstraint = (Constraint) editableConstraints.get(i);
+
+                    String constraintIdentifier = thisConstraint.getIdentifier();
+
+                    int dotIndex = constraintIdentifier.indexOf('.');
+
+                    if (dotIndex == -1) {
+                        throw new RuntimeException("constraint identifier is not in current "
+                                                   + "format");
+                    }
+
+                    String fieldName = constraintIdentifier.substring(dotIndex + 1);
+
+                    Object fieldValue;
+                    try {
+                        fieldValue = TypeUtil.getFieldValue(object, fieldName);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("cannot set field " + fieldName + " of object "
+                                                   + object.getId(), e);
+                    }
+
+                    if (exprList.contains(constraintIdentifier)) {
+                        tf.setAttributeOps("" + (1 + i), ConstraintOp.EQUALS.getIndex().toString());
+                        tf.setAttributeValues("" + (1 + i), fieldValue.toString());
+                    } else {
+                        // too many editable constraints
+                        continue;
+                    }
+                }
+
+                tf.parseAttributeValues(template, session, new ActionErrors(), false);
+
+                PathQuery pathQuery = TemplateHelper.templateFormToQuery(tf, template);
+                Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
+                ServletContext servletContext = session.getServletContext();
+                ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+                Results results;
+                try {
+                    results = os.execute(query);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("cannot find results of template query " 
+                                               + templateName + " for object " + object.getId());
+                }
+
+                newTemplateCounts.put(templateName, new Integer(results.size()));
+            }
+
+            templateCounts = newTemplateCounts;
+        }
+
+        return templateCounts;
+    }
+
+    /**
      * Return the path expressions for the fields that should be used when summarising this
      * DisplayObject.
      * @return the expressions
@@ -210,7 +347,7 @@ public class DisplayObject
     public Map getFieldConfigMap() {
         if (fieldConfigMap == null) {
             fieldConfigMap = new LinkedHashMap();
-            
+
             for (Iterator i = clds.iterator(); i.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) i.next();
                 List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
@@ -223,7 +360,7 @@ public class DisplayObject
                 }
             }
         }
-            
+
         return fieldConfigMap;
     }
 

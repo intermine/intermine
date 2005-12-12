@@ -167,7 +167,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         if (converterTemplateName != null) {
             Integer inOp = ConstraintOp.IN.getIndex();
             TemplateQuery template =
-                TemplateHelper.findTemplate(request, converterTemplateName, "global");
+                TemplateHelper.findTemplate(session, converterTemplateName, "global");
 
             if (template == null) {
                 throw new IllegalStateException("Could not find template \"" 
