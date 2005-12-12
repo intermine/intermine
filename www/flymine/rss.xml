@@ -27,6 +27,29 @@
     <!-- Add new news at the top here -->
     
     <item>
+      <title>FlyMine is Recruting</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Biologist - Database analysis and user support (MATERNITY COVER).
+        &lt;a href="http://www.flymine.org/project/jobs.html"&gt;
+        Details&lt;/a&gt;.
+      </description>
+      <pubDate>Mon, 12 Dec 2005 14:04:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 3.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-3.1/begin.do"&gt;
+        FlyMine 3.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.html"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Mon, 7 Nov 2005 13:36:00 GMT</pubDate>
+    </item>
+    
+    <item>
       <title>FlyMine 3.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -50,7 +73,7 @@
       <pubDate>Wed, 1 Jun 2005 14:10:51 GMT</pubDate>
     </item>
     
-    <item>
+    <!--item>
       <title>FlyMine 2.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -58,7 +81,7 @@
         FlyMine 2.0&lt;/a&gt; is now available.
       </description>
       <pubDate>Wed, 30 Mar 2005 16:53:30 GMT</pubDate>
-    </item>
+    </item-->
     
     <!--item>
       <title>FlyMine 1.1 Released</title>

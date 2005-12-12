@@ -8,7 +8,8 @@
   </item>
 
   <item title="FlyMine releases">
-    <item url="/release-3.0/" title="Release 3.0 (current)"/>
+    <item url="/release-3.1/" title="Release 3.1 (current)"/>
+    <item url="/release-3.0/" title="Release 3.0"/>
     <item url="/release-2.1/" title="Release 2.1"/>
     <item url="/release-2.0/" title="Release 2.0"/>
   </item>
