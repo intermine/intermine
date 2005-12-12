@@ -81,7 +81,7 @@ public class PortalQueryAction extends InterMineAction
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
         Integer op = ConstraintOp.EQUALS.getIndex();
-        TemplateQuery template = TemplateHelper.findTemplate(request, templateName, "global");
+        TemplateQuery template = TemplateHelper.findTemplate(session, templateName, "global");
 
         if (template == null) {
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");

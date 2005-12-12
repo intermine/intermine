@@ -69,7 +69,7 @@ public class TemplateAction extends InterMineAction
         
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
         
-        TemplateQuery template = TemplateHelper.findTemplate(request, templateName, templateType);
+        TemplateQuery template = TemplateHelper.findTemplate(session, templateName, templateType);
         PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
         SessionMethods.loadQuery(queryCopy, request.getSession());
         form.reset (mapping, request);

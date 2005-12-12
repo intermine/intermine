@@ -237,7 +237,7 @@ public class TemplateForm extends ActionForm
         String queryName = getTemplateName();
         String templateType = getTemplateType();
         
-        TemplateQuery template = TemplateHelper.findTemplate(request, queryName, templateType);
+        TemplateQuery template = TemplateHelper.findTemplate(session, queryName, templateType);
         ActionErrors errors = new ActionErrors();
         
         boolean appendWildcard = (request.getParameter("appendWildcard") != null 
@@ -255,8 +255,8 @@ public class TemplateForm extends ActionForm
      * @param errors a place to store any parse errors
      * @param appendWildcard if true a "%" will be append to string fields
      */
-    protected void parseAttributeValues(TemplateQuery template, HttpSession session,
-                                        ActionErrors errors, boolean appendWildcard) {
+    public void parseAttributeValues(TemplateQuery template, HttpSession session,
+                                     ActionErrors errors, boolean appendWildcard) {
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         int j = 0;
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {

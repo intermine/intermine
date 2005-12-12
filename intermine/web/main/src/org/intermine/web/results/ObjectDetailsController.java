@@ -52,7 +52,7 @@ public class ObjectDetailsController extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map displayObjects = SessionMethods.getDisplayObjects(session);
 
-        String idString = (String) request.getParameter("id");
+        String idString = request.getParameter("id");
         if (idString != null && !idString.equals("")
             && (session.getAttribute("object") == null
                 || ((DisplayObject) session.getAttribute("object")).getId()
@@ -139,6 +139,7 @@ public class ObjectDetailsController extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        return new DisplayObject(object, os.getModel(), webConfig, webPropertiesMap);
+        return new DisplayObject(session, object, os.getModel(), webConfig,
+                                 webPropertiesMap);
     }
 }

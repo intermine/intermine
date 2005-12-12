@@ -149,7 +149,7 @@
                   <c:set var="interMineObject" value="${object.object}"/>
                   <!--<div class="body">-->
                     <im:templateList type="global" category="${category}" className="${className}"
-                                     interMineObject="${object.object}" important="true"/>
+                                     displayObject="${object}" important="true"/>
                   <!--</div>-->
                   <%--<im:vspacer height="5"/>--%>
                 </c:if>
@@ -329,7 +329,7 @@
           <c:set var="interMineObject" value="${object.object}"/>
           <div class="body">
             <im:templateList type="global" category="${category}" className="${className}"
-                             interMineObject="${object.object}"/>
+                             displayObject="${object}"/>
           </div>
           <im:vspacer height="5"/>
         </c:if>
