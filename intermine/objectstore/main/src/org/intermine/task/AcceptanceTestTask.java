@@ -189,7 +189,7 @@ public class AcceptanceTestTask extends Task
         
         int count = 0;
         
-        if (failingTestsCount > 0 ) {
+        if (failingTestsCount > 0) {
             pw.println("<hr/><h2>Failing tests:</h2>");
             pw.println("<p>");
 
@@ -222,7 +222,7 @@ public class AcceptanceTestTask extends Task
             pw.println("<h2><a name=\"test" + count + "\">Testing: <font size=\"-1\">"
                        + atr.getTest().getSql() + "</font></a></h2>");
             pw.println("<h3>test type: " + atr.getTest().getType() + "</h3>");
-            pw.println("<p>(completed in " + atr.getTime()/1000.0 + " seconds)</p>");
+            pw.println("<p>(completed in " + atr.getTime() / 1000.0 + " seconds)</p>");
             if (atr.getTest().getNote() != null) {
                 String hyperlinkedDescription = hyperLinkNote(atr.getTest().getNote());
                 pw.println("<h3>Description: " +  hyperlinkedDescription + "</h3>");
