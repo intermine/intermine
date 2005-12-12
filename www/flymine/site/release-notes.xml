@@ -3,6 +3,20 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
+    <title>FlyMine version 3.1 - release notes</title>
+    
+    <itemizedlist>
+      <listitem>
+        <para>Data - fixes</para>
+        <itemizedlist>
+          <listitem><para>FIX: <emphasis>D. melanogaster</emphasis> genes from FlyBase and UniProt are now merged correctly.</para></listitem>
+          <listitem><para>FIX: Missing orthologues from <emphasis>D. melanogaster</emphasis> to <emphasis>A. gambiae</emphasis> are now loaded.</para></listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
     <title>FlyMine version 3.0 - release notes</title>
     
     <itemizedlist>
@@ -43,6 +57,8 @@
            <listitem><para>Five genes are annotated incorrectly in the FlyBase release 4.2 annotation. These are eys, Dimp, cp309, Nev3 and kay. It is a known problem with FlyBase and a fix is progress. In FlyMine the symbols(names) are modified so that they are unique and indicate that there is a problem. Examples are: Dimp-duplicate-symbol-1, Dimp-duplicate-symbol-2 instead of Dimp.</para></listitem>
            <listitem><para>The latest version of InterPro (11.0) is not yet available as a mysql dump so we still have version 10.0.</para></listitem>
            <listitem><para>INDAC microarray oligos were designed to FlyBase version 4.0 transcripts. This means a number now map to old transcripts. These oligos can be queried in FlyMine, however the transcript they are designed to will not have merged with a Gene.</para></listitem>
+           <listitem><para>A number of proteins from Uniprot have not merged with FlyBase genes.  This means that for certain genes there are two objects - one from Uniprot with no other information.</para></listitem>
+           <listitem><para>Orthologues for Anopheles gambiae did not load.</para></listitem>
         </itemizedlist>
       </listitem>
 

@@ -300,8 +300,7 @@
     <source>
       <name>orthologues and paralogues.</name> <description>
         Orthologues and Paralogues between &lt;i&gt;D. melanogaster&lt;/i&gt; and
-        &lt;i&gt;C. elegans&lt;/i&gt;, &lt;i&gt;D. melanogaster&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; and
-        &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
+        &lt;i&gt;C. elegans&lt;/i&gt;
         href="http://inparanoid.cgb.ki.se/index.html">inParanoid&lt;/a>
       </description>
       <version></version>
