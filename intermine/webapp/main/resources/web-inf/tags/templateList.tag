@@ -28,13 +28,10 @@
 <c:forEach items="${templates}" var="templateQuery" varStatus="status">
   <%-- filter unimportant templates if necessary --%>
   <c:if test="${!important || templateQuery.important}">
-
-      <!-- currently disabled
-    <c:if test="${false && empty displayObject.templateCounts[templateQuery.name]}">
+    <c:if test="${!empty displayObject.templateCounts[templateQuery.name] &&
+                  displayObject.templateCounts[templateQuery.name] == 0}">
       <c:set var="cssClass" value="nullStrike"/>
     </c:if>
-       -->
-
     <span class="${cssClass}">
       <im:templateLine type="${type}" templateQuery="${templateQuery}" className="${className}"
                        interMineObject="${interMineObject}"/>
