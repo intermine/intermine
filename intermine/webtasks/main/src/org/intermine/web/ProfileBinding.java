@@ -17,6 +17,8 @@ import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
@@ -53,11 +55,10 @@ public class ProfileBinding
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
-     * @param model the Model - use when marshalling queries
      * @param os the ObjectStore to use when looking up the ids of objects in bags
      * @param writer the XMLStreamWriter to write to
      */
-    public static void marshal(Profile profile, Model model, ObjectStore os,
+    public static void marshal(Profile profile, ObjectStore os,
                                XMLStreamWriter writer) {
         try {
             writer.writeStartElement("userprofile");
@@ -99,7 +100,6 @@ public class ProfileBinding
             writer.writeStartElement("queries");
             for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
                 Map.Entry entry = (Map.Entry) i.next();
-                String queryName = (String) entry.getKey();
                 SavedQuery query = (SavedQuery) entry.getValue();
 
                 SavedQueryBinding.marshal(query, writer);
@@ -109,10 +109,18 @@ public class ProfileBinding
             writer.writeStartElement("template-queries");
             for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
                 Map.Entry entry = (Map.Entry) i.next();
-                String templateName = (String) entry.getKey();
                 TemplateQuery template = (TemplateQuery) entry.getValue();
 
                 TemplateQueryBinding.marshal(template, writer);
+            }
+            writer.writeEndElement();
+            
+            writer.writeStartElement("tags");
+            List tags = profile.getProfileManager().getTags(null, null, null,
+                                                            profile.getUsername());
+            for (Iterator i = tags.iterator(); i.hasNext();) {
+                Tag tag = (Tag) i.next();
+                TagBinding.marshal(tag, writer);
             }
             writer.writeEndElement();
 
@@ -201,7 +209,8 @@ public class ProfileBinding
     }
 
     /**
-     * Read a Profile from an XML stream Reader
+     * Read a Profile from an XML stream Reader.  Note that Tags from the XML are stored immediately
+     * using the ProfileManager.
      * @param reader contains the Profile XML
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param os ObjectStore used to resolve object ids

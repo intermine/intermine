@@ -19,10 +19,12 @@ import org.intermine.xml.full.FullParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -41,6 +43,7 @@ class ProfileHandler extends DefaultHandler
     private Map savedQueries;
     private Map savedBags;
     private Map savedTemplates;
+    private Set tags;
     private List items;
     private Map idObjectMap;
     private IdUpgrader idUpgrader;
@@ -91,7 +94,7 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getObjectStore(),
-                                                            savedBags, idObjectMap, idUpgrader);
+                                                 savedBags, idObjectMap, idUpgrader);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
@@ -100,6 +103,10 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
             subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries);
+        }
+        if (qName.equals("tags")) {
+            tags = new HashSet();
+            subHandler = new TagBinding.TagHandler(profileManager, username);
         }
         if (subHandler != null) {
             subHandler.startElement(uri, localName, qName, attrs);
@@ -128,7 +135,7 @@ class ProfileHandler extends DefaultHandler
             }
         }
         if (qName.equals("bags") || qName.equals("template-queries")
-            || qName.equals("queries") || qName.equals("items")) {
+            || qName.equals("queries") || qName.equals("items") || qName.equals("tags")) {
             subHandler = null;
         }
 

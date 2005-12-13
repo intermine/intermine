@@ -22,6 +22,12 @@
         </query>
       </template>
     </template-queries>
+    <tags>
+      <tag name="test-tag" objectIdentifier="Department.company" type="reference"/>
+      <tag name="test-tag2" objectIdentifier="Department.name" type="attribute"/>
+      <tag name="test-tag2" objectIdentifier="Department.company" type="reference"/>
+      <tag name="test-tag2" objectIdentifier="Department.employees" type="collection"/>
+    </tags>
   </userprofile>
   <userprofile username="sally" password="sally_pass">
     <items>
@@ -91,8 +97,10 @@
       </bag>
     </bags>
     <queries>
-      <query name="query1" model="testmodel" view="">
-      </query>
+      <saved-query name="query1">
+        <query name="query1" model="testmodel" view="">
+        </query>
+      </saved-query>
     </queries>
     <template-queries>
       <template name="template" description="some desc" important="true" keywords="some_keyword">
@@ -100,6 +108,9 @@
         </query>
       </template>
     </template-queries>
+    <tags>
+      <tag name="test-tag" objectIdentifier="Department.company" type="reference"/>
+    </tags>
   </userprofile>
 </userprofiles>
 
