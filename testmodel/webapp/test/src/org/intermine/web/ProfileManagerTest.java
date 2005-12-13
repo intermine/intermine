@@ -14,6 +14,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +42,8 @@ import org.intermine.objectstore.dummy.ObjectStoreWriterDummyImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.XmlBinding;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
@@ -53,6 +58,7 @@ public class ProfileManagerTest extends XMLTestCase
 {
     private Profile bobProfile;
     private Profile sallyProfile;
+    private ProfileManager pm;
     private ObjectStoreWriter osw;
     private ObjectStore os;
     private ObjectStoreWriter userProfileOS;
@@ -68,11 +74,11 @@ public class ProfileManagerTest extends XMLTestCase
 
         userProfileOS =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
-        XmlBinding binding = new XmlBinding(osw.getModel());
+        pm = new ProfileManager(os, userProfileOS);
 
+        XmlBinding binding = new XmlBinding(osw.getModel());
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
-
         List objects = (List) binding.unmarshal(is);
 
         osw.beginTransaction();
@@ -101,7 +107,7 @@ public class ProfileManagerTest extends XMLTestCase
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               false, "");
 
-        bobProfile = new Profile(null, "bob", "pass",
+        bobProfile = new Profile(pm, "bob", "pass",
                                  new HashMap(), new HashMap(), new HashMap());
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
@@ -132,7 +138,7 @@ public class ProfileManagerTest extends XMLTestCase
                                      "some_keyword");
 
 
-        sallyProfile = new Profile(null, "sally", "sally_pass",
+        sallyProfile = new Profile(pm, "sally", "sally_pass",
                                    new HashMap(), new HashMap(), new HashMap());
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", bag);
@@ -191,13 +197,18 @@ public class ProfileManagerTest extends XMLTestCase
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
+        pm.addTag("test-tag", "Department.company", "reference", "bob");
+        pm.addTag("test-tag2", "Department.name", "attribute", "bob");
+        pm.addTag("test-tag2", "Department.company", "reference", "bob");
+        pm.addTag("test-tag2", "Department.employees", "collection", "bob");
+
+        pm.addTag("test-tag", "Department.company", "reference", "sally");
+
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
-            ProfileBinding.marshal(bobProfile, Model.getInstanceByName("userprofile"),
-                                    os, writer);
-            ProfileBinding.marshal(sallyProfile, Model.getInstanceByName("userprofile"), os,
-                                   writer);
+            ProfileBinding.marshal(bobProfile, os, writer);
+            ProfileBinding.marshal(sallyProfile, os, writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -216,12 +227,13 @@ public class ProfileManagerTest extends XMLTestCase
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
 
+        System.err.println ("expectedXml: " + expectedXml);
+        System.err.println ("actualXml: " + actualXml);
+
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
 
     public void testXMLRead() throws Exception {
-        ProfileManager pm = new ProfileManager(os, userProfileOS);
-
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -242,84 +254,143 @@ public class ProfileManagerTest extends XMLTestCase
         expectedIDs.add(new Integer(12));
         expectedIDs.add(new Integer(6));
         assertEquals(expectedIDs, sallyProfile.getSavedBags().get("sally_bag3"));
+
+        assertEquals(1, sallyProfile.getSavedQueries().size());
+        assertEquals(1, sallyProfile.getSavedTemplates().size());
+        
+        Set expectedTags = new HashSet();
+        Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+
+        tag1.setTagName("test-tag");
+        tag1.setObjectIdentifier("Department.company");
+        tag1.setType("reference");
+        tag1.setUserProfile(pm.getUserProfile("bob"));
+            
+        Tag tag2 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        tag2.setTagName("test-tag2");
+        tag2.setObjectIdentifier("Department.name");
+        tag2.setType("attribute");
+        tag2.setUserProfile(pm.getUserProfile("bob"));
+        
+        Tag tag3 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        tag3.setTagName("test-tag2");
+        tag3.setObjectIdentifier("Department.company");
+        tag3.setType("reference");
+        tag3.setUserProfile(pm.getUserProfile("bob"));
+        
+        Tag tag4 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        tag4.setTagName("test-tag2");
+        tag4.setObjectIdentifier("Department.employees");
+        tag4.setType("collection");
+        tag4.setUserProfile(pm.getUserProfile("bob"));
+        
+        expectedTags.add(tag1);
+        expectedTags.add(tag2);
+        expectedTags.add(tag3);
+        expectedTags.add(tag4);
+        
+        Set actualTags = new HashSet(pm.getTags(null, null, null, "bob"));
+        
+        assertEquals(expectedTags.size(), actualTags.size());
+        
+        Iterator actualTagsIter = actualTags.iterator();
+        
+      ACTUAL:
+        while (actualTagsIter.hasNext()) {
+            Tag actualTag = (Tag) actualTagsIter.next();
+
+            Iterator expectedTagIter = expectedTags.iterator();
+
+            while (expectedTagIter.hasNext()) {
+                Tag expectedTag = (Tag) expectedTagIter.next();
+                if (actualTag.getTagName().equals(expectedTag.getTagName())
+                    && actualTag.getObjectIdentifier().equals(expectedTag.getObjectIdentifier())
+                    && actualTag.getType().equals(expectedTag.getType())
+                    && actualTag.getUserProfile().getUsername().equals("bob")) {
+                    continue ACTUAL;
+                }
+            }
+            
+            fail("can't find tag " + actualTag.getTagName() + ", "
+                 + actualTag.getObjectIdentifier() + ", " 
+                 + actualTag.getType());
+        }
     }
 
     public void testAddTag() throws Exception {
-        ProfileManager pm = new ProfileManager(os, userProfileOS);
-
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
         ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
 
-        pm.addTag("test-tag", "Department.name", "attribute", pm.getUserProfile("bob"));
-        pm.addTag("test-tag", "Department.company", "reference", pm.getUserProfile("bob"));
-        pm.addTag("test-tag", "Department.employees", "collection", pm.getUserProfile("bob"));
+        pm.addTag("test-tag", "Department.name", "attribute", "bob");
+        pm.addTag("test-tag", "Department.company", "reference", "bob");
+        pm.addTag("test-tag", "Department.employees", "collection", "bob");
 
         try {
-            pm.addTag("test-tag", "Department.name", "error_tag_type", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.name", "error_tag_type", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.error_field", "collection", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.error_field", "collection", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.name", "collection", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.name", "collection", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.name", "reference", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.name", "reference", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.company", "attribute", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.company", "attribute", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.company", "collection", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.company", "collection", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.employees", "attribute", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.employees", "attribute", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.employees", "reference", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.employees", "reference", "bob");
             fail("expected runtime exception");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag(null, "Department.name", "attribute", pm.getUserProfile("bob"));
+            pm.addTag(null, "Department.name", "attribute", "bob");
             fail("expected runtime exception because of null parameter");
         } catch (RuntimeException e) {
             // expected
         }
 
         try {
-            pm.addTag("test-tag", null, "attribute", pm.getUserProfile("bob"));
+            pm.addTag("test-tag", null, "attribute", "bob");
             fail("expected runtime exception because of null parameter");
         } catch (RuntimeException e) {
             // expected
         }
         try {
-            pm.addTag("test-tag", "Department.name", null, pm.getUserProfile("bob"));
+            pm.addTag("test-tag", "Department.name", null, "bob");
             fail("expected runtime exception because of null parameter");
         } catch (RuntimeException e) {
             // expected
@@ -333,40 +404,38 @@ public class ProfileManagerTest extends XMLTestCase
     }
 
     public void testGetTags() throws Exception {
-        ProfileManager pm = new ProfileManager(os, userProfileOS);
-
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
         ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
 
-        pm.addTag("test-tag1", "Department.name", "attribute", pm.getUserProfile("bob"));
-        pm.addTag("test-tag1", "Department.company", "reference", pm.getUserProfile("bob"));
-        pm.addTag("test-tag1", "Department.employees", "collection", pm.getUserProfile("bob"));
+        pm.addTag("test-tag1", "Department.name", "attribute", "bob");
+        pm.addTag("test-tag1", "Department.company", "reference", "bob");
+        pm.addTag("test-tag1", "Department.employees", "collection", "bob");
 
-        pm.addTag("test-tag2", "Department.name", "attribute", pm.getUserProfile("bob"));
-        pm.addTag("test-tag2", "Department.company", "reference", pm.getUserProfile("bob"));
-        pm.addTag("test-tag2", "Department.employees", "collection", pm.getUserProfile("bob"));
+        pm.addTag("test-tag2", "Department.name", "attribute", "bob");
+        pm.addTag("test-tag2", "Department.company", "reference", "bob");
+        pm.addTag("test-tag2", "Department.employees", "collection", "bob");
 
-        pm.addTag("test-tag1", "Department.name", "attribute", pm.getUserProfile("sally"));
-        pm.addTag("test-tag1", "Department.company", "reference", pm.getUserProfile("sally"));
-        pm.addTag("test-tag1", "Department.employees", "collection", pm.getUserProfile("sally"));
+        pm.addTag("test-tag1", "Department.name", "attribute", "sally");
+        pm.addTag("test-tag1", "Department.company", "reference", "sally");
+        pm.addTag("test-tag1", "Department.employees", "collection", "sally");
 
-        pm.addTag("test-tag3", "Department.name", "attribute", pm.getUserProfile("sally"));
-        pm.addTag("test-tag3", "Department.company", "reference", pm.getUserProfile("sally"));
-        pm.addTag("test-tag3", "Department.employees", "collection", pm.getUserProfile("sally"));
+        pm.addTag("test-tag3", "Department.name", "attribute", "sally");
+        pm.addTag("test-tag3", "Department.company", "reference", "sally");
+        pm.addTag("test-tag3", "Department.employees", "collection", "sally");
 
         List allTags = pm.getTags(null, null, null, null);
         assertEquals(12, allTags.size());
 
-        List nameTags = pm.getTags(null, "Department.name", "attribute", pm.getUserProfile("bob"));
+        List nameTags = pm.getTags(null, "Department.name", "attribute", "bob");
         assertEquals(2, nameTags.size());
 
-        List bobAttributeTag1 = pm.getTags("test-tag1", null, "attribute", pm.getUserProfile("bob"));
+        List bobAttributeTag1 = pm.getTags("test-tag1", null, "attribute", "bob");
         assertEquals(1, bobAttributeTag1.size());
 
-        List bobTag1DeptName = pm.getTags("test-tag1", "Department.name", null, pm.getUserProfile("bob"));
+        List bobTag1DeptName = pm.getTags("test-tag1", "Department.name", null, "bob");
         assertEquals(1, bobTag1DeptName.size());
 
         List allNameAttributeTag1s = pm.getTags("test-tag1", "Department.name", "attribute", null);

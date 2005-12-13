@@ -366,11 +366,11 @@ public class ProfileManager
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userProfile the UserProfile this tag is associated with
+     * @param userName the use name this tag is associated with
      * @return the matching Tags
      */
     public List getTags(String tagName, String objectIdentifier, String type,
-                        UserProfile userProfile) {
+                        String userName) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
 
@@ -400,11 +400,11 @@ public class ProfileManager
             cs.addConstraint(c);
         }
         
-        if (userProfile != null) {
+        if (userName != null) {
             QueryClass userProfileQC = new QueryClass(UserProfile.class);
             q.addFrom(userProfileQC);
-            QueryValue qv = new QueryValue(userProfile.getId());
-            QueryField qf = new QueryField(userProfileQC, "id");
+            QueryValue qv = new QueryValue(userName);
+            QueryField qf = new QueryField(userProfileQC, "username");
             SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
             cs.addConstraint(c);
 
@@ -416,13 +416,13 @@ public class ProfileManager
         }
         q.setConstraint(cs);
         
-        ObjectStore os = osw.getObjectStore();
+        ObjectStore userprofileOS = osw.getObjectStore();
 
-        SingletonResults results = new SingletonResults(q, os, os.getSequence());
+        SingletonResults results =
+            new SingletonResults(q, userprofileOS, userprofileOS.getSequence());
 
         return results;
     }
-
 
     private final Map tagCheckers = new HashMap();
     
@@ -434,25 +434,31 @@ public class ProfileManager
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userProfile the UserProfile to associate this tag with
+     * @param userName the name of the UserProfile to associate this tag with
      */
     public void addTag(String tagName, String objectIdentifier, String type,
-                       UserProfile userProfile) {
+                       String userName) {
         if (tagName == null) {
-            throw new RuntimeException("tagName cannot be null");
+            throw new IllegalArgumentException("tagName cannot be null");
         }
         if (objectIdentifier == null) {
-            throw new RuntimeException("objectIdentifier cannot be null");
+            throw new IllegalArgumentException("objectIdentifier cannot be null");
         }
         if (type == null) {
-            throw new RuntimeException("type cannot be null");
+            throw new IllegalArgumentException("type cannot be null");
         }
-        if (userProfile == null) {
-            throw new RuntimeException("userProfile cannot be null");
+        if (userName == null) {
+            throw new IllegalArgumentException("userName cannot be null");
         }
         if (!tagCheckers.containsKey(type)) {
-            throw new RuntimeException("unknown tag type: " + type);
+            throw new IllegalArgumentException("unknown tag type: " + type);
         }
+        UserProfile userProfile = getUserProfile(userName);
+        
+        if (userProfile == null ) {
+            throw new RuntimeException();
+        }
+        
         ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type, userProfile);
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
@@ -507,6 +513,20 @@ public class ProfileManager
         tagCheckers.put("collection", fieldChecker);
         tagCheckers.put("reference", fieldChecker);
         tagCheckers.put("attribute", fieldChecker);
+    }
+
+    
+    /*
+     * Store the given Tag in the underlying UserProfile object store.  No checking is done to
+     * prevent duplicate tags.
+     * @param tag the Tag
+     */
+    void _aa__storeTag(Tag tag) {
+        try {
+            osw.store(tag);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("failed to store Tag", e);
+        }
     }
 }
 

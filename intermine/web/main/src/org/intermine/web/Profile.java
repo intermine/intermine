@@ -65,6 +65,15 @@ public class Profile
     }
     
     /**
+     * Return the ProfileManager that was passed to the constructor.
+     * @return the ProfileManager
+     */
+    public ProfileManager getProfileManager() {
+        return manager;
+        
+    }
+    
+    /**
      * Get the value of username
      * @return the value of username
      */
