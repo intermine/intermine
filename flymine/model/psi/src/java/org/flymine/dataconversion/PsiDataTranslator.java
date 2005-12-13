@@ -201,8 +201,9 @@ public class PsiDataTranslator extends DataTranslator
                     }
                     if (srcItem.getAttribute("sequence") != null) {
                         Item seq = createItem("Sequence");
-                        seq.addAttribute(new Attribute("residues", srcItem.getAttribute("sequence")
-                                                       .getValue()));
+                        String srcResidues = srcItem.getAttribute("sequence").getValue();
+                        seq.setAttribute("residues", srcResidues);
+                        seq.setAttribute("length", "" + srcResidues.length());
                         tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
                         result.add(seq);
                     }
