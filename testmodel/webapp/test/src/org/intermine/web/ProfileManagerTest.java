@@ -10,12 +10,28 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.XmlBinding;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
+import org.intermine.web.bag.PkQueryIdUpgrader;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,26 +45,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.dummy.ObjectStoreWriterDummyImpl;
-
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.XmlBinding;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
-import org.intermine.web.bag.PkQueryIdUpgrader;
 
 /**
  * Tests for the Profile class.
@@ -61,7 +57,7 @@ public class ProfileManagerTest extends XMLTestCase
     private ProfileManager pm;
     private ObjectStoreWriter osw;
     private ObjectStore os;
-    private ObjectStoreWriter userProfileOS;
+    private ObjectStoreWriter userProfileOSW;
 
     public ProfileManagerTest(String arg) {
         super(arg);
@@ -72,9 +68,9 @@ public class ProfileManagerTest extends XMLTestCase
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
 
-        userProfileOS =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
-        pm = new ProfileManager(os, userProfileOS);
+        pm = new ProfileManager(os, userProfileOSW);
 
         XmlBinding binding = new XmlBinding(osw.getModel());
         InputStream is =
@@ -172,25 +168,25 @@ public class ProfileManagerTest extends XMLTestCase
     }
 
     private void cleanUserProfile() throws ObjectStoreException {
-        if (userProfileOS.isInTransaction()) {
-            userProfileOS.abortTransaction();
+        if (userProfileOSW.isInTransaction()) {
+            userProfileOSW.abortTransaction();
         }
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = userProfileOS.getObjectStore();
-        SingletonResults res = new SingletonResults(q, userProfileOS.getObjectStore(),
-                                                    userProfileOS.getObjectStore()
+        ObjectStore os = userProfileOSW.getObjectStore();
+        SingletonResults res = new SingletonResults(q, userProfileOSW.getObjectStore(),
+                                                    userProfileOSW.getObjectStore()
                                                     .getSequence());
         Iterator resIter = res.iterator();
-        userProfileOS.beginTransaction();
+        userProfileOSW.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            userProfileOS.delete(o);
+            userProfileOSW.delete(o);
         }
-        userProfileOS.commitTransaction();
-        userProfileOS.close();
+        userProfileOSW.commitTransaction();
+        userProfileOSW.close();
     }
 
     public void testXMLWrite() throws Exception {
@@ -410,35 +406,37 @@ public class ProfileManagerTest extends XMLTestCase
 
         ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
 
-        pm.addTag("test-tag1", "Department.name", "attribute", "bob");
-        pm.addTag("test-tag1", "Department.company", "reference", "bob");
-        pm.addTag("test-tag1", "Department.employees", "collection", "bob");
+        pm.addTag("tag1", "Department.name", "attribute", "bob");
+        pm.addTag("tag1", "Department.company", "reference", "bob");
+        pm.addTag("tag1", "Department.employees", "collection", "bob");
 
-        pm.addTag("test-tag2", "Department.name", "attribute", "bob");
-        pm.addTag("test-tag2", "Department.company", "reference", "bob");
-        pm.addTag("test-tag2", "Department.employees", "collection", "bob");
+        pm.addTag("tag2", "Department.name", "attribute", "bob");
+        pm.addTag("tag2", "Department.company", "reference", "bob");
+        pm.addTag("tag2", "Department.employees", "collection", "bob");
 
-        pm.addTag("test-tag1", "Department.name", "attribute", "sally");
-        pm.addTag("test-tag1", "Department.company", "reference", "sally");
-        pm.addTag("test-tag1", "Department.employees", "collection", "sally");
+        pm.addTag("tag1", "Department.name", "attribute", "sally");
+        pm.addTag("tag1", "Department.company", "reference", "sally");
+        pm.addTag("tag1", "Department.employees", "collection", "sally");
 
-        pm.addTag("test-tag3", "Department.name", "attribute", "sally");
-        pm.addTag("test-tag3", "Department.company", "reference", "sally");
-        pm.addTag("test-tag3", "Department.employees", "collection", "sally");
+        pm.addTag("tag3", "Department.name", "attribute", "sally");
+        pm.addTag("tag3", "Department.company", "reference", "sally");
+        pm.addTag("tag3", "Department.employees", "collection", "sally");
 
         List allTags = pm.getTags(null, null, null, null);
-        assertEquals(12, allTags.size());
+        
+        // 17 tags because ProfileManagerBindingTestNewIDs.xml has 5
+        assertEquals(17, allTags.size());
 
         List nameTags = pm.getTags(null, "Department.name", "attribute", "bob");
-        assertEquals(2, nameTags.size());
+        assertEquals(3, nameTags.size());
 
-        List bobAttributeTag1 = pm.getTags("test-tag1", null, "attribute", "bob");
+        List bobAttributeTag1 = pm.getTags("tag1", null, "attribute", "bob");
         assertEquals(1, bobAttributeTag1.size());
 
-        List bobTag1DeptName = pm.getTags("test-tag1", "Department.name", null, "bob");
+        List bobTag1DeptName = pm.getTags("tag1", "Department.name", null, "bob");
         assertEquals(1, bobTag1DeptName.size());
 
-        List allNameAttributeTag1s = pm.getTags("test-tag1", "Department.name", "attribute", null);
+        List allNameAttributeTag1s = pm.getTags("tag1", "Department.name", "attribute", null);
         assertEquals(2, allNameAttributeTag1s.size());
 
     }
