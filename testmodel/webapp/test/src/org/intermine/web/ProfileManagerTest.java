@@ -223,9 +223,6 @@ public class ProfileManagerTest extends XMLTestCase
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
 
-        System.err.println ("expectedXml: " + expectedXml);
-        System.err.println ("actualXml: " + actualXml);
-
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
 
