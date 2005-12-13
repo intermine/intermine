@@ -357,7 +357,8 @@ public class InterproDataTranslator extends DataTranslator
                 tgtItem.getAttribute("interproId").getValue(), interproDataSourceReference);
 
         addReferencedItem(tgtItem, interproSynonym, "synonyms", true, null, false);
-        addToCollection(tgtItem, EVIDENCE, interproDataSource);
+        //addToCollection(tgtItem, EVIDENCE, interproDataSource);
+        tgtItem.addToCollection(EVIDENCE, getInterproEvidenceItem());
 
         Item dataSourceItem = setupCvDbDataSrcEvidenceRef(srcItem, tgtItem, METHOD);
         Item extraDatabaseSynonym = setupExtraDataSrcSynonym(dataSourceItem, tgtItem, METHOD);
