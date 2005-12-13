@@ -1,58 +1,74 @@
 <items>
-    <item id="16_1001" class="http://www.flymine.org/model/genomic#Comment">
-        <attribute name="text" value="PETE TEST BLAH BLAH BLAH"/>
-        <attribute name="type" value="PETE_TEST_COMMON_ANNOTATION"/>
-        <reference name="source" ref_id="-1_5"/>
+    <item id="-1_9" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPRPETE01"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="6_1001"/>
     </item>
-
-    <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSet">
-            <attribute name="title" value="InterPro data set"/>
-        </item>
-
+    <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="SSF48113"/>
+        <reference name="source" ref_id="-1_22"/>
+        <reference name="subject" ref_id="9_4"/>
+    </item>
     <item id="-1_13" class="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Pfam"/>
     </item>
-    <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
-            <attribute name="name" value="InterPro"/>
-        </item>
-    <item id="-1_19" class="http://www.flymine.org/model/genomic#DataSource">
-            <attribute name="name" value="PROSITE profiles"/>
-        </item>
-    <item id="-1_22" class="http://www.flymine.org/model/genomic#DataSource">
-            <attribute name="name" value="Superfamily"/>
-        </item>
-    <item id="-1_16" class="http://www.flymine.org/model/genomic#DataSource">
-            <attribute name="name" value="PRINTS"/>
-        </item>
-    <item id="-1_25" class="http://www.flymine.org/model/genomic#DataSource">
-            <attribute name="name" value="PETE_TEST_DB"/>
-        </item>
-    <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
-            <attribute name="name" value="TrEMBL"/>
-        </item>
-
     <item id="10_3" class="http://www.flymine.org/model/genomic#InterproEvidence">
         <attribute name="infotext" value="Computed by hmmsearch"/>
+    </item>
+    <item id="12_1" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1"/>
+        <reference name="subject" ref_id="9_3"/>
+    </item>
+    <item id="6_3" class="http://www.flymine.org/model/genomic#ProteinFamily">
+        <attribute name="identifier" value="IPR002016"/>
+        <attribute name="interproId" value="IPR002016"/>
+        <attribute name="name" value="Haem peroxidase, plant/fungal/bacterial"/>
+        <attribute name="shortName" value="Peroxidase"/>
+        <collection name="evidence">
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_1"/>
+        </collection>
+        <collection name="parentFeatures">
+            <reference ref_id="6_2"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_8"/>
+        </collection>
+    </item>
+    <item id="-1_26" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="PETE_TM1"/>
+        <reference name="source" ref_id="-1_25"/>
+        <reference name="subject" ref_id="9_1001"/>
+    </item>
+    <item id="12_1002" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1002"/>
+        <reference name="subject" ref_id="9_1002"/>
     </item>
     <item id="10_2" class="http://www.flymine.org/model/genomic#InterproEvidence">
         <attribute name="infotext" value="Computed by FingerprintScan"/>
     </item>
-    <item id="10_5" class="http://www.flymine.org/model/genomic#InterproEvidence">
-        <attribute name="infotext" value="Temporary flag for PRINTS parent entries"/>
+    <item id="6_1003" class="http://www.flymine.org/model/genomic#ProteinFamily">
+        <attribute name="identifier" value="IPR_PETE3"/>
+        <attribute name="interproId" value="IPR_PETE3"/>
+        <attribute name="name" value="PETES DUMMY FAMILY"/>
+        <attribute name="shortName" value="DFM"/>
+        <collection name="comments">
+            <reference ref_id="16_1001"/>
+        </collection>
+        <collection name="contains">
+            <reference ref_id="6_1001"/>
+        </collection>
+        <collection name="evidence">
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_1"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_11"/>
+        </collection>
     </item>
-    <item id="10_4" class="http://www.flymine.org/model/genomic#InterproEvidence">
-        <attribute name="infotext" value="Entered or checked manually by a curator"/>
-    </item>
-    <item id="10_1001" class="http://www.flymine.org/model/genomic#InterproEvidence">
-        <attribute name="infotext" value="EXTRA ITEM JUST FOR UNIT TESTING"/>
-    </item>
-    <item id="10_1" class="http://www.flymine.org/model/genomic#InterproEvidence">
-        <attribute name="infotext" value="Computed by pfsearch"/>
-    </item>
-    <item id="10_6" class="http://www.flymine.org/model/genomic#InterproEvidence">
-        <attribute name="infotext" value="Prints entries to be excluded from SPTR xrefs"/>
-    </item>
-
     <item id="11_1001" class="http://www.flymine.org/model/genomic#Location">
         <attribute name="end" value="999"/>
         <attribute name="start" value="666"/>
@@ -62,6 +78,12 @@
             <reference ref_id="-1_25"/>
             <reference ref_id="10_1001"/>
         </collection>
+    </item>
+    <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPRPETE01"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="9_1001"/>
     </item>
     <item id="11_4" class="http://www.flymine.org/model/genomic#Location">
         <attribute name="end" value="43"/>
@@ -73,47 +95,106 @@
             <reference ref_id="10_1"/>
         </collection>
     </item>
+    <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPR002007"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="6_1"/>
+    </item>
+    <item id="-1_15" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPR002007"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="9_2"/>
+    </item>
+    <item id="-1_18" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPR002007"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="9_3"/>
+    </item>
+    <item id="9_3" class="http://www.flymine.org/model/genomic#ProteinFamily">
+        <attribute name="identifier" value="PS50292"/>
+        <attribute name="interproId" value="IPR002007"/>
+        <attribute name="name" value="PEROXIDASE_3"/>
+        <collection name="evidence">
+            <reference ref_id="10_4"/>
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_19"/>
+        </collection>
+        <collection name="proteins">
+            <reference ref_id="3_1"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_18"/>
+            <reference ref_id="-1_20"/>
+        </collection>
+    </item>
+    <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="InterPro"/>
+    </item>
+    <item id="9_4" class="http://www.flymine.org/model/genomic#ProteinFamily">
+        <attribute name="identifier" value="SSF48113"/>
+        <attribute name="interproId" value="IPR010255"/>
+        <attribute name="name" value="Peroxidase_super"/>
+        <collection name="evidence">
+            <reference ref_id="10_6"/>
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_22"/>
+        </collection>
+        <collection name="proteins">
+            <reference ref_id="3_1"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_21"/>
+            <reference ref_id="-1_23"/>
+        </collection>
+    </item>
     <item id="5_2" class="http://www.flymine.org/model/genomic#Location">
         <attribute name="end" value="43"/>
         <attribute name="start" value="1"/>
         <reference name="object" ref_id="3_1"/>
         <reference name="subject" ref_id="6_2"/>
     </item>
-    <item id="11_1" class="http://www.flymine.org/model/genomic#Location">
-        <attribute name="end" value="43"/>
-        <attribute name="start" value="1"/>
-        <reference name="object" ref_id="3_1"/>
-        <reference name="subject" ref_id="9_1"/>
-        <collection name="evidence">
-            <reference ref_id="-1_13"/>
-            <reference ref_id="10_3"/>
-        </collection>
+    <item id="12_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1001"/>
+        <reference name="subject" ref_id="9_1001"/>
     </item>
-    <item id="5_1" class="http://www.flymine.org/model/genomic#Location">
-        <attribute name="end" value="43"/>
-        <attribute name="start" value="1"/>
-        <reference name="object" ref_id="3_1"/>
-        <reference name="subject" ref_id="6_1"/>
+    <item id="-1_27" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPRPETE02"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="9_1002"/>
     </item>
-    <item id="11_5" class="http://www.flymine.org/model/genomic#Location">
-        <attribute name="end" value="43"/>
-        <attribute name="start" value="1"/>
-        <reference name="object" ref_id="3_1"/>
-        <reference name="subject" ref_id="9_4"/>
-        <collection name="evidence">
-            <reference ref_id="-1_22"/>
-            <reference ref_id="10_3"/>
-        </collection>
+    <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPR010255"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="6_2"/>
     </item>
-    <item id="11_2" class="http://www.flymine.org/model/genomic#Location">
-        <attribute name="end" value="28"/>
-        <attribute name="start" value="8"/>
-        <reference name="object" ref_id="3_1"/>
-        <reference name="subject" ref_id="9_2"/>
+    <item id="9_2" class="http://www.flymine.org/model/genomic#ProteinFamily">
+        <attribute name="identifier" value="PR00457"/>
+        <attribute name="interproId" value="IPR002007"/>
+        <attribute name="name" value="ANPEROXIDASE"/>
         <collection name="evidence">
+            <reference ref_id="10_5"/>
+            <reference ref_id="-1_5"/>
             <reference ref_id="-1_16"/>
-            <reference ref_id="10_2"/>
         </collection>
+        <collection name="proteins">
+            <reference ref_id="3_1"/>
+            <reference ref_id="3_1"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_15"/>
+            <reference ref_id="-1_17"/>
+        </collection>
+    </item>
+    <item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPRPETE02"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="6_1002"/>
     </item>
     <item id="11_3" class="http://www.flymine.org/model/genomic#Location">
         <attribute name="end" value="43"/>
@@ -125,11 +206,122 @@
             <reference ref_id="10_2"/>
         </collection>
     </item>
-
-    <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="7165"/>
+    <item id="14_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1001"/>
+        <reference name="subject" ref_id="6_1002"/>
     </item>
-
+    <item id="11_1" class="http://www.flymine.org/model/genomic#Location">
+        <attribute name="end" value="43"/>
+        <attribute name="start" value="1"/>
+        <reference name="object" ref_id="3_1"/>
+        <reference name="subject" ref_id="9_1"/>
+        <collection name="evidence">
+            <reference ref_id="-1_13"/>
+            <reference ref_id="10_3"/>
+        </collection>
+    </item>
+    <item id="6_2" class="http://www.flymine.org/model/genomic#ProteinFamily">
+        <attribute name="identifier" value="IPR010255"/>
+        <attribute name="interproId" value="IPR010255"/>
+        <attribute name="name" value="Haem peroxidase"/>
+        <attribute name="shortName" value="Peroxidase_super"/>
+        <collection name="childFeatures">
+            <reference ref_id="6_1"/>
+            <reference ref_id="6_3"/>
+        </collection>
+        <collection name="evidence">
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_1"/>
+        </collection>
+        <collection name="proteins">
+            <reference ref_id="3_1"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_7"/>
+        </collection>
+    </item>
+    <item id="5_1" class="http://www.flymine.org/model/genomic#Location">
+        <attribute name="end" value="43"/>
+        <attribute name="start" value="1"/>
+        <reference name="object" ref_id="3_1"/>
+        <reference name="subject" ref_id="6_1"/>
+    </item>
+    <item id="-1_11" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPR_PETE3"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="6_1003"/>
+    </item>
+    <item id="10_5" class="http://www.flymine.org/model/genomic#InterproEvidence">
+        <attribute name="infotext" value="Temporary flag for PRINTS parent entries"/>
+    </item>
+    <item id="12_2" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1"/>
+        <reference name="subject" ref_id="9_2"/>
+    </item>
+    <item id="14_1" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_2"/>
+        <reference name="subject" ref_id="6_1"/>
+    </item>
+    <item id="12_4" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_2"/>
+        <reference name="subject" ref_id="9_4"/>
+    </item>
+    <item id="9_1001" class="http://www.flymine.org/model/genomic#ProteinDomain">
+        <attribute name="identifier" value="PETE_TM1"/>
+        <attribute name="interproId" value="IPRPETE01"/>
+        <attribute name="name" value="PETE_TEST_METHOD_1"/>
+        <collection name="evidence">
+            <reference ref_id="10_1001"/>
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_25"/>
+        </collection>
+        <collection name="proteins">
+            <reference ref_id="3_1001"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_24"/>
+            <reference ref_id="-1_26"/>
+        </collection>
+    </item>
+    <item id="10_4" class="http://www.flymine.org/model/genomic#InterproEvidence">
+        <attribute name="infotext" value="Entered or checked manually by a curator"/>
+    </item>
+    <item id="-1_19" class="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PROSITE profiles"/>
+    </item>
+    <item id="10_1001" class="http://www.flymine.org/model/genomic#InterproEvidence">
+        <attribute name="infotext" value="EXTRA ITEM JUST FOR UNIT TESTING"/>
+    </item>
+    <item id="6_1001" class="http://www.flymine.org/model/genomic#ProteinDomain">
+        <attribute name="identifier" value="IPRPETE01"/>
+        <attribute name="interproId" value="IPRPETE01"/>
+        <attribute name="name" value="PETES DUMMY PARENT DOMAIN"/>
+        <attribute name="shortName" value="DPD"/>
+        <collection name="childFeatures">
+            <reference ref_id="6_1002"/>
+        </collection>
+        <collection name="evidence">
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_1"/>
+        </collection>
+        <collection name="foundIn">
+            <reference ref_id="6_1003"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_9"/>
+        </collection>
+    </item>
+    <item id="15_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1003"/>
+        <reference name="subject" ref_id="6_1001"/>
+    </item>
+    <item id="-1_20" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="PS50292"/>
+        <reference name="source" ref_id="-1_19"/>
+        <reference name="subject" ref_id="9_3"/>
+    </item>
     <item id="3_1" class="http://www.flymine.org/model/genomic#Protein">
         <attribute name="identifier" value="Q5UEB5_ANOGA"/>
         <attribute name="primaryAccession" value="Q5UEB5"/>
@@ -164,81 +356,19 @@
             <reference ref_id="-1_4"/>
         </collection>
     </item>
-
-    <item id="9_1002" class="http://www.flymine.org/model/genomic#ProteinDomain">
-        <attribute name="identifier" value="PETE_TM2"/>
-        <attribute name="interproId" value="IPRPETE02"/>
-        <attribute name="name" value="PETE_TEST_METHOD_2"/>
-        <collection name="evidence">
-            <reference ref_id="10_1001"/>
-            <reference ref_id="-1_1"/>
-            <reference ref_id="-1_25"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_27"/>
-            <reference ref_id="-1_28"/>
-        </collection>
+    <item id="-1_22" class="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Superfamily"/>
     </item>
-    <item id="9_1001" class="http://www.flymine.org/model/genomic#ProteinDomain">
-        <attribute name="identifier" value="PETE_TM1"/>
-        <attribute name="interproId" value="IPRPETE01"/>
-        <attribute name="name" value="PETE_TEST_METHOD_1"/>
-        <collection name="evidence">
-            <reference ref_id="10_1001"/>
-            <reference ref_id="-1_1"/>
-            <reference ref_id="-1_25"/>
-        </collection>
-        <collection name="proteins">
-            <reference ref_id="3_1001"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_24"/>
-            <reference ref_id="-1_26"/>
-        </collection>
+    <item id="10_6" class="http://www.flymine.org/model/genomic#InterproEvidence">
+        <attribute name="infotext" value="Prints entries to be excluded from SPTR xrefs"/>
     </item>
-    <item id="6_1001" class="http://www.flymine.org/model/genomic#ProteinDomain">
-        <attribute name="identifier" value="IPRPETE01"/>
-        <attribute name="interproId" value="IPRPETE01"/>
-        <attribute name="name" value="PETES DUMMY PARENT DOMAIN"/>
-        <attribute name="shortName" value="DPD"/>
-        <collection name="childFeatures">
-            <reference ref_id="6_1002"/>
-        </collection>
-        <collection name="evidence">
-            <reference ref_id="-1_5"/>
-            <reference ref_id="-1_1"/>
-        </collection>
-        <collection name="foundIn">
-            <reference ref_id="6_1003"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_9"/>
-        </collection>
-    </item>
-    <item id="6_1002" class="http://www.flymine.org/model/genomic#ProteinDomain">
-        <attribute name="identifier" value="IPRPETE02"/>
-        <attribute name="interproId" value="IPRPETE02"/>
-        <attribute name="name" value="PETES DUMMY CHILD DOMAIN"/>
-        <attribute name="shortName" value="DCD"/>
-        <collection name="evidence">
-            <reference ref_id="-1_5"/>
-            <reference ref_id="-1_1"/>
-        </collection>
-        <collection name="parentFeatures">
-            <reference ref_id="6_1001"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_10"/>
-        </collection>
-    </item>
-
     <item id="9_1" class="http://www.flymine.org/model/genomic#ProteinFamily">
         <attribute name="identifier" value="PF03098"/>
         <attribute name="interproId" value="IPR002007"/>
         <attribute name="name" value="An_peroxidase"/>
         <collection name="evidence">
             <reference ref_id="10_4"/>
-            <reference ref_id="-1_1"/>
+            <reference ref_id="-1_5"/>
             <reference ref_id="-1_13"/>
         </collection>
         <collection name="proteins">
@@ -247,78 +377,6 @@
         <collection name="synonyms">
             <reference ref_id="-1_12"/>
             <reference ref_id="-1_14"/>
-        </collection>
-    </item>
-    <item id="6_3" class="http://www.flymine.org/model/genomic#ProteinFamily">
-        <attribute name="identifier" value="IPR002016"/>
-        <attribute name="interproId" value="IPR002016"/>
-        <attribute name="name" value="Haem peroxidase, plant/fungal/bacterial"/>
-        <attribute name="shortName" value="Peroxidase"/>
-        <collection name="evidence">
-            <reference ref_id="-1_5"/>
-            <reference ref_id="-1_1"/>
-        </collection>
-        <collection name="parentFeatures">
-            <reference ref_id="6_2"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_8"/>
-        </collection>
-    </item>
-    <item id="6_1003" class="http://www.flymine.org/model/genomic#ProteinFamily">
-        <attribute name="identifier" value="IPR_PETE3"/>
-        <attribute name="interproId" value="IPR_PETE3"/>
-        <attribute name="name" value="PETES DUMMY FAMILY"/>
-        <attribute name="shortName" value="DFM"/>
-        <collection name="comments">
-            <reference ref_id="16_1001"/>
-        </collection>
-        <collection name="contains">
-            <reference ref_id="6_1001"/>
-        </collection>
-        <collection name="evidence">
-            <reference ref_id="-1_5"/>
-            <reference ref_id="-1_1"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_11"/>
-        </collection>
-    </item>
-    <item id="9_3" class="http://www.flymine.org/model/genomic#ProteinFamily">
-        <attribute name="identifier" value="PS50292"/>
-        <attribute name="interproId" value="IPR002007"/>
-        <attribute name="name" value="PEROXIDASE_3"/>
-        <collection name="evidence">
-            <reference ref_id="10_4"/>
-            <reference ref_id="-1_1"/>
-            <reference ref_id="-1_19"/>
-        </collection>
-        <collection name="proteins">
-            <reference ref_id="3_1"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_18"/>
-            <reference ref_id="-1_20"/>
-        </collection>
-    </item>
-    <item id="6_2" class="http://www.flymine.org/model/genomic#ProteinFamily">
-        <attribute name="identifier" value="IPR010255"/>
-        <attribute name="interproId" value="IPR010255"/>
-        <attribute name="name" value="Haem peroxidase"/>
-        <attribute name="shortName" value="Peroxidase_super"/>
-        <collection name="childFeatures">
-            <reference ref_id="6_1"/>
-            <reference ref_id="6_3"/>
-        </collection>
-        <collection name="evidence">
-            <reference ref_id="-1_5"/>
-            <reference ref_id="-1_1"/>
-        </collection>
-        <collection name="proteins">
-            <reference ref_id="3_1"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_7"/>
         </collection>
     </item>
     <item id="6_1" class="http://www.flymine.org/model/genomic#ProteinFamily">
@@ -340,83 +398,74 @@
             <reference ref_id="-1_6"/>
         </collection>
     </item>
-    <item id="9_2" class="http://www.flymine.org/model/genomic#ProteinFamily">
-        <attribute name="identifier" value="PR00457"/>
-        <attribute name="interproId" value="IPR002007"/>
-        <attribute name="name" value="ANPEROXIDASE"/>
-        <collection name="evidence">
-            <reference ref_id="10_5"/>
-            <reference ref_id="-1_1"/>
-            <reference ref_id="-1_16"/>
-        </collection>
-        <collection name="proteins">
-            <reference ref_id="3_1"/>
-            <reference ref_id="3_1"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_15"/>
-            <reference ref_id="-1_17"/>
-        </collection>
-    </item>
-    <item id="9_4" class="http://www.flymine.org/model/genomic#ProteinFamily">
-        <attribute name="identifier" value="SSF48113"/>
-        <attribute name="interproId" value="IPR010255"/>
-        <attribute name="name" value="Peroxidase_super"/>
-        <collection name="evidence">
-            <reference ref_id="10_6"/>
-            <reference ref_id="-1_1"/>
-            <reference ref_id="-1_22"/>
-        </collection>
-        <collection name="proteins">
-            <reference ref_id="3_1"/>
-        </collection>
-        <collection name="synonyms">
-            <reference ref_id="-1_21"/>
-            <reference ref_id="-1_23"/>
-        </collection>
-    </item>
-
-    <item id="12_1" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1"/>
-        <reference name="subject" ref_id="9_3"/>
-    </item>
-    <item id="12_1002" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1002"/>
-        <reference name="subject" ref_id="9_1002"/>
-    </item>
-    <item id="12_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1001"/>
-        <reference name="subject" ref_id="9_1001"/>
-    </item>
-    <item id="14_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1001"/>
-        <reference name="subject" ref_id="6_1002"/>
-    </item>
-    <item id="12_2" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1"/>
+    <item id="-1_17" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="PR00457"/>
+        <reference name="source" ref_id="-1_16"/>
         <reference name="subject" ref_id="9_2"/>
     </item>
-    <item id="14_1" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_2"/>
-        <reference name="subject" ref_id="6_1"/>
+    <item id="-1_4" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="Q5UEB5_ANOGA"/>
+        <reference name="source" ref_id="-1_2"/>
+        <reference name="subject" ref_id="3_1001"/>
     </item>
-    <item id="12_4" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_2"/>
+    <item id="-1_16" class="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PRINTS"/>
+    </item>
+    <item id="-1_12" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="IPR002007"/>
+        <reference name="source" ref_id="-1_1"/>
+        <reference name="subject" ref_id="9_1"/>
+    </item>
+    <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="InterPro data set"/>
+    </item>
+    <item id="11_5" class="http://www.flymine.org/model/genomic#Location">
+        <attribute name="end" value="43"/>
+        <attribute name="start" value="1"/>
+        <reference name="object" ref_id="3_1"/>
         <reference name="subject" ref_id="9_4"/>
+        <collection name="evidence">
+            <reference ref_id="-1_22"/>
+            <reference ref_id="10_3"/>
+        </collection>
     </item>
-    <item id="15_1001" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1003"/>
-        <reference name="subject" ref_id="6_1001"/>
+    <item id="10_1" class="http://www.flymine.org/model/genomic#InterproEvidence">
+        <attribute name="infotext" value="Computed by pfsearch"/>
+    </item>
+    <item id="-1_28" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="PETE_TM2"/>
+        <reference name="source" ref_id="-1_25"/>
+        <reference name="subject" ref_id="9_1002"/>
+    </item>
+    <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+        <attribute name="taxonId" value="7165"/>
+    </item>
+    <item id="-1_25" class="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PETE_TEST_DB"/>
+    </item>
+    <item id="16_1001" class="http://www.flymine.org/model/genomic#Comment">
+        <attribute name="text" value="PETE TEST BLAH BLAH BLAH"/>
+        <attribute name="type" value="PETE_TEST_COMMON_ANNOTATION"/>
+        <reference name="source" ref_id="-1_5"/>
     </item>
     <item id="14_2" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
         <reference name="object" ref_id="6_2"/>
         <reference name="subject" ref_id="6_3"/>
     </item>
-    <item id="12_3" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
-        <reference name="object" ref_id="6_1"/>
-        <reference name="subject" ref_id="9_1"/>
+    <item id="11_2" class="http://www.flymine.org/model/genomic#Location">
+        <attribute name="end" value="28"/>
+        <attribute name="start" value="8"/>
+        <reference name="object" ref_id="3_1"/>
+        <reference name="subject" ref_id="9_2"/>
+        <collection name="evidence">
+            <reference ref_id="-1_16"/>
+            <reference ref_id="10_2"/>
+        </collection>
     </item>
-
     <item id="-1_14" class="http://www.flymine.org/model/genomic#Synonym">
         <attribute name="type" value="identifier"/>
         <attribute name="value" value="PF03098"/>
@@ -435,106 +484,47 @@
         <reference name="source" ref_id="-1_2"/>
         <reference name="subject" ref_id="3_1"/>
     </item>
+    <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="TrEMBL"/>
+    </item>
     <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
         <attribute name="type" value="identifier"/>
         <attribute name="value" value="IPR002016"/>
         <reference name="source" ref_id="-1_1"/>
         <reference name="subject" ref_id="6_3"/>
     </item>
-    <item id="-1_9" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPRPETE01"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="6_1001"/>
+    <item id="6_1002" class="http://www.flymine.org/model/genomic#ProteinDomain">
+        <attribute name="identifier" value="IPRPETE02"/>
+        <attribute name="interproId" value="IPRPETE02"/>
+        <attribute name="name" value="PETES DUMMY CHILD DOMAIN"/>
+        <attribute name="shortName" value="DCD"/>
+        <collection name="evidence">
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_1"/>
+        </collection>
+        <collection name="parentFeatures">
+            <reference ref_id="6_1001"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_10"/>
+        </collection>
     </item>
-    <item id="-1_23" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="SSF48113"/>
-        <reference name="source" ref_id="-1_22"/>
-        <reference name="subject" ref_id="9_4"/>
+    <item id="9_1002" class="http://www.flymine.org/model/genomic#ProteinDomain">
+        <attribute name="identifier" value="PETE_TM2"/>
+        <attribute name="interproId" value="IPRPETE02"/>
+        <attribute name="name" value="PETE_TEST_METHOD_2"/>
+        <collection name="evidence">
+            <reference ref_id="10_1001"/>
+            <reference ref_id="-1_5"/>
+            <reference ref_id="-1_25"/>
+        </collection>
+        <collection name="synonyms">
+            <reference ref_id="-1_27"/>
+            <reference ref_id="-1_28"/>
+        </collection>
     </item>
-    <item id="-1_24" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPRPETE01"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="9_1001"/>
-    </item>
-    <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPR002007"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="6_1"/>
-    </item>
-    <item id="-1_15" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPR002007"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="9_2"/>
-    </item>
-    <item id="-1_18" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPR002007"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="9_3"/>
-    </item>
-    <item id="-1_28" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="PETE_TM2"/>
-        <reference name="source" ref_id="-1_25"/>
-        <reference name="subject" ref_id="9_1002"/>
-    </item>
-    <item id="-1_17" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="PR00457"/>
-        <reference name="source" ref_id="-1_16"/>
-        <reference name="subject" ref_id="9_2"/>
-    </item>
-    <item id="-1_4" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="Q5UEB5_ANOGA"/>
-        <reference name="source" ref_id="-1_2"/>
-        <reference name="subject" ref_id="3_1001"/>
-    </item>
-    <item id="-1_12" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPR002007"/>
-        <reference name="source" ref_id="-1_1"/>
+    <item id="12_3" class="http://www.flymine.org/model/genomic#ProteinFeatureRelation">
+        <reference name="object" ref_id="6_1"/>
         <reference name="subject" ref_id="9_1"/>
-    </item>
-    <item id="-1_27" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPRPETE02"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="9_1002"/>
-    </item>
-    <item id="-1_26" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="PETE_TM1"/>
-        <reference name="source" ref_id="-1_25"/>
-        <reference name="subject" ref_id="9_1001"/>
-    </item>
-    <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPR010255"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="6_2"/>
-    </item>
-    <item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPRPETE02"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="6_1002"/>
-    </item>
-    <item id="-1_20" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="PS50292"/>
-        <reference name="source" ref_id="-1_19"/>
-        <reference name="subject" ref_id="9_3"/>
-    </item>
-    <item id="-1_11" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IPR_PETE3"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="6_1003"/>
     </item>
 </items>
