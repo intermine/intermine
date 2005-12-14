@@ -46,10 +46,6 @@
           <reference ref_id="3"/>
           <reference ref_id="4"/>
         </collection>
-        <collection name="secretarys">
-          <reference ref_id="14"/>
-          <reference ref_id="15"/>
-        </collection>
       </item>
       <item id="6" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
         <attribute name="name" value="DepartmentB1"/>
