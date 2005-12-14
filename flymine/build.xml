@@ -741,7 +741,7 @@
   </target>
 
   <!-- translate ensembl drosophila -->
-  <target name="translate-ensembl-drosophila" depends="convert-ensembl, compile-ensembl-java, compile-genomic-java">
+  <target name="translate-ensembl-drosophila" depends="convert-ensembl, compile-ensembl-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -807,7 +807,7 @@
   </target>
 
   <!-- translate ensembl anopheles -->
-  <target name="translate-ensembl-anopheles" depends="convert-ensembl, compile-ensembl-java, compile-genomic-java">
+  <target name="translate-ensembl-anopheles" depends="convert-ensembl, compile-ensembl-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -877,7 +877,7 @@
   </target>
 
   <!-- translate drosdel -->
-  <target name="translate-drosdel" depends="compile-drosdel-java, compile-genomic-java">
+  <target name="translate-drosdel" depends="compile-drosdel-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1292,9 +1292,7 @@
                  model="psi"
                  osName="osw.psi-src-items">
       <fileset dir="${shared.data}/psi">
-        <include name="caeel*.xml"/>
-        <include name="drome*.xml"/>
-        <include name="yeast*.xml"/>
+        <include name="drome_small.xml"/>
       </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1308,7 +1306,7 @@
     </ant>
   </target>
 
-  <target name="translate-psi" depends="compile-psi-java, compile-genomic-java">
+  <target name="translate-psi" depends="compile-psi-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1467,7 +1465,7 @@
   </target>
 
 
-  <target name="translate-mage" depends="convert-mage, compile-genomic-java, compile-mage-java">
+  <target name="translate-mage" depends="convert-mage, compile-genomic-java-from-db, compile-mage-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1537,7 +1535,7 @@
     </ant>
   </target>
 
-  <target name="translate-protein_structure" depends="prepare-build-model, compile-protein_structure-java, compile-genomic-java">
+  <target name="translate-protein_structure" depends="prepare-build-model, compile-protein_structure-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -3083,7 +3081,7 @@
     </ant>
   </target>
 
-	<target name="remove-webservice" depends="prepare"
+  <target name="remove-webservice" depends="prepare"
           description="release the webservice to the server">
     <ant antfile="${build}/build-webapp.xml" target="remove-webservice" inheritRefs="true">
       <property name="war" value="${dist.webapp}/webservice.war"/>
@@ -3497,7 +3495,7 @@
   </target>
 
   <!-- translate ensembl human data -->
-  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
+  <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4608,7 +4606,7 @@
   </target>
 
   <target name="translate-mage-stemcell" 
-          depends="convert-mage, compile-genomic-java, compile-mage-java">
+          depends="convert-mage, compile-genomic-java-from-db, compile-mage-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
