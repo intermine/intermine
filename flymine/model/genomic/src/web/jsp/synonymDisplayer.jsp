@@ -25,16 +25,17 @@
                 <c:set var="linkProperty" value="${sourceName}.${genus}.${species}.url.prefix"/>
             </c:otherwise>
         </c:choose>
-        <c:set var="href" value="${WEB_PROPERTIES[linkProperty]}${thisSynonym.value}"/>
+        <c:set var="linkPrefix" value="${WEB_PROPERTIES[linkProperty]}"/>
+        <c:set var="href" value="${linkPrefix}${thisSynonym.value}"/>
         <c:if test="${!empty WEB_PROPERTIES[linkProperty]
                       && (thisSynonym.type == 'identifier' 
                           || ((thisSynonym.type == 'name' || thisSynonym.type == 'accession')
                                && sourceName == 'HUGO'))
                       && (sourceName != 'FlyBase' || fn:startsWith(thisSynonym.value, 'FBgn'))
-                      && !seenUrls[href]}">
+                      && seenUrls[linkPrefix] == null}">
           
           <jsp:useBean id="seenUrls" scope="page" class="java.util.HashMap">
-            <c:set target="${seenUrls}" property="${href}" value="${href}"/>
+            <c:set target="${seenUrls}" property="${linkPrefix}" value="${linkPrefix}"/>
           </jsp:useBean>
           <tr>
             <td>
