@@ -105,7 +105,7 @@ public class UniprotDataTranslator extends DataTranslator
          q.setConstraint(sc1);
          // TODO batch size usually 1000, increase again if ObjectStoreItemPathFollowingImpl query
          // generation creates queries that can use bag temprorary tables more effectively
-         return ((ObjectStoreItemReader) srcItemReader).itemIterator(q, 100);
+         return ((ObjectStoreItemReader) srcItemReader).itemIterator(q, 1000);
      }
 
 
@@ -241,7 +241,7 @@ public class UniprotDataTranslator extends DataTranslator
                     if (srcProteinNameEvidence != null) {
                         srcProteinNameStr += " (Evidence " + srcProteinNameEvidence + ")";
                     }
-                    retval.add(createSynonym(protein.getIdentifier(), "symbol",
+                    retval.add(createSynonym(protein.getIdentifier(), "name",
                                              srcProteinNameStr, getDataSourceId("UniProt")));
                 }
             }
@@ -348,15 +348,31 @@ public class UniprotDataTranslator extends DataTranslator
                 Set geneNames = new HashSet();
                 {
                     Iterator srcGeneNameIter = srcGeneNames.iterator();
+                    String notCG = null;
                     while (srcGeneNameIter.hasNext()) {
                         Item srcGeneName = (Item) srcGeneNameIter.next();
                         if ("primary".equals(getAttributeValue(srcGeneName, "type"))) {
                             primaryGeneName = new String(getAttributeValue(srcGeneName,
                                                                            "name"));
                         } else if ("ORF".equals(getAttributeValue(srcGeneName, "type"))) {
-                            geneIdentifier = new String(getAttributeValue(srcGeneName, "name"));
+                            String tmp = getAttributeValue(srcGeneName, "name");
+                            if ((taxonId == 7227) && (!tmp.startsWith("CG"))) {
+                                notCG = tmp;
+                            } else {
+                                geneIdentifier = tmp;
+                            }
                         }
                         geneNames.add(new String(getAttributeValue(srcGeneName, "name")));
+                    }
+                    // Some UniProt entries have CGxxx as Dmel_CGxxx - need to strip prefix
+                    // so that they match identifiers from other sources.  Some genes have
+                    // embl identifiers and no FlyBase id, ignore these.
+                    if ( geneIdentifier == null && notCG != null) {
+                        if (notCG.startsWith("Dmel_")) {
+                            geneIdentifier = notCG.substring(5);
+                        } else {
+                            LOG.info("Found a Drosophila gene without a CG identifer: " + notCG);
+                        }
                     }
                 }
 
@@ -465,7 +481,7 @@ public class UniprotDataTranslator extends DataTranslator
                                 Item synonym = createSynonym(gene.getIdentifier(),
                                     (type.equals("primary") || type.equals("synonym"))
                                                              ? "symbol" : type,
-                                                             symbol, getDataSourceId("UniProt"));
+                                                             symbol, dbId);
                                 geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }
@@ -608,9 +624,6 @@ public class UniprotDataTranslator extends DataTranslator
             return Collections.EMPTY_LIST;
         }
 
-     LOG.warn("UDT.getItemsInCollection()...col.getName() = " + col.getName()
-             + (attributeName != null ? attributeName : " attrname=null "));
-
         StringBuffer refIds = new StringBuffer();
         boolean needComma = false;
         Iterator refIdIter = col.getRefIds().iterator();
@@ -644,9 +657,6 @@ public class UniprotDataTranslator extends DataTranslator
         while (refIdIter.hasNext()) {
             Item tmpItem = (Item) itemMap.get(refIdIter.next());
             if (tmpItem != null) {
-
-              LOG.warn("UDT.getItemsInCollection()...tmpItem.getClassName() = "
-                      + tmpItem.getClassName());
                 retval.add(tmpItem);
             }
         }

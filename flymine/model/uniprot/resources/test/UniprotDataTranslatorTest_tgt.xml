@@ -119,7 +119,7 @@
   <item id="-1_26" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="ftt-1"/>
-    <reference name="source" ref_id="-1_4"/>
+    <reference name="source" ref_id="-1_21"/>
     <reference name="subject" ref_id="-1_22"/>
   </item>
   <item id="-1_40" class="http://www.flymine.org/model/genomic#Synonym">
@@ -140,13 +140,13 @@
   <item id="-1_25" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="par-5"/>
-    <reference name="source" ref_id="-1_4"/>
+    <reference name="source" ref_id="-1_21"/>
     <reference name="subject" ref_id="-1_22"/>
   </item>
   <item id="-1_41" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="Tina-1"/>
-    <reference name="source" ref_id="-1_4"/>
+    <reference name="source" ref_id="-1_37"/>
     <reference name="subject" ref_id="-1_38"/>
   </item>
   <item id="-1_13" class="http://www.flymine.org/model/genomic#Protein">
@@ -178,7 +178,7 @@
     <attribute name="taxonId" value="6239"/>
   </item>
   <item id="-1_32" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="symbol"/>
+    <attribute name="type" value="name"/>
     <attribute name="value" value="Troponin C-akin-1 protein"/>
     <reference name="source" ref_id="-1_4"/>
     <reference name="subject" ref_id="-1_28"/>
@@ -199,7 +199,7 @@
     <attribute name="name" value="FlyBase"/>
   </item>
   <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="symbol"/>
+    <attribute name="type" value="name"/>
     <attribute name="value" value="ENSANGP00000011199"/>
     <reference name="source" ref_id="-1_4"/>
     <reference name="subject" ref_id="-1_3"/>
@@ -215,7 +215,7 @@
     <attribute name="residues" value="MGQAKKVSSALSKLFVYGALKYGQPSNSILASSGNGFAKFWCKATTTQKLPLVIATRYNIPFLLNKPGVGYYVTGEIYEVDDRMLNSLDNLEDCEEIYTREMHDMNIGVGEGTVPCWVYLLQKYPENLLSLRYLSSYENSTTHPYIMRHRRTHKHPAQDDLTYEAQN"/>
   </item>
   <item id="-1_17" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="symbol"/>
+    <attribute name="type" value="name"/>
     <attribute name="value" value="14-3-3-like protein 1"/>
     <reference name="source" ref_id="-1_4"/>
     <reference name="subject" ref_id="-1_13"/>
