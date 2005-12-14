@@ -131,8 +131,9 @@ public class TransferSequences
         ObjectStore os = osw.getObjectStore();
         osw.beginTransaction();
 
-        Results results = PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
-                                                        LocatedSequenceFeature.class, true);
+        Results results =
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
+                                                   LocatedSequenceFeature.class, true);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();
@@ -167,6 +168,7 @@ public class TransferSequences
             Sequence sequence =
                 (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
             sequence.setResidues(featureSeq);
+            sequence.setLength(featureSeq.length());
             feature.setSequence(sequence);
             osw.store(feature);
             osw.store(sequence);
