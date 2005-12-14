@@ -119,9 +119,17 @@ public class CreateReferences
                              CDS.class, "gene");
 
         LOG.info("insertReferences stage 10");
-        // Gene.CDSs.polypeptides
         insertReferenceField(Gene.class, "CDSs", CDS.class, "polypeptides",
                              Translation.class, "gene");
+
+        LOG.info("insertReferences stage 11");
+        insertReferenceField(Translation.class, "CDSs", CDS.class, "MRNAs",
+                             MRNA.class, "translation");
+
+        LOG.info("insertReferences stage 12");
+        // Gene.CDSs.polypeptides
+        insertReferenceField(MRNA.class, "CDSs", CDS.class, "polypeptides",
+                             Translation.class, "transcript");
 
         ObjectStore os = osw.getObjectStore();
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -129,7 +137,7 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 11");
+        LOG.info("insertReferences stage 13");
         insertGeneAnnotationReferences();
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -137,15 +145,15 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 12");
+        LOG.info("insertReferences stage 14");
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
-        LOG.info("insertReferences stage 13");
+        LOG.info("insertReferences stage 15");
         // Gene.microArrayResults
         createMicroArrayResultsCollection();
 
-        LOG.info("insertReferences stage 14");
+        LOG.info("insertReferences stage 16");
         createUtrRefs();
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -233,7 +241,7 @@ public class CreateReferences
                 TypeUtil.setFieldValue(tempObject, createFieldName, thisSourceObject);
                 count++;
                 if (count % 10000 == 0) {
-                    LOG.info("Created " + count + " references in " + destinationClass.getName() 
+                    LOG.info("Created " + count + " references in " + destinationClass.getName()
                              + " to " + sourceClass.getName()
                              + " via " + connectingClass.getName());
                 }
@@ -799,7 +807,7 @@ public class CreateReferences
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
-    
+
     /**
      * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
      *  Protein and GOTerm.
