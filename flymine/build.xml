@@ -1436,7 +1436,6 @@
       <fileset dir="${shared.data}/mage/E-FLYC-1"/>
       <fileset dir="${shared.data}/mage/E-FLYC-2"/>
       <fileset dir="${shared.data}/mage/E-FLYC-3"/>
-      <fileset dir="${shared.data}/mage/E-FLYC-5"/>
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
