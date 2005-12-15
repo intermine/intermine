@@ -1446,7 +1446,9 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" model="mage" quantitationtypes="Signal med ratio">
+                  clsName="org.flymine.dataconversion.MageConverter" 
+                  model="mage" 
+                  quantitationtypes="Signal med ratio">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -3361,6 +3363,23 @@
 
 
   <!-- ============================== TIDMINE/STEM CELL TARGETS ================================================= -->
+ <target name="build-db-genomic-test-stemcell" depends="prepare-build-model, prepare-test, copy-stemcell-config">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.genomic-test"/>
+      <property name="objectstore.name" value="os.genomic-test"/>
+    </ant>
+  </target>
+
+  <target name="build-db-genomic-test-t1dmine" depends="prepare-build-model, prepare-test, copy-t1dmine-config">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="test.class.path"/>
+      <property name="db.name" value="db.genomic-test"/>
+      <property name="objectstore.name" value="os.genomic-test"/>
+    </ant>
+  </target>
 
  <target name="compile-genomic-java-t1dmine" depends="compile-flymine-java, compile-genomic-model-t1dmine">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
@@ -4564,11 +4583,11 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <!--fileset dir="${shared.data}/human/mage/E-EMBL-1"/-->
+      <fileset dir="${shared.data}/human/mage/E-EMBL-1"/>
       <fileset dir="${shared.data}/human/mage/E-MEXP-337"/>
-      <!--fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
+      <fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
       <fileset dir="${shared.data}/human/mage/E-MEXP-70"/>
-      <fileset dir="${shared.data}/human/mage/E-SMDB-3450"/-->
+      <!--fileset dir="${shared.data}/human/mage/E-SMDB-3450"/-->
     </copy>
 
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
@@ -4587,7 +4606,7 @@
     <convert-file osName="osw.mage-src-items"
                   clsName="org.flymine.dataconversion.MageConverter" 
                   model="mage" 
-                  quantitationtypes="Log2Ratio">
+                  quantitationtypes="Log2Ratio, Average Expression Level"> 
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -4614,7 +4633,7 @@
       <property name="objectstore.name" value="os.mage-tgt-items-std"/>
     </ant>
     <copy file="${model}/mage/mage_mappings" toDir="${build.model}/mage"/>
-    <copy file="${model}/genomic/resources/t1dmine/mage_config.properties" toDir="${build.model}/genomic"/>
+    <copy file="${model}/genomic/resources/stemcell/mage_config.properties" toDir="${build.model}/genomic"/>
     <echo message="CLASSPATH: ${models.class.path}"/>
     <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
       <classpath refid="models.class.path"/>
@@ -4635,7 +4654,7 @@
     </ant>
   </target>
   
-  <target name="load-mage-stemcell" depends = "prepare-build-model, copy-t1dmine-config">
+  <target name="load-mage-stemcell" depends = "prepare-build-model, copy-stemcell-config">
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4695,7 +4714,8 @@
                  model="psi"
                  osName="osw.psi-src-items">
       <fileset dir="${shared.data}/human/psi">
-        <include name="rual/*.xml"/>
+        <include name="rual/human*.xml"/>
+        <include name="stelzl/human*.xml"/>
        </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -4805,7 +4825,7 @@
 
   <!-- insert the testmodel data into the database-->
   <target name="insert-data-unittest"
-          depends="build-db-genomic-test, create-indexes-genomic-test, copy-stemcell-config, ensembl-human-test">
+          depends="build-db-genomic-test-stemcell, create-indexes-genomic-test, ensembl-human-test">
     <taskdef name="insert-xml-data" classname="org.intermine.dataloader.XmlDataLoaderTask">
       <classpath refid="test.class.path"/>
     </taskdef>
