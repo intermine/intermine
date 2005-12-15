@@ -176,12 +176,12 @@ public class PostProcessTask extends Task
                 LOG.info("Starting add-licences");
                 new AddLicences(getObjectStoreWriter()).execute();
             } else if ("update-orthologues".equals(operation)) {
-//                UpdateOrthologues uo = new UpdateOrthologues(getObjectStoreWriter());
-//                LOG.info("Starting UpdateOrthologues.process()");
-//                uo.process();
-//                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-//                LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
-//                cr.populateOrthologuesCollection();
+                UpdateOrthologues uo = new UpdateOrthologues(getObjectStoreWriter());
+                LOG.info("Starting UpdateOrthologues.process()");
+                uo.process();
+                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
+                LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
+                cr.populateOrthologuesCollection();
             } else if ("homophila-post-process".equals(operation)) {
                 HomophilaPostProcess hpp = new HomophilaPostProcess(getObjectStoreWriter());
                 hpp.connectDrosophilaGenesToHumanDiseases();
