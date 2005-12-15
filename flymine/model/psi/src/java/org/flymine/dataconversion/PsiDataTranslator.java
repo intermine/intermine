@@ -189,7 +189,8 @@ public class PsiDataTranslator extends DataTranslator
                 } else if ("ProteinInteractorType".equals(className)) {
                     Item xref = getReference(srcItem, "xref");
                     Item dbXref = getReference(xref, "primaryRef");
-                    if (dbXref.getAttribute("db").getValue().equals("uniprot")) {
+                    if (dbXref.getAttribute("db").getValue().equalsIgnoreCase("uniprot") 
+			||dbXref.getAttribute("db").getValue().equalsIgnoreCase("uniprotkb")) {
                         String value = dbXref.getAttribute("id").getValue();
                         tgtItem.addAttribute(new Attribute("primaryAccession", value));
                         Item synonym = createItem("Synonym");
