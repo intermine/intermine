@@ -1292,7 +1292,9 @@
                  model="psi"
                  osName="osw.psi-src-items">
       <fileset dir="${shared.data}/psi">
-        <include name="drome_small.xml"/>
+        <include name="caeel*.xml"/>  
+        <include name="drome*.xml"/>  
+        <include name="yeast*.xml"/>
       </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
