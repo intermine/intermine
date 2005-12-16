@@ -201,7 +201,8 @@ public class AcceptanceTestTask extends Task
                 if (!atr.isSuccessful()) {
                     pw.println("<li><a href=\"#test" + count + "\">");
                     pw.println(atr.getTest().getSql());
-                    pw.println("</a></li>");
+                    pw.println("</a><p><font size='-1'>(" + atr.getTest().getNote()
+                               + ")</font></p></li>");
                 }
 
                 pw.println("</ul>");
@@ -238,6 +239,7 @@ public class AcceptanceTestTask extends Task
                      || atr.getTest().getType().equals(AcceptanceTest.RESULTS_REPORT))
                     && atr.getResults().size() > 0) {
                     outputTable(pw, atr, atr.getColumnLabels(), atr.getResults());
+                    pw.println("<p>total rows: " + atr.getResultsCount() + "</p>");
                 }
             } else {
                 pw.println("<p>SQLException while executing SQL:</p>");
@@ -551,6 +553,7 @@ class AcceptanceTestResult
     private SQLException sqlException = null;
     private List results = null;
     private List columnLabels = null;
+    private int resultCount = -1;
     // a Map from InterMine ID to the corresponding entries in the tracker table
     private Map trackerMap = new HashMap();
     private final long time;
@@ -568,6 +571,12 @@ class AcceptanceTestResult
         try {
             results = copyResults(rs, test.getMaxResults().intValue());
 
+            resultCount = results.size();
+            // count the remaining rows in rs
+            while(rs.next()) {
+                resultCount++;
+            }
+            
             ResultSetMetaData metadata = rs.getMetaData();
             columnLabels = new ArrayList();
             for (int i = 1; i <= metadata.getColumnCount(); i++) {
@@ -615,6 +624,14 @@ class AcceptanceTestResult
      */
     public long getTime() {
         return time;
+    }
+    
+    /**
+     * Return the number of rows the test produced.
+     * @return the number of rows
+     */
+    public int getResultsCount() {
+        return resultCount;
     }
     
     /**
