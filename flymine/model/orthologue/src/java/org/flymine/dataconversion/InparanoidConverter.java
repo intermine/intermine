@@ -167,6 +167,12 @@ public class InparanoidConverter extends FileConverter
         if (abbrev.length() != 2) {
             throw new IllegalArgumentException("invalid organism abbreviation: " + abbrev);
         }
+        // HACK Inparanoid files use abbreviation AG to refer to Anopheles gambiae PEST,
+        // we use AGP for this.
+        if ("AG".equals(abbrev)) {
+            abbrev = "AGP";
+        }
+
         Item organism = (Item) organisms.get(abbrev);
         if (organism == null) {
             organism = createItem("Organism");
