@@ -32,7 +32,7 @@
     </collection>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="abbreviation" value="DM"/>
+    <attribute name="abbreviation" value="AGP"/>
   </item>
   <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
     <reference name="objectTranslation" ref_id="7_2"/>

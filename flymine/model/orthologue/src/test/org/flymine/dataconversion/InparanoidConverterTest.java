@@ -49,8 +49,9 @@ public class InparanoidConverterTest extends TestCase
         // so...this input should produce one orthologue (rows 1 & 3) and two paralogues (1 & 2, 3 & 4)
         String input = "14\t1217\tCE\t1.000\tT21E12.4" + ENDL
             + "14\t1217\tCE\t0.997\tZK617.1b" + ENDL
-            + "14\t1217\tDM\t1.000\tCG32019-PA" + ENDL
-            + "14\t1217\tDM\t0.566\tCG10844-PA" + ENDL;
+            + "14\t1217\tAG\t1.000\tCG32019-PA" + ENDL
+            + "14\t1217\tAG\t0.566\tCG10844-PA" + ENDL;
+
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new InparanoidConverter(itemWriter);
