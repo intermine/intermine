@@ -17,6 +17,12 @@
         <reference name="taxonomy" ref_id="1_1"/>
         <reference name="protein" ref_id="3_1001"/>
     </item>
+    <item id="2_1002" class="http://www.flymine.org/model/interpro#protein2taxonomy">
+        <attribute name="hierarchy" value="PETE:PETE:PETE:PETE"/>
+        <attribute name="tax_name_concat" value="PETE!"/>
+        <reference name="taxonomy" ref_id="1_1"/>
+        <reference name="protein" ref_id="3_1002"/>
+    </item>
 
     <item id="3_1" class="http://www.flymine.org/model/interpro#protein">
         <attribute name="protein_ac" value="Q5UEB5"/>
@@ -35,6 +41,15 @@
         <attribute name="len" value="43"/>
         <attribute name="fragment" value="Y"/>
         <reference name="cv_database" ref_id="4_1"/>
+    </item>
+    <item id="3_1002" class="http://www.flymine.org/model/interpro#protein">
+        <attribute name="protein_ac" value="PETE"/>
+        <attribute name="name" value="PETE_PROTEIN"/>
+        <attribute name="dbcode" value="S"/>
+        <attribute name="crc64" value="CHICKEN"/>
+        <attribute name="len" value="69"/>
+        <attribute name="fragment" value="Y"/>
+        <reference name="cv_database" ref_id="4_6"/>
     </item>
 
     <item id="4_1" class="http://www.flymine.org/model/interpro#cv_database">
@@ -67,6 +82,19 @@
         <attribute name="dborder" value="5"/>
         <attribute name="dbshort" value="PROFILE"/>
     </item>
+    <item id="4_6" class="http://www.flymine.org/model/interpro#cv_database">
+        <attribute name="dbcode" value="S"/>
+        <attribute name="dbname" value="SWISS-PROT"/>
+        <attribute name="dborder" value="2"/>
+        <attribute name="dbshort" value="SWISSPROT"/>
+    </item>
+
+    <item id="4_7" class="http://www.flymine.org/model/interpro#cv_database">
+        <attribute name="dbcode" value="Q"/>
+        <attribute name="dbname" value="PROSITE preprofiles"/>
+        <attribute name="dborder" value="6"/>
+        <attribute name="dbshort" value="PREFILE"/>
+    </item>
     <item id="4_1001" class="http://www.flymine.org/model/interpro#cv_database">
         <attribute name="dbcode" value="@"/>
         <attribute name="dbname" value="PETE_TEST_DB"/>
@@ -79,6 +107,7 @@
         <attribute name="dborder" value="1"/>
         <attribute name="dbshort" value="InterPro"/>
     </item>
+
 
     <item id="5_1" class="http://www.flymine.org/model/interpro#supermatch">
         <attribute name="pos_from" value="1"/>
@@ -200,6 +229,13 @@
         <attribute name="method_date" value="2003-03-20 00:00:00.0"/>
         <attribute name="skip_flag" value="Y"/>
         <reference name="cv_database" ref_id="4_1001"/>
+    </item>
+    <item id="9_1003" class="http://www.flymine.org/model/interpro#method">
+        <attribute name="method_ac" value="PETE_TM3"/>
+        <attribute name="name" value="PETE_TEST_METHOD_3"/>
+        <attribute name="method_date" value="2003-03-20 00:00:00.0"/>
+        <attribute name="skip_flag" value="Y"/>
+        <reference name="cv_database" ref_id="4_7"/>
     </item>
 
     <item id="10_1" class="http://www.flymine.org/model/interpro#cv_evidence">
@@ -347,6 +383,18 @@
         <reference name="method" ref_id="9_1002"/>
         <reference name="cv_evidence" ref_id="10_1001"/>
     </item>
+    <item id="12_1003" class="http://www.flymine.org/model/interpro#entry2method">
+        <attribute name="ida" value="N"/>
+        <reference name="entry" ref_id="6_1002"/>
+        <reference name="method" ref_id="9_1002"/>
+        <reference name="cv_evidence" ref_id="10_1001"/>
+    </item>
+    <item id="12_1003" class="http://www.flymine.org/model/interpro#entry2method">
+        <attribute name="ida" value="N"/>
+        <reference name="entry" ref_id="6_1003"/>
+        <reference name="method" ref_id="9_1003"/>
+        <reference name="cv_evidence" ref_id="10_1001"/>
+    </item>
 
     <item id="13_1" class="http://www.flymine.org/model/interpro#cv_relation">
         <attribute name="code" value="TY"/>
@@ -401,6 +449,52 @@
         <attribute name="order_in" value="1"/>
         <reference name="entry" ref_id="6_1003"/>
         <reference name="common_annotation" ref_id="16_1001"/>
+    </item>
+
+    <item id="18_1" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="T"/>
+        <attribute name="version" value="0.1"/>
+        <reference name="cv_database" ref_id="4_1"/>
+    </item>
+    <item id="18_2" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="Y"/>
+        <attribute name="version" value="0.2"/>
+        <reference name="cv_database" ref_id="4_2"/>
+    </item>
+    <item id="18_3" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="F"/>
+        <attribute name="version" value="0.3"/>
+        <reference name="cv_database" ref_id="4_3"/>
+    </item>
+    <item id="18_4" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="H"/>
+        <attribute name="version" value="0.4"/>
+        <reference name="cv_database" ref_id="4_4"/>
+    </item>
+    <item id="18_5" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="M"/>
+        <attribute name="version" value="0.5"/>
+        <reference name="cv_database" ref_id="4_5"/>
+    </item>
+    <item id="18_6" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="S"/>
+        <attribute name="version" value="46.5"/>
+        <reference name="cv_database" ref_id="4_6"/>
+    </item>
+    <item id="18_7" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="Q"/>
+        <attribute name="version" value="NA"/>
+        <reference name="cv_database" ref_id="4_7"/>
+    </item>
+    <item id="18_1001" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="@"/>
+        <attribute name="version" value="0.1001"/>
+        <reference name="cv_database" ref_id="4_1001"/>
+    </item>
+    <item id="18_1002" class="http://www.flymine.org/model/interpro#db_version">
+        <attribute name="dbcode" value="I"/>
+        <attribute name="version" value="0.1002"/>
+        <reference name="cv_database" ref_id="4_1002"/>
     </item>
 
 </items>

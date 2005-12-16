@@ -1,5 +1,4 @@
 Protein                     = protein
-Protein.identifier          = protein.name
 Protein.primaryAccession    = protein.protein_ac
 
 ProteinDomain               = entry[cv_entry_type.abbrev = Domain]
