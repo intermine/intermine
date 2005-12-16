@@ -155,7 +155,7 @@ public class InterproDataTranslator extends DataTranslator
                     LOG.debug("CONVERTED SWISS-PROT TO UniProt");
                 } else {
                     LOG.debug("SKIPPING NON SWISS-PROT DATASOURCE:"
-                            + (ndsName != null ? ndsName.getValue() : "NO_NAME_ATTR!" ));
+                            + (ndsName != null ? ndsName.getValue() : "NO_NAME_ATTR!"));
                 }
 
                 tgtItemWriter.store(ItemHelper.convert(nextDataSrc));
@@ -166,7 +166,7 @@ public class InterproDataTranslator extends DataTranslator
             } else {
                 Attribute ndsName = nextDataSrc.getAttribute("name");
                 LOG.debug("SKIPPED UNUSED DATASOURCE:"
-                        + (ndsName != null ? ndsName.getValue() : "NO_NAME_ATTR!" ));
+                        + (ndsName != null ? ndsName.getValue() : "NO_NAME_ATTR!"));
             }
         }
     }
@@ -641,11 +641,12 @@ public class InterproDataTranslator extends DataTranslator
     }
 
     /**
-     * Establishs a Datasource evidence item for source items that refer directly to the cv_database
+     * Establishs a Datasource evidence item for source items that refer directly to the cv_db
      * table in the interpro schema of which the PROTEIN and METHOD tables are of current interest.
      *
-     * Also the call to procureDataSourceAndSetItem ensures that the datasource item will actually be
-     * created as the interpro_mappings file no longer handles the cv_database -- datasource item
+     * Also the call to procureDataSourceAndSetItem ensures that the datasource item will 
+     * actually be created as the interpro_mappings file no longer handles 
+     * the cv_database -- datasource item
      * conversion.
      * */
     private Item[] setupCvDbDataSrcEvidenceRef(Item srcItem, Item tgtItem)
@@ -702,7 +703,7 @@ public class InterproDataTranslator extends DataTranslator
             } else {
                 LOG.warn("CAN'T CREATE SYNONYM FOR TGTITEM:" + tgtItem.getClassName()
                         + " AS IT DOES NOT HAVE AN IDENTIFIER"
-                        + (altAttrToUse!=null ? (" OR THIS ATTR:" + altAttrToUse) : ""));
+                        + (altAttrToUse != null ? (" OR THIS ATTR:" + altAttrToUse) : ""));
             }
 
         } else {
@@ -1050,8 +1051,11 @@ public class InterproDataTranslator extends DataTranslator
 
             cvDatabaseSet.add(CV_DATABASE_VIA_DB_VERSION.getItemPrefetchDescriptor());
 
-            ItemPrefetchDescriptor cvDbViaDbVerCvDbDesc = new ItemPrefetchDescriptor("(cv_database <- db_version.cv_database)");
-            cvDbViaDbVerCvDbDesc.addConstraint(new ItemPrefetchConstraintDynamic("cv_database", ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+            ItemPrefetchDescriptor cvDbViaDbVerCvDbDesc 
+                          = new ItemPrefetchDescriptor("(cv_database <- db_version.cv_database)");
+            cvDbViaDbVerCvDbDesc.addConstraint(
+                          new ItemPrefetchConstraintDynamic("cv_database", 
+                          ObjectStoreItemPathFollowingImpl.IDENTIFIER));
             cvDatabaseSet.add(cvDbViaDbVerCvDbDesc);
 
             paths.put("http://www.flymine.org/model/interpro#cv_database", cvDatabaseSet);
@@ -1182,7 +1186,8 @@ public class InterproDataTranslator extends DataTranslator
         private int sourceUseageCount;
 
         /**
-         * @param dataSource - the item to count for.
+         * @param dataSource - the source db item to count for.
+         * @param dataSet - the related dataset item.
          * */
         DataSourceAndSetUsageCounter(Item dataSource, Item dataSet) {
             this.dataSource = dataSource;
