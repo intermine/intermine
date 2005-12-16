@@ -609,7 +609,9 @@ public class DataTranslator
             refList = new ReferenceList(refListName);
             item.addCollection(refList);
         }
-        refList.addRefId(element.getIdentifier());
+        if (!refList.getRefIds().contains(element.getIdentifier())) {
+            refList.addRefId(element.getIdentifier());
+        }
     }
 
     /**
