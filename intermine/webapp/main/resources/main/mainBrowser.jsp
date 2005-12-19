@@ -27,9 +27,12 @@
   
   function addConstraint(path) {
     new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
-      {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true});
-    new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
-      {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true});
+      {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true,
+      onSuccess: function() {
+        new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
+          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true});
+      }
+    });
   }
 </script>
 
