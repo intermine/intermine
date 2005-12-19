@@ -514,20 +514,6 @@ public class ProfileManager
         tagCheckers.put("reference", fieldChecker);
         tagCheckers.put("attribute", fieldChecker);
     }
-
-    
-    /*
-     * Store the given Tag in the underlying UserProfile object store.  No checking is done to
-     * prevent duplicate tags.
-     * @param tag the Tag
-     */
-    void _aa__storeTag(Tag tag) {
-        try {
-            osw.store(tag);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("failed to store Tag", e);
-        }
-    }
 }
 
 /**
