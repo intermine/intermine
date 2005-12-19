@@ -106,6 +106,7 @@ public class MainAction extends InterMineAction
         if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
+            session.setAttribute("prefix", mf.getPath());
         }
         
         if (request.getParameter("nullnotnull") != null) {
