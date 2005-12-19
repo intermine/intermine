@@ -79,8 +79,6 @@ public abstract class TextFileUtil
                                            int maxRows, char delimiter, boolean quote) {
         PrintStream printStream = new PrintStream(os);
 
-        String delimiters = "" + delimiter;
-
         // a count of the columns that are invisble - used to get the correct columnIndex
         int invisibleColumns = 0;
 
@@ -129,7 +127,6 @@ public abstract class TextFileUtil
                     printStream.print(delimiter);
                 }
             }
-            int realRowSize = row.size () - 1 - invisibleColumns;
 
             printStream.println();
 
