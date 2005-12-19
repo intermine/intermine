@@ -26,10 +26,12 @@ import org.intermine.util.DynamicUtil;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.ChromosomeBand;
+import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.IntergenicRegion;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Synonym;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,17 +54,21 @@ public class IntergenicRegionsTest extends TestCase
     private ObjectStoreWriter osw;
     private IntegrationWriter iw;
     private Organism organism = null;
+    private DataSource dataSource;
     
     public IntergenicRegionsTest(String arg) {
         super(arg);
         
         organism = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
+        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource.setName("FlyMine");
     }
     
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
         osw.getObjectStore().flushObjectById();
         osw.store(organism);
+        osw.store(dataSource);
     }
 
     public void tearDown() throws Exception {
@@ -149,6 +155,12 @@ public class IntergenicRegionsTest extends TestCase
                 assertNotNull(loc.getStartIsPartial());
                 assertNotNull(loc.getEndIsPartial());
                 assertEquals(1, loc.getEvidence().size());
+
+                assertEquals(1, ir.getSynonyms().size());
+                Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
+                assertEquals(ir.getIdentifier(), synonym.getValue());
+                assertEquals("identifier", synonym.getType());
+                assertEquals("FlyMine", synonym.getSource().getName());
                 
                 actualIdentifiers.add(ir.getIdentifier());
             }
