@@ -44,6 +44,7 @@ public class IntergenicRegionUtil
     private ObjectStoreWriter osw = null;
     private ObjectStore os;
     private DataSet dataSet;
+    private DataSource dataSource;
     
     /**
      * Create a new IntergenicRegionUtil object that will operate on the given ObjectStoreWriter.
@@ -52,6 +53,13 @@ public class IntergenicRegionUtil
     public IntergenicRegionUtil(ObjectStoreWriter osw) {
         this.osw = osw;
         this.os = osw.getObjectStore();
+        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource.setName("FlyMine");
+        try {
+            dataSource = (DataSource) os.getObjectByExample(dataSource, Collections.singleton("name"));
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
+        }
     }
 
     /**
@@ -68,10 +76,6 @@ public class IntergenicRegionUtil
         dataSet.setDescription("Intergenic regions created by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
         dataSet.setUrl("http://www.flymine.org");
-        DataSource dataSource = 
-            (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-        dataSource.setName("FlyMine");
-        dataSource = (DataSource) os.getObjectByExample(dataSource, Collections.singleton("name"));
         dataSet.setDataSource(dataSource);
                               
         Iterator resIter = results.iterator();
@@ -190,6 +194,10 @@ public class IntergenicRegionUtil
                 intergenicRegion.setOrganism(chr.getOrganism());
                 intergenicRegion.addSynonyms(synonym);
                 intergenicRegion.addEvidence(dataSet);
+                synonym.addEvidence(dataSet);
+                synonym.setSource(dataSource);
+                synonym.setSubject(intergenicRegion);
+                synonym.setType("identifier");
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
                 
@@ -197,6 +205,8 @@ public class IntergenicRegionUtil
                     + "_" + location.getStart() + ".." + location.getEnd();
                 intergenicRegion.setIdentifier(identifier);
                 
+                synonym.setValue(intergenicRegion.getIdentifier());
+
                 return intergenicRegion;
             }
 
