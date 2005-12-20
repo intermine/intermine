@@ -1,8 +1,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<!-- databaseShort.jsp -->
+<!-- dataSourceShort.jsp -->
 <html:xhtml/>
-<html:link action="${linkAction}">
+<html:link href="${object.url}">
   <html:img src="model/${object.name}_logo_small.png"/>
 </html:link>
-<!-- /databaseShort.jsp -->
+<!-- /dataSourceShort.jsp -->
