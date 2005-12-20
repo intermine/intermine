@@ -1,0 +1,62 @@
+The SimpleLoadTask was written to help AlexanderP@gmx.at
+
+Here is the corresponding email:
+
+----------------------------------------------------------------------
+
+To: AlexanderP@gmx.at
+Reply-To: kmr@flymine.org
+CC: flymine-dev@flymine.org
+Date: Fri, 16 Dec 2005 14:28:21 +0000
+Subject: Re: [flymine-dev] instruction
+
+On Fri, 16 Dec 2005 12:48:30 +0100 (MET), AlexanderP  wrote:
+
+> hmm... is there maybe somewhere a step for step instruction for
+> putting own data in flymine(-local-database)? (own data from the
+> local machine... given as file...)
+
+Hi.  Unfortunately, we don't have a good tutorial at the moment.
+
+I understand that you would like to do things like create new
+ProteinFeature objects attached to existing Proteins.
+
+One way to do what you want is to write an ANT task that reads a file
+and creates ProteinFeature objects in your copy of the FlyMine
+database.  I've attached a possible implementation that you could use
+as a starting point.  To try it, you'll need to copy the file to:
+
+  flymine/model/genomic/src/java/org/flymine/task/SimpleLoadTask.java
+
+And add this target to build.xml in the flymine directory:
+
+  <target name="simple-load-test" depends="compile-genomic-java">
+    <taskdef name="simple-load-test" classname="org.flymine.task.SimpleLoadTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <simple-load-test oswAlias="osw.production">
+      <fileset dir=".">
+        <include name="my_file"/>
+      </fileset>
+    </simple-load-test>
+  </target>    
+
+The Task reads files that look like:
+
+A32CD_DROME protein_feature_1_identifier protein_feature_1_long_name
+A33A_DROME protein_feature_2_identifier protein_feature_2_long_name
+(etc...)
+
+The first column of each line is the protein identifier, the second is
+the identifier of the new ProteinFeature and the third is the longName
+field for the new ProteinFeature.
+
+The command:
+  ant simple-load-test
+should be all you need to test things.
+
+It's possible you'll have some problems with properties - let me know
+go it goes.
+
+Kim.
