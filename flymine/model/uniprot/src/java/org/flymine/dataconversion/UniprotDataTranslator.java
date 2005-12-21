@@ -68,7 +68,8 @@ public class UniprotDataTranslator extends DataTranslator
     private FileWriter fw = null;
     private boolean outputIdentifiers = false;
     private Map identifierToOrganismDbId = new HashMap();
-
+    //geneIdentifier is hugo id from ensembl-human, don't create
+    private boolean createGeneIdentifier = true; 
     private Item uniprotDataSet;
     private Reference uniprotDataSetRef;
 
@@ -162,6 +163,7 @@ public class UniprotDataTranslator extends DataTranslator
             // Drosophila melanogaster = 7227
             // Caenorhabditis elegans 6239
             // Anopheles gambiae = 7165
+	    // Homo sapiens = 9606
             Item organism = (Item) organismIter.next();
             Iterator dbRefIter = getItemsInCollection(
                                       organism.getCollection("dbReferences")).iterator();
@@ -367,7 +369,7 @@ public class UniprotDataTranslator extends DataTranslator
                     // Some UniProt entries have CGxxx as Dmel_CGxxx - need to strip prefix
                     // so that they match identifiers from other sources.  Some genes have
                     // embl identifiers and no FlyBase id, ignore these.
-                    if ( geneIdentifier == null && notCG != null) {
+                    if (geneIdentifier == null && notCG != null) {
                         if (notCG.startsWith("Dmel_")) {
                             geneIdentifier = notCG.substring(5);
                         } else {
@@ -401,6 +403,13 @@ public class UniprotDataTranslator extends DataTranslator
                         createGene = true;
                         geneOrganismDbId = geneIdentifier;
                         dbId = getDataSourceId("ensembl");
+                    }
+                } else if (taxonId == 9606) { // H. sapiens
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
+                    if (geneOrganismDbId != null) {
+                        createGene = true;
+                        dbId = getDataSourceId("Ensembl");
+			createGeneIdentifier = false;
                     }
                 }
 
@@ -447,9 +456,9 @@ public class UniprotDataTranslator extends DataTranslator
                             retval.add(synonym);
                         }
 
-                        if (geneIdentifier != null) {
-                            gene.addAttribute(new Attribute("identifier", geneIdentifier));
-                            // don't create duplicate synonym
+                        if (geneIdentifier != null && createGeneIdentifier) {
+			    gene.addAttribute(new Attribute("identifier", geneIdentifier));
+			    // don't create duplicate synonym
                             if (!geneIdentifier.equals(geneOrganismDbId)) {
                                 Item synonym = createSynonym(gene.getIdentifier(), "identifier",
                                                              geneIdentifier, dbId);
@@ -584,7 +593,9 @@ public class UniprotDataTranslator extends DataTranslator
                                                              .lastIndexOf("\\") + 1)))) {
                         geneIdentifier = new String(getAttributeValue(
                                                                       srcDbReference, "id"));
-                    }
+                    } else if (geneNames == null && srcDbRefs.size() == 1) {
+			geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
+		    }
                 }
                 if (geneIdentifier == null) {
                     LOG.info("Found dbRefs (" + srcDbRefs.size()
