@@ -406,10 +406,10 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 } else if (taxonId == 9606) { // H. sapiens
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
+		    createGeneIdentifier = false;
                     if (geneOrganismDbId != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("Ensembl");
-			createGeneIdentifier = false;
+                        createGene = true;                	
+			dbId = getDataSourceId("Ensembl");		
                     }
                 }
 
