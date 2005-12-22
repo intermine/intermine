@@ -1,7 +1,5 @@
 package org.intermine.log;
 
-import org.intermine.objectstore.query.Query;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -15,12 +13,15 @@ import org.intermine.objectstore.query.Query;
  * Time: 17:38:01
  */
 
+import org.intermine.objectstore.query.Query;
+
 /**
  * Denotes the extensions required by this specialized intermine-event-logger.
  *
  * @author Peter McLaren
  * */
-public interface InterMineLogger {
+public interface InterMineLogger
+{
 
     /**
      * Logs a simple message string.

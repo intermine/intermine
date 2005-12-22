@@ -1,11 +1,5 @@
 package org.intermine.log;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.PropertiesUtil;
-
-import java.util.Properties;
-import java.lang.reflect.Method;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -19,25 +13,45 @@ import java.lang.reflect.Method;
  * Time: 10:16:44
  */
 
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.PropertiesUtil;
+import org.apache.log4j.Logger;
+
+import java.util.Properties;
+import java.lang.reflect.Method;
+
 /**
  * Standard InterMine style factory that provides InterMineLogger instances.
  *
  * @author Peter McLaren
  */
-public class InterMineLoggerFactory {
+public class InterMineLoggerFactory
+{
+    private static final Logger LOG = Logger.getLogger(InterMineLoggerFactory.class);
 
+    /**
+     * Gets the default logger
+     *
+     * @throws Exception if there is a problem
+     * */
     public static InterMineLogger getInterMineLogger() throws Exception {
 
         return getInterMineLogger("logger.default");
     }
 
+    /**
+     * Gets the logger matching the supplied alias
+     *
+     * @param loggerAlias the alias of the logger required
+     * @throws Exception if there is a problem
+     * */
     public static InterMineLogger getInterMineLogger(String loggerAlias) throws Exception {
 
-        if(loggerAlias == null || "".equals(loggerAlias)) {
+        if (loggerAlias == null || "".equals(loggerAlias)) {
             throw new Exception("InterMineLoggerFactory supplied an invalid alias! " + loggerAlias);
         }
 
-        System.out.println("InterMineLoggerFactory.getInterMineLogger(.) called, loggerAlias:" + loggerAlias);
+        LOG.debug("InterMineLoggerFactory.getInterMineLogger() called, loggerAlias:" + loggerAlias);
 
         Properties props = PropertiesUtil.getPropertiesStartingWith(loggerAlias);
 
@@ -70,13 +84,7 @@ public class InterMineLoggerFactory {
         Class[] parameterTypes = new Class[] {String.class};
         Method m = cls.getDeclaredMethod("getInstance", parameterTypes);
 
-
-
-
         return (InterMineLogger) m.invoke(null, new Object[] {oswAlias});
     }
 
 }
-
-
-

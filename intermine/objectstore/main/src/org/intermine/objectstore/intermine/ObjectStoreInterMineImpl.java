@@ -286,7 +286,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     try {
                         LOG.debug("INTERMINE LOGGER INSTANTIATED FOR OSALIAS:" + loggerAlias);
                         os.logger = InterMineLoggerFactory.getInterMineLogger(loggerAlias);
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         LOG.debug("INTERMINE LOGGER UNABLE TO BE INSTANTIATED!", e);
                     }
                 } else {
@@ -435,8 +435,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 LOG.error("Failed to write to log table: " + e);
             }
         }
-        
-        if(logger != null) {
+
+        if (logger != null) {
             logger.logQuery("ObjectStoreInterMineImpl", System.getProperty("user.name"),
                     q, sql, new Long(optimise), new Long(estimated), new Long(execute),
                     new Long(permitted), new Long(convert));
