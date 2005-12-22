@@ -27,6 +27,17 @@
     <!-- Add new news at the top here -->
     
     <item>
+      <title>Cambridge University Network Maintenance</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt; FlyMine&lt;/a&gt; will be
+        unavailable from approximately 9am until 5pm GMT on Thursday 29th
+        December 2005 due to network maintenance.
+      </description>
+      <pubDate>Mon, 22 Dec 2005 15:05:18 GMT</pubDate>
+    </item>
+    
+    <item>
       <title>FlyMine is Recruting</title>
       <link>http://www.flymine.org/</link>
       <description>
