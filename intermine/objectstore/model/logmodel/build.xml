@@ -1,0 +1,6 @@
+
+<project name="logmodel" default="default" basedir=".">
+  <description>build logmodel</description>
+  <property name="have.xml" value="true"/>
+  <import file="../../../../imbuild/core-model.xml"/>
+</project>

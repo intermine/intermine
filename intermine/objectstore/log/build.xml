@@ -1,0 +1,6 @@
+<project name="log" default="default" basedir=".">
+
+  <description>build fulldata model</description>
+  <import file="../../../imbuild/model.xml"/>
+
+</project>
