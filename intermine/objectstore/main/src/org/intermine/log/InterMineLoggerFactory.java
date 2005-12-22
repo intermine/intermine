@@ -8,9 +8,6 @@ package org.intermine.log;
  * be distributed with the code.  See the LICENSE file for more
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
- * User: pmclaren
- * Date: 13-Dec-2005
- * Time: 10:16:44
  */
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,6 +30,7 @@ public class InterMineLoggerFactory
      * Gets the default logger
      *
      * @throws Exception if there is a problem
+     * @return An intermine logger
      * */
     public static InterMineLogger getInterMineLogger() throws Exception {
 
@@ -44,6 +42,7 @@ public class InterMineLoggerFactory
      *
      * @param loggerAlias the alias of the logger required
      * @throws Exception if there is a problem
+     * @return An intermine logger
      * */
     public static InterMineLogger getInterMineLogger(String loggerAlias) throws Exception {
 

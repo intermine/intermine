@@ -8,9 +8,6 @@ package org.intermine.log;
  * be distributed with the code.  See the LICENSE file for more
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
- * User: pmclaren
- * Date: 07-Dec-2005
- * Time: 17:38:01
  */
 
 import org.intermine.objectstore.query.Query;

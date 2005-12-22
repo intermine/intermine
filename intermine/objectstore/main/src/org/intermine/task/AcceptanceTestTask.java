@@ -573,7 +573,7 @@ class AcceptanceTestResult
 
             resultCount = results.size();
             // count the remaining rows in rs
-            while(rs.next()) {
+            while (rs.next()) {
                 resultCount++;
             }
             
