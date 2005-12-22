@@ -75,7 +75,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected String connectionTakenBy = null;
 
     protected static final int SEQUENCE_MULTIPLE = 1000000;
-
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
      * Connection, grabbed from the provided ObjectStore.

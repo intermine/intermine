@@ -64,7 +64,28 @@
                        dbname="db.flatmodeunittest"
                        model="testmodel"/>
   </target>
-  
+
+  <target name="build-db-logtest" depends="-init-build-db">
+    <imdbproj:build-db osname="os.log"
+                       dbname="db.log"
+                       model="log"/>
+  </target>
+
+
+
+  <target name="build-db-logdbtest" depends="-init-build-db">
+    <imdbproj:build-db osname="os.imLogger"
+                       dbname="db.imLogger"
+                       model="logmodel"/>
+  </target>
+
+
+  <target name="test-intermine-logging" depends="build-db-logdbtest, -init-test, -init-macrodef-junit">
+    <imtestsproj:junit includes="org/intermine/objectstore/log/ObjectStoreInterMineLogWriterTest.class" excludes="org/intermine/objectstore/**"/>
+  </target>
+
+
+
   <!-- index the unittest database -->
   <target name="create-indexes-unittest" depends="-init-build-db">
     <create-indexes alias="os.unittest" attributeIndexes="false"/>

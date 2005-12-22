@@ -66,6 +66,8 @@ import org.intermine.util.DatabaseUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.TypeUtil;
+import org.intermine.log.InterMineLogger;
+import org.intermine.log.InterMineLoggerFactory;
 
 import org.apache.log4j.Logger;
 
@@ -103,6 +105,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Map bagConstraintTables = Collections.synchronizedMap(new WeakHashMap());
     protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
     protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
+
+    protected InterMineLogger logger = null;
 
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise",
         "estimated", "execute", "permitted", "convert", "iql", "sql"};
@@ -227,6 +231,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String minBagTableSizeString = props.getProperty("minBagTableSize");
         String noNotXmlString = props.getProperty("noNotXml");
         String logEverythingString = props.getProperty("logEverything");
+        String loggerAlias = props.getProperty("logger");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -276,6 +281,18 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses,
                         noNotXml, missingTables);
                 os = new ObjectStoreInterMineImpl(database, databaseSchema);
+
+                if (loggerAlias != null) {
+                    try {
+                        LOG.debug("INTERMINE LOGGER INSTANTIATED FOR OSALIAS:" + loggerAlias);
+                        os.logger = InterMineLoggerFactory.getInterMineLogger(loggerAlias);
+                    } catch(Exception e) {
+                        LOG.debug("INTERMINE LOGGER UNABLE TO BE INSTANTIATED!", e);
+                    }
+                } else {
+                    LOG.debug("INTERMINE LOGGER ALIAS NOT SET FOR OSALIAS:" + osAlias);
+                }
+
                 if (logfile != null) {
                     try {
                         FileWriter fw = new FileWriter(logfile, true);
@@ -417,6 +434,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             } catch (SQLException e) {
                 LOG.error("Failed to write to log table: " + e);
             }
+        }
+        
+        if(logger != null) {
+            logger.logQuery("ObjectStoreInterMineImpl", System.getProperty("user.name"),
+                    q, sql, new Long(optimise), new Long(estimated), new Long(execute),
+                    new Long(permitted), new Long(convert));
         }
     }
 
@@ -566,7 +589,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * @see org.intermine.objectstore.ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -905,7 +928,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStore#estimate
+     * @see org.intermine.objectstore.ObjectStore#estimate
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         Connection c = null;
@@ -950,7 +973,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStore#count
+     * @see org.intermine.objectstore.ObjectStore#count
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         Connection c = null;
@@ -1102,7 +1125,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStore#isMultiConnection
+     * @see org.intermine.objectstore.ObjectStore#isMultiConnection
      */
     public boolean isMultiConnection() {
         return true;
