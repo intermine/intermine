@@ -6,14 +6,14 @@
       <fieldconfig fieldExpr="description"/>
     </fields>
     <longdisplayers>
-      <displayer src="/model/disease.jsp"/>
+      <displayer src="/model/diseaseLong.jsp"/>
     </longdisplayers>
   </class>
   
   <class className="org.flymine.model.genomic.ModelledProteinStructure">
     <fields>
-      <fieldconfig fieldExpr="ZScore" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="QScore" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="ZScore"/>
+      <fieldconfig fieldExpr="QScore"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/modelledStructure.jsp"/>
@@ -22,8 +22,8 @@
 
   <class className="org.flymine.model.genomic.Publication">
     <fields>
-      <fieldconfig fieldExpr="firstAuthor" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="title" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="title"/>
     </fields>
 
     <longdisplayers>
@@ -33,13 +33,13 @@
 
   <class className="org.flymine.model.genomic.Author">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.DataSource">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/dataSourceLong.jsp"/>
@@ -49,9 +49,9 @@
 
   <class className="org.flymine.model.genomic.Organism">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="taxonId" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="abbreviation" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="taxonId"/>
+      <fieldconfig fieldExpr="abbreviation"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/organismLong.jsp"/>
@@ -60,9 +60,9 @@
 
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInResults="false"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -72,18 +72,18 @@
 
   <class className="org.flymine.model.genomic.Exon">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInInlineCollection="true" showInResults="false"/>
-      <fieldconfig fieldExpr="gene.identifier" showInSummary="true" showInInlineCollection="false" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInResults="false"/>
+      <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Gene">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="organismDbId" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="symbol" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="organismDbId"/>
+      <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="wildTypeFunction" doNotTruncate="true" />
     </fields>
     <longdisplayers>
@@ -94,10 +94,10 @@
 
   <class className="org.flymine.model.genomic.ProteinFeature">
     <fields>
-      <fieldconfig fieldExpr="interproId" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="interproId"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="shortName"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
@@ -106,8 +106,8 @@
 
   <class className="org.flymine.model.genomic.DefinedRegion">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
@@ -117,8 +117,8 @@
 
   <class className="org.flymine.model.genomic.Chromosome">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="organism.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="organism.shortName"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -127,15 +127,15 @@
 
   <class className="org.flymine.model.genomic.BioEntity">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Protein">
     <fields>
-      <fieldconfig fieldExpr="primaryAccession" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="organism.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="primaryAccession"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="organism.shortName"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
@@ -144,7 +144,7 @@
 
   <class className="org.flymine.model.genomic.ProteinSequenceFamily">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/pfamNameLink.jsp"/>
@@ -153,17 +153,17 @@
 
   <class className="org.flymine.model.genomic.Transcript">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="organism.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="exonCount" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="organism.shortName"/>
+      <fieldconfig fieldExpr="exonCount"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Translation">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="organismDbId" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="symbol" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="organismDbId"/>
+      <fieldconfig fieldExpr="symbol"/>
     </fields>
   </class>
 
@@ -176,104 +176,104 @@
 
   <class className="org.flymine.model.genomic.Relation">
     <fields>
-      <fieldconfig fieldExpr="object.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="subject.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="object.identifier"/>
+      <fieldconfig fieldExpr="subject.identifier"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Orthologue">
     <fields>
-      <fieldconfig fieldExpr="object.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="object.organism.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="subject.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="subject.organism.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="object.identifier"/>
+      <fieldconfig fieldExpr="object.organism.shortName"/>
+      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="subject.organism.shortName"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.ProteinInteraction">
     <fields>
-      <fieldconfig fieldExpr="shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="shortName"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Location">
     <fields>
-      <fieldconfig fieldExpr="object.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="subject.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="start" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="end" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="object.identifier"/>
+      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.InfoSource">
     <fields>
-      <fieldconfig fieldExpr="title" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="title"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.InterproEvidence">
     <fields>
-      <fieldconfig fieldExpr="infotext" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="infotext"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
-      <fieldconfig fieldExpr="confidence" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="confidenceDesc" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="source.title" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="confidence"/>
+      <fieldconfig fieldExpr="confidenceDesc"/>
+      <fieldconfig fieldExpr="source.title"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.ComputationalResult">
     <fields>
-      <fieldconfig fieldExpr="score" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="confidence" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="source.title" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="score"/>
+      <fieldconfig fieldExpr="confidence"/>
+      <fieldconfig fieldExpr="source.title"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.OntologyTerm">
     <fields>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.OntologyRelation">
     <fields>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="parentTerm.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="childTerm.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="parentTerm.identifier"/>
+      <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
   </class>
   
   <class className="org.flymine.model.genomic.OntologyTermSynonym">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
   
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Annotation">
     <fields>
-      <fieldconfig fieldExpr="subject.identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="subject.identifier"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Synonym">
     <fields>
-      <fieldconfig fieldExpr="value" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="source.name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="source.name"/>
     </fields>
   </class>
 
@@ -286,94 +286,94 @@
 
   <class className="org.flymine.model.genomic.MicroArrayResult">
     <fields>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="value" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="scale" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="isControl" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="scale"/>
+      <fieldconfig fieldExpr="isControl"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Reporter">
     <fields>
-      <fieldconfig fieldExpr="material.identifier" showInSummary="true" showInInlineCollection="true"/>
-      <fieldconfig fieldExpr="failType" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="isControl" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="controlType" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="material.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="failType"/>
+      <fieldconfig fieldExpr="isControl"/>
+      <fieldconfig fieldExpr="controlType"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" sectionOnRight="true" sectionTitle="Description" openByDefault="true"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Sample">
     <fields>
-      <fieldconfig fieldExpr="materialType" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="organism.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="primaryCharacteristicType" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="primaryCharacteristic" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="materialType"/>
+      <fieldconfig fieldExpr="organism.shortName"/>
+      <fieldconfig fieldExpr="primaryCharacteristicType"/>
+      <fieldconfig fieldExpr="primaryCharacteristic"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.SampleCharacteristic">
     <fields>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="value" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.TreatmentParameter">
     <fields>
-      <fieldconfig fieldExpr="type" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="value" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="units" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="units"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Treatment">
     <fields>
-      <fieldconfig fieldExpr="action" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="action"/>
       <fieldconfig fieldExpr="protocol.name" showInInlineCollection="true"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Protocol">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.MicroArrayAssay">
     <fields>
-      <fieldconfig fieldExpr="sample1" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="sample2" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="sample1"/>
+      <fieldconfig fieldExpr="sample2"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="subject.identifier" showInSummary="true" showInInlineCollection="false" showInResults="true"/>
-      <fieldconfig fieldExpr="identifier" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="evidenceCode" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="subject.identifier" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="evidenceCode"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
-      <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
   <class className="org.flymine.model.genomic.ProteinInteractor">
     <fields>
-      <fieldconfig fieldExpr="role" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="protein.primaryAccession" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="interaction.shortName" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="role"/>
+      <fieldconfig fieldExpr="protein.primaryAccession"/>
+      <fieldconfig fieldExpr="interaction.shortName"/>
     </fields>
   </class>
 

@@ -6,7 +6,7 @@
       <node path="Protein.organism" type="Organism">
       </node>
       <node path="Protein.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -16,7 +16,7 @@
       <node path="Synonym" type="Synonym">
       </node>
       <node path="Synonym.value" type="String">
-        <constraint op="=" value="zen" description="Enter a name or identifier (eg a gene or protein name or identifier):" identifier="" editable="true">
+        <constraint op="=" value="zen" description="Enter a name or identifier (eg a gene or protein name or identifier):" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -28,7 +28,7 @@
       <node path="Protein.organism" type="Organism">
       </node>
       <node path="Protein.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Output proteins from the organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Output proteins from the organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -40,7 +40,7 @@
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -50,17 +50,17 @@
       <node path="Protein" type="Protein">
       </node>
       <node path="Protein.primaryAccession" type="String">
-        <constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="" editable="true">
+        <constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAD_GOidentifier2proteinInteractions" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." important="false" keywords="Proteins Protein Interaction">
-    <query name="AAD_GOidentifier2proteinInteractions" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.annotations.subject.name GOTerm.annotations.subject.organismDbId GOTerm.annotations.subject.proteins.primaryAccession GOTerm.annotations.subject.proteins.interactions.bait.primaryAccession GOTerm.annotations.subject.proteins.interactions.prey.primaryAccession GOTerm.annotations.subject.proteins.interactions.evidence.analysis.interactionDetection.name GOTerm.annotations.subject.proteins.interactions.evidence.analysis.publication.pubMedId GOTerm.annotations.subject.proteins.organism.name">
+    <query name="AAD_GOidentifier2proteinInteractions" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.annotations.subject.name GOTerm.annotations.subject.organismDbId GOTerm.annotations.subject.proteins.primaryAccession GOTerm.annotations.subject.proteins.interactions.bait.primaryAccession GOTerm.annotations.subject.proteins.interactions.prey.primaryAccession GOTerm.annotations.subject.proteins.interactions.evidence.analysis.interactionDetection.name GOTerm.annotations.subject.proteins.interactions.evidence.analysis.publication.pubMedId GOTerm.annotations.subject.proteins.organism.name" constraintLogic="A and B">
       <node path="GOTerm" type="GOTerm">
       </node>
       <node path="GOTerm.identifier" type="String">
-        <constraint op="=" value="GO:0007568" description="Show protein interactions for proteins annotated with GO identifier:" identifier="" editable="true">
+        <constraint op="=" value="GO:0007568" description="Show protein interactions for proteins annotated with GO identifier:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="GOTerm.annotations" type="Annotation">
@@ -78,7 +78,7 @@
       <node path="GOTerm.annotations.subject.proteins.organism" type="Organism">
       </node>
       <node path="GOTerm.annotations.subject.proteins.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
@@ -90,35 +90,35 @@
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Output genes from the organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Output genes from the organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAE_gene2Transcripts2" description="Show the predicted transcripts and the number of exons for a particular gene." important="false" keywords="Genomics">
-    <query name="AAE_gene2Transcripts2" model="genomic" view="Gene Gene.transcripts.identifier Gene.transcripts.exonCount">
+    <query name="AAE_gene2Transcripts2" model="genomic" view="Gene Gene.transcripts.identifier Gene.transcripts.exonCount" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="zen" description="Show the predicted transcripts and the number of exons for gene:" identifier="" editable="true">
+        <constraint op="=" value="zen" description="Show the predicted transcripts and the number of exons for gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." important="false" keywords="Proteins, Protein Interactions">
-    <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.evidence.confidence Synonym.subject.proteins.interactions.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactions.evidence.analysis.publication.pubMedId">
+    <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactions.bait.primaryAccession Synonym.subject.proteins.interactions.prey.primaryAccession Synonym.subject.proteins.interactions.evidence.confidence Synonym.subject.proteins.interactions.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactions.evidence.analysis.publication.pubMedId" constraintLogic="A and B">
       <node path="Synonym" type="Synonym">
       </node>
       <node path="Synonym.value" type="String">
-        <constraint op="=" value="128up" description="Show the protein interactions for the protein product of gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="128up" description="Show the protein interactions for the protein product of gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
       <node path="Synonym.subject" type="Gene">
@@ -134,25 +134,25 @@
       <node path="Synonym.subject.organism" type="Organism">
       </node>
       <node path="Synonym.subject.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAF_gene2exonTranscript1" description="Show the predicted transcripts and exons for a particular gene." important="false" keywords="Genomics">
-    <query name="AAF_gene2exonTranscript1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.transcripts.exonCount Gene.exons.identifier">
+    <query name="AAF_gene2exonTranscript1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.transcripts.exonCount Gene.exons.identifier" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="zen" description="Show predicted transcripts and exons for gene:" identifier="" editable="true">
+        <constraint op="=" value="zen" description="Show predicted transcripts and exons for gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
@@ -164,37 +164,37 @@
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="128up" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="128up" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAG_gene2protein1" description="Show the proteins for a particular gene." important="false" keywords="Genomics">
-    <query name="AAG_gene2protein1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.proteins.primaryAccession">
+    <query name="AAG_gene2protein1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.proteins.primaryAccession" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="zen" description="Show proteins for the gene:" identifier="" editable="true">
+        <constraint op="=" value="zen" description="Show proteins for the gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAH_Gene2ProteinStructure2.1NEW2" description="For a particular Drosophila gene show any regions of it's protein for which there is a predicted 3-D structure." important="false" keywords="Proteins, Protein Structure">
-    <query name="AAH_Gene2ProteinStructure2.1NEW2" model="genomic" view="Gene Gene.organismDbId Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature Gene.proteins.regions.structures.region.objects.start Gene.proteins.regions.structures.region.objects.end Gene.proteins.regions.structures">
+    <query name="AAH_Gene2ProteinStructure2.1NEW2" model="genomic" view="Gene Gene.organismDbId Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature Gene.proteins.regions.structures.region.objects.start Gene.proteins.regions.structures.region.objects.end Gene.proteins.regions.structures" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="FBgn0025936" description="Show regions which have a predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="FBgn0025936" description="Show regions which have a predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.proteins" type="Protein">
@@ -210,35 +210,35 @@
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAH_Genes2chromosome1" description="Show genes located on a particular chromsome." important="false" keywords="Genomics">
-    <query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier">
+    <query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.chromosome" type="Chromosome">
       </node>
       <node path="Gene.chromosome.identifier" type="String">
-        <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="c1" editable="true">
+        <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="c1" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAI_Pfam2proteinStructure" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." important="false" keywords="Proteins Protein Structure">
-    <query name="AAI_Pfam2proteinStructure" model="genomic" view="ProteinFeature.identifier ProteinFeature.proteins.primaryAccession ProteinFeature.proteins.regions.objects.start ProteinFeature.proteins.regions.objects.end ProteinFeature.proteins.regions.structures">
+    <query name="AAI_Pfam2proteinStructure" model="genomic" view="ProteinFeature.identifier ProteinFeature.proteins.primaryAccession ProteinFeature.proteins.regions.objects.start ProteinFeature.proteins.regions.objects.end ProteinFeature.proteins.regions.structures" constraintLogic="A and B">
       <node path="ProteinFeature" type="ProteinFeature">
       </node>
       <node path="ProteinFeature.identifier" type="String">
-        <constraint op="=" value="PF00812" description="Show the Drosophila proteins which contain Pfam domain:  (and which also have a predicted 3-D structure for this region.)" identifier="" editable="true">
+        <constraint op="=" value="PF00812" description="Show the Drosophila proteins which contain Pfam domain:  (and which also have a predicted 3-D structure for this region.)" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="ProteinFeature.proteins" type="Protein">
@@ -246,7 +246,7 @@
       <node path="ProteinFeature.proteins.organism" type="Organism">
       </node>
       <node path="ProteinFeature.proteins.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
         </constraint>
       </node>
       <node path="ProteinFeature.proteins.regions" type="ProteinRegion">
@@ -256,19 +256,19 @@
     </query>
   </template>
   <template name="AAI_gene2ChromosomeLocation1" description="Show the chromosome and the chromosome location of a particluar gene." important="false" keywords="Genomics">
-    <query name="AAI_gene2ChromosomeLocation1" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand">
+    <query name="AAI_gene2ChromosomeLocation1" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="zen" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="zen" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Gene.objects" type="Location">
@@ -284,7 +284,7 @@
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.proteins" type="Protein">
@@ -300,11 +300,11 @@
     </query>
   </template>
   <template name="AAJ_synonymGene2exonChromosomeLocations1" description="Show the chromosome location of the exons for a particular gene." important="false" keywords="Genomics">
-    <query name="AAJ_synonymGene2exonChromosomeLocations1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end Synonym.subject.exons.objects.strand">
+    <query name="AAJ_synonymGene2exonChromosomeLocations1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end Synonym.subject.exons.objects.strand" constraintLogic="A and B">
       <node path="Synonym" type="Synonym">
       </node>
       <node path="Synonym.value" type="String">
-        <constraint op="=" value="zen" description="Show the chromosome location of the exons of gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="zen" description="Show the chromosome location of the exons of gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
       <node path="Synonym.subject" type="Gene">
@@ -318,7 +318,7 @@
       <node path="Synonym.subject.organism" type="Organism">
       </node>
       <node path="Synonym.subject.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
@@ -334,23 +334,23 @@
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAL_chromosomeLocation2genes1" description="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." important="false" keywords="Genomics">
-    <query name="AAL_chromosomeLocation2genes1" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.name Chromosome.exons.gene.organismDbId Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand">
+    <query name="AAL_chromosomeLocation2genes1" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.name Chromosome.exons.gene.organismDbId Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" constraintLogic="D and A and C and B">
       <node path="Chromosome" type="Chromosome">
       </node>
       <node path="Chromosome.identifier" type="String">
-        <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="c1" editable="true">
+        <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="c1" editable="true" code="A">
         </constraint>
       </node>
       <node path="Chromosome.organism" type="Organism">
       </node>
       <node path="Chromosome.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="c2" editable="true" code="B">
         </constraint>
       </node>
       <node path="Chromosome.exons" type="Exon">
@@ -360,41 +360,41 @@
       <node path="Chromosome.exons.objects.object" type="Chromosome">
       </node>
       <node path="Chromosome.exons.objects.start" type="Integer">
-        <constraint op="&gt;" value="1" description="between base:" identifier="c3" editable="true">
+        <constraint op="&gt;" value="1" description="between base:" identifier="c3" editable="true" code="C">
         </constraint>
       </node>
       <node path="Chromosome.exons.objects.end" type="Integer">
-        <constraint op="&lt;" value="10000" description="and:" identifier="c4" editable="true">
+        <constraint op="&lt;" value="10000" description="and:" identifier="c4" editable="true" code="D">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAM_Gene2GO2NEW" description="Search for GO annotations for a particular gene." important="false" keywords="Genomics, Gene Ontology">
-    <query name="AAM_Gene2GO2NEW" model="genomic" view="Gene.organismDbId Gene.identifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.identifier">
+    <query name="AAM_Gene2GO2NEW" model="genomic" view="Gene.organismDbId Gene.identifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.identifier" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="CG11348" description="Show the GO annotations for gene:" identifier="" editable="true">
+        <constraint op="=" value="CG11348" description="Show the GO annotations for gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAN_Gene_GoTerms" description="Search for genes annotated with a particular GO term." important="false" keywords="Genomics, Gene Ontology">
-    <query name="AAN_Gene_GoTerms" model="genomic" view="Gene">
+    <query name="AAN_Gene_GoTerms" model="genomic" view="Gene" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Search for genes from:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Search for genes from:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.annotations" type="Annotation">
@@ -402,13 +402,13 @@
       <node path="Gene.annotations.property" type="GOTerm">
       </node>
       <node path="Gene.annotations.property.identifier" type="String">
-        <constraint op="=" value="GO:0007568" description="that have been annotated with GO term:" identifier="Gene.annotations.property.identifier" editable="true">
+        <constraint op="=" value="GO:0007568" description="that have been annotated with GO term:" identifier="Gene.annotations.property.identifier" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAO_OrthologuesWithGO" description="Show predicted orthologues between two organisms and their GO terms." important="false" keywords="Genomics Gene Ontology, Comparative Genomics">
-    <query name="AAO_OrthologuesWithGO" model="genomic" view="Orthologue.object.identifier Orthologue.object.annotations.property.identifier Orthologue.object.annotations.property.name Orthologue.subject.identifier Orthologue.subject.annotations.property.identifier Orthologue.subject.annotations.property.name">
+    <query name="AAO_OrthologuesWithGO" model="genomic" view="Orthologue.object.identifier Orthologue.object.annotations.property.identifier Orthologue.object.annotations.property.name Orthologue.subject.identifier Orthologue.subject.annotations.property.identifier Orthologue.subject.annotations.property.name" constraintLogic="A and B">
       <node path="Orthologue" type="Orthologue">
       </node>
       <node path="Orthologue.object" type="BioEntity">
@@ -416,7 +416,7 @@
       <node path="Orthologue.object.organism" type="Organism">
       </node>
       <node path="Orthologue.object.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show orthologues and GO terms between organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show orthologues and GO terms between organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Orthologue.object.annotations" type="Annotation">
@@ -428,7 +428,7 @@
       <node path="Orthologue.subject.organism" type="Organism">
       </node>
       <node path="Orthologue.subject.organism.name" type="String">
-        <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true">
+        <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Orthologue.subject.annotations" type="Annotation">
@@ -438,25 +438,25 @@
     </query>
   </template>
   <template name="AAP_gene2orthologues" description="Search for predicted orthologues for a particular gene:" important="false" keywords="Genomics, Comparative Genomics">
-    <query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name">
+    <query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="notch" description="Show the predicted orthologues for gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="notch" description="Show the predicted orthologues for gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAQ_orthologues" description="Show the predicted orthologues between two organisms." important="false" keywords="Genomics Comparative Genomics">
-    <query name="AAQ_orthologues" model="genomic" view="Orthologue.object Orthologue.subject">
+    <query name="AAQ_orthologues" model="genomic" view="Orthologue.object Orthologue.subject" constraintLogic="A and B">
       <node path="Orthologue" type="Orthologue">
       </node>
       <node path="Orthologue.object" type="BioEntity">
@@ -464,7 +464,7 @@
       <node path="Orthologue.object.organism" type="Organism">
       </node>
       <node path="Orthologue.object.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Orthologue.subject" type="BioEntity">
@@ -472,25 +472,25 @@
       <node path="Orthologue.subject.organism" type="Organism">
       </node>
       <node path="Orthologue.subject.organism.name" type="String">
-        <constraint op="=" value="Anopheles gambiae str. PEST" description="and:" identifier="" editable="true">
+        <constraint op="=" value="Anopheles gambiae str. PEST" description="and:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." important="false" keywords="Genomics Comparative Genomics">
-    <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
+    <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="notch" description="Show the transcript identifiers and orthologue transcript identifiers for gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="notch" description="Show the transcript identifiers and orthologue transcript identifiers for gene:" identifier="Gene.identifier" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Gene.orthologues" type="Orthologue">
@@ -508,7 +508,7 @@
       <node path="Phenotype" type="Phenotype">
       </node>
       <node path="Phenotype.RNAiCode" type="String">
-        <constraint op="=" value="WT" description="Search for genes and their orthologues which have RNAi code:" identifier="" editable="true">
+        <constraint op="=" value="WT" description="Search for genes and their orthologues which have RNAi code:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -524,7 +524,7 @@
       <node path="Synonym.subject.annotations.property" type="Phenotype">
       </node>
       <node path="Synonym.value" type="String">
-        <constraint op="=" value="C43G2.1" description="Search for RNAi phenotypes and predicted orthologues for gene:" identifier="" editable="true">
+        <constraint op="=" value="C43G2.1" description="Search for RNAi phenotypes and predicted orthologues for gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -534,7 +534,7 @@
       <node path="Phenotype" type="Phenotype">
       </node>
       <node path="Phenotype.RNAiCode" type="String">
-        <constraint op="=" value="Bli" description="Search for gene with RNAi code:" identifier="" editable="true">
+        <constraint op="=" value="Bli" description="Search for gene with RNAi code:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -548,13 +548,13 @@
       <node path="Gene.annotations.property" type="Phenotype">
       </node>
       <node path="Gene.identifier" type="String">
-        <constraint op="=" value="F48E8.5" description="Search for RNAi phenotypes for gene:" identifier="" editable="true">
+        <constraint op="=" value="F48E8.5" description="Search for RNAi phenotypes for gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAW_gene2CERNAi" description="Search for the C. elegans orthologue for a particular gene and its RNAi phenotype." important="false" keywords="Genomics RNAi">
-    <query name="AAW_gene2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name">
+    <query name="AAW_gene2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name" constraintLogic="A and C and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.orthologues" type="Orthologue">
@@ -568,25 +568,25 @@
       <node path="Gene.orthologues.subject.organism" type="Organism">
       </node>
       <node path="Gene.orthologues.subject.organism.name" type="String">
-        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="">
+        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
         </constraint>
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="mav" description="Search for C. elegans orthologues for gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="mav" description="Search for C. elegans orthologues for gene:" identifier="Gene.identifier" editable="true" code="B">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="C">
         </constraint>
       </node>
     </query>
   </template>
   <template name="AAX_genes2CERNAi" description="Show the C. elegans orthologue and RNAi phenotypes for all genes from a particular organism." important="false" keywords="Genomics RNAi">
-    <query name="AAX_genes2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name">
+    <query name="AAX_genes2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.orthologues" type="Orthologue">
@@ -600,19 +600,19 @@
       <node path="Gene.orthologues.subject.organism" type="Organism">
       </node>
       <node path="Gene.orthologues.subject.organism.name" type="String">
-        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="">
+        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
         </constraint>
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show C. elegans orthologues and RNAi phenotypes for organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show C. elegans orthologues and RNAi phenotypes for organism:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="ChrLocation2PCRProduct" description="Show microarray tiling path amplimers located between two points on a chromosome." important="false" keywords="TilingPath MicroArray amplimer chromosomeLocation, Tiling Path">
-    <query name="ChrLocation2PCRProduct" model="genomic" view="PCRProduct">
+    <query name="ChrLocation2PCRProduct" model="genomic" view="PCRProduct" constraintLogic="D and A and C and B">
       <node path="PCRProduct" type="PCRProduct">
       </node>
       <node path="PCRProduct.chromosomeLocation" type="Location">
@@ -620,27 +620,27 @@
       <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
       </node>
       <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
-        <constraint op="=" value="2R" description="Show tiling path amplimers located on chromsome:" identifier="" editable="true">
+        <constraint op="=" value="2R" description="Show tiling path amplimers located on chromsome:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="PCRProduct.chromosomeLocation.start" type="Integer">
-        <constraint op="&gt;" value="1" description="Between:" identifier="" editable="true">
+        <constraint op="&gt;" value="1" description="Between:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="PCRProduct.chromosomeLocation.end" type="Integer">
-        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true">
+        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="C">
         </constraint>
       </node>
       <node path="PCRProduct.organism" type="Organism">
       </node>
       <node path="PCRProduct.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="D">
         </constraint>
       </node>
     </query>
   </template>
   <template name="ChrLocation2TilingPathAmplimers2" description="Show tiling path amplimers located between two points on a chromosome and show the primers used to create the amplimer." important="false" keywords="TilingPath primers amplimer PCRProduct MicroArray, Tiling Path">
-    <query name="ChrLocation2TilingPathAmplimers2" model="genomic" view="PCRProduct PCRProduct.primers">
+    <query name="ChrLocation2TilingPathAmplimers2" model="genomic" view="PCRProduct PCRProduct.primers" constraintLogic="D and A and C and B">
       <node path="PCRProduct" type="PCRProduct">
       </node>
       <node path="PCRProduct.chromosomeLocation" type="Location">
@@ -648,21 +648,21 @@
       <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
       </node>
       <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
-        <constraint op="=" value="2R" description="Show the tiling path amplimers and their primers on chromosome:" identifier="" editable="true">
+        <constraint op="=" value="2R" description="Show the tiling path amplimers and their primers on chromosome:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="PCRProduct.chromosomeLocation.start" type="Integer">
-        <constraint op="&gt;" value="1" description="Between:" identifier="" editable="true">
+        <constraint op="&gt;" value="1" description="Between:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="PCRProduct.chromosomeLocation.end" type="Integer">
-        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true">
+        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="C">
         </constraint>
       </node>
       <node path="PCRProduct.organism" type="Organism">
       </node>
       <node path="PCRProduct.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="D">
         </constraint>
       </node>
     </query>
@@ -674,7 +674,7 @@
       <node path="ProteinBindingSite.evidence" type="DataSet">
       </node>
       <node path="ProteinBindingSite.evidence.title" type="String">
-        <constraint op="=" value="FlyBase" description="List all the protein binding sites annotated by:" identifier="" editable="true">
+        <constraint op="=" value="FlyBase" description="List all the protein binding sites annotated by:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="ProteinBindingSite.chromosomeLocation" type="Location">
@@ -690,7 +690,7 @@
       <node path="TFBindingSite.evidence" type="InfoSource">
       </node>
       <node path="TFBindingSite.evidence.title" type="String">
-        <constraint op="=" value="FlyReg" description="List all the transcription factor binding sites from:" identifier="" editable="true">
+        <constraint op="=" value="FlyReg" description="List all the transcription factor binding sites from:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="TFBindingSite.chromosomeLocation" type="Location">
@@ -700,29 +700,29 @@
     </query>
   </template>
   <template name="GOterm2GeneProteinInteraction" description="Show Genes from a particular organism annotated with a particular GO term which has evidence code IPI (inferred from Protein Interaction). Show the Gene from which the annotation was inferred (the 'with' field)." important="false" keywords="Genomics, Gene Ontology, Protein Interaction">
-    <query name="GOterm2GeneProteinInteraction" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with">
+    <query name="GOterm2GeneProteinInteraction" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with" constraintLogic="A and C and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.goAnnotation" type="GOAnnotation">
       </node>
       <node path="Gene.goAnnotation.name" type="String">
-        <constraint op="=" value="protein binding" description="annotated with GO term (and evidence code IPI):" identifier="" editable="true">
+        <constraint op="=" value="protein binding" description="annotated with GO term (and evidence code IPI):" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Gene.goAnnotation.evidenceCode" type="String">
-        <constraint op="=" value="IPI" description="" identifier="">
+        <constraint op="=" value="IPI" description="" identifier="" code="C">
         </constraint>
       </node>
     </query>
   </template>
   <template name="GOterm2microarrayExperiment1" description="Show experiments in which Genes annotated with a particular GO term have a normalised expression ratio (linear scale) greater/less than a particular value." important="false" keywords="Gene Expression, Gene Ontology">
-    <query name="GOterm2microarrayExperiment1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
+    <query name="GOterm2microarrayExperiment1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2" constraintLogic="A and B">
       <node path="MicroArrayExperiment" type="MicroArrayExperiment">
       </node>
       <node path="MicroArrayExperiment.results" type="MicroArrayResult">
@@ -732,17 +732,17 @@
       <node path="MicroArrayExperiment.results.genes.goAnnotation" type="GOAnnotation">
       </node>
       <node path="MicroArrayExperiment.results.genes.goAnnotation.name" type="String">
-        <constraint op="=" value="signal peptide processing" description="Show experiments in which genes annotated with GO term:" identifier="" editable="true">
+        <constraint op="=" value="signal peptide processing" description="Show experiments in which genes annotated with GO term:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="MicroArrayExperiment.results.value" type="Float">
-        <constraint op="&gt;" value="2.0" description="have a normalised expression ratio (linear scale) greater.less than:" identifier="" editable="true">
+        <constraint op="&gt;" value="2.0" description="have a normalised expression ratio (linear scale) greater.less than:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="GOterm2microarrayresult1" description="Show Genes annotated with a particular GO term which have a normalised expression ratio (linear scale) greater/less than a particular value in a particular experiment." important="false" keywords="Gene Expression, Gene Ontology">
-    <query name="GOterm2microarrayresult1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
+    <query name="GOterm2microarrayresult1" model="genomic" view="MicroArrayExperiment.results.genes MicroArrayExperiment.results.genes.goAnnotation MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2" constraintLogic="A and C and B">
       <node path="MicroArrayExperiment" type="MicroArrayExperiment">
       </node>
       <node path="MicroArrayExperiment.results" type="MicroArrayResult">
@@ -752,21 +752,21 @@
       <node path="MicroArrayExperiment.results.genes.goAnnotation" type="GOAnnotation">
       </node>
       <node path="MicroArrayExperiment.results.genes.goAnnotation.name" type="String">
-        <constraint op="=" value="signal peptide processing" description="Show genes annotated with Go term:" identifier="" editable="true">
+        <constraint op="=" value="signal peptide processing" description="Show genes annotated with Go term:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="MicroArrayExperiment.results.value" type="Float">
-        <constraint op="&gt;" value="2.0" description="which have a normailsed expression ratio (linear scale) greater/less than:" identifier="" editable="true">
+        <constraint op="&gt;" value="2.0" description="which have a normailsed expression ratio (linear scale) greater/less than:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="MicroArrayExperiment.name" type="String">
-        <constraint op="=" value="White-Cooper H: Identification of genes regulated by the meiotic arrest genes: aly, can, zaa and zab" description="in experiment:" identifier="" editable="true">
+        <constraint op="=" value="White-Cooper H: Identification of genes regulated by the meiotic arrest genes: aly, can, zaa and zab" description="in experiment:" identifier="" editable="true" code="C">
         </constraint>
       </node>
     </query>
   </template>
   <template name="Gene2MicroarrayExperiment1" description="Show experiments in which a particular gene (or set of genes) has a normalised expression ratio (linear scale) greater/less than a particular value." important="false" keywords="Gene Expression">
-    <query name="Gene2MicroarrayExperiment1" model="genomic" view="MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.genes MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2">
+    <query name="Gene2MicroarrayExperiment1" model="genomic" view="MicroArrayExperiment MicroArrayExperiment.results MicroArrayExperiment.results.genes MicroArrayExperiment.results.assay.sample1 MicroArrayExperiment.results.assay.sample2" constraintLogic="A and B">
       <node path="MicroArrayExperiment" type="MicroArrayExperiment">
       </node>
       <node path="MicroArrayExperiment.results" type="MicroArrayResult">
@@ -776,11 +776,11 @@
       <node path="MicroArrayExperiment.results.genes.synonyms" type="Synonym">
       </node>
       <node path="MicroArrayExperiment.results.genes.synonyms.value" type="String">
-        <constraint op="=" value="CG2358" description="Show microarray experiments in which gene:" identifier="" editable="true">
+        <constraint op="=" value="CG2358" description="Show microarray experiments in which gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="MicroArrayExperiment.results.value" type="Float">
-        <constraint op="&gt;" value="2.0" description="has a normalised expression ratio (linear scale) greater/less than:" identifier="" editable="true">
+        <constraint op="&gt;" value="2.0" description="has a normalised expression ratio (linear scale) greater/less than:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
@@ -798,7 +798,27 @@
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="zen" description="Show transcription factor binding sites for the gene:" identifier="Gene.identifier" editable="true">
+        <constraint op="=" value="zen" description="Show transcription factor binding sites for the gene:" identifier="Gene.identifier" editable="true" code="A">
+        </constraint>
+      </node>
+    </query>
+  </template>
+  <template name="GenesForOMIMID" description="Show the Drosophila gene(s) that match the human disease gene for a given OMIM ID" important="false" keywords="Disease">
+    <query name="GenesForOMIMID" model="genomic" view="Gene" constraintLogic="A and B">
+      <node path="Gene" type="Gene">
+      </node>
+      <node path="Gene.organism" type="Organism">
+      </node>
+      <node path="Gene.organism.name" type="String">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+        </constraint>
+      </node>
+      <node path="Gene.annotations" type="Annotation">
+      </node>
+      <node path="Gene.annotations.property" type="Disease">
+      </node>
+      <node path="Gene.annotations.property.omimId" type="String">
+        <constraint op="=" value="137060" description="OMIM ID" identifier="omim.id" editable="true" code="B">
         </constraint>
       </node>
     </query>
@@ -808,13 +828,13 @@
       <node path="Synonym" type="Synonym">
       </node>
       <node path="Synonym.value" type="String">
-        <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true">
+        <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="chromosome2tilingAmplicon" description="Show microarray tiling path amplicons and their location for a particular chromsomome." important="false" keywords="MicroArray PCRProduct tiling amplicon, Tiling Path">
-    <query name="chromosome2tilingAmplicon" model="genomic" view="PCRProduct PCRProduct.chromosomeLocation.start PCRProduct.chromosomeLocation.end">
+    <query name="chromosome2tilingAmplicon" model="genomic" view="PCRProduct PCRProduct.chromosomeLocation.start PCRProduct.chromosomeLocation.end" constraintLogic="A and B">
       <node path="PCRProduct" type="PCRProduct">
       </node>
       <node path="PCRProduct.chromosomeLocation" type="Location">
@@ -822,33 +842,33 @@
       <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
       </node>
       <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
-        <constraint op="=" value="2R" description="Show microarray tiling path amplicons located on chromosome:" identifier="" editable="true">
+        <constraint op="=" value="2R" description="Show microarray tiling path amplicons located on chromosome:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="PCRProduct.organism" type="Organism">
       </node>
       <node path="PCRProduct.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="chromosomeLocation2deletion1" description="Show DrosDel deletions for a particular chromosome location:" important="false" keywords="Genomics, DrosDel">
-    <query name="chromosomeLocation2deletion1" model="genomic" view="Chromosome Chromosome.subjects.start Chromosome.subjects.end Chromosome.features Chromosome.features.element1 Chromosome.features.element2">
+    <query name="chromosomeLocation2deletion1" model="genomic" view="Chromosome Chromosome.subjects.start Chromosome.subjects.end Chromosome.features Chromosome.features.element1 Chromosome.features.element2" constraintLogic="A and C and B">
       <node path="Chromosome" type="Chromosome">
       </node>
       <node path="Chromosome.identifier" type="String">
-        <constraint op="=" value="2L" description="Show DrosDel deletions on chromosome:" identifier="" editable="true">
+        <constraint op="=" value="2L" description="Show DrosDel deletions on chromosome:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Chromosome.subjects" type="Location">
       </node>
       <node path="Chromosome.subjects.start" type="Integer">
-        <constraint op="&gt;" value="500" description="between:" identifier="" editable="true">
+        <constraint op="&gt;" value="500" description="between:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Chromosome.subjects.end" type="Integer">
-        <constraint op="&lt;" value="1500" description="and:" identifier="" editable="true">
+        <constraint op="&lt;" value="1500" description="and:" identifier="" editable="true" code="C">
         </constraint>
       </node>
       <node path="Chromosome.features" type="ArtificialDeletion">
@@ -864,69 +884,69 @@
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="CG8340" description="Show DrosDel deletions and transposable elements that would delete gene:" identifier="" editable="true">
+        <constraint op="=" value="CG8340" description="Show DrosDel deletions and transposable elements that would delete gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="gene2DrosDelDeletion2" description="Show available DrosDel deletions which would delete a particular gene." important="false" keywords="Genomics, DrosDel">
-    <query name="gene2DrosDelDeletion2" model="genomic" view="Gene Gene.overlappingFeatures Gene.overlappingFeatures.available Gene.overlappingFeatures.chromosome.identifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.element1 Gene.overlappingFeatures.element2">
+    <query name="gene2DrosDelDeletion2" model="genomic" view="Gene Gene.overlappingFeatures Gene.overlappingFeatures.available Gene.overlappingFeatures.chromosome.identifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.element1 Gene.overlappingFeatures.element2" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.overlappingFeatures" type="ArtificialDeletion">
       </node>
       <node path="Gene.overlappingFeatures.available" type="Boolean">
-        <constraint op="=" value="true" description="" identifier="">
+        <constraint op="=" value="true" description="" identifier="" code="A">
         </constraint>
       </node>
       <node path="Gene.synonyms" type="Synonym">
       </node>
       <node path="Gene.synonyms.value" type="String">
-        <constraint op="=" value="CG9852" description="Show available DrosDel deletions that would delete gene:" identifier="" editable="true">
+        <constraint op="=" value="CG9852" description="Show available DrosDel deletions that would delete gene:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="gene2goTermwithEvidence" description="Show genes from a particular organism annotated with a particular GO term with a  particular evidence code" important="false" keywords="Genomics, Gene Ontology">
-    <query name="gene2goTermwithEvidence" model="genomic" view="Gene Gene.goAnnotation">
+    <query name="gene2goTermwithEvidence" model="genomic" view="Gene Gene.goAnnotation" constraintLogic="A and C and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.goAnnotation" type="GOAnnotation">
       </node>
       <node path="Gene.goAnnotation.name" type="String">
-        <constraint op="=" value="protein binding" description="annotated with GO term:" identifier="" editable="true">
+        <constraint op="=" value="protein binding" description="annotated with GO term:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Gene.goAnnotation.evidenceCode" type="String">
-        <constraint op="=" value="IPI" description="with evidence code:" identifier="" editable="true">
+        <constraint op="=" value="IPI" description="with evidence code:" identifier="" editable="true" code="C">
         </constraint>
       </node>
     </query>
   </template>
   <template name="goTerm2genesWithEvidenceandWith" description="Show genes and the related 'with' annotations from a particular organism annotated with a particular GO term with a particular evidence code. (The 'with' field holds an additional identifier for annotations using certain evidence codes - see below)." important="false" keywords="Genomics, Gene Ontology">
-    <query name="goTerm2genesWithEvidenceandWith" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with">
+    <query name="goTerm2genesWithEvidenceandWith" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with" constraintLogic="A and C and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.organism" type="Organism">
       </node>
       <node path="Gene.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show genes and 'with' annotations from organism:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show genes and 'with' annotations from organism:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.goAnnotation" type="GOAnnotation">
       </node>
       <node path="Gene.goAnnotation.name" type="String">
-        <constraint op="=" value="protein binding" description="Annotated with GO term:" identifier="" editable="true">
+        <constraint op="=" value="protein binding" description="Annotated with GO term:" identifier="" editable="true" code="B">
         </constraint>
       </node>
       <node path="Gene.goAnnotation.evidenceCode" type="String">
-        <constraint op="=" value="IPI" description="with evidence code: (note: for 'with' annotations the evidence code should be IC, IEA, IGI, IPI OR ISS)" identifier="" editable="true">
+        <constraint op="=" value="IPI" description="with evidence code: (note: for 'with' annotations the evidence code should be IC, IEA, IGI, IPI OR ISS)" identifier="" editable="true" code="C">
         </constraint>
       </node>
     </query>
@@ -940,59 +960,59 @@
       <node path="MicroarrayOligo.transcript.chromosome" type="Chromosome">
       </node>
       <node path="MicroarrayOligo.transcript.chromosome.identifier" type="String">
-        <constraint op="=" value="2R" description="List details of microarray oligos and the transcripts they are designed to for Drosophila chromosome:" identifier="" editable="true">
+        <constraint op="=" value="2R" description="List details of microarray oligos and the transcripts they are designed to for Drosophila chromosome:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
   </template>
   <template name="microarrayResult2Experiment1" description="Show genes with a normalised expression ratio (linear scale) greater than or less than a particular value in a particular experiment." important="false" keywords="Gene Expression">
-    <query name="microarrayResult2Experiment1" model="genomic" view="Gene Gene.microArrayResults.experiment Gene.microArrayResults">
+    <query name="microarrayResult2Experiment1" model="genomic" view="Gene Gene.microArrayResults.experiment Gene.microArrayResults" constraintLogic="A and B">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.microArrayResults" type="MicroArrayResult">
       </node>
       <node path="Gene.microArrayResults.value" type="Float">
-        <constraint op="&gt;" value="2.0" description="Show genes with a normalised expression ratio (linear scale) greater/less than:" identifier="" editable="true">
+        <constraint op="&gt;" value="2.0" description="Show genes with a normalised expression ratio (linear scale) greater/less than:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Gene.microArrayResults.experiment" type="MicroArrayExperiment">
       </node>
       <node path="Gene.microArrayResults.experiment.name" type="String">
-        <constraint op="=" value="Bate M: Identification of genes regulated by synaptic transmission in embryos" description="in experiment:" identifier="" editable="true">
+        <constraint op="=" value="Bate M: Identification of genes regulated by synaptic transmission in embryos" description="in experiment:" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="proteinFeature2proteins" description="Show proteins from a particular organism that have a particular protein domain or family:" important="false" keywords="Proteins ">
-    <query name="proteinFeature2proteins" model="genomic" view="Protein Protein.proteinFeatures">
+    <query name="proteinFeature2proteins" model="genomic" view="Protein Protein.proteinFeatures" constraintLogic="A and B">
       <node path="Protein" type="Protein">
       </node>
       <node path="Protein.organism" type="Organism">
       </node>
       <node path="Protein.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="Show proteins from:" identifier="" editable="true">
+        <constraint op="=" value="Drosophila melanogaster" description="Show proteins from:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="Protein.proteinFeatures" type="ProteinFeature">
       </node>
       <node path="Protein.proteinFeatures.identifier" type="String">
-        <constraint op="=" value="PF01926" description="that have domain/family:  (identifier can be Pfam, Interpro Smart, prosite, Prints, ProDom TIGRFAM, PIRSF, SUPERFAMILY, PANTHER, Gene3D)" identifier="" editable="true">
+        <constraint op="=" value="PF01926" description="that have domain/family:  (identifier can be Pfam, Interpro Smart, prosite, Prints, ProDom TIGRFAM, PIRSF, SUPERFAMILY, PANTHER, Gene3D)" identifier="" editable="true" code="B">
         </constraint>
       </node>
     </query>
   </template>
   <template name="tilingAmpliconsInPromoter" description="Show microarray tiling amplicons between two points on a chromosome that are located within a promoter. " important="false" keywords="MicroArray PCRProduct amplicon tiling tilingPath, Tiling Path">
-    <query name="tilingAmpliconsInPromoter" model="genomic" view="PCRProduct PCRProduct.promoter">
+    <query name="tilingAmpliconsInPromoter" model="genomic" view="PCRProduct PCRProduct.promoter" constraintLogic="D and A and C and B and E">
       <node path="PCRProduct" type="PCRProduct">
       </node>
       <node path="PCRProduct.organism" type="Organism">
       </node>
       <node path="PCRProduct.organism.name" type="String">
-        <constraint op="=" value="Drosophila melanogaster" description="" identifier="">
+        <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
         </constraint>
       </node>
       <node path="PCRProduct.promoter" type="Boolean">
-        <constraint op="=" value="true" description="" identifier="">
+        <constraint op="=" value="true" description="" identifier="" code="B">
         </constraint>
       </node>
       <node path="PCRProduct.objects" type="Relation">
@@ -1002,15 +1022,15 @@
       <node path="PCRProduct.chromosomeLocation.object" type="Chromosome">
       </node>
       <node path="PCRProduct.chromosomeLocation.object.identifier" type="String">
-        <constraint op="=" value="2L" description="Show tiling amplicons located within a promoter on chromosome:" identifier="" editable="true">
+        <constraint op="=" value="2L" description="Show tiling amplicons located within a promoter on chromosome:" identifier="" editable="true" code="C">
         </constraint>
       </node>
       <node path="PCRProduct.chromosomeLocation.start" type="Integer">
-        <constraint op="&gt;" value="1" description="between:" identifier="" editable="true">
+        <constraint op="&gt;" value="1" description="between:" identifier="" editable="true" code="D">
         </constraint>
       </node>
       <node path="PCRProduct.chromosomeLocation.end" type="Integer">
-        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true">
+        <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="E">
         </constraint>
       </node>
     </query>
@@ -1020,7 +1040,7 @@
       <node path="Transcript" type="Transcript">
       </node>
       <node path="Transcript.identifier" type="String">
-        <constraint op="=" value="CG10000-RA" description="Give details of the INDAC microarray long oligo for the transcript:" identifier="" editable="true">
+        <constraint op="=" value="CG10000-RA" description="Give details of the INDAC microarray long oligo for the transcript:" identifier="" editable="true" code="A">
         </constraint>
       </node>
     </query>
@@ -1032,7 +1052,7 @@
       <node path="TFBindingSite.factor" type="Gene">
       </node>
       <node path="TFBindingSite.factor.identifier" type="String">
-        <constraint op="=" value="CG8365" description="Show the binding site locations and associated gene for transcription factor gene:" identifier="" editable="true">
+        <constraint op="=" value="CG8365" description="Show the binding site locations and associated gene for transcription factor gene:" identifier="" editable="true" code="A">
         </constraint>
       </node>
       <node path="TFBindingSite.chromosomeLocation" type="Location">

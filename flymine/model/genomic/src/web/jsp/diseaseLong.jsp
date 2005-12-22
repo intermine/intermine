@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<!-- disease.jsp -->
+<!-- diseaseLong.jsp -->
 
 <fmt:setBundle basename="model"/>
 
@@ -18,4 +18,4 @@
   </html:link>
 </div>
 
-<!-- /disease.jsp -->
+<!-- /diseaseLong.jsp -->
