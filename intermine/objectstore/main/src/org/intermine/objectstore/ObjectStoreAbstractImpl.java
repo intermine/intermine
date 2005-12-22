@@ -27,7 +27,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.MetaDataException;
-import org.intermine.log.InterMineLogger;
 
 import org.apache.log4j.Logger;
 
