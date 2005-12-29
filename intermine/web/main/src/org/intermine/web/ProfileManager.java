@@ -455,7 +455,7 @@ public class ProfileManager
         }
         UserProfile userProfile = getUserProfile(userName);
         
-        if (userProfile == null ) {
+        if (userProfile == null) {
             throw new RuntimeException();
         }
         
