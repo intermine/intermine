@@ -10,14 +10,9 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -46,14 +41,7 @@ public class MainPathsController extends TilesAction
     
     private static void populateRequest(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
-                                               getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        
         request.setAttribute("constraintDisplayValues", MainHelper.makeConstraintDisplayMap(query));
     }
 }
