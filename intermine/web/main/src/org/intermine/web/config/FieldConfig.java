@@ -20,9 +20,9 @@ public class FieldConfig
 {
     private String fieldExpr;
     private boolean doNotTruncate;
-    private boolean showInSummary;
-    private boolean showInInlineCollection;
-    private boolean showInResults;
+    private boolean showInSummary = true;
+    private boolean showInInlineCollection = true;
+    private boolean showInResults = true;
     private boolean sectionOnRight;
     private String sectionTitle;
     private boolean openByDefault;
