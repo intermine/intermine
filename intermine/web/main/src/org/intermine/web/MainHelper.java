@@ -314,7 +314,7 @@ public class MainHelper
 
         //build the SELECT list
         for (Iterator i = view.iterator(); i.hasNext();) {
-            q.addToSelect((QueryNode) queryBits.get((String) i.next()));
+            q.addToSelect((QueryNode) queryBits.get(i.next()));
         }
 
         //caller might want path to query node map (e.g. PrecomputeTask)
@@ -458,9 +458,7 @@ public class MainHelper
             Iterator citer = node.getConstraints().iterator();
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
-                ConstraintOp op = con.getOp();
-
-                map.put(con, con.getDisplayValue(node));
+                map.put(con, con.getDisplayValue());
             }
         }
         return map;

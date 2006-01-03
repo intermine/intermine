@@ -85,7 +85,6 @@ public class TemplateController extends TilesAction
         
         if (context.getAttribute("builder") != null) {
             PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-            PathQuery queryClone = (PathQuery) query.clone();
             TemplateBuildState tbs = (TemplateBuildState)
                     session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
             template = TemplateHelper.buildTemplateQuery(tbs, query);
@@ -128,7 +127,7 @@ public class TemplateController extends TilesAction
 
                 if (populate) {
                     String attributeKey = "" + (j + 1);
-                    tf.setAttributeValues (attributeKey, "" + c.getDisplayValue(node));
+                    tf.setAttributeValues (attributeKey, "" + c.getDisplayValue());
                     tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
                     if (c.getIdentifier() != null) {
                         // If special request parameter key is present then we initialise
