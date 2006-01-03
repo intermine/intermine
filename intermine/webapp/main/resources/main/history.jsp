@@ -26,7 +26,7 @@
 	<div style="border-top: 9px solid white">
 
 	
-	<table cellpadding="5" cellspacing="0" border="0" class="histTabTable" width="100%">
+  <table cellpadding="5" cellspacing="0" border="0" class="histTabTable" width="100%">
 	  <tr>
 	    <td width="1%" class="topLeft" nowrap>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
