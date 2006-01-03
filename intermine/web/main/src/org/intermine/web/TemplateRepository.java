@@ -11,7 +11,9 @@ package org.intermine.web;
  */
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,8 +45,9 @@ import org.intermine.util.TypeUtil;
  */
 public class TemplateRepository
 {
-    private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
-    private static final String MISC = "Miscellaneous";
+    private static final Logger LOG = Logger.getLogger(TemplateRepository.class);
+    /** "Miscellaneous" */
+    public static final String MISC = "Miscellaneous";
     
     private ServletContext servletContext;
     
@@ -53,10 +56,18 @@ public class TemplateRepository
      * 
      * @param servletContext the servlet context
      */
-    public TemplateRepository(ServletContext servletContext) {
+    public TemplateRepository(ServletContext context) {
         // index global templates
-        this.servletContext = servletContext;
-        reloadGlobalTemplateQueries(servletContext);
+        servletContext = context;
+
+        servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_QUERIES, new AbstractMap() {
+            public Set entrySet() {
+                return SessionMethods.getSuperUserProfile(servletContext)
+                    .getSavedTemplates().entrySet();
+            }
+        });
+        
+        reindexGlobalTemplates(servletContext);
     }
     
     /**
@@ -76,7 +87,7 @@ public class TemplateRepository
      * @param template the TemplateQuery added
      */
     public void globalTemplateAdded(TemplateQuery template) {
-        reloadGlobalTemplateQueries(servletContext);
+        reindexGlobalTemplates(servletContext);
     }
     
     /**
@@ -86,7 +97,7 @@ public class TemplateRepository
      * @param template the TemplateQuery removed
      */
     public void globalTemplateRemoved(TemplateQuery template) {
-        reloadGlobalTemplateQueries(servletContext);
+        reindexGlobalTemplates(servletContext);
     }
     
     /**
@@ -96,7 +107,7 @@ public class TemplateRepository
      * @param template the TemplateQuery updated
      */
     public void globalTemplateUpdated(TemplateQuery template) {
-        reloadGlobalTemplateQueries(servletContext);
+        reindexGlobalTemplates(servletContext);
     }
 
     /**
@@ -104,7 +115,7 @@ public class TemplateRepository
      * profile has changed.
      */
     public void globalTemplatesChanged() {
-        reloadGlobalTemplateQueries(servletContext);
+        reindexGlobalTemplates(servletContext);
     }
     
     /**
@@ -114,7 +125,7 @@ public class TemplateRepository
      *
      * @param servletContext  servlet context in which to place template map
      */
-    private static void reloadGlobalTemplateQueries(ServletContext servletContext) {   
+    /*private static void reloadGlobalTemplateQueries(ServletContext servletContext) {   
         Map templateMap = Collections.synchronizedMap(new HashMap());
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
@@ -171,14 +182,14 @@ public class TemplateRepository
         servletContext.setAttribute(Constants.CLASS_TEMPLATE_EXPRS, classTemplateExprs);
         
         reindexGlobalTemplates(servletContext);
-    }
+    }*/
     
     /**
      * Get the set of aspect names that this template relates too (by looking at template keywords).
      * @param template the template query 
      * @param servletContext the servlet context
      * @return Set of aspect names
-     */
+     *
     private static Set aspectsForTemplate(TemplateQuery template, ServletContext servletContext) {
         Set aspects = new HashSet();
         Set aspectNames = (Set) servletContext.getAttribute(Constants.CATEGORIES);
@@ -189,7 +200,7 @@ public class TemplateRepository
             }
         }
         return aspects;
-    }
+    }*/
     
     /**
      * Return two Maps with information about the relations between classnames, a given template and
@@ -199,7 +210,7 @@ public class TemplateRepository
      * @param classTemplateExprs a Map from class name to a Map from template name to field name
      * List - the field names/expressions are the ones that should be set when a template is linked
      * to from the object details page eg. Gene.identifier
-     */
+     *
     private static void setClassesForTemplate(ObjectStore os, TemplateQuery template,
                                               Map classCategoryTemplates,
                                               Map classTemplateExprs,
@@ -251,11 +262,6 @@ public class TemplateRepository
                             list.add(template);
                         }
                         
-                        /*if (!categoryTemplatesMap.containsKey(template.getCategory())) {
-                            categoryTemplatesMap.put(template.getCategory(), new ArrayList());
-                        }
-                    
-                        ((List) categoryTemplatesMap.get(template.getCategory())).add(template);*/
                     
                         if (!classTemplateExprs.containsKey(thisClassName)) {
                             classTemplateExprs.put(thisClassName, new HashMap());
@@ -272,7 +278,7 @@ public class TemplateRepository
                }
             }
         }
-    }
+    }*/
     
     /**
      * Create the lucene search index of all global template queries.

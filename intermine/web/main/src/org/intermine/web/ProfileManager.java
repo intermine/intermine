@@ -36,10 +36,13 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 
+import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
+import org.intermine.web.tagging.TagTypes;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -64,6 +68,7 @@ public class ProfileManager
     protected ObjectStoreWriter osw;
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
+    protected CacheMap profileCache = new CacheMap();
 
     /**
      * Construct a ProfileManager for the webapp
@@ -87,10 +92,10 @@ public class ProfileManager
     }
 
     /**
-     * Return the userprofile ObjectStore that was passed to the constructor.
-     * @return the userprofile  ObjectStore from the constructor
+     * Return the userprofile ObjectStoreWriter that was passed to the constructor.
+     * @return the userprofile  ObjectStoreWriter from the constructor
      */
-    public ObjectStore getUserProfileObjectStore() {
+    public ObjectStoreWriter getUserProfileObjectStore() {
         return osw;
     }
     
@@ -169,7 +174,12 @@ public class ProfileManager
      * @param username the username
      * @return the Profile, or null if one doesn't exist
      */
-    public Profile getProfile(String username) {
+    public synchronized Profile getProfile(String username) {
+        Profile profile = (Profile) profileCache.get(username);
+        if (profile != null) {
+            return profile;
+        }
+        
         UserProfile userProfile = getUserProfile(username);
 
         if (userProfile == null) {
@@ -229,8 +239,34 @@ public class ProfileManager
                          + template.getTemplateQuery());
             }
         }
-        return new Profile(this, username, userProfile.getPassword(), savedQueries, savedBags,
+        convertTemplateKeywordsToTags(savedTemplates, username);
+        profile = new Profile(this, username, userProfile.getPassword(), savedQueries, savedBags,
                            savedTemplates);
+        profileCache.put(username, profile);
+        return profile;
+    }
+    
+    /**
+     * Create 'aspect:XXX' tags for each keyword of each template.
+     * Public so that LoadDefaultTemplates task can call in.
+     * @param savedTemplates Map from template name to TemplateQuery
+     * @param username username under which to store tags
+     */
+    public void convertTemplateKeywordsToTags(Map savedTemplates, String username) {
+        for (Iterator iter = savedTemplates.values().iterator(); iter.hasNext(); ) {
+            TemplateQuery tq = (TemplateQuery) iter.next();
+            String keywords = tq.getKeywords();
+            if (StringUtils.isNotEmpty(keywords)) {
+                String aspects[] = keywords.split(",");
+                for (int i = 0; i < aspects.length; i++) {
+                    String aspect = aspects[i].trim();
+                    String tag = "aspect:" + aspect;
+                    if (getTags(tag, tq.getName(), TagTypes.TEMPLATE, username).size() == 0) {
+                        addTag(tag, tq.getName(), TagTypes.TEMPLATE, username);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -358,6 +394,28 @@ public class ProfileManager
 
         return usernames;
     }
+    
+    /**
+     * Delete a tag object from the database.
+     * @param tag Tag object
+     */
+    public void deleteTag(Tag tag) {
+        try {
+            getUserProfileObjectStore().delete(tag);
+        } catch (ObjectStoreException err) {
+            LOG.error(err);
+        }
+    }
+    
+    /**
+     * Get Tag by object id.
+     * @param id intermine object id
+     * @return Tag
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public Tag getTagById(int id) throws ObjectStoreException {
+        return (Tag) getUserProfileObjectStore().getObjectById(new Integer(id));
+    }
 
     /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
@@ -450,16 +508,17 @@ public class ProfileManager
         if (userName == null) {
             throw new IllegalArgumentException("userName cannot be null");
         }
-        if (!tagCheckers.containsKey(type)) {
-            throw new IllegalArgumentException("unknown tag type: " + type);
-        }
         UserProfile userProfile = getUserProfile(userName);
         
         if (userProfile == null) {
-            throw new RuntimeException();
+            throw new RuntimeException("no such user " + userName);
         }
         
-        ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type, userProfile);
+        if (tagCheckers.containsKey(type)) {
+            ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type,
+                    userProfile);
+        }
+        
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);

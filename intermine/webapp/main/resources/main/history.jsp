@@ -113,6 +113,22 @@
 			<html:link action="/login"><fmt:message key="menu.login"/>...</html:link>
 		</div>
 	</c:if>
+	
+	<div class="body">
+  	<c:if test="${IS_SUPERUSER}">
+  	  <span class="smallnote">
+  	      <html:link action="/exportTags">
+  	        <fmt:message key="history.exportTags"/>
+  	      </html:link>
+  	  </span><br/>
+  	  <span class="smallnote">
+  	      <html:link action="/tagImport">
+  	        <fmt:message key="history.importTags"/>
+  	      </html:link>
+  	  </span>
+  	</c:if>
+	</div>
+	
 </div>
 
 <!-- /history.jsp -->

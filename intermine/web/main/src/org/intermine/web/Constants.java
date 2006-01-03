@@ -36,13 +36,13 @@ public interface Constants
     /**
      * ServletContext attribute maps category name to List of TemplateQuerys
      */
-    public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
+    //public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
     
     /**
      * ServletContext attribute maps a class name to a Map of category names to List of
      * TemplateQuerys.
      */
-    public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
+    //public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
 
     /**
      * ServletContext attribute - global instance of TemplateRepository.
@@ -54,7 +54,7 @@ public interface Constants
      * the expression describes a field that should be set when a template is linked to from the
      * object details page.  eg. Gene.identifier
      */
-    public static final String CLASS_TEMPLATE_EXPRS = "CLASS_TEMPLATE_EXPRS";
+    //public static final String CLASS_TEMPLATE_EXPRS = "CLASS_TEMPLATE_EXPRS";
     
     /**
      * ServletContext attribute, List of category names.

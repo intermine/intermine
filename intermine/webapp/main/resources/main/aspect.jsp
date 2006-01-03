@@ -12,6 +12,7 @@
 
 <%-- Import into request scope so that popup can see it --%>
 <tiles:importAttribute name="aspect" scope="request"/>
+<tiles:importAttribute name="startingPoints"/>
 
 <im:box topLeftTile="/aspectIcon.jsp" topRightTile="/aspectPopup.jsp">
 
@@ -41,20 +42,24 @@
 </div>
 
 <div class="body aspectStartingPoints">
-  <c:forEach items="${aspect.startingPoints}" var="classname" varStatus="status">
+  <c:forEach items="${startingPoints}" var="classname" varStatus="status">
     <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-       ${classname}</a><c:if test="${!status.last}">,</c:if>
+       <im:unqualify className="${classname}"/></a><c:if test="${!status.last}">,</c:if>
   </c:forEach>
 </div>
 
-<c:if test="${!empty CATEGORY_TEMPLATES[aspect.name]}">
+<%--<c:if test="${!empty CATEGORY_TEMPLATES[aspect.name]}">--%>
   <div class="heading">
     <fmt:message key="aspect.templates.heading"/>
   </div>
   <div class="body aspectTemplates">
-    <im:templateList type="global" category="${aspect.name}"/>
+    <tiles:insert name="templateList.tile">
+      <tiles:put name="type" value="global"/>
+      <tiles:put name="aspect" value="${aspect.name}"/>
+      <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+    </tiles:insert>
   </div>
-</c:if>
+<%--</c:if>--%>
 
 </im:box>
 

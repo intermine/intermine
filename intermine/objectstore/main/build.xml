@@ -4,7 +4,7 @@
   <description>build, test, package intermine-objectstore</description>
   <property name="generating.code" value="true"/>
   <import file="../../../imbuild/library.xml"/>
-
+  
   <target name="do-generate">
     <mkdir dir="${gen.src.dir}/org/intermine/sql/query"/>
     <mkdir dir="${gen.src.dir}/org/intermine/objectstore/query/iql"/>

@@ -7,6 +7,7 @@
 
 <!-- objectDetails.jsp -->
 <html:xhtml/>
+
 <c:set var="helpUrl"
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
 
@@ -99,6 +100,13 @@
                         <span class="value">${entry.value}</span>
                       </c:otherwise>
                     </c:choose>
+                    <%--<c:if test="${IS_SUPERUSER}">
+                      &nbsp;
+                      <c:set var="descriptor" value="${object.attributeDescriptors[entry.key]}"/>
+                      <tiles:insert name="inlineTagEditor.tile">
+                        <tiles:put name="taggable" beanName="descriptor"/>
+                      </tiles:insert>
+                    </c:if>--%>
                   </td>
                 </tr>
               </c:if>
@@ -113,7 +121,10 @@
           </c:forEach>
           
         </im:body>
-
+      </td>
+      
+      <td valign="top" width="66%">
+        
         <c:forEach items="${object.clds}" var="cld">
           <c:if test="${fn:length(WEBCONFIG.types[cld.name].longDisplayers) > 0}">
             <im:heading id="further">
@@ -126,128 +137,68 @@
                 <c:set var="object" value="${object.object}" scope="request"/>
                 <c:set var="cld" value="${cld}" scope="request"/>
                 <tiles:insert beanName="displayer" beanProperty="src"/><br/>
-                <c:set var="object" value="${object_bak}"/>
+                <c:set var="object" value="${object_bak}" scope="request"/>
               </c:forEach>
             </im:body>
           </c:if>
         </c:forEach>
-
-      </td>
-
-      <td valign="top" width="66%">
-
+        
         <%-- show important templates here --%>
         <c:if test="${showImportantTemplatesFlag == 'true'}">
-          <im:heading id="important">Predefined template queries</im:heading>
+          <im:heading id="important">Interesting template queries</im:heading>
           <im:vspacer height="3"/>
           <im:body id="important">
             <c:forEach items="${CATEGORIES}" var="category">
-              <c:forEach items="${object.clds}" var="cld">
-                <c:set var="className" value="${cld.name}"/>
-                <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className][category]}">
+                
                   <%--<div class="heading">${category}</div>--%>
-                  <c:set var="interMineObject" value="${object.object}"/>
+                  <!--<c:set var="interMineObject" value="${object.object}"/>-->
                   <!--<div class="body">-->
-                    <im:templateList type="global" category="${category}" className="${className}"
-                                     displayObject="${object}" important="true"/>
+                   <tiles:insert name="templateList.tile">
+                     <tiles:put name="type" value="global"/>
+                     <tiles:put name="aspect" value="${category}"/>
+                     <tiles:put name="displayObject" beanName="object"/>
+                     <tiles:put name="important" value="true"/>
+                   </tiles:insert>
                   <!--</div>-->
                   <%--<im:vspacer height="5"/>--%>
-                </c:if>
-              </c:forEach>
             </c:forEach>
           </im:body>
           <im:vspacer height="6"/>
         </c:if>
 
-        <im:heading id="other">Other Information<im:helplink key="objectDetails.help.otherInfo"/></im:heading>
-        <im:body id="other">
-          <table border="0">
-            <c:if test="${!empty object.refsAndCollections}">
-              <c:forEach items="${object.refsAndCollections}" var="entry">
-                <c:set var="collection" value="${entry.value}"/>
-                <c:set var="verbose" value="${!empty object.verbosity[entry.key]}"/>
-                <c:set var="fieldName" value="${entry.key}"/>
-                <tr>
-                  <td width="10px">
-                    <div style="white-space:nowrap">
-                      <c:choose>
-                        <c:when test="${verbose && collection.size > 0}">
-                          <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
-                            <img border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
-                            <span class="collectionField">${fieldName}</span>
-                          </html:link>
-                        </c:when>
-                        <c:when test="${collection.size > 0}">
-                          <html:link action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
-                            <img border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
-                            <span class="collectionField">${fieldName}</span>
-                          </html:link>
-                          <c:if test="${collection.size == 1}">
-                            <c:forEach items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}" var="cld2">
-                              <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
-                                <c:set var="cld2" value="${cld2}" scope="request"/>
-                                <c:set var="backup" value="${object}"/>
-                                <c:set var="object" value="${collection.table.rowObjects[0]}" scope="request"/>
-                                <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
-                                <c:set var="object" value="${backup}" scope="request"/>
-                              </c:if>
-                            </c:forEach>
-                          </c:if>
-                        </c:when>
-                        <c:otherwise>
-                          <span class="nullStrike">
-                            <img border="0" src="images/plus-disabled.gif" alt=" " width="11" height="11"/>
-                            <span class="collectionField nullReferenceField">${fieldName}</span>
-                          </span>
-                        </c:otherwise>
-                      </c:choose>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="collectionDescription ${collection.size == 0 ? 'nullReferenceField' : ''}">
-                      ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
-                    </span>
-                    <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
-                      [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}_${collection.table.ids[0]}">
-                        <fmt:message key="results.details"/>
-                      </html:link>]
-                    </c:if>
-                    <c:if test="${collection.size == 0}">
-                      </span>
-                    </c:if>
-                  </td>
-                </tr>
-                <c:if test="${verbose && collection.size > 0}">
-                  <tr>
-                    <td colspan="2">
-                      
-                      
-                      <tiles:insert page="/objectDetailsCollectionTable.jsp">
-                        <tiles:put name="collection" beanName="collection"/>
-                      </tiles:insert>
-                      
-                      <c:choose>
-                        <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-                          <div class="refSummary">
-                            [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
-                              <fmt:message key="results.showallintable"/>
-                            </html:link>]
-                          </div>
-                        </c:when>
-                        <c:otherwise>
-                          <div class="refSummary">
-                            [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
-                              <fmt:message key="results.showintable"/>
-                            </html:link>]
-                          </div>
-                        </c:otherwise>
-                      </c:choose>
-                    </td>
-                  </tr>
-                </c:if>
-              </c:forEach>
-            </c:if>
-          </table>
+      </td>
+
+    </tr>
+    <tr>
+
+      <td valign="top" colspan="2" width="100%">
+
+        <c:forEach items="${CATEGORIES}" var="category">
+          <im:heading id="${category}">
+            ${category}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
+          </im:heading>
+          <im:body id="${category}">
+            <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+              <tiles:put name="object" beanName="object"/>
+              <tiles:put name="aspect" value="${category}"/>
+            </tiles:insert>
+            <tiles:insert name="templateList.tile">
+              <tiles:put name="type" value="global"/>
+              <tiles:put name="aspect" value="${category}"/>
+              <tiles:put name="displayObject" beanName="object"/>
+              <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+            </tiles:insert>
+            <im:vspacer height="5"/>
+          </im:body>
+        </c:forEach>
+        <im:heading id="Misc">
+          Miscellaneous
+        </im:heading>
+        <im:body id="${category}">
+          <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+            <tiles:put name="object" beanName="object"/>
+            <tiles:put name="aspect" value="Miscellaneous"/>
+          </tiles:insert>
         </im:body>
         
         <c:forEach items="${object.attributes}" var="entry">
@@ -257,26 +208,26 @@
           	</im:heading>
           	<im:body id="right-${entry.key}">
           	
-          	       <c:set var="maxLength" value="80"/>
-                    <c:choose>
-                      <c:when test="${entry.value.class.name ==
-                                    'java.lang.String' && fn:length(entry.value) > maxLength
-                                    && ! object.fieldConfigMap[entry.key].doNotTruncate}">
-                        <span class="value">
-                          ${fn:substring(entry.value, 0, maxLength/2)}
-                        </span>
-                        <span class="value" style="white-space:nowrap">
-                          ${fn:substring(entry.value, maxLength/2, maxLength)}
-                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-                            <fmt:message key="objectDetails.viewall"/>
-                          </html:link>
-                        </span>
-                      </c:when>
-                      <c:otherwise>
-                        <span class="value">${entry.value}</span>
-                      </c:otherwise>
-                    </c:choose>
-                    
+        	    <c:set var="maxLength" value="80"/>
+              <c:choose>
+                <c:when test="${entry.value.class.name ==
+                              'java.lang.String' && fn:length(entry.value) > maxLength
+                              && ! object.fieldConfigMap[entry.key].doNotTruncate}">
+                  <span class="value">
+                    ${fn:substring(entry.value, 0, maxLength/2)}
+                  </span>
+                  <span class="value" style="white-space:nowrap">
+                    ${fn:substring(entry.value, maxLength/2, maxLength)}
+                    <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                      <fmt:message key="objectDetails.viewall"/>
+                    </html:link>
+                  </span>
+                </c:when>
+                <c:otherwise>
+                  <span class="value">${entry.value}</span>
+                </c:otherwise>
+              </c:choose>
+              
           	</im:body>
           </c:if>
         </c:forEach>    
@@ -289,19 +240,19 @@
 </c:if>
 
 <div class="body">
-            <c:if test="${!empty PROFILE.savedBags}">
-              <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
-                <fmt:message key="objectDetails.addToBag"/>
-                <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
-                <select name="bag">
-                  <c:forEach items="${PROFILE.savedBags}" var="entry">
-                    <option name="${entry.key}">${entry.key}</option>
-                  </c:forEach>
-                </select>
-                <input type="hidden" name="object" value="${object.id}"/>
-                <input type="submit" value="<fmt:message key="button.add"/>"/>
-              </form>
-            </c:if>
+  <c:if test="${!empty PROFILE.savedBags}">
+    <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
+      <fmt:message key="objectDetails.addToBag"/>
+      <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+      <select name="bag">
+        <c:forEach items="${PROFILE.savedBags}" var="entry">
+          <option name="${entry.key}">${entry.key}</option>
+        </c:forEach>
+      </select>
+      <input type="hidden" name="object" value="${object.id}"/>
+      <input type="submit" value="<fmt:message key="button.add"/>"/>
+    </form>
+  </c:if>
 </div>
 
 <c:if test="${empty object}">
@@ -313,6 +264,8 @@
 
 </im:box>
 
+
+<!--
 <im:vspacer height="12"/>
 
 <c:if test="${showTemplatesFlag == 'true'}">
@@ -337,5 +290,7 @@
     </c:forEach>
   </im:box>
 </c:if>
+-->
+
 
 <!-- /objectDetails.jsp -->

@@ -61,7 +61,8 @@ public class TemplateHelper
         } else if (SHARED_TEMPLATE.equals(type)) {
             // TODO implement shared templates
         } else if (GLOBAL_TEMPLATE.equals(type)) {
-            templates = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+            templates = (Map) SessionMethods.getSuperUserProfile(servletContext)
+                .getSavedTemplates();
         } else {
             throw new IllegalArgumentException("type: " + type);
         }

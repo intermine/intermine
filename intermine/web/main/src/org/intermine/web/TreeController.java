@@ -87,7 +87,7 @@ public class TreeController extends TilesAction
     protected List makeNodes(ClassDescriptor parent, Set openClasses, int depth,
                              Map classCounts) {
         List nodes = new ArrayList();
-        nodes.add(new TreeNode(parent.getName(), classCounts.get(parent.getName()).toString(),
+        nodes.add(new TreeNode(parent, classCounts.get(parent.getName()).toString(),
                                depth, false,
                                parent.getSubDescriptors().size() == 0,
                                openClasses.contains(parent.getName())));

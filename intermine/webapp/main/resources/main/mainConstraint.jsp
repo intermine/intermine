@@ -57,11 +57,19 @@
         </c:otherwise>
       </c:choose>
 
+      <c:set var="validOps" value="${displayConstraint.validOps}"/>
+      <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
+      <c:set var="options" value="${displayConstraint.optionsList}"/>
 
       <script type="text/javascript">
       <!--
 
       var fixedOps = new Array();
+
+       fixedOps[0] = new Array();
+        <c:forEach items="${fixedOps}" var="op" varStatus="status">
+          fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
+        </c:forEach>
 
       /***********************************************************
        * Called when user chooses a constraint operator. If the
@@ -100,21 +108,6 @@
     
         updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
       }
-
-      //-->
-      </script>
-
-      <c:set var="validOps" value="${displayConstraint.validOps}"/>
-      <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
-      <c:set var="options" value="${displayConstraint.optionsList}"/>
-
-      <script type="text/javascript">
-      <!--
-
-        fixedOps[0] = new Array();
-        <c:forEach items="${fixedOps}" var="op" varStatus="status">
-          fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
-        </c:forEach>
 
       //-->
       </script>
@@ -266,9 +259,10 @@
 
     <script type="text/javascript">
     <!--
-    initConstraintForm(0, document.getElementById('mainForm').attributeOp,
-        document.getElementById('mainForm').attributeOptions,
-        document.getElementById('mainForm').attributeValue);
+    initConstraintForm(0,
+        $('mainForm').attributeOp,
+        $('mainForm').attributeOptions,
+        $('mainForm').attributeValue);
     //-->
     </script>
 
@@ -282,10 +276,10 @@
         </c:if>
         <c:choose>
           <c:when test="${!empty deletePath}">
-            document.getElementById('cancelButton').innerHTML='<input type="button" onclick="window.location.href=\'<html:rewrite action="/mainChange?method=removeNode&amp;path=${deletePath}"/>\'" value="<fmt:message key="query.cancelConstraint"/>"/>';
+            $('cancelButton').innerHTML='<input type="button" onclick="window.location.href=\'<html:rewrite action="/mainChange?method=removeNode&amp;path=${deletePath}"/>\'" value="<fmt:message key="query.cancelConstraint"/>"/>';
           </c:when>
           <c:otherwise>
-            document.getElementById('cancelButton').innerHTML='<input type="button" onclick="window.location.href=\'<html:rewrite action="/query"/>?cancel\'" value="<fmt:message key="query.cancelConstraint"/>"/>';
+            $('cancelButton').innerHTML='<input type="button" onclick="window.location.href=\'<html:rewrite action="/query"/>?cancel\'" value="<fmt:message key="query.cancelConstraint"/>"/>';
           </c:otherwise>
         </c:choose>
       //-->

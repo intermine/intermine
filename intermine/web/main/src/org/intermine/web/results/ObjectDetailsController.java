@@ -10,9 +10,12 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.TreeMap;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +26,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
+import org.intermine.web.ProfileManager;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.TemplateRepository;
 import org.intermine.web.config.WebConfig;
 
 /**
@@ -53,43 +60,89 @@ public class ObjectDetailsController extends InterMineAction
         Map displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
-        if (idString != null && !idString.equals("")
-            && (session.getAttribute("object") == null
-                || ((DisplayObject) session.getAttribute("object")).getId()
-                != Integer.parseInt(idString))) {
-            // Move to a different object
-            Integer key;
-            try {
-                key = new Integer(idString);
-            } catch (NumberFormatException e) {
-                session.removeAttribute("object");
-                return null;
+        
+        Integer id = new Integer(Integer.parseInt(idString));
+        InterMineObject object = os.getObjectById(id);
+        if (object == null) {
+            return null;
+        }
+        DisplayObject dobj = (DisplayObject) displayObjects.get(id);
+        if (dobj == null) {
+            dobj = makeDisplayObject(session, object);
+            displayObjects.put(id, dobj);
+        }
+        request.setAttribute("object", dobj);
+        
+        if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
+            session.removeAttribute(Constants.PORTAL_QUERY_FLAG);
+            setVerboseCollections(session, dobj);
+        }
+        
+        Map aspectRefsAndCollections = new TreeMap();
+        Set aspects = (Set) servletContext.getAttribute(Constants.CATEGORIES);
+        ProfileManager pm = (ProfileManager) servletContext
+            .getAttribute(Constants.PROFILE_MANAGER);
+        Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        
+        for (Iterator i = aspects.iterator(); i.hasNext(); ) {
+            String aspect = (String) i.next();
+            aspectRefsAndCollections.put(aspect, new TreeMap(String.CASE_INSENSITIVE_ORDER));
+        }
+        Map miscRefs = new TreeMap(dobj.getRefsAndCollections());
+        aspectRefsAndCollections.put(TemplateRepository.MISC, miscRefs);
+        
+        for (Iterator iter = dobj.getRefsAndCollections().entrySet().iterator();
+            iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            DisplayField df = (DisplayField) entry.getValue();
+            if (df instanceof DisplayReference) {
+                categoriseBasedOnTags(((DisplayReference) df).getDescriptor(), "reference",
+                        df, miscRefs, pm, superuser, aspectRefsAndCollections);
+            } else if (df instanceof DisplayCollection) {
+                categoriseBasedOnTags(((DisplayCollection) df).getDescriptor(), "collection",
+                        df, miscRefs, pm, superuser, aspectRefsAndCollections);
             }
-            InterMineObject object = os.getObjectById(key);
-            if (object == null) {
-                // no such object
-                session.removeAttribute("object");
-                return null;
-            }
-            String field = request.getParameter("field");
-            if (field != null) {
-                object = (InterMineObject) TypeUtil.getFieldValue(object, field);
-            }
-            DisplayObject dobj = (DisplayObject) displayObjects.get(key);
-            if (dobj == null) {
-                dobj = makeDisplayObject(session, object);
-                displayObjects.put(key, dobj);
-            }
-            request.setAttribute("object", dobj);
-
-            if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
-                session.removeAttribute(Constants.PORTAL_QUERY_FLAG);
-                setVerboseCollections(session, dobj);
-            }
-
-       }
-
+        }
+        
+        request.setAttribute("aspectRefsAndCollections", aspectRefsAndCollections);
+        
         return null;
+    }
+    
+    /**
+     * For a given FieldDescriptor, look up its 'aspect:' tags and place it in the correct
+     * map within aspectRefsAndCollections. If categorised, remove it from the supplied
+     * miscRefs map.
+     * 
+     * @param fd the FieldDecriptor (a references or collection)
+     * @param taggedType 'reference' or 'collection'
+     * @param dispRef the corresponding DisplayReference or DisplayCollection
+     * @param miscRefs map that contains dispRef (may be removed by this method)
+     * @param pm the ProfileManager
+     * @param sup the superuser account name
+     * @param aspectRefsAndCollections take from the DisplayObject
+     */
+    public static void categoriseBasedOnTags(FieldDescriptor fd,
+                                       String taggedType,
+                                       DisplayField dispRef,
+                                       Map miscRefs,
+                                       ProfileManager pm,
+                                       String sup,
+                                       Map aspectRefsAndCollections) {
+        List tags = pm.getTags(null, fd.getClassDescriptor().getUnqualifiedName() + "." 
+                + fd.getName(), taggedType, sup);
+        for (Iterator ti = tags.iterator(); ti.hasNext(); ) {
+            Tag tag = (Tag) ti.next();
+            if (tag.getTagName().startsWith("aspect:")) {
+                String aspect = tag.getTagName().substring(7);
+                Map refs = (Map) aspectRefsAndCollections.get(aspect);
+                if (refs != null) {
+                    refs.put(fd.getName(), dispRef);
+                    miscRefs.remove(fd.getName());
+                }
+            }
+        }
     }
 
     /**
@@ -136,10 +189,13 @@ public class ObjectDetailsController extends InterMineAction
     public static DisplayObject makeDisplayObject(HttpSession session, InterMineObject object)
         throws Exception {
         ServletContext servletContext = session.getServletContext();
+        ProfileManager pm = (ProfileManager) servletContext
+            .getAttribute(Constants.PROFILE_MANAGER);
+        Set aspects = (Set) servletContext.getAttribute(Constants.CATEGORIES);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        return new DisplayObject(session, object, os.getModel(), webConfig,
+        return new DisplayObject(object, os.getModel(), webConfig,
                                  webPropertiesMap);
     }
 }

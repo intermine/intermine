@@ -17,10 +17,10 @@
     would be a lot easier if we were rendering a real tree
     rather than just a list of Nodes.. --%>
   <c:if test="${!noTreeIds && node.indentation > indent}">
-    <div id="${previousNodePath}">
+    <div id="${previousNodePath}"><!--open div ${previousNodePath}-->
   </c:if>
   <c:if test="${!noTreeIds && node.indentation < indent}">
-    </div>
+    </div><!--close-->
   </c:if>
   <c:set var="indent" value="${node.indentation}"/>
   <c:set var="node" value="${node}" scope="request"/>
@@ -29,8 +29,8 @@
   <c:set var="previousNodePath" value="${node.path}"/>
 </c:forEach>
   <%-- see above --%>
-  <c:if test="!noTreeIds">
-    </div>
+  <c:if test="${!noTreeIds}">
+    <!--last close--></div>
   </c:if>
   
 <!-- /mainBrowserLines.jsp -->

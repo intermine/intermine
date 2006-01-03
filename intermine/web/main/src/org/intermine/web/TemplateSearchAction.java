@@ -84,7 +84,7 @@ public class TemplateSearchAction extends InterMineAction
         ServletContext context = session.getServletContext();
         TemplateSearchForm sf = (TemplateSearchForm) form;
         String queryString = sf.getQueryString();
-        Map globalTemplates = (Map) context.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+        Map globalTemplates = SessionMethods.getSuperUserProfile(context).getSavedTemplates();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
         if (StringUtils.isNotEmpty(queryString)) {

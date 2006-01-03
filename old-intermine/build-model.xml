@@ -210,6 +210,9 @@
       <classpath refid="compile.class.path"/>
       <src path="${model}/${model.name}/src/web/java"/>
     </javac>
+    <copy todir="${build.model.dir}">
+      <fileset dir="${model}/${model.name}/src/web/java" excludes="**/*.java"/>
+    </copy>
   </target>
 
   <target name="compile-test" depends="compile-java, copy-test-resources">
@@ -360,7 +363,7 @@
                           userprofilealias="${userprofile.name}" username="${username}"/>
   </target>
 
-  <target name="add-model-to-webapp" depends="summarise-objectstore, compile-java, compile-webapp-java"
+  <target name="add-model-to-webapp" depends="summarise-objectstore, compile-webapp-java"
           description="Add a model to the webapp">
     <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>
     <unwar src="${war}" dest="${build.tmp}">

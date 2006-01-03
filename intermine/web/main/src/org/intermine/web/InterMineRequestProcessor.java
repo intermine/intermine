@@ -40,9 +40,9 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
     public static final List START_PATHS =
         Arrays.asList(new String[] {
                           LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild",
-                          "/objectDetails", "/initObjectDetails", "/examples", "/initObjectTrail",
+                          "/objectDetails", "/examples",
                           "/collectionDetails", "/iqlQuery", "/login", "/feedback", "/portal",
-                          "/templates", "/templateSearch", "/template", "/aspect", "/initDataSet",
+                          "/templates", "/templateSearch", "/template", "/aspect",
                           "/ping"
                       });
     

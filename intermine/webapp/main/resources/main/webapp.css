@@ -95,7 +95,7 @@ ul {
   background-color: white;
 }
 
-.body .collapsed {
+.altmessage {
   font-size: 11px;
   font-style: italic;
   text-align: center;
@@ -110,11 +110,6 @@ table.box th {
   background: #eee;
   border-bottom: 1px solid #888;
 }
-
-/*table.box > tbody > tr > td {
-  -padding: 5px;
-  background: white;
-}*/
 
 table.history > tbody > tr > td {
   font-size: 11px;
@@ -415,11 +410,6 @@ span.collectionDescription {
   font-size: 11px;
 }
 
-.altmessage {
-  text-align: center;
-  font-style: italic;
-}
-
 #tmplPreview {
   margin: 15px;
   padding: 14px;
@@ -453,14 +443,11 @@ a.brokenTmplLink {
   padding: 0px;
 }
 
-.seperator {
-  height: 4px;
-  border-top: 1px solid #ddd;
-  margin-top: 5px;
-}
-
-hr.tmplSeperator {
-  border: 1px solid #ccc;
+hr.seperator {
+  border: 0px;
+  height: 1px;
+  color: #ccc;
+  background-color: #ccc;
 }
 
 .box .buildmenu .body {
@@ -732,4 +719,34 @@ a.constraintId {
 img.fasta {
   margin-top: 3px;
   vertical-align: text-bottom;
+}
+
+img.tag {
+  vertical-align: text-bottom;
+  cursor: pointer;
+  cursor: hand;
+}
+
+a.editTag {
+}
+
+a.deleteTagLink {
+  color: #888;
+  font-size: 10px;
+}
+
+a.deleteTagLink:hover { color:#CF4D23; text-decoration:underline }
+
+a.addTagLink {
+  color: #888;
+  font-size: 10px;
+  text-decoration:underline;
+  white-space: nowrap;
+}
+
+a.addTagLink:hover { color:#CF4D23; text-decoration:underline }
+
+.tag {
+  white-space: nowrap;
+  color: #444;
 }

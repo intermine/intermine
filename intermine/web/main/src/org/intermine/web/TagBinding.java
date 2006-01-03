@@ -10,13 +10,8 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.model.userprofile.Tag;
-import org.intermine.util.SAXParser;
-
 import java.io.Reader;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -26,6 +21,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.intermine.model.userprofile.Tag;
+import org.intermine.util.SAXParser;
 
 /**
  * Convert Tags from the Profile to and from XML
@@ -53,21 +51,21 @@ public class TagBinding
     }
 
     /**
-     * Parse Tags from XML
+     * Parse Tags from XML and write them to the userprofile object store
      * @param pm a ProfileManager used to get UserProfile objects for a given username
      * @param userName the user whose tags are being unmarshalled
      * @param reader the saved Tags
-     * @return a Set of Tags
+     * @return number of new tags created
      */
-    public Set unmarshal(ProfileManager pm, String userName, Reader reader) {
-        Set tags = new HashSet();
+    public int unmarshal(ProfileManager pm, String userName, Reader reader) {
+        TagHandler handler = null;
         try {
-            SAXParser.parse(new InputSource(reader), new TagHandler(pm, userName));
+            SAXParser.parse(new InputSource(reader), handler = new TagHandler(pm, userName));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        return tags;
+        return handler.count;
     }
 
     /**
@@ -80,6 +78,7 @@ public class TagBinding
         private String tagType;
         private ProfileManager profileManager;
         private String userName;
+        private int count;
 
         /**
          * Constructor
@@ -112,7 +111,11 @@ public class TagBinding
             throws SAXException {
             super.endElement(uri, localName, qName);
             if (qName.equals("tag")) {
-                profileManager.addTag(tagName, tagObjectIdentifier, tagType, userName);
+                if (profileManager.getTags(tagName, tagObjectIdentifier, tagType, userName)
+                        .isEmpty()) {
+                    profileManager.addTag(tagName, tagObjectIdentifier, tagType, userName);
+                    count++;
+                }
                 reset();
             }
         }

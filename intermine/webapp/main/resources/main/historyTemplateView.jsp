@@ -59,7 +59,7 @@
                   </td>
                 </c:when>
                 <c:otherwise>
-                  <td nowrap>
+                  <td>
                     <fmt:message var="linkTitle" key="templateList.run">
                       <fmt:param value="${savedTemplate.value.name}"/>
                     </fmt:message>
@@ -67,6 +67,14 @@
                            title="${linkTitle}">
                       ${savedTemplate.value.name}
                     </html:link>
+                    <c:if test="${IS_SUPERUSER}">
+                      <c:set var="taggable" value="${savedTemplate.value}"/>
+                      <tiles:insert name="inlineTagEditor.tile">
+                        <tiles:put name="taggable" beanName="taggable"/>
+                        <tiles:put name="vertical" value="true"/>
+                        <tiles:put name="show" value="true"/>
+                      </tiles:insert>
+                    </c:if>
                   </td>
                 </c:otherwise>
               </c:choose>

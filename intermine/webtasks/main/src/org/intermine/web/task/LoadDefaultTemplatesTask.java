@@ -122,6 +122,7 @@ public class LoadDefaultTemplatesTask extends Task
                     log("Adding template \"" + template.getName() + "\"" + append);
                     profile.saveTemplate(template.getName(), template);
                 }
+                pm.convertTemplateKeywordsToTags(templateQueries, username);
             }
         } catch (Exception e) {
             throw new BuildException(e);

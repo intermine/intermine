@@ -10,16 +10,16 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.PrimaryKeyUtil;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.config.WebConfig;
@@ -32,22 +32,32 @@ public class DisplayReference extends DisplayField
 {
     ProxyReference proxy;
     Map keyAttributes;
-
+    ReferenceDescriptor desc;
+    
     /**
      * Create a new DisplayReference object.
      * @param proxy proxy for the referenced object
-     * @param cld metadata for the referenced object
+     * @param ref metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayReference(ProxyReference proxy, ClassDescriptor cld,
+    public DisplayReference(ProxyReference proxy, ReferenceDescriptor ref,
                             WebConfig webConfig, Map webProperties) throws Exception {
-        super(getProxyList(proxy), cld, webConfig, webProperties);
+        super(getProxyList(proxy), ref, webConfig, webProperties);
         this.proxy = proxy;
-        this.cld = cld;
+        this.cld = ref.getReferencedClassDescriptor();
+        desc = ref;
     }
 
+    /**
+     * Get ReferenceDescriptor for this reference.
+     * @return ReferenceDescriptor
+     */
+    public ReferenceDescriptor getDescriptor() {
+        return desc;
+    }
+    
     /**
      * Get the id of the object
      * @return the id

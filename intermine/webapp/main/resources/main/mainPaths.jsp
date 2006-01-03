@@ -11,9 +11,13 @@
 
 <script>
   function editConstraint(path, index) {
+    if (isExplorer()) {
+      return true;
+    }
     new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
       {parameters:'method=ajaxEditConstraint&path='+path+'&index='+index,
        asynchronous:true, evalScripts:true});
+    return false;
   }
 </script>
 
@@ -122,7 +126,7 @@
               </html:link>
               <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
               <html:link action="/mainChange?method=editConstraint&amp;path=${node.path}&amp;index=${status.index}"
-                         onclick="editConstraint('${node.path}', '${status.index}');return false;"
+                         onclick="return editConstraint('${node.path}', '${status.index}')"
                          title="${editConstraintTitle}">
                 <img border="0" src="images/edit.gif" width="13" height="13" alt="x"/>
               </html:link>

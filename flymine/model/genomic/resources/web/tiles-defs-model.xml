@@ -4,7 +4,7 @@
 
 <tiles-definitions>
 
-<definition name="" path=""></definition>
+<definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" controllerUrl="/initGeneMicroArrayDisplayer.do"/>
 
 </tiles-definitions>
 
