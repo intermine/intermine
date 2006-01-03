@@ -25,6 +25,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 
+import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.ProteinFeature;
 
@@ -46,7 +47,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
 /**
- * 
+ * An example Task that creates ProteinFeature objects using data from a flat file.
  * @author Kim Rutherford
  */
 
@@ -159,14 +160,39 @@ public class SimpleLoadTask extends Task
 
                 Set proteins = getProteinsForName(proteinName);
                 
-                String proteinFeatureIdentifier = bits[1];
-                String proteinFeatureName = bits[2];
+                String proteinStart = bits[1];
+                String proteinEnd = bits[2];
+                String proteinFeatureIdentifier = bits[3];
+                String proteinFeatureName = bits[4];
                 ProteinFeature proteinFeature =
                     (ProteinFeature) DynamicUtil.createObject(Collections.singleton(ProteinFeature.class));
 
                 proteinFeature.setIdentifier(proteinFeatureIdentifier);
                 proteinFeature.setName(proteinFeatureName);
+
                 proteinFeature.setProteins(proteins);
+
+                Iterator proteinIter = proteins.iterator();
+
+                while (proteinIter.hasNext()) {
+                    Protein thisProtein = (Protein) proteinIter.next();
+                    Location featureLocation =
+                        (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+                    try {
+                        featureLocation.setStart(new Integer(Integer.parseInt(proteinStart)));
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("failed to parse start position: " + proteinStart, e);
+                    }
+                    try {
+                        featureLocation.setEnd(new Integer(Integer.parseInt(proteinEnd)));
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("failed to parse end position: " + proteinEnd, e);
+                    }
+                
+                    featureLocation.setSubject(proteinFeature);
+                    featureLocation.setObject(thisProtein);
+                    osw.store(featureLocation);
+                }
 
                 osw.store(proteinFeature);
             }
