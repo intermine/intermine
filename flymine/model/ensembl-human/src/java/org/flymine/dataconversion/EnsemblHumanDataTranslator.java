@@ -264,7 +264,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                                                             // seq_region.coord-sys
                     result.add(location);
                 } else if ("translation".equals(className)) {
+		    tgtItem.addReference(orgRef);
                     Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
+		    if (protein != null) {
+			tgtItem.addReference(new Reference("protein", protein.getIdentifier()));
+			Item sr = createItem(tgtNs + "SimpleRelation", "");
+			sr.setReference("object", tgtItem.getIdentifier());
+			sr.setReference("subject", protein.getIdentifier());
+			result.add(sr);
+		    }
                                         // transcript
                                         // transcript.display_xref
                                         // transcript.display_xref.external_db
@@ -276,17 +284,13 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         addReferencedItem(protein, transRelation, "subjects", true,
                                          "object", false);
                         result.add(transRelation);
-                    }
-                    storeTgtItem = false;
-                // stable_ids become syonyms, need ensembl DataSource as source
+                    }                    
+                // stable_ids become syonyms, need ensembl DataSet as evidence
                 } else if (className.endsWith("_stable_id")) {
-                    if (className.endsWith("translation_stable_id")) {
-                        storeTgtItem = false;
-                    } else {
-                        tgtItem.addReference(ensemblRef);
-                        tgtItem.addAttribute(new Attribute("type", "identifier"));
-                    }
-                } else if ("repeat_feature".equals(className)) {
+		    tgtItem.addToCollection("evidence", ensemblDs);
+		    tgtItem.addReference(ensemblRef);
+		    tgtItem.addAttribute(new Attribute("type", "identifier"));
+		} else if ("repeat_feature".equals(className)) {
                     tgtItem.addReference(orgRef);
                     addReferencedItem(tgtItem, ensemblDs, "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
@@ -651,14 +655,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonyms.add(synonym);
 
-                        if (xref.hasAttribute("display_label")
-                            && !xref.getAttribute("display_label").getValue().equals("")) {
-                            identifier = xref.getAttribute("display_label").getValue();
-                            synonym = createSynonym(srcItem.getIdentifier(),
-                                                   "identifier", identifier, uniprotRef);
-                            addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                            synonyms.add(synonym);
-                        }
+			//not create protein identifier
+                        // if (xref.hasAttribute("display_label")
+//                             && !xref.getAttribute("display_label").getValue().equals("")) {
+//                             identifier = xref.getAttribute("display_label").getValue();
+//                             synonym = createSynonym(srcItem.getIdentifier(),
+//                                                    "identifier", identifier, uniprotRef);
+//                             addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
+//                             synonyms.add(synonym);
+//                         }
                     }
                 }
             }
@@ -677,24 +682,11 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         Item chosenProtein = (Item) proteins.get(primaryAcc);
         if (chosenProtein == null && primaryAcc != null) {
             protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
-            if (identifier != null) {
-                protein.addAttribute(new Attribute("identifier", identifier));
-            }
-            if (transcriptRefId != null) {
-                protein.addReference(new Reference("transcript", transcriptRefId));
-            }
+             
             addReferencedItem(protein, ensemblDs, "evidence", true, "", false);
             // set up additional references/collections
             protein.addReference(orgRef);
-            if (srcItem.hasReference("start_exon")) {
-                protein.addReference(new Reference("startExon",
-                            srcItem.getReference("start_exon").getRefId()));
-            }
-            if (srcItem.hasReference("end_exon")) {
-                protein.addReference(new Reference("endExon",
-                            srcItem.getReference("end_exon").getRefId()));
-            }
-            proteins.put(primaryAcc, protein);
+	    proteins.put(primaryAcc, protein);
             proteinSynonyms.addAll(synonyms);
             chosenProtein = protein;
         }
