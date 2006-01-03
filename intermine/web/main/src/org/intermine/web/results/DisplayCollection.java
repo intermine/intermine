@@ -13,7 +13,8 @@ package org.intermine.web.results;
 import java.util.Collection;
 import java.util.Map;
 
-import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.web.config.WebConfig;
 
 /**
@@ -22,16 +23,27 @@ import org.intermine.web.config.WebConfig;
  */
 public class DisplayCollection extends DisplayField
 {
+    CollectionDescriptor desc;
+    
     /**
      * Construct a new DisplayCollection object
      * @param collection the actual collection
-     * @param cld the type of this collection
+     * @param desc the descriptors for this collection
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayCollection(Collection collection, ClassDescriptor cld,
+    public DisplayCollection(Collection collection, CollectionDescriptor desc,
                              WebConfig webConfig, Map webProperties) throws Exception {
-        super(collection, cld, webConfig, webProperties);
+        super(collection, desc, webConfig, webProperties);
+        this.desc = desc;
+    }
+
+    /**
+     * Get ReferenceDescriptor for this reference.
+     * @return ReferenceDescriptor
+     */
+    public ReferenceDescriptor getDescriptor() {
+        return desc;
     }
 }

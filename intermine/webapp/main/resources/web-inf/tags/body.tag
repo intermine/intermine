@@ -11,7 +11,7 @@
       <jsp:doBody/>
     </c:when>
     <c:otherwise>
-      <div class="collapsed"><fmt:message key="tag.body.hidden"/></div>
+      <div class="altmessage"><fmt:message key="tag.body.hidden"/></div>
     </c:otherwise>
   </c:choose>
 </div>

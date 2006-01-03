@@ -23,22 +23,23 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.util.MessageResources;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
+import org.intermine.util.CacheMap;
 import org.intermine.web.results.DisplayObjectFactory;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
 
-import org.intermine.util.CacheMap;
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import org.apache.struts.util.MessageResources;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -551,5 +552,24 @@ public class SessionMethods
             op = "and";
         }
         return op;
+    }
+
+    /**
+     * Get the ProfileManager from the servlet context.
+     * @param context ServletContext
+     * @return ProfileManager
+     */
+    public static ProfileManager getProfileManager(ServletContext context) {
+        return (ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER);
+    }
+    
+    /**
+     * Get the superusers Profile.
+     * @param context servlet context
+     * @return superuser Profile
+     */
+    public static Profile getSuperUserProfile(ServletContext context) {
+        String username = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        return getProfileManager(context).getProfile(username);
     }
 }

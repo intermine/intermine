@@ -90,6 +90,10 @@
     <put name="body" value="importTemplates.jsp"/>
     <put name="pageName" value="importTemplates"/>
   </definition>
+  <definition name="importTags.page" extends="layout.template">
+    <put name="body" value="importTags.jsp"/>
+    <put name="pageName" value="importTags"/>
+  </definition>
   <definition name="importQuery.page" extends="layout.template">
     <put name="body" value="importQuery.jsp"/>
     <put name="pageName" value="importQuery"/>
@@ -123,9 +127,11 @@
     <put name="main" value="main.tile"/>
     <put name="view" value="view.tile"/>
   </definition>
+  <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
   <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
   <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
+  <definition name="inlineTagEditor.tile" path="/inlineTagEditor.jsp" controllerUrl="/initInlineTagEditor.do"/>
   <definition name="view.tile" path="/view.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>

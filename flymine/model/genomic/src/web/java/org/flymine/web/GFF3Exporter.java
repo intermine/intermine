@@ -10,21 +10,6 @@ package org.flymine.web;
  *
  */
 
-import org.intermine.objectstore.query.Results;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
-import org.intermine.web.TableExporter;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.WebUtil;
-import org.intermine.web.results.Column;
-import org.intermine.web.results.PagedTable;
-
-import org.flymine.io.gff3.GFF3Record;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.util.GFF3Util;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -39,6 +24,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.flymine.io.gff3.GFF3Record;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.util.GFF3Util;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Results;
+import org.intermine.util.StringUtil;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.TableExporter;
+import org.intermine.web.WebUtil;
+import org.intermine.web.results.Column;
+import org.intermine.web.results.PagedTable;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;

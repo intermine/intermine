@@ -18,12 +18,12 @@
           <img src="images/blank.gif" alt=" "/>
         </c:when>
         <c:when test="${node.open}">
-          <html:link action="/changeTree?method=collapse&amp;node=${node.object}" anchor="${node.object}">
+          <html:link action="/changeTree?method=collapse&amp;node=${node.object.name}" anchor="${node.object.name}">
             <img border="0" src="images/minus.gif" alt="-"/>
           </html:link>
         </c:when>
         <c:otherwise>
-          <html:link action="/changeTree?method=expand&amp;node=${node.object}" anchor="${node.object}">
+          <html:link action="/changeTree?method=expand&amp;node=${node.object.name}" anchor="${node.object.name}">
             <img border="0" src="images/plus.gif" alt="+"/>
           </html:link>
         </c:otherwise>
@@ -38,14 +38,23 @@
   class="treeSelected"
          </c:if>
       >
-      <a name="${node.object}"/>
-      <html:link action="/changeTree?method=select&amp;node=${node.object}">
-        <im:unqualify className="${node.object}" var="name"/>${name}
+      <a name="${node.object.name}"/>
+      <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
+        <im:unqualify className="${node.object.name}" var="name"/>${name}
       </html:link>
       <im:typehelp type="${name}"/>
       </span>
       </span>
       ${node.text}
+      
+      <c:if test="${IS_SUPERUSER}">
+        
+        <c:set var="descriptor" value="${node.object}"/>
+        <tiles:insert name="inlineTagEditor.tile">
+          <tiles:put name="taggable" beanName="descriptor"/>
+        </tiles:insert>
+      </c:if>
+      
     </div>
   </c:forEach>
 </div>

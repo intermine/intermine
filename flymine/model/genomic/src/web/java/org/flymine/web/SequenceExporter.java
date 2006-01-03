@@ -10,29 +10,27 @@ package org.flymine.web;
  *
  */
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.OutputStream;
-
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.Globals;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.Annotation;
+import org.flymine.biojava.FlyMineSequence;
+import org.flymine.biojava.FlyMineSequenceFactory;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.util.StringUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
@@ -40,14 +38,13 @@ import org.intermine.web.SessionMethods;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
-import org.intermine.model.InterMineObject;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Protein;
-
-import org.flymine.biojava.FlyMineSequence;
-import org.flymine.biojava.FlyMineSequenceFactory;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and

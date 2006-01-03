@@ -39,13 +39,13 @@
         </c:when>
         <c:when test="${node.button == '+'}">
           <html:link action="/mainChange?method=changePath&amp;path=${node.path}"
-            onclick="toggle('${node.path}', '${node.path}');return false;">
+            onclick="return toggle('${node.path}', '${node.path}')">
             <img id="img_${node.path}" border="0" src="images/plus.gif" width="11" height="11" alt="+"/>
           </html:link>
         </c:when>
         <c:when test="${node.button == '-'}">
           <html:link action="/mainChange?method=changePath&amp;path=${node.prefix}"
-            onclick="toggle('${node.path}', '${node.path}');return false;">
+            onclick="return toggle('${node.path}', '${node.path}');">
             <img id="img_${node.path}" border="0" src="images/minus.gif" width="11" height="11" alt="-"/>
           </html:link>
         </c:when>
@@ -117,7 +117,7 @@
         </c:when>
         <c:otherwise>
           <html:link action="/mainChange?method=addPath&path=${node.path}" title="${addConstraintToTitle}"
-            onclick="addConstraint('${node.path}');return false;">
+            onclick="return addConstraint('${node.path}');">
             <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain"/>
           </html:link>
         </c:otherwise>
@@ -146,7 +146,7 @@
     </div>
     <%-- this if preserves correct interaction with statically rendered tree --%>
     <c:if test="${node.button == '+'}">
-      <div id="${node.path}"></div>
+      <div id="${node.path}"></div><!-- div+ ${node.path} -->
     </c:if>
 
 <!-- /mainBrowserLine.jsp -->

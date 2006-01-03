@@ -52,7 +52,7 @@ public class TemplatesExportAction extends InterMineAction
         if (type == null || type.equals("user")) {
             templates = profile.getSavedTemplates();
         } else if (type.equals("global")) {
-            templates = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+            templates = SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
         } else {
             return null;
         }

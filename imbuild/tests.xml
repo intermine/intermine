@@ -15,6 +15,7 @@
     <!-- junit task properties -->
     <property name="test.results.dir" location="${build.dir}/test/results"/>
     <property name="test.excludes" location=""/>
+    <property name="test.includes" location="**/*Test.class"/>
     <condition property="test.fork" value="yes" else="no">
       <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
     </condition>
@@ -97,7 +98,7 @@
   
   <target name="-init-macrodef-junit">
     <macrodef name="junit" uri="http://www.intermine.org/ns/im-tests-proj/1">
-    <attribute name="includes" default="**/*Test.class"/>
+    <attribute name="includes" default="${test.includes}"/>
     <attribute name="excludes" default="${test.excludes}"/>
     <attribute name="fork" default="${test.fork}"/>
     <attribute name="forkmode" default="${test.forkmode}"/>

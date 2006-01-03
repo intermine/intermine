@@ -29,7 +29,7 @@
         </span>
       </div>
       <c:if test="${!status.last}">
-        <div class="seperator"></div>
+        <hr class="seperator"/>
       </c:if>
     </c:forEach>
   </c:if>

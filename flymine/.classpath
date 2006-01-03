@@ -14,7 +14,6 @@
 	<classpathentry kind="src" path="model/genomic/resources/flymine"/>
 	<classpathentry excluding="flymine/" kind="src" path="model/genomic/resources"/>
 	<classpathentry excluding="resources/|src/java/|src/test/" kind="src" path="model/mage"/>
-	<classpathentry kind="src" path="model/mage/resources"/>
 	<classpathentry kind="src" path="build/model/uniprot/resources"/>
 	<classpathentry kind="src" path="build/model/ensembl/resources"/>
 	<classpathentry kind="src" path="build/model/psi/resources"/>
@@ -94,5 +93,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="model/mage/resources"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.0-rc1.jar"/>
+	<classpathentry sourcepath="/Users/tom/Development/jfreechart-1.0.0-rc1/source" kind="lib" path="lib/jfreechart-1.0.0-rc1.jar"/>
 	<classpathentry kind="output" path="build-eclipse"/>
 </classpath>

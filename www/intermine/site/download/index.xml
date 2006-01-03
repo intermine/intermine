@@ -40,7 +40,7 @@
           </listitem>
 
           <listitem>
-            <para>Issue the command <command>svn co svn://subversion.flymine.org/trunk/intermine</command></para>
+            <para>Issue the command <command>svn co svn://subversion.flymine.org/trunk/</command></para>
           </listitem>
 
         </itemizedlist>

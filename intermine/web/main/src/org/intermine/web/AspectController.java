@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -19,6 +21,11 @@ import javax.servlet.http.HttpSession;
 
 import org.intermine.web.aspects.Aspect;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.TransformerUtils;
+import org.apache.commons.collections.functors.InvokerTransformer;
+import org.apache.commons.collections.list.TransformedList;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -55,6 +62,13 @@ public class AspectController extends TilesAction
             return null;
         }
         context.putAttribute("aspect", set);
+        // look up the classes for this aspect
+        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        List tags = new ArrayList(SessionMethods.getProfileManager(servletContext)
+            .getTags("aspect:" + request.getParameter("name"), null, "class", superuser));
+        CollectionUtils.transform(tags,
+                TransformerUtils.invokerTransformer("getObjectIdentifier"));
+        context.putAttribute("startingPoints", tags);
         return null;
     }
 }

@@ -89,6 +89,7 @@
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
   </class>
 

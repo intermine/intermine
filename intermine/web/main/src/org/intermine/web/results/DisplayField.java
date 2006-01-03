@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.web.config.WebConfig;
@@ -36,15 +37,15 @@ public class DisplayField
     /**
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
-     * @param cld metadata for the referenced object
+     * @param ref metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayField(Collection collection, ClassDescriptor cld,
+    public DisplayField(Collection collection, FieldDescriptor ref,
                         WebConfig webConfig, Map webProperties) throws Exception {
         this.collection = collection;
-        this.cld = cld;
+        this.cld = ref.getClassDescriptor();
         this.webConfig = webConfig;
         this.webProperties = webProperties;
     }
@@ -61,7 +62,7 @@ public class DisplayField
     }
     
     /**
-     * Get the class descriptor for this collection
+     * Get the class descriptor for this field
      * @return the class descriptor
      */
     public ClassDescriptor getCld() {

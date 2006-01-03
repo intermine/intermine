@@ -3,4 +3,10 @@
     <action path="/sequenceExporter"
             type="org.flymine.web.SequenceExporter"/>
     
+    <action path="/chartRenderer"
+            type="org.flymine.web.ChartRenderer"
+            parameter="method"/>
     
+    <action path="/initGeneMicroArrayDisplayer"
+            type="org.flymine.web.GeneMicroArrayDisplayerController"/>
+            

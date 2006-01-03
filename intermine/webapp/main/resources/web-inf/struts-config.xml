@@ -61,6 +61,9 @@
     <form-bean name="importTemplatesForm"
                type="org.intermine.web.TemplatesImportForm"/>
     
+    <form-bean name="importTagsForm"
+              type="org.intermine.web.tagging.ImportTagsForm"/>
+    
     <form-bean name="templateSearchForm"
                type="org.intermine.web.TemplateSearchForm"/>
     
@@ -155,6 +158,9 @@
     <action path="/importQuery"
             forward="importQuery.page"/>
     
+    <action path="/tagImport"
+            forward="importTags.page"/>
+    
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
@@ -220,6 +226,13 @@
       <forward name="queryPaths" path="mainPaths.tile"/>
     </action>
     
+    <action path="/inlineTagEditorChange"
+            type="org.intermine.web.tagging.InlineTagEditorChange"
+            parameter="method">
+      <forward name="editTags" path="/editTags.jsp"/>
+      <forward name="currentTags" path="/currentTags.jsp"/>
+    </action>
+    
     <action path="/viewChange"
             type="org.intermine.web.ViewChange"
             parameter="method">
@@ -259,6 +272,16 @@
     
     <action path="/collapseElement"
             type="org.intermine.web.CollapseAction">
+    </action>
+    
+    <action path="/exportTags"
+            type="org.intermine.web.tagging.ExportTagsAction">
+    </action>
+    
+    <action path="/importTags"
+            type="org.intermine.web.tagging.ImportTagsAction"
+            name="importTagsForm">
+      <forward name="success" path="/history.do" redirect="true"/>
     </action>
     
     <action path="/addToBagAction"
@@ -504,6 +527,12 @@
             
     <action path="/initMainPaths"
             type="org.intermine.web.MainPathsController"/>
+
+    <action path="/initInlineTagEditor"
+            type="org.intermine.web.tagging.InlineTagEditorController"/>
+
+    <action path="/initTemplateList"
+            type="org.intermine.web.TemplateListController"/>
 
     <action path="/initBegin"
             type="org.intermine.web.BeginController"/>

@@ -1,6 +1,6 @@
 
 <project name="testmodel" default="default" basedir=".">
   <description>build testmodel model</description>
-  <import file="../../../../imbuild/core-model.xml"/> 
+  <import file="../../../../imbuild/model.xml"/> 
 </project>
 

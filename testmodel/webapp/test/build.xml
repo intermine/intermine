@@ -18,13 +18,21 @@
     <ant antfile="../main/build.xml" target="build-db-userprofile" inheritAll="false"/>
   </target>
   
-  <target name="-init-test" depends="tests.-init-test, -copy-intermine-properties"/>
+  <target name="redeploy-webapp">
+    <ant antfile="../main/build.xml" target="remove-webapp" inheritAll="false"/>
+    <ant antfile="../main/build.xml" target="release-webapp" inheritAll="false"/>
+  </target>
+  
+  <target name="-init-test" depends="tests.-init-test, -copy-intermine-properties, redeploy-webapp"/>
   
   <target name="-copy-intermine-properties">
-    <copy file="${user.home}/${intermine.properties.file}"
+   <!-- <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.test.resources.dir}/intermine.properties"/>
     <copy file="${default.intermine.properties.file}"
-          tofile="${build.test.resources.dir}/default.intermine.properties"/>
+          tofile="${build.test.resources.dir}/default.intermine.properties"/> -->
+    <!-- Now copy the build properties -->
+    <copy file="${user.home}/build.properties.testmodel-webapp"
+          tofile="${build.test.resources.dir}/build.properties"/>
   </target>
   
 </project>

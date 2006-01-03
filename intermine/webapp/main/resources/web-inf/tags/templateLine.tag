@@ -23,8 +23,8 @@
         <fmt:param value="${templateQuery.name}"/>
       </fmt:message>
       <c:set var="extra" value=""/>
-      <c:if test="${!empty className}">
-        <c:forEach items="${CLASS_TEMPLATE_EXPRS[className][templateQuery.name]}" var="fieldExpr">
+      <c:if test="${!empty fieldExprMap}">
+        <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
           <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
           <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
           <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>

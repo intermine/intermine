@@ -17,10 +17,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import org.biojava.bio.Annotation;
-
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
@@ -28,8 +25,8 @@ import org.biojava.utils.ChangeVetoException;
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
 import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
 
 import org.intermine.model.InterMineObject;
@@ -47,6 +44,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.ExportException;
 import org.intermine.web.FieldExporter;
+
+import org.apache.log4j.Logger;
 
 /**
  * ResidueFieldExporter class

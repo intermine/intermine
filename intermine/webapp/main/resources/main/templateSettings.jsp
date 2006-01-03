@@ -49,10 +49,10 @@
           </c:if>
         </td>
       </tr>
-      <tr>
+      <%--<tr>
         <td align="right"><fmt:message key="templateBuilder.keywords"/></td>
         <td><html:text property="keywords" size="45"/></td>
-      </tr>
+      </tr>--%>
       <tr>
         <td align="center" colspan="2">
           <html:submit>Update settings</html:submit>

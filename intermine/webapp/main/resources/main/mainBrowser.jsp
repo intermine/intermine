@@ -10,7 +10,11 @@
 <html:xhtml/>
 
 <script>
+  
   function toggle(id, path) {
+    if (isExplorer()) {
+      return true;
+    }
     if ($(id).innerHTML=='') {
       new Ajax.Updater(id, '<html:rewrite action="/mainChange"/>',
         {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
@@ -23,9 +27,13 @@
         {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
       $(id).innerHTML='';
     }
+    return false;
   }
   
   function addConstraint(path) {
+    if (isExplorer()) {
+      return true;
+    }
     new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
       {parameters:'method=ajaxNewConstraint&path='+path, asynchronous:true, evalScripts:true,
       onSuccess: function() {
@@ -34,6 +42,11 @@
       }
     });
   }
+  
+  function isExplorer() {
+    return (navigator.appVersion.toLowerCase().indexOf('msie') >= 0);
+  }
+  
 </script>
 
 <div class="heading">
