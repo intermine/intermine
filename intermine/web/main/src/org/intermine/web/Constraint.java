@@ -112,11 +112,9 @@ public class Constraint
     /**
      * Return value in display format. This performs conversion between SQL
      * wildcard % symbols and user wildcard * symbols.
-     *
-     * @param node  the path node related to this constraint
-     * @return      constraint value translated for the user as a string
+     * @return  constraint value translated for the user as a string
      */
-    public String getDisplayValue(PathNode node) {
+    public String getDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
             return WebUtil.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
@@ -150,7 +148,7 @@ public class Constraint
     }
 
     /**
-     * @see Object#equalsSet
+     * @see Object#equals
      */
     public boolean equals(Object o) {
         if (o instanceof Constraint) {
