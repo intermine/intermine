@@ -154,7 +154,7 @@ public class ProfileBinding
                                                                 profile.getUsername());
                 for (Iterator i = tags.iterator(); i.hasNext();) {
                     Tag tag = (Tag) i.next();
-                    if (!onlyConfigTags || tag.getTagName().contains(":")) {
+                    if (!onlyConfigTags || tag.getTagName().indexOf(":") >= 0) {
                         TagBinding.marshal(tag, writer);
                     }
                 }
