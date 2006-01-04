@@ -2,21 +2,33 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- templates.jsp -->
 <c:choose>
   <c:when test="${empty param.category}">
-    <c:forEach items="${CATEGORY_TEMPLATES}" var="category">
-      <c:if test="${!empty CATEGORY_TEMPLATES[category.key]}">
-        <div class="heading">${category.key}</div>
-        <div class="body"><im:templateList type="global" category="${category.key}"/></div>
-        <im:vspacer height="5"/>
-      </c:if>
+
+    <c:forEach items="${CATEGORIES}" var="category">
+      <div class="heading">${category}</div>
+      <div class="body">
+        <tiles:insert name="templateList.tile">
+          <tiles:put name="type" value="global"/>
+          <tiles:put name="aspect" value="${category}"/>
+          <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+        </tiles:insert>
+      </div>
+      <im:vspacer height="5"/>
     </c:forEach>
   </c:when>
   <c:otherwise>
     <div class="heading">${param.category}</div>
-    <div class="body"><im:templateList type="global" category="${param.category}"/></div>
+    <div class="body">
+      <tiles:insert name="templateList.tile">
+        <tiles:put name="type" value="global"/>
+        <tiles:put name="aspect" value="${param.category}"/>
+        <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+      </tiles:insert>
+    </div>
   </c:otherwise>
 </c:choose>
 <div class="body">
