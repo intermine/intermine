@@ -1,56 +1,74 @@
-<template-list>
-
-  <template name="employeesFromCompanyAndDepartment"
-            description="View all the employees that work within a certain department of the specified company"
-            category="People">
-    <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee">
-      <node path="Employee.department.company.name">
-        <constraint op="=" value="CompanyA" editable="true" description="" 
-                    identifier="Company.name"/>
-      </node>
-      <node path="Employee.department.name">
-        <constraint op="LIKE" value="Department%" editable="true" description=""
-                    identifier="Department.name"/>
-      </node>
-    </query>
-  </template>
-  
-  <template name="employeesOfACertainAge"
-            description="View all the employees of a certain age"
-            category="People">
-    <query name="employeesOfACertainAge" model="testmodel" view="Employee">
-      <node path="Employee.age">
-        <constraint op="&gt;" value="35" editable="true" description="First age constraint"
-                    identifier="Employee.age.LESS_THAN.1"/>
-        <constraint op="!=" value="55" editable="true" description="Second age constraint"
-                    identifier="Employee.age.NOT_EQUALS.1"/>
-      </node>
-    </query>
-  </template>
-  
-  <template name="employeesOverACertainAgeFromDepartmentA"
-            description="View all the employees of a certain age from a certain department"
-            category="People">
-    <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee">
-      <node path="Employee.age">
-        <constraint op=">=" value="25" editable="true" description="Age constraint"
-                    identifier="Employee.age.NOT_EQUALS.1"/>
-      </node>
-      <node path="Employee.department.name">
-        <constraint op="=" value="DepartmentA" editable="false" description="" 
-                    identifier="Employee.department.name"/>
-      </node>
-    </query>
-  </template>
-
-  <template name="employeeByName"
-            description="View all the employees with certain name"
-            category="People">
-    <query name="employeeByName" model="testmodel" view="Employee">
-      <node path="Employee.name">
-        <constraint op="=" value="" editable="true" description="" identifier="Employee.name"/>
-      </node>
-    </query>
-  </template>
-  
-</template-list>
+<userprofile username="tom@flymine.org">
+  <items/>
+  <bags/>
+  <queries>
+  </queries>
+  <template-queries>
+    <template name="employeeByName" description="View all the employees with certain name" important="false">
+      <query name="employeeByName" model="testmodel" view="Employee">
+        <node path="Employee" type="Employee">
+        </node>
+        <node path="Employee.name" type="String">
+          <constraint op="=" value="" description="" identifier="Employee.name" editable="true" code="A">
+          </constraint>
+        </node>
+      </query>
+    </template>
+    <template name="employeesFromCompanyAndDepartment" description="View all the employees that work within a certain department of the specified company" important="false">
+      <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee" constraintLogic="A and B">
+        <node path="Employee" type="Employee">
+        </node>
+        <node path="Employee.department" type="Department">
+        </node>
+        <node path="Employee.department.company" type="Company">
+        </node>
+        <node path="Employee.department.company.name" type="String">
+          <constraint op="=" value="CompanyA" description="" identifier="Company.name" editable="true" code="A">
+          </constraint>
+        </node>
+        <node path="Employee.department.name" type="String">
+          <constraint op="LIKE" value="Department%" description="" identifier="Department.name" editable="true" code="B">
+          </constraint>
+        </node>
+      </query>
+    </template>
+    <template name="employeesOfACertainAge" description="View all the employees of a certain age" important="false">
+      <query name="employeesOfACertainAge" model="testmodel" view="Employee" constraintLogic="A and B">
+        <node path="Employee" type="Employee">
+        </node>
+        <node path="Employee.age" type="int">
+          <constraint op="&gt;" value="35" description="First age constraint" identifier="Employee.age.LESS_THAN.1" editable="true" code="A">
+          </constraint>
+          <constraint op="!=" value="55" description="Second age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="B">
+          </constraint>
+        </node>
+      </query>
+    </template>
+    <template name="employeesOverACertainAgeFromDepartmentA" description="View all the employees of a certain age from a certain department" important="false">
+      <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee" constraintLogic="A and B">
+        <node path="Employee" type="Employee">
+        </node>
+        <node path="Employee.age" type="int">
+          <constraint op="&gt;=" value="25" description="Age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="A">
+          </constraint>
+        </node>
+        <node path="Employee.department" type="Department">
+        </node>
+        <node path="Employee.department.name" type="String">
+          <constraint op="=" value="DepartmentA" description="" identifier="Employee.department.name" code="B">
+          </constraint>
+        </node>
+      </query>
+    </template>
+  </template-queries>
+  <tags>
+    <tag name="aspect:People" objectIdentifier="employeesFromCompanyAndDepartment" type="template">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="employeeByName" type="template">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template">
+    </tag>
+  </tags>
+</userprofile>
