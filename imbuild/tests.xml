@@ -15,7 +15,7 @@
     <!-- junit task properties -->
     <property name="test.results.dir" location="${build.dir}/test/results"/>
     <property name="test.excludes" location=""/>
-    <property name="test.includes" location="**/*Test.class"/>
+    <property name="test.includes" value="**/*Test.class"/>
     <condition property="test.fork" value="yes" else="no">
       <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
     </condition>
