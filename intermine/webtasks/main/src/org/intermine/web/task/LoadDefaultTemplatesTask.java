@@ -24,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.Profile;
+import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.RequestPasswordAction;
 import org.intermine.web.TemplateQuery;
@@ -83,9 +84,10 @@ public class LoadDefaultTemplatesTask extends Task
      * @see Task#execute
      */
     public void execute() throws BuildException {
+        log("Loading default templates and tags into profile " + username);
+        
         // Needed so that STAX can find it's implementation classes
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         
         try {
@@ -93,26 +95,31 @@ public class LoadDefaultTemplatesTask extends Task
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             ProfileManager pm = new ProfileManager(os, userProfileOS);
-            Reader templateQueriesReader = new FileReader(xmlFile);
-            Map templateQueries = new TemplateQueryBinding().unmarshal(templateQueriesReader);
-            Profile profile = null;
+            Reader reader = new FileReader(xmlFile);
+            
+            // Copy into existing or new superuser profile
+            Profile profileDest = null;
             if (!pm.hasProfile(username)) {
                 LOG.info("Creating profile for " + username);
                 String password = RequestPasswordAction.generatePassword();
-                profile = new Profile(pm, username, password,
+                profileDest = new Profile(pm, username, password,
                                       new HashMap(), new HashMap(), new HashMap());
-                pm.saveProfile(profile);
+                pm.saveProfile(profileDest);
             } else {
                 LOG.warn("Profile for " + username + ", clearing template queries");
-                profile = pm.getProfile(username, pm.getPassword(username));
-                Map tmpls = new HashMap(profile.getSavedTemplates());
+                profileDest = pm.getProfile(username, pm.getPassword(username));
+                Map tmpls = new HashMap(profileDest.getSavedTemplates());
                 Iterator iter = tmpls.keySet().iterator();
                 while (iter.hasNext()) {
-                    profile.deleteTemplate((String) iter.next());
+                    profileDest.deleteTemplate((String) iter.next());
                 }
             }
-            if (profile.getSavedTemplates().size() == 0) {
-                Iterator iter = templateQueries.values().iterator();
+            
+            // Unmarshal - note that tags are stored immediately
+            Profile profileSrc = ProfileBinding.unmarshal(reader, pm, os);
+            
+            if (profileDest.getSavedTemplates().size() == 0) {
+                Iterator iter = profileSrc.getSavedTemplates().values().iterator();
                 while (iter.hasNext()) {
                     TemplateQuery template = (TemplateQuery) iter.next();
                     String append = "";
@@ -120,9 +127,9 @@ public class LoadDefaultTemplatesTask extends Task
                         append = " [invalid]";
                     }
                     log("Adding template \"" + template.getName() + "\"" + append);
-                    profile.saveTemplate(template.getName(), template);
+                    profileDest.saveTemplate(template.getName(), template);
                 }
-                pm.convertTemplateKeywordsToTags(templateQueries, username);
+                pm.convertTemplateKeywordsToTags(profileSrc.getSavedTemplates(), username);
             }
         } catch (Exception e) {
             throw new BuildException(e);
