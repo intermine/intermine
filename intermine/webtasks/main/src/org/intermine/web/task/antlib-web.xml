@@ -3,6 +3,9 @@
         name="load-default-templates"
         classname="org.intermine.web.task.LoadDefaultTemplatesTask"/>
     <typedef
+        name="dump-default-templates"
+        classname="org.intermine.web.task.DumpDefaultTemplatesTask"/>
+    <typedef
         name="precompute-templates"
         classname="org.intermine.web.task.PrecomputeTemplatesTask"/>
     <typedef

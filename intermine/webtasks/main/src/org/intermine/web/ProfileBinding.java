@@ -59,67 +59,105 @@ public class ProfileBinding
      */
     public static void marshal(Profile profile, ObjectStore os,
                                XMLStreamWriter writer) {
+        marshal(profile, os, writer, true, true, true, true, true, false);
+    }
+    
+    /**
+     * Convert a Profile to XML and write XML to given writer.
+     * @param profile the UserProfile
+     * @param os the ObjectStore to use when looking up the ids of objects in bags
+     * @param writer the XMLStreamWriter to write to
+     * @param writeQueries save saved queries
+     * @param writeTemplates write saved templates
+     * @param writeBags write saved bags
+     * @param writeTags write saved tags
+     * @param onlyConfigTags if true, only save tags that contain a ':'
+     */
+    public static void marshal(Profile profile, ObjectStore os,
+                               XMLStreamWriter writer,
+                               boolean writePassword,
+                               boolean writeQueries,
+                               boolean writeTemplates,
+                               boolean writeBags,
+                               boolean writeTags,
+                               boolean onlyConfigTags) {
         try {
             writer.writeStartElement("userprofile");
             writer.writeAttribute("username", profile.getUsername());
-            writer.writeAttribute("password", profile.getPassword());
-
-            ItemFactory itemFactory = new ItemFactory(os.getModel());
-
-            Set idSet = new HashSet();
-
-            getProfileObjectIds(profile, os, idSet);
-
-            if (!idSet.isEmpty()) {
-                List objects = os.getObjectsByIds(idSet);
-
-                writer.writeStartElement("items");
-                Iterator objectsIter = objects.iterator();
-
-                while (objectsIter.hasNext()) {
-                    ResultsRow rr = (ResultsRow) objectsIter.next();
-                    InterMineObject o = (InterMineObject) rr.get(0);
-                    Item item = itemFactory.makeItem(o);
-                    FullRenderer.render(writer, item);
+            
+            if (writePassword) {
+                writer.writeAttribute("password", profile.getPassword());
+            }
+            
+            if (writeBags) {
+                ItemFactory itemFactory = new ItemFactory(os.getModel());
+    
+                Set idSet = new HashSet();
+    
+                getProfileObjectIds(profile, os, idSet);
+    
+                if (!idSet.isEmpty()) {
+                    List objects = os.getObjectsByIds(idSet);
+    
+                    writer.writeStartElement("items");
+                    Iterator objectsIter = objects.iterator();
+    
+                    while (objectsIter.hasNext()) {
+                        ResultsRow rr = (ResultsRow) objectsIter.next();
+                        InterMineObject o = (InterMineObject) rr.get(0);
+                        Item item = itemFactory.makeItem(o);
+                        FullRenderer.render(writer, item);
+                    }
+    
+                    writer.writeEndElement();
                 }
-
+    
+                writer.writeStartElement("bags");
+                for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    String bagName = (String) entry.getKey();
+                    InterMineBag bag = (InterMineBag) entry.getValue();
+    
+                    InterMineBagBinding.marshal(bag, bagName, writer);
+                }
                 writer.writeEndElement();
+            } else {
+                writer.writeEmptyElement("items");
+                writer.writeEmptyElement("bags");
             }
-
-            writer.writeStartElement("bags");
-            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                String bagName = (String) entry.getKey();
-                InterMineBag bag = (InterMineBag) entry.getValue();
-
-                InterMineBagBinding.marshal(bag, bagName, writer);
-            }
-            writer.writeEndElement();
 
             writer.writeStartElement("queries");
-            for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                SavedQuery query = (SavedQuery) entry.getValue();
-
-                SavedQueryBinding.marshal(query, writer);
+            if (writeQueries) {
+                for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    SavedQuery query = (SavedQuery) entry.getValue();
+    
+                    SavedQueryBinding.marshal(query, writer);
+                }
             }
             writer.writeEndElement();
 
             writer.writeStartElement("template-queries");
-            for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                TemplateQuery template = (TemplateQuery) entry.getValue();
-
-                TemplateQueryBinding.marshal(template, writer);
+            if (writeTemplates) {
+                for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    TemplateQuery template = (TemplateQuery) entry.getValue();
+    
+                    TemplateQueryBinding.marshal(template, writer);
+                }
             }
             writer.writeEndElement();
             
             writer.writeStartElement("tags");
-            List tags = profile.getProfileManager().getTags(null, null, null,
-                                                            profile.getUsername());
-            for (Iterator i = tags.iterator(); i.hasNext();) {
-                Tag tag = (Tag) i.next();
-                TagBinding.marshal(tag, writer);
+            if (writeTags) {
+                List tags = profile.getProfileManager().getTags(null, null, null,
+                                                                profile.getUsername());
+                for (Iterator i = tags.iterator(); i.hasNext();) {
+                    Tag tag = (Tag) i.next();
+                    if (!onlyConfigTags || tag.getTagName().contains(":")) {
+                        TagBinding.marshal(tag, writer);
+                    }
+                }
             }
             writer.writeEndElement();
 
