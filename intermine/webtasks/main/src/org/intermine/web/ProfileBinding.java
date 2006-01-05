@@ -252,18 +252,21 @@ public class ProfileBinding
      * @param reader contains the Profile XML
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param os ObjectStore used to resolve object ids
+     * @param username default username - used if there is no username in the XML
+     * @param password default password
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-            String username, String password) {
+                                    String username, String password) {
         try {
+            IdUpgrader idUpgrader = new IdUpgrader() {
+                public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
+                    throw new RuntimeException("Shouldn't call getNewIds() in a"
+                                               + " running webapp");
+                }
+            };
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, new IdUpgrader() {
-                    public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
-                        throw new RuntimeException("Shouldn't call getNewIds() in a"
-                                                   + " running webapp");
-                    }
-                }, username, password);
+                new ProfileHandler(profileManager, idUpgrader, username, password);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {
