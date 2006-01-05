@@ -91,7 +91,8 @@ public class TemplateListController extends TilesAction
         Map newTemplateCounts = new TreeMap();
         InterMineObject object = displayObject.getObject();
         
-        for (Iterator iter = templates.iterator(); iter.hasNext(); ) {
+        TEMPLATES:
+            for (Iterator iter = templates.iterator(); iter.hasNext(); ) {
             TemplateQuery template = (TemplateQuery) iter.next();
             String templateName = template.getName();
             
@@ -137,12 +138,12 @@ public class TemplateListController extends TilesAction
                                                + object.getId(), e);
                 }
     
-                if (exprList.contains(constraintIdentifier)) {
+                if (exprList.contains(constraintIdentifier) && fieldValue != null) {
                     tf.setAttributeOps("" + (1 + i), ConstraintOp.EQUALS.getIndex().toString());
                     tf.setAttributeValues("" + (1 + i), fieldValue.toString());
                 } else {
-                    // too many editable constraints
-                    continue;
+                    // unmatched constraints so bail out
+                    continue TEMPLATES;
                 }
             }
     

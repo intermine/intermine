@@ -143,10 +143,15 @@ public class ObjectDetailsTemplateController extends TilesAction
                     if (testClass.isInstance(object)) {
                         ClassDescriptor cd = model.getClassDescriptorByName(className);
                         if (cd.getFieldDescriptorByName(fieldName) != null) {
-                            unmatchedConstraintCount--;
-
                             Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
                             
+                            if (fieldValue == null) {
+                                // this field is not a good constraint value
+                                continue;
+                            }
+                            
+                            unmatchedConstraintCount--;
+
                             templateForm.setAttributeOps("" + (constraintIndex + 1), equalsString);
                             templateForm.setAttributeValues("" + (constraintIndex + 1), fieldValue);
                         }
