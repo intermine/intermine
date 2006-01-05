@@ -176,8 +176,8 @@
 
   <aspect name="Disease">
     <subtitle>Human disease gene matches</subtitle>
-    <icon-image>model/disease.jpg</icon-image>
-    <large-image>model/disease.jpg</large-image>
+    <icon-image>model/disease.png</icon-image>
+    <large-image>model/disease.png</large-image>
     <intro-text>
       Homophila Human Disease to Drosophila Database (version 2.1).
     </intro-text>
