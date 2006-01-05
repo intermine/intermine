@@ -49,10 +49,11 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
+        String aspect = request.getParameter("aspect");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
         if (object != null) {
-            object.setVerbosity(fieldName, true);
+            object.setVerbosity(aspect + "_" + fieldName, true);
         }
         
         return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
@@ -75,9 +76,10 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
+        String aspect = request.getParameter("aspect");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
-        object.setVerbosity(fieldName, false);
+        object.setVerbosity(aspect + "_" + fieldName, false);
 
         return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
     }

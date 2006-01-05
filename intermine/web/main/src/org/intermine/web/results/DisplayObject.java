@@ -21,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -31,26 +28,12 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.Constraint;
-import org.intermine.web.MainHelper;
-import org.intermine.web.PathQuery;
-import org.intermine.web.TemplateForm;
-import org.intermine.web.TemplateHelper;
-import org.intermine.web.TemplateQuery;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
 import org.intermine.web.config.WebConfig;
-
-import org.apache.struts.action.ActionErrors;
 
 /**
  * Class to represent an object for display in the webapp. Various maps and collections
@@ -74,8 +57,6 @@ public class DisplayObject
     private Map references = null;
     private Map collections = null;
     private Map refsAndCollections = null;
-    private Map aspectRefsAndCollections = null;
-    private Map templateCounts = null;
     private List keyAttributes = null;
     private List keyReferences = null;
     private Map fieldConfigMap = null;
@@ -227,6 +208,14 @@ public class DisplayObject
         return refsAndCollections;
     }
 
+    /*
+    public Map getDisplayTemplates() {
+        if (displayTemplateMap == null) {
+            displayTemplateMap = new HashMap();
+        }
+        return displayTemplateMap;
+    }
+    */
     /**
      * Return a Map from template name to a count of the number of results will be returned if the\
      * template is run using this DisplayObject to fill in the editable fields.

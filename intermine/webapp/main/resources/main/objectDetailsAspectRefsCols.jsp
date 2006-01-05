@@ -18,20 +18,21 @@
   <c:if test="${!empty aspectRefsAndCollections[aspect]}">
     <c:forEach items="${aspectRefsAndCollections[aspect]}" var="entry">
       <c:set var="collection" value="${entry.value}"/>
-      <c:set var="verbose" value="${!empty object.verbosity[entry.key]}"/>
       <c:set var="fieldName" value="${entry.key}"/>
+      <c:set var="aspectAndField" value="${aspect}_${fieldName}"/>
+      <c:set var="verbose" value="${!empty object.verbosity[aspectAndField]}"/>
       <tr>
         <td width="10px">
           <div style="white-space:nowrap">
             <c:choose>
               <c:when test="${verbose && collection.size > 0}">
-                <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
+                <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
                   <img border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
                   <span class="collectionField">${fieldName}</span>
                 </html:link>
               </c:when>
               <c:when test="${collection.size > 0}">
-                <html:link action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;id=${object.id}&amp;trail=${param.trail}">
+                <html:link action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
                   <img border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
                   <span class="collectionField">${fieldName}</span>
                 </html:link>
@@ -60,7 +61,7 @@
           <span class="collectionDescription ${collection.size == 0 ? 'nullReferenceField' : ''}">
             ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
           </span>
-          <c:if test="${collection.size == 1 && empty object.verbosity[fieldName]}">
+          <c:if test="${collection.size == 1 && empty object.verbosity[aspectAndField]}">
             [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}_${collection.table.ids[0]}">
               <fmt:message key="results.details"/>
             </html:link>]
@@ -90,22 +91,18 @@
               <tiles:put name="collection" beanName="collection"/>
             </tiles:insert>
             
-            <c:choose>
-              <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-                <div class="refSummary">
-                  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+            <div class="refSummary">
+              [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+                <c:choose>
+                  <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
                     <fmt:message key="results.showallintable"/>
-                  </html:link>]
-                </div>
-              </c:when>
-              <c:otherwise>
-                <div class="refSummary">
-                  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+                  </c:when>
+                  <c:otherwise>
                     <fmt:message key="results.showintable"/>
-                  </html:link>]
-                </div>
-              </c:otherwise>
-            </c:choose>
+                  </c:otherwise>
+                </c:choose>
+              </html:link>]
+            </div>
           </td>
         </tr>
       </c:if>

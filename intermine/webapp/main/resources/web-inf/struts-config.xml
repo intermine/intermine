@@ -534,6 +534,9 @@
     <action path="/initTemplateList"
             type="org.intermine.web.TemplateListController"/>
 
+    <action path="/initObjectDetailsTemplate"
+            type="org.intermine.web.ObjectDetailsTemplateController"/>
+
     <action path="/initBegin"
             type="org.intermine.web.BeginController"/>
 

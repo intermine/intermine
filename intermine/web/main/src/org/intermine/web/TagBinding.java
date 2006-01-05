@@ -11,8 +11,6 @@ package org.intermine.web;
  */
 
 import java.io.Reader;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -58,9 +56,9 @@ public class TagBinding
      * @return number of new tags created
      */
     public int unmarshal(ProfileManager pm, String userName, Reader reader) {
-        TagHandler handler = null;
+        TagHandler handler = new TagHandler(pm, userName);
         try {
-            SAXParser.parse(new InputSource(reader), handler = new TagHandler(pm, userName));
+            SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

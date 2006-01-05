@@ -39,13 +39,16 @@ public class TemplateHelper
     public static final String SHARED_TEMPLATE = "shared";
     /** Type parameter indicating private user template. */
     public static final String USER_TEMPLATE = "user";
+    /** Type parameter indicating ALL templates */
+    public static final String ALL_TEMPLATE = "all";
     
     /**
      * Locate TemplateQuery by identifier. The type parameter
      *
      * @param session     the http session
      * @param identifier  template query identifier/name
-     * @param type        type of tempate, either GLOBAL_TEMPLATE, SHARED_TEMPLATE or USER_TEMPLATE
+     * @param type        type of tempate, either GLOBAL_TEMPLATE, SHARED_TEMPLATE or USER_TEMPLATE,
+     *                    ALL_TEMPLATE
      * @return            the located template query with matching identifier
      */
     public static TemplateQuery findTemplate(HttpSession session,
@@ -53,21 +56,27 @@ public class TemplateHelper
                                              String type) {
 
         ServletContext servletContext = session.getServletContext();
-        Map templates = null;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
         if (USER_TEMPLATE.equals(type)) {
-            templates = profile.getSavedTemplates();
+            return (TemplateQuery) profile.getSavedTemplates().get(identifier);
         } else if (SHARED_TEMPLATE.equals(type)) {
             // TODO implement shared templates
+            return null;
         } else if (GLOBAL_TEMPLATE.equals(type)) {
-            templates = (Map) SessionMethods.getSuperUserProfile(servletContext)
-                .getSavedTemplates();
+            Map templates =
+                SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
+            return (TemplateQuery) templates.get(identifier);
+        } else if (ALL_TEMPLATE.equals(type)) {
+            TemplateQuery tq = findTemplate(session, identifier, GLOBAL_TEMPLATE);
+            if (tq == null) {
+                return findTemplate(session, identifier, USER_TEMPLATE);
+            } else {
+                return tq;
+            }
         } else {
             throw new IllegalArgumentException("type: " + type);
         }
-        
-        return (TemplateQuery) templates.get(identifier);
     }
     
     /**
@@ -134,7 +143,6 @@ public class TemplateHelper
     public static String templateMapToXml(Map templates) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        TemplateQueryBinding binding = new TemplateQueryBinding();
         Iterator iter = templates.values().iterator();
         
         try {
