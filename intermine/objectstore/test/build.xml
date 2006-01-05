@@ -12,15 +12,6 @@
                                     build-db-truncunittest,
                                     build-db-notxmlunittest"/>
   
-  <target name="-copy-intermine-properties">
-    <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.test.resources.dir}/intermine.properties"/>
-    <copy file="${default.intermine.properties.file}"
-          tofile="${build.test.resources.dir}/default.intermine.properties"/>
-  </target>
-
-  <target name="-init-test" depends="tests.-init-test, -copy-intermine-properties"/>
-
   <target name="do-test" depends="-init-macrodef-junit">
      <!--<imtestsproj:junit fork="yes" includes="org/intermine/util/CacheMapTest.class">
       <customize>
@@ -39,7 +30,7 @@
     </path>
   </target>
   
-  <target name="-init-build-db" depends="init, -init-deps, -copy-intermine-properties, -init-task-xml"/>
+  <target name="-init-build-db" depends="init, -init-deps, -init-task-xml"/>
   
   <target name="build-db-unittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.unittest"

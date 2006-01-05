@@ -39,6 +39,19 @@
     </condition>
   </target>
   
+  <target name="-test-for-intermine-properties">
+    <condition property="has.intermine.properties">
+      <and><isset property="intermine.properties.file"/></and>
+    </condition>
+  </target>
+  
+  <target name="-copy-intermine-properties" if="has.intermine.properties">
+    <copy file="${user.home}/${intermine.properties.file}"
+          tofile="${build.test.resources.dir}/intermine.properties"/>
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.test.resources.dir}/default.intermine.properties"/>
+  </target>
+  
   <target name="-init-emma" depends="init">
     <property name="emma.lib.path" value="${tests.xml.basedir}/lib/emma.jar:${tests.xml.basedir}/lib/emma_ant.jar"/>
     <mkdir dir="${build.instrumented.dir}"/>
@@ -79,7 +92,7 @@
     </emma>
   </target>
   
-  <target name="test" depends="-init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
+  <target name="test" depends="-init-test, -test-for-intermine-properties, -copy-intermine-properties, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
   
   <target name="test-all" depends="init, -init-deps, jar">
     <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
