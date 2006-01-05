@@ -175,32 +175,32 @@ public class MainHelper
 
     /**
      * Make an InterMine query from a path query
-     * @param query the PathQuery
+     * @param pathQuery the PathQuery
      * @param savedBags the current saved bags map
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
      * @return an InterMine Query
      */
-    public static Query makeQuery(PathQuery query, Map savedBags, Map pathToQueryNode) {
-        query = (PathQuery) query.clone();
-        Map qNodes = query.getNodes();
-        List view = query.getView();
-        Model model = query.getModel();
+    public static Query makeQuery(PathQuery pathQuery, Map savedBags, Map pathToQueryNode) {
+        pathQuery = (PathQuery) pathQuery.clone();
+        Map qNodes = pathQuery.getNodes();
+        List view = pathQuery.getView();
+        Model model = pathQuery.getModel();
         Map codeToCS = new HashMap();
         ConstraintSet rootcs = null;
         ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
         
-        if (query.getAllConstraints().size() == 1) {
-            Constraint c = (Constraint) query.getAllConstraints().get(0);
+        if (pathQuery.getAllConstraints().size() == 1) {
+            Constraint c = (Constraint) pathQuery.getAllConstraints().get(0);
             codeToCS.put(c.getCode(), andcs);
-        } else if (query.getAllConstraints().size() > 1) {
-            rootcs = makeConstraintSets(query.getLogic(), codeToCS);
+        } else if (pathQuery.getAllConstraints().size() > 1) {
+            rootcs = makeConstraintSets(pathQuery.getLogic(), codeToCS);
         }
 
         //first merge the query and the view
         for (Iterator i = view.iterator(); i.hasNext();) {
             String path = (String) i.next();
             if (!qNodes.containsKey(path)) {
-                query.addNode(path);
+                pathQuery.addNode(path);
             }
         }
 
@@ -214,7 +214,7 @@ public class MainHelper
         Map queryBits = new HashMap();
 
         //build the FROM and WHERE clauses
-        for (Iterator i = query.getNodes().values().iterator(); i.hasNext();) {
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
             QueryReference qr = null;
@@ -295,7 +295,7 @@ public class MainHelper
         
         // Now process loop constraints. The constraint parameter refers backwards and
         // forwards in the query so we can't process these in the above loop.
-        for (Iterator i = query.getNodes().values().iterator(); i.hasNext();) {
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
             QueryNode qn = (QueryNode) queryBits.get(path);
