@@ -116,7 +116,8 @@ public class LoadDefaultTemplatesTask extends Task
             }
             
             // Unmarshal - note that tags are stored immediately
-            Profile profileSrc = ProfileBinding.unmarshal(reader, pm, os);
+            Profile profileSrc = ProfileBinding.unmarshal(reader, pm, os,
+                    profileDest.getUsername(), profileDest.getPassword());
             
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();
