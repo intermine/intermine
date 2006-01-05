@@ -64,10 +64,25 @@ class ProfileHandler extends DefaultHandler
      * correspond to object in old bags.
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
+        this(profileManager, idUpgrader, null, null);
+    }
+    
+    /**
+     * Create a new ProfileHandler
+     * @param profileManager the ProfileManager to pass to the Profile constructor
+     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
+     * correspond to object in old bags.
+     * @param defaultUsername default username
+     * @param defaultPassword default password
+     */
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
+            String defaultUsername, String defaultPassword) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
         items = new ArrayList();
+        this.username = defaultUsername;
+        this.password = defaultPassword;
     }
 
     /**
@@ -85,8 +100,12 @@ class ProfileHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
-            username = attrs.getValue("username");
-            password = attrs.getValue("password");
+            if (attrs.getValue("username") != null) {
+                username = attrs.getValue("username");
+            }
+            if (attrs.getValue("password") != null) {
+                password = attrs.getValue("password");
+            }
         }
         if (qName.equals("items")) {
             subHandler = new FullHandler();

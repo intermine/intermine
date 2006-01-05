@@ -67,6 +67,7 @@ public class ProfileBinding
      * @param profile the UserProfile
      * @param os the ObjectStore to use when looking up the ids of objects in bags
      * @param writer the XMLStreamWriter to write to
+     * @param writeUserAndPassword write username and password
      * @param writeQueries save saved queries
      * @param writeTemplates write saved templates
      * @param writeBags write saved bags
@@ -75,7 +76,7 @@ public class ProfileBinding
      */
     public static void marshal(Profile profile, ObjectStore os,
                                XMLStreamWriter writer,
-                               boolean writePassword,
+                               boolean writeUserAndPassword,
                                boolean writeQueries,
                                boolean writeTemplates,
                                boolean writeBags,
@@ -83,10 +84,10 @@ public class ProfileBinding
                                boolean onlyConfigTags) {
         try {
             writer.writeStartElement("userprofile");
-            writer.writeAttribute("username", profile.getUsername());
             
-            if (writePassword) {
+            if (writeUserAndPassword) {
                 writer.writeAttribute("password", profile.getPassword());
+                writer.writeAttribute("username", profile.getUsername());
             }
             
             if (writeBags) {
@@ -253,7 +254,8 @@ public class ProfileBinding
      * @param os ObjectStore used to resolve object ids
      * @return the new Profile
      */
-    public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os) {
+    public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
+            String username, String password) {
         try {
             ProfileHandler profileHandler =
                 new ProfileHandler(profileManager, new IdUpgrader() {
@@ -261,7 +263,7 @@ public class ProfileBinding
                         throw new RuntimeException("Shouldn't call getNewIds() in a"
                                                    + " running webapp");
                     }
-                });
+                }, username, password);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {
