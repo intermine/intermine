@@ -78,12 +78,12 @@ public class InitialiserPlugin implements PlugIn
         loadExampleQueries(servletContext);
         
         ObjectStore os = null;
+        Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String osAlias = (String) props.get("webapp.os.alias");
         try {
-            Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-            String osAlias = (String) props.get("webapp.os.alias");
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            throw new ServletException("Unable to instantiate ObjectStore", e);
+            throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
         }
         servletContext.setAttribute(Constants.OBJECTSTORE, os); 
         
