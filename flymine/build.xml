@@ -164,6 +164,8 @@
       <pathelement location="${build.model}/genomic/flymine"/>
     </path>
 
+    <mkdir dir="${build.webapp.intermine.lib}"/>
+
     <path id="webapp.class.path">
       <pathelement path="${resources}/webapp"/>
       <path refid="base.class.path"/>
@@ -3030,6 +3032,20 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
+                              username="${webapp.superuser}" osAlias="os.production"
+                              userProfileAlias="osw.userprofile-production"/>
+  </target>
+  
+  <!-- load default global template queries -->
+  <target name="dump-default-templates" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="insert-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <dump-default-templates fileName="model/genomic/resources/web/template-queries.xml"
                               username="${webapp.superuser}" osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
