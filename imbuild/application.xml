@@ -71,6 +71,12 @@
                             userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
+  <target name="dump-default-templates" depends="-init-build-db">
+    <dump-default-templates fileName="${default.template.queries}"
+                            username="${superuser.account}" osAlias="${objectstore.name}"
+                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
   <target name="write-userprofile-xml" depends="-init-build-db">
     <write-userprofile-xml fileName="${build.dir}/userprofile.xml" osAlias="${objectstore.name}"
                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
