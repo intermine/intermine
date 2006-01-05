@@ -264,33 +264,4 @@
 
 </im:box>
 
-
-<!--
-<im:vspacer height="12"/>
-
-<c:if test="${showTemplatesFlag == 'true'}">
-  <c:set var="helpUrl"
-         value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualTemplatequeries.html"/>
-
-  <im:box helpUrl="${helpUrl}"
-          titleKey="objectDetails.heading.templates">
-    <c:forEach items="${CATEGORIES}" var="category">
-      <c:forEach items="${object.clds}" var="cld">
-        <c:set var="className" value="${cld.name}"/>
-        <c:if test="${!empty CLASS_CATEGORY_TEMPLATES[className][category]}">
-          <div class="heading">${category}</div>
-          <c:set var="interMineObject" value="${object.object}"/>
-          <div class="body">
-            <im:templateList type="global" category="${category}" className="${className}"
-                             displayObject="${object}"/>
-          </div>
-          <im:vspacer height="5"/>
-        </c:if>
-      </c:forEach>
-    </c:forEach>
-  </im:box>
-</c:if>
--->
-
-
 <!-- /objectDetails.jsp -->

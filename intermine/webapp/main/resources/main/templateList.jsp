@@ -12,28 +12,24 @@
 <tiles:importAttribute name="displayObject" ignore="true"/>
 <tiles:importAttribute name="important" ignore="true"/>
 <tiles:importAttribute name="noTemplatesMsgKey" ignore="true"/>
+<tiles:importAttribute name="aspect"/>
 <tiles:importAttribute name="type"/>
 
 <c:if test="${!empty displayObject}">
   <c:set var="interMineObject" value="${displayObject.object}"/>
 </c:if>
 
-<c:forEach items="${templates}" var="templateQuery" varStatus="status">
-  <%-- filter unimportant templates if necessary --%>
-  <c:if test="${!important || templateQuery.important}">
-    <c:if test="${!empty templateCounts[templateQuery.name] &&
-                  templateCounts[templateQuery.name] == 0}">
-      <c:set var="cssClass" value="nullStrike"/>
+  <c:forEach items="${templates}" var="templateQuery" varStatus="status">
+    <%-- filter unimportant templates if necessary --%>
+    <c:if test="${!important || templateQuery.important}">
+          <tiles:insert name="objectDetailsTemplate.tile">
+            <tiles:put name="displayObject" beanName="displayObject"/>
+            <tiles:put name="templateQuery" beanName="templateQuery"/>
+            <tiles:put name="aspect" value="${aspect}"/>
+            <tiles:put name="type" value="${type}"/>
+          </tiles:insert>
     </c:if>
-    <span class="${cssClass}">
-      <im:templateLine type="${type}" templateQuery="${templateQuery}" className="${className}"
-                       interMineObject="${interMineObject}"/>
-      <c:if test="${!status.last}">
-        <hr class="seperator"/>
-      </c:if>
-    </span>
-  </c:if>
-</c:forEach>
+  </c:forEach>
 
 <c:if test="${empty templates && !empty noTemplatesMsgKey}">
   <div class="altmessage"><fmt:message key="${noTemplatesMsgKey}"/></div>

@@ -12,20 +12,12 @@ package org.intermine.web;
 
 import java.io.IOException;
 import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
@@ -33,10 +25,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
 
 /**
  * Respository object for TemplateQueries.
@@ -53,8 +41,7 @@ public class TemplateRepository
     
     /**
      * Construct a new instance of TemplateRepository.
-     * 
-     * @param servletContext the servlet context
+     * @param context the servlet context
      */
     public TemplateRepository(ServletContext context) {
         // index global templates

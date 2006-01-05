@@ -10,22 +10,20 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
+import org.intermine.objectstore.query.ConstraintOp;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionErrors;
-
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Form to handle input from the template page
@@ -33,8 +31,6 @@ import org.intermine.objectstore.query.ConstraintOp;
  */
 public class TemplateForm extends ActionForm
 {
-    private static final Logger LOG = Logger.getLogger(TemplateForm.class);
-    
     /** Maps containing form state for each constraint. */
     protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
     protected Map selectedBags, bagOps;
@@ -229,15 +225,14 @@ public class TemplateForm extends ActionForm
     }
 
     /**
-     * @see ActionForm#validate
+     * @see ActionForm#validate(ActionMapping, HttpServletRequest)
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String queryName = getTemplateName();
-        String templateType = getTemplateType();
         
-        TemplateQuery template = TemplateHelper.findTemplate(session, queryName, templateType);
+        TemplateQuery template =
+            TemplateHelper.findTemplate(session, queryName, getTemplateType());
         ActionErrors errors = new ActionErrors();
         
         boolean appendWildcard = (request.getParameter("appendWildcard") != null 

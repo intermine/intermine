@@ -49,7 +49,8 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class TemplateListController extends TilesAction
 {
     /**
-     * @see TilesAction#execute
+     * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
+     *                          HttpServletResponse) 
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,
@@ -62,18 +63,11 @@ public class TemplateListController extends TilesAction
         String type = (String) context.getAttribute("type");
         String aspect = (String) context.getAttribute("aspect");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
-        String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
-        Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        ProfileManager pm = (ProfileManager) servletContext
-            .getAttribute(Constants.PROFILE_MANAGER);
         Set templates = null;
-        Map templateFieldExprs = new HashMap();
         
         if (StringUtils.equals("global", type)) {
             if (object == null) {
-                templates = (Set) TemplateListHelper.getAspectTemplates(aspect, servletContext);
+                templates = TemplateListHelper.getAspectTemplates(aspect, servletContext);
             } else {
                 Map fieldExprs = new HashMap();
                 templates = TemplateListHelper

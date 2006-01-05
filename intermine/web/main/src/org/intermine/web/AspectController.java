@@ -22,10 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.intermine.web.aspects.Aspect;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.TransformerUtils;
-import org.apache.commons.collections.functors.InvokerTransformer;
-import org.apache.commons.collections.list.TransformedList;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;

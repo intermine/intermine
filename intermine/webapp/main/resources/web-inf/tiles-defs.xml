@@ -128,6 +128,8 @@
     <put name="view" value="view.tile"/>
   </definition>
   <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
+  <definition name="objectDetailsTemplate.tile" path="/objectDetailsTemplate.jsp" 
+              controllerUrl="/initObjectDetailsTemplate.do"/>
   <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
   <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
   <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
