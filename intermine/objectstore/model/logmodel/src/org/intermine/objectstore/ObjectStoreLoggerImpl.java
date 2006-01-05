@@ -1,13 +1,4 @@
-package org.intermine.objectstore.log;
-
-import org.intermine.objectstore.*;
-import org.intermine.objectstore.query.Query;
-import org.intermine.log.InterMineLogger;
-import org.intermine.model.logmodel.*;
-import org.apache.log4j.Logger;
-
-import java.util.Properties;
-import java.util.Collection;
+package org.intermine.objectstore;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -17,13 +8,15 @@ import java.util.Collection;
  * be distributed with the code.  See the LICENSE file for more
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
- * User: pmclaren
- * Date: 12-Dec-2005
- * Time: 13:59:58
  */
 
+import org.intermine.objectstore.query.Query;
+import org.intermine.log.InterMineLogger;
+import org.intermine.model.logmodel.*;
+import org.apache.log4j.Logger;
+
 /**
- *
+ * @author Peter Mclaren
  * */
 public class ObjectStoreLoggerImpl implements InterMineLogger
 {
@@ -44,6 +37,11 @@ public class ObjectStoreLoggerImpl implements InterMineLogger
         this.osw = osw;
     }
 
+    /**
+     * Standard create instance style method.
+     * @param alias The alias of the object store that this logger can use to record log statements.
+     * @return ObjectStoreLoggerImpl an instance of the InterMineLogger interface
+     * */
     public static ObjectStoreLoggerImpl getInstance(String alias) {
 
         ObjectStoreWriter oswInternal;
