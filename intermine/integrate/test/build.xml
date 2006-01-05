@@ -19,7 +19,7 @@
     </path>
   </target>
   
-  <target name="build-db-fulldatatest" depends="init, -init-deps, -copy-intermine-properties, -init-task-xml">
+  <target name="build-db-fulldatatest" depends="init, -init-deps, -init-task-xml">
     <task:build-db osname="os.fulldatatest"
                    dbname="db.fulldatatest"
                    model="fulldata"/>
