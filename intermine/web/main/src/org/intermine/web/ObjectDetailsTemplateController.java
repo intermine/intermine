@@ -64,8 +64,13 @@ public class ObjectDetailsTemplateController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
 
-        TemplateQuery  templateQuery = (TemplateQuery) context.getAttribute("templateQuery");
         DisplayObject displayObject = (DisplayObject) context.getAttribute("displayObject");
+
+        if (displayObject == null) {
+            return null;
+        }
+        
+        TemplateQuery  templateQuery = (TemplateQuery) context.getAttribute("templateQuery");        
         String templateName = templateQuery.getName();
         
         TemplateQuery template =
@@ -121,6 +126,10 @@ public class ObjectDetailsTemplateController extends TilesAction
         return null;
     }
 
+    /**
+     * Try to fill the TemplateForm argument using the attribute values in the InterMineObject 
+     * arg and return the number of form fields that aren't set afterwards.
+     */
     private int fillTemplateForm(TemplateQuery template, InterMineObject object,
                                  TemplateForm templateForm, Model model) {
         List constraints = template.getAllConstraints();
