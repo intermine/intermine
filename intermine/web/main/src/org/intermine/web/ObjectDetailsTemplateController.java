@@ -70,7 +70,7 @@ public class ObjectDetailsTemplateController extends TilesAction
             return null;
         }
         
-        TemplateQuery  templateQuery = (TemplateQuery) context.getAttribute("templateQuery");        
+        TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");        
         String templateName = templateQuery.getName();
         
         TemplateQuery template =
