@@ -9,13 +9,13 @@
 
 <html:xhtml/>
 
-<tiles:importAttribute name="displayObject"/>
+<tiles:importAttribute name="displayObject" ignore="true"/>
 <tiles:importAttribute name="templateQuery"/>
 <tiles:importAttribute name="aspect"/>
 <tiles:importAttribute name="type"/>
 
 <%-- from controller: --%>
-<tiles:importAttribute name="unconstrainedCount"/>
+<tiles:importAttribute name="unconstrainedCount" ignore="true"/>
 <tiles:importAttribute name="table" ignore="true"/>
 <tiles:importAttribute name="viewNodesAreAttributes" ignore="true"/>
 
