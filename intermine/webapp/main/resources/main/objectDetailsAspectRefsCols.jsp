@@ -43,7 +43,7 @@
                       <c:set var="backup" value="${object}"/>
                       <c:set var="object" value="${collection.table.rowObjects[0]}" scope="request"/>
                       <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
-                      <c:set var="object" value="${backup}"/>
+                      <c:set var="object" value="${backup}" scope="request"/>
                     </c:if>
                   </c:forEach>
                 </c:if>
