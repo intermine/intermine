@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
@@ -27,7 +26,7 @@ import org.intermine.web.config.WebConfig;
 
 public class DisplayField
 {
-    ClassDescriptor cld;
+    FieldDescriptor fd;
     int size = -1;
     InlineResultsTable table = null;
     Collection collection = null;
@@ -37,15 +36,15 @@ public class DisplayField
     /**
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
-     * @param ref metadata for the referenced object
+     * @param fd metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @throws Exception if an error occurs
      */
-    public DisplayField(Collection collection, FieldDescriptor ref,
+    public DisplayField(Collection collection, FieldDescriptor fd,
                         WebConfig webConfig, Map webProperties) throws Exception {
         this.collection = collection;
-        this.cld = ref.getClassDescriptor();
+        this.fd = fd;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
     }
@@ -56,17 +55,10 @@ public class DisplayField
      */
     public InlineResultsTable getTable() {
         if (table == null && collection.size() > 0) {
-            table = new InlineResultsTable(collection, cld, webConfig, webProperties);
+            table = new InlineResultsTable(collection, fd.getClassDescriptor().getModel(),
+                                           webConfig, webProperties);
         }
         return table;
-    }
-    
-    /**
-     * Get the class descriptor for this field
-     * @return the class descriptor
-     */
-    public ClassDescriptor getCld() {
-        return cld;
     }
     
     /**
