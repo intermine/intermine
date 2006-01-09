@@ -14,10 +14,10 @@ package org.intermine.cache;
  * Implementations of this interface are passed to InterMineCache.register().  If
  * InterMineCache.get() can't find an object the ObjectCreator.create() method is called to make a
  * new object.  The Implementation of ObjectCreator should include a create() method that has
- * parameters of the right type.
+ * parameters of the right type and returns Serializable.
  * @author Kim Rutherford
  */
 public interface ObjectCreator
 {
-   // empty - the implementation should include a create() method
+   // empty - the implementation should include a create() method that returns Serializable
 }

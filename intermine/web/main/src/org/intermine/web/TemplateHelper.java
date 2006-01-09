@@ -10,21 +10,39 @@ package org.intermine.web;
  *
  */
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+
+import org.intermine.cache.InterMineCache;
+import org.intermine.cache.ObjectCreator;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.results.InlineTemplateTable;
+
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.objectstore.query.ConstraintOp;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 
 /**
  * Static helper routines related to templates.
@@ -33,6 +51,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TemplateHelper
 {
+    private static final Logger LOG = Logger.getLogger(TemplateHelper.class);
+
     /** Type parameter indicating globally shared template. */
     public static final String GLOBAL_TEMPLATE = "global";
     /** Type parameter indicating group shared template. */
@@ -44,33 +64,38 @@ public class TemplateHelper
     
     /**
      * Locate TemplateQuery by identifier. The type parameter
-     *
-     * @param session     the http session
-     * @param identifier  template query identifier/name
+     * @param servletContext the ServletContext
+     * @param userName the user name (for finding user templates)
+     * @param templateName  template query identifier/name
      * @param type        type of tempate, either GLOBAL_TEMPLATE, SHARED_TEMPLATE or USER_TEMPLATE,
      *                    ALL_TEMPLATE
      * @return            the located template query with matching identifier
      */
-    public static TemplateQuery findTemplate(HttpSession session,
-                                             String identifier,
+    public static TemplateQuery findTemplate(ServletContext servletContext,
+                                             String userName,
+                                             String templateName,
                                              String type) {
 
-        ServletContext servletContext = session.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+        ProfileManager pm = 
+            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        Profile profile = null;
+        if (userName != null) {
+            profile = pm.getProfile(userName);
+        }
         if (USER_TEMPLATE.equals(type)) {
-            return (TemplateQuery) profile.getSavedTemplates().get(identifier);
+            return (TemplateQuery) profile.getSavedTemplates().get(templateName);
         } else if (SHARED_TEMPLATE.equals(type)) {
             // TODO implement shared templates
             return null;
         } else if (GLOBAL_TEMPLATE.equals(type)) {
             Map templates =
                 SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
-            return (TemplateQuery) templates.get(identifier);
+            return (TemplateQuery) templates.get(templateName);
         } else if (ALL_TEMPLATE.equals(type)) {
-            TemplateQuery tq = findTemplate(session, identifier, GLOBAL_TEMPLATE);
+            TemplateQuery tq = findTemplate(servletContext, userName, 
+                                            templateName, GLOBAL_TEMPLATE);
             if (tq == null) {
-                return findTemplate(session, identifier, USER_TEMPLATE);
+                return findTemplate(servletContext, userName, templateName, USER_TEMPLATE);
             } else {
                 return tq;
             }
@@ -185,5 +210,184 @@ public class TemplateHelper
                                                    (PathQuery) query.clone(), tbs.isImportant(),
                                                    tbs.getKeywords());
         return template;
+    }
+
+
+    /**
+     * Try to fill the TemplateForm argument using the attribute values in the InterMineObject 
+     * arg and return the number of form fields that aren't set afterwards.
+     */
+    private static int fillTemplateForm(TemplateQuery template, InterMineObject object,
+                                        TemplateForm templateForm, Model model) {
+        List constraints = template.getAllConstraints();
+        int unmatchedConstraintCount = constraints.size();
+        String equalsString = ConstraintOp.EQUALS.getIndex().toString();
+
+        for (int constraintIndex = 0; constraintIndex < constraints.size(); constraintIndex++) {
+            Constraint c = (Constraint) constraints.get(constraintIndex);
+
+            String constraintIdentifier = c.getIdentifier();
+            String[] bits = constraintIdentifier.split("\\.");
+            
+            if (bits.length == 2) {
+                String className = model.getPackageName() + "." + bits[0];
+                String fieldName = bits[1];
+                
+                try {
+                    Class testClass = Class.forName(className);
+
+                    if (testClass.isInstance(object)) {
+                        ClassDescriptor cd = model.getClassDescriptorByName(className);
+                        if (cd.getFieldDescriptorByName(fieldName) != null) {
+                            Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
+                            
+                            if (fieldValue == null) {
+                                // this field is not a good constraint value
+                                continue;
+                            }
+                            
+                            unmatchedConstraintCount--;
+
+                            templateForm.setAttributeOps("" + (constraintIndex + 1), equalsString);
+                            templateForm.setAttributeValues("" + (constraintIndex + 1), fieldValue);
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    LOG.error(e);
+                } catch (IllegalAccessException e) {
+                    LOG.error(e);
+                }                
+            }
+        }
+
+        return unmatchedConstraintCount;
+    }
+
+    
+    /**
+     * Make and return an InlineTemplateTable for the given template and interMineObjectId.
+     */
+    private static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
+                                                               TemplateQuery template,
+                                                               InterMineObject object) {
+        TemplateForm templateForm = new TemplateForm();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        int unconstrainedCount = 
+            fillTemplateForm(template, object, templateForm, os.getModel());
+        if (unconstrainedCount > 0) {
+            return null;
+        }
+
+        templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
+        PathQuery pathQuery = TemplateHelper.templateFormToQuery(templateForm, template);
+        try {
+            Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
+            Results results = os.execute(query);        
+            
+            List columnNames = new ArrayList(pathQuery.getView());
+            InlineTemplateTable itt =
+                new InlineTemplateTable(results, columnNames, webProperties);
+            List viewNodes = pathQuery.getView();
+                    
+            Iterator viewIter = viewNodes.iterator();
+            while (viewIter.hasNext()) {
+                String path = (String) viewIter.next();
+                String className = MainHelper.getTypeForPath(path, pathQuery);
+                if (className.indexOf(".") == -1) {
+                    // a primative like "int"
+                } else {
+                    Class nodeClass = Class.forName(className);
+
+                    if (InterMineObject.class.isAssignableFrom(nodeClass)) {
+                        // can't display objects inline yet
+                        return null;
+                    }
+                }
+            }
+            return itt;
+
+        } catch (IllegalArgumentException e) {
+            // probably a template is out of date
+            LOG.error("error while getting inline template information", e);
+        } catch (ClassNotFoundException e) {
+            // probably a template is out of date
+            LOG.error("error while getting inline template information", e);
+        } catch (ObjectStoreException e) {
+            LOG.error("error while getting inline template information", e);
+        }
+
+        return null;
+    }
+
+    
+    /**
+     * The cache tag to use when looking for template tables in the cache.
+     */
+    public static final String TEMPLATE_TABLE_CACHE_TAG = "template_table_tag";
+    
+    private static final String NO_USERNAME_STRING = "__NO_USER_NAME__";
+    
+    /**
+     * Register an ObjectCreator for creating inline template tables.
+     * @param cache the InterMineCache
+     * @param servletContext the ServletContext
+     */
+    public static void registerTemplateTableCreator(InterMineCache cache,
+                                                    final ServletContext servletContext) {
+        ObjectCreator templateTableCreator = new ObjectCreator() {
+            final ObjectStore os = 
+                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+
+            public Serializable create(String templateName, Integer id, String userName) {
+                if (userName.equals(NO_USERNAME_STRING)) {
+                    // the create method can't have a null argument, but null is the signal for
+                    // findTemplate() that there is no current user
+                    userName = null;
+                }
+                TemplateQuery template = 
+                    TemplateHelper.findTemplate(servletContext, userName, 
+                                                templateName, TemplateHelper.ALL_TEMPLATE);
+
+                    if (template == null) {
+                        throw new IllegalStateException("Could not find template \"" 
+                                                        + templateName + "\"");
+                    }
+
+                InterMineObject object;
+                try {
+                    object = os.getObjectById(id);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("cannot find object for ID: " + id);
+                }
+                return makeInlineTemplateTable(servletContext, template, object);
+            }
+        };
+        
+        cache.register(TEMPLATE_TABLE_CACHE_TAG, templateTableCreator);
+    }
+
+    /**
+     * Make (or find in the global cache) and return an InlineTemplateTable for the given
+     * template, interMineObjectId and user name.
+     * @param servletContext the ServletContext
+     * @param templateName the template name
+     * @param interMineObjectId the object Id
+     * @param userName the user name
+     * @return the InlineTemplateTable
+     */
+    public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext, 
+                                                                 String templateName,
+                                                                 Integer interMineObjectId, 
+                                                                 String userName) {
+        if (userName == null) {
+            // the ObjectCreator.create() method can't have a null argument, but null is the signal
+            // for findTemplate() that there is no current user
+            userName = NO_USERNAME_STRING;
+        }
+
+        InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
+        return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
+                                               templateName, interMineObjectId, userName);
     }
 }

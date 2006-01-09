@@ -320,7 +320,13 @@ public class MainForm extends ActionForm
         Object parsedValue = null;
         
         if (Date.class.equals(type)) {
-            DateFormat df =  DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            DateFormat df;
+            if (locale == null) {
+                // use deafult locale
+                df =  DateFormat.getDateInstance(DateFormat.SHORT);
+            } else {
+                df =  DateFormat.getDateInstance(DateFormat.SHORT, locale);
+            }
             try {
                 parsedValue = df.parse(value);
             } catch (ParseException e) {

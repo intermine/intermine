@@ -207,4 +207,9 @@ public interface Constants
      * Servlet attribute. Map from MultiKey(experiment, gene) id to temp file name.
      */
     public static final String GRAPH_CACHE = "GRAPH_CACHE";
+
+    /**
+     * Servlet attribute. The global webapp cache - a InterMineCache object.
+     */
+    public static final String GLOBAL_CACHE = "GLOBAL_CACHE";
 }

@@ -97,7 +97,9 @@ public class TemplateController extends TilesAction
             if (type == null) {
                 type = TemplateHelper.GLOBAL_TEMPLATE;
             }
-            template = TemplateHelper.findTemplate(session, queryName, type);
+            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+            template = TemplateHelper.findTemplate(servletContext, userName,
+                                                   queryName, type);
         }
         
         if (template == null) {

@@ -15,9 +15,7 @@
 <tiles:importAttribute name="type"/>
 
 <%-- from controller: --%>
-<tiles:importAttribute name="unconstrainedCount" ignore="true"/>
 <tiles:importAttribute name="table" ignore="true"/>
-<tiles:importAttribute name="viewNodesAreAttributes" ignore="true"/>
 
 <c:set var="templateName" value="${templateQuery.name}"/>
 
@@ -37,7 +35,7 @@
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
       <c:set var="cssClass" value="nullStrike"/>
     </c:when>
-    <c:when test="${!viewNodesAreAttributes || unconstrainedCount > 0}">
+    <c:when test="${empty table}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
     </c:when>
     <c:when test="${verbose}">

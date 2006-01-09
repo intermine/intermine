@@ -18,21 +18,24 @@ import org.intermine.objectstore.query.Results;
 
 import org.intermine.web.Constants;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 
 /**
  * An inline table created by running a template.
  * @author Kim Rutherford
  */
-public class InlineTemplateTable
+public class InlineTemplateTable implements Serializable
 {
-    private Results results;
     private Map webProperties;
-    private int size = -1;
+    private int inlineSize = -1;
     private ArrayList inlineResults;
     private static final Logger LOG = Logger.getLogger(InlineTemplateTable.class);
     private final List columnNames;
-
+    private int resultsSize = -1;
+    private int maxInlineTableSize = 30;
+    
     /**
      * Construct a new InlineTemplateTable
      * @param results the Results of running the template query
@@ -40,9 +43,31 @@ public class InlineTemplateTable
      * @param webProperties the web properties from the session
      */
     public InlineTemplateTable(Results results, List columnNames, Map webProperties) {
-        this.results = results;
         this.columnNames = columnNames;
         this.webProperties = webProperties;
+        String maxInlineTableSizeString =
+            (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
+
+        inlineSize = maxInlineTableSize;
+
+        resultsSize = results.size();
+            
+        if (resultsSize < inlineSize) {
+            inlineSize = resultsSize;
+        }   
+
+        try {
+            maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
+        } catch (NumberFormatException e) {
+            LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
+                     + maxInlineTableSizeString);
+        }
+
+        inlineResults = new ArrayList(getInlineSize(results, maxInlineTableSize));
+
+        for (int i = 0; i < getInlineSize(results, maxInlineTableSize); i++) {
+            inlineResults.add(results.get(i));
+        }
     }
 
     /**
@@ -58,45 +83,21 @@ public class InlineTemplateTable
      * @return the first getSize() rows from the Results object that was passed to the constructor
      */
     public List getInlineResults() {
-        if (inlineResults == null) {
-            inlineResults = new ArrayList(getSize());
-
-            for (int i = 0; i < getSize(); i++) {
-                inlineResults.add(results.get(i));
-            }
-        }
-        
         return inlineResults;
     }
     
     /**
      * Return the number of table rows or the INLINE_TABLE_SIZE whichever is smaller.
      */
-    private int getSize() {
-        if (size == -1) {
-            // default
-            int maxInlineTableSize = 30;
+    private int getInlineSize(Results results, int maxInlineTableSize) {
+        return inlineSize;
+    }
 
-            String maxInlineTableSizeString =
-                (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
-
-            try {
-                maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
-            } catch (NumberFormatException e) {
-                LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
-                         + maxInlineTableSizeString);
-            }
-
-            size = maxInlineTableSize;
-
-            try {
-                // do this rather than calling results.size() because Results.size() is slow
-                results.get(size);
-            } catch (IndexOutOfBoundsException e) {
-                size = results.size();
-            }
-        }
-         
-        return size;
+    /**
+     * Return the number of rows in the Results object that was passed to the constructor.
+     * @return the row count
+     */
+    public int getResultsSize() {
+        return resultsSize;
     }
 }

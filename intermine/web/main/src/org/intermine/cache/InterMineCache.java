@@ -161,6 +161,7 @@ public class InterMineCache
 
         try {
             Method creatorMethod = creatorClass.getMethod("create", classes);
+            creatorMethod.setAccessible(true);
             return (Serializable) creatorMethod.invoke(creator, objects);
         } catch (Exception e) {
             throw new RuntimeException("failed to invoke the create method for cache tag \""
