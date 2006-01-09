@@ -366,11 +366,13 @@
   <target name="add-model-to-webapp" depends="summarise-objectstore, compile-webapp-java"
           description="Add a model to the webapp">
     <loadfile property="model.struts.config" srcFile="${model}/${model.name}/resources/web/struts-config-model.xml"/>
-    <unwar src="${war}" dest="${build.tmp}">
+    <copy file="../intermine/webapp/main/resources/web-inf/struts-config.xml"
+          todir="${build.tmp}/WEB-INF/" overwrite="true"/>
+    <!--<unwar src="${war}" dest="${build.tmp}">
       <patternset>
         <include name="**/struts-config.xml"/>
       </patternset>
-    </unwar>
+    </unwar>-->
     <replace file="${build.tmp}/WEB-INF/struts-config.xml" value="${model.struts.config}">
       <!-- can't use normal token as xml must be parseable before this replacement -->
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
@@ -390,7 +392,8 @@
       <classes file="${model}/${model.name}/resources/web/model.properties"/>
       <classes file="${build.tmp}/WEB-INF/intermine.properties" />
       <classes dir="${build.model}/${model.name}"/>
-    </war>
+      <lib dir="${model.lib}"/>   
+ </war>
   </target>
 
   <target name="dot">
