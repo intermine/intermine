@@ -165,9 +165,11 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         InterMineBag bagToSave = null;
         
         if (converterTemplateName != null) {
+            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
             Integer inOp = ConstraintOp.IN.getIndex();
             TemplateQuery template =
-                TemplateHelper.findTemplate(session, converterTemplateName, "global");
+                TemplateHelper.findTemplate(servletContext, userName, 
+                                            converterTemplateName, "global");
 
             if (template == null) {
                 throw new IllegalStateException("Could not find template \"" 

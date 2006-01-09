@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -229,10 +230,12 @@ public class TemplateForm extends ActionForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         String queryName = getTemplateName();
+        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         
         TemplateQuery template =
-            TemplateHelper.findTemplate(session, queryName, getTemplateType());
+            TemplateHelper.findTemplate(servletContext, userName, queryName, getTemplateType());
         ActionErrors errors = new ActionErrors();
         
         boolean appendWildcard = (request.getParameter("appendWildcard") != null 
@@ -252,7 +255,13 @@ public class TemplateForm extends ActionForm
      */
     public void parseAttributeValues(TemplateQuery template, HttpSession session,
                                      ActionErrors errors, boolean appendWildcard) {
-        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        Locale locale;
+        if (session == null) {
+            // use default locale
+            locale = null;
+        } else {
+            locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        }
         int j = 0;
         for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();

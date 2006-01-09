@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import java.util.TreeSet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -101,11 +103,12 @@ public class InitialiserPlugin implements PlugIn
                 new TemplateRepository(servletContext));
         
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
+
+        makeCache(servletContext, os);
     }
 
     /**
-     * 
-     * 
+     * Load the Aspects configuration from aspects.xml
      * @param servletContext the servlet cnotext
      * @param os the main objectstore
      */
@@ -291,7 +294,18 @@ public class InitialiserPlugin implements PlugIn
         String superuser = (String) props.get("superuser.account");
         servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
     }
-    
+
+    /**
+     * Load the Aspects configuration from aspects.xml
+     * @param servletContext the servlet cnotext
+     * @param os the main objectstore
+     */
+    private void makeCache(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        InterMineCache cache = new InterMineCache();
+        TemplateHelper.registerTemplateTableCreator(cache, servletContext);
+        servletContext.setAttribute(Constants.GLOBAL_CACHE, cache);
+    }
     /**
      * Load the CATEGORY_CLASSES and CATEGORIES servlet context attribute. Loads cateogires and
      * subcateogires from roperties file /WEB-INF/classCategories.properties<p>

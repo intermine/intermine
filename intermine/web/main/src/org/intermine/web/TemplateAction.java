@@ -68,8 +68,10 @@ public class TemplateAction extends InterMineAction
         boolean skipBuilder = (request.getParameter("skipBuilder") != null);
         
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
-        
-        TemplateQuery template = TemplateHelper.findTemplate(session, templateName, templateType);
+
+        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName, 
+                                                             templateName, templateType);
         PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
         SessionMethods.loadQuery(queryCopy, request.getSession());
         form.reset (mapping, request);

@@ -203,12 +203,12 @@
         
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
-          	<im:heading id="right-${entry.key}">
-          	  ${object.fieldConfigMap[entry.key].sectionTitle}
-          	</im:heading>
-          	<im:body id="right-${entry.key}">
-          	
-        	    <c:set var="maxLength" value="80"/>
+            <im:heading id="right-${entry.key}">
+              ${object.fieldConfigMap[entry.key].sectionTitle}
+            </im:heading>
+            <im:body id="right-${entry.key}">
+              
+              <c:set var="maxLength" value="80"/>
               <c:choose>
                 <c:when test="${entry.value.class.name ==
                               'java.lang.String' && fn:length(entry.value) > maxLength
@@ -228,10 +228,10 @@
                 </c:otherwise>
               </c:choose>
               
-          	</im:body>
+            </im:body>
           </c:if>
         </c:forEach>    
-        
+
       </td>
 
     </tr>
