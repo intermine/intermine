@@ -43,7 +43,6 @@ public class InlineResultsTable
     protected List resultsAsList;
     // just those objects that we will display
     protected List subList;
-    protected ClassDescriptor cld;
     protected List columns = null;
     protected List columnFullNames = null;
     // a list of list of values for the table
@@ -58,11 +57,11 @@ public class InlineResultsTable
     /**
      * Construct a new InlineResultsTable object
      * @param results the underlying SingletonResults object
-     * @param cld the type of this collection field
+     * @param model the current Model 
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      */
-    public InlineResultsTable(Collection results, ClassDescriptor cld,
+    public InlineResultsTable(Collection results, Model model,
                               WebConfig webConfig, Map webProperties) {
         this.results = results;
         if (results instanceof List) {
@@ -72,11 +71,10 @@ public class InlineResultsTable
                 this.resultsAsList = ((LazyCollection) results).asList();
             }
         }
-        this.cld = cld;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
 
-        this.model = cld.getModel();
+        this.model = model;
     }
 
     /**
@@ -137,7 +135,7 @@ public class InlineResultsTable
                 // special case for ProxyReference from DisplayReference objects
                 o = ((ProxyReference) o).getObject();
             }
-            types.add(DisplayObject.getLeafClds(o.getClass(), cld.getModel()));
+            types.add(DisplayObject.getLeafClds(o.getClass(), model));
         }
         return types;
     }
@@ -190,7 +188,7 @@ public class InlineResultsTable
 
             subList.add(o);
 
-            Set clds = DisplayObject.getLeafClds(o.getClass(), cld.getModel());
+            Set clds = DisplayObject.getLeafClds(o.getClass(), model);
 
             ClassDescriptor theClass = null;
             

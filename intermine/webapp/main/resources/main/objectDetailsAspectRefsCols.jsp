@@ -59,7 +59,7 @@
         </td>
         <td width="1%" nowrap>
           <span class="collectionDescription ${collection.size == 0 ? 'nullReferenceField' : ''}">
-            ${collection.size} <span class="type">${collection.cld.unqualifiedName}</span>
+            ${collection.size} <span class="type">${collection.descriptor.referencedClassDescriptor.unqualifiedName}</span>
           </span>
           <c:if test="${collection.size == 1 && empty object.verbosity[aspectAndField]}">
             [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}_${collection.table.ids[0]}">

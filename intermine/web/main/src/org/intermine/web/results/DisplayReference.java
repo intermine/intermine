@@ -46,7 +46,6 @@ public class DisplayReference extends DisplayField
                             WebConfig webConfig, Map webProperties) throws Exception {
         super(getProxyList(proxy), ref, webConfig, webProperties);
         this.proxy = proxy;
-        this.cld = ref.getReferencedClassDescriptor();
         desc = ref;
     }
 
@@ -57,7 +56,7 @@ public class DisplayReference extends DisplayField
     public ReferenceDescriptor getDescriptor() {
         return desc;
     }
-    
+
     /**
      * Get the id of the object
      * @return the id
@@ -82,13 +81,14 @@ public class DisplayReference extends DisplayField
     public Map getKeyAttributes() throws Exception {
         if (keyAttributes == null) {
             keyAttributes = new HashMap();
-            Set pks = PrimaryKeyUtil.getPrimaryKeyFields(cld.getModel(),
+            Set pks = PrimaryKeyUtil.getPrimaryKeyFields(fd.getClassDescriptor().getModel(),
                                                          proxy.getObject().getClass());
             for (Iterator i = pks.iterator(); i.hasNext();) {
-                FieldDescriptor fd = (FieldDescriptor) i.next();
-                if (fd.isAttribute()) {
-                    Object fieldValue = TypeUtil.getFieldValue(proxy.getObject(), fd.getName());
-                    keyAttributes.put(fd.getName(), fieldValue);
+                FieldDescriptor refFieldDescriptor = (FieldDescriptor) i.next();
+                if (refFieldDescriptor.isAttribute()) {
+                    Object fieldValue = TypeUtil.getFieldValue(proxy.getObject(),
+                                                               refFieldDescriptor.getName());
+                    keyAttributes.put(refFieldDescriptor.getName(), fieldValue);
                 }
             }
         }
