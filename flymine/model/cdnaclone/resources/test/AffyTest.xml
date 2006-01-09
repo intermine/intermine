@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<items> 
+<item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
+  <attribute name="name" value="Affymetrix"/>
+</item> 
+<item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
+  <attribute name="title" value="Affymetrix HG-U133A annotationdata set"/>
+</item>
+<item id="-1_3" class="http://www.flymine.org/model/genomic#Organism">
+  <attribute name="abbreviation" value="HS"/>
+</item>
+<item id="-1_4" class="http://www.flymine.org/model/genomic#CompositeSequence">
+  <attribute name="identifier" value="1007_s_at"/>
+  <reference name="organism" ref_id="-1_3"/>
+  <collection name="evidence">
+    <reference ref_id="-1_2"/>
+  </collection>
+  <collection name="genes">
+    <reference ref_id="-1_6"/>
+  </collection>
+</item>
+<item id="-1_5" class="http://www.flymine.org/model/genomic#Synonym">
+  <attribute name="type" value="identifier"/>
+  <attribute name="value" value="1007_s_at"/>
+  <reference name="source" ref_id="-1_1"/>
+  <reference name="subject" ref_id="-1_4"/>
+</item>
+<item id="-1_6" class="http://www.flymine.org/model/genomic#Gene">
+  <attribute name="organismDbId" value="ENSG00000137332"/>
+  <reference name="organism" ref_id="-1_3"/>
+</item>
+<item id="-1_7" class="http://www.flymine.org/model/genomic#CompositeSequence">
+  <attribute name="identifier" value="211739_x_at"/>
+  <reference name="organism" ref_id="-1_3"/>
+  <collection name="evidence">
+    <reference ref_id="-1_2"/>
+  </collection> 
+  <collection name="genes">
+    <reference ref_id="-1_9"/>
+    <reference ref_id="-1_10"/>
+  </collection>
+</item>
+<item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
+  <attribute name="type" value="identifier"/>
+  <attribute name="value" value="211739_x_at"/>
+  <reference name="source" ref_id="-1_1"/>
+  <reference name="subject" ref_id="-1_7"/>
+</item> 
+<item id="-1_9" class="http://www.flymine.org/model/genomic#Gene">
+  <attribute name="organismDbId" value="ENSG00000136488"/>
+  <reference name="organism" ref_id="-1_3"/>
+</item>
+
+<item id="-1_10" class="http://www.flymine.org/model/genomic#Gene">
+  <attribute name="organismDbId" value="ENSG00000136487"/>
+  <reference name="organism" ref_id="-1_3"/>
+</item>
+
+</items>
