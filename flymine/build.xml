@@ -127,7 +127,6 @@
     <include name="biojava*.jar"/>
     <include name="jcommon*.jar"/>
     <include name="jfreechart*.jar"/>
-    <include name="gnujaxp.jar"/>
   </patternset>
 
   <!-- The FlyMine jar file -->
