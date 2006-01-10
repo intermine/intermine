@@ -166,41 +166,6 @@
           <im:vspacer height="6"/>
         </c:if>
 
-      </td>
-
-    </tr>
-    <tr>
-
-      <td valign="top" colspan="2" width="100%">
-
-        <c:forEach items="${CATEGORIES}" var="category">
-          <im:heading id="${category}">
-            ${category}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
-          </im:heading>
-          <im:body id="${category}">
-            <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
-              <tiles:put name="object" beanName="object"/>
-              <tiles:put name="aspect" value="${category}"/>
-            </tiles:insert>
-            <tiles:insert name="templateList.tile">
-              <tiles:put name="type" value="global"/>
-              <tiles:put name="aspect" value="${category}"/>
-              <tiles:put name="displayObject" beanName="object"/>
-              <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
-            </tiles:insert>
-            <im:vspacer height="5"/>
-          </im:body>
-        </c:forEach>
-        <im:heading id="Misc">
-          Miscellaneous
-        </im:heading>
-        <im:body id="${category}">
-          <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
-            <tiles:put name="object" beanName="object"/>
-            <tiles:put name="aspect" value="Miscellaneous"/>
-          </tiles:insert>
-        </im:body>
-        
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
             <im:heading id="right-${entry.key}">
@@ -234,6 +199,39 @@
 
       </td>
 
+    </tr>
+    <tr>
+
+      <td valign="top" colspan="2" width="100%">
+
+        <c:forEach items="${CATEGORIES}" var="category">
+          <im:heading id="${category}">
+            ${category}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
+          </im:heading>
+          <im:body id="${category}">
+            <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+              <tiles:put name="object" beanName="object"/>
+              <tiles:put name="aspect" value="${category}"/>
+            </tiles:insert>
+            <tiles:insert name="templateList.tile">
+              <tiles:put name="type" value="global"/>
+              <tiles:put name="aspect" value="${category}"/>
+              <tiles:put name="displayObject" beanName="object"/>
+              <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+            </tiles:insert>
+            <im:vspacer height="5"/>
+          </im:body>
+        </c:forEach>
+        <im:heading id="Misc">
+          Miscellaneous
+        </im:heading>
+        <im:body id="Misc">
+          <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+            <tiles:put name="object" beanName="object"/>
+            <tiles:put name="aspect" value="Miscellaneous"/>
+          </tiles:insert>
+        </im:body>        
+      </td>
     </tr>
   </table>
 
