@@ -2883,8 +2883,8 @@
   <!-- WEBAPP TARGETS -->
 
   <target name="build-production-webapp"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-java">
-          <!-- depends="prepare-build-model, compile-flymine-java, create-so-name-to-classname-map" -->
+          depends="prepare-build-model, compile-flymine-java,
+                   compile-genomic-java, create-so-name-to-classname-map">
     <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
     <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
     <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
