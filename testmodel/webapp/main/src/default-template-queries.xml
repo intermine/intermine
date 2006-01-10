@@ -62,6 +62,22 @@
     </template>
   </template-queries>
   <tags>
+    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Employee" type="class">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Manager" type="class">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.CEO" type="class">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Contractor" type="class">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Secretary" type="class">
+    </tag>
+    <tag name="aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Bank" type="class">
+    </tag>
+    <tag name="aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Department" type="class">
+    </tag>
+    <tag name="aspect:Entities" objectIdentifier="org.intermine.model.testmodel.Address" type="class">
+    </tag>
     <tag name="aspect:People" objectIdentifier="employeesFromCompanyAndDepartment" type="template">
     </tag>
     <tag name="aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template">
