@@ -75,6 +75,7 @@
               <c:set var="descriptor" value="${collection.descriptor}"/>
               <tiles:insert name="inlineTagEditor.tile">
                 <tiles:put name="taggable" beanName="descriptor"/>
+                <tiles:put name="show" value="true"/>
               </tiles:insert>
             </c:when>
             <c:otherwise>

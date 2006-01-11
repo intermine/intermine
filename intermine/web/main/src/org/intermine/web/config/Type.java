@@ -10,20 +10,25 @@ package org.intermine.web.config;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Configuration object for displaying a class
  *
  * @author Andrew Varley
+ * @author Thomas Riley
  */
 public class Type
 {
@@ -33,6 +38,7 @@ public class Type
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private Displayer tableDisplayer;
+    private Map aspectDisplayers = new HashMap();
 
     /**
      * Set the fully-qualified class name for this Type
@@ -80,6 +86,16 @@ public class Type
      */
     public void addLongDisplayer(Displayer disp) {
         longDisplayers.add(disp);
+        String aspects[] = StringUtils.split(disp.getAspects(), ',');
+        for (int i = 0; i < aspects.length; i++) {
+            String aspect = aspects[i].trim();
+            List displayers = (List) aspectDisplayers.get(aspect);
+            if (displayers == null) {
+                displayers = new ArrayList();
+                aspectDisplayers.put(aspect, displayers);
+            }
+            displayers.add(disp);
+        }
     }
     
     /**
@@ -164,5 +180,19 @@ public class Type
         sb.append("</class>");
 
         return sb.toString();
+    }
+
+    /**
+     * @return return map from aspect name to list of long displayer
+     */
+    public Map getAspectDisplayers() {
+        return aspectDisplayers;
+    }
+
+    /**
+     * @param aspectDisplayers The aspectDisplayers to set.
+     */
+    public void setAspectDisplayers(Map aspectDisplayers) {
+        this.aspectDisplayers = aspectDisplayers;
     }
 }

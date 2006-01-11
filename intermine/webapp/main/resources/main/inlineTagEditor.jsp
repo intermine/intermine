@@ -12,12 +12,13 @@
 <tiles:importAttribute name="vertical" ignore="true"/>
 <tiles:importAttribute name="show" ignore="true"/>
 
+<c:if test="${vertical}">
+  <br/>
+</c:if>
+
 <img class="tag" src="images/tag.gif" onclick="new Effect.Appear('tags-${uid}', {duration: 0.15})"/>
 
 <span id="tags-${uid}" style="${!show?'display:none':''}">
-  <c:if test="${vertical}">
-    <br/>
-  </c:if>
   <span id="currentTags-${uid}">
     <tiles:insert page="/currentTags.jsp"/>
   </span>

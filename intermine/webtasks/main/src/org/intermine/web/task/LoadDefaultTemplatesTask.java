@@ -106,7 +106,7 @@ public class LoadDefaultTemplatesTask extends Task
                                       new HashMap(), new HashMap(), new HashMap());
                 pm.saveProfile(profileDest);
             } else {
-                LOG.warn("Profile for " + username + ", clearing template queries");
+                LOG.info("Profile for " + username + ", clearing template queries");
                 profileDest = pm.getProfile(username, pm.getPassword(username));
                 Map tmpls = new HashMap(profileDest.getSavedTemplates());
                 Iterator iter = tmpls.keySet().iterator();

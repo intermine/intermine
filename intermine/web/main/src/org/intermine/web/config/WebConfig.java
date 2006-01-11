@@ -78,7 +78,7 @@ public class WebConfig
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
 
         digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
-        digester.addSetProperties("webconfig/class/longdisplayers/displayer", "src", "src");
+        digester.addSetProperties("webconfig/class/longdisplayers/displayer");
         digester.addSetNext("webconfig/class/longdisplayers/displayer", "addLongDisplayer");
 
         digester.addCallMethod("webconfig/class/longdisplayers/displayer/param", "addParam", 2);

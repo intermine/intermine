@@ -10,19 +10,23 @@ package org.intermine.web;
  *
  */
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import java.util.List;
-import java.util.Arrays;
+import org.apache.log4j.Logger;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
-import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 
 /**
@@ -31,6 +35,8 @@ import org.apache.struts.util.MessageResources;
  */
 public class InterMineRequestProcessor extends TilesRequestProcessor
 {
+    private static final Logger LOG = Logger.getLogger(InterMineRequestProcessor.class);
+    
     private static final String LOGON_PATH = "/begin";
     private static final String LOGON_INIT_PATH = "/initBegin";
 
@@ -51,6 +57,35 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         try {
+            HttpSession session = request.getSession();
+            ServletContext sc = session.getServletContext();
+            ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
+
+            if (session.getAttribute("ser") != null) {
+                session.removeAttribute("ser");
+                SessionMethods.initSession(session);
+                
+                String user = (String) session.getAttribute("ser-username");
+                if (user != null) {
+                    // Replace default anon UserProfile
+                    Profile p = pm.getProfile(user);
+                    if (p != null) {
+                        LOG.warn("Could not find profile for user " + user);
+                        session.setAttribute(Constants.PROFILE, pm.getProfile(user));
+                    }
+                    session.removeAttribute("ser-username");
+                }
+                String queryXml = (String) session.getAttribute("ser-query");
+                if (queryXml != null) {
+                    PathQuery pq = PathQuery.fromXml(queryXml);
+                    if (pq.isValid()) {
+                        LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
+                        session.setAttribute(Constants.QUERY, PathQuery.fromXml(queryXml));
+                    }
+                    session.removeAttribute("ser-query");
+                }
+            }
+            
             if (request.getSession().getAttribute(Constants.PROFILE) == null) {
                 request.getSession().invalidate();
             }
@@ -66,6 +101,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 processForwardConfig(request, response, new ActionForward(LOGON_PATH + ".do"));
             }
         } catch (Exception e) {
+            request.getSession().invalidate(); // safer?
             throw new RuntimeException(e);
         }
         

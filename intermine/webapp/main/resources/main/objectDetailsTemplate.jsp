@@ -50,9 +50,15 @@
     </c:otherwise>
   </c:choose>
   <span class="${cssClass}">
-
     <im:templateLine type="${type}" templateQuery="${templateQuery}"
                      className="${className}" interMineObject="${interMineObject}"/>
+    <c:if test="${IS_SUPERUSER}">
+      <tiles:insert name="inlineTagEditor.tile">
+        <tiles:put name="taggable" beanName="templateQuery"/>
+        <tiles:put name="vertical" value="true"/>
+        <tiles:put name="show" value="true"/>
+      </tiles:insert>
+    </c:if>
   </span>
   <c:if test="${verbose}">
     <c:if test="${!empty displayObject.object && !empty table.inlineResults}">
