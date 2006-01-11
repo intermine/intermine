@@ -232,6 +232,7 @@
   <target name="test-java" depends="compile-test">
     <copy file="${model.mapping}" toDir="${build.model.dir}" failonerror="false"/>
     <junit printsummary="yes" haltonfailure="no" failureproperty="junit.failure">
+    <sysproperty key="java.awt.headless" value="true"/>
       <formatter type="xml" />
       <classpath refid="test.class.path"/>
       <batchtest fork="no" todir="${results.junit}">
