@@ -9,4 +9,8 @@
     
     <action path="/initGeneMicroArrayDisplayer"
             type="org.flymine.web.GeneMicroArrayDisplayerController"/>
+
+    <action path="/proteinInteractionRenderer"
+            type="org.flymine.web.ProteinInteractionImgRenderer"/>
+    
             

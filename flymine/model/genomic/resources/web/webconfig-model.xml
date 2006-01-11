@@ -140,6 +140,7 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
+      <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
   </class>
 
