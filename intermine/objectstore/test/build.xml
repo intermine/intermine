@@ -71,7 +71,7 @@
   </target>
 
 
-  <target name="test-intermine-logging" depends="build-db-logdbtest, -init-test, -init-macrodef-junit">
+  <target name="test-intermine-logging" depends="build-db-logdbtest, init-test, -init-macrodef-junit">
     <imtestsproj:junit includes="org/intermine/objectstore/log/ObjectStoreInterMineLogWriterTest.class" excludes="org/intermine/objectstore/**"/>
   </target>
 
