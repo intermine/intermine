@@ -110,6 +110,18 @@
                           minRows="0" username="${superuser.account}"/>
   </target>
 
+  <!-- CONSOLE -->
+  
+  <target name="console" depends="skip-deps, -init-build-db">
+    <copy file="${application.xml.basedir}/console.bshrc" tofile="${user.home}/.bshrc"/>
+    <java classname="bsh.Console" fork="true" spawn="true">
+      <classpath>
+        <pathelement location="${application.xml.basedir}/lib/bsh-2.0b4.jar"/>
+        <path refid="task.class.path"/>
+      </classpath>
+    </java>
+  </target>
+  
   <!-- MACRO DEFINITIONS -->
 
   <target name="-init-presetdef-war">
