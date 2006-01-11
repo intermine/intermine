@@ -3041,7 +3041,7 @@
           file="${resources}/webapp/default.intermine.properties"
           overwrite="true" verbose="true"/>
     <!-- insert default template queries. this will also create the superuser account. -->
-    <taskdef name="insert-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
+    <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/template-queries.xml"
