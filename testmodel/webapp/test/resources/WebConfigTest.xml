@@ -28,7 +28,7 @@
       <fieldconfig fieldExpr="title" doNotTruncate="true"/> 
     </fields>
     <longdisplayers>
-      <displayer src="/model/manager.jsp"/>
+      <displayer src="/model/manager.jsp" aspects="Aspect1, Aspect2"/>
     </longdisplayers>
     <tabledisplayer src="/model/tableManager.jsp"/>
   </class>
