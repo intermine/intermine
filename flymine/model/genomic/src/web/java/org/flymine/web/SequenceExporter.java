@@ -26,6 +26,7 @@ import org.flymine.biojava.FlyMineSequenceFactory;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
@@ -80,6 +81,10 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         
         InterMineObject obj = os.getObjectById(new Integer(request.getParameter("object")));
         
+        if (obj instanceof Sequence) {
+            Sequence sequence = (Sequence) obj;
+            obj = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
+        }
         if (obj instanceof LocatedSequenceFeature) {
             flyMineSequence = FlyMineSequenceFactory.make((LocatedSequenceFeature) obj);
             Annotation annotation = flyMineSequence.getAnnotation();
@@ -108,7 +113,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-
+        ObjectStore os =
+            (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ",
                            "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
@@ -170,6 +176,14 @@ public class SequenceExporter extends InterMineAction implements TableExporter
 
                 FlyMineSequence flyMineSequence;
 
+                if (object instanceof Sequence) {
+                    Sequence sequence = (Sequence) object;
+                    object = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
+                    if (object == null) {
+                        // no LocatedSequenceFeature found
+                        continue;
+                    }
+                }
                 if (object instanceof LocatedSequenceFeature) {
                     LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
                     flyMineSequence = FlyMineSequenceFactory.make(feature);
@@ -240,8 +254,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
     }
 
     /**
-     * @throws ObjectStoreException 
-     * @see org.intermine.web.TableExporter#canExport
+     * @see org.intermine.web.TableExporter#canExport(PagedTable)
      */
     public boolean canExport(PagedTable pt) {
         return getFeatureColumn(pt) != null;
@@ -254,7 +267,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
      */
     protected boolean validType(Class type) {
         return (LocatedSequenceFeature.class.isAssignableFrom(type)
-                || Protein.class.isAssignableFrom(type));
+                || Protein.class.isAssignableFrom(type)
+                || Sequence.class.isAssignableFrom(type));
     }
 
     /**
