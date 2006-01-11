@@ -114,16 +114,18 @@ public abstract class FlyNetworkIntegrator
 
     /**
      * Convert a Collection of flymine FlyNodeS into a Collection of cytoscape CyNodeS
+     * currently only works if the nodes are already in cytoscape????
      * @param flyNodes Collection of FlyNodeS to convert into CyNodeS
      * @return a Collection of corresponding CyNodeS
      */
     public static Collection convertNodesFly2Cy(Collection flyNodes) {
+        // TODO: check that collection contains only flyNodes
         Collection cyNodes = new ArrayList();
         for (Iterator iter = flyNodes.iterator(); iter.hasNext();) {
             FlyNode fn = (FlyNode) iter.next();
-            CyNode cyn = Cytoscape.getCyNode(fn.getLabel());
-            // TODO: check if Node really exists
-            // what if not?? -> error or create new or ...
+            // call getCyNode with create flag = true! otherwise CyNodeS will NOT be created
+            // existing CyNodeS however are not created
+            CyNode cyn = Cytoscape.getCyNode(fn.getLabel(), true);
             cyNodes.add(cyn);
         }
         return cyNodes;
@@ -131,6 +133,7 @@ public abstract class FlyNetworkIntegrator
 
     /**
      * Convert a Collection of flymine FlyEdgeS into a Collection of cytoscape CyEdgeS
+     * currently only works if the edges are already in cytoscape????
      * @param flyEdges Collection of FlyEdgeS to convert into CyEdgeS
      * @return a Collection of corresponding CyEdgeS
      */
@@ -138,9 +141,11 @@ public abstract class FlyNetworkIntegrator
         Collection cyEdges = new ArrayList();
         for (Iterator iter = flyEdges.iterator(); iter.hasNext();) {
             FlyEdge fe = (FlyEdge) iter.next();
+
             CyEdge cye = Cytoscape.getCyEdge(fe.getSource().getLabel(), fe.getLabel(), fe
                     .getTarget().getLabel(), (String) fe
                     .getAttributeValue(Semantics.INTERACTION));
+
             // TODO: check if Edge really exists
             cyEdges.add(cye);
         }
@@ -150,6 +155,7 @@ public abstract class FlyNetworkIntegrator
 
     /**
      * Convert a Collection of flymine FlyNodeS into a int array of cytoscape CyNode ideces
+     * currently only works if the nodes are already in cytoscape????
      * @param flyNodes Collection of FlyNodeS to convert into CyNode indeces
      * @return a int[] representing cytoscape CyNode ideces
      */
@@ -169,6 +175,7 @@ public abstract class FlyNetworkIntegrator
 
     /**
      * Convert a Collection of flymine FlyEdgeS into a int array of cytoscape CyEdge indeces
+     * currently only works if the edges are already in cytoscape????
      * @param flyEdges Collection of FlyEdgeS to convert into CyEdge indeces
      * @return a in[] representing cytoscape CyEdge ideces
      */

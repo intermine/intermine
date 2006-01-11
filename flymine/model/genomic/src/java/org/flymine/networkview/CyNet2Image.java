@@ -18,10 +18,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
+
+import org.apache.log4j.Logger;
+import org.flymine.networkview.network.FlyEdge;
+import org.flymine.networkview.network.FlyNetwork;
+import org.flymine.networkview.network.FlyNode;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
@@ -44,6 +51,8 @@ import giny.view.NodeView;
  */
 public class CyNet2Image
 {
+
+    private static final Logger LOG = Logger.getLogger(CyNet2Image.class);
 
     /**
      * Convert a network to an image.
@@ -73,13 +82,13 @@ public class CyNet2Image
     /**
      * Convert a network to an image.
      * @param net Input network to convert to an image
-     * @param height Height that the resulting image should be
      * @param width Width that the resulting image should be
+     * @param height Height that the resulting image should be
      * @param vizpropsFile String specifying the location of the vizmap properties file
      * @param style String specifying the name of the style
      * @return The resulting image
      */
-    public static Image convertNetwork2Image(CyNetwork net, int height, int width,
+    public static Image convertNetwork2Image(CyNetwork net, int width, int height,
             String vizpropsFile, String style) {
         PhoebeNetworkView pnv;
         Image image;
@@ -98,6 +107,7 @@ public class CyNet2Image
             try {
                 vizprops.load(new FileInputStream(vizmaps));
             } catch (IOException e) {
+                LOG.error("Error loading vizmap properties");
                 doDefault = true;
                 break userStyle;
 
@@ -122,14 +132,16 @@ public class CyNet2Image
             // get the backgroundcolor of that style
             // -> used later when transfering into image
             bgColor = myVS.getGlobalAppearanceCalculator().getDefaultBackgroundColor();
-            // set style
+            // set & apply style
             vmm.setVisualStyle(myVS);
-            // apply the style
             vmm.applyAppearances();
-        }
+        } else { // vizpropsFile or style not specified
+            doDefault = true;
+        } // end userStyle
+
         if (doDefault) {
             // start over again and apply default style
-            pnv = new PhoebeNetworkView(net, "tmpview");
+            pnv = new PhoebeNetworkView(net, "defaultview");
             applyDefaultStyle(pnv);
         }
 
@@ -188,9 +200,33 @@ public class CyNet2Image
         Graphics2D g = buffImg.createGraphics();
         g.drawImage(img, null, null);
 
-        // Save image to disk as PNG
+        // Save image to file as PNG
         ImageIO.write(buffImg, "png", new File(filepath));
 
+    }
+
+    /**
+     * write image to a OutputStream
+     * @param img image to write
+     * @param out OutputStream to write to
+     * @return true if writing was successfull false otherwise
+     */
+    public static boolean imageOut(Image img, OutputStream out) {
+        boolean success;
+        BufferedImage buffImg = new BufferedImage(img.getWidth(null),
+                img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = buffImg.createGraphics();
+        g.drawImage(img, null, null);
+
+        // Save image to OutputStream as PNG
+        try {
+            ImageIO.write(buffImg, "png", out);
+            success = true;
+        } catch (IOException e) {
+            success = false;
+            // TODO print to logger
+        }
+        return success;
     }
 
     /**
@@ -245,12 +281,43 @@ public class CyNet2Image
      * @param args arguments to the program
      */
     public static void main(String[] args) {
-        String vizFile = "/home/flo/.cytoscape/vizmap.props";
-        String netFile = "/home/flo/FlyMine/Cytoscape/cytoscape_testdata2.sif";
+        //String vizFile = "/home/flo/.cytoscape/vizmap.props";
+        //String netFile = "/home/flo/FlyMine/Cytoscape/cytoscape_testdata2.sif";
+        //
+        //try {
+        //    CyNetwork net = Cytoscape.createNetworkFromFile(netFile);
+        //    Image i1 = CyNet2Image.convertNetwork2Image(net, 500, 500, vizFile, "test1");
+        //    Image i2 = CyNet2Image.convertNetwork2Image(net);
+        //    image2File(i1, "/tmp/test1.png");
+        //    image2File(i2, "/tmp/test2.png");
+        //} catch (IOException e) {
+        //    e.printStackTrace();
+        //}
 
+        FlyNetwork fn = new FlyNetwork();
+        FlyNode n1 = new FlyNode("node1");
+        FlyNode n2 = new FlyNode("node2");
+        FlyNode n3 = new FlyNode("node3");
+        FlyNode n4 = new FlyNode("node4");
+        FlyEdge e1 = new FlyEdge(n1, n2);
+        FlyEdge e2 = new FlyEdge(n2, n2);
+        FlyEdge e3 = new FlyEdge(n2, n3);
+        FlyEdge e4 = new FlyEdge(n3, n4);
+        fn.addNode(n1);
+        fn.addNode(n2);
+        fn.addNode(n3);
+        fn.addNode(n4);
+        fn.addEdge(e1);
+        fn.addEdge(e2);
+        fn.addEdge(e3);
+        fn.addEdge(e4);
+
+        Collection nc = FlyNetworkIntegrator.convertNodesFly2Cy(fn.getNodes());
+        Collection ec = FlyNetworkIntegrator.convertEdgesFly2Cy(fn.getEdges());
+        CyNetwork net = Cytoscape.createNetwork(nc, ec, "testnet");
+
+        Image i = CyNet2Image.convertNetwork2Image(net);
         try {
-            CyNetwork net = Cytoscape.createNetworkFromFile(netFile);
-            Image i = CyNet2Image.convertNetwork2Image(net, 500, 500, vizFile, "test1");
             image2File(i, "/tmp/test.png");
         } catch (IOException e) {
             e.printStackTrace();
