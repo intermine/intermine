@@ -19,7 +19,7 @@
       <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
     </fields>
     <longdisplayers>
-      <displayer src="/model/employeeName.jsp"/>
+      <displayer src="/model/employeeName.jsp" aspects="People"/>
     </longdisplayers>
   </class>
 
@@ -39,7 +39,7 @@
       <fieldconfig fieldExpr="title" doNotTruncate="true"/>
     </fields>
     <longdisplayers>
-      <displayer src="/model/managerSeniority.jsp"/>
+      <displayer src="/model/managerSeniority.jsp" aspects="People"/>
     </longdisplayers>
   </class>
 
@@ -64,7 +64,7 @@
 
   <class className="org.intermine.model.testmodel.HasAddress" fieldName="address">
     <longdisplayers>
-      <displayer src="/model/addressField.jsp"/>
+      <displayer src="/model/addressField.jsp" aspects="Entities"/>
     </longdisplayers>
   </class>
 
