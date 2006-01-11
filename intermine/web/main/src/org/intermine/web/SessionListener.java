@@ -24,13 +24,17 @@ public class SessionListener implements HttpSessionListener
      * @see HttpSessionListener#sessionCreated
      */
     public void sessionCreated(HttpSessionEvent se) {
+        //System. out.println("sessionCreated");
         HttpSession session = se.getSession();
         SessionMethods.initSession(session);
+        session.setAttribute("activation-listener", new SessionActivationListener());
     }
 
     /**
      * @see HttpSessionListener#sessionDestroyed
      */
     public void sessionDestroyed(HttpSessionEvent se) {
+        //System. out.println("sessionDestroyed");
+        se.getSession().removeAttribute(Constants.TABLE_MAP);
     }
 }

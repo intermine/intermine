@@ -17,11 +17,12 @@ import java.util.Map;
  * Configuration object describing details of a displayer
  *
  * @author Andrew Varley
+ * @author Thomas Riley
  */
 public class Displayer
 {
     private String src;
-
+    private String aspects = "";
     private Map params = new HashMap();
 
     /**
@@ -33,6 +34,24 @@ public class Displayer
         this.src = src;
     }
 
+    /**
+     * Get the aspects of this displayer
+     *
+     * @return the aspects
+     */
+    public String getAspects() {
+        return this.aspects;
+    }
+    
+    /**
+     * Set the aspects of this displayer
+     *
+     * @param aspect the aspects
+     */
+    public void setAspects(String aspect) {
+        this.aspects = aspect;
+    }
+    
     /**
      * Get the source of this displayer
      *

@@ -7,7 +7,6 @@
 <!-- templates.jsp -->
 <c:choose>
   <c:when test="${empty param.category}">
-
     <c:forEach items="${CATEGORIES}" var="category">
       <div class="heading">${category}</div>
       <div class="body">

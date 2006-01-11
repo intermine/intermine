@@ -100,13 +100,6 @@
                         <span class="value">${entry.value}</span>
                       </c:otherwise>
                     </c:choose>
-                    <%--<c:if test="${IS_SUPERUSER}">
-                      &nbsp;
-                      <c:set var="descriptor" value="${object.attributeDescriptors[entry.key]}"/>
-                      <tiles:insert name="inlineTagEditor.tile">
-                        <tiles:put name="taggable" beanName="descriptor"/>
-                      </tiles:insert>
-                    </c:if>--%>
                   </td>
                 </tr>
               </c:if>
@@ -124,24 +117,6 @@
       </td>
       
       <td valign="top" width="66%">
-        
-        <c:forEach items="${object.clds}" var="cld">
-          <c:if test="${fn:length(WEBCONFIG.types[cld.name].longDisplayers) > 0}">
-            <im:heading id="further">
-              <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
-            </im:heading>
-            <im:vspacer height="3"/>
-            <im:body id="further">
-              <c:forEach items="${WEBCONFIG.types[cld.name].longDisplayers}" var="displayer">
-                <c:set var="object_bak" value="${object}"/>
-                <c:set var="object" value="${object.object}" scope="request"/>
-                <c:set var="cld" value="${cld}" scope="request"/>
-                <tiles:insert beanName="displayer" beanProperty="src"/><br/>
-                <c:set var="object" value="${object_bak}" scope="request"/>
-              </c:forEach>
-            </im:body>
-          </c:if>
-        </c:forEach>
         
         <%-- show important templates here --%>
         <c:if test="${showImportantTemplatesFlag == 'true'}">
@@ -165,6 +140,17 @@
           </im:body>
           <im:vspacer height="6"/>
         </c:if>
+        
+        <im:heading id="further">
+          <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
+        </im:heading>
+        <im:vspacer height="3"/>
+        <im:body id="further">
+          <tiles:insert page="/objectDetailsDisplayers.jsp">
+            <tiles:put name="aspect" value=""/>
+            <tiles:put name="displayObject" beanName="object"/>
+          </tiles:insert>
+        </im:body>
 
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
@@ -200,6 +186,7 @@
       </td>
 
     </tr>
+
   </table>
 
 </c:if>
@@ -233,6 +220,10 @@
           <tiles:put name="aspect" value="${category}"/>
           <tiles:put name="displayObject" beanName="object"/>
           <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+        </tiles:insert>
+        <tiles:insert page="/objectDetailsDisplayers.jsp">
+          <tiles:put name="aspect" value="${category}"/>
+          <tiles:put name="displayObject" beanName="object"/>
         </tiles:insert>
         <im:vspacer height="5"/>
       </im:body>

@@ -10,6 +10,7 @@ package org.intermine.web.results;
  *
  */
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
@@ -34,9 +35,9 @@ import org.intermine.metadata.FieldDescriptor;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
-public class PagedResults extends PagedTable
+public class PagedResults extends PagedTable implements Serializable
 {
-    protected Results results;
+    protected transient Results results;
 
     /**
      * Create a new PagedResults object from the given Results object.

@@ -76,7 +76,7 @@ public interface Constants
     /**
      * Session attribute, name of tab selected on history page.
      */
-    public static final String HISTORY_PAGE = "HISTORY_PAGE";
+    public static final String HISTORY_PAGE = "HISTORY_PAGE"; // serializes
     
     /**
      * ServletContext attribute used to store the WebConfig object for the Model.
@@ -96,7 +96,7 @@ public interface Constants
     /**
      * Session attribute used to store the user's Profile
      */
-    public static final String PROFILE = "PROFILE";
+    public static final String PROFILE = "PROFILE"; // serialized as 'username'
     
     /**
      * Session attribute used to store the current query
