@@ -132,8 +132,14 @@ public class ResidueFieldExporter implements FieldExporter
         }
     }
 
-    private LocatedSequenceFeature getLocatedSequenceFeatureForSequence(ObjectStore os,
-                                                                        Sequence sequence) {
+    /**
+     * Find the LocatedSequenceFeature that references the given Sequence.
+     * @param os the ObjectStore
+     * @param sequence the Sequence
+     * @return the LocatedSequenceFeature
+     */
+    public static LocatedSequenceFeature getLocatedSequenceFeatureForSequence(ObjectStore os,
+                                                                              Sequence sequence) {
         Query q = new Query();
 
         QueryClass lsfQc = new QueryClass(LocatedSequenceFeature.class);

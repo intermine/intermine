@@ -281,10 +281,11 @@
   <class className="org.flymine.model.genomic.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
-                   sectionOnRight="true" sectionTitle="Sequence" openByDefault="true"
+                   sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
                    showInSummary="false" showInResults="false" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="length"/>
     </fields>
+    <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.MicroArrayResult">
