@@ -200,66 +200,70 @@
       </td>
 
     </tr>
-    <tr>
-
-      <td valign="top" colspan="2" width="100%">
-
-        <c:forEach items="${CATEGORIES}" var="category">
-          <im:heading id="${category}">
-            ${category}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
-          </im:heading>
-          <im:body id="${category}">
-            <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
-              <tiles:put name="object" beanName="object"/>
-              <tiles:put name="aspect" value="${category}"/>
-            </tiles:insert>
-            <tiles:insert name="templateList.tile">
-              <tiles:put name="type" value="global"/>
-              <tiles:put name="aspect" value="${category}"/>
-              <tiles:put name="displayObject" beanName="object"/>
-              <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
-            </tiles:insert>
-            <im:vspacer height="5"/>
-          </im:body>
-        </c:forEach>
-        <im:heading id="Misc">
-          Miscellaneous
-        </im:heading>
-        <im:body id="Misc">
-          <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
-            <tiles:put name="object" beanName="object"/>
-            <tiles:put name="aspect" value="Miscellaneous"/>
-          </tiles:insert>
-        </im:body>        
-      </td>
-    </tr>
   </table>
 
 </c:if>
-
-<div class="body">
-  <c:if test="${!empty PROFILE.savedBags}">
-    <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
-      <fmt:message key="objectDetails.addToBag"/>
-      <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
-      <select name="bag">
-        <c:forEach items="${PROFILE.savedBags}" var="entry">
-          <option name="${entry.key}">${entry.key}</option>
-        </c:forEach>
-      </select>
-      <input type="hidden" name="object" value="${object.id}"/>
-      <input type="submit" value="<fmt:message key="button.add"/>"/>
-    </form>
-  </c:if>
-</div>
-
 <c:if test="${empty object}">
   <%-- Display message if object not found --%>
+  <im:vspacer height="12"/>
   <div class="altmessage">
     <fmt:message key="objectDetails.noSuchObject"/>
   </div>
+  <im:vspacer height="12"/>
 </c:if>
 
 </im:box>
+
+<c:if test="${!empty object}">
+  <im:vspacer height="12"/>
+
+  <im:box helpUrl="${helpUrl}"
+          titleKey="objectDetails.heading.byaspect">
+    <c:forEach items="${CATEGORIES}" var="category">
+      <im:heading id="${category}">
+        ${category}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
+      </im:heading>
+      <im:body id="${category}">
+        <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+          <tiles:put name="object" beanName="object"/>
+          <tiles:put name="aspect" value="${category}"/>
+        </tiles:insert>
+        <tiles:insert name="templateList.tile">
+          <tiles:put name="type" value="global"/>
+          <tiles:put name="aspect" value="${category}"/>
+          <tiles:put name="displayObject" beanName="object"/>
+          <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
+        </tiles:insert>
+        <im:vspacer height="5"/>
+      </im:body>
+    </c:forEach>
+    <im:heading id="Misc">
+      Miscellaneous
+    </im:heading>
+    <im:body id="Misc">
+      <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+        <tiles:put name="object" beanName="object"/>
+        <tiles:put name="aspect" value="Miscellaneous"/>
+      </tiles:insert>
+    </im:body>        
+
+    <div class="body">
+      <c:if test="${!empty PROFILE.savedBags}">
+        <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
+          <fmt:message key="objectDetails.addToBag"/>
+          <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+          <select name="bag">
+            <c:forEach items="${PROFILE.savedBags}" var="entry">
+              <option name="${entry.key}">${entry.key}</option>
+            </c:forEach>
+          </select>
+          <input type="hidden" name="object" value="${object.id}"/>
+          <input type="submit" value="<fmt:message key="button.add"/>"/>
+        </form>
+      </c:if>
+    </div>
+
+  </im:box>
+</c:if>
 
 <!-- /objectDetails.jsp -->
