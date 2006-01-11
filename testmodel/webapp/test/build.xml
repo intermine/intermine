@@ -23,7 +23,7 @@
     <ant antfile="../main/build.xml" target="release-webapp" inheritAll="false"/>
   </target>
   
-  <target name="-init-test" depends="tests.-init-test, -copy-build-properties, redeploy-webapp"/>
+  <target name="init-test" depends="tests.init-test, -copy-build-properties, redeploy-webapp"/>
   
   <target name="-copy-build-properties">
     <!-- need for the web unit tests to know where the webapp is -->

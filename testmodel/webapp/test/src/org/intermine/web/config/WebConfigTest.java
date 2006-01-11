@@ -13,6 +13,8 @@ package org.intermine.web.config;
 import junit.framework.TestCase;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import org.intermine.metadata.Model;
 
@@ -48,6 +50,7 @@ public class WebConfigTest extends TestCase
 
         Displayer managerDisplayer = new Displayer();
         managerDisplayer.setSrc("/model/manager.jsp");
+        managerDisplayer.setAspects("Aspect1, Aspect2");
         Displayer tdisp = new Displayer();
         tdisp.setSrc("/model/tableManager.jsp");
         
@@ -94,11 +97,15 @@ public class WebConfigTest extends TestCase
         wc2.addType(thingType);
         wc2.addTableExportConfig(tableExportConfig);
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
-
-        assertEquals(1, managerType.getLongDisplayers().size());
-        assertEquals("/model/manager.jsp",
-                     ((Displayer) managerType.getLongDisplayers().iterator().next()).getSrc());
-
+        
+        HashMap displayerAspects = new HashMap();
+        displayerAspects.put("Aspect1", Arrays.asList(
+                new Object[]{managerType.getLongDisplayers().iterator().next()}));
+        displayerAspects.put("Aspect2", Arrays.asList(
+                new Object[]{managerType.getLongDisplayers().iterator().next()}));
+        assertEquals(displayerAspects, ((Type) wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
+                .getAspectDisplayers());
+        
         assertEquals(wc2, wc1);
 
     }
