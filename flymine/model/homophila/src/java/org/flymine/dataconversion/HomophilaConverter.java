@@ -109,22 +109,24 @@ public class HomophilaConverter extends FileConverter
         
         LOG.info("Reading disease descriptions...");
         
-        String desc = "";
+        StringBuffer descBuff = new StringBuffer();
         String omim = "";
         while ((line = br.readLine()) != null) {
             String fields[] = StringUtils.split(line, '\t');
             if (omim.equals(fields[0])) {
-                desc += "; " + fields[1];
+                descBuff.append("; ");
+                descBuff.append(fields[1]);
                 continue;
             }
             if (!StringUtils.isBlank(omim)) {
                 // New entry
-                diseaseDescriptions.put(omim, desc);
+                diseaseDescriptions.put(omim, descBuff.toString());
             }
             omim = fields[0];
-            desc = fields[1];
+            descBuff = new StringBuffer();
+            descBuff.append(fields[1]);
         }
-        diseaseDescriptions.put(omim, desc); // last line
+        diseaseDescriptions.put(omim, descBuff.toString()); // last line
         
         LOG.info("" + diseaseDescriptions.size() + " descriptions read.");
     }
