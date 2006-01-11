@@ -30,7 +30,7 @@
   
   <!-- RUN TESTS -->
   
-  <target name="-init-test" depends="init, -init-deps">
+  <target name="init-test" depends="init, -init-deps">
     <mkdir dir="${test.results.dir}"/>
     <mkdir dir="${build.test.resources.dir}"/>
     <copy file="${tests.xml.basedir}/test.log4j.properties" toFile="${build.test.resources.dir}/log4j.properties"/>
@@ -92,7 +92,7 @@
     </emma>
   </target>
   
-  <target name="test" depends="-init-test, -test-for-intermine-properties, -copy-intermine-properties, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
+  <target name="test" depends="init-test, -test-for-intermine-properties, -copy-intermine-properties, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
   
   <target name="test-all" depends="init, -init-deps, jar">
     <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
