@@ -55,9 +55,12 @@
 
   <target name="default" depends="compile, jar"/>
   
-  <target name="-init-deps-no-build">
-    <property name="no.dep" value="true"/>
+  <target name="-init-deps-no-build" depends="skip-deps">
     <dependencies basedir="${library.xml.basedir}/.."/>
+  </target>
+  
+  <target name="skip-deps">
+    <property name="no.dep" value="true"/>
   </target>
   
   <target name="-pre-init-deps"/>
