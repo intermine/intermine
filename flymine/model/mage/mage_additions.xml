@@ -5,7 +5,7 @@
   <attribute name="description" type="java.lang.String"/>
   <attribute name="sample1" type="java.lang.String"/>
   <attribute name="sample2" type="java.lang.String"/>
-  <attribute name="logicalOrder" type="java.lang.Integer"/>
+  <attribute name="displayOrder" type="java.lang.Integer"/>
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="assays"/> 
   <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"  reverse-reference="assay"/>
   <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" reverse-reference="assays"/>
