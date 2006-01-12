@@ -15,21 +15,21 @@
     <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="Swiss-Prot data set"/>
         <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
-        <attribute name="version" value="47.7"/>
+        <attribute name="version" value="48.8"/>
         <attribute name="url" value="http://ca.expasy.org/sprot"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="12" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="TrEMBL data set"/>
         <attribute name="description" value="Translated CDSs from the EMBL database"/>
-        <attribute name="version" value="30.7"/>
+        <attribute name="version" value="31.8"/>
         <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="UniProt data set"/>
         <attribute name="description" value="UniProt Knowledgebase"/>
-        <attribute name="version" value="6.5"/>
+        <attribute name="version" value="6.8"/>
         <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
