@@ -91,7 +91,7 @@ public class TemplateListController extends TilesAction
                                                       userName);
             
             if (itt == null) {
-                // template has unconstrained fields so we can't can't it
+                // template has unconstrained fields so we can't inline it
                 newTemplateCounts.put(templateName, null);
             } else {
                 newTemplateCounts.put(templateName, new Integer(itt.getResultsSize()));
