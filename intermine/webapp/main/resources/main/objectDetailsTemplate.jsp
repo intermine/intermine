@@ -105,6 +105,5 @@
       </table>
     </c:if>
   </c:if>
-  <hr class="seperator"/>
 </div>
 <!-- /objectDetailsTemplate.jsp -->

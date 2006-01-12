@@ -29,6 +29,9 @@
         <tiles:put name="type" value="${type}"/>
       </tiles:insert>
     </c:if>
+    <c:if test="${!status.last}">
+      <hr class="seperator"/>
+    </c:if>
   </c:forEach>
 
 <c:if test="${empty templates && !empty noTemplatesMsgKey}">
