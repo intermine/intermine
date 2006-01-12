@@ -148,6 +148,7 @@
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
+  <definition name="objectDetailsAspect.tile" path="/objectDetailsAspect.jsp" controllerUrl="/initObjectDetailsAspect.do"/>
   <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
     <put name="preview" value="template.tile"/>
   </definition>

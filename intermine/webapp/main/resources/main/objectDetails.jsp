@@ -49,6 +49,8 @@
 
         <im:body id="summary">
           <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
+            
+            <%-- Show the summary fields (fields that are shown in tables of this object type) --%>
             <c:forEach items="${object.fieldExprs}" var="expr">
               <c:if test="${object.fieldConfigMap[expr].showInSummary}">
                 <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
@@ -62,8 +64,7 @@
                   <td>
                     <c:choose>                      
                       <c:when test="${empty outVal}">
-                        <%-- add a space so that IE renders the borders --%>
-                        &nbsp
+                        &nbsp;
                       </c:when>
                       <c:otherwise>
                         <b><im:value>${outVal}</im:value></b>
@@ -74,6 +75,7 @@
               </c:if>
             </c:forEach>
           
+            <%-- Show all other fields --%>
             <c:forEach items="${object.attributes}" var="entry">
               <c:if test="${! object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
                 <tr>
@@ -106,6 +108,7 @@
             </c:forEach>
           </table>
           
+          <%-- Show the *table* displayers for this object type --%>
           <c:forEach items="${LEAF_DESCRIPTORS_MAP[object.object]}" var="cld2">
             <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
               <c:set var="cld2" value="${cld2}" scope="request"/>
@@ -118,29 +121,24 @@
       
       <td valign="top" width="66%">
         
-        <%-- show important templates here --%>
+        <%-- Important templates, arranged by category --%>
         <c:if test="${showImportantTemplatesFlag == 'true'}">
           <im:heading id="important">Interesting template queries</im:heading>
           <im:vspacer height="3"/>
           <im:body id="important">
             <c:forEach items="${CATEGORIES}" var="category">
-                
-                  <%--<div class="heading">${category}</div>--%>
-                  <!--<c:set var="interMineObject" value="${object.object}"/>-->
-                  <!--<div class="body">-->
-                   <tiles:insert name="templateList.tile">
-                     <tiles:put name="type" value="global"/>
-                     <tiles:put name="aspect" value="${category}"/>
-                     <tiles:put name="displayObject" beanName="object"/>
-                     <tiles:put name="important" value="true"/>
-                   </tiles:insert>
-                  <!--</div>-->
-                  <%--<im:vspacer height="5"/>--%>
+              <tiles:insert name="templateList.tile">
+                <tiles:put name="type" value="global"/>
+                <tiles:put name="aspect" value="${category}"/>
+                <tiles:put name="displayObject" beanName="object"/>
+                <tiles:put name="important" value="true"/>
+              </tiles:insert>
             </c:forEach>
           </im:body>
           <im:vspacer height="6"/>
         </c:if>
         
+        <%-- Long displayers not tied to a particular aspect --%>
         <im:heading id="further">
           <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
         </im:heading>
@@ -152,6 +150,7 @@
           </tiles:insert>
         </im:body>
 
+        <%-- Fields that are set to 'sectionOnRight' --%>
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
             <im:heading id="right-${entry.key}">
@@ -203,31 +202,18 @@
 
 <c:if test="${!empty object}">
   <im:vspacer height="12"/>
-
   <im:box helpUrl="${helpUrl}"
           titleKey="objectDetails.heading.byaspect">
+                    
+    <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="category">
-      <im:heading id="${category}">
-        ${category}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
-      </im:heading>
-      <im:body id="${category}">
-        <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
-          <tiles:put name="object" beanName="object"/>
-          <tiles:put name="aspect" value="${category}"/>
-        </tiles:insert>
-        <tiles:insert name="templateList.tile">
-          <tiles:put name="type" value="global"/>
-          <tiles:put name="aspect" value="${category}"/>
-          <tiles:put name="displayObject" beanName="object"/>
-          <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
-        </tiles:insert>
-        <tiles:insert page="/objectDetailsDisplayers.jsp">
-          <tiles:put name="aspect" value="${category}"/>
-          <tiles:put name="displayObject" beanName="object"/>
-        </tiles:insert>
-        <im:vspacer height="5"/>
-      </im:body>
+      <tiles:insert name="objectDetailsAspect.tile">
+        <tiles:put name="aspect" value="${category}"/>
+        <tiles:put name="displayObject" beanName="object"/>
+      </tiles:insert>
     </c:forEach>
+    
+    <%-- All other references and collections --%>
     <im:heading id="Misc">
       Miscellaneous
     </im:heading>
@@ -236,8 +222,9 @@
         <tiles:put name="object" beanName="object"/>
         <tiles:put name="aspect" value="Miscellaneous"/>
       </tiles:insert>
-    </im:body>        
-
+    </im:body>
+    
+    <%-- Add to bag --%>
     <div class="body">
       <c:if test="${!empty PROFILE.savedBags}">
         <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">

@@ -563,6 +563,9 @@
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
 
+    <action path="/initObjectDetailsAspect"
+            type="org.intermine.web.results.ObjectDetailsAspectController"/>
+
     <action path="/initBagDetails"
             type="org.intermine.web.results.BagDetailsController"/>
 
