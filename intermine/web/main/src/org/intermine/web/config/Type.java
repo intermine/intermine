@@ -86,7 +86,12 @@ public class Type
      */
     public void addLongDisplayer(Displayer disp) {
         longDisplayers.add(disp);
-        String aspects[] = StringUtils.split(disp.getAspects(), ',');
+        String aspects[];
+        if (StringUtils.isEmpty(disp.getAspects())) {
+            aspects = new String[]{""};
+        } else {
+            aspects = StringUtils.split(disp.getAspects(), ',');
+        }
         for (int i = 0; i < aspects.length; i++) {
             String aspect = aspects[i].trim();
             List displayers = (List) aspectDisplayers.get(aspect);
