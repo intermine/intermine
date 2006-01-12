@@ -61,7 +61,9 @@ public class TemplateListHelper
                 if (StringUtils.equals(aspect, aspect2)) {
                     TemplateQuery tq = (TemplateQuery) 
                         p.getSavedTemplates().get(tag.getObjectIdentifier());
-                    templates.put(tq.getName(), tq);
+                    if (tq != null) {
+                        templates.put(tq.getName(), tq);
+                    }
                 }
             }
         }
