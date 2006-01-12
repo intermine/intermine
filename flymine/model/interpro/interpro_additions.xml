@@ -2,7 +2,7 @@
 <classes>
 
     <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-        <collection name="proteinFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
+        <collection name="proteinFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" reverse-reference="proteins"/>
     </class>
 
     <class name="org.flymine.model.genomic.ProteinFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
@@ -10,7 +10,7 @@
         <attribute name="identifier" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
         <attribute name="shortName" type="java.lang.String"/>
-        <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true"/>
+        <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="proteinFeatures"/>
         <collection name="parentFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
         <collection name="childFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
         <collection name="contains" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
