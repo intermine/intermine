@@ -16,12 +16,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Comparator;
+import java.lang.reflect.Constructor;
 
 import org.intermine.InterMineException;
 import org.intermine.util.XmlUtil;
@@ -87,7 +90,7 @@ public class MageDataTranslator extends DataTranslator
 
     // genomic:Sample -> genomic:SampleCharacteristics
     protected Map sampleToChars = new HashMap();
-    protected Set assays = new HashSet();
+    protected Map assays = new HashMap();
 
     protected Map clones = new HashMap(); //cloneItem identifier, cloneItem
     protected Map cloneMap = new HashMap();//cloneIdentifier, cloneItem
@@ -98,6 +101,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map cloneToResults = new HashMap();
     protected Map sampleToLabel = new HashMap();
     protected Map exptToDataSet = new HashMap();
+    protected Map exptToAssays = null;
 
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
@@ -122,6 +126,13 @@ public class MageDataTranslator extends DataTranslator
         LOG.info(config);
     }
 
+    /**
+     * Return the namespace of the target model.
+     * @return the target namespace
+     */
+    public String getTgtNamespace() {
+        return this.tgtNs;
+    }
 
     /**
      * Read in a properties file with additional information about experiments.  Key is
@@ -151,6 +162,19 @@ public class MageDataTranslator extends DataTranslator
             String exptName = key.substring(0, key.indexOf("."));
             String propName = key.substring(key.indexOf(".") + 1);
 
+            if (propName.equals("assayOrderClass")) {
+                try {
+                    Class tmp = Class.forName(value);
+                    LOG.info("assayOrderClass = " + tmp.getName());
+                    if (!(Comparator.class.isAssignableFrom(tmp))) {
+                        throw new IllegalArgumentException("assayOrderClass: " + value
+                                                          + " is not a Comparator!");
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalArgumentException("Unable to find Comparator: "
+                                                       + value + ", for Experiment: " + key);
+                }
+            }
             addToMap(config, exptName, propName, value);
 
             // also set up a map of any expt.materialIdType config values found,
@@ -161,7 +185,15 @@ public class MageDataTranslator extends DataTranslator
         }
     }
 
-    private void addToMap(Map config, String group, String key, String value) {
+    /**
+     * Add an entry to nester map of the form:
+     * config = [group, [key, value]]
+     * @param config the outer map
+     * @param group key for outer map
+     * @param key key to inner map
+     * @param value value for inner map
+     */
+    protected void addToMap(Map config, String group, String key, String value) {
         Map exptConfig = (Map) config.get(group);
         if (exptConfig == null) {
             exptConfig = new HashMap();
@@ -225,7 +257,11 @@ public class MageDataTranslator extends DataTranslator
             tgtItemWriter.store(ItemHelper.convert(processMicroArrayResult(holder)));
         }
 
-        i = processMicroArrayAssays().iterator();
+        try {
+            i = processMicroArrayAssays().iterator();
+        } catch (Exception e) {
+            throw new InterMineException(e);
+        }
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
@@ -412,10 +448,10 @@ public class MageDataTranslator extends DataTranslator
          throws ObjectStoreException {
 
          if (srcItem.hasAttribute("identifier")) {
-             tgtItem.addAttribute(new Attribute("name",
-                     srcItem.getAttribute("identifier").getValue()));
+             String identifier = srcItem.getAttribute("identifier").getValue();
+             tgtItem.addAttribute(new Attribute("name", identifier));
+             assays.put(tgtItem.getIdentifier(), tgtItem);
          }
-         assays.add(tgtItem);
      }
 
 
@@ -510,7 +546,8 @@ public class MageDataTranslator extends DataTranslator
         }
 
         // if (srcItem.hasReference("compositeSequence")) {
-        //    holder.reporterId = identifierToInt(srcItem.getReference("compositeSequence").getRefId());
+        //    holder.reporterId = identifierToInt(srcItem.getReference("compositeSequence")
+        //            .getRefId());
         //}
         if (srcItem.hasReference("quantitationType")) {
             Item qtItem = getReference(srcItem, "quantitationType");
@@ -704,14 +741,6 @@ public class MageDataTranslator extends DataTranslator
                 throw new IllegalArgumentException("Unable to find label for sample: "
                      + sampleId + " srcItem " + srcItem.getAttribute("identifier").getValue());
             }
-            //  try {
-//                  if (label != null) {
-//                      sampleToLabel.put(sampleId, label);
-//                  }
-//              } catch (IllegalArgumentException e){
-//                  System.err.println("Unable to find label for sample: "+sampleId);
-
-//              }
         }
     }
 
@@ -969,17 +998,19 @@ public class MageDataTranslator extends DataTranslator
     }
 
    /**
-     * got map fo assays
+     * got map of assays
      * add experiment reference and sample1, sample2 attribute
      * @return assay only once for the same item
+     * @throws Exception if anything goes wrong
      */
-    protected Set processMicroArrayAssays() {
-        Iterator assayIter = assays.iterator();
+    protected Collection processMicroArrayAssays() throws Exception {
+        Iterator assayIter = assays.values().iterator();
         while (assayIter.hasNext()) {
             Item assay = (Item) assayIter.next();
             String assayId = assay.getIdentifier();
-            if (assayToExperiment.containsKey(assayId)) {
-                assay.setReference("experiment", (String) assayToExperiment.get(assayId));
+            String experimentId = (String) assayToExperiment.get(assayId);
+            if (experimentId != null) {
+                assay.setReference("experiment", experimentId);
             }
 
             if (assayToSamples.containsKey(assayId)) {
@@ -1021,10 +1052,55 @@ public class MageDataTranslator extends DataTranslator
                                                            + " or sample2 (" + sample2Label + ").");
                     }
                 }
+
+            }
+            if (experimentId != null) {
+                // set the order of this assay in the experiment
+                String order = getAssayOrder(assay);
+                if (!order.equals("")) {
+                    assay.setAttribute("displayOrder", getAssayOrder(assay));
+                }
+                LOG.info("Assay: " + assay.getAttribute("name").getValue() + " has order: "
+                          + assay.getAttribute("displayOrder").getValue());
             }
         }
-        return assays;
+        return assays.values();
     }
+
+    private String getAssayOrder(Item assay) throws Exception {
+        String expt = (String) assayToExperiment.get(assay.getIdentifier());
+
+        if (exptToAssays == null) {
+            exptToAssays = new HashMap();
+            Iterator iter = assayToExperiment.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String assayId = (String) entry.getKey();
+                String exptId = (String) entry.getValue();
+                TreeSet orderedAssays = (TreeSet) exptToAssays.get(exptId);
+                if (orderedAssays == null) {
+
+                    String assayOrderClass = getConfig((String) assayToExpName.get(assayId),
+                                                       "assayOrderClass");
+                    Class comparatorCls = DefaultAssayComparator.class;
+                    if (assayOrderClass != null) {
+                        comparatorCls = Class.forName(assayOrderClass);
+                    }
+                    Constructor con = comparatorCls.getConstructor(new Class[]
+                        {MageDataTranslator.class});
+                    DefaultAssayComparator comparator = (DefaultAssayComparator)
+                        con.newInstance(new Object[] {this});
+                    orderedAssays = new TreeSet(comparator);
+                    exptToAssays.put(exptId, orderedAssays);
+                }
+                orderedAssays.add(assays.get(assayId));
+            }
+        }
+
+        List assayList = new ArrayList((Collection) exptToAssays.get(expt));
+        return "" + assayList.indexOf(assay);
+    }
+
 
     /**
      * @param id sample id
@@ -1431,6 +1507,10 @@ public class MageDataTranslator extends DataTranslator
 
         descSet = new HashSet();
 
+        path = new ItemPath("Reporter.controlType", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("Reporter.failTypes", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
         desc = new ItemPrefetchDescriptor("Reporter.featureReporterMaps");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("featureReporterMaps",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
@@ -1461,18 +1541,10 @@ public class MageDataTranslator extends DataTranslator
 
         paths.put(srcNs + "Reporter", descSet);
 
-        //path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
-//         path = new ItemPath(
-//               "Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
-//         descSet.add(path.getItemPrefetchDescriptor());
-//         path = new ItemPath("Reporter.controlType", srcNs);
-//         descSet.add(path.getItemPrefetchDescriptor());
-//         path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
-//         descSet.add(path.getItemPrefetchDescriptor());
-//         path = new ItemPath(
-//               "Reporter.immobilizedCharacteristics.type.sequenceDatabases.database", srcNs);
-//         descSet.add(path.getItemPrefetchDescriptor());
-//         paths.put(srcNs + "Reporter", descSet);
+        path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
+        path = new ItemPath(
+               "Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
 
         return paths;
     }
