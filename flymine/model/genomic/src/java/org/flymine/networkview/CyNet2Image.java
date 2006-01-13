@@ -181,16 +181,18 @@ public class CyNet2Image
      */
     private static Image createSingleNodeImage(String protein) {
         String line1 = "No interactions";
-        String line2 = "found for protein";
+        String line2 = "with other proteins";
+        String line3 = "found for protein";
         BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) img.getGraphics();
         g.setBackground(Color.WHITE);
         g.clearRect(0, 0, 200, 200);
         g.setColor(Color.BLACK);
         g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 20));
-        g.drawString(line1, 20, 55);
-        g.drawString(line2, 10, 95);
-        g.drawString(protein, 60, 145);
+        g.drawString(line1, 20, 40);
+        g.drawString(line2, 1, 80);
+        g.drawString(line3, 10, 120);
+        g.drawString(protein, 60, 165);
         return img;
     }
     
@@ -340,25 +342,25 @@ public class CyNet2Image
 
         FlyNetwork fn = new FlyNetwork();
         FlyNode n1 = new FlyNode("Q9WV19");
-        FlyNode n2 = new FlyNode("node2");
-        FlyNode n3 = new FlyNode("node3");
-        FlyNode n4 = new FlyNode("node4");
-        FlyNode n5 = new FlyNode("node5");
-        FlyEdge e1 = new FlyEdge(n1, n2);
-        FlyEdge e2 = new FlyEdge(n2, n2);
-        FlyEdge e3 = new FlyEdge(n2, n3);
-        FlyEdge e4 = new FlyEdge(n3, n4);
-        FlyEdge e5 = new FlyEdge(n3, n5);
+//        FlyNode n2 = new FlyNode("node2");
+//        FlyNode n3 = new FlyNode("node3");
+//        FlyNode n4 = new FlyNode("node4");
+//        FlyNode n5 = new FlyNode("node5");
+//        FlyEdge e1 = new FlyEdge(n1, n2);
+        FlyEdge e2 = new FlyEdge(n1, n1);
+//        FlyEdge e3 = new FlyEdge(n2, n3);
+//        FlyEdge e4 = new FlyEdge(n3, n4);
+//        FlyEdge e5 = new FlyEdge(n3, n5);
         fn.addNode(n1);
-        fn.addNode(n2);
-        fn.addNode(n3);
-        fn.addNode(n4);
-        fn.addNode(n5);
-        fn.addEdge(e1);
+//        fn.addNode(n2);
+//        fn.addNode(n3);
+//        fn.addNode(n4);
+//        fn.addNode(n5);
+//        fn.addEdge(e1);
         fn.addEdge(e2);
-        fn.addEdge(e3);
-        fn.addEdge(e4);
-        fn.addEdge(e5);
+//        fn.addEdge(e3);
+//        fn.addEdge(e4);
+//        fn.addEdge(e5);
         
         Collection nc = FlyNetworkIntegrator.convertNodesFly2Cy(fn.getNodes());
         Collection ec = FlyNetworkIntegrator.convertEdgesFly2Cy(fn.getEdges());
