@@ -8,10 +8,11 @@
 
 <!-- objectDetailsCollectionTable -->
 
-<tiles:importAttribute name="collection"/>
+<% if (pageContext.getAttribute("org.apache.struts.taglib.tiles.CompContext", PageContext.REQUEST_SCOPE) != null) { %>
+  <tiles:importAttribute name="collection"/>
+<% } %>
 
 <html:xhtml/>
-
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
   <tr>
@@ -22,7 +23,7 @@
     <table border="0" cellspacing="0" class="refSummary" align="right">
       <thead style="text-align: center">
         <tr>
-          <td width="10px">
+          <td width="10px"> 
             <fmt:message key="objectDetails.class"/>
           </td>
           <c:forEach items="${collection.table.columnNames}" var="fd"
@@ -87,5 +88,18 @@
     </table>
   </td></tr>
 </table>
+
+<div class="refSummary">
+  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
+    <c:choose>
+      <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
+        <fmt:message key="results.showallintable"/>
+      </c:when>
+      <c:otherwise>
+        <fmt:message key="results.showintable"/>
+      </c:otherwise>
+    </c:choose>
+  </html:link>]
+</div>
 
 <!-- /objectDetailsCollectionTable -->

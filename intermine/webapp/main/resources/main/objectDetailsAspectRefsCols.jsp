@@ -14,6 +14,7 @@
 <tiles:importAttribute name="aspect"/>
 
 
+
 <table border="0">
   <c:if test="${!empty aspectRefsAndCollections[aspect]}">
     <c:forEach items="${aspectRefsAndCollections[aspect]}" var="entry">
@@ -26,14 +27,14 @@
           <div style="white-space:nowrap">
             <c:choose>
               <c:when test="${verbose && collection.size > 0}">
-                <html:link action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
-                  <img border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
+                <html:link onclick="return toggleCollectionVisibility('${aspect}', '${fieldName}', '${object.object.id}')"  action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
+                  <img id="img_${aspect}_${fieldName}" border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
                   <span class="collectionField">${fieldName}</span>
                 </html:link>
               </c:when>
               <c:when test="${collection.size > 0}">
-                <html:link action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
-                  <img border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
+                <html:link onclick="return toggleCollectionVisibility('${aspect}', '${fieldName}', '${object.object.id}')"  action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
+                  <img id="img_${aspect}_${fieldName}" border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
                   <span class="collectionField">${fieldName}</span>
                 </html:link>
                 <c:if test="${collection.size == 1}">
@@ -61,7 +62,7 @@
           <span class="collectionDescription ${collection.size == 0 ? 'nullReferenceField' : ''}">
             ${collection.size} <span class="type">${collection.descriptor.referencedClassDescriptor.unqualifiedName}</span>
           </span>
-          <c:if test="${collection.size == 1 && empty object.verbosity[aspectAndField]}">
+          <c:if test="${collection.size == 1 && !verbose}">
             [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}_${collection.table.ids[0]}">
               <fmt:message key="results.details"/>
             </html:link>]
@@ -84,26 +85,15 @@
           </c:choose>
         </td>
       </tr>
-      <c:if test="${verbose && collection.size > 0}">
+      <c:if test="${collection.size > 0}">
         <tr>
-          <td colspan="2">
-            
-            <tiles:insert page="/objectDetailsCollectionTable.jsp">
-              <tiles:put name="collection" beanName="collection"/>
-            </tiles:insert>
-            
-            <div class="refSummary">
-              [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;pageSize=25&amp;trail=${param.trail}">
-                <c:choose>
-                  <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-                    <fmt:message key="results.showallintable"/>
-                  </c:when>
-                  <c:otherwise>
-                    <fmt:message key="results.showintable"/>
-                  </c:otherwise>
-                </c:choose>
-              </html:link>]
-            </div>
+          <td colspan="2" id="coll_${aspect}_${fieldName}">
+            <c:if test="${verbose}">
+              <tiles:insert page="/objectDetailsCollectionTable.jsp">
+                <tiles:put name="collection" beanName="collection"/>
+                <tiles:put name="object" beanName="object"/>
+              </tiles:insert>
+            </c:if>
           </td>
         </tr>
       </c:if>

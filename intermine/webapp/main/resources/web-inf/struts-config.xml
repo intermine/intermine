@@ -263,6 +263,7 @@
             parameter="method">
       <forward name="objectDetails" path="/objectDetails.do" redirect="true"/>
       <forward name="results" path="results.page"/>
+      <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
     </action>
     
     <action path="/editTemplate"
