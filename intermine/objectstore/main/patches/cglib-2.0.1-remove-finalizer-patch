@@ -1,0 +1,27 @@
+*** src/proxy/net/sf/cglib/proxy/Enhancer.java.~1~	2004-04-17 21:28:54.000000000 +0100
+--- src/proxy/net/sf/cglib/proxy/Enhancer.java	2005-01-26 17:38:34.000000000 +0000
+***************
+*** 56,61 ****
+--- 56,62 ----
+  import java.lang.reflect.Constructor;
+  import java.lang.reflect.InvocationTargetException;
+  import java.lang.reflect.Method;
++ import java.lang.reflect.Member;
+  import java.util.*;
+  import net.sf.cglib.core.*;
+  import net.sf.cglib.transform.*;
+***************
+*** 482,487 ****
+--- 483,494 ----
+          CollectionUtils.filter(actualMethods, new VisibilityPredicate(sc, true));
+          CollectionUtils.filter(actualMethods, new DuplicatesPredicate());
+          CollectionUtils.filter(actualMethods, new RejectModifierPredicate(Constants.ACC_FINAL));
++         CollectionUtils.filter(actualMethods, new Predicate() {
++             public boolean evaluate(Object arg) {
++                 return !((Member)arg).getName().equals("finalize");
++             }
++         });
++ 
+  
+          final Map classInfoCache = new HashMap();
+          List methods = CollectionUtils.transform(actualMethods, new Transformer() {
