@@ -10,8 +10,13 @@ package org.flymine.networkview;
  *
  */
 
+import giny.util.SpringEmbeddedLayouter;
+import giny.view.EdgeView;
+import giny.view.NodeView;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -40,9 +45,7 @@ import cytoscape.visual.VisualStyle;
 import cytoscape.visual.mappings.ContinuousMapping;
 import cytoscape.visual.mappings.DiscreteMapping;
 import cytoscape.visual.mappings.PassThroughMapping;
-import giny.util.SpringEmbeddedLayouter;
-import giny.view.EdgeView;
-import giny.view.NodeView;
+
 
 /**
  * utility class to create a image from the network
@@ -97,6 +100,16 @@ public class CyNet2Image
 
         // create view of the network
         pnv = new PhoebeNetworkView(net, "tmpview");
+        int nodeCount = pnv.getNodeViewCount();
+        
+        // do not create network image if there is just a single node that 
+        // has no interactions
+        // instead create default image
+        if (nodeCount == 1) {
+            NodeView nv = (NodeView) pnv.getNodeViewsList().get(0);
+            String s = nv.getNode().getIdentifier();
+            return CyNet2Image.createSingleNodeImage(s);
+        }
 
         // try to apply the specified userstyle from the specified vizmap properties
         userStyle: if (vizpropsFile != null && style != null) {
@@ -157,11 +170,30 @@ public class CyNet2Image
         }
 
         // create a image from canvas
-        image = pnv.getCanvas().getLayer().toImage(width, height, bgColor);
 
+        image = pnv.getCanvas().getLayer().toImage(width, height, bgColor);
         return (image);
     }
 
+    /**
+     * this method will create a default image showing some text
+     * @return a default image
+     */
+    private static Image createSingleNodeImage(String protein) {
+        String line1 = "No interactions";
+        String line2 = "found for protein";
+        BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = (Graphics2D) img.getGraphics();
+        g.setBackground(Color.WHITE);
+        g.clearRect(0, 0, 200, 200);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 20));
+        g.drawString(line1, 20, 55);
+        g.drawString(line2, 10, 95);
+        g.drawString(protein, 60, 145);
+        return img;
+    }
+    
     /**
      * Applies a default style 
      * @param pnv networkview to apply the default style to
@@ -174,6 +206,12 @@ public class CyNet2Image
             nv.setShape(NodeView.ROUNDED_RECTANGLE);
             nv.setUnselectedPaint(Color.YELLOW);
             nv.setBorderPaint(Color.black);
+            Font x = new Font(nv.getLabel().getFont().getFontName(), 
+                    Font.BOLD, 26);
+            nv.setBorderWidth(0.5f);
+            nv.setHeight(30);
+            nv.setWidth(120);
+            nv.getLabel().setFont(x);
         }
         for (Iterator ie = pnv.getEdgeViewsIterator(); ie.hasNext();) {
             EdgeView ev = (EdgeView) ie.next();
@@ -188,7 +226,7 @@ public class CyNet2Image
     }
 
     /**
-     * saves a image to a file
+     * saves a image to a file in png format
      * @param img image to save
      * @param filepath location to save the file to
      * 
@@ -239,15 +277,14 @@ public class CyNet2Image
         SpringEmbeddedLayouter lay;
         // need the same size as in CyNet2Image, so the result of the layouter 
         // will look the same as the image created with the CyNet2Image utility
-        int size = 1000;
+        int size = 350;
         pnv.getCanvas().setSize(size, size);
-
         // some calculations needed to spread the nodes over the canvas
         int nodeCount = pnv.getNodeViewCount();
-        int nodesPerRow = (new Double(Math.sqrt(nodeCount))).intValue() + 1;
+        int nodesPerRow = (new Double(Math.sqrt(nodeCount))).intValue();
 
-        int hSpace = size / (nodesPerRow + 1);
-        int wSpace = size / (nodesPerRow + 1);
+        int hSpace = size / (nodesPerRow);
+        int wSpace = size / (nodesPerRow);
 
         int wPos = wSpace;
         int hPos = hSpace;
@@ -281,44 +318,61 @@ public class CyNet2Image
      * @param args arguments to the program
      */
     public static void main(String[] args) {
-        //String vizFile = "/home/flo/.cytoscape/vizmap.props";
-        //String netFile = "/home/flo/FlyMine/Cytoscape/cytoscape_testdata2.sif";
-        //
-        //try {
-        //    CyNetwork net = Cytoscape.createNetworkFromFile(netFile);
-        //    Image i1 = CyNet2Image.convertNetwork2Image(net, 500, 500, vizFile, "test1");
-        //    Image i2 = CyNet2Image.convertNetwork2Image(net);
-        //    image2File(i1, "/tmp/test1.png");
-        //    image2File(i2, "/tmp/test2.png");
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
+        int iSize = 350;
+        int iSmallSize = 200;
+//        String vizFile = "/home/flo/.cytoscape/vizmap.props";
+//        String netFile = "/home/flo/FlyMine/Cytoscape/cytoscape_testdata2.sif";
+//        
+//        try {
+//            CyNetwork net = Cytoscape.createNetworkFromFile(netFile);
+////            Image i1 = CyNet2Image.convertNetwork2Image(net, 500, 500, vizFile, "test1");
+//            Image i1 = CyNet2Image.convertNetwork2Image(net, iSize, iSize, null, null);
+//            image2File(i1, "/tmp/test1img.png");
+//            Image i1sf = i1.getScaledInstance(iSmallSize, iSmallSize, Image.SCALE_FAST);
+//            image2File(i1sf, "/tmp/test1sfimg.png");
+//            Image i1ss = i1.getScaledInstance(iSmallSize, iSmallSize, Image.SCALE_SMOOTH);
+//            image2File(i1ss, "/tmp/test1ssimg.png");
+//            Image i2 = CyNet2Image.convertNetwork2Image(net);
+//            image2File(i2, "/tmp/test2img.png");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         FlyNetwork fn = new FlyNetwork();
-        FlyNode n1 = new FlyNode("node1");
+        FlyNode n1 = new FlyNode("Q9WV19");
         FlyNode n2 = new FlyNode("node2");
         FlyNode n3 = new FlyNode("node3");
         FlyNode n4 = new FlyNode("node4");
+        FlyNode n5 = new FlyNode("node5");
         FlyEdge e1 = new FlyEdge(n1, n2);
         FlyEdge e2 = new FlyEdge(n2, n2);
         FlyEdge e3 = new FlyEdge(n2, n3);
         FlyEdge e4 = new FlyEdge(n3, n4);
+        FlyEdge e5 = new FlyEdge(n3, n5);
         fn.addNode(n1);
         fn.addNode(n2);
         fn.addNode(n3);
         fn.addNode(n4);
+        fn.addNode(n5);
         fn.addEdge(e1);
         fn.addEdge(e2);
         fn.addEdge(e3);
         fn.addEdge(e4);
-
+        fn.addEdge(e5);
+        
         Collection nc = FlyNetworkIntegrator.convertNodesFly2Cy(fn.getNodes());
         Collection ec = FlyNetworkIntegrator.convertEdgesFly2Cy(fn.getEdges());
         CyNetwork net = Cytoscape.createNetwork(nc, ec, "testnet");
 
-        Image i = CyNet2Image.convertNetwork2Image(net);
         try {
-            image2File(i, "/tmp/test.png");
+            Image i3 = CyNet2Image.convertNetwork2Image(net, iSize, iSize, null, null);
+            image2File(i3, "/tmp/test3img.png");
+            Image i3sf = i3.getScaledInstance(iSmallSize, iSmallSize, Image.SCALE_FAST);
+            image2File(i3sf, "/tmp/test3sfimg.png");
+            Image i3ss = i3.getScaledInstance(iSmallSize, iSmallSize, Image.SCALE_SMOOTH);
+            image2File(i3ss, "/tmp/test3ssimg.png");
+            Image i4 = CyNet2Image.convertNetwork2Image(net);
+            image2File(i4, "/tmp/test4img.png");
         } catch (IOException e) {
             e.printStackTrace();
         }
