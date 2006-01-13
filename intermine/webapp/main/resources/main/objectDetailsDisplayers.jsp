@@ -11,9 +11,16 @@
 
 <tiles:importAttribute name="displayObject"/>
 <tiles:importAttribute name="aspect"/>
+<tiles:importAttribute name="heading" ignore="true"/>
 
 <c:forEach items="${displayObject.clds}" var="cld">
   <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[aspect]) > 0}">
+    <c:if test="${heading == true}">
+      <div class="heading">
+        <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
+      </div>
+      <div class="body">
+    </c:if>
     <c:forEach items="${WEBCONFIG.types[cld.name].aspectDisplayers[aspect]}" var="displayer">
       <c:set var="object_bk" value="${object}"/>
       <c:set var="object" value="${displayObject.object}" scope="request"/>
@@ -21,6 +28,9 @@
       <tiles:insert beanName="displayer" beanProperty="src"/><br/>
       <c:set var="object" value="${object_bk}" scope="request"/>
     </c:forEach>
+    <c:if test="${heading == true}">
+      </div>
+    </c:if>
   </c:if>
 </c:forEach>
 

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
+import org.intermine.web.TemplateListController;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -44,6 +45,12 @@ public class ObjectDetailsAspectController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         DisplayObject dobj = (DisplayObject) context.getAttribute("displayObject");
         
+        ComponentContext cc = new ComponentContext();
+        cc.putAttribute("type", "global");
+        cc.putAttribute("aspect", context.getAttribute("aspect"));
+        cc.putAttribute("displayObject", dobj);
+        
+        new TemplateListController().execute(cc, mapping, form, request, response);
         return null;
     }
 

@@ -12,13 +12,17 @@ pre.stacktrace {
  overflow: auto;
 }
 
+div.error_body {
+  background-color: white;
+  border: solid 1px #bbb;
+}
+
 </style>
 
 <!-- error.jsp -->
 <html:xhtml/>
 
-<im:box titleKey="error.title">
-
+<div class="error_body">
 <div class="body"><b><fmt:message key="error.stacktrace"/></b></div>
 
 <div class="body">
@@ -27,6 +31,6 @@ pre.stacktrace {
  </pre>
 </div>
 
-</im:box>
+</div>
 
 <!-- /error.jsp =-->

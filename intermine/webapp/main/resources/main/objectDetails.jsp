@@ -8,6 +8,26 @@
 <!-- objectDetails.jsp -->
 <html:xhtml/>
 
+<script>
+  
+function toggleCollectionVisibility(aspect, field, object_id) {
+
+  var img = $('img_'+aspect+'_'+field).src;
+  if (img.indexOf('images/minus.gif') >= 0) {
+    $('img_'+aspect+'_'+field).src='images/plus.gif';
+    $('coll_'+aspect+'_'+field).innerHTML='';
+  }
+  else
+    $('img_'+aspect+'_'+field).src='images/minus.gif';
+    
+  new Ajax.Updater('coll_'+aspect+'_'+field, '<html:rewrite action="/modifyDetails"/>',
+    {parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id});
+    
+  return false;
+}
+
+</script>
+
 <c:set var="helpUrl"
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
 
@@ -139,16 +159,11 @@
         </c:if>
         
         <%-- Long displayers not tied to a particular aspect --%>
-        <im:heading id="further">
-          <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
-        </im:heading>
-        <im:vspacer height="3"/>
-        <im:body id="further">
           <tiles:insert page="/objectDetailsDisplayers.jsp">
             <tiles:put name="aspect" value=""/>
             <tiles:put name="displayObject" beanName="object"/>
+            <tiles:put name="heading" value="true"/>
           </tiles:insert>
-        </im:body>
 
         <%-- Fields that are set to 'sectionOnRight' --%>
         <c:forEach items="${object.attributes}" var="entry">

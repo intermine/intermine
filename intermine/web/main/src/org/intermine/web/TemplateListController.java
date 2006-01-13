@@ -64,7 +64,7 @@ public class TemplateListController extends TilesAction
                             fieldExprs);
                 request.setAttribute("fieldExprMap", fieldExprs);
                 request.setAttribute("templateCounts", calcTemplateCounts(templates, fieldExprs,
-                        object, session));
+                        object.getObject().getId(), session));
             }
         } else if (StringUtils.equals("user", type)) {
             //templates = profile.get
@@ -75,12 +75,11 @@ public class TemplateListController extends TilesAction
         return null;
     }
     
-    private Map calcTemplateCounts(Set templates, Map fieldExprs, DisplayObject displayObject,
+    private Map calcTemplateCounts(Set templates, Map fieldExprs, Integer objectId,
             HttpSession session) {
         ServletContext servletContext = session.getServletContext();
         Map newTemplateCounts = new TreeMap();
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();        
-        Integer objectId = displayObject.getObject().getId();
+        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
                 
         for (Iterator iter = templates.iterator(); iter.hasNext(); ) {
             TemplateQuery template = (TemplateQuery) iter.next();

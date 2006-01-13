@@ -385,6 +385,15 @@ public class DisplayObject
     public void setVerbosity(String fieldName, boolean verbose) {
         verbosity.put(fieldName, verbose ? fieldName : null);
     }
+    
+    /**
+     * Get verbosity of a field
+     * @param aspectAndField aspect + fieldName
+     * @return true or false
+     */
+    public boolean isVerbose(String aspectAndField) {
+        return verbosity.get(aspectAndField) != null;
+    }
 
     /**
      * Create the Maps and Lists returned by the getters in this class.

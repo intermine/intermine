@@ -98,8 +98,26 @@ public class ModifyDetails extends DispatchAction
                                    HttpServletRequest request,
                                    HttpServletResponse response)
         throws Exception {
-        verbosify(mapping, form, request, response);
-        return mapping.findForward("objectDetailsCollectionTable");
+        HttpSession session = request.getSession();
+        String fieldName = request.getParameter("field");
+        String trail = request.getParameter("trail");
+        String aspect = request.getParameter("aspect");
+        DisplayObject object = getDisplayObject(session, request.getParameter("id"));
+        Object collection = object.getRefsAndCollections().get(fieldName);
+        
+        String key = aspect + "_" + fieldName;
+        
+        object.setVerbosity(key, !object.isVerbose(key));
+        
+        request.setAttribute("object", object);
+        request.setAttribute("trail", trail);
+        request.setAttribute("collection", collection);
+        
+        if (object.isVerbose(key)) {
+            return mapping.findForward("objectDetailsCollectionTable");
+        } else {
+            return null;
+        }
     }
     
     /**
