@@ -91,6 +91,7 @@ public class MageConverter extends FileConverter
 
     protected HashMap seenMap = new LinkedHashMap();
     protected HashMap refMap = new LinkedHashMap();
+    protected HashMap classmap = new HashMap();
     protected ItemFactory itemFactory;
     protected Set qTypes = new HashSet();
     protected int id = 0;
@@ -114,6 +115,8 @@ public class MageConverter extends FileConverter
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());
+    
+       
     }
 
     /**
@@ -171,8 +174,20 @@ public class MageConverter extends FileConverter
     /**
      * @see FileConverter#process
      */
-    public void close() throws Exception {
-
+    public void close() throws Exception { 
+        Iterator i = refMap.keySet().iterator();
+        while (i.hasNext()) {
+            String mageObjId = (String) i.next();
+            String itemIdentifier = (String) refMap.get(mageObjId);
+            String className = (String) classmap.get(itemIdentifier.substring(0, 
+                               itemIdentifier.indexOf("_")));
+            Item item = new Item();
+            item.setClassName(MAGE_NS + className);
+            item.setImplementations("");
+            item.setIdentifier(itemIdentifier);
+            item.setAttribute("identifier", mageObjId);
+            storeItem(item);
+        }
     }
 
 
@@ -187,6 +202,7 @@ public class MageConverter extends FileConverter
     protected int createItem(Object obj, boolean create) throws Exception {
         boolean storeItem = true;
         String objId = null;
+        String itemIdentifier = null; //item identifier with name space
         int itemId = -1; //item identifier without namespace
         Integer intItemId = new Integer(itemId);
 
@@ -216,15 +232,21 @@ public class MageConverter extends FileConverter
             //for storing those objects
             // are reffed in one xml file but not defined in the same file
             if (objId != null && refMap.containsKey(objId)) {
-                itemId = ((Integer) refMap.get(objId)).intValue();
-                storeItem = false;
+                //itemId = ((Integer) refMap.get(objId)).intValue();
+                itemIdentifier = ((String) refMap.get(objId));
+                itemId = Integer.parseInt(itemIdentifier.substring(
+                         itemIdentifier.indexOf("_") + 1));
             } else {
                 itemId = id++;
+                itemIdentifier = alias(className) + "_" + itemId;
             }
 
-            item.setIdentifier(alias(className) + "_" + itemId);
+            item.setIdentifier(itemIdentifier);
+            if (!classmap.containsKey(alias(className))) {
+                classmap.put(alias(className), className);
+            }
             intItemId = new Integer(itemId);
-            //seenMap: key=objId/Obj value=item.identifier
+            //seenMap: key=objId/Obj value=item.identifier without namespace
             //seenMap only store item that is defined.
             //objId will be removed in later stage if not defined
             if (objId != null) {
@@ -271,11 +293,12 @@ public class MageConverter extends FileConverter
                                     && checkNameValueType(mageObj, map, "value") == null
                                     && map.containsKey("type")
                                     && checkNameValueType(mageObj, map, "type") == null) {
-                                    refMap.put(objId, intItemId);
+                                    refMap.put(objId, itemIdentifier);
                                     seenMap.remove(objId);
                                     createItem(mageObj, false);
                                 }
-                            } else if (!mageObj.getClass().getName().endsWith("MismatchInformation")){
+                            } else if (!mageObj.getClass().getName().endsWith(
+                                "MismatchInformation")) {
                                 col.addRefId(findItemIdentifier(mageObj, true));
                             }
                         }
@@ -295,7 +318,6 @@ public class MageConverter extends FileConverter
                         } else if (!returnName.equals("org.biomage.DesignElement.Position")
                              && !returnName.equals("org.biomage.Measurement.DistanceUnit")) {
                             item.setReference(info.getName(), findItemIdentifier(value, true));
-
                         }
                     } else { // if (!info.getName().equals("identifier")) {
                         item.setAttribute(info.getName(), escapeQuotes(value.toString()));
@@ -303,7 +325,6 @@ public class MageConverter extends FileConverter
                     }
                 }
             }
-
         }
 
 
@@ -319,9 +340,10 @@ public class MageConverter extends FileConverter
             // an exception just in case.
             System.err .println("BioDataCube.Order " + order.getValue());
             if (order.getValue() != 2) {
-                throw new IllegalArgumentException("BioDataCube has order other than DBQ "
-                                                   + "(was: " + order.getValue() + ")."
-                                                   + " Current code may not work.");
+                throw new IllegalArgumentException(
+                    "BioDataCube has order other than DBQ "
+                     + "(was: " + order.getValue() + ")."
+                     + " Current code may not work.");
             }
             List rowNames = null; //D
             DesignElementDimension ddimension =
@@ -381,7 +403,7 @@ public class MageConverter extends FileConverter
                             dataList.addRefId(datum.getIdentifier());
                             datum.setReference("quantitationType", findItemIdentifier(qt, true));
                             if (feature instanceof Feature) {
-                                datum.setReference("designElement",
+                                datum.setReference("feature",
                                          findItemIdentifier(feature, true));
                             } else if (feature instanceof Reporter) {
                                 datum.setReference("reporter", findItemIdentifier(feature, true));
@@ -403,9 +425,16 @@ public class MageConverter extends FileConverter
             }
         }
 
-        if (seenMap.containsKey(objId)) {
+        if (seenMap.containsKey(obj) || seenMap.containsKey(objId)) {
             storeItem = true;
+        } else {
+            storeItem = false;
         }
+
+        if (refMap.containsKey(objId) && seenMap.containsKey(objId)) {
+            refMap.remove(objId);
+        }
+
         if (storeItem) {
             storeItem(item);
         }
