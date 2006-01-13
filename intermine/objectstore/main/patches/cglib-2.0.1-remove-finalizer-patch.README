@@ -1,0 +1,3 @@
+Patch for cglib to remove the finalize() method from generated classes.
+Was originally commited in [5724].
+
