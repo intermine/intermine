@@ -43,8 +43,8 @@ import cytoscape.Cytoscape;
  */
 public class ProteinInteractionImgRenderer extends InterMineAction
 {
-    //    private int imgHeight = 300;
-    //    private int imgWidht = 500;
+    private int imgHeight = 350;
+    private int imgWidht = 350;
 
     /**
      * Method called to export a Image of protein interations to the reults page.
@@ -107,11 +107,12 @@ public class ProteinInteractionImgRenderer extends InterMineAction
         }
 
         if (net != null) {
-            // Image img = CyNet2Image.convertNetwork2Image(net, imgWidht, imgHeight, null, null);
-            Image img = CyNet2Image.convertNetwork2Image(net);
+            Image img = CyNet2Image.convertNetwork2Image(net, imgWidht, imgHeight, null, null);
+            //Image img = CyNet2Image.convertNetwork2Image(net);
             response.setContentType("image/png");
+            Image imgS = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
             OutputStream out = response.getOutputStream();
-            CyNet2Image.imageOut(img, out);
+            CyNet2Image.imageOut(imgS, out);
 
         } else {
             msg.append("network was null");
