@@ -591,7 +591,6 @@ public class MageDataTranslator extends DataTranslator
             }
         }
 
-        // PATH BioAssayDatum.quatitationType.qtItem.getClassName().endsWith("MeasuredSignal")scale
         if (srcItem.hasReference("bioAssay")) {
             Item baItem = getReference(srcItem, "bioAssay");
             if (baItem.getClassName().endsWith("MeasuredBioAssay")) {
@@ -1629,12 +1628,21 @@ public class MageDataTranslator extends DataTranslator
 
 
         descSet = new HashSet();
+        path = new ItemPath("BioAssayDatum.bioAssay", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("BioAssayDatum.feature", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("BioAssayDatum.reporter", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("BioAssayDatum.compositeSequence", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("BioAssayDatum.quantitationType.scale", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("BioAssayDatum.quantitationType.targetQuantitationType.scale",
                             srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "BioAssayDatum", descSet);
+
         //prefetch cache miss?
         descSet = new HashSet();
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial"
@@ -1662,7 +1670,6 @@ public class MageDataTranslator extends DataTranslator
                + ".measurement.unit",
                srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-
         paths.put(srcNs + "Treatment", descSet);
 
 
@@ -1674,40 +1681,56 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("Reporter.failTypes", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-        desc = new ItemPrefetchDescriptor("Reporter.featureReporterMaps");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("featureReporterMaps",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2 = new ItemPrefetchDescriptor("Reporter.featureReporterMaps.feature");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("feature",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
-        descSet.add(desc);
 
-        desc = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("immobilizedCharacteristics",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("type",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
-        desc3 = new ItemPrefetchDescriptor(
-                    "Reporter.immobilizedCharacteristics.type.sequenceDatabases");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic("sequenceDatabases",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2.addPath(desc3);
-        desc4 = new ItemPrefetchDescriptor(
-                "Reporter.immobilizedCharacteristics.type.sequenceDatabases.database");
-        desc4.addConstraint(new ItemPrefetchConstraintDynamic("database",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3.addPath(desc4);
-        descSet.add(desc);
+        path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());      
+        path = new ItemPath("Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());      
+ 
+        path = new ItemPath(
+               "Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());       
+
+
+       //  desc = new ItemPrefetchDescriptor("Reporter.featureReporterMaps");
+//         desc.addConstraint(new ItemPrefetchConstraintDynamic("featureReporterMaps",
+//                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+//         desc2 = new ItemPrefetchDescriptor("Reporter.featureReporterMaps.feature");
+//         desc2.addConstraint(new ItemPrefetchConstraintDynamic("feature",
+//                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+//         desc.addPath(desc2);
+//         descSet.add(desc);
+
+//         desc = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics");
+//         desc.addConstraint(new ItemPrefetchConstraintDynamic("immobilizedCharacteristics",
+//                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+//         desc2 = new ItemPrefetchDescriptor("Reporter.immobilizedCharacteristics.type");
+//         desc2.addConstraint(new ItemPrefetchConstraintDynamic("type",
+//                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+//         desc.addPath(desc2);
+//         desc3 = new ItemPrefetchDescriptor(
+//                     "Reporter.immobilizedCharacteristics.type.sequenceDatabases");
+//         desc3.addConstraint(new ItemPrefetchConstraintDynamic("sequenceDatabases",
+//                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+//         desc2.addPath(desc3);
+//         desc4 = new ItemPrefetchDescriptor(
+//                 "Reporter.immobilizedCharacteristics.type.sequenceDatabases.database");
+//         desc4.addConstraint(new ItemPrefetchConstraintDynamic("database",
+//                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+//         desc3.addPath(desc4);
+//         descSet.add(desc);
+
+       
 
         paths.put(srcNs + "Reporter", descSet);
 
-        path = new ItemPath("Reporter.featureReporterMaps.featureInformationSources", srcNs);
-        path = new ItemPath(
-               "Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
+        descSet = new HashSet();
+        path = new ItemPath("CompositeSequence.reporterCompositeMaps.reporterPositionSources.reporter", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
+        paths.put(srcNs + "CompositeSequence", descSet);
+
 
         return paths;
     }
