@@ -26,7 +26,7 @@
     
     <!-- Add new news at the top here -->
     
-    <item>
+    <!--item>
       <title>FlyMine is Recruiting</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -35,7 +35,7 @@
         Details&lt;/a&gt;.
       </description>
       <pubDate>Tues, 03 Jan 2006 11:31:00 GMT</pubDate>
-    </item>
+    </item-->
 
     <item>
       <title>Cambridge University Network Maintenance</title>
