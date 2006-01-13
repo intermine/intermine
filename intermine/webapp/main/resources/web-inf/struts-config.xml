@@ -375,7 +375,7 @@
             name="importTemplatesForm"
             input="import">
       <forward name="import" path="importTemplates.page"/>
-      <forward name="begin" path="/begin.do" redirect="true"/>
+      <forward name="history" path="/history.do" redirect="true"/>
     </action>
     
     <action path="/importQueryAction"
