@@ -55,25 +55,25 @@
         <node path="Protein" type="Protein">
         </node>
         <node path="Protein.primaryAccession" type="String">
-          <constraint op="=" value="P09089" description="" identifier="" code="A">
+          <constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="" code="A" editable="true">
           </constraint>
         </node>
       </query>
     </template>
-    <template name="AAD_GOidentifier2proteinInteractions" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." important="false" keywords="Proteins Protein Interaction">
+    <template name="AAD_GOidentifier2proteinInteractions" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." important="false" keywords="Proteins, Protein Interaction">
       <query name="AAD_GOidentifier2proteinInteractions" model="genomic" view="Gene.allGoAnnotation.actualGoTerm.identifier Gene.allGoAnnotation.actualGoTerm.name Gene.name Gene.organismDbId Gene.proteins.primaryAccession Gene.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Gene.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Gene.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId Gene.organism.name" constraintLogic="A and B and C">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.allGoAnnotation" type="GOAnnotation">
         </node>
         <node path="Gene.allGoAnnotation.identifier" type="String">
-          <constraint op="=" value="GO:0007568" description="" identifier="" code="A">
+          <constraint op="=" value="GO:0007568" description="Show protein interactions for proteins annotated with GO identifier:" identifier="" code="A" editable="true" >
           </constraint>
         </node>
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
+          <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" code="B" editable="true" >
           </constraint>
         </node>
         <node path="Gene.proteins" type="Protein">
@@ -125,11 +125,11 @@
       </query>
     </template>
     <template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." important="false" keywords="Proteins, Protein Interactions">
-      <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.evidence.confidence Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B">
+      <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.evidence.confidence Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B and C">
         <node path="Synonym" type="Synonym">
         </node>
         <node path="Synonym.value" type="String">
-          <constraint op="=" value="bib" description="" identifier="" code="B">
+          <constraint op="=" value="128up" description="Show the protein interactions for the protein product of gene:" identifier="Gene.identifier" editable="true" code="B">
           </constraint>
         </node>
         <node path="Synonym.subject" type="Gene">
@@ -148,6 +148,12 @@
         </node>
         <node path="Synonym.subject.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
           <constraint op="!=" value="Synonym.subject.proteins" code="A">
+          </constraint>
+        </node>
+        <node path="Synonym.subject.organism" type="Organism">
+        </node>
+        <node path="Synonym.subject.organism.name" type="String">
+          <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="C">
           </constraint>
         </node>
       </query>
@@ -177,7 +183,7 @@
         <node path="Gene.synonyms" type="Synonym">
         </node>
         <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="128up" description="" identifier="" code="A">
+          <constraint op="=" value="128up" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true" code="A">
           </constraint>
         </node>
       </query>
@@ -246,7 +252,7 @@
         </node>
       </query>
     </template>
-    <template name="AAI_Pfam2proteinStructure" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." important="false" keywords="Proteins Protein Structure">
+    <template name="AAI_Pfam2proteinStructure" description="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." important="false" keywords="Proteins, Protein Structure">
       <query name="AAI_Pfam2proteinStructure" model="genomic" view="ProteinFeature.identifier ProteinFeature.proteins.primaryAccession ProteinFeature.proteins.regions.objects.start ProteinFeature.proteins.regions.objects.end ProteinFeature.proteins.regions.structures">
         <node path="ProteinFeature" type="ProteinFeature">
         </node>
@@ -420,7 +426,7 @@
         </node>
       </query>
     </template>
-    <template name="AAO_OrthologuesWithGO2" description="Show predicted orthologues between two organisms and their GO terms." important="false" keywords="Genomics Gene Ontology, Comparative Genomics">
+    <template name="AAO_OrthologuesWithGO2" description="Show predicted orthologues between two organisms and their GO terms." important="false" keywords="Genomics, Gene Ontology, Comparative Genomics">
       <query name="AAO_OrthologuesWithGO2" model="genomic" view="Orthologue.object Orthologue.object.identifier Orthologue.object.annotations.property.identifier Orthologue.object.annotations.property.name Orthologue.subject Orthologue.subject.identifier Orthologue.subject.annotations.property.identifier Orthologue.subject.annotations.property.name">
         <node path="Orthologue" type="Orthologue">
         </node>
@@ -468,7 +474,7 @@
         </node>
       </query>
     </template>
-    <template name="AAQ_orthologues" description="Show the predicted orthologues between two organisms." important="false" keywords="Genomics Comparative Genomics">
+    <template name="AAQ_orthologues" description="Show the predicted orthologues between two organisms." important="false" keywords="Genomics, Comparative Genomics">
       <query name="AAQ_orthologues" model="genomic" view="Orthologue.object Orthologue.subject">
         <node path="Orthologue" type="Orthologue">
         </node>
@@ -490,7 +496,7 @@
         </node>
       </query>
     </template>
-    <template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." important="false" keywords="Genomics Comparative Genomics">
+    <template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." important="false" keywords="Genomics, Comparative Genomics">
       <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
         <node path="Gene" type="Gene">
         </node>
@@ -516,7 +522,7 @@
         </node>
       </query>
     </template>
-    <template name="AAS_phenotype2genesWithOrthologues" description="Search for genes with a particular RNAi phenotype and show the orthologues of these genes. (Note: RNAi phenotypes are currently only available for C. elegans)." important="false" keywords="Genomics Comparative Genomics RNAi">
+    <template name="AAS_phenotype2genesWithOrthologues" description="Search for genes with a particular RNAi phenotype and show the orthologues of these genes. (Note: RNAi phenotypes are currently only available for C. elegans)." important="false" keywords="Genomics, Comparative Genomics, RNAi">
       <query name="AAS_phenotype2genesWithOrthologues" model="genomic" view="Phenotype Phenotype.genes Phenotype.genes.organism Phenotype.genes.orthologues.subject Phenotype.genes.orthologues.subject.organism">
         <node path="Phenotype" type="Phenotype">
         </node>
@@ -526,7 +532,7 @@
         </node>
       </query>
     </template>
-    <template name="AAT_RNAiwithOrthologues" description="Search for RNAi phenotypes for a particular gene and show the predicted orthologues for this gene. (Note: RNAi phenotypes are currently only available for C. elegans genes)." important="false" keywords="Genomics Comparative Genomics RNAi">
+    <template name="AAT_RNAiwithOrthologues" description="Search for RNAi phenotypes for a particular gene and show the predicted orthologues for this gene. (Note: RNAi phenotypes are currently only available for C. elegans genes)." important="false" keywords="Genomics, Comparative Genomics, RNAi">
       <query name="AAT_RNAiwithOrthologues" model="genomic" view="Synonym.subject Synonym.subject.annotations.property Synonym.subject.orthologues.subject Synonym.subject.orthologues.subject.organism">
         <node path="Synonym" type="Synonym">
         </node>
@@ -542,7 +548,7 @@
         </node>
       </query>
     </template>
-    <template name="AAU_phenotype2genes1" description="Search for genes with a particular RNAi phenotype. (Note:  RNAi phenotypes are currently only available for C. elegans)." important="false" keywords="Genomics RNAi">
+    <template name="AAU_phenotype2genes1" description="Search for genes with a particular RNAi phenotype. (Note:  RNAi phenotypes are currently only available for C. elegans)." important="false" keywords="Genomics, RNAi">
       <query name="AAU_phenotype2genes1" model="genomic" view="Phenotype Phenotype.genes Phenotype.genes.organism">
         <node path="Phenotype" type="Phenotype">
         </node>
@@ -566,7 +572,7 @@
         </node>
       </query>
     </template>
-    <template name="AAW_gene2CERNAi" description="Search for the C. elegans orthologue for a particular gene and its RNAi phenotype." important="false" keywords="Genomics RNAi">
+    <template name="AAW_gene2CERNAi" description="Search for the C. elegans orthologue for a particular gene and its RNAi phenotype." important="false" keywords="Genomics, RNAi">
       <query name="AAW_gene2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name">
         <node path="Gene" type="Gene">
         </node>
@@ -598,7 +604,7 @@
         </node>
       </query>
     </template>
-    <template name="AAX_genes2CERNAi" description="Show the C. elegans orthologue and RNAi phenotypes for all genes from a particular organism." important="false" keywords="Genomics RNAi">
+    <template name="AAX_genes2CERNAi" description="Show the C. elegans orthologue and RNAi phenotypes for all genes from a particular organism." important="false" keywords="Genomics, RNAi">
       <query name="AAX_genes2CERNAi" model="genomic" view="Gene Gene.identifier Gene.name Gene.orthologues.subject Gene.orthologues.subject.identifier Gene.orthologues.subject.name Gene.orthologues.subject.annotations.property.RNAiCode Gene.orthologues.subject.annotations.property.name">
         <node path="Gene" type="Gene">
         </node>
@@ -723,7 +729,7 @@
         <node path="ProteinBindingSite.evidence.dataSource" type="DataSource">
         </node>
         <node path="ProteinBindingSite.evidence.dataSource.name" type="String">
-          <constraint op="=" value="FlyBase" description="" identifier="" code="A">
+          <constraint op="=" value="FlyBase" description="List all the protein binding sites annotated by:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="ProteinBindingSite.chromosomeLocation" type="Location">
@@ -898,91 +904,95 @@
         </node>
       </query>
     </template>
-    <template name="ProteinInteractions2orthologues" description="For the protein interactions of a particular organism, show the interacting proteins and their corresponding genes and the orthologues of these genes from another organism." important="false" keywords="Protein Interactions Comparative Genomics Proteins">
-      <query name="ProteinInteractions2orthologues" model="genomic" view="Protein.interactions.bait Protein.interactions.prey Protein.interactions.bait.genes Protein.interactions.prey.genes Protein.interactions.bait.genes.orthologues.subject Protein.interactions.prey.genes.orthologues.subject">
+    <template name="ProteinInteractions2orthologues" description="For the protein interactions of a particular organism, show the interacting proteins and their corresponding genes and the orthologues of these genes from another organism." important="false" keywords="Protein Interactions, Comparative Genomics, Proteins">
+      <query name="ProteinInteractions2orthologues" model="genomic" view="Protein Protein.interactionRoles.interaction.interactors.protein Protein.genes Protein.interactionRoles.interaction.interactors.protein.genes Protein.genes.orthologues.subject Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" constraintLogic="A and B and D and C">
         <node path="Protein" type="Protein">
+        </node>
+        <node path="Protein.interactionRoles" type="ProteinInteractor">
+        </node>
+        <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
+          <constraint op="!=" value="Protein" code="A">
+          </constraint>
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes" type="Gene">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues" type="Orthologue">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" type="Gene">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" type="Organism">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism.name" type="String">
+          <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="B" editable="true">
+          </constraint>
+        </node>
+        <node path="Protein.genes" type="Gene">
+        </node>
+        <node path="Protein.genes.orthologues" type="Orthologue">
+        </node>
+        <node path="Protein.genes.orthologues.subject" type="Gene">
+        </node>
+        <node path="Protein.genes.orthologues.subject.organism" type="Organism">
+          <constraint op="=" value="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" code="C">
+          </constraint>
         </node>
         <node path="Protein.organism" type="Organism">
         </node>
         <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show the interacting proteins and the corresponding genes from:" identifier="" editable="true">
-          </constraint>
-        </node>
-        <node path="Protein.interactions" type="ProteinInteraction">
-        </node>
-        <node path="Protein.interactions.bait" type="Protein">
-        </node>
-        <node path="Protein.interactions.bait.genes" type="Gene">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues" type="Orthologue">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues.subject" type="BioEntity">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues.subject.organism" type="Organism">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues.subject.organism.name" type="String">
-          <constraint op="=" value="Caenorhabditis elegans" description="and the orthologous genes from:" identifier="" editable="true">
-          </constraint>
-        </node>
-        <node path="Protein.interactions.prey" type="Protein">
-        </node>
-        <node path="Protein.interactions.prey.genes" type="Gene">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues" type="Orthologue">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues.subject" type="BioEntity">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues.subject.organism" type="Organism">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues.subject.organism.name" type="String">
-          <constraint op="=" value="Caenorhabditis elegans" description="[enter organism for orthologous genes again]:" identifier="" editable="true">
+          <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="D"  editable="true">
           </constraint>
         </node>
       </query>
     </template>
-    <template name="ProteinInteractions2orthologuesAndPhenotypes" description="For the protein interactions of a particular organism, show the interacting proteins and their corresponding genes, the orthologues of these genes from another organism and the RNAi phenotype of the orthologous gene (note: RNAi phenotypes currently only available for C. elegans)." important="false" keywords="Protein Interactions Comparative Genomics Proteins">
-      <query name="ProteinInteractions2orthologuesAndPhenotypes" model="genomic" view="Protein.interactions.bait Protein.interactions.prey Protein.interactions.bait.genes Protein.interactions.prey.genes Protein.interactions.bait.genes.orthologues.subject Protein.interactions.prey.genes.orthologues.subject Protein.interactions.bait.genes.orthologues.subject.phenotypes Protein.interactions.prey.genes.orthologues.subject.phenotypes">
+    <template name="ProteinInteractions2orthologuesAndPhenotypes" description="For the protein interactions of a particular organism, show the interacting proteins and their corresponding genes, the orthologues of these genes from another organism and the RNAi phenotype of the orthologous gene (note: RNAi phenotypes currently only available for C. elegans)." important="false" keywords="Protein Interactions, Comparative Genomics, Proteins">
+      <query name="ProteinInteractions2orthologuesAndPhenotypes" model="genomic" view="Protein Protein.interactionRoles.interaction.interactors.protein Protein.genes Protein.interactionRoles.interaction.interactors.protein.genes Protein.genes.orthologues.subject Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject Protein.genes.orthologues.subject.phenotypes Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.phenotypes" constraintLogic="A and B and D and C">
         <node path="Protein" type="Protein">
+        </node>
+        <node path="Protein.interactionRoles" type="ProteinInteractor">
+        </node>
+        <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
+          <constraint op="!=" value="Protein" code="A">
+          </constraint>
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes" type="Gene">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues" type="Orthologue">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" type="Gene">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" type="Organism">
+        </node>
+        <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism.name" type="String">
+          <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="B"  editable="true">
+          </constraint>
+        </node>
+        <node path="Protein.genes" type="Gene">
+        </node>
+        <node path="Protein.genes.orthologues" type="Orthologue">
+        </node>
+        <node path="Protein.genes.orthologues.subject" type="Gene">
+        </node>
+        <node path="Protein.genes.orthologues.subject.organism" type="Organism">
+          <constraint op="=" value="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" code="C">
+          </constraint>
         </node>
         <node path="Protein.organism" type="Organism">
         </node>
         <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show the interacting proteins and the corresponding genes from:" identifier="" editable="true">
-          </constraint>
-        </node>
-        <node path="Protein.interactions" type="ProteinInteraction">
-        </node>
-        <node path="Protein.interactions.bait" type="Protein">
-        </node>
-        <node path="Protein.interactions.bait.genes" type="Gene">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues" type="Orthologue">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues.subject" type="Gene">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues.subject.organism" type="Organism">
-        </node>
-        <node path="Protein.interactions.bait.genes.orthologues.subject.organism.name" type="String">
-          <constraint op="=" value="Caenorhabditis elegans" description="and the orthologous genes and RNAi phenotypes from:" identifier="" editable="true">
-          </constraint>
-        </node>
-        <node path="Protein.interactions.prey" type="Protein">
-        </node>
-        <node path="Protein.interactions.prey.genes" type="Gene">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues" type="Orthologue">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues.subject" type="Gene">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues.subject.organism" type="Organism">
-        </node>
-        <node path="Protein.interactions.prey.genes.orthologues.subject.organism.name" type="String">
-          <constraint op="=" value="Caenorhabditis elegans" description="[enter organism for orthologous genes again]:" identifier="" editable="true">
+          <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="D"  editable="true">
           </constraint>
         </node>
       </query>
     </template>
-    <template name="TFbindingsite2geneAndFactor" description="For a particular transcription factor binding site, show the associated gene and transcription factor." important="false" keywords="Genomics Binding Sites">
+    <template name="TFbindingsite2geneAndFactor" description="For a particular transcription factor binding site, show the associated gene and transcription factor." important="false" keywords="Genomics, Binding Sites">
       <query name="TFbindingsite2geneAndFactor" model="genomic" view="TFBindingSite TFBindingSite.gene TFBindingSite.factor">
         <node path="TFBindingSite" type="TFBindingSite">
         </node>
@@ -1034,7 +1044,7 @@
         </node>
       </query>
     </template>
-    <template name="chromsosomeLocation2TFbindingSites" description="For a particular chromosome location, show the transcription factor binding sites, the transcription factor that binds each site and the gene associated with each site." important="false" keywords="Genomics Binding Sites">
+    <template name="chromsosomeLocation2TFbindingSites" description="For a particular chromosome location, show the transcription factor binding sites, the transcription factor that binds each site and the gene associated with each site." important="false" keywords="Genomics, Binding Sites">
       <query name="chromsosomeLocation2TFbindingSites" model="genomic" view="TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite TFBindingSite.factor TFBindingSite.gene">
         <node path="TFBindingSite" type="TFBindingSite">
         </node>
@@ -1056,7 +1066,7 @@
         </node>
       </query>
     </template>
-    <template name="drosDel2indac1" description="Show deletion location, overlapping genes, transcripts and indac oligos for a particular drosDel deletion(s)." important="false" keywords="INDAC DrosDel">
+    <template name="drosDel2indac1" description="Show deletion location, overlapping genes, transcripts and indac oligos for a particular drosDel deletion(s)." important="false" keywords="INDAC, DrosDel">
       <query name="drosDel2indac1" model="genomic" view="Deletion Deletion.chromosome.identifier Deletion.chromosomeLocation.start Deletion.chromosomeLocation.end Deletion.overlappingFeatures.chromosomeLocation.strand Deletion.overlappingFeatures Deletion.overlappingFeatures.transcripts Deletion.overlappingFeatures.transcripts.microarrayOligos">
         <node path="Deletion" type="Deletion">
         </node>
@@ -1324,4 +1334,3 @@
          type="class" />
   </tags>
 </userprofile>
-
