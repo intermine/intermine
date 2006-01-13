@@ -14,4 +14,6 @@ Treatment = Treatment
 Protocol = Protocol
 Protocol.name = Protocol.name
 Protocol.description = Protocol.text
-
+CompositeSequence = CompositeSequence
+CompositeSequence.identifier = CompositeSequence.identifier
+CompositeSequence.name = CompositeSequence.name
