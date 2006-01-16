@@ -36,11 +36,13 @@ public class GoConverterTest extends TestCase
 
     public void setUp() throws Exception {
         goFile = File.createTempFile("go-tiny", ".ontology");
-        Reader goReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.ontology"));
+        Reader goReader = new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.ontology"));
         writeTempFile(goFile, goReader);
 
         goOboFile = File.createTempFile("go-tiny", ".obo");
-        Reader goOboReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.obo"));
+        Reader goOboReader = new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream("resources/test/go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
     }
 
@@ -69,11 +71,12 @@ public class GoConverterTest extends TestCase
                 "/resources/test/GoConverterOboTest_tgt.xml", true, false);
 
     }
-
+    
     private void translateCommon(File onotologyFile, String srcFile, String tgtFile,
                                  boolean verbose, boolean writeItemFile) throws Exception{
 
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(srcFile));
+        Reader reader = new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(srcFile));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
         converter.setOntology(onotologyFile);
@@ -88,7 +91,8 @@ public class GoConverterTest extends TestCase
         assertEquals(new HashSet(getExpectedItems(tgtFile)), writer.getItems());
 
         if(writeItemFile){
-            writeItemCollectionOutToFile(getExpectedItems(tgtFile), "GoConverterTestItemFile", "xml", true);
+            writeItemCollectionOutToFile(
+                    getExpectedItems(tgtFile), "GoConverterTestItemFile", "xml", true);
         }
     }
 
@@ -102,22 +106,23 @@ public class GoConverterTest extends TestCase
         gene1.setAttribute("organismDbId", "FBgn0026430");
         gene1.setReference("organism", "1_1");
         expected.add(gene1);
-        Item gene2 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
+        Item gene2 = tgtItemFactory.makeItem("0_2", GENOMIC_NS + "Gene", "");
         gene2.setAttribute("organismDbId", "FBgn0001612");
         gene2.setReference("organism", "1_1");
         expected.add(gene2);
-        assertEquals(expected, converter.createWithObjects("FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", "1_1"));
+        assertEquals(expected, converter.createWithObjects(
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", "1_1", "10_10"));
     }
 
-    protected Collection getExpectedItems( String targetFile ) throws Exception {
+    protected Collection getExpectedItems(String targetFile) throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream(targetFile));
     }
 
     /*
         Use this to write out a test file for comparing the source data with...
     */
-    private void writeItemCollectionOutToFile(Collection itemCollection, String fileName, String suffix,
-                                              boolean includeItemsTag){
+    private void writeItemCollectionOutToFile(
+            Collection itemCollection, String fileName, String suffix, boolean includeItemsTag){
 
         try {
             File itemLogFile =File.createTempFile(fileName, suffix);
