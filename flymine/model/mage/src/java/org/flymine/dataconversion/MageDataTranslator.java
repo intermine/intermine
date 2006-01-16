@@ -42,8 +42,8 @@ import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemPrefetchDescriptor;
-import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
-import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
+//import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
+//import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
 import org.intermine.metadata.Model;
 
 import org.apache.log4j.Logger;
@@ -362,17 +362,23 @@ public class MageDataTranslator extends DataTranslator
                     result.add(tgtItem);
                 }
             }
+
         } else if (className.equals("LabeledExtract")) {
-            translateLabeledExtract(srcItem);   
+            translateLabeledExtract(srcItem); //
         } else if (className.equals("DerivedBioAssay")) {
             if (derivedBioAssayNs == null) {
                 derivedBioAssayNs = namespaceFromIdentifier(srcItem.getIdentifier());
             }
             List baList = new ArrayList();
-            setDerivedBAToMeasuredBA(srcItem, baList);
+            bioAssayMap.put(srcItem.getIdentifier(), setDerivedBAToMeasuredBA(srcItem, baList)); 
+            LOG.error("bioAssayMap " + srcItem.getIdentifier() 
+                      + " = " + setDerivedBAToMeasuredBA(srcItem, baList));
         }
+        
         return result;
     }
+
+
 
 
 
@@ -541,11 +547,12 @@ public class MageDataTranslator extends DataTranslator
     /**
      * @param srcItem = mage:DerivedBioAssay
      * @param baList = recursive bioAssayList
+     * @return baList = bioAssayList
      * @throws ObjectStoreException if anything goes wrong
      * set up a map of derivedBioAssay to MeasuredBioAssay
      * to be used when setting MicroArrayResult -->bioAssay
      */
-    protected void setDerivedBAToMeasuredBA(Item srcItem, List baList)
+    protected List setDerivedBAToMeasuredBA(Item srcItem, List baList)
         throws ObjectStoreException {
         
         if (srcItem.hasCollection("derivedBioAssayMap")) {
@@ -556,21 +563,31 @@ public class MageDataTranslator extends DataTranslator
                     Iterator iter = getCollection(baMapItem, "sourceBioAssays");
                     while (iter.hasNext()) {
                         Item sbaItem = (Item) iter.next();
-                        if (sbaItem.getClassName().endsWith("MeasuredBioAssay")) {
-                            baList.add(sbaItem.getIdentifier());
-                        } else if (sbaItem.getClassName().endsWith("DerivedBioAssay")) {
-                            setDerivedBAToMeasuredBA(sbaItem, baList);
+                        if (!baList.contains(sbaItem.getIdentifier())) {
+                            if (sbaItem.getClassName().endsWith("MeasuredBioAssay")) {
+                                baList.add(sbaItem.getIdentifier());
+                            } else if (sbaItem.getClassName().endsWith("DerivedBioAssay")) {
+                                if (bioAssayMap.containsKey(sbaItem.getIdentifier())) {
+                                    List tempList = (List) bioAssayMap.get(sbaItem.getIdentifier());
+                                    Iterator listIter = tempList.iterator();
+                                    while (listIter.hasNext()) {
+                                        baList.add((String) listIter.next());
+                                    }
+                                } else {
+                                    setDerivedBAToMeasuredBA(sbaItem, baList);
+                                }
+                            
+                            }
                         }
                     }                    
                 }
             }
         }
-        bioAssayMap.put(srcItem.getIdentifier(), baList);
+        
+        return baList;
     }
 
-   
-
-
+    
     /**
      * @param srcItem = mage:BioAssayDatum
      * @param tgtItem = flymine:MicroArrayResult
@@ -1621,7 +1638,7 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "MeasuredBioAssay", descSet);
 
-
+        descSet = new HashSet();
         path = new ItemPath("DerivedBioAssay.derivedBioAssayMap.sourceBioAssays", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "DerivedBioAssay", descSet);
@@ -1682,9 +1699,11 @@ public class MageDataTranslator extends DataTranslator
         path = new ItemPath("Reporter.failTypes", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
 
-        path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
+        path = new ItemPath(
+            "Reporter.immobilizedCharacteristics.type", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());      
-        path = new ItemPath("Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);
+        path = new ItemPath(
+            "Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());      
  
         path = new ItemPath(
@@ -1727,7 +1746,8 @@ public class MageDataTranslator extends DataTranslator
         paths.put(srcNs + "Reporter", descSet);
 
         descSet = new HashSet();
-        path = new ItemPath("CompositeSequence.reporterCompositeMaps.reporterPositionSources.reporter", srcNs);
+        path = new ItemPath(
+             "CompositeSequence.reporterCompositeMaps.reporterPositionSources.reporter", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "CompositeSequence", descSet);
 
