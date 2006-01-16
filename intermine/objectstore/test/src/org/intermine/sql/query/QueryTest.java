@@ -1099,4 +1099,46 @@ public class QueryTest extends TestCase
         System.out.println("q1 = " + q1);
         assertTrue(q1.toString().indexOf("IS NOT NULL") > 0);
     }
+
+    // the new Query() takes too long - ~12 seconds
+    // in the sql_shell this SQL results in "expecting CLOSE_PAREN, found '='" Exception
+    public void testLongParseTimeRegression() throws Exception {
+        String sql = "SELECT DISTINCT a1_.identifier AS a10_, a1_.organismDbId AS a11_, "
+            + "a1_.symbol AS a12_, a1_.wildTypeFunction AS a13_, a3_.primaryAccession AS "
+            + "a14_, a8_.interproId AS a15_, a8_.identifier AS a16_, a8_.name AS a17_, "
+            + "a8_.shortName AS a18_ FROM Gene AS a1_, Synonym AS a2_, Protein AS "
+            + "a3_, ProteinRegion AS a4_, ProteinStructure AS a5_, ProteinRegion AS a6_, "
+            + "Location AS a7_, ProteinFeature AS a8_, Organism AS a9_, GenesProteins "
+            + "AS indirect0 WHERE ((LOWER(a2_.intermine_value) = 'cg1046' AND "
+            + "LOWER(a9_.name) = 'drosophila melanogaster') AND a1_.id = a2_.subjectId AND "
+            + "(a1_.id = indirect0.Proteins AND indirect0.Genes = a3_.id) AND a3_.id = "
+            + "a4_.proteinId AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = "
+            + "a7_.subjectId AND a6_.proteinFeatureId = a8_.id AND a1_.organismId = a9_.id) "
+            + "ORDER BY a1_.identifier, a1_.organismDbId, a1_.symbol, a1_.wildTypeFunction, "
+            + "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";
+
+        long start = new Date().getTime();
+        Query q1 = new Query(sql);
+        assertTrue(((new Date()).getTime() - start)/1000 < 2);
+    }
+    
+    public void testToString() throws Exception {
+        String sql = "SELECT DISTINCT a1_.identifier AS a10_, a1_.organismDbId AS a11_, " +
+                "a1_.symbol AS a12_, a1_.wildTypeFunction AS a13_, a3_.primaryAccession AS " +
+                "a14_, a8_.interproId AS a15_, a8_.identifier AS a16_, a8_.name AS a17_, " +
+                "a8_.shortName AS a18_ FROM Gene AS a1_, Synonym AS a2_, Protein AS" +
+                " a3_, ProteinRegion AS a4_, ProteinStructure AS a5_, ProteinRegion AS a6_, " +
+                "Location AS a7_, ProteinFeature AS a8_, Organism AS a9_, GenesProteins AS " +
+                "indirect0 WHERE LOWER(a2_.intermine_value) = 'cg1046' AND LOWER(a9_.name)" +
+                " = 'drosophila melanogaster' AND a1_.id = a2_.subjectId AND a1_.id = " +
+                "indirect0.Proteins AND indirect0.Genes = a3_.id AND a3_.id = a4_.proteinId " +
+                "AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = a7_.subjectId " +
+                "AND a6_.proteinFeatureId = a8_.id AND a1_.organismId = a9_.id ORDER BY " +
+                "a1_.identifier, a1_.organismDbId, a1_.symbol, a1_.wildTypeFunction, " +
+                "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";
+        
+        Query q1 = new Query(sql);
+
+        assertEquals(sql, q1.toString());
+    }
 }
