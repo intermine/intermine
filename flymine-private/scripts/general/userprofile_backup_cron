@@ -5,8 +5,8 @@
 PATH=/usr/local/bin:/software/arch/postgresql/bin:$PATH
 export PATH
 
-/software/noarch/bin/userprofile_backup -p 5433 /export/flymine/dumps/userprofile_backup gollum > $HOME/.userprofile_backup.output.new
-if cmp $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
+/software/noarch/bin/userprofile_backup -p 5433 /export/flymine/dumps/userprofile_backup gollum 2>&1 > $HOME/.userprofile_backup.output.new
+if cmp -s $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
 then
     exit 0;
 else
