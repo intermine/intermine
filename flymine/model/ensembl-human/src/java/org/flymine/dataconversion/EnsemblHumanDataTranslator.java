@@ -264,15 +264,15 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                                                             // seq_region.coord-sys
                     result.add(location);
                 } else if ("translation".equals(className)) {
-		    tgtItem.addReference(orgRef);
+                    tgtItem.addReference(orgRef);
                     Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
-		    if (protein != null) {
-			tgtItem.addReference(new Reference("protein", protein.getIdentifier()));
-			Item sr = createItem(tgtNs + "SimpleRelation", "");
-			sr.setReference("object", tgtItem.getIdentifier());
-			sr.setReference("subject", protein.getIdentifier());
-			result.add(sr);
-		    }
+                    if (protein != null) {
+                        tgtItem.addReference(new Reference("protein", protein.getIdentifier()));
+                        Item sr = createItem(tgtNs + "SimpleRelation", "");
+                        sr.setReference("object", tgtItem.getIdentifier());
+                        sr.setReference("subject", protein.getIdentifier());
+                        result.add(sr);
+                    }
                                         // transcript
                                         // transcript.display_xref
                                         // transcript.display_xref.external_db
@@ -287,10 +287,10 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     }                    
                 // stable_ids become syonyms, need ensembl DataSet as evidence
                 } else if (className.endsWith("_stable_id")) {
-		    tgtItem.addToCollection("evidence", ensemblDs);
-		    tgtItem.addReference(ensemblRef);
-		    tgtItem.addAttribute(new Attribute("type", "identifier"));
-		} else if ("repeat_feature".equals(className)) {
+                    tgtItem.addToCollection("evidence", ensemblDs);
+                    tgtItem.addReference(ensemblRef);
+                    tgtItem.addAttribute(new Attribute("type", "identifier"));
+                } else if ("repeat_feature".equals(className)) {
                     tgtItem.addReference(orgRef);
                     addReferencedItem(tgtItem, ensemblDs, "evidence", true, "", false);
                     result.add(createAnalysisResult(srcItem, tgtItem));
@@ -654,16 +654,6 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                                                      "accession", accession, uniprotRef);
                         addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
                         synonyms.add(synonym);
-
-			//not create protein identifier
-                        // if (xref.hasAttribute("display_label")
-//                             && !xref.getAttribute("display_label").getValue().equals("")) {
-//                             identifier = xref.getAttribute("display_label").getValue();
-//                             synonym = createSynonym(srcItem.getIdentifier(),
-//                                                    "identifier", identifier, uniprotRef);
-//                             addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-//                             synonyms.add(synonym);
-//                         }
                     }
                 }
             }
@@ -686,7 +676,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
             addReferencedItem(protein, ensemblDs, "evidence", true, "", false);
             // set up additional references/collections
             protein.addReference(orgRef);
-	    proteins.put(primaryAcc, protein);
+            proteins.put(primaryAcc, protein);
             proteinSynonyms.addAll(synonyms);
             chosenProtein = protein;
         }
@@ -997,7 +987,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         //marker
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("marker.display_marker_synonym");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("marker_synonym", identifier));
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("display_marker_synonym", identifier));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("marker <- marker_feature.marker");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "marker"));
@@ -1017,13 +1007,13 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         //assembly
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("assembly.asm_seq_region");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("asm_seq_region", identifier));
         desc2 = new ItemPrefetchDescriptor("assembly.asm_seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         desc.addPath(desc2);
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("assembly.cmp_seq_region");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("cmp_seq_region", identifier));
         desc2 = new ItemPrefetchDescriptor("assembly.cmp_seq_region.coord_system");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         desc.addPath(desc2);
@@ -1052,3 +1042,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         return paths;
     }
 }
+
+
+
+
