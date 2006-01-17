@@ -4729,6 +4729,38 @@
   <!-- load CDNAclone image data into production -->
   <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone-image"/>
 
+  <!-- CDNACLONE/probeset PIPELINE --> 
+  <target name="retrieve-cdnaclone-probeset" 
+          depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <convert-file clsName="org.flymine.dataconversion.AffyConverter"
+                  osName="osw.cdnaclone-tgt-items" 
+                  model="cdnaclone">
+      <fileset dir="${shared.data}/human/probeSet/" includes="HG-U133A_annot.csv"/>
+    </convert-file>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.cdnaclone-tgt-items-std"/>
+    </ant>
+  </target>
+
+  <target name="load-cdnaclone-probeset" depends="copy-stemcell-config">
+    <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <load-cdnaclone integrationWriter="integration.production" 
+                    source="os.cdnaclone-translated" 
+                    sourceName="cdnaclone"/>
+  </target>
+ 
+  <!-- load CDNAclone image data into production -->
+  <target name="build-cdnaclone-probeset-production" 
+          depends="retrieve-cdnaclone-probeset, load-cdnaclone-probeset"/>
+
+
   <!--psi intact for stemcell PIPILINE -->
   <target name="retrieve-psi-intact-stemcell" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
