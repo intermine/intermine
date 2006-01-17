@@ -10,7 +10,7 @@
     <attribute name="title" value="Ensembl Homo sapiens"/>
     <attribute name="description"
                value="The Ensembl eukaryotic genome annotation database"/>
-    <attribute name="version" value="31.35d"/>
+    <attribute name="version" value="36.35i"/>
     <attribute name="url" value="http://www.ensembl.org/Homo_sapiens"/>
     <reference name="dataSource" ref_id="0"/>
   </item>
@@ -37,7 +37,7 @@
   <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="UniProt data set"/>
     <attribute name="description" value="UniProt Knowledgebase"/>
-    <attribute name="version" value="5.7"/>
+    <attribute name="version" value="6.8"/>
     <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
     <reference name="dataSource" ref_id="10"/>
   </item>
@@ -179,16 +179,17 @@
   </item>
 
   <item id="280" class="" implements="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="name" value="BDGP"/>
+    <attribute name="name" value="Affymetrix GeneChip"/>
     <attribute name="description" value="Berkeley Drosophila Genome Project"/>
     <attribute name="url" value="http://www.fruitfly.org"/>
   </item>
   <item id="281" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="BDGP cDNA clone data set"/>
-    <attribute name="description" value="Berkeley Drosophila Genome Project cDNA clone data set"/>
+    <attribute name="title" value="Affymetrix U133A probe set for human genome "/>
+    <attribute name="description" value="???"/>
     <attribute name="version" value="???"/>
-    <attribute name="url" value="http://www.fruitfly.org"/>
-    <reference name="dataSource" ref_id="270"/>
+    <attribute name="url" value="http://www.affymetrix.com/Auth/analysis/downloads/taf/HG-U133A_annot_csv.zip"/>
+    <reference name="dataSource" ref_id="280"/>
   </item>
+
 
 </items>

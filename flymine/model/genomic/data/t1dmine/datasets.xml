@@ -10,7 +10,7 @@
     <attribute name="title" value="Ensembl Homo sapiens"/>
     <attribute name="description"
                value="The Ensembl eukaryotic genome annotation database"/>
-    <attribute name="version" value="31.35d"/>
+    <attribute name="version" value="36.35i"/>
     <attribute name="url" value="http://www.ensembl.org/Homo_sapiens"/>
     <reference name="dataSource" ref_id="0"/>
   </item>
