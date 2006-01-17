@@ -1606,7 +1606,13 @@ public class SqlGenerator
         }
 
         public String getWhere() {
-            return (whereText.length() == 0 ? "" : " WHERE " + whereText.toString());
+            // a hacky fix for #731:
+            String where = whereText.toString();
+            if (where.startsWith("(") && where.endsWith(")")) {
+                where = where.substring(1, where.length() - 1);
+            }
+            
+            return (whereText.length() == 0 ? "" : " WHERE " + where);
         }
 
         public StringBuffer getWhereBuffer() {

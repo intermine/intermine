@@ -244,7 +244,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("QueryClassBagDouble", Collections.singleton("InterMineObject"));
         results.put("QueryClassBagContainsObject", "SELECT indirect0.departmentId AS a2_ FROM InterMineObject AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") ORDER BY indirect0.departmentId");
         results2.put("QueryClassBagContainsObject", Collections.singleton("InterMineObject"));
-        results.put("QueryClassBagContainsObjectDouble", "SELECT indirect0.departmentId AS a2_ FROM InterMineObject AS indirect0, InterMineObject AS indirect1 WHERE (indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") AND indirect1.class = 'org.intermine.model.testmodel.Employee' AND (indirect1.departmentId = indirect0.departmentId AND indirect1.id = " + employeeA2Id + ")) ORDER BY indirect0.departmentId");
+        results.put("QueryClassBagContainsObjectDouble", "SELECT indirect0.departmentId AS a2_ FROM InterMineObject AS indirect0, InterMineObject AS indirect1 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND ((indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) AND indirect0.id = " + employeeA1Id + ") AND indirect1.class = 'org.intermine.model.testmodel.Employee' AND (indirect1.departmentId = indirect0.departmentId AND indirect1.id = " + employeeA2Id + ") ORDER BY indirect0.departmentId");
         results2.put("QueryClassBagContainsObjectDouble", Collections.singleton("InterMineObject"));
         results.put("ObjectContainsObject", "SELECT 'hello' AS a1_ FROM InterMineObject AS indirect0 WHERE indirect0.class = 'org.intermine.model.testmodel.Employee' AND (" + departmentA1Id + " = indirect0.departmentId AND indirect0.id = " + employeeA1Id + ")");
         results2.put("ObjectContainsObject", Collections.singleton("InterMineObject"));
@@ -254,7 +254,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectNotContainsObject", Collections.singleton("InterMineObject"));
         results.put("SubqueryExistsConstraint", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company')");
         results2.put("SubqueryExistsConstraint", Collections.singleton("InterMineObject"));
-        results.put("NotSubqueryExistsConstraint", "SELECT 'hello' AS a1_ WHERE (NOT EXISTS(SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company'))");
+        results.put("NotSubqueryExistsConstraint", "SELECT 'hello' AS a1_ WHERE NOT EXISTS(SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company')");
         results2.put("NotSubqueryExistsConstraint", Collections.singleton("InterMineObject"));
         results.put("SubqueryExistsConstraintNeg", "SELECT 'hello' AS a1_ WHERE EXISTS(SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Bank')");
         results2.put("SubqueryExistsConstraintNeg", Collections.singleton("InterMineObject"));
