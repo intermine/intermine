@@ -15,6 +15,7 @@ import java.awt.RenderingHints;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.Renderer;
 
-import org.flymine.model.genomic.MicroArrayResult;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
@@ -35,6 +35,9 @@ import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.data.category.DefaultCategoryDataset;
+
+import org.flymine.model.genomic.MicroArrayResult;
+import org.flymine.model.genomic.MicroArrayAssay;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Results;
@@ -120,7 +123,12 @@ public class ChartRenderer extends InterMineAction
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
             MicroArrayResult result = (MicroArrayResult) rr.get(0);
-            xyDataset.addValue(result.getValue(), "value", result.getAssay().getName());
+            Set assays = result.getAssays();
+            Iterator assayIter = assays.iterator();
+            while (assayIter.hasNext()) {
+                String name = ((MicroArrayAssay) assayIter.next()).getName();
+                xyDataset.addValue(result.getValue(), "value", name);
+            }
         }
         
         CategoryAxis xAxis = new CategoryAxis(null);
