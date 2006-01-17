@@ -493,7 +493,8 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             if (start != 0) {
                 System.out.println("testCancelMethods6: time for query = " + (System.currentTimeMillis() - start) + " ms");
             }
-            assertEquals("ERROR: canceling query due to user request", e.getMessage());
+            String errorString = e.getMessage().replaceFirst("statement", "query");
+            assertEquals("ERROR: canceling query due to user request", errorString);
         } finally {
             if (s != null) {
                 try {
@@ -584,7 +585,8 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             Throwable t = e.getCause();
             if (!"Request id flibble8 is cancelled".equals(t.getMessage())) {
                 t = t.getCause();
-                assertEquals("ERROR: canceling query due to user request", t.getMessage());
+                String errorString =  t.getMessage().replaceFirst("statement", "query");
+                assertEquals("ERROR: canceling query due to user request",errorString);
             }
         } finally {
             ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
