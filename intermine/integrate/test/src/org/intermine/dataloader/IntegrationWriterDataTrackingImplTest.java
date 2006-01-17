@@ -33,6 +33,7 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.SetupDataTestCase;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -69,6 +70,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         }
         storeData();
         iw.idMap.clear();
+        iw.skeletons.clear();
         iw.beginTransaction();
     }
 
@@ -907,4 +909,39 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(objects.isEmpty());
     }
 
+    public void testSkeletonsNoException() throws Exception {
+        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        a.setAddress("address1");
+        if (doIds) {
+            a.setId(new Integer(1));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(a, source, skelSource, iw.SKELETON);
+        assertTrue(iw.skeletons.size() == 1);
+        iw.store(a, source, skelSource, iw.SOURCE);
+        assertTrue(iw.skeletons.size() == 0);
+    }
+
+    public void testSkeletonsException() throws Exception {
+        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        a.setAddress("address1");
+        if (doIds) {
+            a.setId(new Integer(1));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(a, source, skelSource, iw.SKELETON);
+        assertTrue(iw.skeletons.size() == 1);
+
+        try {
+            iw.close();
+            fail("Expected exception because not all skeletons replaced by real objects");
+        } catch (ObjectStoreException e) {
+        }
+    }
 }
