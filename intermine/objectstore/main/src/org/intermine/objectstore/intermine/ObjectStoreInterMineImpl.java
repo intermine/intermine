@@ -99,6 +99,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected long statsExeTime = 0;
     protected long statsConTime = 0;
     protected QueryOptimiserContext limitedContext;
+    protected boolean verboseQueryLog = false;
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
@@ -232,6 +233,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String noNotXmlString = props.getProperty("noNotXml");
         String logEverythingString = props.getProperty("logEverything");
         String loggerAlias = props.getProperty("logger");
+        String verboseQueryLogString = props.getProperty("verboseQueryLog");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -322,6 +324,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if ("true".equals(logEverythingString)) {
                     os.setLogEverything(true);
                 }
+                if ("true".equals(verboseQueryLogString)) {
+                    os.setVerboseQueryLog(true);
+                }
                 instances.put(osAlias, os);
             }
             return os;
@@ -387,6 +392,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public void setLogEverything(boolean logEverything) {
         this.logEverything = logEverything;
+    }
+
+    /**
+     * Sets the verboseQueryLog configuration option.
+     *
+     * @param verboseQueryLog a boolean
+     */
+    public void setVerboseQueryLog(boolean verboseQueryLog) {
+        this.verboseQueryLog = verboseQueryLog;
     }
 
     /**
@@ -684,6 +698,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected List executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, int sequence) throws ObjectStoreException {
+
         if (explain) {
             checkStartLimit(start, limit, q);
         }
@@ -691,6 +706,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
         long preGenTime = System.currentTimeMillis();
         String sql = generateSql(c, q, start, limit);
+        String generatedSql = sql;
         try {
             long estimatedTime = 0;
             long startOptimiseTime = System.currentTimeMillis();
@@ -729,7 +745,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + getMaxTime() + "): IQL query: " + q + ", SQL query: " + sql));
                 }
             }
-
             long preExecute = System.currentTimeMillis();
             Statement s = c.createStatement();
             registerStatement(s);
@@ -772,12 +787,27 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
                         permittedTime, postConvert - postExecute, q, sql);
             }
-            statsGenTime += startOptimiseTime - preGenTime;
-            statsOptTime += endOptimiseTime - startOptimiseTime;
-            statsNulTime += postNullStuff - endOptimiseTime;
-            statsEstTime += preExecute - postNullStuff;
-            statsExeTime += postExecute - preExecute;
-            statsConTime += postConvert - postExecute;
+            long genTime = startOptimiseTime - preGenTime;
+            statsGenTime += genTime;
+            long optTime = endOptimiseTime - startOptimiseTime;
+            statsOptTime += optTime;
+            long nulTime = postNullStuff - endOptimiseTime;
+            statsNulTime += nulTime;
+            long estTime = preExecute - postNullStuff;
+            statsEstTime += estTime;
+            long exeTime = postExecute - preExecute;
+            statsExeTime += exeTime;
+            long conTime = postConvert - postExecute;
+            statsConTime += conTime;
+            if (verboseQueryLog) {
+                LOG.info("(VERBOSE) iql: " + q + "\n"
+                         + "generated sql: " + generatedSql + "\n"
+                         + "optimised sql: " + sql + "\n"
+                         + "generate: " + genTime + " ms, optimise: " + optTime + " ms, "
+                         + "replace nulls: " + nulTime + " ms,  estimate: " + estTime + " ms, "
+                         + "execute: " + exeTime + " ms, convert results: " + conTime + " ms, "
+                         + "total: " + (postConvert - preGenTime) + " ms");
+            }
             QueryOrderable firstOrderBy = null;
             firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
             if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
