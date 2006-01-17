@@ -1951,7 +1951,8 @@
     </ant>
   </target>
 
-  <target name="translate-uniprot" depends="prepare-build-model, compile-uniprot-java, compile-genomic-java-from-db">
+  <target name="translate-uniprot" 
+          depends="prepare-build-model, compile-uniprot-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1984,13 +1985,15 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot" ignoreDuplicates="true"/>
+    <load-uniprot integrationWriter="integration.production" 
+                  source="os.uniprot-translated" 
+                  sourceName="uniprot" 
+                  ignoreDuplicates="true"/>
   </target>
 
   <target name="filter-uniprot-dros" depends="prepare-build-model, compile-uniprot-java">
-    <taskdef
-      name="filter-uniprot"
-      classname="org.flymine.dataconversion.UniprotFilterTask">
+    <taskdef name="filter-uniprot"
+             classname="org.flymine.dataconversion.UniprotFilterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
 
@@ -2007,12 +2010,17 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.production" source="os.uniprot-translated" sourceName="uniprot-dros" ignoreDuplicates="true"/>
+    <load-uniprot integrationWriter="integration.production" 
+                  source="os.uniprot-translated" 
+                  sourceName="uniprot-dros" 
+                  ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-uniprot-dros-production" depends="filter-uniprot-dros, retrieve-uniprot, translate-uniprot, load-uniprot-dros"/>
+  <target name="build-uniprot-dros-production" 
+          depends="filter-uniprot-dros, retrieve-uniprot, translate-uniprot, load-uniprot-dros"/>
 
-  <target name="build-uniprot-production" depends="filter-uniprot, retrieve-uniprot, translate-uniprot, load-uniprot"/>
+  <target name="build-uniprot-production" 
+          depends="filter-uniprot, retrieve-uniprot, translate-uniprot, load-uniprot"/>
 
 
   <!-- BUILD PRODUCTION DATABASE -->
@@ -4602,10 +4610,10 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <fileset dir="${shared.data}/human/mage/E-EMBL-1"/>
-      <fileset dir="${shared.data}/human/mage/E-MEXP-337"/>
-      <fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
-      <fileset dir="${shared.data}/human/mage/E-MEXP-70"/>
+      <!--fileset dir="${shared.data}/human/mage/E-EMBL-1"/-->
+      <!--fileset dir="${shared.data}/human/mage/E-MEXP-337"/-->
+      <!--fileset dir="${shared.data}/human/mage/E-MEXP-384"/-->
+      <!--fileset dir="${shared.data}/human/mage/E-MEXP-70"/-->
       <!--fileset dir="${shared.data}/human/mage/E-SMDB-3450"/-->
     </copy>
 
@@ -4677,7 +4685,7 @@
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-mage integrationWriter="integration.production" 
+    <load-mage integrationWriter="integration.genomic-test" 
                source="os.mage-translated" 
                sourceName="mage" 
                ignoreDuplicates="false"/>
@@ -4761,6 +4769,35 @@
   <target name="build-psi-intact-production-stemcell" 
           depends="retrieve-psi-intact-stemcell, translate-psi, load-psi-intact-stemcell"/>
 
+ 
+ <target name="filter-uniprot-hs" depends="prepare-build-model, compile-uniprot-java">
+    <taskdef name="filter-uniprot"
+             classname="org.flymine.dataconversion.UniprotFilterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <filter-uniprot tgtDir="${build.tmp}" organisms="9606">
+      <fileset dir="${shared.data}/uniprot/6.8">
+        <include name="uniprot_sprot*"/>
+        <!--include name="uniprot_trembl*"/-->
+      </fileset>
+    </filter-uniprot>
+  </target>
+
+  <target name="load-uniprot-hs"  depends="copy-stemcell-config">
+    <taskdef name="load-uniprot" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-uniprot integrationWriter="integration.genomic-test" 
+                  source="os.uniprot-translated" 
+                  sourceName="uniprot-hs" 
+                  ignoreDuplicates="true"/>
+  </target>
+
+  <target name="build-uniprot-hs-production" 
+          depends="filter-uniprot-hs, retrieve-uniprot, translate-uniprot, load-uniprot-hs"/>
+
 
   <!--SPLIT T1DMINE FROM FLYMINE-->
   <target name="build-db-userprofile-t1dmine" depends="prepare-build-model">
@@ -4802,7 +4839,37 @@
   </target>
 
 
- <!--//Stem Cell Mine//=============STEMCELL==============-->
+ <!--=====================STEMCELLMINE==============--> 
+
+  <!-- BUILD PRODUCTION DATABASE -->
+  <!-- Build genomic model database to hold production data -->
+  <target name="build-db-production-stemcell" 
+          depends="compile-genomic-model-stemcell, copy-stemcell-config">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.production"/>
+      <property name="objectstore.name" value="os.production"/>
+    </ant>
+    <antcall target="create-indexes-production"/>
+  </target>
+
+
+   <!-- build production database - assumes that ensembl databases already retrieved -->
+  <target name="stemcell-production-build"
+          depends="create-production-model-stemcell, compile-genomic-model-stemcell,jar-genomic,
+                   build-db-production-t1dmine, load-static-t1dmine,
+                   build-ensembl-human-production, 
+                   build-go-production-human,build-go-production-mouse,build-orthologues-production-mouse,
+                   build-tfbs-production, 
+                   build-firstef-production,build-mousechain-production, build-opposumchain-production,
+                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production, 
+                   build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
+                   build-gene-synonyms-for-embl-production,
+                   build-tfbscluster-production, build-cns-production,
+                   build-mage-stemcell-production, build-cdnaclone-image-production,
+                   analyse-db-production, grant-db-production"/>
+
   <target name="build-db-userprofile-stemcell" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${resources}/webapp/default.intermine.properties"
