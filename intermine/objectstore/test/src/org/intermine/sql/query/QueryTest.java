@@ -1086,17 +1086,13 @@ public class QueryTest extends TestCase
     // bug where 'field IS NOT NULL' is converted to 'field IS NULL'
     public void testIsNotNullBugFails() throws Exception {
         String sql1 = "SELECT DISTINCT a2_.identifier AS a1_ FROM Gene AS a2_, Organism AS a3_ WHERE (a2_.organismId = a3_.id OR a2_.identifier IS NOT NULL) OR 'ENSANGG00000018976' < a2_.identifier ORDER BY a2_.identifier LIMIT 10000 OFFSET 1";
-        System.out.println("sql1 = " + sql1);
         Query q1 = new Query(sql1);
-        System.out.println("q1 = " + q1);
         assertTrue(q1.toString().indexOf("IS NOT NULL") > 0);
     }
 
     public void testIsNotNullBugWorks() throws Exception {
         String sql1 = "SELECT DISTINCT a2_.identifier AS a1_ FROM Gene AS a2_, Organism AS a3_ WHERE a2_.organismId = a3_.id OR a2_.identifier IS NOT NULL OR 'ENSANGG00000018976' < a2_.identifier ORDER BY a2_.identifier LIMIT 10000 OFFSET 1";
-        System.out.println("sql1 = " + sql1);
         Query q1 = new Query(sql1);
-        System.out.println("q1 = " + q1);
         assertTrue(q1.toString().indexOf("IS NOT NULL") > 0);
     }
 
@@ -1123,6 +1119,18 @@ public class QueryTest extends TestCase
     }
 
     public void testLongParseTimeRegression2() throws Exception {
+        String sql = "SELECT DISTINCT a2_.id AS a2_id FROM Gene AS a1_, MicroArrayResult AS "
+            + "a2_, MicroArrayExperiment AS a3_, GenesMicroArrayResults AS indirect0 "
+            + "WHERE ((LOWER(a3_.identifier) = 'e-flyc-3' AND LOWER(a1_.identifier) = "
+            + "'cg4722') AND (a1_.id = indirect0.MicroArrayResults AND indirect0.Genes "
+            + "= a2_.id) AND a2_.experimentId = a3_.id) ORDER BY a2_.id";
+
+        long start = new Date().getTime();
+        Query q1 = new Query(sql);
+        assertTrue(((new Date()).getTime() - start)/1000 < 2);
+    }
+    
+    public void testLongParseTimeRegression3() throws Exception {
         String sql = "SELECT DISTINCT a1_.id AS a1_id, a2_.id AS a2_id, a4_.type AS a5_, a4_.intermine_value AS a6_ FROM MicroArrayExperiment AS a1_, MicroArrayAssay AS a2_, Sample AS a3_, SampleCharacteristic AS a4_, AssaysSamples AS indirect0, CharacteristicsSample AS indirect1 WHERE (((LOWER(a4_.type) = 'timeunit' OR LOWER(a4_.type) = 'developmentalstage') AND LOWER(a1_.name) = 'arbeitman m: gene expression during the life cycle of drosophila melanogaster') AND a1_.id = a2_.experimentId AND (a2_.id = indirect0.Samples AND indirect0.Assays = a3_.id) AND (a3_.id = indirect1.Characteristics AND indirect1.Sample = a4_.id)) ORDER BY a1_.id, a2_.id, a4_.type, a4_.intermine_value LIMIT 500";
         long start = new Date().getTime();
         Query q1 = new Query(sql);
