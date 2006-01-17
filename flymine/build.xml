@@ -3039,7 +3039,8 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
-                              username="${webapp.superuser}" osAlias="os.production"
+                              username="${webapp.superuser}" 
+                              osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
   
@@ -3047,14 +3048,16 @@
   <target name="dump-default-templates" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${resources}/webapp/default.intermine.properties"
-          overwrite="true" verbose="true"/>
+          overwrite="true" 
+          verbose="true"/>
     <!-- insert default template queries. this will also create the superuser account. -->
     <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/template-queries.xml"
-                              username="${webapp.superuser}" osAlias="os.production"
-                              userProfileAlias="osw.userprofile-production"/>
+                            username="${webapp.superuser}" 
+                            osAlias="os.production"
+                            userProfileAlias="osw.userprofile-production"/>
   </target>
 
   <!-- write the userprofile database to a file as XML -->
@@ -4823,9 +4826,24 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/t1dmine/template-queries.xml"
-                              username="${webapp.superuser}" osAlias="os.production"
+                              username="${webapp.superuser}" 
+                              osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
+  <target name="dump-default-templates-t1dmine" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" verbose="true"/>
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <dump-default-templates fileName="model/genomic/resources/web/t1dmine/template-queries.xml"
+                            username="${webapp.superuser}" 
+                            osAlias="os.production"
+                            userProfileAlias="osw.userprofile-production"/>
+  </target>
+  
 
   <target name="build-production-webapp-t1dmine"
           depends="t1dmine-model-style, build-production-webapp">
@@ -4893,9 +4911,25 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/stemcellmine/template-queries.xml"
-                              username="${webapp.superuser}" osAlias="os.production"
+                              username="${webapp.superuser}" 
+                              osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
+  <target name="dump-default-templates-stemcell" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${resources}/webapp/default.intermine.properties"
+          overwrite="true" 
+          verbose="true"/>
+    <!-- insert default template queries. this will also create the superuser account. -->
+    <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
+      <classpath refid="webapp.class.path"/>
+    </taskdef>
+    <dump-default-templates fileName="model/genomic/resources/web/stemcellmine/template-queries.xml"
+                            username="${webapp.superuser}" 
+                            osAlias="os.production"
+                            userProfileAlias="osw.userprofile-production"/>
+  </target>
+  
 
  <target name="build-production-webapp-stemcell"
           depends="stemcell-model-style, build-production-webapp">
