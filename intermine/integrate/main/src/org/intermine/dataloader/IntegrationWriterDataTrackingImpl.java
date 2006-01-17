@@ -31,6 +31,7 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.IntPresentSet;
 
 import org.apache.log4j.Logger;
 
@@ -45,6 +46,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
     protected DataTracker dataTracker;
+    protected IntPresentSet skeletons = new IntPresentSet();
 
     /**
      * Creates a new instance of this class, given the properties defining it.
@@ -153,7 +155,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
      */
     protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
-            int type) throws ObjectStoreException {
+                                    int type) throws ObjectStoreException {
         if (o == null) {
             return null;
         }
@@ -171,6 +173,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             }
         }
         Integer newId = null;
+        // if multiple equivalent objects in database just use id of first one
         Iterator equivalentIter = equivalentObjects.iterator();
         if (equivalentIter.hasNext()) {
             newId = ((InterMineObject) equivalentIter.next()).getId();
@@ -204,6 +207,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 if (!"id".equals(fieldName)) {
                     Set sortedEquivalentObjects;
 
+                    // always add to collections, resolve other clashes by priority
                     if (field instanceof CollectionDescriptor) {
                         sortedEquivalentObjects = new HashSet();
                     } else {
@@ -244,7 +248,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                         + field.getName() + "\" originally read from source: "
                                         + fieldSource;
                                 }
-                                
+
                                 if (!ignoreDuplicates) {
                                     LOG.error(errMessage);
                                     throw new IllegalArgumentException(errMessage);
@@ -344,6 +348,15 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         if (type != FROM_DB) {
             assignMapping(o.getId(), newObj.getId());
         }
+
+        // keep track of skeletons that are stored and remove when replaced by real object
+        if (type == SKELETON) {
+            skeletons.add(newObj.getId());
+        } else {
+            if (skeletons.contains(newObj.getId().intValue())) {
+                skeletons.set(newObj.getId().intValue(), false);
+            }
+        }
         //LOG.debug("store() finished normally for object " + oText);
         return newObj;
     }
@@ -360,6 +373,18 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @see IntegrationWriterAbstractImpl#close
      */
     public void close() throws ObjectStoreException {
+        // There is a bug somewhere in this code that sometimes allows skeletons to
+        // be stored without matching up with the real object object.  The problem
+        // seems to be erratic, some runs complete without a problem.  Here we
+        // throw an exception if any skeletons have been stored but never replace
+        // by a real object to give early warning.
+        if (!(skeletons.size() == 0)) {
+            LOG.info("Some skeletons where not replaced by real "
+                     + "objects: " + skeletons.toString());
+            LOG.info("IDMAP CONTENTS:" + idMap.toString());
+            throw new ObjectStoreException("Some skeletons where not replaced by real "
+                                       + "objects: " + skeletons.size());
+        }
         osw.close();
         dataTracker.close();
     }
