@@ -14,14 +14,14 @@ Current Data
 <DD>
 Molecular evidence for stem cell function of the slow-dividing fraction among human hematopoietic progenitor cells by genome-wide analysis
 </DD>
+
 <DT>Dik WA, Pike-Overzet K:</DT>
-<DD>
-Human T-cell differentiation
-</DD>
+<DD>Human T-cell differentiation</DD>
+
 <DT>van Zelm MC:</DT>
-<DD>
-Human B-cell differentiation
-</DD>
+<DD>Human B-cell differentiation</DD>
+
+<!--
 <DT>Shim MH:</DT>
 <DD>
 Gene Expression Profile in Primary Human CD30+/CD38lo Cells Differentiating Along the Megakaryocyte Lineage
@@ -30,5 +30,6 @@ Gene Expression Profile in Primary Human CD30+/CD38lo Cells Differentiating Alon
 <DD>
 Compare blood stem cells from young vs old mice
 </DD>
+-->
 </DL>
 </div>
