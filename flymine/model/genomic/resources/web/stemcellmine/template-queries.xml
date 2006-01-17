@@ -1,4 +1,9 @@
-<template-list>
+<userprofile>
+  <items/>
+  <bags/>
+  <queries>
+  </queries>
+  <template-queries>
   <template name="AAA_allHumanGenes" description="Show all the Human genes." important="false" keywords="Genomics">
     <query name="AAA_allHumanGenes" model="genomic" view="Gene">
       <node path="Gene" type="Gene">
@@ -435,6 +440,55 @@
       </node>
     </query>
   </template>
+ </template-queries>
+  <tags>
+    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.MicroArrayExperiment" type="class" />
+    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.CDNAClone" type="class" />
+    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
+ 
+    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
+    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class" />
+    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class" />
+    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class" />
+ 
+    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
+    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.BindingSite" type="class" />
+    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class" />
+    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.ProteinBindingSite" type="class" />
+    
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TRNA" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.NcRNA" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.ChromosomeBand" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RRNA" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnRNA" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnoRNA" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.UTR" type="class" />
+    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.MRNA" type="class" />
+    
+    <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
+    <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
+    <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class" />
+
+    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
+    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class" />
+    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
+    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />
+
+    <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
+    <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
+    <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
+  </tags>
+</userprofile>
 
 
-</template-list>
