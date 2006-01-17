@@ -163,7 +163,7 @@ public class UniprotDataTranslator extends DataTranslator
             // Drosophila melanogaster = 7227
             // Caenorhabditis elegans 6239
             // Anopheles gambiae = 7165
-	    // Homo sapiens = 9606
+            // Homo sapiens = 9606
             Item organism = (Item) organismIter.next();
             Iterator dbRefIter = getItemsInCollection(
                                       organism.getCollection("dbReferences")).iterator();
@@ -406,10 +406,10 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 } else if (taxonId == 9606) { // H. sapiens
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
-		    createGeneIdentifier = false;
+                    createGeneIdentifier = false;
                     if (geneOrganismDbId != null) {
-                        createGene = true;                	
-			dbId = getDataSourceId("Ensembl");		
+                        createGene = true;                      
+                        dbId = getDataSourceId("Ensembl");              
                     }
                 }
 
@@ -457,8 +457,8 @@ public class UniprotDataTranslator extends DataTranslator
                         }
 
                         if (geneIdentifier != null && createGeneIdentifier) {
-			    gene.addAttribute(new Attribute("identifier", geneIdentifier));
-			    // don't create duplicate synonym
+                            gene.addAttribute(new Attribute("identifier", geneIdentifier));
+                            // don't create duplicate synonym
                             if (!geneIdentifier.equals(geneOrganismDbId)) {
                                 Item synonym = createSynonym(gene.getIdentifier(), "identifier",
                                                              geneIdentifier, dbId);
@@ -594,8 +594,8 @@ public class UniprotDataTranslator extends DataTranslator
                         geneIdentifier = new String(getAttributeValue(
                                                                       srcDbReference, "id"));
                     } else if (geneNames == null && srcDbRefs.size() == 1) {
-			geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
-		    }
+                        geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
+                    }
                 }
                 if (geneIdentifier == null) {
                     LOG.info("Found dbRefs (" + srcDbRefs.size()
