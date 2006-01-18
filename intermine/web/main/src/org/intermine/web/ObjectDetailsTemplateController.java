@@ -60,7 +60,6 @@ public class ObjectDetailsTemplateController extends TilesAction
 
         InlineTemplateTable itt =
             TemplateHelper.getInlineTemplateTable(servletContext, templateName,
-                                                  TemplatesImportAction.ATTRIBUTE_VIEW_NAME,
                                                   objectId, userName);
         
         context.putAttribute("table", itt);

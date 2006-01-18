@@ -87,7 +87,7 @@ public class TemplateListController extends TilesAction
 
             InlineTemplateTable itt =
                 TemplateHelper.getInlineTemplateTable(servletContext, templateName, 
-                                                      TemplatesImportAction.ATTRIBUTE_VIEW_NAME,
+                                                      /*TemplatesImportAction.ATTRIBUTE_VIEW_NAME,*/
                                                       objectId, userName);
             
             if (itt == null) {
