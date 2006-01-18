@@ -140,6 +140,30 @@ public class InterMineCache
         return object;        
     }
     
+    /**
+     * Return a new object associated with cacheTag.  If no object matching arg1 is found one will
+     * be created, cached and returned.
+     * @param cacheTag the tag specifying which part of the cache to look arg1 in
+     * @param arg1 first argument used to look up the object to return (and the argument passed to
+     * the constructor of the new object if one is created)
+     * @param arg2 second argument
+     * @param arg3 third argument
+     * @param arg4 fourth argument
+     * @return the new object
+     */
+    public Serializable get(String cacheTag, Object arg1, Object arg2, Object arg3, Object arg4) {
+        CacheMap objectCache = getObjectCache(cacheTag);
+
+        MultiKey mkey = new MultiKey(arg1, arg2, arg3, arg4);
+        Serializable object = (Serializable) objectCache.get(mkey);
+        if (object == null) {
+            object = create(cacheTag, new Object[] {arg1, arg2, arg3, arg4});
+            objectCache.put(mkey, object);
+        }
+        
+        return object;        
+    }
+    
     private CacheMap getObjectCache(String cacheTag) {
         CacheMap ret = (CacheMap) objectCaches.get(cacheTag);
         if (ret == null) {
