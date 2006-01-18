@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Date;
-//import java.io.StringWriter;
-//import java.io.PrintWriter;
 import java.math.BigDecimal;
 import javax.sql.DataSource;
 
@@ -53,9 +51,9 @@ public class Database implements Shutdownable
 
     /**
      * No argument constructor for testing purposes
-     *
      */
     protected Database() {
+        // empty
     }
 
     /**
