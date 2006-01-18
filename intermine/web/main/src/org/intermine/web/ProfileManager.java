@@ -74,10 +74,8 @@ public class ProfileManager
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
-     * @throws ObjectStoreException if the user profile database cannot be found
      */
-    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS)
-        throws ObjectStoreException {
+    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
         makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
@@ -193,7 +191,7 @@ public class ProfileManager
                 savedBags.putAll(InterMineBagBinding.unmarshal(
                     new StringReader(bag.getBag()), os, new IdUpgrader() {
                         public Set getNewIds(InterMineObject oldObject,
-                                             ObjectStore os) {
+                                             ObjectStore _) {
                             throw new RuntimeException("Shouldn't call getNewIds() in a"
                                                        + " running webapp");
                         }
@@ -247,7 +245,7 @@ public class ProfileManager
     }
     
     /**
-     * Create 'aspect:XXX' tags for each keyword of each template.
+     * Create 'aspect:xxx' tags for each keyword of each template.
      * Public so that LoadDefaultTemplates task can call in.
      * @param savedTemplates Map from template name to TemplateQuery
      * @param username username under which to store tags
@@ -317,7 +315,6 @@ public class ProfileManager
                     org.intermine.web.SavedQuery query = null;
                     try {
                         Map.Entry entry = (Map.Entry) i.next();
-                        String queryName = (String) entry.getKey();
                         query = (org.intermine.web.SavedQuery) entry.getValue();
                         SavedQuery savedQuery = new SavedQuery();
                         savedQuery.setQuery(SavedQueryBinding.marshal(query));
@@ -332,7 +329,6 @@ public class ProfileManager
                     TemplateQuery template = null;
                     try {
                         Map.Entry entry = (Map.Entry) i.next();
-                        String templateName = (String) entry.getKey();
                         template = (TemplateQuery) entry.getValue();
                         SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
                         savedTemplate.setTemplateQuery(templateBinding.marshal(template));
