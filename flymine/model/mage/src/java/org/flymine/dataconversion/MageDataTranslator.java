@@ -1653,6 +1653,7 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("BioAssayDatum.compositeSequence", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
+        //prefetch cache miss?
         path = new ItemPath("BioAssayDatum.quantitationType.scale", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("BioAssayDatum.quantitationType.targetQuantitationType.scale",
@@ -1662,9 +1663,14 @@ public class MageDataTranslator extends DataTranslator
 
         //prefetch cache miss?
         descSet = new HashSet();
+        path = new ItemPath("LabeledExtract.treatments.action", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
+        path = new ItemPath("LabeledExtract.treatments.protocolApplications.parameterValues.parameterType", srcNs);
+        descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial"
                             , srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
+        
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial."
                             + "treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1677,6 +1683,7 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
         paths.put(srcNs + "BioSource", descSet);
 
+        //treatment prefetch?
         descSet = new HashSet();
         path = new ItemPath("Treatment.action", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1756,3 +1763,4 @@ public class MageDataTranslator extends DataTranslator
     }
 
 }
+
