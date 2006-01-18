@@ -33,7 +33,6 @@
     <c:when test="${!empty templateCounts[templateName] &&
                   templateCounts[templateName] == 0}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
-      <c:set var="cssClass" value="nullStrike"/>
     </c:when>
     <c:when test="${empty table}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
@@ -49,61 +48,63 @@
       </html:link>
     </c:otherwise>
   </c:choose>
-  <span class="${cssClass}">
-    <im:templateLine type="${type}" templateQuery="${templateQuery}"
-                     className="${className}" interMineObject="${interMineObject}"/>
-    <c:if test="${IS_SUPERUSER}">
-      <tiles:insert name="inlineTagEditor.tile">
-        <tiles:put name="taggable" beanName="templateQuery"/>
-        <tiles:put name="vertical" value="true"/>
-        <tiles:put name="show" value="true"/>
-      </tiles:insert>
-    </c:if>
-  </span>
+
+  <im:templateLine type="${type}" templateQuery="${templateQuery}"
+                   className="${className}" interMineObject="${interMineObject}"/>
+  <c:if test="${IS_SUPERUSER}">
+    <tiles:insert name="inlineTagEditor.tile">
+      <tiles:put name="taggable" beanName="templateQuery"/>
+      <tiles:put name="vertical" value="true"/>
+      <tiles:put name="show" value="true"/>
+    </tiles:insert>
+  </c:if>
+
   <c:if test="${verbose}">
-    <c:if test="${!empty displayObject.object && !empty table.inlineResults}">
-      <table border="0" cellspacing="0" cellpadding="0" width="100%">
-        <tr>
-          <td width="15">
-            <img border="0" src="images/blank.gif" alt="" width="15" height="11"/>
-          </td>
-          <td>
-            <table border="0" cellspacing="0" class="refSummary" align="right">
-              <thead style="text-align: center">
-                <tr>
-                  <c:forEach items="${table.columnNames}" var="columnName"
-                             varStatus="status">
-                    <td>
-                      <span class="attributeField" style="white-space:nowrap">
-                        ${columnName}
-                      </span>
-                    </td>
-                  </c:forEach>
-                </tr>
-              </thead>
-              <tbody>
-                <c:forEach items="${table.inlineResults}" var="row" varStatus="status">
+    <div style="overflow-x: auto">
+      <c:if test="${!empty displayObject.object && !empty table.inlineResults}">
+        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+          <tr>
+            <td width="15">
+              <img border="0" src="images/blank.gif" alt="" width="15" height="11"/>
+            </td>
+            <td>
+              <table border="0" cellspacing="0" class="refSummary" align="right">
+                <thead style="text-align: center">
                   <tr>
-                    <c:forEach items="${row}" var="col">
+                    <c:forEach items="${table.columnNames}" var="columnName" varStatus="status">
                       <td>
-                        <c:choose>
-                          <c:when test="${empty col}">
-                            <fmt:message key="objectDetails.nullField"/>
-                          </c:when>
-                          <c:otherwise>
-                            ${col}
-                          </c:otherwise>
-                        </c:choose>
+                        <span class="attributeField" style="white-space:nowrap">
+                          <c:out value="${fn:replace(columnName, '.', '&nbsp;> ')}" 
+                                 escapeXml="false"/>
+                        </span>
                       </td>
                     </c:forEach>
                   </tr>
-                </c:forEach>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </c:if>
+                </thead>
+                <tbody>
+                  <c:forEach items="${table.inlineResults}" var="row" varStatus="status">
+                    <tr>
+                      <c:forEach items="${row}" var="col">
+                        <td>
+                          <c:choose>
+                            <c:when test="${empty col}">
+                              <fmt:message key="objectDetails.nullField"/>
+                            </c:when>
+                            <c:otherwise>
+                              ${col}
+                            </c:otherwise>
+                          </c:choose>
+                        </td>
+                      </c:forEach>
+                    </tr>
+                  </c:forEach>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </c:if>
+    </div>
   </c:if>
 </div>
 <!-- /objectDetailsTemplate.jsp -->
