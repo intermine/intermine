@@ -46,6 +46,7 @@ public class AffyConverter extends CDNACloneConverter
     protected ItemFactory itemFactory;
     protected Map geneMap = new HashMap();
     protected Map probeMap = new HashMap();
+    private String PROBEPREFIX = "Affymetrix:CompositeSequence:HG-U133A:";
 
     /**
      * Constructor
@@ -60,11 +61,11 @@ public class AffyConverter extends CDNACloneConverter
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
         dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Affymetrix");
+        dataSource.setAttribute("name", "Affymetrix GeneChip");
         writer.store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Affymetrix HG-U133A annotationdata set");
+        dataSet.setAttribute("title", "Affymetrix HG-U133A annotation data set");
         writer.store(ItemHelper.convert(dataSet));
 
         organism = createItem("Organism");
@@ -150,7 +151,7 @@ public class AffyConverter extends CDNACloneConverter
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
-        probe.setAttribute("identifier", id);
+        probe.setAttribute("identifier", PROBEPREFIX + id);
         probe.setReference("organism", orgId);
         //      probe.addCollection(new ReferenceList("genes", geneId));
         probe.addCollection(new ReferenceList("evidence",
@@ -159,7 +160,7 @@ public class AffyConverter extends CDNACloneConverter
 
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
-        synonym.setAttribute("value", id);
+        synonym.setAttribute("value", PROBEPREFIX + id);
         synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
         writer.store(ItemHelper.convert(synonym));
@@ -168,5 +169,3 @@ public class AffyConverter extends CDNACloneConverter
     }
 
 }
-
-

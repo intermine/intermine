@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <items> 
 <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
-  <attribute name="name" value="Affymetrix"/>
+  <attribute name="name" value="Affymetrix GeneChip"/>
 </item> 
 <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
-  <attribute name="title" value="Affymetrix HG-U133A annotationdata set"/>
+  <attribute name="title" value="Affymetrix HG-U133A annotation data set"/>
 </item>
 <item id="-1_3" class="http://www.flymine.org/model/genomic#Organism">
   <attribute name="abbreviation" value="HS"/>
 </item>
 <item id="-1_4" class="http://www.flymine.org/model/genomic#CompositeSequence">
-  <attribute name="identifier" value="1007_s_at"/>
+  <attribute name="identifier" value="Affymetrix:CompositeSequence:HG-U133A:1007_s_at"/>
   <reference name="organism" ref_id="-1_3"/>
   <collection name="evidence">
     <reference ref_id="-1_2"/>
@@ -21,7 +21,7 @@
 </item>
 <item id="-1_5" class="http://www.flymine.org/model/genomic#Synonym">
   <attribute name="type" value="identifier"/>
-  <attribute name="value" value="1007_s_at"/>
+  <attribute name="value" value="Affymetrix:CompositeSequence:HG-U133A:1007_s_at"/>
   <reference name="source" ref_id="-1_1"/>
   <reference name="subject" ref_id="-1_4"/>
 </item>
@@ -30,7 +30,7 @@
   <reference name="organism" ref_id="-1_3"/>
 </item>
 <item id="-1_7" class="http://www.flymine.org/model/genomic#CompositeSequence">
-  <attribute name="identifier" value="211739_x_at"/>
+  <attribute name="identifier" value="Affymetrix:CompositeSequence:HG-U133A:211739_x_at"/>
   <reference name="organism" ref_id="-1_3"/>
   <collection name="evidence">
     <reference ref_id="-1_2"/>
@@ -42,7 +42,7 @@
 </item>
 <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
   <attribute name="type" value="identifier"/>
-  <attribute name="value" value="211739_x_at"/>
+  <attribute name="value" value="Affymetrix:CompositeSequence:HG-U133A:211739_x_at"/>
   <reference name="source" ref_id="-1_1"/>
   <reference name="subject" ref_id="-1_7"/>
 </item> 
