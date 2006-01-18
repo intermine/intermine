@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.objectstore.query.Query;
 import org.intermine.util.XmlUtil;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,10 +72,19 @@ public class ExportQueryAction extends InterMineAction
         }
         
         response.setContentType("text/plain; charset=us-ascii");
-        String modelName = query.getModel().getName();
-        String xml = PathQueryBinding.marshal(query, (name != null ? name : ""), modelName);
-        xml = XmlUtil.indentXmlSimple(xml);
-        response.getWriter().write(xml);
+        
+        if (StringUtils.isEmpty(request.getParameter("as"))
+            || request.getParameter("as").toLowerCase().equals("xml")) {
+            String modelName = query.getModel().getName();
+            String xml = PathQueryBinding.marshal(query, (name != null ? name : ""), modelName);
+            xml = XmlUtil.indentXmlSimple(xml);
+            response.getWriter().write(xml);
+        } else if (request.getParameter("as").toLowerCase().equals("iql")) {
+            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags());
+            String iql = osQuery.toString();
+            response.getWriter().println(iql);
+        }
+        
         return null;
     }
 }
