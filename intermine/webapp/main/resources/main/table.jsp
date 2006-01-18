@@ -162,7 +162,7 @@
 
             <th align="center" valign="top" style="${headerStyle}">
               <div>
-                <c:out value="${fn:replace(column.name, '.', ' > ')}"/>
+                <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
               </div>
             </th>
           </c:forEach>
