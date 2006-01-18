@@ -10,22 +10,24 @@ package org.intermine.web;
  *
  */
 
-import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ResultsInfo;
+
+import org.intermine.metadata.Model;
 import org.intermine.util.CollectionUtil;
+
+import java.io.StringReader;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,7 +49,7 @@ public class PathQuery
     protected ArrayList problems = new ArrayList();
     protected LogicExpression constraintLogic = null;
     protected Map alternativeViews = new TreeMap();
-    
+
     /**
      * Construct a new instance of PathQuery.
      * @param model the Model on which to base this query
@@ -155,7 +157,7 @@ public class PathQuery
         }
         return list;
     }
-
+    
     /**
      * Sets the value of view
      * @param view the value of view
@@ -192,10 +194,10 @@ public class PathQuery
     /**
      * Add an alternative select list.
      * @param name view name
-     * @param view the select list
+     * @param alternateView the select list
      */
-    public void addAlternativeView(String name, List view) {
-        alternativeViews.put(name, view);
+    public void addAlternativeView(String name, List alternateView) {
+        alternativeViews.put(name, alternateView);
     }
     
     /**
@@ -358,7 +360,7 @@ public class PathQuery
     }
 
     /**
-     * @see Object#equals
+     * @see Object#equals(Object)
      */
     public boolean equals(Object o) {
         return (o instanceof PathQuery)
@@ -369,7 +371,7 @@ public class PathQuery
     }
 
     /**
-     * @see Object#hashCode
+     * @see Object#hashCode()
      */
     public int hashCode() {
         return 2 * model.hashCode()
@@ -378,7 +380,7 @@ public class PathQuery
     }
 
     /**
-     * @see Object#toString
+     * @see Object#toString()
      */
     public String toString() {
         return "{PathQuery: " + model + ", " + nodes + ", " + view + "}";
@@ -474,7 +476,7 @@ public class PathQuery
     
     /**
      * Serialise to XML with no name.
-     * @see #toXml(String)
+     * @return the XML
      */
     public String toXml() {
         return PathQueryBinding.marshal(this, "", model.getName());
