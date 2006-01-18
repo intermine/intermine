@@ -30,6 +30,7 @@ import org.intermine.util.Shutdownable;
 import org.intermine.util.StringUtil;
 
 import org.apache.log4j.Logger;
+import org.postgresql.util.PSQLException;
 
 /**
  * Class that represents a physical SQL database
@@ -92,7 +93,12 @@ public class Database implements Shutdownable
      * @throws SQLException if there is a problem in the underlying database
      */
     public Connection getConnection() throws SQLException {
-        Connection retval = datasource.getConnection();
+        Connection retval;
+        try {
+            retval = datasource.getConnection();
+        } catch (PSQLException e) {
+            throw new RuntimeException("can't open datasource for " + this, e);
+        }
         /*
         Exception e = new Exception();
         e.fillInStackTrace();
@@ -233,7 +239,6 @@ public class Database implements Shutdownable
         while (propsEnum.hasMoreElements()) {
             String propertyName = (String) propsEnum.nextElement();
             Object propertyValue = props.get(propertyName);
-            String configName = propertyName.substring(propertyName.lastIndexOf(".") + 1);
             Field field = null;
 
             // Get the first part of the string - this is the attribute we are taking about
@@ -342,5 +347,12 @@ public class Database implements Shutdownable
      */
     public String getColumnTypeString(Class c) {
         return (String) POSTGRESQL_TYPE_STRING_MAP.get(c);
+    }
+
+    /**
+     * @see Object#toString()
+     */
+    public String toString() {
+        return "" + settings + " " + driver + " " + platform;
     }
 }
