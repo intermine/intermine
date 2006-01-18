@@ -86,8 +86,9 @@ public class TemplateListController extends TilesAction
             String templateName = template.getName();
 
             InlineTemplateTable itt =
-                TemplateHelper.getInlineTemplateTable(servletContext, templateName, objectId, 
-                                                      userName);
+                TemplateHelper.getInlineTemplateTable(servletContext, templateName, 
+                                                      TemplatesImportAction.ATTRIBUTE_VIEW_NAME,
+                                                      objectId, userName);
             
             if (itt == null) {
                 // template has unconstrained fields so we can't inline it
