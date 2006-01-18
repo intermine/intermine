@@ -25,7 +25,7 @@
   <c:set var="interMineObject" value="${displayObject.object}"/>
 </c:if>
 
-<div>
+<div class="templateLine">
   <c:choose>
     <c:when test="${empty displayObject}">
 
@@ -78,23 +78,76 @@
                                  escapeXml="false"/>
                         </span>
                       </td>
+                      <c:if test="${table.resultsSize > 0}">
+                        <c:set var="object" value="${table.inlineResults[0][status.index]}"/>
+                        <c:if test="${!empty LEAF_DESCRIPTORS_MAP[object]}">
+                          <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
+                          <c:forEach items="${displayObject.fieldExprs}" var="expr">
+                            <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
+                              <td>
+                                <span class="attributeField">${expr}</span>
+                              </td>
+                            </c:if>
+                          </c:forEach>
+                        </c:if>
+                      </c:if>
                     </c:forEach>
                   </tr>
                 </thead>
                 <tbody>
                   <c:forEach items="${table.inlineResults}" var="row" varStatus="status">
                     <tr>
-                      <c:forEach items="${row}" var="col">
-                        <td>
-                          <c:choose>
-                            <c:when test="${empty col}">
-                              <fmt:message key="objectDetails.nullField"/>
-                            </c:when>
-                            <c:otherwise>
-                              ${col}
-                            </c:otherwise>
-                          </c:choose>
-                        </td>
+                      <c:forEach items="${row}" var="object">
+                        <c:choose>
+                          <c:when test="${empty object}">
+                            <td><fmt:message key="objectDetails.nullField"/></td>
+                          </c:when>
+                          <c:otherwise>
+                            <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
+                            <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
+                            <td>
+                              <c:choose>
+                                <c:when test="${empty leafClds}">
+                                  ${object}
+                                </c:when>
+                                <c:otherwise>
+                                  <%-- Link to object --%>
+                                  <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
+                                  <span style="white-space:nowrap">
+                                    <c:forEach var="cld" items="${leafClds}">
+                                      <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
+                                    </c:forEach>
+                                    [<html:link action="${linkAction}">
+                                      <fmt:message key="results.details"/>
+                                    </html:link>]
+                                  </td>
+                              
+                                  <%-- Cell for each field expr --%>
+                                  <c:forEach items="${displayObject.fieldExprs}" var="expr">
+                                    <c:set var="object2" value="${object}" scope="request"/>
+                                    <im:eval evalExpression="object2.${expr}" evalVariable="outVal"/>
+                                    <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
+                                      <td>
+                                      <c:set var="style" value="white-space:nowrap"/>
+                                      <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
+                                        <c:if test="${fn:length(outVal) > 65}">
+                                          <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..." scope="request"/>
+                                        </c:if>
+                                        <c:set var="style" value=""/>
+                                      </c:if>
+                                      <div style="${style}">
+                                        <im:value>${outVal}</im:value>
+                                      </div>
+                                      </td>
+                                    </c:if>
+                                  </c:forEach>
+                                </c:otherwise>
+                              </c:choose>
+                              
+                            </span>
+                            <%-- /Link to object --%>
+                          </c:otherwise>
+                        </c:choose>
                       </c:forEach>
                     </tr>
                   </c:forEach>

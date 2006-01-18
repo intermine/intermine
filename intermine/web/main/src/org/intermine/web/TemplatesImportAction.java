@@ -72,9 +72,6 @@ public class TemplatesImportAction extends InterMineAction
         Iterator iter = templates.values().iterator();
         while (iter.hasNext()) {
             TemplateQuery template = (TemplateQuery) iter.next();
-            if (((Boolean) session.getAttribute(Constants.IS_SUPERUSER)).booleanValue()) {
-                makeAttributeView(template, servletContext);
-            }
             profile.saveTemplate(template.getName(), template);
             imported++;
         }
@@ -88,54 +85,4 @@ public class TemplatesImportAction extends InterMineAction
         
         return mapping.findForward("history");
     }
-
-    private void makeAttributeView(TemplateQuery template, ServletContext servletContext) {
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        PathQuery pathQuery = template.getQuery();
-        
-        List newView = new ArrayList();
-            
-        Iterator viewIter = pathQuery.getView().iterator();
-        while (viewIter.hasNext()) {
-            String node = (String) viewIter.next();
-            Path path;
-            try {
-                path = new Path(model, node);
-            } catch (RuntimeException e) {
-                // the path probably contains a sub-class constraint - just ignore it for now
-                continue;
-            }
-            
-            ClassDescriptor cd = path.getEndClassDescriptor();
-            
-            if (cd == null) {
-                if (!newView.contains(path.toString())) {
-                    newView.add(path.toString());
-                }
-            } else {
-                List fieldConfigs = FieldConfigHelper.getClassFieldConfigs(wc, cd);
-                
-                Iterator fcIter = fieldConfigs.iterator();
-                while (fcIter.hasNext()) {
-                    FieldConfig fc = (FieldConfig) fcIter.next();
-                    String expr = fc.getFieldExpr();
-                    
-                    String newViewPath = path + "." + expr;
-                    if (!newView.contains(newViewPath)) {
-                        newView.add(newViewPath);
-                    }
-                }
-
-            }
-        }                
-
-        pathQuery.addAlternativeView(ATTRIBUTE_VIEW_NAME, newView);
-    }
-    
-    /**
-     * The name to use for the automatically created view for attributes.
-     */
-    public final static String ATTRIBUTE_VIEW_NAME = "Attributes of default view";
 }

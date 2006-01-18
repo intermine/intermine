@@ -217,14 +217,14 @@ public class TemplateHelper
      * Try to fill the TemplateForm argument using the attribute values in the InterMineObject 
      * arg and return the number of form fields that aren't set afterwards.
      */
-    private static int fillTemplateForm(TemplateQuery template, String viewName,
+    private static int fillTemplateForm(TemplateQuery template, //String viewName,
                                         InterMineObject object,
                                         TemplateForm templateForm, Model model) {
         List constraints = template.getAllConstraints();
         int unmatchedConstraintCount = constraints.size();
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
 
-        templateForm.setView(viewName);
+        //templateForm.setView(viewName);
         
         for (int constraintIndex = 0; constraintIndex < constraints.size(); constraintIndex++) {
             Constraint c = (Constraint) constraints.get(constraintIndex);
@@ -272,19 +272,18 @@ public class TemplateHelper
      */
     private static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
                                                                TemplateQuery template,
-                                                               String viewName,
                                                                InterMineObject object) {
         TemplateForm templateForm = new TemplateForm();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
 
-        if (template.getQuery().getAlternativeView(viewName) == null) {
+        /*if (template.getQuery().getAlternativeView(viewName) == null) {
             // ignore templates that don't have an attributes only view
             return null;
-        }
+        }*/
         
         int unconstrainedCount = 
-            fillTemplateForm(template, viewName, object, templateForm, os.getModel());
+            fillTemplateForm(template, /*viewName,*/ object, templateForm, os.getModel());
         if (unconstrainedCount > 0) {
             return null;
         }
@@ -301,7 +300,7 @@ public class TemplateHelper
                 new InlineTemplateTable(results, columnNames, webProperties);
             List viewNodes = pathQuery.getView();
                     
-            Iterator viewIter = viewNodes.iterator();
+            /*Iterator viewIter = viewNodes.iterator();
             while (viewIter.hasNext()) {
                 String path = (String) viewIter.next();
                 String className = MainHelper.getTypeForPath(path, pathQuery);
@@ -312,18 +311,18 @@ public class TemplateHelper
 
                     if (InterMineObject.class.isAssignableFrom(nodeClass)) {
                         // can't display objects inline yet
-                        return null;
+                        //return null;
                     }
                 }
-            }
+            }*/
             return itt;
 
         } catch (IllegalArgumentException e) {
             // probably a template is out of date
             LOG.error("error while getting inline template information", e);
-        } catch (ClassNotFoundException e) {
-            // probably a template is out of date
-            LOG.error("error while getting inline template information", e);
+        //} catch (ClassNotFoundException e) {
+        //    // probably a template is out of date
+        //    LOG.error("error while getting inline template information", e);
         } catch (ObjectStoreException e) {
             LOG.error("error while getting inline template information", e);
         }
@@ -350,7 +349,7 @@ public class TemplateHelper
             final ObjectStore os = 
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-            public Serializable create(String templateName, String viewName,
+            public Serializable create(String templateName, /*String viewName,*/
                                        Integer id, String userName) {
                 if (userName.equals(NO_USERNAME_STRING)) {
                     // the create method can't have a null argument, but null is the signal for
@@ -372,7 +371,7 @@ public class TemplateHelper
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("cannot find object for ID: " + id);
                 }
-                return makeInlineTemplateTable(servletContext, template, viewName, object);
+                return makeInlineTemplateTable(servletContext, template, /*viewName,*/ object);
             }
         };
         
@@ -390,7 +389,6 @@ public class TemplateHelper
      */
     public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext, 
                                                                  String templateName,
-                                                                 String viewName,
                                                                  Integer interMineObjectId, 
                                                                  String userName) {
         if (userName == null) {
@@ -401,6 +399,6 @@ public class TemplateHelper
 
         InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
         return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                                               templateName, viewName, interMineObjectId, userName);
+                                               templateName, interMineObjectId, userName);
     }
 }

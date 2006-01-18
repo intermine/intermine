@@ -21,10 +21,10 @@
               foundDisplayer == true ||
               !empty templates}">
 
-  <im:heading id="${category}">
+  <im:heading id="${aspect}">
     ${aspect}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
   </im:heading>
-    <im:body id="${category}">
+    <im:body id="${aspect}">
       <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
         <tiles:put name="object" beanName="displayObject"/>
         <tiles:put name="aspect" value="${aspect}"/>
@@ -48,6 +48,7 @@
     <!-- nothing to display for aspect ${aspect} -->
   </c:otherwise>
 </c:choose>
+
 
 <!-- /objectDetailsAspect.jsp -->
 
