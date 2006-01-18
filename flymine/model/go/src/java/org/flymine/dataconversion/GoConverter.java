@@ -137,10 +137,10 @@ public class GoConverter extends FileConverter
                 continue;
             }
 
-            String qualifier = array[3];
-            String goEvidence = array[6];
             String productId = array[1];
             String goId = array[4];
+            String qualifier = array[3];
+            String goEvidence = array[6];
             String type = array[11];
 
             GoTermProduct key = new GoTermProduct(productId, goId, goEvidence, qualifier);
@@ -154,7 +154,7 @@ public class GoConverter extends FileConverter
 
                 ItemWrapper newProductWrapper =
                         newProduct(productId, type, newOrganism.getIdentifier(),
-                                newDatasource.getIdentifier(), null);
+                                newDatasource.getIdentifier());
 
                 String pwKey = newProductWrapper.getKey();
 
@@ -456,24 +456,10 @@ public class GoConverter extends FileConverter
                     if (withTypes.containsKey(prefix)) {
                         WithType wt = (WithType) withTypes.get(prefix);
 
-                        String pWrapKey = makeProductKey(value, wt.clsName, organismId);
-                        Item withProduct;
-
-                        //Have we already seen this product somewhere before?
-                        if (productWrapperMap != null
-                                && productWrapperMap.containsKey(pWrapKey)) {
-
-                            withProduct = ((ItemWrapper) productWrapperMap.get(pWrapKey)).getItem();
-                            withProductList.add(withProduct);
-                            //Ok here we have a new (so far) product - lets create it now...
-                        } else {
-                            ItemWrapper productWrapper =
-                                    newProduct(value, wt.clsName, organismId,
-                                            dataSourceId, pWrapKey);
-                            withProduct = productWrapper.getItem();
-                            withProductList.add(withProduct);
-                            productWrapperMap.put(pWrapKey, productWrapper);
-                        }
+                        ItemWrapper productWrapper = newProduct(
+                                value, wt.clsName, organismId, dataSourceId);
+                        Item withProduct = productWrapper.getItem();
+                        withProductList.add(withProduct);
                     } else {
                         LOG.debug("createWithObjects skipping a withType prefix:" + prefix);
                     }
@@ -539,7 +525,6 @@ public class GoConverter extends FileConverter
      * @param accession  the accession or actual identifier of the gene/protein (eg: FBgn0019981)
      * @param type       the type
      * @param organismId the organism identifier of the current organism item
-     * @param key        optional param that allows us to provide the key if we have already got it.
      * @param dataSourceId the id of the datasource the product is from.
      * @return the geneProduct
      * @throws ObjectStoreException if an error occurs in storing
@@ -547,11 +532,23 @@ public class GoConverter extends FileConverter
     protected ItemWrapper newProduct(String accession,
                                      String type,
                                      String organismId,
-                                     String dataSourceId,
-                                     String key) throws ObjectStoreException {
+                                     String dataSourceId) throws ObjectStoreException {
 
-        if (key == null) {
-            key = makeProductKey(accession, type, organismId);
+        StringBuffer buff = new StringBuffer();
+        buff.append("GoConverter.newProduct()");
+        buff.append(" accession:"); buff.append(accession);
+        buff.append(" type:"); buff.append(type);
+        buff.append(" organismId:"); buff.append(organismId);
+        buff.append(" dataSourceId:"); buff.append(dataSourceId);
+        LOG.debug(buff.toString());
+
+        String key = makeProductKey(accession, type, organismId);
+
+        //Have we already seen this product somewhere before?
+        // if so, return the product rather than creating a new one...
+        if (productWrapperMap != null && productWrapperMap.containsKey(key)) {
+
+            return ((ItemWrapper) productWrapperMap.get(key));
         }
 
         String idField = null;
