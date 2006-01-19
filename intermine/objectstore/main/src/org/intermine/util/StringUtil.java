@@ -23,6 +23,9 @@ import java.util.Iterator;
  */
 public class StringUtil
 {
+    private static final char HEX_CHARS[]
+        = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' };
+    
     private StringUtil() {
     }
 
@@ -84,7 +87,23 @@ public class StringUtil
         }
         return l;
     }
-
+    
+    /**
+     * Convert a byte buffer to a hexadecimal string.
+     * @param buffer byte buffer
+     * @return hexadecimal string
+     */
+    public static String bufferToHexString(byte buffer[]) {
+        StringBuffer sb = new StringBuffer(buffer.length * 2);
+        for (int i = 0; i < buffer.length; i++) {
+            char a = HEX_CHARS[(buffer[i] & 0xF0) >> 4];
+            char b = HEX_CHARS[buffer[i] & 0x0F];
+            sb.append(a);
+            sb.append(b);
+        }
+        return sb.toString();
+    }
+    
     /**
      * Returns a list of tokens delimited by delim in String str.
      * eg. split("abc@#def@#", "@#") returns a 3 element array containing "abc", "def" and ""

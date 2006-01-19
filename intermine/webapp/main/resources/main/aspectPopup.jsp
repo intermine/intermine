@@ -14,7 +14,7 @@
   <!--//<![CDATA[
     function changeaspect() {
       var url = '${requestScope['javax.servlet.include.context_path']}/aspect.do?';
-      var set = document.getElementById('aspectSelector').options[document.getElementById('aspectSelector').selectedIndex].value;
+      var set = $('aspectSelector').options[$('aspectSelector').selectedIndex].value;
       if (set != '') {
         url += 'name=' + set;
         document.location.href=url;
@@ -24,24 +24,24 @@
 </script>
 
 <form action="<html:rewrite action="/aspect"/>" name="aspectForm">
-        <%-- Page size controls --%>
-        <fmt:message key="aspect.starting.point"/>
-        <select name="name" onchange="changeaspect()" id="aspectSelector" class="aspectSelect">
-          <c:if test="${aspect == null}">
-            <option value="" selected>-- Choose aspect --</option>
-          </c:if>
-          <c:forEach items="${ASPECTS}" var="entry">
-            <c:set var="set" value="${entry.value}"/>
-            <option value="${set.name}"
-              <c:if test="${aspect.name == set.name}">
-                selected
-              </c:if>
-            >${set.name}</option>
-          </c:forEach>
-        </select>
-        <noscript>
-          <input type="submit" value="<fmt:message key="button.change"/>" class="aspectSelect"/>
-        </noscript>
+  <%-- Page size controls --%>
+  <fmt:message key="aspect.starting.point"/>
+  <select name="name" onchange="changeaspect()" id="aspectSelector" class="aspectSelect">
+    <c:if test="${aspect == null}">
+      <option value="" selected>-- Choose aspect --</option>
+    </c:if>
+    <c:forEach items="${ASPECTS}" var="entry">
+      <c:set var="set" value="${entry.value}"/>
+      <option value="${set.name}"
+        <c:if test="${aspect.name == set.name}">
+          selected
+        </c:if>
+      >${set.name}</option>
+    </c:forEach>
+  </select>
+  <noscript>
+    <input type="submit" value="<fmt:message key="button.change"/>" class="aspectSelect"/>
+  </noscript>
 </form>
 
 <!-- /aspectPopup.jsp -->

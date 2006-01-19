@@ -349,12 +349,4 @@ public class PrecomputeTemplatesTask extends Task
             return profile.getSavedTemplates();
         }
     }
-
-    /**
-     * Return the name of the properties file that passed to the constructor.
-     * @return the name of the properties file that passed to the constructor.
-     */
-    protected String getPropertiesFileName() {
-        return os.getModel().getName() + "_precompute.properties";
-    }
 }

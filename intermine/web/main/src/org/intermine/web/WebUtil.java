@@ -14,12 +14,20 @@ import org.intermine.objectstore.query.Results;
 
 import org.intermine.objectstore.ObjectStoreException;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -54,6 +62,45 @@ public abstract class WebUtil
         }
 
         return intVal;
+    }
+    
+    /**
+     * Gets the cache directory.
+     * @param servletContext the servlet context
+     * @return cache directory
+     */
+    public static File getCacheDirectory(ServletContext servletContext) {
+        Properties p = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String dir = p.getProperty("webapp.cachedir");
+        if (StringUtils.isEmpty(dir)) {
+            throw new RuntimeException("Please define webapp.cachedir in your build properties");
+        }
+        File cacheDir = new File(dir);
+        if (!cacheDir.exists()) {
+            throw new RuntimeException("No such directory: " + cacheDir.getPath());
+        }
+        String version = p.getProperty("project.releaseVersion");
+        cacheDir = new File(cacheDir, version);
+        if (!cacheDir.exists()) {
+            if (!cacheDir.mkdir()) {
+                throw new RuntimeException("Failed to create directory: " + cacheDir.getPath());
+            }
+        }
+        return cacheDir;
+    }
+    
+    /**
+     * Given an image on disk, write the image to the client. Assumes content type from
+     * the file extensions.
+     * @param imgFile image file
+     * @param response the http response object
+     * @throws IOException if something goes wrong
+     */
+    public static void sendImageFile(File imgFile, HttpServletResponse response)
+        throws IOException {
+        String type = StringUtils.substringAfterLast(imgFile.getName(), ".");
+        response.setContentType("image/" + type);
+        IOUtils.copy(new FileReader(imgFile), response.getOutputStream());
     }
 
     /**

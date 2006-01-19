@@ -87,13 +87,17 @@
       </tr>
       <c:if test="${collection.size > 0}">
         <tr>
-          <td colspan="2" id="coll_${aspect}_${fieldName}">
+          <td colspan="2">
+            <div id="coll_${aspect}_${fieldName}">
+              <div>
             <c:if test="${verbose}">
               <tiles:insert page="/objectDetailsCollectionTable.jsp">
                 <tiles:put name="collection" beanName="collection"/>
                 <tiles:put name="object" beanName="object"/>
               </tiles:insert>
             </c:if>
+              </div>
+            </div>
           </td>
         </tr>
       </c:if>

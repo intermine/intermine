@@ -15,6 +15,7 @@ function toggleCollectionVisibility(aspect, field, object_id) {
   var img = $('img_'+aspect+'_'+field).src;
   if (img.indexOf('images/minus.gif') >= 0) {
     $('img_'+aspect+'_'+field).src='images/plus.gif';
+    //Effect.SlideUp($('coll_'+aspect+'_'+field));
     $('coll_'+aspect+'_'+field).innerHTML='';
   }
   else
