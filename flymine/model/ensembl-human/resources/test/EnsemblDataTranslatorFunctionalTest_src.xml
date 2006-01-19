@@ -127,9 +127,7 @@
   </item>
   <item id="8_478" class="http://www.flymine.org/model/ensembl-human#translation">
     <attribute name="seq_start" value="10"/>    
-    <attribute name="seq_end" value="356"/>    
-    <reference name="start_exon" ref_id="0_2654"/>
-    <reference name="end_exon" ref_id="0_2652"/>
+    <attribute name="seq_end" value="356"/>  
     <reference name="transcript" ref_id="3_478"/>
   </item>
 
@@ -454,7 +452,13 @@
     <attribute name="priority" value="170"/>
     <reference name="display_marker_synonym" ref_id = "18_3"/>
  </item>
-
+ <item id="14_1" class="http://www.flymine.org/model/ensembl-human#marker">
+    <attribute name="left_primer" value="CACACAGGCTCACATGTT"/>
+    <attribute name="right_primer" value="GCTCCAGCGTCATGGAGG"/> 
+    <attribute name="min_primer_dist" value="142"/>
+    <attribute name="max_primer_dist" value="170"/>
+    <attribute name="priority" value="170"/>
+ </item>
  <item id="13_433858" class="http://www.flymine.org/model/ensembl-human#marker_feature">
     <attribute name="seq_region_start" value="11391868"/>
     <attribute name="seq_region_end" value="11391868"/>
