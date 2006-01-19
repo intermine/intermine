@@ -156,14 +156,6 @@ public class GoConverter extends FileConverter
                         newProduct(productId, type, newOrganism.getIdentifier(),
                                 newDatasource.getIdentifier());
 
-                String pwKey = newProductWrapper.getKey();
-
-                if (productWrapperMap.containsKey(pwKey)) {
-                    newProductWrapper = (ItemWrapper) productWrapperMap.get(pwKey);
-                } else {
-                    productWrapperMap.put(newProductWrapper.getKey(), newProductWrapper);
-                }
-
                 GoAnnoWithParentsPlaceHolder newPlaceHolder = new GoAnnoWithParentsPlaceHolder(
                         qualifier, newDatasource, newPublication, goEvidence, newProductWrapper,
                         newGoTerm, array[7], newOrganism);
@@ -445,7 +437,7 @@ public class GoConverter extends FileConverter
 
         List withProductList = new ArrayList();
         try {
-            String[] elements = withText.split("; |, ");
+            String[] elements = withText.split("[; |,]");
             for (int i = 0; i < elements.length; i++) {
                 String entry = elements[i].trim();
                 // rely on the format being type:identifier
@@ -534,13 +526,15 @@ public class GoConverter extends FileConverter
                                      String organismId,
                                      String dataSourceId) throws ObjectStoreException {
 
-        StringBuffer buff = new StringBuffer();
-        buff.append("GoConverter.newProduct()");
-        buff.append(" accession:"); buff.append(accession);
-        buff.append(" type:"); buff.append(type);
-        buff.append(" organismId:"); buff.append(organismId);
-        buff.append(" dataSourceId:"); buff.append(dataSourceId);
-        LOG.debug(buff.toString());
+        if (LOG.isDebugEnabled()) {
+            StringBuffer buff = new StringBuffer();
+            buff.append("GoConverter.newProduct()");
+            buff.append(" accession:"); buff.append(accession);
+            buff.append(" type:"); buff.append(type);
+            buff.append(" organismId:"); buff.append(organismId);
+            buff.append(" dataSourceId:"); buff.append(dataSourceId);
+            LOG.debug(buff.toString());
+        }
 
         String key = makeProductKey(accession, type, organismId);
 
@@ -576,7 +570,10 @@ public class GoConverter extends FileConverter
 
         writer.store(ItemHelper.convert(synonym));
 
-        return new ItemWrapper(key, product);
+        ItemWrapper newProductWrapper = new ItemWrapper(key, product);
+        productWrapperMap.put(key, newProductWrapper);
+
+        return newProductWrapper;
     }
 
     /**

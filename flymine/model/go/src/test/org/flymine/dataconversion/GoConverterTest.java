@@ -71,7 +71,7 @@ public class GoConverterTest extends TestCase
                 "/resources/test/GoConverterOboTest_tgt.xml", true, false);
 
     }
-    
+
     private void translateCommon(File onotologyFile, String srcFile, String tgtFile,
                                  boolean verbose, boolean writeItemFile) throws Exception{
 
