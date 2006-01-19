@@ -33,6 +33,7 @@
     <c:when test="${!empty templateCounts[templateName] &&
                   templateCounts[templateName] == 0}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
+      <c:set var="cssClass" value="nullStrike"/>
     </c:when>
     <c:when test="${empty table}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
@@ -48,16 +49,17 @@
       </html:link>
     </c:otherwise>
   </c:choose>
-
-  <im:templateLine type="${type}" templateQuery="${templateQuery}"
-                   className="${className}" interMineObject="${interMineObject}"/>
-  <c:if test="${IS_SUPERUSER}">
-    <tiles:insert name="inlineTagEditor.tile">
-      <tiles:put name="taggable" beanName="templateQuery"/>
-      <tiles:put name="vertical" value="true"/>
-      <tiles:put name="show" value="true"/>
-    </tiles:insert>
-  </c:if>
+  <span class="${cssClass}">
+    <im:templateLine type="${type}" templateQuery="${templateQuery}"
+                     className="${className}" interMineObject="${interMineObject}"/>
+    <c:if test="${IS_SUPERUSER}">
+      <tiles:insert name="inlineTagEditor.tile">
+        <tiles:put name="taggable" beanName="templateQuery"/>
+        <tiles:put name="vertical" value="true"/>
+        <tiles:put name="show" value="true"/>
+      </tiles:insert>
+    </c:if>
+  </span>
 
   <c:if test="${verbose}">
     <div style="overflow-x: auto">
