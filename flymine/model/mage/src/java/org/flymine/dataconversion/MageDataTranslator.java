@@ -634,7 +634,7 @@ public class MageDataTranslator extends DataTranslator
             Item qtItem = getReference(srcItem, "quantitationType");
 
             if (qtItem.hasAttribute("name")) {
-                holder.type = "(Normalised) " + qtItem.getAttribute("name").getValue().intern();
+                holder.type = qtItem.getAttribute("name").getValue().intern();
             } else {
                 LOG.warn("QuantitationType ( " + qtItem.getIdentifier()
                           + " ) does not have name attribute");
