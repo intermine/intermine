@@ -104,13 +104,13 @@
                           </c:when>
                           <c:otherwise>
                             <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
-                            <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                             <td>
                               <c:choose>
                                 <c:when test="${empty leafClds}">
                                   ${object}
                                 </c:when>
                                 <c:otherwise>
+                                  <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                                   <%-- Link to object --%>
                                   <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
                                   <span style="white-space:nowrap">
