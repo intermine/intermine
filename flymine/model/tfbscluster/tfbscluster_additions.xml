@@ -18,8 +18,7 @@
   <attribute name="type" type="java.lang.String"/>
   <reference name="location" referenced-type="org.flymine.model.genomic.Location"/>
   <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
-  <reference name="conservedOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
-  
+  <collection name="conservedOrganisms" referenced-type="org.flymine.model.genomic.Organism"/>  
 </class>
 <class name="org.flymine.model.genomic.ConservedRegion" extends="org.flymine.model.genomic.Region" is-interface="true">
 </class>
