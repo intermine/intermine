@@ -4,5 +4,12 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-
-<img src="<html:rewrite action="/proteinInteractionRenderer?object=${object.id}"/>"/>
+<c:choose>
+  <c:when test="${empty object.proteinInteractions}">
+    <p>No known protein interactions</p>
+  </c:when>
+  <c:otherwise>
+    <img style="border: 1px solid #ccc"
+         src="<html:rewrite action="/proteinInteractionRenderer?object=${object.id}"/>"/>
+  </c:otherwise>
+</c:choose>
