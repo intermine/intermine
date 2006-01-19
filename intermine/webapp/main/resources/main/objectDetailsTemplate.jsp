@@ -72,7 +72,7 @@
                 <thead style="text-align: center">
                   <tr>
                     <c:forEach items="${table.columnNames}" var="columnName" varStatus="status">
-                      <td>
+                      <td class="object">
                         <span class="attributeField" style="white-space:nowrap">
                           <c:out value="${fn:replace(columnName, '.', '&nbsp;> ')}" 
                                  escapeXml="false"/>
@@ -84,8 +84,8 @@
                           <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                           <c:forEach items="${displayObject.fieldExprs}" var="expr">
                             <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
-                              <td>
-                                <span class="attributeField">${expr}</span>
+                              <td class="attrib">
+                                <span class="attributeField">${fn:replace(expr, '.', '&nbsp;> ')}</span>
                               </td>
                             </c:if>
                           </c:forEach>
@@ -127,7 +127,7 @@
                                     <c:set var="object2" value="${object}" scope="request"/>
                                     <im:eval evalExpression="object2.${expr}" evalVariable="outVal"/>
                                     <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
-                                      <td>
+                                      <td class="attrib">
                                       <c:set var="style" value="white-space:nowrap"/>
                                       <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
                                         <c:if test="${fn:length(outVal) > 65}">
