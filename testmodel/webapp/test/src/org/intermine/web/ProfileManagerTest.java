@@ -394,6 +394,8 @@ public class ProfileManagerTest extends XMLTestCase
         } catch (RuntimeException e) {
             // expected
         }
+
+        pm.addTag("test-tag", "Department", "class", "bob");
     }
 
     public void testGetTags() throws Exception {
@@ -418,7 +420,9 @@ public class ProfileManagerTest extends XMLTestCase
         pm.addTag("tag3", "Department.name", "attribute", "sally");
         pm.addTag("tag3", "Department.company", "reference", "sally");
         pm.addTag("tag3", "Department.employees", "collection", "sally");
-
+        
+        pm.addTag("tag4", "Department", "class", "sally");
+        
         List allTags = pm.getTags(null, null, null, null);
         
         // 17 tags because ProfileManagerBindingTestNewIDs.xml has 5

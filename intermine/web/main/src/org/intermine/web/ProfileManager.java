@@ -10,18 +10,14 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.SavedQuery;
-import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -36,6 +32,18 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.SavedBag;
+import org.intermine.model.userprofile.SavedQuery;
+import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.IdUpgrader;
@@ -44,15 +52,8 @@ import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.tagging.TagTypes;
 
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -69,6 +70,8 @@ public class ProfileManager
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
+
+    private Map tagCache = null;
 
     /**
      * Construct a ProfileManager for the webapp
@@ -191,7 +194,7 @@ public class ProfileManager
                 savedBags.putAll(InterMineBagBinding.unmarshal(
                     new StringReader(bag.getBag()), os, new IdUpgrader() {
                         public Set getNewIds(InterMineObject oldObject,
-                                             ObjectStore _) {
+                                             ObjectStore objectStore) {
                             throw new RuntimeException("Shouldn't call getNewIds() in a"
                                                        + " running webapp");
                         }
@@ -395,8 +398,10 @@ public class ProfileManager
      * Delete a tag object from the database.
      * @param tag Tag object
      */
-    public void deleteTag(Tag tag) {
+    public synchronized void deleteTag(Tag tag) {
         try {
+            LOG.error("deleteTag() removing cache");
+            tagCache = null;
             getUserProfileObjectStore().delete(tag);
         } catch (ObjectStoreException err) {
             LOG.error(err);
@@ -409,7 +414,7 @@ public class ProfileManager
      * @return Tag
      * @throws ObjectStoreException if something goes wrong
      */
-    public Tag getTagById(int id) throws ObjectStoreException {
+    public synchronized Tag getTagById(int id) throws ObjectStoreException {
         return (Tag) getUserProfileObjectStore().getObjectById(new Integer(id));
     }
 
@@ -423,8 +428,16 @@ public class ProfileManager
      * @param userName the use name this tag is associated with
      * @return the matching Tags
      */
-    public List getTags(String tagName, String objectIdentifier, String type,
+    public synchronized List getTags(String tagName, String objectIdentifier, String type,
                         String userName) {
+        Map cache = getTagCache();
+        MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
+        
+        if (cache.containsKey(key)) {
+            LOG.error("found in cache: " + key);
+            return (List) cache.get(key);
+        }
+        
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
 
@@ -475,7 +488,22 @@ public class ProfileManager
         SingletonResults results =
             new SingletonResults(q, userprofileOS, userprofileOS.getSequence());
 
+        LOG.error("adding to cache: " + key);
+        cache.put(key, new ArrayList (results));
+        
         return results;
+    }
+
+    private MultiKey makeKey(String tagName, String objectIdentifier, String type,
+                             String userName) {
+        return new MultiKey(tagName, objectIdentifier, type, userName);
+    }
+
+    private Map getTagCache() {
+        if (tagCache == null) {
+            tagCache  = new HashMap();
+        }
+        return tagCache;
     }
 
     private final Map tagCheckers = new HashMap();
@@ -490,8 +518,10 @@ public class ProfileManager
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
      * @param userName the name of the UserProfile to associate this tag with
      */
-    public void addTag(String tagName, String objectIdentifier, String type,
+    public synchronized void addTag(String tagName, String objectIdentifier, String type,
                        String userName) {
+        LOG.error("addTag() deleting cache");
+        tagCache = null;
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
         }
@@ -504,17 +534,16 @@ public class ProfileManager
         if (userName == null) {
             throw new IllegalArgumentException("userName cannot be null");
         }
+        if (!tagCheckers.containsKey(type)) {
+            throw new IllegalArgumentException("unknown tag type: " + type);
+        }
         UserProfile userProfile = getUserProfile(userName);
         
         if (userProfile == null) {
             throw new RuntimeException("no such user " + userName);
         }
-        
-        if (tagCheckers.containsKey(type)) {
-            ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type,
-                    userProfile);
-        }
-        
+
+        ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type, userProfile);
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);
@@ -568,6 +597,27 @@ public class ProfileManager
         tagCheckers.put("collection", fieldChecker);
         tagCheckers.put("reference", fieldChecker);
         tagCheckers.put("attribute", fieldChecker);
+        
+        TagChecker templateChecker = new TagChecker() {
+            void isValid(String tagName, String objectIdentifier, String type,
+                         UserProfile userProfile) {
+                // OK
+            }
+        };
+        tagCheckers.put("template", templateChecker);
+        
+        TagChecker classChecker = new TagChecker() {
+            void isValid(String tagName, String objectIdentifier, String type,
+                         UserProfile userProfile) {
+                String className = objectIdentifier;
+                ClassDescriptor cd = model.getClassDescriptorByName(className);
+                if (cd == null) {
+                    throw new RuntimeException("unknown class name \"" + className
+                                               + "\" while tagging: " + objectIdentifier);
+                }
+            }
+        };
+        tagCheckers.put("class", classChecker);
     }
 }
 
