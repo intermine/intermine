@@ -176,6 +176,9 @@ public class SimpleLoadTask extends Task
 
                 while (proteinIter.hasNext()) {
                     Protein thisProtein = (Protein) proteinIter.next();
+                    thisProtein.addProteinFeatures(proteinFeature);
+                    osw.store(thisProtein);
+
                     Location featureLocation =
                         (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
                     try {
@@ -218,7 +221,7 @@ public class SimpleLoadTask extends Task
         
         Set returnList = new HashSet();
         try {
-            Results res = osw.execute(q);
+            Results res = osw.getObjectStore().execute(q);
             Iterator resIter = res.iterator();
             while (resIter.hasNext()) {
                 ResultsRow rr = (ResultsRow) resIter.next();
