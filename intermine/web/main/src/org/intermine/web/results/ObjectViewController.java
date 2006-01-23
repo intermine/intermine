@@ -71,7 +71,6 @@ public class ObjectViewController extends TilesAction
         Object o = request.getAttribute("object");
         
         if (o == null) {
-            LOG.info("object attribute is null");
             String objectId = (String) request.getParameter("id");
             if (objectId != null) {
                 o = os.getObjectById(new Integer(objectId));
@@ -83,7 +82,6 @@ public class ObjectViewController extends TilesAction
         }
         
         if (o == null) {
-            LOG.info("object attribute is still null");
             //this wouldn't be necessary if objectdetails was tidier
             session.removeAttribute("object");
         } else {
