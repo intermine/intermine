@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -52,7 +53,7 @@ public class TemplateListController extends TilesAction
         String type = (String) context.getAttribute("type");
         String aspect = (String) context.getAttribute("aspect");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
-        Set templates = null;
+        List templates = null;
         
         if (StringUtils.equals("global", type)) {
             if (object == null) {
