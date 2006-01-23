@@ -373,6 +373,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @see IntegrationWriterAbstractImpl#close
      */
     public void close() throws ObjectStoreException {
+        osw.close();
+        dataTracker.close();
+
         // There is a bug somewhere in this code that sometimes allows skeletons to
         // be stored without matching up with the real object object.  The problem
         // seems to be erratic, some runs complete without a problem.  Here we
@@ -385,7 +388,5 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             throw new ObjectStoreException("Some skeletons where not replaced by real "
                                        + "objects: " + skeletons.size());
         }
-        osw.close();
-        dataTracker.close();
     }
 }
