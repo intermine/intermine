@@ -1,4 +1,15 @@
 <aspects>
+  <aspect name="Genomics">
+    <subtitle>Genome annotation</subtitle>
+    <icon-image>model/genomics.gif</icon-image>
+    <large-image>model/genomics.gif</large-image>
+    <intro-text>
+      Genome annotation data.
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
+  </aspect>
+  
   <aspect name="Gene Expression">
     <subtitle></subtitle>
     <icon-image>model/marray.gif</icon-image>
@@ -9,55 +20,42 @@
     <tile-name>model/microarray.jsp</tile-name>
     <starting-points>MicroArrayExperiment CDNAClone Gene</starting-points>
   </aspect>
-
-  <aspect name="Protein Interactions">
+  
+  <aspect name="Gene Ontology">
     <subtitle></subtitle>
-    <icon-image>model/proteinInteraction.gif</icon-image>
-    <large-image>model/proteinInteraction.gif</large-image>
-    <tile-name></tile-name>
+    <icon-image>model/geneOntology.png</icon-image>
+    <large-image>model/geneOntology.png</large-image>
     <intro-text>
-      Proteins formatted in the Proteomics Standards Initiative (PSI)
-      molecular interaction (PSI MI) format can be mapped to the FlyMine
-      data model.
+      The Gene Ontology (GO) project is a collaborative effort to
+      address the need for consistent descriptions of gene products in
+      different databases.
+      
+      The GO collaborators are developing three structured, controlled
+      vocabularies (ontologies) that describe gene products in terms of
+      their associated biological processes, cellular components and
+      molecular functions in a species-independent manner.
+      
+      GO terms are organized in structures called directed acyclic
+      graphs (DAGs), which differ from hierarchies in that a child, or
+      more specialized, term can have many parents, or less specialized,
+      terms.
+      
+      The three GO ontologies have been loaded into FlyMine and the
+      hierachical structure of each can be browsed and queried.
+      
+      Model organism databases annotate their gene products (or genes)
+      with GO terms, providing references and indicating what kind of
+      evidence is available to support the annotations.
+      
+      GO annotations for D. melanogaster, C. elegans and A. gambiae have
+      been loaded into FlyMine.  The GO annotations are 'attached' to
+      Genes and so each gene has a reference (link) to a list of it's GO
+      annotations (if available).
     </intro-text>
-    <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
-    <tile-name>model/proteinInteraction.jsp</tile-name>
+    <starting-points>Gene GOTerm GOAnnotation</starting-points>
+    <tile-name>model/GO.jsp</tile-name>
   </aspect>
-
-  <aspect name="Protein Structure">
-    <subtitle>3-D protein&lt;br/&gt;structures</subtitle>
-    <icon-image>model/pstructure.gif</icon-image>
-    <large-image>model/pstructure.gif</large-image>
-    <intro-text>
-      3-D protein structures.
-    </intro-text>
-    <starting-points>Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain ProteinFamily</starting-points>
-    <tile-name>model/proteinStructure.jsp</tile-name>
-  </aspect>
-
-  <!--
-      <aspect name="Anopheles">
-        <subtitle></subtitle>
-        <icon-image>model/anopheles.gif</icon-image>
-        <large-image>model/anopheles.gif</large-image>
-        <tile-name></tile-name>
-        <intro-text>
-        </intro-text>
-        <starting-points></starting-points>
-      </aspect>
-      -->
-
-  <aspect name="Binding Sites">
-    <subtitle></subtitle>
-    <icon-image>model/bindingSites.png</icon-image>
-    <large-image>model/bindingSites.png</large-image>
-    <intro-text>
-      DNA and Protein binding sites.
-    </intro-text>
-    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
-    <tile-name>model/bindingSites.jsp</tile-name>
-  </aspect>
-
+  
   <aspect name="INDAC">
     <subtitle>Long Oligos</subtitle>
     <icon-image>model/indac.png</icon-image>
@@ -68,7 +66,7 @@
     <tile-name>model/indac.jsp</tile-name>
     <starting-points>Transcript Gene MicroarrayOligo</starting-points>
   </aspect>
-
+  
   <aspect name="Tiling Path">
     <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
@@ -79,62 +77,38 @@
     <tile-name>model/tilingPath.jsp</tile-name>
     <starting-points>PCRProduct Primer TilingPathSpan Chromosome Location</starting-points>
   </aspect>
-
-  <aspect name="Genomics">
-    <subtitle></subtitle>
-    <icon-image>model/genomics.gif</icon-image>
-    <large-image>model/genomics.gif</large-image>
+  
+  <aspect name="DrosDel">
+    <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
+    <icon-image>model/drosdel.gif</icon-image>
+    <large-image>model/drosdel.gif</large-image>
     <intro-text>
-      Genome annotation data.
+      DrosDel P-element insertion and deletion locations.
     </intro-text>
-    <tile-name>model/genomics.jsp</tile-name>
-    <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
+    <tile-name>model/drosdel.jsp</tile-name>
+    <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
   </aspect>
-
-  <aspect name="Gene Ontology">
-    <subtitle></subtitle>
-    <icon-image>model/geneOntology.png</icon-image>
-    <large-image>model/geneOntology.png</large-image>
+  
+  <aspect name="RNAi">
+    <subtitle>RNA interference experiments</subtitle>
+    <icon-image>model/rnai.png</icon-image>
+    <large-image>model/rnai.png</large-image>
     <intro-text>
-      The Gene Ontology (GO) project is a collaborative effort to
-      address the need for consistent descriptions of gene products in
-      different databases.
-
-      The GO collaborators are developing three structured, controlled
-      vocabularies (ontologies) that describe gene products in terms of
-      their associated biological processes, cellular components and
-      molecular functions in a species-independent manner.
-
-      GO terms are organized in structures called directed acyclic
-      graphs (DAGs), which differ from hierarchies in that a child, or
-      more specialized, term can have many parents, or less specialized,
-      terms.
-
-      The three GO ontologies have been loaded into FlyMine and the
-      hierachical structure of each can be browsed and queried.
-
-      Model organism databases annotate their gene products (or genes)
-      with GO terms, providing references and indicating what kind of
-      evidence is available to support the annotations.
-
-      GO annotations for D. melanogaster, C. elegans and A. gambiae have
-      been loaded into FlyMine.  The GO annotations are 'attached' to
-      Genes and so each gene has a reference (link) to a list of it's GO
-      annotations (if available).
+      RNAi experiments
     </intro-text>
-    <starting-points>Gene GOTerm GOAnnotation</starting-points>
-    <tile-name>model/GO.jsp</tile-name>
+    <tile-name>model/RNAi.jsp</tile-name>
+    <starting-points>RNAiExperiment Phenotype Gene</starting-points>
   </aspect>
-
-  <aspect name="Proteins">
-    <subtitle></subtitle>
-    <icon-image>model/proteins.png</icon-image>
-    <large-image>model/proteins.png</large-image>
+  
+  <aspect name="Disease">
+    <subtitle>Human disease matches from Homophila</subtitle>
+    <icon-image>model/disease.png</icon-image>
+    <large-image>model/disease.png</large-image>
     <intro-text>
-      Protein annotation (including family and domain annotation).
+      Homophila Human Disease to Drosophila Database (version 2.1).
     </intro-text>
-    <tile-name>model/proteins.jsp</tile-name>
-    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <tile-name>model/diseaseAspect.jsp</tile-name>
+    <starting-points>Disease Orthologue BlastMatch Gene</starting-points>
   </aspect>
 
   <aspect name="Comparative Genomics">
@@ -151,37 +125,64 @@
     <tile-name>model/inparanoid.jsp</tile-name>
     <starting-points>Gene Orthologue Paralogue</starting-points>
   </aspect>
-
-  <aspect name="DrosDel">
-    <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
-    <icon-image>model/drosdel.gif</icon-image>
-    <large-image>model/drosdel.gif</large-image>
+  
+  <aspect name="Proteins">
+    <subtitle>Protein and protemics data</subtitle>
+    <icon-image>model/proteins.png</icon-image>
+    <large-image>model/proteins.png</large-image>
     <intro-text>
-      DrosDel P-element insertion and deletion locations.
+      Protein annotation (including family and domain annotation).
     </intro-text>
-    <tile-name>model/drosdel.jsp</tile-name>
-    <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
+    <tile-name>model/proteins.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
   </aspect>
-
-  <aspect name="RNAi">
+  
+  <aspect name="Protein Interactions">
     <subtitle></subtitle>
-    <icon-image>model/rnai.png</icon-image>
-    <large-image>model/rnai.png</large-image>
+    <icon-image>model/proteinInteraction.gif</icon-image>
+    <large-image>model/proteinInteraction.gif</large-image>
+    <tile-name></tile-name>
     <intro-text>
-      RNAi experiments
+      Proteins formatted in the Proteomics Standards Initiative (PSI)
+      molecular interaction (PSI MI) format can be mapped to the FlyMine
+      data model.
     </intro-text>
-    <tile-name>model/RNAi.jsp</tile-name>
-    <starting-points>RNAiExperiment Phenotype Gene</starting-points>
+    <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
+    <tile-name>model/proteinInteraction.jsp</tile-name>
   </aspect>
-
-  <aspect name="Disease">
-    <subtitle>Human disease gene matches</subtitle>
-    <icon-image>model/disease.png</icon-image>
-    <large-image>model/disease.png</large-image>
+  
+  <aspect name="Protein Structure">
+    <subtitle>3-D protein&lt;br/&gt;structures</subtitle>
+    <icon-image>model/pstructure.gif</icon-image>
+    <large-image>model/pstructure.gif</large-image>
     <intro-text>
-      Homophila Human Disease to Drosophila Database (version 2.1).
+      3-D protein structures.
     </intro-text>
-    <tile-name>model/diseaseAspect.jsp</tile-name>
-    <starting-points>Disease Orthologue BlastMatch Gene</starting-points>
+    <starting-points>Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <tile-name>model/proteinStructure.jsp</tile-name>
   </aspect>
+  
+  <!--
+      <aspect name="Anopheles">
+        <subtitle></subtitle>
+        <icon-image>model/anopheles.gif</icon-image>
+        <large-image>model/anopheles.gif</large-image>
+        <tile-name></tile-name>
+        <intro-text>
+        </intro-text>
+        <starting-points></starting-points>
+      </aspect>
+      -->
+  
+  <aspect name="Binding Sites">
+    <subtitle>Protein binding sites</subtitle>
+    <icon-image>model/bindingSites.png</icon-image>
+    <large-image>model/bindingSites.png</large-image>
+    <intro-text>
+      DNA and Protein binding sites.
+    </intro-text>
+    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
+    <tile-name>model/bindingSites.jsp</tile-name>
+  </aspect>
+  
 </aspects>
