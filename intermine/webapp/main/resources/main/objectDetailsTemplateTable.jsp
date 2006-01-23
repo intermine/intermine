@@ -14,7 +14,7 @@
 
 <html:xhtml/>
 
-<div style="overflow-x: auto">
+<div style="overflow-x: auto; padding: 3px">
   <c:if test="${displayObject != null && table != null && !empty table.inlineResults}">
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
       <tr>
@@ -116,15 +116,15 @@
 
 <c:choose>
   <c:when test="${table == null}">
-    <script>
-      <!--
+    <script type="text/javascript">
+      <!--//<![CDATA[
         $('img_${fn:replace(aspect, ' ', '_')}_${templateQuery.name}').src='images/blank.gif';
-      //-->
+      //]]>-->
     </script>
   </c:when>
   <c:otherwise>
-    <script>
-      <!--
+    <script type="text/javascript">
+      <!--//<![CDATA[
         var id = '${fn:replace(aspect, ' ', '_')}_${templateQuery.name}';
         if (${table.resultsSize} == 0) {
           $('img_'+id).src='images/plus-disabled.gif';
@@ -135,7 +135,7 @@
         } else {
           $('count_'+id).innerHTML='${table.resultsSize} results';
         }
-      //-->
+      //]]>-->
     </script>
   </c:otherwise>
 </c:choose>

@@ -5,11 +5,11 @@
 <!-- menu.jsp -->
 <html:xhtml/>
 <div class="links">
-  <span class="menu-logged-in-item">
-    <c:if test="${!empty PROFILE.username}">
+  <c:if test="${!empty PROFILE.username}">
+    <span class="menu-logged-in-item">
       ${PROFILE.username}
-    </c:if>
-  </span>
+    </span>
+  </c:if>
   <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
       <fmt:message key="menu.home"/>

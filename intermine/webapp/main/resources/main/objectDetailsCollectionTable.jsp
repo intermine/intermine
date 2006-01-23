@@ -24,7 +24,7 @@
     <table border="0" cellspacing="0" class="refSummary" align="right">
       <thead style="text-align: center">
         <tr>
-          <td width="10px"> 
+          <td width="10"> 
             <fmt:message key="objectDetails.class"/>
           </td>
           <c:forEach items="${collection.table.columnNames}" var="fd"
@@ -35,7 +35,7 @@
               </span>
             </td>
           </c:forEach>
-          <td width="10px">
+          <td width="10">
             &nbsp;<%--for IE--%>
           </td>
         </tr>

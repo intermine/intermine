@@ -31,7 +31,7 @@
       </tiles:insert>
       <%-- the controller of this tile should have already called the controller
         for the template list so just insert the jsp page --%>
-      <c:if test="${!empty templates}">
+      <c:if test="${!empty templates && !empty aspectRefsAndCollections[aspect]}">
         <hr class="seperator"/>
       </c:if>
       <tiles:insert name="/templateList.jsp">
@@ -40,6 +40,9 @@
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="noTemplatesMsgKey" value=""/>
       </tiles:insert>
+      <c:if test="${!empty templates && foundDisplayer}">
+        <hr class="seperator"/>
+      </c:if>
       <tiles:insert page="/objectDetailsDisplayers.jsp">
         <tiles:put name="aspect" value="${aspect}"/>
         <tiles:put name="displayObject" beanName="displayObject"/>

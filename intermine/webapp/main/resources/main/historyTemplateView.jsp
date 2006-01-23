@@ -30,7 +30,7 @@
           <tr>
             <th>
               <input type="checkbox" id="selected_template"
-                     onclick="selectColumnCheckbox(this.form, 'template')">
+                     onclick="selectColumnCheckbox(this.form, 'template')"/>
             </th>
             <th align="left" nowrap>
               <fmt:message key="history.namecolumnheader"/>
@@ -42,7 +42,7 @@
               <fmt:message key="history.actionscolumnheader"/>
             </th>
           </tr>    
-          <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate">
+          <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate" varStatus="status">
             <tr>
               <td>
                 <html:multibox property="selected" styleId="selected_template_${status.index}">
@@ -79,7 +79,6 @@
                 </c:otherwise>
               </c:choose>
               
-              </td>
               <td nowrap>
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">

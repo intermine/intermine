@@ -5,6 +5,8 @@
 
 <!-- templateSearch.jsp -->
 
+<html:xhtml/>
+
 <script type="text/javascript">
 <!--
 window.onload = function() { document.getElementById("queryString").focus(); }
@@ -12,7 +14,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
 </script>
 
 <div class="body">
-  <html:form action="/templateSearch" method="GET" styleId="templateSearch">
+  <html:form action="/templateSearch" method="get">
     <fmt:message key="templateSearch.search.label"/>
     <html:text property="queryString" size="40" styleId="queryString"/>
     <html:select property="type">

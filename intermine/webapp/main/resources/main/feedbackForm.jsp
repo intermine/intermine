@@ -30,7 +30,6 @@
     <td><html:textarea property="message" cols="80" rows="10" style="width: 100%" styleId="fbcomment"/></td>
   </tr>
   <tr>
-    <td><hidden name="url" value="${requestScope['javax.servlet.forward.servlet_path']}?${pageContext.request.queryString}"/></td>
     <td align="center"><html:submit/></td>
   </tr>
   </table>
