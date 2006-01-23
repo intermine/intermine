@@ -9,10 +9,10 @@
     Object o = request.getAttribute("object");
     if ((o instanceof DisplayObject &&
        ((LocatedSequenceFeature) ((DisplayObject) o).getObject())
-           .proxGetSequence().getId() != null) ||
+           .proxGetSequence() != null) ||
         (o instanceof InterMineObject &&
         ((LocatedSequenceFeature) o)
-           .proxGetSequence().getId() != null)) {
+           .proxGetSequence() != null)) {
 %>
 
   <html:xhtml/>
