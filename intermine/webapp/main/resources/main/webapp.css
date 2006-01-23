@@ -758,13 +758,23 @@ a.addTagLink:hover { color:#CF4D23; text-decoration:underline }
   color: #444;
 }
 
-.templateLine {
+div.templateLine {
   margin-bottom: 5px;
   margin-top: 5px;
   padding-left: 3px;
 }
 
+div.templateIcon {
+  float: left;
+  padding-top: 2px;
+}
+
+div.templateDetails {
+  margin-left: 15px;
+}
+
 span.templateResCount {
   color: #555;
+  white-space: nowrap;
   font-size: 10px;
 }

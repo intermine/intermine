@@ -26,34 +26,43 @@
 <div class="templateLine">
   <c:choose>
     <c:when test="${empty displayObject}">
-
+      <%-- no icon at all --%>
     </c:when>
-    <%--<c:when test="${!empty templateCounts[templateName] &&
+    <%--
+      <c:when test="${!empty templateCounts[templateName] &&
                   templateCounts[templateName] == 0}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
       <c:set var="cssClass" value="nullStrike"/>
-    </c:when>--%>
-    <%--<c:when test="${empty table}">
+    </c:when>
+    <c:when test="${empty table}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
-    </c:when>--%>
+    </c:when>
+    --%>
     <c:when test="${verbose}">
-      <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
-        onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
-        <img border="0" src="images/minus.gif" alt="-" id="img_${uid}" height="11" width="11"/>
-      </html:link>
+      <div class="templateIcon">
+        <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
+          onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
+          <img border="0" src="images/minus.gif" alt="-" id="img_${uid}" height="11" width="11"/>
+        </html:link>
+      </div>
     </c:when>
     <c:otherwise>
-      <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
-        onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
-        <img border="0" src="images/plus.gif" alt="+" id="img_${uid}" height="11" width="11"/>
-      </html:link>
+      <div class="templateIcon">
+        <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
+          onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
+          <img border="0" src="images/plus.gif" alt="+" id="img_${uid}" height="11" width="11"/>
+        </html:link>
+      </div>
     </c:otherwise>
   </c:choose>
-  <span class="${cssClass}" id="label_${uid}">
-    <im:templateLine type="${type}" templateQuery="${templateQuery}"
-                     className="${className}" interMineObject="${interMineObject}"/>
-    <span id="count_${uid}" class="templateResCount"></span><br/>
-  </span>
+  
+  <div class="templateDetails">
+    <span class="${cssClass}" id="label_${uid}">
+      <im:templateLine type="${type}" templateQuery="${templateQuery}"
+                       className="${className}" interMineObject="${interMineObject}"/>
+      <span id="count_${uid}" class="templateResCount"></span><br/>
+    </span>
+  </div>
 
   <div id="table_${uid}" style="${verbose?'':'display: none'}">
     <div id="table_${uid}_int">
