@@ -101,8 +101,6 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
      * @param feature
      * @throws BuildException if gene is not in right format
      */
-
-
     private void createGeneAndRelated(String gene, GFF3Record record, Item feature)
         throws BuildException {
         List genes = (List) record.getAttributes().get(gene);
@@ -130,6 +128,14 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
         }
     }
 
+
+    /**
+     * create a collection with all the possible conservedOranisms 
+     * attribute name in Gff3 Attributes
+     * @param orgList ArrayList from Gff3 organism attribute
+     * @return ArrayList with identifier for conservedOrganisms
+     */
+    
     protected List getConservedOrganismList(List orgList) {
         List conservedOrganismList = new ArrayList();
         Iterator i = orgList.iterator();

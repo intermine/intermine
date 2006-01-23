@@ -54,8 +54,6 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         Item feature = getFeature();
 
         List conservedOrganismList = getConservedOrganismList(record);
-
-        //feature.setReference("conservedOrganism", conservedOrganism);
         feature.addCollection(new ReferenceList("conservedOrganisms", conservedOrganismList));
 
         if (record.getAttributes().get("type") != null) {
@@ -85,10 +83,8 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
      * create geneItem, DistanceRelation item and add relevant reference/collection to feature
      * attribute name in Gff3 Attributes
      * gene attributes like gene1=(geneId using ENSGxxxx),(3'or 5' or intron),distance
-     * @param gene: attributes name, either gene1 or gene2
-     * @param record: Gff3Record
-     * @param feature
-     * @throws BuildException if gene is not in right format
+     * @param residues String
+     * @return item sequence
      */
 
 
@@ -103,6 +99,13 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         return sequence;
     }
 
+
+    /**
+     * create a collection with all the possible conservedOranisms 
+     * attribute name in Gff3 Attributes
+     * @param record GFF3Record
+     * @return ArrayList with conservedOrganisms
+     */
     public List getConservedOrganismList(GFF3Record record) {
         List conservedOrganismList = new ArrayList();
         if (record.getAttributes().get("organism") != null) {
