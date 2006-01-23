@@ -9,25 +9,51 @@
 <html:xhtml/>
 
 <script>
-  
+<!--
 function toggleCollectionVisibility(aspect, field, object_id) {
 
-  var img = $('img_'+aspect+'_'+field).src;
-  if (img.indexOf('images/minus.gif') >= 0) {
-    $('img_'+aspect+'_'+field).src='images/plus.gif';
-    //Effect.SlideUp($('coll_'+aspect+'_'+field));
-    $('coll_'+aspect+'_'+field).innerHTML='';
+  if ($('coll_'+aspect+'_'+field+'_inner').innerHTML=='') {
+    // need to fetch
+    new Ajax.Updater('coll_'+aspect+'_'+field+'_inner', '<html:rewrite action="/modifyDetails"/>', {
+      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id,
+      onComplete: function(t) { /*toggleSlide(aspect, field)*/ }
+    });
+  } else {
+    new Ajax.Request('<html:rewrite action="/modifyDetails"/>', {
+      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id
+    });
   }
-  else
-    $('img_'+aspect+'_'+field).src='images/minus.gif';
-    
-  new Ajax.Updater('coll_'+aspect+'_'+field, '<html:rewrite action="/modifyDetails"/>',
-    {parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id});
-    
+  toggleSlide(aspect, field);
   return false;
 }
 
+
+function toggleSlide(aspect, field) {
+  var img = $('img_'+aspect+'_'+field).src;
+  $('img_'+aspect+'_'+field).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
+  Element.toggle('coll_'+aspect+'_'+field);//, 'blind');//, {duration: 0.2});
+}
+
+function toggleTemplateList(aspect, template) {
+  var img = $('img_'+aspect+'_'+template).src;
+  $('img_'+aspect+'_'+template).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
+  Element.toggle('table_'+aspect+'_'+template);//, 'slide', {duration: 0.2, fps:25});
+  return false;
+}
+//-->
 </script>
+
+<!--
+<div id="foo" style="display:none">
+<div>
+  Some content <p>
+  asdasdf
+</div>
+</div>
+
+<a href="#" onclick="Effect.SlideUp('foo', {duration: 0.25, fps: 25});return false">Slide up</a>
+<a href="#" onclick="Effect.SlideDown('foo', {duration: 0.25, fps: 25});return false">Slide down</a>
+-->
 
 <c:set var="helpUrl"
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>

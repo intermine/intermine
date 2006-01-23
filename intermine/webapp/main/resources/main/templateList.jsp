@@ -22,7 +22,7 @@
   <c:forEach items="${templates}" var="templateQuery" varStatus="status">
     <%-- filter unimportant templates if necessary --%>
     <c:if test="${!important || templateQuery.important}">
-      <tiles:insert name="objectDetailsTemplate.tile">
+      <tiles:insert name="objectDetailsTemplate.jsp">
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="templateQuery" beanName="templateQuery"/>
         <tiles:put name="aspect" value="${aspect}"/>

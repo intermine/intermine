@@ -31,6 +31,9 @@
       </tiles:insert>
       <%-- the controller of this tile should have already called the controller
         for the template list so just insert the jsp page --%>
+      <c:if test="${!empty templates}">
+        <hr class="seperator"/>
+      </c:if>
       <tiles:insert name="/templateList.jsp">
         <tiles:put name="type" value="global"/>
         <tiles:put name="aspect" value="${aspect}"/>

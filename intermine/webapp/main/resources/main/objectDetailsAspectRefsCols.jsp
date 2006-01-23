@@ -88,16 +88,26 @@
       <c:if test="${collection.size > 0}">
         <tr>
           <td colspan="2">
-            <div id="coll_${aspect}_${fieldName}">
-              <div>
-            <c:if test="${verbose}">
-              <tiles:insert page="/objectDetailsCollectionTable.jsp">
-                <tiles:put name="collection" beanName="collection"/>
-                <tiles:put name="object" beanName="object"/>
-              </tiles:insert>
-            </c:if>
-              </div>
-            </div>
+            <c:choose>
+              <c:when test="${verbose}">
+                <div id="coll_${aspect}_${fieldName}">
+                  <div id="coll_${aspect}_${fieldName}_inner">
+                    <c:if test="${verbose}">
+                      <tiles:insert page="/objectDetailsCollectionTable.jsp">
+                        <tiles:put name="collection" beanName="collection"/>
+                        <tiles:put name="object" beanName="object"/>
+                        <tiles:put name="fieldName" value="${fieldName}"/>
+                      </tiles:insert>
+                    </c:if>
+                  </div>
+                </div>
+              </c:when>
+              <c:otherwise>
+                <div id="coll_${aspect}_${fieldName}" style="display:none">
+                   <div id="coll_${aspect}_${fieldName}_inner"></div>
+                </div>
+              </c:otherwise>
+            </c:choose>
           </td>
         </tr>
       </c:if>

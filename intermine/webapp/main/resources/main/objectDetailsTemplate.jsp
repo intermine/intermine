@@ -14,10 +14,8 @@
 <tiles:importAttribute name="aspect"/>
 <tiles:importAttribute name="type"/>
 
-<%-- from controller: --%>
-<tiles:importAttribute name="table" ignore="true"/>
-
 <c:set var="templateName" value="${templateQuery.name}"/>
+<c:set var="uid" value="${fn:replace(aspect, ' ', '_')}_${templateName}"/>
 
 <c:set var="aspectAndField" value="${aspect}_${templateName}"/>
 <c:if test="${!empty displayObject}">
@@ -30,136 +28,71 @@
     <c:when test="${empty displayObject}">
 
     </c:when>
-    <c:when test="${!empty templateCounts[templateName] &&
+    <%--<c:when test="${!empty templateCounts[templateName] &&
                   templateCounts[templateName] == 0}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
       <c:set var="cssClass" value="nullStrike"/>
-    </c:when>
-    <c:when test="${empty table}">
+    </c:when>--%>
+    <%--<c:when test="${empty table}">
       <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
-    </c:when>
+    </c:when>--%>
     <c:when test="${verbose}">
-      <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
-        <img border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
+      <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
+        onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
+        <img border="0" src="images/minus.gif" alt="-" id="img_${uid}" height="11" width="11"/>
       </html:link>
     </c:when>
     <c:otherwise>
-      <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
-        <img border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
+      <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
+        onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
+        <img border="0" src="images/plus.gif" alt="+" id="img_${uid}" height="11" width="11"/>
       </html:link>
     </c:otherwise>
   </c:choose>
-  <span class="${cssClass}">
+  <span class="${cssClass}" id="label_${uid}">
     <im:templateLine type="${type}" templateQuery="${templateQuery}"
                      className="${className}" interMineObject="${interMineObject}"/>
-    <c:if test="${IS_SUPERUSER}">
-      <tiles:insert name="inlineTagEditor.tile">
-        <tiles:put name="taggable" beanName="templateQuery"/>
-        <tiles:put name="vertical" value="true"/>
-        <tiles:put name="show" value="true"/>
-      </tiles:insert>
-    </c:if>
+    <span id="count_${uid}" class="templateResCount"></span><br/>
   </span>
 
-  <c:if test="${verbose}">
-    <div style="overflow-x: auto">
-      <c:if test="${!empty displayObject.object && !empty table.inlineResults}">
-        <table border="0" cellspacing="0" cellpadding="0" width="100%">
-          <tr>
-            <td width="15">
-              <img border="0" src="images/blank.gif" alt="" width="15" height="11"/>
-            </td>
-            <td>
-              <table border="0" cellspacing="0" class="refSummary" align="right">
-                <thead style="text-align: center">
-                  <tr>
-                    <c:forEach items="${table.columnNames}" var="columnName" varStatus="status">
-                      <td class="object">
-                        <span class="attributeField" style="white-space:nowrap">
-                          <c:out value="${fn:replace(columnName, '.', '&nbsp;> ')}" 
-                                 escapeXml="false"/>
-                        </span>
-                      </td>
-                      <c:if test="${table.resultsSize > 0}">
-                        <c:set var="object" value="${table.inlineResults[0][status.index]}"/>
-                        <c:if test="${!empty LEAF_DESCRIPTORS_MAP[object]}">
-                          <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
-                          <c:forEach items="${displayObject.fieldExprs}" var="expr">
-                            <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
-                              <td class="attrib">
-                                <span class="attributeField">${fn:replace(expr, '.', '&nbsp;> ')}</span>
-                              </td>
-                            </c:if>
-                          </c:forEach>
-                        </c:if>
-                      </c:if>
-                    </c:forEach>
-                  </tr>
-                </thead>
-                <tbody>
-                  <c:forEach items="${table.inlineResults}" var="row" varStatus="status">
-                    <tr>
-                      <c:forEach items="${row}" var="object">
-                        <c:choose>
-                          <c:when test="${empty object}">
-                            <td><fmt:message key="objectDetails.nullField"/></td>
-                          </c:when>
-                          <c:otherwise>
-                            <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
-                            <td>
-                              <c:choose>
-                                <c:when test="${empty leafClds}">
-                                  ${object}
-                                </c:when>
-                                <c:otherwise>
-                                  <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
-                                  <%-- Link to object --%>
-                                  <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
-                                  <span style="white-space:nowrap">
-                                    <c:forEach var="cld" items="${leafClds}">
-                                      <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
-                                    </c:forEach>
-                                    [<html:link action="${linkAction}">
-                                      <fmt:message key="results.details"/>
-                                    </html:link>]
-                                  </td>
-                              
-                                  <%-- Cell for each field expr --%>
-                                  <c:forEach items="${displayObject.fieldExprs}" var="expr">
-                                    <c:set var="object2" value="${object}" scope="request"/>
-                                    <im:eval evalExpression="object2.${expr}" evalVariable="outVal"/>
-                                    <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
-                                      <td class="attrib">
-                                      <c:set var="style" value="white-space:nowrap"/>
-                                      <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
-                                        <c:if test="${fn:length(outVal) > 65}">
-                                          <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..." scope="request"/>
-                                        </c:if>
-                                        <c:set var="style" value=""/>
-                                      </c:if>
-                                      <div style="${style}">
-                                        <im:value>${outVal}</im:value>
-                                      </div>
-                                      </td>
-                                    </c:if>
-                                  </c:forEach>
-                                </c:otherwise>
-                              </c:choose>
-                              
-                            </span>
-                            <%-- /Link to object --%>
-                          </c:otherwise>
-                        </c:choose>
-                      </c:forEach>
-                    </tr>
-                  </c:forEach>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </table>
+  <div id="table_${uid}" style="${verbose?'':'display: none'}">
+    <div id="table_${uid}_int">
+      <c:if test="${verbose}">
+        <tiles:insert name="objectDetailsTemplateTable.tile">
+          <tiles:put name="displayObject" beanName="displayObject"/>
+          <tiles:put name="templateQuery" beanName="templateQuery"/>
+          <tiles:put name="aspect" value="${aspect}"/>
+        </tiles:insert>
       </c:if>
     </div>
+  </div>
+  
+  <c:if test="${IS_SUPERUSER}">
+    <tiles:insert name="inlineTagEditor.tile">
+      <tiles:put name="taggable" beanName="templateQuery"/>
+      <tiles:put name="vertical" value="true"/>
+      <tiles:put name="show" value="true"/>
+    </tiles:insert>
   </c:if>
+  
+  <c:if test="${!verbose}">
+    <script>
+      <!--
+        $('img_${uid}').src='images/spinner.gif';
+        new Ajax.Updater('table_${uid}_int', '<html:rewrite action="/modifyDetails"/>', {
+          parameters:'method=ajaxTemplateCount&template=${templateName}&object=${displayObject.object.id}&type=global&aspect=${aspect}',
+          onComplete: function() {
+            var count = $('count_${uid}').innerHTML;
+            if (count == '0')
+              $('img_${uid}').src='images/blank.gif';
+            else
+              $('img_${uid}').src='images/plus.gif';
+          },
+          evalScripts: true
+        });
+      -->
+    </script>
+  </c:if>
+  
 </div>
 <!-- /objectDetailsTemplate.jsp -->

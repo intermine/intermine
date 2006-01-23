@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,8 +23,19 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.tiles.ComponentContext;
+
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
+import org.intermine.web.ObjectDetailsTemplateController;
+import org.intermine.web.Profile;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.TemplateHelper;
+import org.intermine.web.TemplateListController;
+import org.intermine.web.TemplateQuery;
 
 /**
  * Action to handle events from the object details page
@@ -112,12 +124,53 @@ public class ModifyDetails extends DispatchAction
         request.setAttribute("object", object);
         request.setAttribute("trail", trail);
         request.setAttribute("collection", collection);
+        request.setAttribute("fieldName", fieldName);
         
         if (object.isVerbose(key)) {
             return mapping.findForward("objectDetailsCollectionTable");
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Count number of results for a template on the object details page.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward ajaxTemplateCount(ActionMapping mapping,
+                                   ActionForm form,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        ServletContext sc = session.getServletContext();
+        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        String type = request.getParameter("type");
+        String id = request.getParameter("object");
+        String templateName = request.getParameter("template");
+        ObjectStore os = (ObjectStore) sc.getAttribute(Constants.OBJECTSTORE);
+        
+        InterMineObject o = os.getObjectById(new Integer(id));
+        TemplateQuery tq = TemplateHelper.findTemplate(sc, userName, templateName, type);
+        Map displayObjects = (Map) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
+        DisplayObject obj = (DisplayObject) displayObjects.get(o);
+        
+        System.out.println("displayObject = " + obj + " tq = " + tq);
+        
+        ComponentContext cc = new ComponentContext();
+        cc.putAttribute("displayObject", obj);
+        cc.putAttribute("templateQuery", tq);
+        cc.putAttribute("aspect", request.getParameter("aspect"));
+        
+        new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
+        request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+        return mapping.findForward("objectDetailsTemplateTable");
     }
     
     /**
