@@ -1,0 +1,36 @@
+
+<project name="testmodel-webservice-test" default="default" basedir="."
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1">
+  
+  <description>build, test, package testmodel-webservice-test</description>
+  
+  <import file="../../../imbuild/tests.xml"/>
+  <import file="../../../imbuild/task.xml"/>
+  
+  <target name="test" depends="clear-dbs, release, tests.test">
+    <ant antfile="../main/build.xml" target="remove-webapp" inheritAll="false"/> 
+  </target>  
+
+  <target name="release">
+    <ant antfile="../main/build.xml" target="release-webapp" inheritAll="false"/>
+  </target>
+
+  <target name="clear-dbs" unless="no.test.init">
+    <!--
+      Build and init unittest databases early, before building dependencies
+      (so that objectstore summary reflects new database).
+    -->
+    <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false"/>
+  </target>
+  
+  <target name="init-test" depends="tests.init-test, -copy-intermine-properties"/>
+  
+  <target name="-copy-intermine-properties">
+    <copy file="${user.home}/${intermine.properties.file}"
+          tofile="${build.test.resources.dir}/intermine.properties"/>
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.test.resources.dir}/default.intermine.properties"/>
+  </target>
+  
+</project>
+

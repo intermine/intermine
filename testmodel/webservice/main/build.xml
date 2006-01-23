@@ -1,0 +1,7 @@
+
+<project name="testmodel-webservice" default="default" basedir=".">
+  
+  <description>build, test, package testmodel-webservice</description>
+  <import file="../../../imbuild/webservice.xml"/>
+  
+</project>
