@@ -8,7 +8,7 @@
   <import file="../../../imbuild/tests.xml"/>
   <import file="../../../imbuild/task.xml"/>
 
-  <target name="-pre-test" depends="build-db-fulldatatest"/>
+  <target name="-pre-test" depends="build-db-fulldatatest, build-db-unittest"/>
   
   <target name="-define-task-classpath">
     <!-- Override to alter the classpath created -->
@@ -25,5 +25,11 @@
                    model="fulldata"/>
   </target>
   
+  <target name="build-db-unittest" depends="init, -init-deps, -init-task-xml">
+    <task:build-db osname="os.unittest"
+                   dbname="db.unittest"
+                   model="testmodel"/>
+  </target>
+
 </project>
 
