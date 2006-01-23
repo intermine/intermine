@@ -56,7 +56,7 @@
     </c:otherwise>
   </c:choose>
   
-  <div class="templateDetails">
+  <div class="${displayObject == null ? '' : 'templateDetails'}">
     <span class="${cssClass}" id="label_${uid}">
       <im:templateLine type="${type}" templateQuery="${templateQuery}"
                        className="${className}" interMineObject="${interMineObject}"/>
