@@ -1665,7 +1665,8 @@ public class MageDataTranslator extends DataTranslator
         descSet = new HashSet();
         path = new ItemPath("LabeledExtract.treatments.action", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("LabeledExtract.treatments.protocolApplications.parameterValues.parameterType", srcNs);
+        path = new ItemPath("LabeledExtract.treatments.protocolApplications."
+                            + "parameterValues.parameterType", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial"
                             , srcNs);
