@@ -757,3 +757,14 @@ a.addTagLink:hover { color:#CF4D23; text-decoration:underline }
   white-space: nowrap;
   color: #444;
 }
+
+.templateLine {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 3px;
+}
+
+span.templateResCount {
+  color: #555;
+  font-size: 10px;
+}

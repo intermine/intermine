@@ -63,8 +63,8 @@ public class TemplateListController extends TilesAction
                     .getAspectTemplateForClass(aspect, servletContext, object.getObject(),
                             fieldExprs);
                 request.setAttribute("fieldExprMap", fieldExprs);
-                request.setAttribute("templateCounts", calcTemplateCounts(templates, fieldExprs,
-                        object.getObject().getId(), session));
+                //request.setAttribute("templateCounts", calcTemplateCounts(templates, fieldExprs,
+                //        object.getObject().getId(), session));
             }
         } else if (StringUtils.equals("user", type)) {
             //templates = profile.get

@@ -51,7 +51,7 @@ public class ObjectDetailsTemplateController extends TilesAction
         if (displayObject == null) {
             return null;
         }
-
+        
         TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");        
         String templateName = templateQuery.getName();
         
@@ -62,7 +62,9 @@ public class ObjectDetailsTemplateController extends TilesAction
             TemplateHelper.getInlineTemplateTable(servletContext, templateName,
                                                   objectId, userName);
         
-        context.putAttribute("table", itt);
+        if (itt != null) {
+            context.putAttribute("table", itt);
+        }
         
         return null;
     }

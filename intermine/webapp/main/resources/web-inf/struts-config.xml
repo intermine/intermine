@@ -264,6 +264,7 @@
       <forward name="objectDetails" path="/objectDetails.do" redirect="true"/>
       <forward name="results" path="results.page"/>
       <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
+      <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
     </action>
     
     <action path="/editTemplate"
@@ -535,7 +536,7 @@
     <action path="/initTemplateList"
             type="org.intermine.web.TemplateListController"/>
 
-    <action path="/initObjectDetailsTemplate"
+    <action path="/initObjectDetailsTemplateTable"
             type="org.intermine.web.ObjectDetailsTemplateController"/>
 
     <action path="/initBegin"

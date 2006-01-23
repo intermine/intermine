@@ -10,6 +10,7 @@
 
 <% if (pageContext.getAttribute("org.apache.struts.taglib.tiles.CompContext", PageContext.REQUEST_SCOPE) != null) { %>
   <tiles:importAttribute name="collection"/>
+  <tiles:importAttribute name="fieldName"/>
 <% } %>
 
 <html:xhtml/>
