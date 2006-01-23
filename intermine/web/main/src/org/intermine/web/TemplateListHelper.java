@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.log4j.Logger;
 public class TemplateListHelper
 {
     private static final Logger LOG = Logger.getLogger(TemplateListHelper.class);
+    private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
     
     /**
      * Get the Set of templates for a given aspect.
@@ -46,7 +48,7 @@ public class TemplateListHelper
      * @param context ServletContext
      * @return Set of TemplateQuerys
      */
-    public static Set getAspectTemplates(String aspect, ServletContext context) {
+    public static List getAspectTemplates(String aspect, ServletContext context) {
         String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
         Profile p = pm.getProfile(sup);
@@ -68,9 +70,10 @@ public class TemplateListHelper
             }
         }
         
-        return new HashSet(templates.values());
+        List retList = new ArrayList(templates.values());
+
+        return retList;
     }
-    
 
     /**
      * Get the Set of templates for a given aspect that contains constraints
@@ -81,13 +84,13 @@ public class TemplateListHelper
      * @param fieldExprsOut field expressions to fill in
      * @return Set of TemplateQuerys
      */
-    public static Set getAspectTemplateForClass(String aspect,
+    public static List getAspectTemplateForClass(String aspect,
                                                 ServletContext context,
                                                 InterMineObject object,
                                                 Map fieldExprsOut) {
-        HashSet templates = new HashSet();
+        List templates = new ArrayList();
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
-        Set all = getAspectTemplates(aspect, context);
+        List all = getAspectTemplates(aspect, context);
         Set types = new HashSet();
         types.addAll(DynamicUtil.decomposeClass(object.getClass()));
         types.addAll(Arrays.asList(object.getClass().getInterfaces()));
@@ -133,6 +136,9 @@ public class TemplateListHelper
                 }
             }
         }
+        
+        Collections.sort(templates, TEMPLATE_COMPARATOR);
+        
         return templates;
     }
 }
