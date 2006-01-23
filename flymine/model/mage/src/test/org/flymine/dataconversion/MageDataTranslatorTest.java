@@ -561,7 +561,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item expItem1 = createTgtItem("MicroArrayResult", "58_762", "");
         expItem1.setAttribute("value","-1.234");
         expItem1.setAttribute("scale","log");
-        expItem1.setAttribute("type","(Normalised) Log Ratio");
+        expItem1.setAttribute("type","Log Ratio");
         expItem1.setCollection("assays", new ArrayList(Collections.singleton("4_1")));
 	Item expItem2 = createTgtItem("MicroArrayAssay", "4_1", "");
         
