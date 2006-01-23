@@ -1,14 +1,14 @@
 <items>
-  <item id="1_7" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="1_9" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="ENSG00000171621"/>
   </item>
-  <item id="1_3" class="http://www.flymine.org/model/genomic#DistanceRelation">
+  <item id="1_5" class="http://www.flymine.org/model/genomic#DistanceRelation">
     <attribute name="distance" value="1460"/>
     <attribute name="type" value="3'"/>
     <reference name="object" ref_id="0_4"/>
-    <reference name="subject" ref_id="1_2"/>
+    <reference name="subject" ref_id="1_4"/>
   </item>
-  <item id="1_6" class="http://www.flymine.org/model/genomic#Sequence">
+  <item id="1_8" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="residues" value="GATATGGGAACGGAA"/>
   </item>
   <item id="0_8" class="http://www.flymine.org/model/genomic#Location">
@@ -25,13 +25,17 @@
     <attribute name="identifier" value="2ets-1gata:chr1:9334827..9334841"/>
     <attribute name="type" value="2ets-1gata"/>
     <reference name="organism" ref_id="0_0"/>
-    <reference name="sequence" ref_id="1_6"/>
+    <reference name="sequence" ref_id="1_8"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
     <collection name="geneDistances">
-      <reference ref_id="1_8"/>
-    </collection>
+      <reference ref_id="1_10"/>
+    </collection> 
+    <collection name="conservedOrganisms"> 
+       <reference ref_id="1_2"/>
+       <reference ref_id="1_3"/>
+    </collection>    
   </item>
   <item id="0_9" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
@@ -42,7 +46,7 @@
   <item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="HSCL"/>
   </item>
-  <item id="1_2" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="ENSG00000171735"/>
   </item>
   <item id="0_5" class="http://www.flymine.org/model/genomic#Location">
@@ -55,7 +59,7 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="1_6" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="ENSG00000049245"/>
   </item>
   <item id="0_6" class="http://www.flymine.org/model/genomic#Synonym">
@@ -76,30 +80,41 @@
       <reference ref_id="0_1"/>
     </collection>
     <collection name="geneDistances">
-      <reference ref_id="1_3"/>
       <reference ref_id="1_5"/>
+      <reference ref_id="1_7"/>
     </collection>
+     <collection name="conservedOrganisms"> 
+       <reference ref_id="1_2"/>
+       <reference ref_id="1_3"/>
+    </collection>    
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="1"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
-  <item id="1_8" class="http://www.flymine.org/model/genomic#DistanceRelation">
+  <item id="1_10" class="http://www.flymine.org/model/genomic#DistanceRelation">
     <attribute name="distance" value="0"/>
     <attribute name="type" value="intron"/>
     <reference name="object" ref_id="0_7"/>
-    <reference name="subject" ref_id="1_7"/>
+    <reference name="subject" ref_id="1_9"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="residues" value="GGATAATCTGAATTCCCAAGTGCCAGGAGTAGGAT"/>
   </item>
-  <item id="1_5" class="http://www.flymine.org/model/genomic#DistanceRelation">
+  <item id="1_7" class="http://www.flymine.org/model/genomic#DistanceRelation">
     <attribute name="distance" value="1964"/>
     <attribute name="type" value="5'"/>
     <reference name="object" ref_id="0_4"/>
-    <reference name="subject" ref_id="1_4"/>
+    <reference name="subject" ref_id="1_6"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="HSCL transcription factor binding site clusters"/>
   </item>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="MM"/>
+  </item>
+  <item id="1_3" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="CF"/>
+  </item>
+ 
 </items>

@@ -12,15 +12,25 @@
   <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="abbreviation" value="MM"/>
   </item>
-  <item id="1_2" class="http://www.flymine.org/model/genomic#Sequence">
+  <item id="1_3" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="residues" value="GTGGAAGG"/>
+  </item> 
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="CF"/>
   </item>
+  <item id="1_4" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="MD"/>
+  </item>
+  
   <item id="0_7" class="http://www.flymine.org/model/genomic#NcConservedRegion">
     <attribute name="identifier" value="ets-n2:chr1:6799..6933"/>
     <attribute name="type" value="ets-n2"/>
-    <reference name="conservedOrganism" ref_id="1_1"/>
+    <collection name="conservedOrganisms"> 
+       <reference ref_id="1_1"/>
+       <reference ref_id="1_4"/>
+    </collection>
     <reference name="organism" ref_id="0_0"/>
-    <reference name="sequence" ref_id="1_2"/>
+    <reference name="sequence" ref_id="1_3"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
@@ -54,9 +64,12 @@
   <item id="0_4" class="http://www.flymine.org/model/genomic#NcConservedRegion">
     <attribute name="identifier" value="ets-n2:chr1:6745..6752"/>
     <attribute name="type" value="ets-n2"/>
-    <reference name="conservedOrganism" ref_id="1_1"/>
+    <collection name="conservedOrganisms"> 
+       <reference ref_id="1_1"/>
+       <reference ref_id="1_2"/>
+    </collection>
     <reference name="organism" ref_id="0_0"/>
-    <reference name="sequence" ref_id="1_2"/>
+    <reference name="sequence" ref_id="1_3"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
