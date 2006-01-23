@@ -23,7 +23,7 @@
     <tiles:insert page="/currentTags.jsp"/>
   </span>
   <span id="addLink-${uid}">
-    <a class="addTagLink" href="" onclick="startEditingTag('${uid}');return false">Add tags</a>
+    <a class="addTagLink" href="#" onclick="startEditingTag('${uid}');return false">Add tags</a>
   </span>
   <span id="tagsEdit-${uid}" style="display:none; white-space:nowrap">
     <c:if test="${vertical}">

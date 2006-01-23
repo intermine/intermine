@@ -97,21 +97,23 @@
         <tiles:get name="body"/>
       </im:box>
       
-      <div id="feedbackFormDivButton">
-        <im:vspacer height="11"/>
-        <div class="expandButton">
-           <a href="#" onclick="showFeedbackForm();return false">
-             <b>${WEB_PROPERTIES["feedback.title"]}</b>
-           </a>
-      	</div>
-      </div>
-      
-      <div id="feedbackFormDiv" style="display:none">
+      <c:if test="${pageName != 'feedback'}">
+        <div id="feedbackFormDivButton">
           <im:vspacer height="11"/>
-          <im:box titleKey="feedbackBox.title">
-            <tiles:get name="feedbackForm"/>
-          </im:box>
-      </div>
+          <div class="expandButton">
+             <a href="#" onclick="showFeedbackForm();return false">
+               <b>${WEB_PROPERTIES["feedback.title"]}</b>
+             </a>
+        	</div>
+        </div>
+      
+        <div id="feedbackFormDiv" style="display:none">
+            <im:vspacer height="11"/>
+            <im:box title="${WEB_PROPERTIES['feedback.title']}">
+              <tiles:get name="feedbackForm"/>
+            </im:box>
+        </div>
+      </c:if>
       
       <c:if test="${param.debug != null}">
         <im:vspacer height="11"/>

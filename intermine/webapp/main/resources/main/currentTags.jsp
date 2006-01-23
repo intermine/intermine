@@ -10,7 +10,7 @@
 <html:xhtml/>
 
 <c:forEach items="${currentTags}" var="item" varStatus="status">
-  <span class="tag">${item.tagName} <a href="" class="deleteTagLink" onclick="new Ajax.Request('<html:rewrite action="/inlineTagEditorChange"/>', {parameters:'method=delete&tagid='+'${item.id}', asynchronous:false});refreshTags('${uid}', '${type}');return false;">[x]</a></span>
+  <span class="tag">${item.tagName} <a href="#" class="deleteTagLink" onclick="new Ajax.Request('<html:rewrite action="/inlineTagEditorChange"/>', {parameters:'method=delete&tagid='+'${item.id}', asynchronous:false});refreshTags('${uid}', '${type}');return false;">[x]</a></span>
 </c:forEach>
 
 <!-- /currentTags.jsp -->

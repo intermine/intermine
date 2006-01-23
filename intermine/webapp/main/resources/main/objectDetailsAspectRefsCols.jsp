@@ -23,7 +23,7 @@
       <c:set var="aspectAndField" value="${aspect}_${fieldName}"/>
       <c:set var="verbose" value="${!empty object.verbosity[aspectAndField]}"/>
       <tr>
-        <td width="10px">
+        <td width="10">
           <div style="white-space:nowrap">
             <c:choose>
               <c:when test="${verbose && collection.size > 0}">

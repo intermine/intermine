@@ -5,6 +5,8 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- templates.jsp -->
+<html:xhtml/>
+
 <c:choose>
   <c:when test="${empty param.category}">
     <c:forEach items="${CATEGORIES}" var="category">

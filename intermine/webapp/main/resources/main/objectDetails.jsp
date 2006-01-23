@@ -8,15 +8,14 @@
 <!-- objectDetails.jsp -->
 <html:xhtml/>
 
-<script>
-<!--
+<script type="text/javascript">
+<!--//<![CDATA[
 function toggleCollectionVisibility(aspect, field, object_id) {
 
   if ($('coll_'+aspect+'_'+field+'_inner').innerHTML=='') {
     // need to fetch
     new Ajax.Updater('coll_'+aspect+'_'+field+'_inner', '<html:rewrite action="/modifyDetails"/>', {
-      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id,
-      onComplete: function(t) { /*toggleSlide(aspect, field)*/ }
+      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id
     });
   } else {
     new Ajax.Request('<html:rewrite action="/modifyDetails"/>', {
@@ -27,7 +26,6 @@ function toggleCollectionVisibility(aspect, field, object_id) {
   return false;
 }
 
-
 function toggleSlide(aspect, field) {
   var img = $('img_'+aspect+'_'+field).src;
   $('img_'+aspect+'_'+field).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
@@ -37,23 +35,11 @@ function toggleSlide(aspect, field) {
 function toggleTemplateList(aspect, template) {
   var img = $('img_'+aspect+'_'+template).src;
   $('img_'+aspect+'_'+template).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
-  Element.toggle('table_'+aspect+'_'+template);//, 'slide', {duration: 0.2, fps:25});
+  Element.toggle('table_'+aspect+'_'+template);
   return false;
 }
-//-->
+//]]>-->
 </script>
-
-<!--
-<div id="foo" style="display:none">
-<div>
-  Some content <p>
-  asdasdf
-</div>
-</div>
-
-<a href="#" onclick="Effect.SlideUp('foo', {duration: 0.25, fps: 25});return false">Slide up</a>
-<a href="#" onclick="Effect.SlideDown('foo', {duration: 0.25, fps: 25});return false">Slide down</a>
--->
 
 <c:set var="helpUrl"
        value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>

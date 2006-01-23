@@ -128,7 +128,7 @@
 <im:vspacer height="12"/>
   <im:box titleKey="begin.heading.searchtemplates">
   <div class="body" align="center">
-  <html:form action="/templateSearch" method="GET" styleId="templateSearch">
+  <html:form action="/templateSearch" method="get">
     <fmt:message key="templateSearch.search.label"/>
     <html:text property="queryString" size="40" styleId="queryString"/>
     <html:select property="type">

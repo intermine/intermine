@@ -75,9 +75,9 @@
     </tiles:insert>
   </c:if>
   
-  <c:if test="${!verbose}">
-    <script>
-      <!--
+  <c:if test="${!verbose && displayObject != null}">
+    <script type="text/javascript">
+      <!--//<![CDATA[
         $('img_${uid}').src='images/spinner.gif';
         new Ajax.Updater('table_${uid}_int', '<html:rewrite action="/modifyDetails"/>', {
           parameters:'method=ajaxTemplateCount&template=${templateName}&object=${displayObject.object.id}&type=global&aspect=${aspect}',
@@ -90,7 +90,7 @@
           },
           evalScripts: true
         });
-      -->
+      //]]>-->
     </script>
   </c:if>
   
