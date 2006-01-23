@@ -125,6 +125,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public static void removeDataFromStore() throws Exception {
+        removeDataFromStore(writer);
+    }
+
+    public static void removeDataFromStore(ObjectStoreWriter writer) throws Exception {
         System.out.println("Removing data from store");
         long start = new Date().getTime();
         if (writer == null) {
@@ -919,9 +923,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
 
-        iw.store(a, source, skelSource, iw.SKELETON);
+        iw.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SKELETON);
         assertTrue(iw.skeletons.size() == 1);
-        iw.store(a, source, skelSource, iw.SOURCE);
+        iw.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SOURCE);
         assertTrue(iw.skeletons.size() == 0);
     }
 
@@ -932,16 +936,22 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a.setId(new Integer(1));
         }
 
-        Source source = iw.getMainSource("testsource");
-        Source skelSource = iw.getSkeletonSource("testsource");
+        IntegrationWriterDataTrackingImpl iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+        ObjectStoreWriter writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
+        Source source = iw2.getMainSource("testsource");
+        Source skelSource = iw2.getSkeletonSource("testsource");
 
-        iw.store(a, source, skelSource, iw.SKELETON);
-        assertTrue(iw.skeletons.size() == 1);
+        iw2.store(a, source, skelSource, IntegrationWriterDataTrackingImpl.SKELETON);
+        assertTrue(iw2.skeletons.size() == 1);
 
         try {
-            iw.close();
+            iw2.close();
             fail("Expected exception because not all skeletons replaced by real objects");
         } catch (ObjectStoreException e) {
+        } finally {
+            iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
+            writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
+            removeDataFromStore(writer2);
         }
     }
 }
