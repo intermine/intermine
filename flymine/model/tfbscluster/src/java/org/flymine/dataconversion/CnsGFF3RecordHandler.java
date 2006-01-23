@@ -11,16 +11,18 @@ package org.flymine.dataconversion;
  */
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 import org.flymine.io.gff3.GFF3Record;
 
 import org.apache.tools.ant.BuildException;
-
 
 /**
  * A converter/retriever for Tfbs conserved non-coding site GFF3 files.
@@ -32,7 +34,7 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
 {
 
     private final Map sequenceMap = new HashMap();
-    private Item conservedOrganism;
+    private final Map organismMap = new HashMap();
 
 
     /**
@@ -51,9 +53,10 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) throws BuildException {
         Item feature = getFeature();
 
-        conservedOrganism = getConservedOrganism(record);
+        List conservedOrganismList = getConservedOrganismList(record);
 
-        feature.setReference("conservedOrganism", conservedOrganism);
+        //feature.setReference("conservedOrganism", conservedOrganism);
+        feature.addCollection(new ReferenceList("conservedOrganisms", conservedOrganismList));
 
         if (record.getAttributes().get("type") != null) {
             String type = (String) ((List) record.getAttributes().get("type")).get(0);
@@ -100,16 +103,27 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         return sequence;
     }
 
-    public Item getConservedOrganism(GFF3Record record) {
-        if (conservedOrganism == null) {
-            if (record.getAttributes().get("organism") != null) {
-                String orgAbbrev = (String) ((List) record.getAttributes().get("organism")).get(0);
-                conservedOrganism = createItem("Organism");
-                conservedOrganism.setAttribute("abbreviation", orgAbbrev);
-                addItem(conservedOrganism);
+    public List getConservedOrganismList(GFF3Record record) {
+        List conservedOrganismList = new ArrayList();
+        if (record.getAttributes().get("organism") != null) {
+            List orgList = (List) record.getAttributes().get("organism");
+            Iterator i = orgList.iterator();
+            Item conservedOrg;
+            while (i.hasNext()) {
+                String orgAbbrev = (String) i.next();
+                if (organismMap.containsKey(orgAbbrev)) {
+                    conservedOrg = (Item) organismMap.get(orgAbbrev);                 
+                } else {
+                    conservedOrg = createItem("Organism");
+                    conservedOrg.setAttribute("abbreviation", orgAbbrev);
+                    addItem(conservedOrg);
+                    organismMap.put(orgAbbrev, conservedOrg);
+                }
+                conservedOrganismList.add(conservedOrg.getIdentifier());   
+               
             }
         }
-        return conservedOrganism;
+        return conservedOrganismList;
     }
 
 }

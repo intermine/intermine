@@ -1,6 +1,6 @@
 ##gff-version 3 
 ##CIMR HSCL CNS
 
-1	TFBSSearch	nc_conserved_region	6745	6752	.	+	.	ID=ets-n2:chr1:6745..6752;type=ets-n2;organism=MM;sequence=GTGGAAGG
-1	TFBSSearch	nc_conserved_region	6799	6933	.	+	.	ID=ets-n2:chr1:6799..6933;type=ets-n2;organism=MM;sequence=GTGGAAGG
+1	TFBSSearch	nc_conserved_region	6745	6752	.	+	.	ID=ets-n2:chr1:6745..6752;type=ets-n2;organism=MM,CF;sequence=GTGGAAGG
+1	TFBSSearch	nc_conserved_region	6799	6933	.	+	.	ID=ets-n2:chr1:6799..6933;type=ets-n2;organism=MM,MD;sequence=GTGGAAGG
 
