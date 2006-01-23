@@ -13,7 +13,7 @@
 <tiles:importAttribute name="show" ignore="true"/>
 
 <c:if test="${vertical}">
-  <br/>
+  <div style="margin-top: 5px">
 </c:if>
 
 <img class="tag" src="images/tag.gif" onclick="new Effect.Appear('tags-${uid}', {duration: 0.15})"/>
@@ -37,5 +37,9 @@
     <input type="button" style="font-size: 10px" value="Done" onclick="stopEditingTag('${uid}')"/>
   </span>
 </span>
+
+<c:if test="${vertical}">
+  </div>
+</c:if>
 
 <!-- /inlineTagEditor.jsp -->

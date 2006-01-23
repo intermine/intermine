@@ -130,8 +130,8 @@
           $('img_'+id).src='images/plus-disabled.gif';
           $('label_'+id).className='nullStrike';
           $('count_'+id).innerHTML='no results';
-          $('img_'+id).parentElement.href='#';
-          $('img_'+id).parentElement.onclick = function(){return false;};
+          $('img_'+id).parentNode.href='#';
+          $('img_'+id).parentNode.onclick = function(){return false;};
         } else {
           $('count_'+id).innerHTML='${table.resultsSize} results';
         }
