@@ -2944,6 +2944,7 @@
     <filter token="HELP_LOCATION" value="${www.help.location}"/>
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
     <filter token="RELEASE_VERSION" value="${release.version}"/>
+    <filter token="CACHE_DIR" value="${webapp.cachedir}"/>
     <copy todir="${build.tmp}" filtering="true"
           file="${webapp.properties.file}"
           overwrite="true" verbose="true"/>
