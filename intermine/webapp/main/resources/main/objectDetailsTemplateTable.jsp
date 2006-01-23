@@ -14,6 +14,7 @@
 
 <html:xhtml/>
 
+<div style="width: 200px">
 <div style="overflow-x: auto; padding: 3px">
   <c:if test="${displayObject != null && table != null && !empty table.inlineResults}">
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -112,6 +113,7 @@
     </table>
     
   </c:if>
+</div>
 </div>
 
 <c:choose>
