@@ -32,4 +32,13 @@
     <attribute name="genus" value="Monodelphis"/>
     <attribute name="species" value="domestica"/>
   </item> 
+  <item id="0_5" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Canis familiaris"/>
+    <attribute name="shortName" value="C. familiaris"/>
+    <attribute name="taxonId" value="9615"/>
+    <attribute name="abbreviation" value="CF"/>
+    <attribute name="genus" value="Canis"/>
+    <attribute name="species" value="familiaris"/>
+  </item> 
+
 </items>
