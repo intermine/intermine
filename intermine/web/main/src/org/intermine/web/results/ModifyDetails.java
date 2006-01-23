@@ -32,9 +32,7 @@ import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 import org.intermine.web.ObjectDetailsTemplateController;
 import org.intermine.web.Profile;
-import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateHelper;
-import org.intermine.web.TemplateListController;
 import org.intermine.web.TemplateQuery;
 
 /**
@@ -160,8 +158,6 @@ public class ModifyDetails extends DispatchAction
         TemplateQuery tq = TemplateHelper.findTemplate(sc, userName, templateName, type);
         Map displayObjects = (Map) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
         DisplayObject obj = (DisplayObject) displayObjects.get(o);
-        
-        System.out.println("displayObject = " + obj + " tq = " + tq);
         
         ComponentContext cc = new ComponentContext();
         cc.putAttribute("displayObject", obj);
