@@ -34,7 +34,7 @@ public class InlineTemplateTable implements Serializable
     private static final Logger LOG = Logger.getLogger(InlineTemplateTable.class);
     private final List columnNames;
     private int resultsSize = -1;
-    private int maxInlineTableSize = 30;
+    private int maxInlineTableSize = 10;
     
     /**
      * Construct a new InlineTemplateTable
@@ -45,16 +45,10 @@ public class InlineTemplateTable implements Serializable
     public InlineTemplateTable(Results results, List columnNames, Map webProperties) {
         this.columnNames = columnNames;
         this.webProperties = webProperties;
+        resultsSize = results.size();
+        
         String maxInlineTableSizeString =
             (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
-
-        inlineSize = maxInlineTableSize;
-
-        resultsSize = results.size();
-            
-        if (resultsSize < inlineSize) {
-            inlineSize = resultsSize;
-        }   
 
         try {
             maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
@@ -62,6 +56,12 @@ public class InlineTemplateTable implements Serializable
             LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
                      + maxInlineTableSizeString);
         }
+        
+        inlineSize = maxInlineTableSize;
+
+        if (resultsSize < inlineSize) {
+            inlineSize = resultsSize;
+        }   
 
         inlineResults = new ArrayList(getInlineSize(results, maxInlineTableSize));
 
