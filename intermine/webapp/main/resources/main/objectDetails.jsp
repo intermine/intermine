@@ -10,8 +10,47 @@
 
 <script type="text/javascript">
 <!--//<![CDATA[
-function toggleCollectionVisibility(aspect, field, object_id) {
 
+queue = [];
+
+function queueInlineTemplateQuery(aspect, templateName, id) {
+  queue.push([aspect, templateName, id]);
+}
+
+/* Called onload */
+function loadInlineTemplates() {
+  loadInlineTemplate(0);
+}
+
+function loadInlineTemplate(i) {
+  if (i >= queue.length) {
+    return;
+  }
+
+  var aspect = queue[i][0];
+  var templateName = queue[i][1];
+  var id = queue[i][2];
+  var uid = aspect + '_' + templateName;
+  
+  Element.show('table_'+uid+'_int');
+  $('table_'+uid+'_int').innerHTML = aspect + templateName + id;
+  
+  new Ajax.Updater('table_'+uid+'_int', '<html:rewrite action="/modifyDetails"/>', {
+    parameters:'method=ajaxTemplateCount&template='+templateName+'&object='+id+'&type=global&aspect='+aspect, asynchronous:true,
+    onComplete: function() {
+      var count = $('count_'+uid).innerHTML;
+      if (count == '0')
+        $('img_'+uid).src='images/blank.gif';
+      else
+        $('img_'+uid).src='images/plus.gif';
+      // load the next one
+      loadInlineTemplate(i+1);
+    },
+    evalScripts: true
+  });
+}
+
+function toggleCollectionVisibility(aspect, field, object_id) {
   if ($('coll_'+aspect+'_'+field+'_inner').innerHTML=='') {
     // need to fetch
     new Ajax.Updater('coll_'+aspect+'_'+field+'_inner', '<html:rewrite action="/modifyDetails"/>', {
@@ -40,6 +79,9 @@ function toggleTemplateList(aspect, template) {
   Element.toggle('table_'+aspect+'_'+template);
   return false;
 }
+
+Event.observe(window, 'load', loadInlineTemplates, false);
+
 //]]>-->
 </script>
 
