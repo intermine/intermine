@@ -43,8 +43,8 @@
 
 <div class="body aspectStartingPoints">
   <c:forEach items="${startingPoints}" var="classname" varStatus="status">
-    <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-       <im:unqualify className="${classname}"/></a><c:if test="${!status.last}">,</c:if>
+    <im:unqualify className="${classname}" var="name"/>
+    <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">${name}</a><c:if test="${!status.last}">,</c:if>
   </c:forEach>
 </div>
 
