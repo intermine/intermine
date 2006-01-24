@@ -46,7 +46,8 @@ public class AffyConverter extends CDNACloneConverter
     protected ItemFactory itemFactory;
     protected Map geneMap = new HashMap();
     protected Map probeMap = new HashMap();
-    private String PROBEPREFIX = "Affymetrix:CompositeSequence:HG-U133A:";
+    private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:HG-U133A:";
+    private static final String PROBEURL = "https://www.affymetrix.com/LinkServlet?probeset=";
 
     /**
      * Constructor
@@ -152,6 +153,8 @@ public class AffyConverter extends CDNACloneConverter
         throws Exception {
         Item probe = createItem(clsName);
         probe.setAttribute("identifier", PROBEPREFIX + id);
+        probe.setAttribute("name", id);
+        probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);
         //      probe.addCollection(new ReferenceList("genes", geneId));
         probe.addCollection(new ReferenceList("evidence",
@@ -167,5 +170,4 @@ public class AffyConverter extends CDNACloneConverter
 
         return probe;
     }
-
 }

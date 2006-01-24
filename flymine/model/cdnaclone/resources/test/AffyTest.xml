@@ -11,6 +11,8 @@
 </item>
 <item id="-1_4" class="http://www.flymine.org/model/genomic#CompositeSequence">
   <attribute name="identifier" value="Affymetrix:CompositeSequence:HG-U133A:1007_s_at"/>
+  <attribute name="name" value="1007_s_at"/>
+  <attribute name="url" value="https://www.affymetrix.com/LinkServlet?probeset=1007_s_at"/>
   <reference name="organism" ref_id="-1_3"/>
   <collection name="evidence">
     <reference ref_id="-1_2"/>
@@ -31,6 +33,8 @@
 </item>
 <item id="-1_7" class="http://www.flymine.org/model/genomic#CompositeSequence">
   <attribute name="identifier" value="Affymetrix:CompositeSequence:HG-U133A:211739_x_at"/>
+  <attribute name="name" value="211739_x_at"/>
+  <attribute name="url" value="https://www.affymetrix.com/LinkServlet?probeset=211739_x_at"/>
   <reference name="organism" ref_id="-1_3"/>
   <collection name="evidence">
     <reference ref_id="-1_2"/>
