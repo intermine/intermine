@@ -9,8 +9,8 @@
 
 <html:xhtml/>
 
-<script>
-  
+<script type="text/javascript">
+  <!--
   function toggle(id, path) {
     if (isExplorer()) {
       return true;
@@ -41,12 +41,13 @@
           {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true});
       }
     });
+    return false;
   }
   
   function isExplorer() {
     return (navigator.appVersion.toLowerCase().indexOf('msie') >= 0);
   }
-  
+  //-->
 </script>
 
 <div class="heading">
