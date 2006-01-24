@@ -14,6 +14,7 @@
 
 <html:xhtml/>
 
+<div>
 <div style="overflow: auto; padding: 3px">
   <c:if test="${displayObject != null && table != null && !empty table.inlineResults}">
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
