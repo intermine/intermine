@@ -103,7 +103,7 @@
       </saved-query>
     </queries>
     <template-queries>
-      <template name="template" description="some desc" important="true"><!-- keywords="some_keyword">-->
+      <template name="template" description="some desc" important="true">
         <query name="template" model="testmodel" view="">
         </query>
       </template>

@@ -395,7 +395,7 @@ public class ProfileManagerTest extends XMLTestCase
             // expected
         }
 
-        pm.addTag("test-tag", "Department", "class", "bob");
+        pm.addTag("test-tag", "org.intermine.model.testmodel.Department", "class", "bob");
     }
 
     public void testGetTags() throws Exception {
@@ -421,12 +421,12 @@ public class ProfileManagerTest extends XMLTestCase
         pm.addTag("tag3", "Department.company", "reference", "sally");
         pm.addTag("tag3", "Department.employees", "collection", "sally");
         
-        pm.addTag("tag4", "Department", "class", "sally");
+        pm.addTag("tag4", "org.intermine.model.testmodel.Department", "class", "sally");
         
         List allTags = pm.getTags(null, null, null, null);
         
-        // 17 tags because ProfileManagerBindingTestNewIDs.xml has 5
-        assertEquals(17, allTags.size());
+        // 18 tags because ProfileManagerBindingTestNewIDs.xml has 5
+        assertEquals(18, allTags.size());
 
         List nameTags = pm.getTags(null, "Department.name", "attribute", "bob");
         assertEquals(3, nameTags.size());
@@ -440,5 +440,8 @@ public class ProfileManagerTest extends XMLTestCase
         List allNameAttributeTag1s = pm.getTags("tag1", "Department.name", "attribute", null);
         assertEquals(2, allNameAttributeTag1s.size());
 
+        List allClassTags = pm.getTags(null, "org.intermine.model.testmodel.Department",
+                                       "class", null);
+        assertEquals(1, allClassTags.size());
     }
 }
