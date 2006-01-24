@@ -190,6 +190,18 @@
     <attribute name="url" value="http://www.affymetrix.com/Auth/analysis/downloads/taf/HG-U133A_annot_csv.zip"/>
     <reference name="dataSource" ref_id="280"/>
   </item>
+ 
+ <item id="290" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="IntAct"/>
+    <attribute name="description" value="an open source molecular interaction database"/>
+    <attribute name="url" value="http://www.ebi.ac.uk/intact/index.jsp"/>
+  </item>
 
+ <item id="300" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Reactome"/>
+    <attribute name="description" value="Curated database of biological processes in humans"/>
+    <attribute name="url" value="http://www.reactome.org/"/>
+  </item>
 
+  
 </items>

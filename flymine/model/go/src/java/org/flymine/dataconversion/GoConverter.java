@@ -647,6 +647,12 @@ public class GoConverter extends FileConverter
                 title = "HGNC";
             } else if ("SWALL".equals(code)) {
                 title = "SWALL";
+            } else if ("IntAct".equals(code)) {
+                title = "IntAct";
+            } else if ("GDB".equals(code)) {
+                title = "GDB";
+            } else if ("Reactome".equals(code)) {
+                title = "Reactome";
             } else {
                 throw new IllegalArgumentException("Database with code '" + code
                         + "' not recognised");
