@@ -19,27 +19,23 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.safe.ObjectStoreSafeImpl;
 
-public class ObjectStoreClientTest extends TestCase //extends ObjectStoreAbstractImplTestCase
+public class ObjectStoreClientTest extends ObjectStoreAbstractImplTestCase
 {
-    private ObjectStoreClient osai;
+    private static ObjectStoreClient osai;
 
-//     public static void oneTimeSetUp() throws Exception {
-//         osai = (ObjectStoreClient) ObjectStoreFactory.getObjectStore("os.unittest-client");
-//         os = new ObjectStoreSafeImpl(osai);
-//         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
-//     }
-
-    public void setUp() throws Exception {
+    public static void oneTimeSetUp() throws Exception {
         osai = (ObjectStoreClient) ObjectStoreFactory.getObjectStore("os.unittest-client");
+        os = new ObjectStoreSafeImpl(osai);
+        ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 
     public ObjectStoreClientTest(String arg) {
         super(arg);
     }
 
-//      public static Test suite() {
-//          return buildSuite(ObjectStoreClientTest.class);
-//      }
+    public static Test suite() {
+        return buildSuite(ObjectStoreClientTest.class);
+    }
 
     public void testQueryId() throws Exception {
         Query q1 = new IqlQuery("select a1_ from Company as a1_", "org.intermine.model.testmodel").toQuery();

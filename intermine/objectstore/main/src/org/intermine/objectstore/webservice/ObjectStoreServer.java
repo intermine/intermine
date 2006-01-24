@@ -13,6 +13,7 @@ package org.intermine.objectstore.webservice;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.intermine.InterMineException;
 import org.intermine.metadata.Model;
@@ -25,6 +26,8 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.webservice.ser.InterMineString;
 import org.intermine.objectstore.webservice.ser.SerializationUtil;
 import org.intermine.util.Util;
+import org.intermine.util.PropertiesUtil;
+
 
 /**
  * The server side of an ObjectStore webservice. This should be run in
@@ -38,16 +41,24 @@ public class ObjectStoreServer
     private ObjectStore os;
     private Map registeredResults = new HashMap();
 
+
     /**
      * Construct an ObjectStoreServer that communicates with an ObjectStore
-     * given by the objectstoreserver.os property
+     * given by the webservice.os property
      *
-     * @param alias the ObjectStore alias to use for this server
-     * @throws Exception if the property 'os.default' is missing or invalid
+     * @throws Exception if the property 'os.webservice' is missing or invalid
      */
-    public ObjectStoreServer(String alias) throws Exception {
-        this.os = ObjectStoreFactory.getObjectStore(alias);
+    public ObjectStoreServer() throws Exception {
+        Properties props = PropertiesUtil.getPropertiesStartingWith("webservice");
+        props = PropertiesUtil.stripStart("webservice", props);
+        String osAlias = props.getProperty("os");
+        if (osAlias == null) {
+            throw new ObjectStoreException("No 'webservice.os' property found, must be "
+                                           + "set to initialise ObjectStoreServer.");
+        }
+        this.os = ObjectStoreFactory.getObjectStore(osAlias);
     }
+
 
     /**
      * Register a query with this class. This is useful to avoid
@@ -131,7 +142,7 @@ public class ObjectStoreServer
             throw (RuntimeException) Util.verboseException(e);
         }
     }
-    
+
     /**
      * Returns the number of row the query will produce
      *
@@ -146,7 +157,7 @@ public class ObjectStoreServer
             throw (RuntimeException) Util.verboseException(e);
         }
     }
-    
+
     /**
      * Explain a Query (give estimate for execution time and number of rows).
      *

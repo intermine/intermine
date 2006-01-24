@@ -24,15 +24,6 @@
   <target name="-pre-jar" depends="webapp.-pre-jar">
     <!-- Start with base intermine webservice war -->
     <copy file="${source.intermine.webservice.war}" tofile="${dist.war}"/>
-    <!-- Concatenate local build.properties with web.properties -->
-    <!--copy tofile="${build.webinf.dir}/web.properties.tmp"
-          file="resources/web.properties"
-          overwrite="true" verbose="true"/-->
-    <!--concat destfile="${build.webinf.dir}/web.properties">
-      <fileset file="${build.webinf.dir}/web.properties.tmp"/>
-      <fileset file="${build.properties.local}"/>
-    </concat-->
-    <!--delete file="${build.webinf.dir}/web.properties.tmp"/-->
     <!-- Copy intermine.properties into build/classes -->
     <copy file="${user.home}/${intermine.properties.file}"
           tofile="${build.classes.dir}/intermine.properties"/>
