@@ -25,7 +25,7 @@ public class ObjectStoreServerTest extends TestCase
     }
 
     public void setUp() throws Exception {
-        server = new ObjectStoreServer("os.unittest");
+        server = new ObjectStoreServer();
     }
 
     public void testRegisterQueryObject() throws Exception {
