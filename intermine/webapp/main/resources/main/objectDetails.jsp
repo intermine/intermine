@@ -15,11 +15,13 @@ function toggleCollectionVisibility(aspect, field, object_id) {
   if ($('coll_'+aspect+'_'+field+'_inner').innerHTML=='') {
     // need to fetch
     new Ajax.Updater('coll_'+aspect+'_'+field+'_inner', '<html:rewrite action="/modifyDetails"/>', {
-      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id
+      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id,
+      asynchronous:true
     });
   } else {
     new Ajax.Request('<html:rewrite action="/modifyDetails"/>', {
-      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id
+      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id,
+      asynchronous:true
     });
   }
   toggleSlide(aspect, field);

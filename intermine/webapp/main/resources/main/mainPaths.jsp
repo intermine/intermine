@@ -10,6 +10,7 @@
 <html:xhtml/>
 
 <script>
+  <!--
   function editConstraint(path, index) {
     if (isExplorer()) {
       return true;
@@ -19,6 +20,7 @@
        asynchronous:true, evalScripts:true});
     return false;
   }
+  //-->
 </script>
 
 <div class="heading">
