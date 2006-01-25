@@ -1,3 +1,3 @@
 <!-- managerSeniority.jsp -->
-Seniority: <bold>${object.seniority}</bold>
+Seniority: <b>${object.seniority}</b>
 <!-- /managerSeniority.jsp -->
