@@ -14,6 +14,7 @@ import java.awt.Image;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,9 @@ import org.flymine.model.genomic.Protein;
 import org.flymine.networkview.CyNet2Image;
 import org.flymine.networkview.FlyNetworkIntegrator;
 import org.flymine.networkview.ProteinInteractionRetriever;
+import org.flymine.networkview.network.FlyEdge;
 import org.flymine.networkview.network.FlyNetwork;
+import org.flymine.networkview.network.FlyNode;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
@@ -83,15 +86,25 @@ public class ProteinInteractionImgRenderer extends InterMineAction
         CyNetwork net = null;
 
         try {
+            for (Iterator iter = fn.getNodes().iterator(); iter.hasNext();) {
+                FlyNode node = (FlyNode) iter.next();
+                msg.append(node.getLabel() + "<br>");
+            }
+            for (Iterator iter = fn.getEdges().iterator(); iter.hasNext();) {
+                FlyEdge edge = (FlyEdge) iter.next();
+                msg.append(edge.getLabel() +"<br>" );
+            }
             nc = FlyNetworkIntegrator.convertNodesFly2Cy(fn.getNodes());
             ec = FlyNetworkIntegrator.convertEdgesFly2Cy(fn.getEdges());
 
             if (!nc.isEmpty() || !ec.isEmpty()) {
                 net = Cytoscape.createNetwork(nc, ec, "tmpNet");
+                msg.append("conversion of nodes/edges succeeded<br>");
             } else {
                 msg.append("conversion of nodes/edges failed<br>");
             }
         } catch (Throwable e) {
+            msg.append(e.getClass().toString() + "<br>");
             StackTraceElement[] trace = e.getStackTrace();
             for (int i = 0; i < trace.length; i++) {
                 msg.append(trace[i] + "<br>");
