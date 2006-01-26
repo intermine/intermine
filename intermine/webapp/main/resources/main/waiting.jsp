@@ -19,7 +19,7 @@
   <div class="waitmsg">
     <fmt:message key="waiting.message"/>
     <p>
-      <img border="0" src="model/progress${imgnum}.gif" width="118" height="118" alt="progress"/>
+      <img border="0" src="model/progress${imgnum}.gif" alt="progress"/>
     </p>
   </div>
   <script language="JavaScript">
