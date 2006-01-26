@@ -383,6 +383,7 @@
       <fileset dir="${model}/${model.name}/src/web/jsp"/>
       <fileset dir="${model}/${model.name}/src/web/images"/>
       <fileset file="${model.css.file}"/>
+      <fileset dir="${model.images.dir}"/>
     </copy>
     <!-- Make a copy in order to rename file -->
     <copy file="${runtime.properties.local}" toFile="${build.tmp}/WEB-INF/intermine.properties"/>

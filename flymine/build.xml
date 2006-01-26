@@ -2898,7 +2898,8 @@
     <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
     <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
     <property name ="aspects.properties.file" value="model/genomic/resources/web/aspects.xml"/>
-
+    <property name="model.images.dir" value="model/genomic/resources/web/images"/>
+    
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2911,6 +2912,7 @@
       <property name="db.name" value="db.production"/>
       <property name="objectstore.name" value="os.production"/>
       <property name="db.name" value="db.production"/>
+      <property name="model.images.dir" value="${model.images.dir}"/>
       <reference torefid="class.path" refid="webapp.class.path"/>
     </ant>
 
@@ -4884,6 +4886,7 @@
 
   <target name ="t1dmine-model-style">
      <property name="model.css.file" value = "model/genomic/resources/web/t1dmine/model.css"/>
+     <property name="model.images.dir" value = "model/genomic/resources/web/t1dmine/images"/>
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>     
@@ -4974,6 +4977,7 @@
      <property name ="web.properties.file" value ="model/genomic/resources/web/stemcellmine/web.properties"/>
      <property name ="log4j.properties.file" value ="${resources}/webapp/stemcellmine/log4j.properties"/>
      <property name ="aspects.properties.file" value="model/genomic/resources/web/stemcellmine/aspects.xml"/>
+     <property name="model.images.dir" value = "model/genomic/resources/web/stemcellmine/images"/>
   </target>
 
   <!-- insert the testmodel data into the database-->
