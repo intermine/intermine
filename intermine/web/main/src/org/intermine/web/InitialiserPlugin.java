@@ -75,6 +75,8 @@ public class InitialiserPlugin implements PlugIn
      */
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
         ServletContext servletContext = servlet.getServletContext();
+ 
+        System.setProperty("java.awt.headless", "true");
         
         loadWebProperties(servletContext);
         loadExampleQueries(servletContext);
