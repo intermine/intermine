@@ -12,10 +12,10 @@
 	<classpathentry kind="lib" path="/intermine-web/lib/struts.jar"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="lib" path="lib/nekohtml-0.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/js-1.5R4.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpunit-1.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/jwebunit-1.2.jar"/>
 	<classpathentry kind="lib" path="build/test/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
+	<classpathentry kind="lib" path="lib/js-1.6R2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
