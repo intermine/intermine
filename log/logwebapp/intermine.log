@@ -1,0 +1,114 @@
+2006-01-17 11:35:02 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@129b0e1) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@10fe2b9
+2006-01-17 11:35:02 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = 1016283384, model = "userprofile"
+2006-01-17 11:35:02 INFO  org.intermine.objectstore.intermine.TorqueModelOutput     - Generating /home/pmclaren/svn/dev/log/logwebapp/build/task/os.userprofile-log-schema.xml
+2006-01-17 11:35:04 INFO  org.apache.torque.engine.database.transform.XmlToAppData     - Parsing file: 'schema45608xml'
+2006-01-17 11:35:07 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@185ad79) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:35:07 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = 1748475866, model = "logmodel"
+2006-01-17 11:35:07 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@238016) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:35:07 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = -241933594, model = "userprofile"
+2006-01-17 11:35:07 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl with sequence = 563952267, model = "userprofile"
+2006-01-17 11:35:08 INFO  org.intermine.web.task.LoadDefaultTemplatesTask     - Creating profile for pmclaren@flymine.org
+2006-01-17 11:35:09 INFO   org.intermine.web.TemplateRepository     - Indexing template queries
+2006-01-17 11:35:09 INFO   org.intermine.web.TemplateRepository     - Indexed 0 out of 0 templates in 340 milliseconds
+2006-01-17 11:35:09 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Got new set of serial numbers - took 2 ms
+2006-01-17 11:35:09 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for table UserProfile
+2006-01-17 11:35:09 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for ClassDescriptor org.intermine.model.userprofile.UserProfile
+2006-01-17 11:35:09 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for table InterMineObject
+2006-01-17 11:35:09 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for ClassDescriptor org.intermine.model.InterMineObject
+2006-01-17 11:35:11 INFO  org.intermine.sql.precompute.PrecomputedTableManager     - Loaded 0 precomputed table descriptions (plus 0 failed) in 2 ms
+2006-01-17 11:35:11 ERROR org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Shutting down open ObjectStoreWriterInterMineImpl with sequence = 563952271 and Database jdbc:postgresql://localhost/userprofile-log, createSituation = java.lang.Exception
+	at org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl.<init>(ObjectStoreWriterInterMineImpl.java:100)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:274)
+	at org.intermine.objectstore.ObjectStoreWriterFactory.getObjectStoreWriter(ObjectStoreWriterFactory.java:75)
+	at org.intermine.web.task.LoadDefaultTemplatesTask.execute(LoadDefaultTemplatesTask.java:95)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+	at org.apache.tools.ant.Task.perform(Task.java:364)
+	at org.apache.tools.ant.Target.execute(Target.java:341)
+	at org.apache.tools.ant.Target.performTasks(Target.java:369)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1216)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1185)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:40)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1068)
+	at org.apache.tools.ant.Main.runBuild(Main.java:668)
+	at org.apache.tools.ant.Main.startAnt(Main.java:187)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:246)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:67)
+
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = -241933592 and Database jdbc:postgresql://localhost/userprofile-log
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = -241933592, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 11:35:11 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@238016) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = 1748475866 and Database jdbc:postgresql://localhost/logdb
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = 1748475866, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = 1016283384 and Database jdbc:postgresql://localhost/userprofile-log
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = 1016283384, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 11:35:11 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@129b0e1) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@10fe2b9
+2006-01-17 11:35:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 11:35:11 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@185ad79) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:51:04 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@129b0e1) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@10fe2b9
+2006-01-17 11:51:05 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = 1572805438, model = "userprofile"
+2006-01-17 11:51:05 INFO  org.intermine.objectstore.intermine.TorqueModelOutput     - Generating /home/pmclaren/svn/dev/log/logwebapp/build/task/os.userprofile-log-schema.xml
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table savedtemplatequery
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table intermine_metadata
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table savedbag
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table userprofile
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table intermineobject
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table tag
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table savedquery
+2006-01-17 11:51:05 INFO        org.intermine.util.DatabaseUtil     - Dropping table precompute_index
+2006-01-17 11:51:07 INFO  org.apache.torque.engine.database.transform.XmlToAppData     - Parsing file: 'schema36484xml'
+2006-01-17 11:51:13 INFO         org.intermine.task.BuildDbTask     - Failed to create SEQUENCE: java.sql.SQLException: ERROR: relation "serial" already exists
+2006-01-17 11:51:13 INFO         org.intermine.task.BuildDbTask     - Failed to create SEQUENCE: java.sql.SQLException: ERROR: relation "objectstore_unique_integer" already exists
+2006-01-17 11:51:13 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@1401d28) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:51:14 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = -51219669, model = "logmodel"
+2006-01-17 11:51:14 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@ae4646) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:51:14 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = -849344449, model = "userprofile"
+2006-01-17 11:51:14 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl with sequence = 1774704227, model = "userprofile"
+2006-01-17 11:51:15 INFO  org.intermine.web.task.LoadDefaultTemplatesTask     - Creating profile for pmclaren@flymine.org
+2006-01-17 11:51:15 INFO   org.intermine.web.TemplateRepository     - Indexing template queries
+2006-01-17 11:51:16 INFO   org.intermine.web.TemplateRepository     - Indexed 0 out of 0 templates in 384 milliseconds
+2006-01-17 11:51:16 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Got new set of serial numbers - took 2 ms
+2006-01-17 11:51:16 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for table UserProfile
+2006-01-17 11:51:16 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for ClassDescriptor org.intermine.model.userprofile.UserProfile
+2006-01-17 11:51:16 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for table InterMineObject
+2006-01-17 11:51:16 INFO  org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Generating cached metadata for ClassDescriptor org.intermine.model.InterMineObject
+2006-01-17 11:51:19 INFO  org.intermine.sql.precompute.PrecomputedTableManager     - Loaded 0 precomputed table descriptions (plus 0 failed) in 2 ms
+2006-01-17 11:51:20 INFO   org.intermine.web.TemplateRepository     - Indexing template queries
+2006-01-17 11:51:20 INFO   org.intermine.web.TemplateRepository     - Indexed 0 out of 0 templates in 0 milliseconds
+2006-01-17 11:51:20 ERROR org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl     - Shutting down open ObjectStoreWriterInterMineImpl with sequence = 1774704231 and Database jdbc:postgresql://localhost/userprofile-log, createSituation = java.lang.Exception
+	at org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl.<init>(ObjectStoreWriterInterMineImpl.java:100)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:274)
+	at org.intermine.objectstore.ObjectStoreWriterFactory.getObjectStoreWriter(ObjectStoreWriterFactory.java:75)
+	at org.intermine.web.task.LoadDefaultTemplatesTask.execute(LoadDefaultTemplatesTask.java:95)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:275)
+	at org.apache.tools.ant.Task.perform(Task.java:364)
+	at org.apache.tools.ant.Target.execute(Target.java:341)
+	at org.apache.tools.ant.Target.performTasks(Target.java:369)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1216)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1185)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:40)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1068)
+	at org.apache.tools.ant.Main.runBuild(Main.java:668)
+	at org.apache.tools.ant.Main.startAnt(Main.java:187)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:246)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:67)
+
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = -849344447 and Database jdbc:postgresql://localhost/userprofile-log
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = -849344447, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 11:51:20 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@ae4646) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = -51219669 and Database jdbc:postgresql://localhost/logdb
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = -51219669, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = 1572805438 and Database jdbc:postgresql://localhost/userprofile-log
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = 1572805438, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 11:51:20 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/userprofile-log(org.intermine.sql.Database@129b0e1) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@10fe2b9
+2006-01-17 11:51:20 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 11:51:20 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@1401d28) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@fd918a

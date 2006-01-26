@@ -1,0 +1,21 @@
+<webconfig>
+  <class className="org.intermine.model.logmodel.InterMineLoggable">
+    <fields>
+      <fieldconfig fieldExpr="caller"/>
+      <fieldconfig fieldExpr="message"/>
+      <fieldconfig fieldExpr="timestamp"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.logmodel.LoggableQuery">
+    <fields>
+      <fieldconfig fieldExpr="initiator"/>
+      <fieldconfig fieldExpr="queryOQL"/>
+      <fieldconfig fieldExpr="querySQL"/>
+      <fieldconfig fieldExpr="optimise"/>
+      <fieldconfig fieldExpr="estimated"/>
+      <fieldconfig fieldExpr="execute"/>
+      <fieldconfig fieldExpr="acceptable"/>
+      <fieldconfig fieldExpr="conversion"/>
+    </fields>
+  </class>
+</webconfig>
