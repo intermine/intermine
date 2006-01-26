@@ -405,23 +405,23 @@ public class ProfileManagerTest extends XMLTestCase
 
         ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
 
-        pm.addTag("tag1", "Department.name", "attribute", "bob");
-        pm.addTag("tag1", "Department.company", "reference", "bob");
-        pm.addTag("tag1", "Department.employees", "collection", "bob");
+        pm.addTag("some_tag1", "Department.name", "attribute", "bob");
+        pm.addTag("some_tag1", "Department.company", "reference", "bob");
+        pm.addTag("some_tag1", "Department.employees", "collection", "bob");
 
-        pm.addTag("tag2", "Department.name", "attribute", "bob");
-        pm.addTag("tag2", "Department.company", "reference", "bob");
-        pm.addTag("tag2", "Department.employees", "collection", "bob");
+        pm.addTag("some_tag2", "Department.name", "attribute", "bob");
+        pm.addTag("some_tag2", "Department.company", "reference", "bob");
+        pm.addTag("some_tag2", "Department.employees", "collection", "bob");
 
-        pm.addTag("tag1", "Department.name", "attribute", "sally");
-        pm.addTag("tag1", "Department.company", "reference", "sally");
-        pm.addTag("tag1", "Department.employees", "collection", "sally");
+        pm.addTag("some_tag1", "Department.name", "attribute", "sally");
+        pm.addTag("some_tag1", "Department.company", "reference", "sally");
+        pm.addTag("some_tag1", "Department.employees", "collection", "sally");
 
-        pm.addTag("tag3", "Department.name", "attribute", "sally");
-        pm.addTag("tag3", "Department.company", "reference", "sally");
-        pm.addTag("tag3", "Department.employees", "collection", "sally");
+        pm.addTag("some_tag3", "Department.name", "attribute", "sally");
+        pm.addTag("some_tag3", "Department.company", "reference", "sally");
+        pm.addTag("some_tag3", "Department.employees", "collection", "sally");
         
-        pm.addTag("tag4", "org.intermine.model.testmodel.Department", "class", "sally");
+        pm.addTag("some_tag3.1", "org.intermine.model.testmodel.Department", "class", "sally");
         
         List allTags = pm.getTags(null, null, null, null);
         
@@ -431,14 +431,27 @@ public class ProfileManagerTest extends XMLTestCase
         List nameTags = pm.getTags(null, "Department.name", "attribute", "bob");
         assertEquals(3, nameTags.size());
 
-        List bobAttributeTag1 = pm.getTags("tag1", null, "attribute", "bob");
+        List bobAttributeTag1 = pm.getTags("some_tag1", null, "attribute", "bob");
         assertEquals(1, bobAttributeTag1.size());
 
-        List bobTag1DeptName = pm.getTags("tag1", "Department.name", null, "bob");
+        List bobTag1DeptName = pm.getTags("some_tag1", "Department.name", null, "bob");
         assertEquals(1, bobTag1DeptName.size());
 
-        List allNameAttributeTag1s = pm.getTags("tag1", "Department.name", "attribute", null);
+        List allNameAttributeTag1s = pm.getTags("some_tag1", "Department.name", "attribute", null);
         assertEquals(2, allNameAttributeTag1s.size());
+
+        List nameTagsPattern = pm.getTags("%tag3%", null, null, null);
+        assertEquals(4, nameTagsPattern.size());
+
+        List sallyNameTagsPattern = pm.getTags(null, null, null, "sal%");
+        assertEquals(8, sallyNameTagsPattern.size());
+        
+        // "_" is a wildcard
+        List bobDeptPattern = pm.getTags("some_tag_", "Department.%", null, "bob");
+        assertEquals(6, bobDeptPattern.size());
+
+        List typeTestPattern = pm.getTags("some_tag_", "Department.%", "%e", "___");
+        assertEquals(4, typeTestPattern.size());
 
         List allClassTags = pm.getTags(null, "org.intermine.model.testmodel.Department",
                                        "class", null);
