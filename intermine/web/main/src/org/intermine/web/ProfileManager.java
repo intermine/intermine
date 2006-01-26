@@ -449,21 +449,21 @@ public class ProfileManager
         if (tagName != null) {
             QueryValue qv = new QueryValue(tagName);
             QueryField qf = new QueryField(qc, "tagName");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
         }
         
         if (objectIdentifier != null) {
             QueryValue qv = new QueryValue(objectIdentifier);
             QueryField qf = new QueryField(qc, "objectIdentifier");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
         }
         
         if (type != null) {
             QueryValue qv = new QueryValue(type);
             QueryField qf = new QueryField(qc, "type");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
         }
         
@@ -472,7 +472,7 @@ public class ProfileManager
             q.addFrom(userProfileQC);
             QueryValue qv = new QueryValue(userName);
             QueryField qf = new QueryField(userProfileQC, "username");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
 
             QueryObjectReference qr = new QueryObjectReference(qc, "userProfile");
