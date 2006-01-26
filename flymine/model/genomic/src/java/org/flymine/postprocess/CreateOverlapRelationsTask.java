@@ -83,7 +83,7 @@ public class CreateOverlapRelationsTask extends Task
                 classNamesToIgnoreList.add(classNames[i].trim());
             }
 
-            cl.createOverlapRelations(classNamesToIgnoreList, true);
+            cl.createOverlapRelations(classNamesToIgnoreList, false);
         } catch (Exception e) {
             throw new BuildException("Failed to create OverlapRelations");
         }
