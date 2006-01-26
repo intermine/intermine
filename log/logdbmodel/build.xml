@@ -1,0 +1,6 @@
+<project name="log-logdbmodel" default="default" basedir=".">
+  
+  <description>perform actions on the testmodel database</description>
+  <import file="../../imbuild/objectstore.xml"/>
+
+</project>

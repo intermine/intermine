@@ -1,0 +1,20 @@
+2006-01-17 10:21:14 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://null/null(org.intermine.sql.Database@fb6c5f) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@119e583
+2006-01-17 10:21:14 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://null/null(org.intermine.sql.Database@fb6c5f) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@119e583
+2006-01-17 10:33:05 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@b3319f) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@1ee148b
+2006-01-17 10:33:07 INFO             org.intermine.sql.Database     - Creating new Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@1636e4e) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@12aea3e
+2006-01-17 10:33:07 INFO  org.intermine.objectstore.ObjectStoreAbstractImpl     - Creating new org.intermine.objectstore.intermine.ObjectStoreInterMineImpl with sequence = 1677100641, model = "logmodel"
+2006-01-17 10:33:07 INFO  org.intermine.objectstore.ObjectStoreSummary     - Collecting class counts...
+2006-01-17 10:33:08 INFO  org.intermine.sql.precompute.PrecomputedTableManager     - Loaded 0 precomputed table descriptions (plus 0 failed) in 56 ms
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - Summarising field values...
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - Looking for empty collections and references...
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - org.intermine.model.logmodel.InterMineLoggable
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - 	86 millis
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - org.intermine.model.logmodel.LoggableQuery
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - 	0 millis
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - org.intermine.model.InterMineObject
+2006-01-17 10:33:08 INFO  org.intermine.objectstore.ObjectStoreSummary     - 	0 millis
+2006-01-17 10:33:09 INFO             org.intermine.sql.Database     - Finalise - Closing datasource for Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@b3319f) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@1ee148b
+2006-01-17 10:33:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Shutting down open ObjectStoreInterMineImpl with sequence = 1677100641 and Database jdbc:postgresql://localhost/logdb
+2006-01-17 10:33:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Close called on ObjectStoreInterMineImpl with sequence = 1677100641, time spent: SQL Gen: 0, SQL Optimise: 0, Nulls: 0, Estimate: 0, Execute: 0, Results Convert: 0
+2006-01-17 10:33:11 INFO  org.intermine.objectstore.intermine.ObjectStoreInterMineImpl     - Temporary tables to drop: []
+2006-01-17 10:33:11 INFO             org.intermine.sql.Database     - Shutdown - Closing datasource for Database jdbc:postgresql://localhost/logdb(org.intermine.sql.Database@1636e4e) with ClassLoader org.apache.tools.ant.loader.AntClassLoader2@12aea3e
