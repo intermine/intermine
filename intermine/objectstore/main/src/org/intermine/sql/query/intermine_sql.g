@@ -451,10 +451,9 @@ field_name:
         { #field_name = #([FIELD_NAME, "FIELD_NAME"], #field_name); }
     ;
 
-abstract_constraint: (constraint_set)=> constraint_set | safe_abstract_constraint ;
+abstract_constraint: (gornull_constraint)=> gornull_constraint | (constraint_set)=> constraint_set | safe_abstract_constraint ;
 
-safe_abstract_constraint: (gornull_constraint)=> gornull_constraint
-            | (paren_constraint)=> paren_constraint
+safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | (subquery_constraint)=> subquery_constraint
             | (inlist_constraint)=> inlist_constraint
             | constraint
@@ -479,7 +478,7 @@ not_constraint: "not"! safe_abstract_constraint
 
 paren_constraint: OPEN_PAREN! abstract_constraint CLOSE_PAREN! ;
 
-constraint_set: (or_constraint_set)=> or_constraint_set | and_constraint_set;
+constraint_set: (and_constraint_set)=> and_constraint_set | or_constraint_set;
 
 or_constraint_set: 
         safe_abstract_constraint ("or"! safe_abstract_constraint)+
