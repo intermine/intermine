@@ -59,6 +59,10 @@ public class GoConverter extends FileConverter
 
     private OboParser oboParser = null;
 
+    private Item dataSourceItem;
+    private Item dataSetItem;
+
+
     /*Some Debugging vars*/
     private Map storedItemMap = new LinkedHashMap();
     private static final String STORE_ONE = "store_1";
@@ -83,6 +87,15 @@ public class GoConverter extends FileConverter
         synonymTypes.put("Protein", "accession");
         synonymTypes.put("gene", "identifier");
         synonymTypes.put("Gene", "identifier");
+
+        dataSourceItem = createItem("DataSource");
+        dataSourceItem.setAttribute("name", "Gene Ontology");
+
+        dataSetItem = createItem("DataSet");
+        Date now = new Date(System.currentTimeMillis());
+
+        dataSetItem.setAttribute("description", "GO Annotation loaded on " + now.toString());
+        dataSetItem.setReference("dataSource", dataSourceItem);
     }
 
     /**
@@ -562,6 +575,9 @@ public class GoConverter extends FileConverter
         product.addReference(new Reference("organism", organismId));
         product.addAttribute(new Attribute(idField, accession));
 
+        //Record some evidence that says we got/matched the gene from GO data.
+        product.addToCollection("evidence", newDatasource("Gene Ontology"));
+
         Item synonym = newSynonym(
                 product.getIdentifier(),
                 (String) synonymTypes.get(type),
@@ -651,6 +667,8 @@ public class GoConverter extends FileConverter
                 title = "IntAct";
             } else if ("GDB".equals(code)) {
                 title = "GDB";
+            } else if ("Gene Ontology".equals(code)) {
+                title = "Gene Ontology";
             } else if ("Reactome".equals(code)) {
                 title = "Reactome";
             } else {
