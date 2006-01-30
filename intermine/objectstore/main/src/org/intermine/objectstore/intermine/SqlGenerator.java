@@ -811,7 +811,8 @@ public class SqlGenerator
                     state.addToWhere(disjunctive ? " OR " : " AND ");
                 }
                 needComma = true;
-                constraintToString(state, subC, q, schema, newSafeness, (!negate) && (!disjunctive));
+                constraintToString(state, subC, q, schema, newSafeness, (!negate) &&
+                        (!disjunctive));
             }
             state.addToWhere(negate ? "))" : (loseBrackets && (!disjunctive) ? "" : ")"));
         }
