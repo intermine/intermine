@@ -110,8 +110,6 @@ public class TemplateController extends TilesAction
         Map names = new HashMap();
         Map constraints = new HashMap();
         
-        int j = 0;
-        
         // For each node with an editable constraint, create a DisplayConstraint bean
         // and the human-readable "name" for each node (Department.company.name -> "Company namae")
         
@@ -126,27 +124,12 @@ public class TemplateController extends TilesAction
                     get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
                 names.put(c, parent.getType() + " "
                           + node.getPath().substring(node.getPath().lastIndexOf(".") + 1));
-
-                if (populate) {
-                    String attributeKey = "" + (j + 1);
-                    tf.setAttributeValues (attributeKey, "" + c.getDisplayValue());
-                    tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
-                    if (c.getIdentifier() != null) {
-                        // If special request parameter key is present then we initialise
-                        // the form bean with the parameter value
-                        String paramName = c.getIdentifier() + "_value";
-                        String constraintValue = request.getParameter(paramName);
-                        if (constraintValue != null) {
-                            tf.setAttributeValues(attributeKey, constraintValue);
-                        }
-                    }
-                }
-                
-                j++;
             }
             
             constraints.put(node, template.getConstraints(node));
         }
+        
+        populateTemplateForm(template, tf, request);
         
         tf.setTemplateName(queryName);
         tf.setTemplateType(type);
@@ -160,5 +143,30 @@ public class TemplateController extends TilesAction
         }
         
         return null;
+    }
+    
+    private static void populateTemplateForm(TemplateQuery template, TemplateForm tf,
+            HttpServletRequest request) {
+        int j = 0;
+        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            
+            for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
+                Constraint c = (Constraint) ci.next();
+                String attributeKey = "" + (j + 1);
+                tf.setAttributeValues (attributeKey, "" + c.getDisplayValue());
+                tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
+                if (c.getIdentifier() != null) {
+                    // If special request parameter key is present then we initialise
+                    // the form bean with the parameter value
+                    String paramName = c.getIdentifier() + "_value";
+                    String constraintValue = request.getParameter(paramName);
+                    if (constraintValue != null) {
+                        tf.setAttributeValues(attributeKey, constraintValue);
+                    }
+                }
+                j++;
+            }
+        }
     }
 }

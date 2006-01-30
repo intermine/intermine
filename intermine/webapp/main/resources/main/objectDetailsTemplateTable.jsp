@@ -36,9 +36,9 @@
                   <c:if test="${table.resultsSize > 0}">
                     <c:set var="object" value="${table.inlineResults[0][status.index]}"/>
                     <c:if test="${!empty LEAF_DESCRIPTORS_MAP[object]}">
-                      <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
-                      <c:forEach items="${displayObject.fieldExprs}" var="expr">
-                        <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
+                      <c:set var="displayObject2" value="${DISPLAY_OBJECT_CACHE[object]}"/>
+                      <c:forEach items="${displayObject2.fieldExprs}" var="expr">
+                        <c:if test="${displayObject2.fieldConfigMap[expr].showInResults}">
                           <td class="attrib">
                             <span class="attributeField">${fn:replace(expr, '.', '&nbsp;> ')}</span>
                           </td>
@@ -65,7 +65,7 @@
                               ${object}
                             </c:when>
                             <c:otherwise>
-                              <c:set var="displayObject" value="${DISPLAY_OBJECT_CACHE[object]}"/>
+                              <c:set var="displayObject2" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                               <%-- Link to object --%>
                               <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
                               <span style="white-space:nowrap">
@@ -78,10 +78,10 @@
                               </td>
                           
                               <%-- Cell for each field expr --%>
-                              <c:forEach items="${displayObject.fieldExprs}" var="expr">
+                              <c:forEach items="${displayObject2.fieldExprs}" var="expr">
                                 <c:set var="object2" value="${object}" scope="request"/>
                                 <im:eval evalExpression="object2.${expr}" evalVariable="outVal"/>
-                                <c:if test="${displayObject.fieldConfigMap[expr].showInResults}">
+                                <c:if test="${displayObject2.fieldConfigMap[expr].showInResults}">
                                   <td class="attrib">
                                   <c:set var="style" value="white-space:nowrap"/>
                                   <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
@@ -114,6 +114,19 @@
     
   </c:if>
 </div>
+
+
+<c:set var="extra" value=""/>
+<c:if test="${!empty fieldExprMap}">
+  <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
+    <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
+    <c:set var="fieldValue" value="${displayObject.object[fieldName]}"/>
+    <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
+  </c:forEach>
+</c:if>
+[<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;type=global${extra}">
+  Show in table...
+</html:link>]
 
 <c:choose>
   <c:when test="${table == null}">

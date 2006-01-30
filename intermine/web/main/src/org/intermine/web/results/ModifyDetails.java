@@ -10,6 +10,7 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -19,21 +20,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
+import org.intermine.web.Constraint;
+import org.intermine.web.ForwardParameters;
+import org.intermine.web.ObjectDetailsTemplateController;
+import org.intermine.web.PathNode;
+import org.intermine.web.PathQuery;
+import org.intermine.web.Profile;
+import org.intermine.web.QueryMonitorTimeout;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.TemplateHelper;
+import org.intermine.web.TemplateListHelper;
+import org.intermine.web.TemplateQuery;
+
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.ForwardParameters;
-import org.intermine.web.ObjectDetailsTemplateController;
-import org.intermine.web.Profile;
-import org.intermine.web.TemplateHelper;
-import org.intermine.web.TemplateQuery;
+import org.apache.struts.util.MessageResources;
 
 /**
  * Action to handle events from the object details page
@@ -41,6 +50,56 @@ import org.intermine.web.TemplateQuery;
  */
 public class ModifyDetails extends DispatchAction
 {
+    /**
+     * Show in table for inline template queries.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward runTemplate(ActionMapping mapping,
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        String name = request.getParameter("name");
+        String type = request.getParameter("type");
+        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
+                                                             name, type);
+        PathQuery query = (PathQuery) template.getQuery().clone();
+        
+        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPath());
+            for (int ci = 0; ci < node.getConstraints().size(); ci++) {
+                Constraint c = (Constraint) node.getConstraint(ci);
+                if (c.getIdentifier() != null) {
+                    // If special request parameter key is present then we initialise
+                    // the form bean with the parameter value
+                    String paramName = c.getIdentifier() + "_value";
+                    String constraintValue = request.getParameter(paramName);
+                    if (constraintValue != null) {
+                        nodeCopy.setConstraintValue(nodeCopy.getConstraint(ci), constraintValue);
+                    }
+                }
+            }
+        }
+        
+        SessionMethods.loadQuery(query, request.getSession());
+        QueryMonitorTimeout clientState
+                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startQuery(clientState, session, messages, false);
+        Thread.sleep(200); // slight pause in the hope of avoiding holding page
+        return new ForwardParameters(mapping.findForward("waiting"))
+                            .addParameter("qid", qid).forward();
+    }
     
     /**
      * @param mapping The ActionMapping used to select this instance
@@ -163,6 +222,12 @@ public class ModifyDetails extends DispatchAction
         cc.putAttribute("displayObject", obj);
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("aspect", request.getParameter("aspect"));
+        
+        Map fieldExprs = new HashMap();
+        TemplateListHelper
+            .getAspectTemplateForClass(request.getParameter("aspect"), sc, o,
+                    fieldExprs);
+        cc.putAttribute("fieldExprMap", fieldExprs);
         
         new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
