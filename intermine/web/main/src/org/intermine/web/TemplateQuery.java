@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -91,7 +92,11 @@ public class TemplateQuery
      * @return      List of Constraints for Node
      */
     public List getConstraints(PathNode node) {
-        return (List) constraints.get(node);
+        if (constraints.get(node) == null) {
+            return Collections.EMPTY_LIST;
+        } else {
+            return (List) constraints.get(node);
+        }
     }
 
 
