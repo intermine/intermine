@@ -96,19 +96,38 @@ public class GoConverterTest extends TestCase
         }
     }
 
+    /*
+        <item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
+            <attribute name="organismDbId" value="FBgn0026430"/>
+            <reference name="organism" ref_id="1_1"/>
+            <collection name="evidence">
+                <reference ref_id="0_3"/>
+            </collection>
+        </item>
+
+        <item id="2_5" class="http://www.flymine.org/model/genomic#Gene">
+            <attribute name="organismDbId" value="FBgn0001612"/>
+            <reference name="organism" ref_id="1_1"/>
+            <collection name="evidence">
+                <reference ref_id="0_3"/>
+            </collection>
+        </item>
+    */
     public void testCreateWithObjects() throws Exception {
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
 
         List expected = new ArrayList();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        Item gene1 = tgtItemFactory.makeItem("0_0", GENOMIC_NS + "Gene", "");
+        Item gene1 = tgtItemFactory.makeItem("2_2", GENOMIC_NS + "Gene", "");
         gene1.setAttribute("organismDbId", "FBgn0026430");
         gene1.setReference("organism", "1_1");
+        gene1.addToCollection("evidence", "0_3");
         expected.add(gene1);
-        Item gene2 = tgtItemFactory.makeItem("0_2", GENOMIC_NS + "Gene", "");
+        Item gene2 = tgtItemFactory.makeItem("2_5", GENOMIC_NS + "Gene", "");
         gene2.setAttribute("organismDbId", "FBgn0001612");
         gene2.setReference("organism", "1_1");
+        gene2.addToCollection("evidence", "0_3");
         expected.add(gene2);
         assertEquals(expected, converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", "1_1", "10_10"));
