@@ -6,35 +6,33 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 
-<!-- /objectDetailsAspectRefsCols.jsp -->
+<!-- /objectDetailsRefsCols.jsp -->
 
 <html:xhtml/>
 
 <tiles:importAttribute name="object"/>
-<tiles:importAttribute name="aspect"/>
-
-
+<tiles:importAttribute name="placement"/>
 
 <table border="0">
-  <c:if test="${!empty aspectRefsAndCollections[aspect]}">
-    <c:forEach items="${aspectRefsAndCollections[aspect]}" var="entry">
+  <c:if test="${!empty placementRefsAndCollections[placement]}">
+    <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
       <c:set var="collection" value="${entry.value}"/>
       <c:set var="fieldName" value="${entry.key}"/>
-      <c:set var="aspectAndField" value="${aspect}_${fieldName}"/>
-      <c:set var="verbose" value="${!empty object.verbosity[aspectAndField]}"/>
+      <c:set var="placementAndField" value="${placement}_${fieldName}"/>
+      <c:set var="verbose" value="${!empty object.verbosity[placementAndField]}"/>
       <tr>
         <td width="10">
           <div style="white-space:nowrap">
             <c:choose>
               <c:when test="${verbose && collection.size > 0}">
-                <html:link onclick="return toggleCollectionVisibility('${aspect}', '${fieldName}', '${object.object.id}')"  action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
-                  <img id="img_${aspect}_${fieldName}" border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
+                <html:link onclick="return toggleCollectionVisibility('${placement}', '${fieldName}', '${object.object.id}')"  action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
+                  <img id="img_${placement}_${fieldName}" border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
                   <span class="collectionField">${fieldName}</span>
                 </html:link>
               </c:when>
               <c:when test="${collection.size > 0}">
-                <html:link onclick="return toggleCollectionVisibility('${aspect}', '${fieldName}', '${object.object.id}')"  action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}">
-                  <img id="img_${aspect}_${fieldName}" border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
+                <html:link onclick="return toggleCollectionVisibility('${placement}', '${fieldName}', '${object.object.id}')"  action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
+                  <img id="img_${placement}_${fieldName}" border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
                   <span class="collectionField">${fieldName}</span>
                 </html:link>
                 <c:if test="${collection.size == 1}">
@@ -90,8 +88,8 @@
           <td colspan="2">
             <c:choose>
               <c:when test="${verbose}">
-                <div id="coll_${aspect}_${fieldName}">
-                  <div id="coll_${aspect}_${fieldName}_inner">
+                <div id="coll_${placement}_${fieldName}">
+                  <div id="coll_${placement}_${fieldName}_inner">
                     <c:if test="${verbose}">
                       <tiles:insert page="/objectDetailsCollectionTable.jsp">
                         <tiles:put name="collection" beanName="collection"/>
@@ -103,8 +101,8 @@
                 </div>
               </c:when>
               <c:otherwise>
-                <div id="coll_${aspect}_${fieldName}" style="display:none">
-                   <div id="coll_${aspect}_${fieldName}_inner"></div>
+                <div id="coll_${placement}_${fieldName}" style="display:none">
+                   <div id="coll_${placement}_${fieldName}_inner"></div>
                 </div>
               </c:otherwise>
             </c:choose>
@@ -115,5 +113,5 @@
   </c:if>
 </table>
 
-<!-- /objectDetailsAspectRefsCols.jsp -->
+<!-- /objectDetailsRefsCols.jsp -->
 

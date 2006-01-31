@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ * Helper methods for template lists.
  * @author Thomas Riley
  */
 public class TemplateListHelper
@@ -59,8 +59,8 @@ public class TemplateListHelper
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
             if (tag.getTagName().startsWith("aspect:")) {
-                String aspect2 = tag.getTagName().substring(7).trim();
-                if (StringUtils.equals(aspect, aspect2)) {
+                String tagName = tag.getTagName().trim();
+                if (StringUtils.equals(aspect, tagName)) {
                     TemplateQuery tq = (TemplateQuery) 
                         p.getSavedTemplates().get(tag.getObjectIdentifier());
                     if (tq != null) {

@@ -132,14 +132,14 @@
   <c:when test="${table == null}">
     <script type="text/javascript">
       <!--//<![CDATA[
-        $('img_${fn:replace(aspect, ' ', '_')}_${templateQuery.name}').src='images/blank.gif';
+        $('img_${fn:replace(placement, ' ', '_')}_${templateQuery.name}').src='images/blank.gif';
       //]]>-->
     </script>
   </c:when>
   <c:otherwise>
     <script type="text/javascript">
       <!--//<![CDATA[
-        var id = '${fn:replace(aspect, ' ', '_')}_${templateQuery.name}';
+        var id = '${fn:replace(placement, ' ', '_')}_${templateQuery.name}';
         if (${table.resultsSize} == 0) {
           $('img_'+id).src='images/plus-disabled.gif';
           $('label_'+id).className='nullStrike';

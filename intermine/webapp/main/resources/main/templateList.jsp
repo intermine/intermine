@@ -12,7 +12,7 @@
 <tiles:importAttribute name="displayObject" ignore="true"/>
 <tiles:importAttribute name="important" ignore="true"/>
 <tiles:importAttribute name="noTemplatesMsgKey" ignore="true"/>
-<tiles:importAttribute name="aspect"/>
+<tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="type"/>
 
 <c:if test="${!empty displayObject}">
@@ -25,7 +25,7 @@
       <tiles:insert name="objectDetailsTemplate.jsp">
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="templateQuery" beanName="templateQuery"/>
-        <tiles:put name="aspect" value="${aspect}"/>
+        <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="type" value="${type}"/>
       </tiles:insert>
     </c:if>

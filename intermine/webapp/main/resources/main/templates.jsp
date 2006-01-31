@@ -14,7 +14,7 @@
       <div class="body">
         <tiles:insert name="templateList.tile">
           <tiles:put name="type" value="global"/>
-          <tiles:put name="aspect" value="${category}"/>
+          <tiles:put name="placement" value="${category}"/>
           <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
         </tiles:insert>
       </div>
@@ -26,7 +26,7 @@
     <div class="body">
       <tiles:insert name="templateList.tile">
         <tiles:put name="type" value="global"/>
-        <tiles:put name="aspect" value="${param.category}"/>
+        <tiles:put name="placement" value="${param.category}"/>
         <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
       </tiles:insert>
     </div>
