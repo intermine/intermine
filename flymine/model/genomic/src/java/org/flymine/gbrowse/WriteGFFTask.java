@@ -426,6 +426,15 @@ public class WriteGFFTask extends Task
             attributes.put("promoter", promoterFlagList);
         }
 
+        if (bioEntity instanceof ArtificialDeletion) {
+            ArtificialDeletion deletion = (ArtificialDeletion) bioEntity;
+            if (deletion.getAvailable() != null) {
+                ArrayList availableFlagList = new ArrayList();
+                availableFlagList.add(((ArtificialDeletion) bioEntity).getAvailable().toString());
+                attributes.put("available", availableFlagList);
+            }
+        }
+
         lineBuffer.append(stringifyAttributes(attributes));
         gffWriter.println(lineBuffer.toString());
     }
