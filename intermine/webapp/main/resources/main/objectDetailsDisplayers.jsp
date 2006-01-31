@@ -10,18 +10,18 @@
 <html:xhtml/>
 
 <tiles:importAttribute name="displayObject"/>
-<tiles:importAttribute name="aspect"/>
+<tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="heading" ignore="true"/>
 
 <c:forEach items="${displayObject.clds}" var="cld">
-  <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[aspect]) > 0}">
+  <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[placement]) > 0}">
     <c:if test="${heading == true}">
       <div class="heading">
         <span style="white-space:nowrap">Further information for this ${cld.unqualifiedName}</span>
       </div>
       <div class="body">
     </c:if>
-    <c:forEach items="${WEBCONFIG.types[cld.name].aspectDisplayers[aspect]}" var="displayer">
+    <c:forEach items="${WEBCONFIG.types[cld.name].aspectDisplayers[placement]}" var="displayer">
       <c:set var="object_bk" value="${object}"/>
       <c:set var="object" value="${displayObject.object}" scope="request"/>
       <c:set var="cld" value="${cld}" scope="request"/>

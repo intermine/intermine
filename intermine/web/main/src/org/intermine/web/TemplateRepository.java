@@ -35,7 +35,7 @@ public class TemplateRepository
 {
     private static final Logger LOG = Logger.getLogger(TemplateRepository.class);
     /** "Miscellaneous" */
-    public static final String MISC = "Miscellaneous";
+    public static final String MISC = "aspect:Miscellaneous";
     
     private ServletContext servletContext;
     

@@ -11,15 +11,15 @@
 
 <tiles:importAttribute name="displayObject" ignore="true"/>
 <tiles:importAttribute name="templateQuery"/>
-<tiles:importAttribute name="aspect"/>
+<tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="type"/>
 
 <c:set var="templateName" value="${templateQuery.name}"/>
-<c:set var="uid" value="${fn:replace(aspect, ' ', '_')}_${templateName}"/>
+<c:set var="uid" value="${fn:replace(placement, ' ', '_')}_${templateName}"/>
 
-<c:set var="aspectAndField" value="${aspect}_${templateName}"/>
+<c:set var="placementAndField" value="${placement}_${templateName}"/>
 <c:if test="${!empty displayObject}">
-  <c:set var="verbose" value="${!empty displayObject.verbosity[aspectAndField]}"/>
+  <c:set var="verbose" value="${!empty displayObject.verbosity[placementAndField]}"/>
   <c:set var="interMineObject" value="${displayObject.object}"/>
 </c:if>
 
@@ -40,16 +40,16 @@
     --%>
     <c:when test="${verbose}">
       <div class="templateIcon">
-        <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
-          onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
+        <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}"
+          onclick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
           <img border="0" src="images/minus.gif" alt="-" id="img_${uid}" height="11" width="11"/>
         </html:link>
       </div>
     </c:when>
     <c:otherwise>
       <div class="templateIcon">
-        <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;aspect=${aspect}&amp;id=${object.id}&amp;trail=${param.trail}"
-          onclick="return toggleTemplateList('${fn:replace(aspect, ' ', '_')}', '${templateName}')">
+        <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}"
+          onclick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
           <img border="0" src="images/plus.gif" alt="+" id="img_${uid}" height="11" width="11"/>
         </html:link>
       </div>
@@ -70,7 +70,7 @@
         <tiles:insert name="objectDetailsTemplateTable.tile">
           <tiles:put name="displayObject" beanName="displayObject"/>
           <tiles:put name="templateQuery" beanName="templateQuery"/>
-          <tiles:put name="aspect" value="${aspect}"/>
+          <tiles:put name="placement" value="${placement}"/>
         </tiles:insert>
       </c:if>
     </div>
@@ -88,9 +88,9 @@
     <script type="text/javascript">
       <!--//<![CDATA[
         $('img_${uid}').src='images/spinner.gif';
-        queueInlineTemplateQuery('${fn:replace(aspect, ' ', '_')}', '${templateName}', '${displayObject.object.id}');
+        queueInlineTemplateQuery('${fn:replace(placement, ' ', '_')}', '${templateName}', '${displayObject.object.id}');
         /*new Ajax.Updater('table_${uid}_int', '<html:rewrite action="/modifyDetails"/>', {
-          parameters:'method=ajaxTemplateCount&template=${templateName}&object=${displayObject.object.id}&type=global&aspect=${aspect}', asynchronous:true,
+          parameters:'method=ajaxTemplateCount&template=${templateName}&object=${displayObject.object.id}&type=global&placement=${placement}', asynchronous:true,
           onComplete: function() {
             var count = $('count_${uid}').innerHTML;
             if (count == '0')

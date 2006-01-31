@@ -55,7 +55,7 @@
   <div class="body aspectTemplates">
     <tiles:insert name="templateList.tile">
       <tiles:put name="type" value="global"/>
-      <tiles:put name="aspect" value="${aspect.name}"/>
+      <tiles:put name="placement" value="aspect:${aspect.name}"/>
       <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
     </tiles:insert>
   </div>

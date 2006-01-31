@@ -26,7 +26,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * 
+ * Controller for the objectDetailsAspect tile.
  * @author Thomas Riley
  */
 public class ObjectDetailsAspectController extends TilesAction
@@ -47,7 +47,7 @@ public class ObjectDetailsAspectController extends TilesAction
         
         ComponentContext cc = new ComponentContext();
         cc.putAttribute("type", "global");
-        cc.putAttribute("aspect", context.getAttribute("aspect"));
+        cc.putAttribute("placement", context.getAttribute("placement"));
         cc.putAttribute("displayObject", dobj);
         
         new TemplateListController().execute(cc, mapping, form, request, response);

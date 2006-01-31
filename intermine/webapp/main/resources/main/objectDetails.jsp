@@ -13,8 +13,8 @@
 
 queue = [];
 
-function queueInlineTemplateQuery(aspect, templateName, id) {
-  queue.push([aspect, templateName, id]);
+function queueInlineTemplateQuery(placement, templateName, id) {
+  queue.push([placement, templateName, id]);
 }
 
 /* Called onload */
@@ -27,16 +27,16 @@ function loadInlineTemplate(i) {
     return;
   }
 
-  var aspect = queue[i][0];
+  var placement = queue[i][0];
   var templateName = queue[i][1];
   var id = queue[i][2];
-  var uid = aspect + '_' + templateName;
-  
+  var uid = placement + '_' + templateName;
+
   Element.show('table_'+uid+'_int');
-  $('table_'+uid+'_int').innerHTML = aspect + templateName + id;
-  
+  $('table_'+uid+'_int').innerHTML = placement + templateName + id;
+
   new Ajax.Updater('table_'+uid+'_int', '<html:rewrite action="/modifyDetails"/>', {
-    parameters:'method=ajaxTemplateCount&template='+templateName+'&object='+id+'&type=global&aspect='+aspect, asynchronous:true,
+    parameters:'method=ajaxTemplateCount&template='+templateName+'&object='+id+'&type=global&placement='+placement, asynchronous:true,
     onComplete: function() {
       var count = $('count_'+uid).innerHTML;
       if (count == '0')
@@ -50,33 +50,33 @@ function loadInlineTemplate(i) {
   });
 }
 
-function toggleCollectionVisibility(aspect, field, object_id) {
-  if ($('coll_'+aspect+'_'+field+'_inner').innerHTML=='') {
+function toggleCollectionVisibility(placement, field, object_id) {
+  if ($('coll_'+placement+'_'+field+'_inner').innerHTML=='') {
     // need to fetch
-    new Ajax.Updater('coll_'+aspect+'_'+field+'_inner', '<html:rewrite action="/modifyDetails"/>', {
-      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id,
+    new Ajax.Updater('coll_'+placement+'_'+field+'_inner', '<html:rewrite action="/modifyDetails"/>', {
+      parameters:'method=ajaxVerbosify&placement='+placement+'&field='+field+'&id='+object_id,
       asynchronous:true
     });
   } else {
     new Ajax.Request('<html:rewrite action="/modifyDetails"/>', {
-      parameters:'method=ajaxVerbosify&aspect='+aspect+'&field='+field+'&id='+object_id,
+      parameters:'method=ajaxVerbosify&placement='+placement+'&field='+field+'&id='+object_id,
       asynchronous:true
     });
   }
-  toggleSlide(aspect, field);
+  toggleSlide(placement, field);
   return false;
 }
 
-function toggleSlide(aspect, field) {
-  var img = $('img_'+aspect+'_'+field).src;
-  $('img_'+aspect+'_'+field).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
-  Element.toggle('coll_'+aspect+'_'+field);//, 'blind');//, {duration: 0.2});
+function toggleSlide(placement, field) {
+  var img = $('img_'+placement+'_'+field).src;
+  $('img_'+placement+'_'+field).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
+  Element.toggle('coll_'+placement+'_'+field);//, 'blind');//, {duration: 0.2});
 }
 
-function toggleTemplateList(aspect, template) {
-  var img = $('img_'+aspect+'_'+template).src;
-  $('img_'+aspect+'_'+template).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
-  Element.toggle('table_'+aspect+'_'+template);
+function toggleTemplateList(placement, template) {
+  var img = $('img_'+placement+'_'+template).src;
+  $('img_'+placement+'_'+template).src = (img.indexOf('images/minus.gif') >= 0 ? 'images/plus.gif' : 'images/minus.gif');
+  Element.toggle('table_'+placement+'_'+template);
   return false;
 }
 
@@ -126,7 +126,7 @@ Event.observe(window, 'load', loadInlineTemplates, false);
 
         <im:body id="summary">
           <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
-            
+
             <%-- Show the summary fields (fields that are shown in tables of this object type) --%>
             <c:forEach items="${object.fieldExprs}" var="expr">
               <c:if test="${object.fieldConfigMap[expr].showInSummary}">
@@ -139,7 +139,7 @@ Event.observe(window, 'load', loadInlineTemplates, false);
                     </c:forEach>
                   </td>
                   <td>
-                    <c:choose>                      
+                    <c:choose>
                       <c:when test="${empty outVal}">
                         &nbsp;
                       </c:when>
@@ -151,7 +151,7 @@ Event.observe(window, 'load', loadInlineTemplates, false);
                 </tr>
               </c:if>
             </c:forEach>
-          
+
             <%-- Show all other fields --%>
             <c:forEach items="${object.attributes}" var="entry">
               <c:if test="${! object.fieldConfigMap[entry.key].showInSummary && !object.fieldConfigMap[entry.key].sectionOnRight}">
@@ -184,7 +184,16 @@ Event.observe(window, 'load', loadInlineTemplates, false);
               </c:if>
             </c:forEach>
           </table>
-          
+
+          <im:vspacer height="15"/>
+
+          <c:forEach items="${object.clds}" var="cld">
+            <tiles:insert page="/objectDetailsRefsCols.jsp">
+              <tiles:put name="object" beanName="object"/>
+              <tiles:put name="placement" value="placement:summary"/>
+            </tiles:insert>
+          </c:forEach>
+
           <%-- Show the *table* displayers for this object type --%>
           <c:forEach items="${LEAF_DESCRIPTORS_MAP[object.object]}" var="cld2">
             <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
@@ -192,21 +201,21 @@ Event.observe(window, 'load', loadInlineTemplates, false);
               <p><tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/></p>
             </c:if>
           </c:forEach>
-          
+
         </im:body>
       </td>
-      
+
       <td valign="top" width="66%">
-        
+
         <%-- Important templates, arranged by category --%>
         <c:if test="${showImportantTemplatesFlag == 'true'}">
           <im:heading id="important">Interesting template queries</im:heading>
           <im:vspacer height="3"/>
           <im:body id="important">
-            <c:forEach items="${CATEGORIES}" var="category">
+            <c:forEach items="${CATEGORIES}" var="aspect">
               <tiles:insert name="templateList.tile">
                 <tiles:put name="type" value="global"/>
-                <tiles:put name="aspect" value="${category}"/>
+                <tiles:put name="placement" value="aspect:${aspect}"/>
                 <tiles:put name="displayObject" beanName="object"/>
                 <tiles:put name="important" value="true"/>
               </tiles:insert>
@@ -214,10 +223,10 @@ Event.observe(window, 'load', loadInlineTemplates, false);
           </im:body>
           <im:vspacer height="6"/>
         </c:if>
-        
+
         <%-- Long displayers not tied to a particular aspect --%>
           <tiles:insert page="/objectDetailsDisplayers.jsp">
-            <tiles:put name="aspect" value=""/>
+            <tiles:put name="placement" value=""/>
             <tiles:put name="displayObject" beanName="object"/>
             <tiles:put name="heading" value="true"/>
           </tiles:insert>
@@ -229,7 +238,7 @@ Event.observe(window, 'load', loadInlineTemplates, false);
               ${object.fieldConfigMap[entry.key].sectionTitle}
             </im:heading>
             <im:body id="right-${entry.key}">
-              
+
               <c:set var="maxLength" value="80"/>
               <c:choose>
                 <c:when test="${entry.value.class.name ==
@@ -249,10 +258,10 @@ Event.observe(window, 'load', loadInlineTemplates, false);
                   <span class="value">${entry.value}</span>
                 </c:otherwise>
               </c:choose>
-              
+
             </im:body>
           </c:if>
-        </c:forEach>    
+        </c:forEach>
 
       </td>
 
@@ -276,26 +285,26 @@ Event.observe(window, 'load', loadInlineTemplates, false);
   <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}"
           titleKey="objectDetails.heading.byaspect">
-                    
+
     <%-- Each aspect --%>
-    <c:forEach items="${CATEGORIES}" var="category">
+    <c:forEach items="${CATEGORIES}" var="aspect">
       <tiles:insert name="objectDetailsAspect.tile">
-        <tiles:put name="aspect" value="${category}"/>
+        <tiles:put name="placement" value="aspect:${aspect}"/>
         <tiles:put name="displayObject" beanName="object"/>
       </tiles:insert>
     </c:forEach>
-    
+
     <%-- All other references and collections --%>
     <im:heading id="Misc">
       Miscellaneous
     </im:heading>
     <im:body id="Misc">
-      <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+      <tiles:insert page="/objectDetailsRefsCols.jsp">
         <tiles:put name="object" beanName="object"/>
-        <tiles:put name="aspect" value="Miscellaneous"/>
+        <tiles:put name="placement" value="aspect:Miscellaneous"/>
       </tiles:insert>
     </im:body>
-    
+
     <%-- Add to bag --%>
     <div class="body">
       <c:if test="${!empty PROFILE.savedBags}">

@@ -388,11 +388,12 @@ public class DisplayObject
     
     /**
      * Get verbosity of a field
-     * @param aspectAndField aspect + fieldName
+     * @param placementAndField a String that combines the name of the current placement/aspect and
+     * a fieldName
      * @return true or false
      */
-    public boolean isVerbose(String aspectAndField) {
-        return verbosity.get(aspectAndField) != null;
+    public boolean isVerbose(String placementAndField) {
+        return verbosity.get(placementAndField) != null;
     }
 
     /**

@@ -118,11 +118,11 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
-        String aspect = request.getParameter("aspect");
+        String placement = request.getParameter("placement");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
         if (object != null) {
-            object.setVerbosity(aspect + "_" + fieldName, true);
+            object.setVerbosity(placement + "_" + fieldName, true);
         }
         
         return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
@@ -145,10 +145,10 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
-        String aspect = request.getParameter("aspect");
+        String placement = request.getParameter("placement");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         
-        object.setVerbosity(aspect + "_" + fieldName, false);
+        object.setVerbosity(placement + "_" + fieldName, false);
 
         return forwardToObjectDetails(mapping, request.getParameter("id"), trail);
     }
@@ -170,11 +170,11 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
-        String aspect = request.getParameter("aspect");
+        String placement = request.getParameter("placement");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
         Object collection = object.getRefsAndCollections().get(fieldName);
         
-        String key = aspect + "_" + fieldName;
+        String key = placement + "_" + fieldName;
         
         object.setVerbosity(key, !object.isVerbose(key));
         
@@ -221,11 +221,11 @@ public class ModifyDetails extends DispatchAction
         ComponentContext cc = new ComponentContext();
         cc.putAttribute("displayObject", obj);
         cc.putAttribute("templateQuery", tq);
-        cc.putAttribute("aspect", request.getParameter("aspect"));
+        cc.putAttribute("placement", request.getParameter("placement"));
         
         Map fieldExprs = new HashMap();
         TemplateListHelper
-            .getAspectTemplateForClass(request.getParameter("aspect"), sc, o,
+            .getAspectTemplateForClass(request.getParameter("placement"), sc, o,
                     fieldExprs);
         cc.putAttribute("fieldExprMap", fieldExprs);
         

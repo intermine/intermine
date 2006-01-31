@@ -11,14 +11,10 @@ package org.intermine.web;
  */
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.intermine.web.results.DisplayObject;
-import org.intermine.web.results.InlineTemplateTable;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +47,7 @@ public class TemplateListController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         String type = (String) context.getAttribute("type");
-        String aspect = (String) context.getAttribute("aspect");
+        String aspect = (String) context.getAttribute("placement");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
         List templates = null;
         
@@ -64,8 +60,6 @@ public class TemplateListController extends TilesAction
                     .getAspectTemplateForClass(aspect, servletContext, object.getObject(),
                             fieldExprs);
                 request.setAttribute("fieldExprMap", fieldExprs);
-                //request.setAttribute("templateCounts", calcTemplateCounts(templates, fieldExprs,
-                //        object.getObject().getId(), session));
             }
         } else if (StringUtils.equals("user", type)) {
             //templates = profile.get
@@ -74,31 +68,5 @@ public class TemplateListController extends TilesAction
         request.setAttribute("templates", templates);
         
         return null;
-    }
-    
-    private Map calcTemplateCounts(Set templates, Map fieldExprs, Integer objectId,
-            HttpSession session) {
-        ServletContext servletContext = session.getServletContext();
-        Map newTemplateCounts = new TreeMap();
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-                
-        for (Iterator iter = templates.iterator(); iter.hasNext(); ) {
-            TemplateQuery template = (TemplateQuery) iter.next();
-            String templateName = template.getName();
-
-            InlineTemplateTable itt =
-                TemplateHelper.getInlineTemplateTable(servletContext, templateName, 
-                                                      /*TemplatesImportAction.ATTRIBUTE_VIEW_NAME,*/
-                                                      objectId, userName);
-            
-            if (itt == null) {
-                // template has unconstrained fields so we can't inline it
-                newTemplateCounts.put(templateName, null);
-            } else {
-                newTemplateCounts.put(templateName, new Integer(itt.getResultsSize()));
-            }
-        }
-        
-        return newTemplateCounts;
     }
 }

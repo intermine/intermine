@@ -6,37 +6,37 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute name="displayObject"/>
-<tiles:importAttribute name="aspect"/>
+<tiles:importAttribute name="placement"/>
 
 <!-- objectDetailsAspect.jsp -->
 
 <c:forEach items="${displayObject.clds}" var="cld">
-  <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[aspect]) > 0}">
+  <c:if test="${fn:length(WEBCONFIG.types[cld.name].aspectDisplayers[placement]) > 0}">
     <c:set var="foundDisplayer" value="true"/>
   </c:if>
 </c:forEach>
 
 <c:choose>
-  <c:when test="${!empty aspectRefsAndCollections[aspect] ||
+  <c:when test="${!empty placementRefsAndCollections[placement] ||
               foundDisplayer == true ||
               !empty templates}">
 
-  <im:heading id="${aspect}">
-    ${aspect}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
+  <im:heading id="${placement}">
+    ${placement}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
   </im:heading>
-    <im:body id="${aspect}">
-      <tiles:insert page="/objectDetailsAspectRefsCols.jsp">
+    <im:body id="${placement}">
+      <tiles:insert page="/objectDetailsRefsCols.jsp">
         <tiles:put name="object" beanName="displayObject"/>
-        <tiles:put name="aspect" value="${aspect}"/>
+        <tiles:put name="placement" value="${placement}"/>
       </tiles:insert>
       <%-- the controller of this tile should have already called the controller
         for the template list so just insert the jsp page --%>
-      <c:if test="${!empty templates && !empty aspectRefsAndCollections[aspect]}">
+      <c:if test="${!empty templates && !empty placementRefsAndCollections[placement]}">
         <hr class="seperator"/>
       </c:if>
       <tiles:insert name="/templateList.jsp">
         <tiles:put name="type" value="global"/>
-        <tiles:put name="aspect" value="${aspect}"/>
+        <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="noTemplatesMsgKey" value=""/>
       </tiles:insert>
@@ -44,17 +44,15 @@
         <hr class="seperator"/>
       </c:if>
       <tiles:insert page="/objectDetailsDisplayers.jsp">
-        <tiles:put name="aspect" value="${aspect}"/>
+        <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="displayObject" beanName="displayObject"/>
       </tiles:insert>
       <im:vspacer height="5"/>
     </im:body>
   </c:when>
   <c:otherwise>
-    <!-- nothing to display for aspect ${aspect} -->
+    <!-- nothing to display for placement ${placement} -->
   </c:otherwise>
 </c:choose>
 
-
 <!-- /objectDetailsAspect.jsp -->
-
