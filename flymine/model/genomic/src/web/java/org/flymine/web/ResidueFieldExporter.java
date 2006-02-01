@@ -165,8 +165,15 @@ public class ResidueFieldExporter implements FieldExporter
             return null;
         }
     }
-
-    private Protein getProteinForSequence(ObjectStore os, Sequence sequence) {
+  
+    
+    /**
+     * Find the Protein that references the given Sequence.
+     * @param os the ObjectStore
+     * @param sequence the Sequence
+     * @return the Protein
+     */
+    public static Protein getProteinForSequence(ObjectStore os, Sequence sequence) {
         Query q = new Query();
 
         QueryClass proteinQc = new QueryClass(Protein.class);
