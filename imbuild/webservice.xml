@@ -16,7 +16,7 @@
   <target name="-pre-init" depends="webapp.-pre-init">
     <!-- Files -->
     <!-- Location of model-less intermine-webservice.war -->
-    <property name="source.intermine.webservice.war" location="${webservice.xml.basedir}/../intermine/webservice/dist/intermine-webservice.war"/>
+    <property name="source.intermine.webservice.war" location="${webservice.xml.basedir}/../intermine/webservice/server/dist/intermine-webservice.war"/>
   </target>
 
   <!-- WAR INSTEAD OF JAR -->
