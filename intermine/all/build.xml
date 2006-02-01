@@ -25,6 +25,7 @@
       <fileset dir="../.." includes="intermine/integrate/test/build.xml"/>
       <fileset dir="../.." includes="intermine/web/test/build.xml"/>
       <fileset dir="../.." includes="testmodel/webapp/test/build.xml"/>
+      <fileset dir="../.." includes="testmodel/webservice/test/build.xml"/>
     </subant>
   </target>
   
@@ -45,6 +46,7 @@
           <include name="intermine/integrate/main/src/**/*.java"/>
           <include name="intermine/web/main/src/**/*.java"/>
           <include name="intermine/webapp/main/src/**/*.java"/>
+          <include name="intermine/objectstore/model/logmodel/src/**/*.java"/>
         </fileset>
       </customize>
     </lib:checkstyle>
