@@ -142,6 +142,7 @@
       <displayer src="/model/synonymDisplayer.jsp"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
+    <tabledisplayer src="/model/proteinShortDisplayer.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.ProteinSequenceFamily">

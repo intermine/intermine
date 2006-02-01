@@ -84,9 +84,16 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
             obj = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
+            if (obj == null) {
+                obj = ResidueFieldExporter.getProteinForSequence(os, sequence);
+            }
         }
-        if (obj instanceof LocatedSequenceFeature) {
-            flyMineSequence = FlyMineSequenceFactory.make((LocatedSequenceFeature) obj);
+        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein) {
+            if (obj instanceof LocatedSequenceFeature) {
+                flyMineSequence = FlyMineSequenceFactory.make((LocatedSequenceFeature) obj);
+            } else {
+                flyMineSequence = FlyMineSequenceFactory.make((Protein) obj);
+            }
             Annotation annotation = flyMineSequence.getAnnotation();
             annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
                     ((BioEntity) obj).getIdentifier());
@@ -181,7 +188,11 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     object = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
                     if (object == null) {
                         // no LocatedSequenceFeature found
-                        continue;
+                        object = ResidueFieldExporter.getProteinForSequence(os, sequence);
+                        if (object == null) {
+                            // no Protein either
+                            continue;
+                        }
                     }
                 }
                 if (object instanceof LocatedSequenceFeature) {
