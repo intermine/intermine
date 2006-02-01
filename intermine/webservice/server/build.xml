@@ -2,8 +2,8 @@
 <project name="intermine-webservice" default="default" basedir=".">
   
   <description>build, test, package intermine-webservice</description>
-  <import file="../../imbuild/webapp.xml"/>
-  <import file="../../imbuild/task.xml"/>
+  <import file="../../../imbuild/webapp.xml"/>
+  <import file="../../../imbuild/task.xml"/>
   
 	<property name="generating.code" value="true"/>
 	
