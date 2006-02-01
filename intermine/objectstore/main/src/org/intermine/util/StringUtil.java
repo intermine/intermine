@@ -264,7 +264,37 @@ public class StringUtil
         }
     }
 
+    /**
+     * Escape single backslash with single forwardslash for correct storage in postgres.
+     *
+     * @param s the string to format
+     * @return the string with duplicated double backslash
+     */
+    public static String escapeBackslash(String s) {
+        if (s.indexOf('\\') == -1) {
+            return s;
+        } else {
+            return s.replaceAll("\\\\", "/");
+        }
+    }
 
+
+    /**
+     * trim left space in string
+     *
+     * @param s the string to format
+     * @return the string with no whitespace in the left of string
+     */
+    public static String trimLeft(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isWhitespace(s.charAt(i))) {
+                return s.substring(i);
+            }
+        } 
+        return s;
+        
+    }
+    
     /**
      * Return true if all characters in a given String are digits.  Null or empty string
      * will return false.

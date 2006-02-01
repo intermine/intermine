@@ -9,6 +9,7 @@ package org.flymine.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import org.intermine.util.StringUtil;
 
 import java.util.Set;
 import java.io.BufferedReader;
@@ -51,7 +52,7 @@ public class UniprotXmlFilter
 
         while ((line = in.readLine()) != null) {
             // quicker to trim whole file first?
-            String trimmed = trimLeft(line);
+            String trimmed = StringUtil.trimLeft(line);
             if (trimmed.startsWith("<entry")) {
                 // make sure opening element is included
                 if (keep) {
@@ -77,7 +78,7 @@ public class UniprotXmlFilter
                 keep = false;
             }
             if (keep) {
-                sb.append(line + System.getProperty("line.separator"));
+                sb.append(StringUtil.escapeBackslash(line) + System.getProperty("line.separator"));
             }
         }
         // catch final entry
@@ -89,14 +90,4 @@ public class UniprotXmlFilter
         out.flush();
     }
 
-
-    // should move to InterMine StringUtil
-    private String trimLeft(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (!Character.isWhitespace(s.charAt(i))) {
-                return s.substring(i);
-            }
-        }
-        return s;
-    }
 }

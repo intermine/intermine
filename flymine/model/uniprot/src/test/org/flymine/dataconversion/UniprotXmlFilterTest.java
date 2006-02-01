@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.io.File;
 import java.io.InputStreamReader;
 
+import  org.intermine.util.StringUtil;
+
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -52,4 +54,14 @@ public class UniprotXmlFilterTest extends XMLTestCase
         XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(expectedReader, new FileReader(tmpFile));
     }
+
+    public void testEscape() throws Exception {
+        String in ="Novel protein\\n\\";
+        
+        String out = StringUtil.escapeBackslash(in);
+        String expected = "Novel protein/n/";
+        System.out.println("escapeOut " + out);
+        assertEquals(expected, out);
+    }
+    
 }
