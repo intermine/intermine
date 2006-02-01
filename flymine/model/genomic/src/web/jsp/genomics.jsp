@@ -150,34 +150,6 @@
               </query>
             </im:querylink>
           </li>
-          <li>
-            <im:querylink text="Homo sapiens genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Homo sapiens" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="Homo sapiens gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Homo sapiens" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
         </ul>
       </div>
     </td>
