@@ -29,4 +29,4 @@ The columns are:
    protein feature start position (1st amino acid of the feature)
    protein feature end position (the last amino acid of the feature)
    the identifier of the new ProteinFeature
-   long name (longName field) for the new ProteinFeature
+   name field for the new ProteinFeature
