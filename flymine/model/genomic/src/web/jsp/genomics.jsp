@@ -108,10 +108,6 @@
           comparison purposes.
         </p>
         <dl>
-          <dt><i>Bacillus subtilis</i></dt>
-          <dd>
-            Protein interaction matches from <a href="http://www.ebi.ac.uk/intact/">intAct</a>
-          </dd>
           <dt><i>Caenorhabditis elegans</i></dt>
           <dd>
             Genome information from <a href="www.wormbase.org">WormBase</a>,
@@ -119,22 +115,6 @@
             <a href="http://www.ebi.ac.uk/intact/">intAct</a>, orthologues and
             paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
             terms, Uniprot and Interpro data
-          </dd>
-          <dt><i>Homo sapiens</i></dt>
-          <dd>
-            Protein interactions from <a href="http://www.ebi.ac.uk/intact/">intAct</a>
-          </dd>
-          <dt><i>Mus musculus</i></dt>
-          <dd>
-            Protein interactions from <a href="http://www.ebi.ac.uk/intact/">intAct</a>
-          </dd>
-          <dt><i>Saccharomyces cerevisiae</i></dt>
-          <dd>
-            Protein interactions from <a href="http://www.ebi.ac.uk/intact/">intAct</a>
-          </dd>
-          <dt><i>Schizosaccharomyces pombe</i></dt>
-          <dd>
-            Protein interactions from <a href="http://www.ebi.ac.uk/intact/">intAct</a>
           </dd>
         </dl>
       </div>
