@@ -84,7 +84,8 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organismDbId"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="wildTypeFunction" doNotTruncate="true" />
+      <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
+                   showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
