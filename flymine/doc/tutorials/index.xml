@@ -5,24 +5,47 @@
   <section>
     <title>Query Tutorials</title>
 
-    <para>The following tutorials will guide you through gradually more
-    complex queries. NOTE: It is recommended that you read the <ulink
-    url="../manual/manualQuickstart.xml">quick start guide</ulink> before you
-    attempt these tutorials.</para>
+    <para>The following tutorials will guide you through accessing
+    FlyMine data through the quick search and template queries. The
+    third tutorial 'Navigating object details pages' introduces
+    browsing the data available once a query has been run. NOTE: It is
+    recommended that you read the <ulink
+    url="../manual/manualQuickstart.xml">quick start guide</ulink>
+    before you attempt these tutorials.</para>
 
     <orderedlist>
       <listitem>
-        <para><ulink url="tutorial1.xml">Tutorial1</ulink>: Show the names of
+        <para><ulink url="quickSearch.xml">Tutorial1</ulink>: Running a quick search.</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="templates.xml">Tutorial2</ulink>: Running template queries</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="objectDetails.xml">Tutorial3</ulink>: Navigating object details pages: browsing the data</para>
+      </listitem>
+    </orderedlist>
+
+
+    <para>The following tutorials will guide you through gradually
+    more complex queries using the query builder. NOTE: It is
+    recommended that you read the <ulink
+    url="../manual/manualQuickstart.xml">quick start guide</ulink>
+    before you attempt these tutorials.</para>
+
+    <orderedlist>
+      <listitem>
+        <para><ulink url="query1.xml">Tutorial4</ulink>: Show all the gene symbols and identifiers of
         all genes in FlyMine</para>
       </listitem>
 
       <listitem>
-        <para><ulink url="tutorial2.xml">Tutorial2</ulink>: Show the names of
-        all the genes from Drosophila melanogaster</para>
+        <para><ulink url="query2.xml">Tutorial5</ulink>: Show all the genes from Drosophila melanogaster</para>
       </listitem>
 
       <listitem>
-        <para><ulink url="tutorial3.xml">Tutorial3</ulink>: Show the
+        <para><ulink url="query3.xml">Tutorial6</ulink>: Show the
         Orthologues between Drosophila melanogaster and Anopheles gambiae.</para>
       </listitem>
     </orderedlist>

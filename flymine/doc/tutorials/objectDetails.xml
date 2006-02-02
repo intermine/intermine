@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial2: <emphasis>Navigating object details pages</emphasis></title>
+
+    <para>This tutorial will guide you through the structure of the
+    object details pages and how to navigate them.  The object details
+    page for the zen gene will be used as an example.  All object
+    details pages have the same basic structure and so this example
+    can be extended to other items in the database.</para>
+
+    <para>Enter the gene symbol 'zen' into the quick search box to
+    access the object details page for this gene. See tutorial1 for
+    more information on the quick search.</para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails1.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+    <para>The object details page contains the following sections:</para>
+
+
+    <para>Summary for selected gene: The left-hand side of the object
+    details page always provides a summary of the item being
+    viewed. This summary includes the main attributes of the item.
+    For genes, the main attributes are the identifier, name, symbol
+    and organismDbID.  The organismDbID is the main identifier of the
+    relevant model organsim database - ie FlyBase for any Drosophila
+    melanogaster genes, and so for fly genes, this attribute will
+    always be an FBgn identifier.  The 'identifier' attribute contains
+    any main secondary identifer used for that particular organism.
+    For D. melanogaster genes this is the CGXXXX identifier.  </para>
+
+    <para>Further information for this gene: Below the summary is
+    always a section for further information.  This contains links to
+    external databases where appropriate - a link is provided to the
+    relevant gene report in FlyBase for D. melanogaster genes.  Below
+    the external links is an inset of the GBrowse genome viewer.  This
+    will be present on the object details page for any genomic
+    feature. Click on the GBrowse image to go to the full genome
+    browser, from where you can add additional tracks of information
+    and naviaagte around the genome.</para>
+
+    <para>Other information: The right hand side of the object details
+    page always contains a set of summary tables and links to related
+    items. Any data not available for the particular item being viewed
+    will be greyed and crossed out. For example, the zen gene has no
+    clone or microArrayResult information:</para>
+
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails2.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+  
+    <para>For each related item, there is a summary and a link to the
+    details page for that item.  Expand the GoAnnotations and Proteins
+    links for the zen gene to see the summary tables for these related
+    items:</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails3.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+     
+
+
+     <para>From the protein summary table, click on the [details...]
+     link.  This will take you to the object details page for the
+     ZEN1_DROME protein:</para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails4.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+     <para>Notice that the layout of the object details page for the
+     ZEN1_DROME protein is the same as that for the zen gene.  Notice
+     the 'trail' in the top left hand corner above the summary.  This
+     allows you to see where you have navigated from.  Clicking on the
+     'gene' link of the trail will take you back to the zen gene
+     object details page.</para>
+
+      <para>Look at the links to items related to the ZEN1_PROTEIN.
+      Notice that here there are several links to useful protein-based
+      information. Notice that there is also a link back to the zen
+      gene.  Expand the links for 'Interactions' and 'proteinFeatures'
+      to view the summary tables for the related items.  The
+      proteinFeatures link contains family and domain information for
+      the ZEN1_DROME protein (from Interpro). Click on the
+      [details...] link for one of the domains, to navigate to its
+      object details page. Use the 'trail' to go back to the
+      ZEN1_DROME protein. </para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails5.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+   
+
+
+<para> Click on the [details...] link from the Regions link. FlyMine
+contains modelled 3-D structural predictions for certain regions of
+D. melanogaster proteins.  The regions roughly correspond to Pfam
+domains.  The regions link allows you to access the structural
+information for any regions which have been modelled.  From the
+ProteinRegion object details page, expand the 'object',
+'proteinFeature' and 'structure' links to view the domain and location
+for which a structure was modelled and information about the actual
+modelled structure.  Follow the [details...] link for the
+'modelledProteinStructure' for more details about the
+structure:</para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails6.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+
+
+<para>Use the 'trail' to navigate back to the zen gene object details
+page.  The above should have given you an idea of how to navigate
+around and browse the database via the object details pages for
+related items in the database.</para>
+
+
+<para>Underneath each object details page is a set of related template
+queries.  These templates are queries that can be run with the type of
+item you are viewing and will be set to run with the identifier of the
+item you are viewing. (note: this does not necessarily mean there will
+be results available for the particular item you are viewing). See
+tutorial2 for more details on running template queries.</para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="objectDetails7.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+     
+
+
+  </section>
+</article>

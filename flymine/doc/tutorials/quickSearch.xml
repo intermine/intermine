@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial1: <emphasis>Browsing FlyMine: Running a quick search</emphasis></title>
+
+    <para>This tutorial will guide you through running a quick
+    search. The tutorial will show you how to run a quick search for
+    the 'zen' gene.</para>
+
+    <para>The quick search allows you to access all the information
+    that is available for a particular database entry and provides a
+    good way to browse the database.</para>
+
+    <para>The quick search option is accessed from the main query
+    page. (To access the main query page click on 'Start a query' in
+    the FlyMine home page).</para>
+
+    <para>Enter the gene symbol 'zen' into the search box and press
+    'Search':</para>
+
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="quickSearch1.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+
+    <para>Since one item in the database matches the term 'zen', you
+    will be taken straight to the 'Object Details' page for the 'zen'
+    gene. Navigating the object details page is described in more
+    detail in tutorial3</para>
+
+    <para>Wild cards (*) can be added to increase the range of a quick
+    search.  Enter 'zen*' into the search box and press 'Search'. This
+    time the search term matches several items in the database and a
+    summary list of these will be returned as your results. Each
+    summary includes a link ('details') to the object details page for
+    that item:</para>
+
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="quickSearch2.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+  </section>
+</article>
