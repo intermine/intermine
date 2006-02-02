@@ -11,7 +11,7 @@
       </div>
       <div class="body">
         <DL>
-          <DT><A href="http://www.ebi.uniprot.org/index.shtml">Uniprot
+          <DT><A href="http://www.ebi.uniprot.org/index.shtml">UniProt
           Knowledgebase (UniProtKB)</A></DT>
           <DD>
             All proteins from the <A
@@ -23,7 +23,7 @@
               <LI><I>A. gambiae</I></LI>
               <LI><I>C. elegans</I></LI>
             </UL>
-            For each protein record in Uniprot for each species the following
+            For each protein record in UniProt for each species the following
             information is extracted and loaded into FlyMine:
             <UL>
               <LI>Entry name</LI>
@@ -39,7 +39,7 @@
           <DT><A href="http://www.ebi.ac.uk/interpro">InterPro</A> protein
           families and domains.</DT>
           <DD>
-            Protein family and domain assignments to proteins in Uniprot have
+            Protein family and domain assignments to proteins in UniProt have
             been loaded from <A
             href="http://www.ebi.ac.uk/interpro">InterPro</A> (version 10.0)
             for the following organisms:
