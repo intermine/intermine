@@ -14,7 +14,7 @@
 <tiles:importAttribute name="aspect" scope="request"/>
 <tiles:importAttribute name="startingPoints"/>
 
-<im:box topLeftTile="/aspectIcon.jsp" topRightTile="/aspectPopup.jsp">
+<im:box title="${aspect.name}" topRightTile="/aspectPopup.jsp">
 
 <c:if test="${!empty aspect.aspectSources}">
   <div class="aspectSources">
@@ -28,8 +28,12 @@
 </c:if>
 
 <div class="body aspectIntro">
-  ${aspect.introText}
+  <p>
+    <img src="${ASPECTS[aspect.name].iconImage}" class="aspectPageIcon"/>
+    ${aspect.introText}
+  </p>
 </div>
+<div style="clear:both;"></div>
 
 <c:if test="${!empty aspect.tileName}">
   <div class="aspectTile">
