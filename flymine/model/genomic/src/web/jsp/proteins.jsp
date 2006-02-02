@@ -36,12 +36,12 @@
               <LI>Gene ORF name</LI>
             </UL>
           </DD>
-          <DT><A href="http://www.ebi.ac.uk/interpro">Interpro</A> protein
+          <DT><A href="http://www.ebi.ac.uk/interpro">InterPro</A> protein
           families and domains.</DT>
           <DD>
             Protein family and domain assignments to proteins in Uniprot have
             been loaded from <A
-            href="http://www.ebi.ac.uk/interpro">Interpro</A> (version 10.0)
+            href="http://www.ebi.ac.uk/interpro">InterPro</A> (version 10.0)
             for the following organisms:
             <UL>
               <LI><I>D. melanogaster</I></LI>
