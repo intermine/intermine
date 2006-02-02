@@ -18,11 +18,13 @@
 
 <c:choose>
   <c:when test="${!empty placementRefsAndCollections[placement] ||
-              foundDisplayer == true ||
-              !empty templates}">
+                foundDisplayer == true ||
+                !empty templates}">
+
+  <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}"/>
 
   <im:heading id="${placement}">
-    ${placement}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
+    ${aspect}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
   </im:heading>
     <im:body id="${placement}">
       <tiles:insert page="/objectDetailsRefsCols.jsp">
