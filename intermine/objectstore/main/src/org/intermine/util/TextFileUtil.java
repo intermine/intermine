@@ -35,10 +35,11 @@ public abstract class TextFileUtil
      * @param os the OutputStream to write to
      * @param listOfLists the table to write
      * @param columnOrder the real order of the column in the output - a map from the column index
-     * in the output to the column index in the listOfLists
-     * @param columnVisible an array mapping from columns in listOfLists to their visibility
+     * in the output to the column index in the listOfLists.  null means use the original order
+     * @param columnVisible an array mapping from columns in listOfLists to their visibility.  null
+     * means all columns are visible
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
-     * listOfLists
+     * listOfLists.  -1 means output all
      */
     public static void writeTabDelimitedTable(OutputStream os, List listOfLists,
                                               int [] columnOrder, boolean [] columnVisible,
@@ -51,10 +52,11 @@ public abstract class TextFileUtil
      * @param os the OutputStream to write to
      * @param listOfLists the table to write
      * @param columnOrder the real order of the column in the output - a map from the column index
-     * in the output to the column index in the listOfLists
-     * @param columnVisible an array mapping from columns in listOfLists to their visibility
+     * in the output to the column index in the listOfLists.  null means use the original order
+     * @param columnVisible an array mapping from columns in listOfLists to their visibility.  null
+     * means all columns are visible
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
-     * listOfLists
+     * listOfLists.  -1 means output all
      */
     public static void writeCSVTable(OutputStream os, List listOfLists,
                                      int [] columnOrder, boolean [] columnVisible,
@@ -82,9 +84,11 @@ public abstract class TextFileUtil
         // a count of the columns that are invisble - used to get the correct columnIndex
         int invisibleColumns = 0;
 
-        for (int columnIndex = 0; columnIndex < columnVisible.length; columnIndex++) {
-            if (!columnVisible[columnIndex]) {
-                invisibleColumns++;
+        if (columnVisible != null) {
+            for (int columnIndex = 0; columnIndex < columnVisible.length; columnIndex++) {
+                if (!columnVisible[columnIndex]) {
+                    invisibleColumns++;
+                }
             }
         }
 
@@ -101,17 +105,21 @@ public abstract class TextFileUtil
             List realRow = new ArrayList();
             
             for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                int realColumnIndex = columnOrder[columnIndex];
+                int realColumnIndex;
+
+                if (columnOrder == null) {
+                    realColumnIndex = columnIndex;
+                } else {
+                    realColumnIndex = columnOrder[columnIndex];
+                }
 
                 Object o = row.get(realColumnIndex);
 
-                if (!columnVisible[columnIndex]) {
+                if (columnVisible != null && !columnVisible[columnIndex]) {
                     continue;
                 }
 
                 realRow.add(o);
-                
-                
             }
             
             for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
