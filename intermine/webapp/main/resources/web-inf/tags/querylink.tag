@@ -17,7 +17,7 @@
 </jsp:useBean>
 
 <html:link action="/loadQuery" name="linkParams">
-  <span style="white-space:nowrap">
+  <span>
     ${text}
     <c:if test="${showArrow}">
       <img border="0" class="arrow" src="images/right-arrow.gif" alt="-&gt;"/>
