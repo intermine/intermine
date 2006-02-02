@@ -23,11 +23,12 @@
           <a href="/">FlyMine</a> is a resource aimed at the Drosophila and
           Anopheles research communities hence the focus is on those organisms.
         <dl>
-          <dt><i>Drosophila melanogaster</i></dt>
+          <dt><i>Drosophila melanogaster</i> - <a href="http://www.flybase.org"><html:img src="model/FlyBase_logo_mini.png"/></a></dt>
           <dd>
-            Release 4.2 genome annotation from <A href="http://flybase.bio.indiana.edu">FlyBase</a>.
+            Release 4.2 genome annotation from <A href="http://flybase.bio.indiana.edu"> 
+            FlyBase</a>.
           </dd>
-          <dt><i>Anopheles gambiae</i> str. PEST</dt>
+          <dt><i>Anopheles gambiae</i> str. PEST - <a href="http://www.ensembl.org/Anopheles_gambiae"><html:img src="model/ensembl_logo_mini.png"/></a></dt>
           <dd>
             Release 2b genome annotations from <a href="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</a>.
           </dd>
