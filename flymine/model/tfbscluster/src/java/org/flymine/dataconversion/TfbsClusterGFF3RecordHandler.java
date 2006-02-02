@@ -33,7 +33,7 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
 {
 
     private final Map geneMap = new HashMap();
-    private final Map organismMap = new HashMap();
+ 
     /**
      * Create a new TfbsGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -51,26 +51,6 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) throws BuildException {
         Item feature = getFeature();
 
-        if (record.getAttributes().get("type") != null) {
-            String type = (String) ((List) record.getAttributes().get("type")).get(0);
-            feature.setAttribute("type", type);
-        }
-
-        if (record.getAttributes().get("sequence") != null) {
-            Item sequence = createItem("Sequence");
-            String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
-            sequence.setAttribute("residues", residues);
-            addItem(sequence);
-            feature.setReference("sequence", sequence.getIdentifier());
-        } 
-        
-        if (record.getAttributes().get("organism") != null) {
-            List orgList = getConservedOrganismList(
-                          (List) record.getAttributes().get("organism"));
-            feature.addCollection(new ReferenceList("conservedOrganisms", orgList));
-        }
-
-
         if (record.getAttributes().get("gene1") != null) {
             createGeneAndRelated("gene1", record, feature);
 
@@ -78,7 +58,6 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
         if (record.getAttributes().get("gene2") != null) {
             createGeneAndRelated("gene2", record, feature);
         }
-
 
     }
 
@@ -127,31 +106,5 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             addItem(distanceRelation);
         }
     }
-
-
-    /**
-     * create a collection with all the possible conservedOranisms 
-     * attribute name in Gff3 Attributes
-     * @param orgList ArrayList from Gff3 organism attribute
-     * @return ArrayList with identifier for conservedOrganisms
-     */
     
-    protected List getConservedOrganismList(List orgList) {
-        List conservedOrganismList = new ArrayList();
-        Iterator i = orgList.iterator();
-        Item conservedOrg;
-        while (i.hasNext()) {
-            String orgAbbrev = (String) i.next();
-            if (organismMap.containsKey(orgAbbrev)) {
-                conservedOrg = (Item) organismMap.get(orgAbbrev);                 
-            } else {
-                conservedOrg = createItem("Organism");
-                conservedOrg.setAttribute("abbreviation", orgAbbrev);
-                addItem(conservedOrg);
-                organismMap.put(orgAbbrev, conservedOrg);
-            }
-            conservedOrganismList.add(conservedOrg.getIdentifier());   
-        }
-        return conservedOrganismList;
-    }
 }
