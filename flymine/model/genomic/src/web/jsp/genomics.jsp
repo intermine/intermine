@@ -5,9 +5,14 @@
 
 <table>
   <tr>
-    <td valign="top" colspan="2">
+    <td valign="top">
       <div class="heading2">
-        Major genome datasets
+        Major genomes
+      </div>
+    </td>
+    <td valign="top">
+      <div class="heading2">
+        Dataset links
       </div>
     </td>
   </tr>
@@ -29,7 +34,7 @@
         </dl>
       </div>
     </td>
-    <td width="30%" valign="top">
+    <td width="40%" valign="top">
       <div class="body">
         <ul>
           <li>
@@ -93,9 +98,14 @@
     </td>
   </tr>
   <tr>
-    <td colspan="2">
+    <td valign="top">
       <div class="heading2">
         Minor datasets
+      </div>
+    </td>
+    <td valign="top">
+      <div class="heading2">
+        Dataset links
       </div>
     </td>
   </tr>
@@ -119,7 +129,7 @@
         </dl>
       </div>
     </td>
-    <td width="30%" valign="top">
+    <td width="4%" valign="top">
       <div class="body">
         <ul>
           <li>
