@@ -4,7 +4,6 @@ html, body
   font-size: 100%; /* NN4 */
   margin: 0;
   padding: 0;
-  background-color: #F0F2FF;
 }
 
 a:link { color:#049; text-decoration:none }
@@ -36,12 +35,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   margin: 3px;
 }
 
-#header h1 a
-{
-  color: #210075;
-  text-decoration: none;
-}
-
 #header p
 {
   font-size: 1.2em;
@@ -70,7 +63,6 @@ ul {
 /* style for boxes with heading - used by the front page and the webapp */
 .box .heading, .heading2 {
   border: 1px solid #888;
-  background-color: #f5f5f5;
   padding: 1px;
   padding-left: 5px;
   padding-right: 5px;
@@ -78,7 +70,7 @@ ul {
   margin-right: 8px;
   margin-left: 8px;
   margin-bottom: 4px;
-  font-size: 13px;
+  font-size: 14px;
   color: black;
   white-space: nowrap;
 }
@@ -93,6 +85,7 @@ ul {
 
 .boxbody {
   background-color: white;
+  border-bottom: 1px solid #888;
 }
 
 .altmessage {
@@ -103,11 +96,12 @@ ul {
 }
 
 table.box {
-  border: 1px solid #888;
+  border: 0px solid #888;
 }
 
 table.box th {
   background: #eee;
+  border-top: 1px solid #888;
   border-bottom: 1px solid #888;
 }
 
@@ -177,9 +171,7 @@ table td {
 }
 .links {
   background-color: #fff;
-  border-bottom: solid #888 1px;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding: 3px;
 }
 .links .menu-item {
   padding-right: 5px;
@@ -444,9 +436,8 @@ a.brokenTmplLink {
   text-align: center;
 }
 
-/* override flymine2.css */
 #pagecontent {
-  margin: 10px;
+  margin: 0px;
   padding: 0px;
 }
 
@@ -559,8 +550,12 @@ td.aspectIconCell {
   margin-left: -10px;
 }
 
-.aspectStartingPoints, .aspectTile, .aspectIntro {
+.aspectStartingPoints, .aspectTile {
   padding-bottom: 8px;
+}
+.aspectIntro {
+  padding-bottom: 8px;
+  font-size: larger;
 }
 
 .aspectIntroImg {
