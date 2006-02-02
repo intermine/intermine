@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -61,6 +62,10 @@ public class GFF3Converter
     private Map identifierMap = new HashMap();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
+    
+    protected Map conservedOrgMap =  new HashMap();
+    protected Map sequenceMap =  new HashMap();
+
 
     /**
      * Constructor
@@ -147,7 +152,6 @@ public class GFF3Converter
         }
 
         iter = handler.getFinalItems().iterator();
-
         while (iter.hasNext()) {
             writer.store(ItemHelper.convert((Item) iter.next()));
         }
@@ -180,17 +184,32 @@ public class GFF3Converter
         }
 
         Item feature;
-
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
-        } else {
+         } else {
             feature = createItem(className);
+         }
+
+        if (record.getAttributes().get("type") != null) {
+            String type = (String) ((List) record.getAttributes().get("type")).get(0);
+            feature.setAttribute("type", type);
+        }
+            
+        if (record.getAttributes().get("sequence") != null) {
+            String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
+            Item sequence = getSequenceItem(residues);
+            feature.setReference("sequence", sequence.getIdentifier());   
+        }         
+
+        List conservedOrganismList = getConservedOrganismList(record);
+        if (conservedOrganismList != null) {
+            feature.addCollection(new ReferenceList("conservedOrganisms", conservedOrganismList));
         }
 
         if (names != null) {
-            if (cd.getFieldDescriptorByName("symbol") == null) {
+            if (cd.getFieldDescriptorByName("symbol") == null) {                
                 feature.addAttribute(new Attribute("name", (String) names.get(0)));
                 for (Iterator i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
@@ -214,6 +233,7 @@ public class GFF3Converter
                 }
             }
         }
+        
         feature.addReference(getOrgRef());
 
         // if parents -> create a SimpleRelation
@@ -227,7 +247,7 @@ public class GFF3Converter
             }
         }
 
-
+        
         Item location = createItem("Location");
         location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
         location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
@@ -238,14 +258,14 @@ public class GFF3Converter
         } else {
             location.addAttribute(new Attribute("strand", "0"));
         }
-
+        
         if (record.getPhase() != null) {
             location.addAttribute(new Attribute("phase", record.getPhase()));
         }
         location.addReference(new Reference("object", seq.getIdentifier()));
         location.addReference(new Reference("subject", feature.getIdentifier()));
         location.addCollection(new ReferenceList("evidence",
-                            Arrays.asList(new Object[] {dataSet.getIdentifier()})));
+                               Arrays.asList(new Object[] {dataSet.getIdentifier()})));
         handler.setLocation(location);
 
         ReferenceList evidence = new ReferenceList("evidence");
@@ -256,14 +276,14 @@ public class GFF3Converter
             if (String.valueOf(record.getScore()) != null) {
                 computationalResult.addAttribute(new Attribute("type", "score"));
                 computationalResult.addAttribute(new Attribute("score",
-                                                               String.valueOf(record.getScore())));
+                                                 String.valueOf(record.getScore())));
             }
 
             //no sense to create ComputationalAnalysis if there is no ComputationalResult
             if (record.getSource() != null) {
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
-                                                          computationalAnalysis.getIdentifier()));
+                                                 computationalAnalysis.getIdentifier()));
                 handler.setAnalysis(computationalAnalysis);
             }
 
@@ -273,7 +293,7 @@ public class GFF3Converter
 
         feature.addCollection(evidence);
         handler.setFeature(feature);
-
+        
         String orgAbb = null;
         String tgtSeqIdentifier = null;
         if (record.getAttributes().get("Organism") != null) {
@@ -298,7 +318,8 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
-
+        
+           
         try {
             Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
@@ -309,7 +330,9 @@ public class GFF3Converter
             LOG.error("Problem writing item to the itemwriter");
             throw e;
         }
+        
     }
+                      
 
     private String getIdentifier(String id) {
         String identifier = (String) identifierMap.get(id);
@@ -420,4 +443,39 @@ public class GFF3Converter
     private String createIdentifier() {
         return "0_" + itemid++;
     }
+
+    public List getConservedOrganismList(GFF3Record record) {
+        List conservedOrganismList = new ArrayList();
+        if (record.getAttributes().get("conservedOrganism") != null) {
+            List orgList = (List) record.getAttributes().get("conservedOrganism");
+            Iterator i = orgList.iterator();
+            Item conservedOrg;
+            while (i.hasNext()) {
+                String orgAbbrev = (String) i.next();
+                if (conservedOrgMap.containsKey(orgAbbrev)) {
+                    conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);                 
+                } else {
+                    conservedOrg = createItem("Organism");
+                    conservedOrg.setAttribute("abbreviation", orgAbbrev);
+                    handler.addItem(conservedOrg);
+                    conservedOrgMap.put(orgAbbrev, conservedOrg);
+                }
+                conservedOrganismList.add(conservedOrg.getIdentifier());   
+            }
+        }
+        return conservedOrganismList;
+    } 
+
+    private Item getSequenceItem(String residues) {
+        Item sequence = (Item) sequenceMap.get(residues);
+        if (sequence == null) {
+            sequence = createItem("Sequence");
+            sequence.setAttribute("residues", residues);
+            handler.addItem(sequence);
+            sequenceMap.put(residues, sequence);
+        }
+        return sequence;
+    }
+
 }
+
