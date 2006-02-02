@@ -523,6 +523,12 @@ img.searchHeatImg {
   margin-right: 2px;
 }
 
+.aspectPageIcon {
+  float: left;
+  margin: 5px;
+  margin-right: 12px;
+}
+
 table.aspectIconsTable {
   margin-left: 10px;
   margin-bottom: 5px;
