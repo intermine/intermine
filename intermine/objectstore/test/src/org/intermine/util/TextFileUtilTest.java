@@ -45,10 +45,22 @@ public class TextFileUtilTest extends TestCase
         String expected;
         String results;
 
+        // test writing all columns in their natural order
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {true, true, true, true},
+                                            100);
+        expected = "101\t102\tstring 103\tstring 104, with comma\n"
+            + "201\t202\tstring 203\t\"string 204\t with tab\"\n";
+        results = baos.toString();
+        assertEquals(expected, results);
+
+        // same as above - the nulls mean show all columns in their natural order
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            null,
+                                            null,
                                             100);
         expected = "101\t102\tstring 103\tstring 104, with comma\n"
             + "201\t202\tstring 203\t\"string 204\t with tab\"\n";
@@ -96,6 +108,27 @@ public class TextFileUtilTest extends TestCase
         expected = "102\n202\n";
         results = baos.toString();
         assertEquals(expected, results);
+        
+        // test writing a limited number of rows
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {0, 1, 2, 3},
+                                            new boolean[] {true, true, true, true},
+                                            1);
+        expected = "101\t102\tstring 103\tstring 104, with comma\n";
+        results = baos.toString();
+        assertEquals(expected, results);        
+        
+        // test writing all rows (-1 as maxRows)
+        baos = new ByteArrayOutputStream();
+        TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
+                                            new int[] {0, 1, 2, 3},
+                                            new boolean[] {true, true, true, true},
+                                            -1);
+        expected = "101\t102\tstring 103\tstring 104, with comma\n"
+            + "201\t202\tstring 203\t\"string 204\t with tab\"\n";;
+        results = baos.toString();
+        assertEquals(expected, results);     
     }
 
     public void testWriteCommaDelimitedTable() throws Exception {
