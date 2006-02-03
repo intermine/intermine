@@ -42,10 +42,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   margin: 3px;
 }
 
-ul {
-  margin-left: -10px;
-}
-
 .version {
   border: 1px solid #222;
   font-size: 15px;
@@ -532,7 +528,7 @@ table.aspectIconsTable {
 }
 
 td.aspectIconCell {
-  padding-right: 7px;
+  padding-right: 15px;
 }
 
 .aspectSources {
@@ -553,7 +549,7 @@ td.aspectIconCell {
 .aspectSources ul {
   margin-bottom: 3px;
   margin-top: 5px;
-  margin-left: -10px;
+  margin-left: 0px;
 }
 
 .aspectStartingPoints, .aspectTile {

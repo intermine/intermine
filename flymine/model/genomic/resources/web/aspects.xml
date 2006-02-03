@@ -4,69 +4,53 @@
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
     <intro-text>
-      Genome annotation data.
+      The genome annotation in FlyMine comes from curated source databases.
+      In most cases FlyMine includes all genome features that have locations
+      (eg. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
     <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Ensembl Anopheles" url="http://www.ensembl.org/Anopheles_gambiae"/>
   </aspect>
-  
+
   <aspect name="Gene Expression">
-    <subtitle></subtitle>
+    <subtitle>ArrayExpress</subtitle>
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
     <intro-text>
-      Microarray gene expression data formatted in mage-ml format can be loaded into FlyMine.
+      FlyMine contains selected Microarray gene expression data sets for
+      Drosophila.  We plan to add more soon.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
     <starting-points>MicroArrayExperiment CDNAClone Gene</starting-points>
+    <aspect-source name="Array Express" url="http://www.ebi.ac.uk/arrayexpress/"/>
   </aspect>
-  
-  <aspect name="Gene Ontology">
-    <subtitle></subtitle>
-    <icon-image>model/geneOntology.png</icon-image>
-    <large-image>model/geneOntology.png</large-image>
+
+  <aspect name="Binding Sites">
+    <subtitle>Protein binding sites</subtitle>
+    <icon-image>model/bindingSites.png</icon-image>
+    <large-image>model/bindingSites.png</large-image>
     <intro-text>
-      The Gene Ontology (GO) project is a collaborative effort to
-      address the need for consistent descriptions of gene products in
-      different databases.
-      
-      The GO collaborators are developing three structured, controlled
-      vocabularies (ontologies) that describe gene products in terms of
-      their associated biological processes, cellular components and
-      molecular functions in a species-independent manner.
-      
-      GO terms are organized in structures called directed acyclic
-      graphs (DAGs), which differ from hierarchies in that a child, or
-      more specialized, term can have many parents, or less specialized,
-      terms.
-      
-      The three GO ontologies have been loaded into FlyMine and the
-      hierachical structure of each can be browsed and queried.
-      
-      Model organism databases annotate their gene products (or genes)
-      with GO terms, providing references and indicating what kind of
-      evidence is available to support the annotations.
-      
-      GO annotations for D. melanogaster, C. elegans and A. gambiae have
-      been loaded into FlyMine.  The GO annotations are 'attached' to
-      Genes and so each gene has a reference (link) to a list of it's GO
-      annotations (if available).
+      DNA and Protein binding sites from FlyReg and FlyBase.
     </intro-text>
-    <starting-points>Gene GOTerm GOAnnotation</starting-points>
-    <tile-name>model/GO.jsp</tile-name>
+    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
+    <tile-name>model/bindingSites.jsp</tile-name>
+    <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
   </aspect>
-  
-  <aspect name="INDAC">
-    <subtitle>Long Oligos</subtitle>
-    <icon-image>model/indac.png</icon-image>
-    <large-image>model/indac.png</large-image>
+
+  <aspect name="DrosDel">
+    <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
+    <icon-image>model/drosdel.gif</icon-image>
+    <large-image>model/drosdel.gif</large-image>
     <intro-text>
-      Long oligos from the International Drosophila array consortium.
+      DrosDel P-element insertion and deletion locations.
     </intro-text>
-    <tile-name>model/indac.jsp</tile-name>
-    <starting-points>Transcript Gene MicroarrayOligo</starting-points>
+    <tile-name>model/drosdel.jsp</tile-name>
+    <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
+    <aspect-source name="DrosDel" url="http://www.drosdel.org.uk/"/>
   </aspect>
-  
+
   <aspect name="Tiling Path">
     <subtitle>Microarray Tiling Primers</subtitle>
     <icon-image>model/tilingPath.png</icon-image>
@@ -77,29 +61,32 @@
     <tile-name>model/tilingPath.jsp</tile-name>
     <starting-points>PCRProduct Primer TilingPathSpan Chromosome Location</starting-points>
   </aspect>
-  
-  <aspect name="DrosDel">
-    <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
-    <icon-image>model/drosdel.gif</icon-image>
-    <large-image>model/drosdel.gif</large-image>
+
+  <aspect name="INDAC">
+    <subtitle>Long Oligos</subtitle>
+    <icon-image>model/indac.png</icon-image>
+    <large-image>model/indac.png</large-image>
     <intro-text>
-      DrosDel P-element insertion and deletion locations.
+      Long oligos from the International Drosophila Array Consortium.
     </intro-text>
-    <tile-name>model/drosdel.jsp</tile-name>
-    <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
+    <tile-name>model/indac.jsp</tile-name>
+    <starting-points>Transcript Gene MicroarrayOligo</starting-points>
+    <aspect-source name="International Drosophila Array Consortium" url="http://www.indac.net/"/>
   </aspect>
-  
+
   <aspect name="RNAi">
-    <subtitle>RNA interference experiments</subtitle>
+    <subtitle>RNA interference</subtitle>
     <icon-image>model/rnai.png</icon-image>
     <large-image>model/rnai.png</large-image>
     <intro-text>
-      RNAi experiments
+      FlyMine currently contains RNAi experiment results only for
+      Caenorhabditis elegans.  By using orthologues, gene phenotypes in other
+      organisms can be inferred from the C. elegans RNAi experiments.
     </intro-text>
     <tile-name>model/RNAi.jsp</tile-name>
     <starting-points>RNAiExperiment Phenotype Gene</starting-points>
   </aspect>
-  
+
   <aspect name="Disease">
     <subtitle>Human disease matches from Homophila</subtitle>
     <icon-image>model/disease.png</icon-image>
@@ -109,6 +96,7 @@
     </intro-text>
     <tile-name>model/diseaseAspect.jsp</tile-name>
     <starting-points>Disease Orthologue BlastMatch Gene</starting-points>
+    <aspect-source name="Homophila" url="http://superfly.ucsd.edu/homophila/"/>
   </aspect>
 
   <aspect name="Comparative Genomics">
@@ -124,21 +112,25 @@
     </intro-text>
     <tile-name>model/inparanoid.jsp</tile-name>
     <starting-points>Gene Orthologue Paralogue</starting-points>
+    <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
   </aspect>
-  
+
   <aspect name="Proteins">
     <subtitle>Protein and protemics data</subtitle>
     <icon-image>model/proteins.png</icon-image>
     <large-image>model/proteins.png</large-image>
     <intro-text>
-      Protein annotation (including family and domain annotation).
+      Protein annotation (including family and domain annotation) from UniProt
+      and InterPro.
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <aspect-source name="InterPro" url="http://www.ebi.ac.uk/interpro"/>
+    <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
-  
+
   <aspect name="Protein Interactions">
-    <subtitle></subtitle>
+    <subtitle>IntAct</subtitle>
     <icon-image>model/proteinInteraction.gif</icon-image>
     <large-image>model/proteinInteraction.gif</large-image>
     <tile-name></tile-name>
@@ -149,19 +141,46 @@
     </intro-text>
     <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
     <tile-name>model/proteinInteraction.jsp</tile-name>
+    <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
   </aspect>
-  
+
   <aspect name="Protein Structure">
     <subtitle>3-D protein&lt;br/&gt;structures</subtitle>
     <icon-image>model/pstructure.gif</icon-image>
     <large-image>model/pstructure.gif</large-image>
     <intro-text>
-      3-D protein structures.
+      3-D protein structures from the Mizuguchi lab.
     </intro-text>
     <starting-points>Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain ProteinFamily</starting-points>
     <tile-name>model/proteinStructure.jsp</tile-name>
+    <aspect-source name="Kenji Mizuguchi lab"
+                   url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
   </aspect>
-  
+
+  <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image>model/geneOntology.png</icon-image>
+    <large-image>model/geneOntology.png</large-image>
+    <intro-text>
+      The Gene Ontology (GO) project is a collaborative effort to
+      address the need for consistent descriptions of gene products in
+      different databases.
+&lt;p&gt;
+      The GO collaborators are developing three structured, controlled
+      vocabularies (ontologies) that describe gene products in terms of
+      their associated biological processes, cellular components and
+      molecular functions in a species-independent manner.
+&lt;p&gt;
+      GO annotations for D. melanogaster, C. elegans and A. gambiae have
+      been loaded into FlyMine.  The GO annotations are 'attached' to
+      Genes and so each gene has a reference (link) to a list of its GO
+      annotations (if available).
+    </intro-text>
+    <starting-points>Gene GOTerm GOAnnotation</starting-points>
+    <tile-name>model/GO.jsp</tile-name>
+    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
+  </aspect>
+
   <!--
       <aspect name="Anopheles">
         <subtitle></subtitle>
@@ -173,16 +192,4 @@
         <starting-points></starting-points>
       </aspect>
       -->
-  
-  <aspect name="Binding Sites">
-    <subtitle>Protein binding sites</subtitle>
-    <icon-image>model/bindingSites.png</icon-image>
-    <large-image>model/bindingSites.png</large-image>
-    <intro-text>
-      DNA and Protein binding sites.
-    </intro-text>
-    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
-    <tile-name>model/bindingSites.jsp</tile-name>
-  </aspect>
-  
 </aspects>

@@ -8,7 +8,7 @@
 
 <!-- aspectIcons -->
 
-  <table class="aspectIconsTable" border="0" width="100" cellspacing="0" cellpadding="0">
+  <table class="aspectIconsTable" border="0" width="550" cellspacing="0" cellpadding="0">
     <tr>
       <td width="33%" valign="top">
         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">

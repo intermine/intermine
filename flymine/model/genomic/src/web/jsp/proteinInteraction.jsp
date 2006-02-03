@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<TABLE>
+<TABLE width="100%">
   <TR>
     <TD valign="top">
       <div class="heading2">
@@ -78,7 +78,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All <i>D. melanogaster</i> protein interactions (export)" skipBuilder="true">
+            <im:querylink text="All <i>D. melanogaster</i> protein interactions (for export/download)" skipBuilder="true">
               <query name="" model="genomic" view="ProteinInteraction.bait.identifier ProteinInteraction.bait.primaryAccession ProteinInteraction.prey.identifier ProteinInteraction.prey.primaryAccession ProteinInteraction.evidence.confidence">
                 <node path="ProteinInteraction" type="ProteinInteraction">
                 </node>
@@ -106,7 +106,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Giot et al, 2003 (export)" skipBuilder="true">
+            <im:querylink text="Giot et al, 2003 (for export/download)" skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.bait.identifier ProteinInteraction.bait.primaryAccession ProteinInteraction.prey.identifier ProteinInteraction.prey.primaryAccession ProteinInteraction.evidence.confidence">
   <node path="ProteinInteraction" type="ProteinInteraction">
   </node>
@@ -142,7 +142,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Stanyon et al, 2004 (export)" skipBuilder="true">
+            <im:querylink text="Stanyon et al, 2004 (for export/download)" skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.bait.identifier ProteinInteraction.bait.primaryAccession ProteinInteraction.prey.identifier ProteinInteraction.prey.primaryAccession">
   <node path="ProteinInteraction" type="ProteinInteraction">
   </node>
@@ -206,7 +206,7 @@
         </im:querylink>
       </li>
           <li>
-            <im:querylink text="All <i>C. elegans</i> protein interactions (export)" skipBuilder="true">
+            <im:querylink text="All <i>C. elegans</i> protein interactions (for export/download)" skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.bait.identifier ProteinInteraction.bait.primaryAccession ProteinInteraction.prey.identifier ProteinInteraction.prey.primaryAccession">
   <node path="ProteinInteraction" type="ProteinInteraction">
   </node>
@@ -232,7 +232,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Li et al, 2004 (export)" skipBuilder="true">
+            <im:querylink text="Li et al, 2004 (for export/download)" skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.bait.identifier ProteinInteraction.bait.primaryAccession ProteinInteraction.prey.identifier ProteinInteraction.prey.primaryAccession">
   <node path="ProteinInteraction" type="ProteinInteraction">
   </node>

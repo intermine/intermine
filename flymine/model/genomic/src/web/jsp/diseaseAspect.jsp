@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<TABLE>
+<TABLE width="100%">
   <TR>
     <TD valign="top">
       <div class="heading2">
