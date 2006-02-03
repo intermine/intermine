@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 
-<table>
+<table width="100%">
   <tr>
     <td valign="top">
       <div class="heading2">

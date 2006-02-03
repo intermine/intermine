@@ -27,11 +27,9 @@
   </div>
 </c:if>
 
+<img src="${ASPECTS[aspect.name].iconImage}" class="aspectPageIcon" align="left"/>
 <div class="body aspectIntro">
-  <p>
-    <img src="${ASPECTS[aspect.name].iconImage}" class="aspectPageIcon"/>
-    ${aspect.introText}
-  </p>
+  ${aspect.introText}
 </div>
 <div style="clear:both;"></div>
 
