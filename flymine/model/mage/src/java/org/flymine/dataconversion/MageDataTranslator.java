@@ -104,7 +104,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map reporterToCompositeSeq = new HashMap();
     protected Map reporterToMaterial = new HashMap();
     protected Map bioAssayMap = new HashMap();
-    
+
 
     protected Set materialIdTypes = new HashSet();
     protected Map expIdNames = new HashMap();
@@ -256,11 +256,9 @@ public class MageDataTranslator extends DataTranslator
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
 
-        // needs to be called before other processXX methods
-        i = processSamples().iterator();
-        while (i.hasNext()) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
+        // needs to be called before other processXX methods but not stored yet as
+        // sample descriptions may be altered
+        processSamples();
 
         i = reporters.iterator();
         while (i.hasNext()) {
@@ -291,6 +289,12 @@ public class MageDataTranslator extends DataTranslator
             }
             tgtItemWriter.store(ItemHelper.convert((Item) clone));
         }
+
+        i = samplesById.values().iterator();
+        while (i.hasNext()) {
+            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
+        }
+
 
     }
 
@@ -341,7 +345,7 @@ public class MageDataTranslator extends DataTranslator
                     if (reporterNs == null) {
                         reporterNs = namespaceFromIdentifier(tgtItem.getIdentifier());
                     }
-                    translateReporter(srcItem, tgtItem); 
+                    translateReporter(srcItem, tgtItem);
                     storeTgtItem = false; //reporter->material:compositeSequence
                 } else if (className.equals("BioSequence")) {
                     storeTgtItem = false;
@@ -353,7 +357,7 @@ public class MageDataTranslator extends DataTranslator
                 } else if (className.equals("CompositeSequence")) {
                     if (compositeSeqNs == null) {
                         compositeSeqNs = namespaceFromIdentifier(srcItem.getIdentifier());
-                    }   
+                    }
                     setCompositeSeqToReporter(srcItem);
                     translateCompositeSequence(srcItem, tgtItem);
                 }
@@ -370,11 +374,11 @@ public class MageDataTranslator extends DataTranslator
                 derivedBioAssayNs = namespaceFromIdentifier(srcItem.getIdentifier());
             }
             List baList = new ArrayList();
-            bioAssayMap.put(srcItem.getIdentifier(), setDerivedBAToMeasuredBA(srcItem, baList)); 
-            LOG.error("bioAssayMap " + srcItem.getIdentifier() 
+            bioAssayMap.put(srcItem.getIdentifier(), setDerivedBAToMeasuredBA(srcItem, baList));
+            LOG.warn("bioAssayMap " + srcItem.getIdentifier()
                       + " = " + setDerivedBAToMeasuredBA(srcItem, baList));
         }
-        
+
         return result;
     }
 
@@ -437,7 +441,7 @@ public class MageDataTranslator extends DataTranslator
                 Item desItem = (Item) desIter.next();
                 if (desItem.hasAttribute("text")) {
                     if (desFlag) {
-                        LOG.error("Already set description for MicroArrayExperiment, "
+                        LOG.warn("Already set description for MicroArrayExperiment, "
                                   + " srcItem = " + srcItem.getIdentifier());
                     } else {
                         tgtItem.setAttribute("description", desItem.getAttribute("text")
@@ -485,7 +489,7 @@ public class MageDataTranslator extends DataTranslator
              tgtItem.setAttribute("name", identifier);
          }
          assays.put(tgtItem.getIdentifier(), tgtItem);
-         
+
      }
 
 
@@ -554,7 +558,7 @@ public class MageDataTranslator extends DataTranslator
      */
     protected List setDerivedBAToMeasuredBA(Item srcItem, List baList)
         throws ObjectStoreException {
-        
+
         if (srcItem.hasCollection("derivedBioAssayMap")) {
             Iterator baMapIter = getCollection(srcItem, "derivedBioAssayMap");
             while (baMapIter.hasNext()) {
@@ -576,18 +580,18 @@ public class MageDataTranslator extends DataTranslator
                                 } else {
                                     setDerivedBAToMeasuredBA(sbaItem, baList);
                                 }
-                            
+
                             }
                         }
-                    }                    
+                    }
                 }
             }
         }
-        
+
         return baList;
     }
 
-    
+
     /**
      * @param srcItem = mage:BioAssayDatum
      * @param tgtItem = flymine:MicroArrayResult
@@ -626,7 +630,7 @@ public class MageDataTranslator extends DataTranslator
         if (srcItem.hasReference("reporter")) {
             holder.reporterId = identifierToInt(srcItem.getReference("reporter").getRefId());
         } else if (srcItem.hasReference("compositeSequence")) {
-            holder.compositeSeqId 
+            holder.compositeSeqId
                 = identifierToInt(srcItem.getReference("compositeSequence").getRefId());
         }
 
@@ -771,22 +775,22 @@ public class MageDataTranslator extends DataTranslator
         }
         reporters.add(tgtItem);
     }
-    
+
     /**
      * @param srcItem =  mage:compositeSequence
      * @throws ObjectStoreException if problem occured during translating
      * set compositeSeqToReporter map
      */
-    protected void setCompositeSeqToReporter(Item srcItem) 
+    protected void setCompositeSeqToReporter(Item srcItem)
         throws ObjectStoreException {
         List reporterIds = new ArrayList();
         if (srcItem.hasCollection("reporterCompositeMaps")) {
             Iterator rcmIter = getCollection(srcItem, "reporterCompositeMaps");
-            while (rcmIter.hasNext()) {  
+            while (rcmIter.hasNext()) {
                 Item rcm = (Item) rcmIter.next();
                 if (rcm.hasCollection("reporterPositionSources")) {
                     Iterator rpsIter = getCollection(rcm, "reporterPositionSources");
-                    while (rpsIter.hasNext()) { 
+                    while (rpsIter.hasNext()) {
                         Item rp = (Item) rpsIter.next();
                         if (rp.hasReference("reporter")) {
                             String reporterId = rp.getReference("reporter").getRefId();
@@ -798,8 +802,8 @@ public class MageDataTranslator extends DataTranslator
             }
         }
         if (reporterIds.size() > 0) {
-            compositeSeqToReporter.put(srcItem.getIdentifier(), reporterIds);   
-        }       
+            compositeSeqToReporter.put(srcItem.getIdentifier(), reporterIds);
+        }
 
     }
 
@@ -809,7 +813,7 @@ public class MageDataTranslator extends DataTranslator
      * @throws ObjectStoreException if problem occured during translating
      */
     protected void translateCompositeSequence(Item srcItem, Item tgtItem)
-        throws ObjectStoreException { 
+        throws ObjectStoreException {
         String name = null;
         if (srcItem.hasAttribute("name")) {
             name = srcItem.getAttribute("name").getValue();
@@ -1144,6 +1148,30 @@ public class MageDataTranslator extends DataTranslator
                 assay.setReference("experiment", experimentId);
             }
 
+
+            if (experimentId != null) {
+                String assayHandlerClass = getConfig((String) assayToExpName.get(assayId),
+                                                        "assayHandlerClass");
+                Class handlerCls = DefaultAssayHandler.class;
+                if (assayHandlerClass != null) {
+                    handlerCls = Class.forName(assayHandlerClass);
+                }
+                Constructor con = handlerCls.getConstructor(new Class[]
+                    {MageDataTranslator.class});
+                DefaultAssayHandler handler = (DefaultAssayHandler)
+                    con.newInstance(new Object[] {this});
+                handler.process(assay);
+
+                // set the order of this assay in the experiment
+                String order = getAssayOrder(assay, handler);
+                if (!order.equals("")) {
+                    assay.setAttribute("displayOrder", order);
+                }
+                LOG.info("Assay: " + assay.getAttribute("name").getValue() + " has order: "
+                          + assay.getAttribute("displayOrder").getValue());
+            }
+
+
             if (assayToSamples.containsKey(assayId)) {
                 List sampleIds = (List) assayToSamples.get(assayId);
                 assay.addCollection(new ReferenceList("samples", sampleIds));
@@ -1168,15 +1196,18 @@ public class MageDataTranslator extends DataTranslator
                     while (sampleIter.hasNext()) {
                         String sampleId = (String) sampleIter.next();
                         String label = (String) sampleToLabel.get(sampleId);
-                        if (label.equals(sample1Label)) {
-                            assay.setAttribute("sample1", getSampleSummary(sampleId));
-                        } else if (label.equals(sample2Label)) {
-                            assay.setAttribute("sample2", getSampleSummary(sampleId));
-                        } else {
-                            throw new IllegalArgumentException(
-                                  "Unable to match label (" + label + ")"
-                                   + " with sample1 (" + sample1Label + ")"
-                                   + " or sample2 (" + sample2Label + ").");
+                        String summary = getSampleSummary(sampleId);
+                        if (summary != null) {
+                            if (label.equals(sample1Label)) {
+                                assay.setAttribute("sample1", getSampleSummary(sampleId));
+                            } else if (label.equals(sample2Label)) {
+                                assay.setAttribute("sample2", getSampleSummary(sampleId));
+                            } else {
+                                throw new IllegalArgumentException(
+                                    "Unable to match label (" + label + ")"
+                                    + " with sample1 (" + sample1Label + ")"
+                                    + " or sample2 (" + sample2Label + ").");
+                            }
                         }
                     }
                 } else if (sampleIds.size() == 1 && sample2Label.equalsIgnoreCase("n/a")) {
@@ -1193,22 +1224,15 @@ public class MageDataTranslator extends DataTranslator
                 }
 
             }
-            if (experimentId != null) {
-                // set the order of this assay in the experiment
-                String order = getAssayOrder(assay);
-                if (!order.equals("")) {
-                    assay.setAttribute("displayOrder", getAssayOrder(assay));
-                }
-                LOG.info("Assay: " + assay.getAttribute("name").getValue() + " has order: "
-                          + assay.getAttribute("displayOrder").getValue());
-            }
+
         }
         return assays.values();
     }
 
-    private String getAssayOrder(Item assay) throws Exception {
+    private String getAssayOrder(Item assay, DefaultAssayHandler handler) throws Exception {
         String expt = (String) assayToExperiment.get(assay.getIdentifier());
 
+        // first time called - set up ordered assay sets for all experiments
         if (exptToAssays == null) {
             exptToAssays = new HashMap();
             Iterator iter = assayToExperiment.entrySet().iterator();
@@ -1218,27 +1242,53 @@ public class MageDataTranslator extends DataTranslator
                 String exptId = (String) entry.getValue();
                 TreeSet orderedAssays = (TreeSet) exptToAssays.get(exptId);
                 if (orderedAssays == null) {
-
-                    String assayOrderClass = getConfig((String) assayToExpName.get(assayId),
-                                                       "assayOrderClass");
-                    Class comparatorCls = DefaultAssayComparator.class;
-                    if (assayOrderClass != null) {
-                        comparatorCls = Class.forName(assayOrderClass);
-                    }
-                    Constructor con = comparatorCls.getConstructor(new Class[]
-                        {MageDataTranslator.class});
-                    DefaultAssayComparator comparator = (DefaultAssayComparator)
-                        con.newInstance(new Object[] {this});
-                    orderedAssays = new TreeSet(comparator);
-                    exptToAssays.put(exptId, orderedAssays);
+                    orderedAssays = new TreeSet();
+                    exptToAssays.put(expt, orderedAssays);
                 }
-                orderedAssays.add(assays.get(assayId));
+                orderedAssays.add(handler.getAssayOrderable((Item) assays.get(assayId)));
             }
         }
 
+        // get order of this assay in experiment
         List assayList = new ArrayList((Collection) exptToAssays.get(expt));
-        return "" + assayList.indexOf(assay);
+        return "" + assayList.indexOf(handler.getAssayOrderable(assay));
     }
+
+
+
+
+//     String expt = (String) assayToExperiment.get(assay.getIdentifier());
+
+//         if (exptToAssays == null) {
+//             exptToAssays = new HashMap();
+//             Iterator iter = assayToExperiment.entrySet().iterator();
+//             while (iter.hasNext()) {
+//                 Map.Entry entry = (Map.Entry) iter.next();
+//                 String assayId = (String) entry.getKey();
+//                 String exptId = (String) entry.getValue();
+//                 TreeSet orderedAssays = (TreeSet) exptToAssays.get(exptId);
+//                 if (orderedAssays == null) {
+
+//                     String assayOrderClass = getConfig((String) assayToExpName.get(assayId),
+//                                                        "assayOrderClass");
+//                     Class comparatorCls = DefaultAssayComparator.class;
+//                     if (assayOrderClass != null) {
+//                         comparatorCls = Class.forName(assayOrderClass);
+//                     }
+//                     Constructor con = comparatorCls.getConstructor(new Class[]
+//                         {MageDataTranslator.class});
+//                     DefaultAssayComparator comparator = (DefaultAssayComparator)
+//                         con.newInstance(new Object[] {this});
+//                     orderedAssays = new TreeSet(comparator);
+//                     exptToAssays.put(exptId, orderedAssays);
+//                 }
+//                 orderedAssays.add(assays.get(assayId));
+//             }
+//         }
+
+//         List assayList = new ArrayList((Collection) exptToAssays.get(expt));
+//         return "" + assayList.indexOf(assay);
+//     }
 
 
     /**
@@ -1269,7 +1319,7 @@ public class MageDataTranslator extends DataTranslator
             reporter.setReference("material", (String) reporterToCompositeSeq.get(reporterId));
         }
         return reporter;
-    }        
+    }
 
 
     /**
@@ -1288,20 +1338,20 @@ public class MageDataTranslator extends DataTranslator
         // MicroArrayResult.samples
 
         //should be result2bioassay
-        
+
         List assayIds = new ArrayList();
         String assayId;
         if (holder.measuredAssayId > 0) {
             assayId = assayNs + holder.measuredAssayId;
             assayIds.add(assayId);
-        } else if (holder.derivedAssayId > 0) {  
-            assayId = derivedBioAssayNs + holder.derivedAssayId;            
+        } else if (holder.derivedAssayId > 0) {
+            assayId = derivedBioAssayNs + holder.derivedAssayId;
             assayIds = (List) bioAssayMap.get(assayId);
         }
         if (assayIds.size() > 0) {
-            maResult.addCollection(new ReferenceList("assays", assayIds));          
+            maResult.addCollection(new ReferenceList("assays", assayIds));
         }
-            
+
         List samples = new ArrayList();
         if (assayIds.size() > 0) {
             Iterator iter = assayIds.iterator();
@@ -1347,7 +1397,7 @@ public class MageDataTranslator extends DataTranslator
         }
         if (reporterIds.size() > 0) {
             maResult.addCollection(new ReferenceList("reporters", reporterIds));
-            Iterator iter = reporterIds.iterator(); 
+            Iterator iter = reporterIds.iterator();
             while (iter.hasNext()) {
                 String id = (String) iter.next();
                 if (controls.contains(id)) {
@@ -1355,17 +1405,17 @@ public class MageDataTranslator extends DataTranslator
                 } else {
                     maResult.setAttribute("isControl", "false");
                 }
-            
+
                 // MicroArrayResult.material
                 if (reporterToMaterial.containsKey(id)) {
                     String materialId = (String) reporterToMaterial.get(id);
-                    
+
                     // for some experiments we want to change the material identifier for
                     // an alternative database reference defined in the config.  Alternatives
                     // are in cloneIds map - material->alternative id
                     String expName = (String) expIdNames.get(experimentId);
                     String materialIdType = getConfig(expName, "materialIdType");
-                    
+
                     if (materialIdType != null && cloneIds.containsKey(materialId)) {
                         Map typeMap = (Map) cloneIds.get(materialId);
                         if (typeMap != null) {
@@ -1385,7 +1435,7 @@ public class MageDataTranslator extends DataTranslator
                             cloneToResults.put(materialId, results);
                         }
                         results.add(maResult.getIdentifier());
-                   
+
                     }
                 }
             }
@@ -1583,7 +1633,7 @@ public class MageDataTranslator extends DataTranslator
         if (holder.value != null) {
             result.setAttribute("value", holder.value);
         }
-        
+
         return result;
     }
 
@@ -1671,7 +1721,7 @@ public class MageDataTranslator extends DataTranslator
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial"
                             , srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
-        
+
         path = new ItemPath("LabeledExtract.treatments.sourceBioMaterialMeasurements.bioMaterial."
                             + "treatments.sourceBioMaterialMeasurements.bioMaterial", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
@@ -1709,14 +1759,14 @@ public class MageDataTranslator extends DataTranslator
 
         path = new ItemPath(
             "Reporter.immobilizedCharacteristics.type", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());      
+        descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath(
             "Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());      
- 
+        descSet.add(path.getItemPrefetchDescriptor());
+
         path = new ItemPath(
                "Reporter.featureReporterMaps.featureInformationSources.feature", srcNs);
-        descSet.add(path.getItemPrefetchDescriptor());       
+        descSet.add(path.getItemPrefetchDescriptor());
 
 
        //  desc = new ItemPrefetchDescriptor("Reporter.featureReporterMaps");
@@ -1749,7 +1799,7 @@ public class MageDataTranslator extends DataTranslator
 //         desc3.addPath(desc4);
 //         descSet.add(desc);
 
-       
+
 
         paths.put(srcNs + "Reporter", descSet);
 
