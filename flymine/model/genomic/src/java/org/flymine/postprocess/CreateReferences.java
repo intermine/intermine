@@ -149,6 +149,9 @@ public class CreateReferences
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
+        // CDNAClone.results (MicroArrayResult)
+        createCDNACloneResultsCollection();
+
         LOG.info("insertReferences stage 15");
         // Gene.microArrayResults
         createMicroArrayResultsCollection();
@@ -718,6 +721,98 @@ public class CreateReferences
         }
     }
 
+
+    /**
+     * Creates a collection of MicroArrayResult objects on Genes.
+     * @throws Exception if anything goes wrong
+     */
+    protected void createCDNACloneResultsCollection() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryClass qcCDNAClone = new QueryClass(CDNAClone.class);
+        q.addFrom(qcCDNAClone);
+        q.addToSelect(qcCDNAClone);
+        q.addToOrderBy(qcCDNAClone);
+
+        QueryClass qcReporter = new QueryClass(Reporter.class);
+        q.addFrom(qcReporter);
+        q.addToSelect(qcReporter);
+        q.addToOrderBy(qcReporter);
+
+        QueryObjectReference reporterMaterial =
+            new QueryObjectReference(qcReporter, "material");
+        ContainsConstraint ccReporterMaterial =
+            new ContainsConstraint(reporterMaterial, ConstraintOp.CONTAINS, qcCDNAClone);
+        cs.addConstraint(ccReporterMaterial);
+
+        QueryClass qcResult = new QueryClass(MicroArrayResult.class);
+        q.addFrom(qcResult);
+        q.addToSelect(qcResult);
+        q.addToOrderBy(qcResult);
+
+        QueryCollectionReference reporterResults =
+            new QueryCollectionReference(qcReporter, "results");
+        ContainsConstraint ccReporterResults =
+            new ContainsConstraint(reporterResults, ConstraintOp.CONTAINS, qcResult);
+        cs.addConstraint(ccReporterResults);
+
+        q.setConstraint(cs);
+        ObjectStore os = osw.getObjectStore();
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+
+        int count = 0;
+        CDNAClone lastClone = null;
+        Set newCollection = new HashSet();
+
+        osw.beginTransaction();
+
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            CDNAClone thisClone = (CDNAClone) rr.get(0);
+            MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
+
+            if (lastClone == null || !thisClone.getId().equals(lastClone.getId())) {
+                if (lastClone != null) {
+                    // clone so we don't change the ObjectStore cache
+                    CDNAClone tempClone = (CDNAClone) PostProcessUtil
+                        .cloneInterMineObject(lastClone);
+                    TypeUtil.setFieldValue(tempClone, "results", newCollection);
+                    osw.store(tempClone);
+                    count++;
+                }
+                newCollection = new HashSet();
+            }
+
+            newCollection.add(maResult);
+
+            lastClone = thisClone;
+        }
+
+        if (lastClone != null) {
+            // clone so we don't change the ObjectStore cache
+            CDNAClone tempClone = (CDNAClone) PostProcessUtil.cloneInterMineObject(lastClone);
+            TypeUtil.setFieldValue(tempClone, "results", newCollection);
+            osw.store(tempClone);
+            count++;
+        }
+        LOG.info("Created " + count + " CDNAClone.results collections");
+        osw.commitTransaction();
+
+        // now ANALYSE tables relating to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(CDNAClone.class.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
+
     /**
      * Read the UTRs collection of MRNA then set the fivePrimeUTR and threePrimeUTR fields with the
      * corresponding UTRs.
@@ -1029,6 +1124,4 @@ public class CreateReferences
             }
         }
     }
-
-
 }
