@@ -1243,7 +1243,7 @@ public class MageDataTranslator extends DataTranslator
                 TreeSet orderedAssays = (TreeSet) exptToAssays.get(exptId);
                 if (orderedAssays == null) {
                     orderedAssays = new TreeSet();
-                    exptToAssays.put(expt, orderedAssays);
+                    exptToAssays.put(exptId, orderedAssays);
                 }
                 orderedAssays.add(handler.getAssayOrderable((Item) assays.get(assayId)));
             }
