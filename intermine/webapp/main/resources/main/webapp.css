@@ -775,3 +775,12 @@ span.templateResCount {
   white-space: nowrap;
   font-size: 10px;
 }
+
+img.objectDetailsAspectIcon {
+  margin-left: -5px;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  margin-right: 5px;
+  border-right: 1px solid #888;
+  float: left;
+}

@@ -29,9 +29,9 @@
       <td valign="top">
         <div id="mainConstraint">
           <c:if test="${editingNode != null}">
-      	    <tiles:insert name="mainConstraint.tile"/>
-    	    </c:if>
-    	  </div>
+            <tiles:insert name="mainConstraint.tile"/>
+          </c:if>
+        </div>
       </td>
     </tr>
 </table>

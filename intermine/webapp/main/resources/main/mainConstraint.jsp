@@ -64,7 +64,7 @@
       <script type="text/javascript">
       <!--
 
-      var fixedOps = new Array();
+       fixedOps = new Array();
 
        fixedOps[0] = new Array();
         <c:forEach items="${fixedOps}" var="op" varStatus="status">

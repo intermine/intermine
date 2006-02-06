@@ -84,9 +84,12 @@
                                 <c:if test="${displayObject2.fieldConfigMap[expr].showInResults}">
                                   <td class="attrib">
                                   <c:set var="style" value="white-space:nowrap"/>
-                                  <c:if test="${outVal.class.name == 'java.lang.String' && fn:length(outVal) > 25}">
+                                  <c:if test="${outVal.class.name == 'java.lang.String'}">
                                     <c:if test="${fn:length(outVal) > 65}">
                                       <c:set var="outVal" value="${fn:substring(outVal, 0, 60)}..." scope="request"/>
+                                    </c:if>
+                                    <c:if test="${fn:length(outVal) == 0}">
+                                      <c:set var="outVal" value="&nbsp;"/>
                                     </c:if>
                                     <c:set var="style" value=""/>
                                   </c:if>
@@ -116,6 +119,8 @@
 </div>
 
 
+<%-- Produce show in table link --%>
+
 <c:set var="extra" value=""/>
 <c:if test="${!empty fieldExprMap}">
   <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
@@ -128,28 +133,28 @@
   Show in table...
 </html:link>]
 
+<%-- Update ui given results of this template --%>
+
 <c:choose>
   <c:when test="${table == null}">
     <script type="text/javascript">
-      <!--//<![CDATA[
-        $('img_${fn:replace(placement, ' ', '_')}_${templateQuery.name}').src='images/blank.gif';
-      //]]>-->
+      <%-- Please don't CDATA this script element. See [762] --%>
+      $('img_${fn:replace(placement, ' ', '_')}_${templateQuery.name}').src='images/blank.gif';
     </script>
   </c:when>
   <c:otherwise>
     <script type="text/javascript">
-      <!--//<![CDATA[
-        var id = '${fn:replace(placement, ' ', '_')}_${templateQuery.name}';
-        if (${table.resultsSize} == 0) {
-          $('img_'+id).src='images/plus-disabled.gif';
-          $('label_'+id).className='nullStrike';
-          $('count_'+id).innerHTML='no results';
-          $('img_'+id).parentNode.href='#';
-          $('img_'+id).parentNode.onclick = function(){return false;};
-        } else {
-          $('count_'+id).innerHTML='${table.resultsSize} results';
-        }
-      //]]>-->
+      <%-- Please don't CDATA this script element. See [762] --%>
+      id = '${fn:replace(aspect, ' ', '_')}_${templateQuery.name}';
+      if (${table.resultsSize} == 0) {
+        $('img_'+id).src='images/plus-disabled.gif';
+        $('label_'+id).className='nullStrike';
+        $('count_'+id).innerHTML='no results';
+        $('img_'+id).parentNode.href='#';
+        $('img_'+id).parentNode.onclick = function(){return false;};
+      } else {
+        $('count_'+id).innerHTML='${table.resultsSize} results';
+      }
     </script>
   </c:otherwise>
 </c:choose>
