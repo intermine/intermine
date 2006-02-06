@@ -206,7 +206,8 @@ table td {
   text-align: center;
 }
 .expandButton {
-  border: 1px solid #888;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
   background-color: white;
   padding: 4px;
   text-align: center;
