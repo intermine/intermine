@@ -18,6 +18,31 @@
   
   <c:set var="label" value="${type}"/>
   
+  <c:if test="${type == 'TilingPathSpans'}">
+    <c:set var="type" value="${type}+ReversePrimers+ForwardPrimers+PCRProducts"/>
+    <c:set var="label" value="${label}-ReversePrimers-ForwardPrimers-PCRProducts"/>
+  </c:if>
+
+  <c:if test="${type == 'PCRProducts'}">
+    <c:set var="type" value="${type}+ReversePrimers+ForwardPrimers+TilingPathSpans"/>
+    <c:set var="label" value="${label}-ReversePrimers-ForwardPrimers-TilingPathSpans"/>
+  </c:if>
+  
+  <c:if test="${type == 'ReversePrimers'}">
+    <c:set var="type" value="${type}+ForwardPrimers+TilingPathSpans+PCRProducts"/>
+    <c:set var="label" value="${label}-ForwardPrimers-TilingPathSpans-PCRProducts"/>
+  </c:if>
+  
+  <c:if test="${type == 'ForwardPrimers'}">
+    <c:set var="type" value="${type}+ReversePrimers+TilingPathSpans+PCRProducts"/>
+    <c:set var="label" value="${label}-ReversePrimers-TilingPathSpans-PCRProducts"/>
+  </c:if>
+  
+  <c:if test="${type == 'ArtificialDeletions'}">
+    <c:set var="type" value="${type}+TransposableElementInsertionSites"/>
+    <c:set var="label" value="${label}-TransposableElementInsertionSites"/>
+  </c:if>
+  
   <c:if test="${type != 'Genes'}">
     <c:set var="type" value="${type}+Genes"/>
     <c:set var="label" value="${label}-Genes"/>
@@ -27,7 +52,7 @@
     <c:set var="type" value="${type}+Pseudogenes"/>
     <c:set var="label" value="${label}-Pseudogenes"/>
   </c:if>
-  
+
   <c:set var="name" value="FlyMineInternalID_${object.id}"/>
 
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">
