@@ -334,7 +334,7 @@ table.results tr.even {
 }
 
 .type {
-  color: grey;
+  color: #864;
 }
 .modelBrowser .type {
   color: blue;
@@ -358,7 +358,7 @@ table.results tr.even {
 }
 .nullStrike {
 /* see #643:    text-decoration: line-through; */
-  color: grey;
+  color: #888;
 }
 .constraint {
   color: purple;
