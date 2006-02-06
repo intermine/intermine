@@ -245,7 +245,7 @@
               </im:querylink>
             </li>
             <li>
-              <im:querylink text="All phenotype identifiers, nams and RNAi codes" skipBuilder="true">
+              <im:querylink text="All phenotype identifiers, names and RNAi codes" skipBuilder="true">
                 <query name="" model="genomic" view="Phenotype.identifier Phenotype.name Phenotype.RNAiCode">
                 </query>
               </im:querylink>
