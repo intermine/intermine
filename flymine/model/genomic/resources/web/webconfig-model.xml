@@ -10,6 +10,14 @@
     </longdisplayers>
   </class>
   
+  <class className="org.flymine.model.genomic.BlastMatch">
+    <fields>
+      <fieldconfig fieldExpr="object.identifier"/>
+      <fieldconfig fieldExpr="subject.identifier"/>
+      <fieldconfig fieldExpr="EValue"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.ModelledProteinStructure">
     <fields>
       <fieldconfig fieldExpr="ZScore"/>
