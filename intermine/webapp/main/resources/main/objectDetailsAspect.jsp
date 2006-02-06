@@ -24,6 +24,7 @@
   <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}"/>
 
   <im:heading id="${placement}">
+    <img src="${ASPECTS[aspect].iconImage}" width="20" height="20" class="objectDetailsAspectIcon"/>
     ${aspect}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
   </im:heading>
     <im:body id="${placement}">
