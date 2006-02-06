@@ -4,12 +4,16 @@
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
     <intro-text>
-      The genome annotation in FlyMine comes from curated source databases.
-      In most cases FlyMine includes all genome features that have locations
-      (eg. genes and repeat regions).
+      The gene structure and other genome annotation in FlyMine is provided by
+      a variety of curated source databases.  In most cases FlyMine includes
+      all genome features that have locations (eg. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
-    <starting-points>Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite Pseudogene RRNA SnRNA SnoRNA UTR MRNA</starting-points>
+    <starting-points>
+      Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand
+      Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite
+      Pseudogene RRNA SnRNA SnoRNA UTR MRNA
+    </starting-points> 
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="Ensembl Anopheles" url="http://www.ensembl.org/Anopheles_gambiae"/>
   </aspect>
@@ -139,7 +143,9 @@
       molecular interaction (PSI MI) format can be mapped to the FlyMine
       data model.
     </intro-text>
-    <starting-points>Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm</starting-points>
+    <starting-points>
+      Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm
+    </starting-points>
     <tile-name>model/proteinInteraction.jsp</tile-name>
     <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
   </aspect>
@@ -151,7 +157,10 @@
     <intro-text>
       3-D protein structures from the Mizuguchi lab.
     </intro-text>
-    <starting-points>Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <starting-points>
+      Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain
+      ProteinFamily
+    </starting-points>
     <tile-name>model/proteinStructure.jsp</tile-name>
     <aspect-source name="Kenji Mizuguchi lab"
                    url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
