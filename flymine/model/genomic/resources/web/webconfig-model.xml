@@ -172,6 +172,12 @@
   </class>
 
   <class className="org.flymine.model.genomic.MicroarrayOligo">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="length"/>
+      <fieldconfig fieldExpr="distance3Prime"/>
+      <fieldconfig fieldExpr="tm"/>
+    </fields>
     <longdisplayers>
       <!-- disable the LocatedSequenceFeature displayer (GBrowse) because
            MicroarrayOligos aren't located at the moment -->
