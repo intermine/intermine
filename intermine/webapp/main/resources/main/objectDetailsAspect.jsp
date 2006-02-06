@@ -21,10 +21,9 @@
                 foundDisplayer == true ||
                 !empty templates}">
 
-  <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}"/>
+  <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
 
-  <im:heading id="${placement}">
-    <img src="${ASPECTS[aspect].iconImage}" width="20" height="20" class="objectDetailsAspectIcon"/>
+  <im:heading id="${placement}" topLeftTile="/objectDetailsAspectIcon.jsp">
     ${aspect}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
   </im:heading>
     <im:body id="${placement}">
