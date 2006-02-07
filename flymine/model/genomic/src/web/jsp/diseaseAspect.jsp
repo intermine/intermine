@@ -61,7 +61,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Disease discriptions and OMIM IDs from the Homophila data set" 
+            <im:querylink text="Disease descriptions and OMIM IDs from the Homophila data set" 
                           skipBuilder="true">
               <query name="" model="genomic" view="Disease.description Disease.omimId">
               </query>
