@@ -306,6 +306,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
                                         // repeat_consensus
                 } else if ("marker".equals(className)) {
+                    tgtItem.addReference(orgRef);
                     addReferencedItem(tgtItem, ensemblDs, "evidence", true, "", false);
                     Set locations = createLocations(srcItem, tgtItem, srcNs);
                                         // <- marker_feature.marker
