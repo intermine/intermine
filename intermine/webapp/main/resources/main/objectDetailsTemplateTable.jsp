@@ -145,7 +145,7 @@
   <c:otherwise>
     <script type="text/javascript">
       <%-- Please don't CDATA this script element. See [762] --%>
-      id = '${fn:replace(aspect, ' ', '_')}_${templateQuery.name}';
+      id = '${fn:replace(placement, ' ', '_')}_${templateQuery.name}';
       if (${table.resultsSize} == 0) {
         $('img_'+id).src='images/plus-disabled.gif';
         $('label_'+id).className='nullStrike';
