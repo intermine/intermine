@@ -34,6 +34,8 @@ import org.apache.tools.ant.BuildException;
 
 public class CnsGFF3RecordHandler extends GFF3RecordHandler
 {
+    protected Map conservedOrgMap =  new HashMap();
+    protected Map sequenceMap =  new HashMap();
 
 
     /**
@@ -44,13 +46,68 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         super(tgtModel);
 
     }
-
-
     /**
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) throws BuildException {
-        
+        Item feature = getFeature();
+   
+        if (record.getAttributes().get("type") != null) {
+            String type = (String) ((List) record.getAttributes().get("type")).get(0);
+            feature.setAttribute("type", type);
+        }
+            
+        if (record.getAttributes().get("sequence") != null) {
+            String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
+            Item sequence = getSequenceItem(residues);
+            feature.setReference("sequence", sequence.getIdentifier());   
+        }         
+
+        List conservedOrganismList = getConservedOrganismList(record);
+        if (conservedOrganismList != null) {
+            feature.addCollection(new ReferenceList("conservedOrganisms", conservedOrganismList));
+        }
+    }
+        /**
+     * @param clsName
+     * @return item
+     */
+    private Item createItem(String clsName) {
+        return getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
+                                  + clsName);
+    }
+
+    private List getConservedOrganismList(GFF3Record record) {
+        List conservedOrganismList = new ArrayList();
+        if (record.getAttributes().get("conservedOrganism") != null) {
+            List orgList = (List) record.getAttributes().get("conservedOrganism");
+            Iterator i = orgList.iterator();
+            Item conservedOrg;
+            while (i.hasNext()) {
+                String orgAbbrev = (String) i.next();
+                if (conservedOrgMap.containsKey(orgAbbrev)) {
+                    conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);                 
+                } else {
+                    conservedOrg = createItem("Organism");
+                    conservedOrg.setAttribute("abbreviation", orgAbbrev);
+                    addItem(conservedOrg);
+                    conservedOrgMap.put(orgAbbrev, conservedOrg);
+                }
+                conservedOrganismList.add(conservedOrg.getIdentifier());   
+            }
+        }
+        return conservedOrganismList;
+    } 
+
+    private Item getSequenceItem(String residues) {
+        Item sequence = (Item) sequenceMap.get(residues);
+        if (sequence == null) {
+            sequence = createItem("Sequence");
+            sequence.setAttribute("residues", residues);
+            addItem(sequence);
+            sequenceMap.put(residues, sequence);
+        }
+        return sequence;
     }
 
 }
