@@ -125,7 +125,7 @@ public abstract class TextFileUtil
             for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
                 Object o = realRow.get(columnIndex);
 
-                if (o instanceof Number || (!quote && o.toString().indexOf('\t') < 0)) {
+                if (o instanceof Number || (!quote && o.toString().indexOf(delimiter) < 0)) {
                     writeUnQuoted(printStream, o);
                 } else {
                     writeQuoted(printStream, o);
