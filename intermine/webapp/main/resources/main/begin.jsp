@@ -14,7 +14,7 @@
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr>
       <td width="99%">
-				<div class="body">
+	<div class="body">
       		<c:choose>
 	      	  <c:when test="${!empty ASPECTS}">
 	            <p><fmt:message key="begin.aspect.intro"/></p>
@@ -39,7 +39,7 @@
 	            </c:forEach>
 	      	  </c:otherwise>
 	      	</c:choose>
-				</div>
+	</div>
 	        <%--
 	        <c:forEach items="${CATEGORIES}" var="category">
 	          <c:if test="${!empty CATEGORY_CLASSES[category]}">
@@ -58,7 +58,7 @@
 	          </c:if>
 	        </c:forEach>
 	        --%>
-        
+
       </td>
       <td valign="top" align="right" nowrap="nowrap" width="1%" class="buildmenu">
         <div class="body">
@@ -89,26 +89,22 @@
 
 <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
 <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartBrowsing.html"/>
+<c:set var="browseTemplateName" value="${WEB_PROPERTIES['begin.browse.template']}"/>
+
 <c:if test="${!empty browseTemplateName && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
   <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}"
           titleKey="begin.heading.browse">
     <div class="body" align="center">
-      <html:form action="/browseAction">
-        ${WEB_PROPERTIES["begin.browse.prompt"]}:&nbsp;
-        <html:hidden property="attributeOps(1)" value="${browseOperator}"/>
-        <html:text property="attributeValues(1)"/>
-        <input type="hidden" name="templateType" value="global"/>
-        <input type="hidden" name="templateName" value="${browseTemplateName}"/>
-        <input type="hidden" name="skipBuilder" value="1"/>
-        <input type="hidden" name="noSaveQuery" value="1"/>
-        <html:submit><fmt:message key="begin.input.submit"/></html:submit>
-        <br/>
-        <p class="smallnote">
-          <fmt:message key="begin.browse.help.message"/>
-          [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
-        </p>
-      </html:form>
+      <tiles:insert name="browse.tile">
+        <tiles:put name="prompt" value="${WEB_PROPERTIES['begin.browse.prompt']}"/>
+        <tiles:put name="templateName" value="${browseTemplateName}"/>
+      </tiles:insert>
+      <br/>
+      <p class="smallnote">
+        <fmt:message key="begin.browse.help.message"/>
+        [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
+      </p>
     </div>
   </im:box>
 </c:if>

@@ -118,7 +118,7 @@
   <definition name="waiting.page" path="/waiting.jsp"/>
   <definition name="error.page" path="/error.jsp"/>
   <!--tiles-->
-  <definition name="begin.tile" path="/begin.jsp" controllerUrl="/initBegin.do"/>
+  <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
@@ -131,6 +131,10 @@
   <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
   <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
   <definition name="inlineTagEditor.tile" path="/inlineTagEditor.jsp" controllerUrl="/initInlineTagEditor.do"/>
+  <definition name="browse.tile" path="/browse.jsp" controllerUrl="/initBrowse.do">
+    <put name="prompt" value="Query text"/>
+    <put name="templateName" value=""/>
+  </definition>
   <definition name="view.tile" path="/view.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>

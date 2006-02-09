@@ -534,17 +534,17 @@
     <action path="/initInlineTagEditor"
             type="org.intermine.web.tagging.InlineTagEditorController"/>
 
+    <action path="/initBrowse"
+            type="org.intermine.web.BrowseController"/>
+
     <action path="/initTemplateList"
             type="org.intermine.web.TemplateListController"/>
 
     <action path="/initObjectDetailsTemplateTable"
             type="org.intermine.web.ObjectDetailsTemplateController"/>
 
-    <action path="/initBegin"
-            type="org.intermine.web.BeginController"/>
-
-  	<action path="/initHistory"
-	          type="org.intermine.web.history.HistoryController"/>
+    <action path="/initHistory"
+	    type="org.intermine.web.history.HistoryController"/>
 
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
