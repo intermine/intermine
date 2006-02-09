@@ -107,7 +107,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             // query database by primary key for equivalent objects
             if (obj instanceof ProxyReference) {
 
-                LOG.info("IDMAP CONTENTS:" + idMap.toString());
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("IDMAP CONTENTS:" + idMap.toString());
+                }
 
                 throw new IllegalArgumentException("Given a ProxyReference, but id not in ID Map."
                                                    + " Source object ID: " + obj.getId()
