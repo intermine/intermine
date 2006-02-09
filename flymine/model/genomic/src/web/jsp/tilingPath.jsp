@@ -26,11 +26,11 @@
           products and primers.  The PCR products that overlap a promoter
           region are highlighted:
         </p>
-        <div>
+        <div style="margin-left: 20px">
           <img style="border: 1px solid black" src="model/tiling_path_screen_shot.png"/>
         </div>
         <p>A closer view:</p>
-        <div>
+        <div style="margin-left: 20px">
           <img style="border: 1px solid black" src="model/tiling_path_screen_shot_zoom.png"/>
         </div>
       </div>
