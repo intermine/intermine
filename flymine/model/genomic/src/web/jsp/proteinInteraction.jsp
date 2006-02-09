@@ -30,6 +30,13 @@
            1,814 reproducible interactions among 488 proteins.<BR>
            28 interactions in common between this screen and the Giot et al screen described above.<BR>
          </DD>
+         <DT>Formstecher E. et al (2005) Genome Research 15 (3): 376-84.   (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?\cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15710747">PubMed: 15710747</A>).
+         </DT>
+         <DD>
+High-throughput yeast two-hybrid dataset.<BR>
+More than 2300 protein-protein interactions were identified, of which 710 are of high confidence.<BR>
+         </DD>
+         <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.</DT>
        </DL>
        <P><B><I>C. elegans</I></B></P>
        <DL>
@@ -39,6 +46,56 @@
          <DD>
            Total of 4049 interactions identified.
          </DD>
+         <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.</DT>
+         </DL>
+       <P><B><I>S. cerevisiae</I></B></P>
+       <DL>
+         <DT>
+           Uetz P. et al (2000) Nature 403: 623-7 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=10688190">PubMed: 10688190</A>)
+         </DT>
+         <DD>
+           High throughput Gal4-based two-hybrid interaction data set.<BR>
+           957 putative interactions involving 1,004 S. cerevisiae proteins.<BR>
+         </DD>
+         <DT>
+          Ito T. et al (2000) Proc Natl Acad Sci USA 97(3): 1143-7  (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Re\
+trieve&db=PubMed&dopt=Abstract&list_uids=10655498">PubMed: 10655498</A>)
+         </DT>
+         <DD>
+           High throughput Gal4-based two-hybrid interaction data set.<BR>
+           957 putative interactions involving 1,004 S. cerevisiae proteins.<BR>
+         </DD>
+         <DT>
+          Ito T. et al (2001) Proc Natl Acad Sci USA 98(8): 4569-74  (<a href="http://www.ncbi.nlm.nih.gov/entrez\
+/query.fcgi?cmd=Re\
+trieve&db=PubMed&dopt=Abstract&list_uids=11283351">PubMed: 11283351</A>)
+         </DT>
+         <DD>
+           High throughput two-hybrid interaction data set.<BR>
+           4,549 two-hybrid interactions among 3,278 proteins.<BR>
+         </DD>
+         <DT>
+          Ho Y. et al (2002) Nature 415: 180-3 (<a href="http://www.ncbi.nlm.nih.gov/entrez\
+/query.fcgi?cmd=Re\
+trieve&db=PubMed&dopt=Abstract&list_uids=11805837">PubMed: 11805837</A>)
+         </DT>
+         <DD>
+           High-throughput mass spectrometric protein complex identification. <BR>
+           Detected 3,617 associated proteins covering 25% of the yeast proteome.<BR>
+         </DD>
+         <DT>
+          Gavin AC. et al (2002) Nature 415: 141-7 (<a href="http://www.ncbi.nlm.nih.gov/entrez\
+/query.fcgi?cmd=Re\
+trieve&db=PubMed&dopt=Abstract&list_uids=11805826">PubMed: 11805826</A>)
+         </DT>
+         <DD>
+           Large-scale tandem-affinity purification (TAP) and mass spectrometry to characterize multiprotein complexes in Saccharomyces cerevisiae. <BR>
+          Identified 232 distinct multiprotein complexes.<BR>                   
+         </DD>
+         <DT>
+           In addition a number of protein interactions and complexes from smaller scale experiments are available.
+         </DT>
+
        </DL>
      </div>
     </TD>
