@@ -1,7 +1,7 @@
 <project name="flymine" default="help" basedir=".">
   <description>FlyMine build file</description>
 
-  <property name="build.properties.local.base" 
+  <property name="build.properties.local.base"
             value="${user.home}/build.properties.${ant.project.name}"/>
   <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
              else="${build.properties.local.base}">
@@ -9,7 +9,7 @@
   </condition>
   <available file="${build.properties.local}" property="build.properties.local.present"/>
   <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
-  
+
   <property name="runtime.properties.local.base" value="${user.home}/${ant.project.name}.properties" />
   <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
              else="${runtime.properties.local.base}">
@@ -17,7 +17,7 @@
   </condition>
   <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
   <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
-  
+
   <!-- Import intermine build tasks -->
   <taskdef resource="org/intermine/task/antlib.xml" classpath="../imbuild/lib/ant-tasks.jar"/>
   <taskdef resource="checkstyletask.properties" classpath="../imbuild/lib/checkstyle-all-3.0b1.jar"/>
@@ -32,7 +32,7 @@
 
   <!-- set ${release} with -Drelease=something on the command line to choose a
        different set of properties files -->
- 
+
   <property file="${build.properties.local}"/>
   <property file="build.properties"/>
 
@@ -212,7 +212,7 @@
       <pathelement location="${build.model}/homophila"/>
       <pathelement location="${build.model}/interpro"/>
       <pathelement location="${build.model}/cdnaclone"/>
-      
+
       <!--t1dmine/stemcell specific model-->
       <pathelement location="${build.model}/ensembl-human"/>
       <pathelement location="${build.model}/firstef"/>
@@ -223,7 +223,7 @@
       <pathelement location="${build.model}/ensembl-variation"/>
       <pathelement location="${build.model}/ensembl-disease"/>
       <pathelement location="${build.model}/opposumchain"/>
-      
+
 
       <fileset dir="${model}">
         <patternset refid="lib.models"/>
@@ -628,14 +628,14 @@
   <target name="build-interpro-production" depends="init-paths, build-interpro-prod-database, retrieve-interpro, translate-interpro, load-interpro, update-equivalent-interpro-features"/>
 
   <target name="build-interpro-prod-database" depends="prepare-build-model">
-    <copy todir="${build.resources}" 
-          file="${model}/interpro/resources/buildInterproSummaryDbFromInterproReleaseDb.sql" 
+    <copy todir="${build.resources}"
+          file="${model}/interpro/resources/buildInterproSummaryDbFromInterproReleaseDb.sql"
           overwrite="true"/>
-    <sql classpathref="models.class.path" 
-         driver="com.mysql.jdbc.Driver" 
-         url="jdbc:mysql://gollum:3306/interpro_prod" 
-         userid="rns" 
-         password="rns" 
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/interpro_prod"
+         userid="rns"
+         password="rns"
          src="${build.resources}/buildInterproSummaryDbFromInterproReleaseDb.sql"/>
   </target>
 
@@ -947,7 +947,7 @@
   </target>
 
   <!-- filter only chromosome 4 of Chado for creating small databases -->
-  <target name="filter-chado-small" 
+  <target name="filter-chado-small"
           depends="prepare-build-model, compile-genomic-java, compile-chado-java, compile-flymine-java">
     <taskdef
       name="filter-chado"
@@ -1161,7 +1161,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.BDGPCloneConverter"
-                  osName="osw.cdnaclone-tgt-items" 
+                  osName="osw.cdnaclone-tgt-items"
                   model="cdnaclone">
       <fileset dir="${shared.data}/bdgp_clones/" includes="dgc2flybase.txt"/>
     </convert-file>
@@ -1296,8 +1296,8 @@
                  model="psi"
                  osName="osw.psi-src-items">
       <fileset dir="${shared.data}/psi">
-        <include name="caeel*.xml"/>  
-        <include name="drome*.xml"/>  
+        <include name="caeel*.xml"/>
+        <include name="drome*.xml"/>
         <include name="yeast*.xml"/>
       </fileset>
     </convert-xml>
@@ -1350,9 +1350,9 @@
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-psi integrationWriter="integration.production" 
-              source="os.psi-translated" 
-              sourceName="psi-intact" 
+    <load-psi integrationWriter="integration.production"
+              source="os.psi-translated"
+              sourceName="psi-intact"
               ignoreDuplicates="true"/>
   </target>
 
@@ -1451,8 +1451,8 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" 
-                  model="mage" 
+                  clsName="org.flymine.dataconversion.MageConverter"
+                  model="mage"
                   quantitationtypes="Signal med ratio">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
@@ -1506,9 +1506,9 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-mage integrationWriter="integration.production" 
-               source="os.mage-translated" 
-               sourceName="mage" 
+    <load-mage integrationWriter="integration.production"
+               source="os.mage-translated"
+               sourceName="mage"
                ignoreDuplicates="false"/>
   </target>
 
@@ -1951,7 +1951,7 @@
     </ant>
   </target>
 
-  <target name="translate-uniprot" 
+  <target name="translate-uniprot"
           depends="prepare-build-model, compile-uniprot-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1985,9 +1985,9 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.production" 
-                  source="os.uniprot-translated" 
-                  sourceName="uniprot" 
+    <load-uniprot integrationWriter="integration.production"
+                  source="os.uniprot-translated"
+                  sourceName="uniprot"
                   ignoreDuplicates="true"/>
   </target>
 
@@ -2010,16 +2010,16 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.production" 
-                  source="os.uniprot-translated" 
-                  sourceName="uniprot-dros" 
+    <load-uniprot integrationWriter="integration.production"
+                  source="os.uniprot-translated"
+                  sourceName="uniprot-dros"
                   ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-uniprot-dros-production" 
+  <target name="build-uniprot-dros-production"
           depends="filter-uniprot-dros, retrieve-uniprot, translate-uniprot, load-uniprot-dros"/>
 
-  <target name="build-uniprot-production" 
+  <target name="build-uniprot-production"
           depends="filter-uniprot, retrieve-uniprot, translate-uniprot, load-uniprot"/>
 
 
@@ -2183,15 +2183,15 @@
   <!-- LOAD PRODUCTION DATA -->
 
   <!-- Translates and loads ensembl drosophila data -->
-  <target name="build-ensembl-drosophila-production" 
+  <target name="build-ensembl-drosophila-production"
           depends="retrieve-ensembl-drosophila,translate-ensembl-drosophila,load-ensembl-drosophila"/>
 
   <!-- Translates and loads ensembl anopheles data -->
-  <target name="build-ensembl-anopheles-production" 
+  <target name="build-ensembl-anopheles-production"
           depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
 
   <!-- Retrieve and load orthologue data -->
-  <target name="build-orthologues-production" 
+  <target name="build-orthologues-production"
           depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid"/>
 
   <!-- build production database - assumes that ensembl databases already retrieved -->
@@ -2294,6 +2294,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <create-overlap-relations objectStoreWriter="osw.production"
+                              ignoreSelfMatches="false"
                               classesToIgnore="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, ProteinBindingSite, Pseudogene, RRNA, RegulatoryRegion, RepeatRegion, Supercontig, TFBindingSite, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
   </target>
 
@@ -2303,6 +2304,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <create-overlap-relations objectStoreWriter="osw.production"
+                              ignoreSelfMatches="true"
                               classesToIgnore="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, ProteinBindingSite, Pseudogene, RRNA, RegulatoryRegion, RepeatRegion, Supercontig, TFBindingSite, ThreePrimeUTR, Transcript, TranscriptionStartSite, TransposableElementInsertionSite"/>
   </target>
 
@@ -2353,9 +2355,9 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <load-xml-data integrationWriter="integration.production" 
-                   xmlFile="${build.tmp}/publications.xml" 
-                   sourceName="pubmed" 
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${build.tmp}/publications.xml"
+                   sourceName="pubmed"
                    ignoreDuplicates="true"/>
   </target>
 
@@ -2395,24 +2397,24 @@
     <homophila-post-process operation="homophila-post-process" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="set-collection-counts" depends="compile-genomic-java-from-db"> 	 
-     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask"> 	 
-       <classpath refid="models.class.path"/> 	 
-     </taskdef> 	 
-     <mappings operation="set-collection-counts" objectStoreWriter="osw.production"/> 	 
-   </target> 	 
-  	 
-   <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db"> 	 
+  <target name="set-collection-counts" depends="compile-genomic-java-from-db">
+     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+       <classpath refid="models.class.path"/>
+     </taskdef>
+     <mappings operation="set-collection-counts" objectStoreWriter="osw.production"/>
+   </target>
+
+   <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db">
      <taskdef name="tsv-file-reader" classname="org.flymine.task.TSVFileReaderWithSynonymTask">
-       <classpath refid="models.class.path"/> 	 
-     </taskdef> 	 
-     <tsv-file-reader oswAlias="osw.production" organismAbbreviation="DM" 	 
+       <classpath refid="models.class.path"/>
+     </taskdef>
+     <tsv-file-reader oswAlias="osw.production" organismAbbreviation="DM"
                       configurationFile="model/genomic/resources/flymine/drosophila_fullname_reader.properties"
-                      dataSourceName="FlyBase"> 	 
-       <fileset dir="${flybase.chado.melanogaster}"> 	 
-         <include name="flyBaseFullNameWT.txt"/> 	 
-       </fileset> 	 
-     </tsv-file-reader> 	 
+                      dataSourceName="FlyBase">
+       <fileset dir="${flybase.chado.melanogaster}">
+         <include name="flyBaseFullNameWT.txt"/>
+       </fileset>
+     </tsv-file-reader>
    </target>
 
   <target name="post-process">
@@ -2674,7 +2676,7 @@
     </ant>
   </target>
 
-  <target name="psi-test" 
+  <target name="psi-test"
           depends="prepare-test, prepare-build-model, build-db-fulldatatest, convert-psi">
     <copy file="${model}/psi/psi.xsd" toDir="${build.model}/psi"/>
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
@@ -2696,12 +2698,12 @@
     </ant>
   </target>
 
-  <target name="flyreg-test" 	 
-           depends="prepare-test, prepare-build-model, build-db-fulldatatest, compile-genomic-java"> 	 
-     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true"> 	 
-       <property name="model.name" value="flyreg"/> 	 
-       <reference torefid="class.path" refid="test.class.path"/> 	 
-     </ant> 	 
+  <target name="flyreg-test"
+           depends="prepare-test, prepare-build-model, build-db-fulldatatest, compile-genomic-java">
+     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
+       <property name="model.name" value="flyreg"/>
+       <reference torefid="class.path" refid="test.class.path"/>
+     </ant>
    </target>
 
   <target name="compile-taxonomy-java">
@@ -2779,7 +2781,7 @@
   <target name="test-models-inc"
           depends="mage-test, ensembl-test, rnai-test, homophila-test,
                    psi-test, orthologue-test, go-test, interpro-test,
-                   flyreg-test, drosdel-test, taxonomy-test, uniprot-test, 
+                   flyreg-test, drosdel-test, taxonomy-test, uniprot-test,
                    protein_structure-test, chado-test">
     <antcall target="test-report"/>
   </target>
@@ -2814,7 +2816,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier" 
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-chromosome-*.fasta"/>
@@ -2828,7 +2830,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier" 
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-4-chromosome-*.fasta"/>
@@ -2842,7 +2844,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="org.flymine.model.genomic.Gene" keyFieldName="identifier" 
+    <read-fasta className="org.flymine.model.genomic.Gene" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-gene-*.fasta"/>
@@ -2856,7 +2858,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <read-fasta className="org.flymine.model.genomic.CDS" keyFieldName="identifier" 
+    <read-fasta className="org.flymine.model.genomic.CDS" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production" idSuffix="_CDS">
       <fileset dir="${flybase.chado.melanogaster.fasta}">
         <include name="dmel-all-CDS-*.fasta"/>
@@ -2900,7 +2902,7 @@
     <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
     <property name ="aspects.properties.file" value="model/genomic/resources/web/aspects.xml"/>
     <property name="model.images.dir" value="model/genomic/resources/web/images"/>
-    
+
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
@@ -2971,17 +2973,17 @@
       <reference torefid="file.names" refid="flymine-global-web-properties-patternset"/>
     </ant>
 
-    <filter token="LOG_DIR" value="${webapp.logdir}"/> 	 
-     <copy todir="${build.tmp}" filtering="true" overwrite="true"> 	 
-       <fileset file="${log4j.properties.file}"/> 	 
-     </copy> 	 
-     <patternset id="flymine-logging-properties-patternset"> 	 
-       <include name="log4j.properties"/> 	 
-     </patternset> 	 
-     <ant antfile="${build}/build-webapp.xml" target="add-to-war-classes" inheritRefs="true"> 	 
-       <property name="war" value="${dist.webapp}/flymine.war"/> 	 
-       <property name="file.dir" value="${build.tmp}"/> 	 
-       <reference torefid="file.names" refid="flymine-logging-properties-patternset"/> 	 
+    <filter token="LOG_DIR" value="${webapp.logdir}"/>
+     <copy todir="${build.tmp}" filtering="true" overwrite="true">
+       <fileset file="${log4j.properties.file}"/>
+     </copy>
+     <patternset id="flymine-logging-properties-patternset">
+       <include name="log4j.properties"/>
+     </patternset>
+     <ant antfile="${build}/build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
+       <property name="war" value="${dist.webapp}/flymine.war"/>
+       <property name="file.dir" value="${build.tmp}"/>
+       <reference torefid="file.names" refid="flymine-logging-properties-patternset"/>
      </ant>
   </target>
 
@@ -3043,23 +3045,23 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
-                              username="${webapp.superuser}" 
+                              username="${webapp.superuser}"
                               osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
-  
+
   <!-- load default global template queries -->
   <target name="dump-default-templates" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${resources}/webapp/default.intermine.properties"
-          overwrite="true" 
+          overwrite="true"
           verbose="true"/>
     <!-- insert default template queries. this will also create the superuser account. -->
     <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/template-queries.xml"
-                            username="${webapp.superuser}" 
+                            username="${webapp.superuser}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -3251,7 +3253,7 @@
   </target>
 
   <target name="create-so-name-to-classname-map" depends="compile-genomic-java">
-    <taskdef name="create-so-name-to-classname-map" 
+    <taskdef name="create-so-name-to-classname-map"
              classname="org.flymine.task.SOClassNameMapMakerTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -3482,7 +3484,7 @@
                 merge-ensembl-disease-model,
                 merge-mage-model, merge-cdnaclone-model,
                 merge-orthologue-model,
-                merge-chado-model, merge-shortcuts">  
+                merge-chado-model, merge-shortcuts">
   </target>
 
 
@@ -3506,7 +3508,7 @@
                 merge-so-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-tfbscluster-model, merge-mage-model, merge-cdnaclone-model,
                 merge-orthologue-model,
-                merge-chado-model, merge-shortcuts">  
+                merge-chado-model, merge-shortcuts">
   </target>
 
 
@@ -3582,8 +3584,8 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-human integrationWriter="integration.production" 
-                source="os.ensembl-human-translated" 
+    <load-human integrationWriter="integration.production"
+                source="os.ensembl-human-translated"
                 sourceName="ensembl-human" />
                <!--queryClass="org.flymine.model.genomic.Synonym"/-->
   </target>
@@ -3767,11 +3769,11 @@
   <target name="t1dmine-production-build"
           depends="create-production-model-t1dmine, compile-genomic-model-t1dmine,jar-genomic,
                    build-db-production-t1dmine, load-static-t1dmine,
-                   build-ensembl-human-production, 
+                   build-ensembl-human-production,
                    build-go-production-human,build-go-production-mouse,build-orthologues-production-mouse,
-                   build-tfbs-production, 
+                   build-tfbs-production,
                    build-firstef-production,build-mousechain-production, build-opposumchain-production,
-                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production, 
+                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production,
                    build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
                    build-gene-synonyms-for-embl-production,
                    build-tfbscluster-production, build-cns-production,
@@ -3799,7 +3801,7 @@
       <antcall target="analyse-db-production"/>
       <antcall target="create-references"/>
       <antcall target="analyse-db-production"/>
-      <!-- removed due to running out of memory -->  
+      <!-- removed due to running out of memory -->
       <!--antcall target="transfer-sequences-chromosome"/-->
       <!--antcall target="analyse-db-production"/-->
       <!--antcall target="create-indexes-production-attribute"/-->
@@ -3813,10 +3815,10 @@
       <antcall target="make-spanning-locations"/>
       <antcall target="analyse-db-production"/>
       <antcall target="update-orthologues"/>
-      <antcall target="analyse-db-production"/>     
+      <antcall target="analyse-db-production"/>
       <antcall target="set-collection-counts"/>
       <antcall target="update-publications"/>
-      <antcall target="analyse-db-production"/--> 
+      <antcall target="analyse-db-production"/-->
   </target>
 
   <!--COMPILATION AND TESTING TARGETS -->
@@ -3838,7 +3840,7 @@
 
   <target name="test-t1dmine-models-inc"
           depends="ensembl-human-test, go-test,
-                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test, 
+                   tfbs-test, firstef-test, region-test, diseaseregion-test, ensembl-disease-test,
                    opposumchain-test, tfbscluster-test, mage-test, cdnaclone-test">
     <antcall target="test-report"/>
   </target>
@@ -3870,7 +3872,7 @@
   <!-- GO ANNOTATION FOR HUMAN -->
 
   <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
- 
+
     <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -4612,7 +4614,7 @@
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
 
  <!--mage data for stem cell-->
- <target name="retrieve-mage-stemcell" 
+ <target name="retrieve-mage-stemcell"
          depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
@@ -4638,9 +4640,9 @@
     </taskdef>
 
     <convert-file osName="osw.mage-src-items"
-                  clsName="org.flymine.dataconversion.MageConverter" 
-                  model="mage" 
-                  quantitationtypes="Log2Ratio, Average Expression Level"> 
+                  clsName="org.flymine.dataconversion.MageConverter"
+                  model="mage"
+                  quantitationtypes="Log2Ratio, Average Expression Level">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -4658,7 +4660,7 @@
     </ant>
   </target>
 
-  <target name="translate-mage-stemcell" 
+  <target name="translate-mage-stemcell"
           depends="convert-mage, compile-genomic-java-from-db, compile-mage-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -4687,30 +4689,30 @@
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
-  
+
   <target name="load-mage-stemcell" depends = "prepare-build-model, copy-stemcell-config">
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-mage integrationWriter="integration.genomic-test" 
-               source="os.mage-translated" 
-               sourceName="mage" 
+    <load-mage integrationWriter="integration.genomic-test"
+               source="os.mage-translated"
+               sourceName="mage"
                ignoreDuplicates="false"/>
   </target>
 
-  <target name="build-mage-stemcell-production" 
+  <target name="build-mage-stemcell-production"
           depends="retrieve-mage-stemcell, translate-mage-stemcell, load-mage-stemcell"/>
 
-  
 
 
-<!-- CDNACLONE/image PIPELINE --> 
+
+<!-- CDNACLONE/image PIPELINE -->
   <target name="retrieve-cdnaclone-image" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.ImageCloneConverter"
-                  osName="osw.cdnaclone-tgt-items" 
+                  osName="osw.cdnaclone-tgt-items"
                   model="cdnaclone">
       <fileset dir="${shared.data}/human/imageClones/" includes="UnigeneSetRZPD3.1.txt"/>
     </convert-file>
@@ -4725,22 +4727,22 @@
     <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-cdnaclone integrationWriter="integration.production" 
-                    source="os.cdnaclone-translated" 
+    <load-cdnaclone integrationWriter="integration.production"
+                    source="os.cdnaclone-translated"
                     sourceName="cdnaclone"/>
   </target>
- 
+
   <!-- load CDNAclone image data into production -->
   <target name="build-cdnaclone-image-production" depends="retrieve-cdnaclone-image, load-cdnaclone-image"/>
 
-  <!-- CDNACLONE/probeset PIPELINE --> 
-  <target name="retrieve-cdnaclone-probeset" 
+  <!-- CDNACLONE/probeset PIPELINE -->
+  <target name="retrieve-cdnaclone-probeset"
           depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
       <classpath refid="models.class.path"/>
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.AffyConverter"
-                  osName="osw.cdnaclone-tgt-items" 
+                  osName="osw.cdnaclone-tgt-items"
                   model="cdnaclone">
       <fileset dir="${shared.data}/human/probeSet/" includes="HG-U133A_annot.csv"/>
     </convert-file>
@@ -4755,13 +4757,13 @@
     <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-cdnaclone integrationWriter="integration.production" 
-                    source="os.cdnaclone-translated" 
+    <load-cdnaclone integrationWriter="integration.production"
+                    source="os.cdnaclone-translated"
                     sourceName="cdnaclone"/>
   </target>
- 
+
   <!-- load CDNAclone image data into production -->
-  <target name="build-cdnaclone-probeset-production" 
+  <target name="build-cdnaclone-probeset-production"
           depends="retrieve-cdnaclone-probeset, load-cdnaclone-probeset"/>
 
 
@@ -4799,16 +4801,16 @@
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-psi integrationWriter="integration.genomic-test" 
-              source="os.psi-translated" 
-              sourceName="psi-intact" 
+    <load-psi integrationWriter="integration.genomic-test"
+              source="os.psi-translated"
+              sourceName="psi-intact"
               ignoreDuplicates="true"/>
   </target>
- 
-  <target name="build-psi-intact-production-stemcell" 
+
+  <target name="build-psi-intact-production-stemcell"
           depends="retrieve-psi-intact-stemcell, translate-psi, load-psi-intact-stemcell"/>
 
- 
+
  <target name="filter-uniprot-hs" depends="prepare-build-model, compile-uniprot-java">
     <taskdef name="filter-uniprot"
              classname="org.flymine.dataconversion.UniprotFilterTask">
@@ -4828,13 +4830,13 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.genomic-test" 
-                  source="os.uniprot-translated" 
-                  sourceName="uniprot-hs" 
+    <load-uniprot integrationWriter="integration.genomic-test"
+                  source="os.uniprot-translated"
+                  sourceName="uniprot-hs"
                   ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-uniprot-hs-production" 
+  <target name="build-uniprot-hs-production"
           depends="filter-uniprot-hs, retrieve-uniprot, translate-uniprot, load-uniprot-hs"/>
 
 
@@ -4862,7 +4864,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/t1dmine/template-queries.xml"
-                              username="${webapp.superuser}" 
+                              username="${webapp.superuser}"
                               osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -4875,11 +4877,11 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/t1dmine/template-queries.xml"
-                            username="${webapp.superuser}" 
+                            username="${webapp.superuser}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
   </target>
-  
+
 
   <target name="build-production-webapp-t1dmine"
           depends="t1dmine-model-style, build-production-webapp">
@@ -4890,15 +4892,15 @@
      <property name="model.images.dir" value = "model/genomic/resources/web/t1dmine/images"/>
      <property name="webapp.properties.file" value="${resources}/webapp/t1dmine/global.web.properties"/>
      <property name ="web.properties.file" value ="model/genomic/resources/web/t1dmine/web.properties"/>
-     <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>     
+     <property name ="log4j.properties.file" value ="${resources}/webapp/t1dmine/log4j.properties"/>
   </target>
 
 
- <!--=====================STEMCELLMINE==============--> 
+ <!--=====================STEMCELLMINE==============-->
 
   <!-- BUILD PRODUCTION DATABASE -->
   <!-- Build genomic model database to hold production data -->
-  <target name="build-db-production-stemcell" 
+  <target name="build-db-production-stemcell"
           depends="compile-genomic-model-stemcell, copy-stemcell-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="genomic"/>
@@ -4914,11 +4916,11 @@
   <target name="stemcell-production-build"
           depends="create-production-model-stemcell, compile-genomic-model-stemcell,jar-genomic,
                    build-db-production-t1dmine, load-static-t1dmine,
-                   build-ensembl-human-production, 
+                   build-ensembl-human-production,
                    build-go-production-human,build-go-production-mouse,build-orthologues-production-mouse,
-                   build-tfbs-production, 
+                   build-tfbs-production,
                    build-firstef-production,build-mousechain-production, build-opposumchain-production,
-                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production, 
+                   build-regions-production, build-disease-regions-production, build-ensembl-disease-production,
                    build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
                    build-gene-synonyms-for-embl-production,
                    build-tfbscluster-production, build-cns-production,
@@ -4948,25 +4950,25 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/stemcellmine/template-queries.xml"
-                              username="${webapp.superuser}" 
+                              username="${webapp.superuser}"
                               osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
   <target name="dump-default-templates-stemcell" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${resources}/webapp/default.intermine.properties"
-          overwrite="true" 
+          overwrite="true"
           verbose="true"/>
     <!-- insert default template queries. this will also create the superuser account. -->
     <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/stemcellmine/template-queries.xml"
-                            username="${webapp.superuser}" 
+                            username="${webapp.superuser}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
   </target>
-  
+
 
  <target name="build-production-webapp-stemcell"
           depends="stemcell-model-style, build-production-webapp">
@@ -5001,5 +5003,5 @@
                       outputFile="results/acceptance_test.html"
                       database="db.production"/>
 
-  </target>    
+  </target>
 </project>
