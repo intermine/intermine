@@ -85,7 +85,7 @@ public class CreateOverlapRelationsTask extends Task
 
             cl.createOverlapRelations(classNamesToIgnoreList, false);
         } catch (Exception e) {
-            throw new BuildException("Failed to create OverlapRelations");
+            throw new BuildException("Failed to create OverlapRelations", e);
         }
     }
 }
