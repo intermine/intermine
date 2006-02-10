@@ -59,7 +59,7 @@ public class CreateReferences
      * @throws Exception if anything goes wrong
      */
     public void insertReferences() throws Exception {
-        LOG.info("insertReferences stage 1");
+       //  LOG.info("insertReferences stage 1");
 
         // Transcript.exons / Exon.transcripts
         insertCollectionField(Transcript.class, "subjects", RankedRelation.class, "subject",
@@ -149,10 +149,11 @@ public class CreateReferences
         // Gene.phenotypes
         insertReferences(Gene.class, Phenotype.class, "phenotypes");
 
+        LOG.info("insertReferences stage 15");
         // CDNAClone.results (MicroArrayResult)
         createCDNACloneResultsCollection();
-
-        LOG.info("insertReferences stage 15");
+        // CompositeSequence.results (MicroArrayResult)
+        createCompositeSeqResultsCollection();
         // Gene.microArrayResults
         createMicroArrayResultsCollection();
 
@@ -723,7 +724,7 @@ public class CreateReferences
 
 
     /**
-     * Creates a collection of MicroArrayResult objects on Genes.
+     * Creates a collection of MicroArrayResult objects on CDNAClone.
      * @throws Exception if anything goes wrong
      */
     protected void createCDNACloneResultsCollection() throws Exception {
@@ -808,6 +809,98 @@ public class CreateReferences
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
             ClassDescriptor cld = model.getClassDescriptorByName(CDNAClone.class.getName());
+            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
+        }
+    }
+
+
+
+    /**
+     * Creates a collection of MicroArrayResult objects on CompositeSequence.
+     * @throws Exception if anything goes wrong
+     */
+    protected void createCompositeSeqResultsCollection() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryClass qcCompositeSeq = new QueryClass(CompositeSequence.class);
+        q.addFrom(qcCompositeSeq);
+        q.addToSelect(qcCompositeSeq);
+        q.addToOrderBy(qcCompositeSeq);
+
+        QueryClass qcReporter = new QueryClass(Reporter.class);
+        q.addFrom(qcReporter);
+        q.addToSelect(qcReporter);
+        q.addToOrderBy(qcReporter);
+
+        QueryObjectReference reporterMaterial =
+            new QueryObjectReference(qcReporter, "material");
+        ContainsConstraint ccReporterMaterial =
+            new ContainsConstraint(reporterMaterial, ConstraintOp.CONTAINS, qcCompositeSeq);
+        cs.addConstraint(ccReporterMaterial);
+
+        QueryClass qcResult = new QueryClass(MicroArrayResult.class);
+        q.addFrom(qcResult);
+        q.addToSelect(qcResult);
+        q.addToOrderBy(qcResult);
+
+        QueryCollectionReference reporterResults =
+            new QueryCollectionReference(qcReporter, "results");
+        ContainsConstraint ccReporterResults =
+            new ContainsConstraint(reporterResults, ConstraintOp.CONTAINS, qcResult);
+        cs.addConstraint(ccReporterResults);
+
+        q.setConstraint(cs);
+        ObjectStore os = osw.getObjectStore();
+
+        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Results res = new Results(q, os, os.getSequence());
+        res.setBatchSize(500);
+
+        int count = 0;
+        CompositeSequence lastComSeq = null;
+        Set newCollection = new HashSet();
+
+        osw.beginTransaction();
+
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+            CompositeSequence thisComSeq = (CompositeSequence) rr.get(0);
+            MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
+
+            if (lastComSeq == null || !thisComSeq.getId().equals(lastComSeq.getId())) {
+                if (lastComSeq != null) {
+                    // clone so we don't change the ObjectStore cache
+                    CompositeSequence tempComSeq = (CompositeSequence) PostProcessUtil
+                        .cloneInterMineObject(lastComSeq);
+                    TypeUtil.setFieldValue(tempComSeq, "results", newCollection);
+                    osw.store(tempComSeq);
+                    count++;
+                }
+                newCollection = new HashSet();
+            }
+
+            newCollection.add(maResult);
+
+            lastComSeq = thisComSeq;
+        }
+
+        if (lastComSeq != null) {
+            // clone so we don't change the ObjectStore cache
+            CompositeSequence tempComSeq = (CompositeSequence) PostProcessUtil.cloneInterMineObject(lastComSeq);
+            TypeUtil.setFieldValue(tempComSeq, "results", newCollection);
+            osw.store(tempComSeq);
+            count++;
+        }
+        LOG.info("Created " + count + " CompositeSequence.results collections");
+        osw.commitTransaction();
+
+        // now ANALYSE tables relating to class that has been altered - may be rows added
+        // to indirection tables
+        if (osw instanceof ObjectStoreWriterInterMineImpl) {
+            ClassDescriptor cld = model.getClassDescriptorByName(CompositeSequence.class.getName());
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
