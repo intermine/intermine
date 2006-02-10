@@ -625,7 +625,8 @@
   <!-- ========== DATA LOADING PIPELINE - ORGANISED BY SOURCE ========== -->
 
   <!-- INTERPRO PIPELINE -->
-  <target name="build-interpro-production" depends="init-paths, build-interpro-prod-database, retrieve-interpro, translate-interpro, load-interpro, update-equivalent-interpro-features"/>
+  <target name="build-interpro-production" 
+          depends="init-paths, build-interpro-prod-database, retrieve-interpro, translate-interpro, load-interpro, update-equivalent-interpro-features"/>
 
   <target name="build-interpro-prod-database" depends="prepare-build-model">
     <copy todir="${build.resources}"
@@ -1053,6 +1054,17 @@
 
   <!-- Load data from inparanoid orthologues into production -->
   <target name="load-orthologues-inparanoid" depends="copy-flymine-config">
+    <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-orthologue integrationWriter="integration.production"
+                     source="os.inparanoid-orthologue-translated"
+                     sourceName="orthologue-inparanoid"
+                     ignoreDuplicates="true"/>
+  </target>
+
+  <target name="load-orthologues-inparanoid-mouse" depends="copy-stemcell-config">
     <taskdef name="load-orthologue" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -1827,61 +1839,7 @@
 
   <target name="build-tiling_path-production" depends="retrieve-tiling_path, load-tiling_path"/>
 
- <!-- GFF3 PIPELINE -->
-  <!--load GFF3 data-->
-  <target name="retrieve-gff3" depends="prepare-build-model, compile-genomic-java">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="fulldata"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.gff3-tgt-items-std"/>
-    </ant>
-
-    <taskdef name="retrieve-file" classname="org.flymine.task.GFF3ConverterTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <retrieve-file converter ="org.flymine.dataconversion.GFF3Converter"
-                    target="osw.gff3-tgt-items"
-                    seqClsName = "Chromosome"
-                    orgAbbrev ="HS"
-                    infoSourceTitle = "UCSC"
-                    model ="genomic">
-      <fileset dir ="${shared.data}/human">
-          <include name ="tfbs/*.gff"/>
-      </fileset>
-      <!--fileset dir ="${shared.data}/gff3">
-        <include name ="test.gff"/>
-      </fileset-->
-
-    </retrieve-file>
-
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.gff3-tgt-items"/>
-    </ant>
-
-    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.common-tgt-items"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
-
- <!--target name="load-gff3" depends="copy-genomic-config">
-    <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
-      <classpath refid="genomic.class.path"/>
-    </taskdef>
-
-    <load-gff3 integrationWriter="integration.production"
-               source="os.gff3-translated"
-               sourceName="ucsc"
-               ignoreDuplicates="false"/>
-  </target>
-
-  <target name="build-gff3-production" depends="retrieve-gff3, load-gff3"/-->
-
-
+ 
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
@@ -3424,6 +3382,14 @@
     </ant>
   </target>
 
+  <target name="compile-genomic-java-stemcell" 
+         depends="compile-flymine-java, compile-genomic-model-stemcell">
+    <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
+      <property name="model.name" value="genomic"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+  
  <target name="load-static-t1dmine" depends="prepare-build-model, copy-t1dmine-config">
     <taskdef name="load-xml-data"
              classname="org.intermine.dataloader.XmlDataLoaderTask">
@@ -3448,12 +3414,12 @@
 
     <property name="stemcellmine.data" value="model/genomic/data/stemcellmine"/>
 
-    <load-xml-data integrationWriter="integration.production"
-                   xmlFile="${stemcellmine.data}/datasets.xml" sourceName="static"/>
+    <!--load-xml-data integrationWriter="integration.production"
+                   xmlFile="${stemcellmine.data}/datasets.xml" sourceName="static"/-->
     <load-xml-data integrationWriter="integration.production"
                    xmlFile="${stemcellmine.data}/organisms.xml" sourceName="static"/>
-    <load-xml-data integrationWriter="integration.production"
-                   xmlFile="${stemcellmine.data}/ontologies.xml" sourceName="static"/>
+    <!--load-xml-data integrationWriter="integration.production"
+                   xmlFile="${stemcellmine.data}/ontologies.xml" sourceName="static"/-->
   </target>
   <!-- ENSEMBL HUMAN  CORE MODEL GENERATION -->
 
@@ -3579,7 +3545,7 @@
   </target>
 
   <!-- Load data from ensembl-human-tgt-items into production -->
-  <target name="load-ensembl-human" depends="prepare-build-model, copy-t1dmine-config">
+  <target name="load-ensembl-human" depends="prepare-build-model, copy-stemcell-config">
     <taskdef name="load-human" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -3891,7 +3857,7 @@
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/human">
-        <include name="gene_association*"/>
+        <include name="current_gene_association*"/>
       </fileset>
     </convert-file>
 
@@ -3933,7 +3899,7 @@
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
       <fileset dir="${shared.data}/go-annotation/mouse">
-        <include name="gene_association*"/>
+        <include name="current_gene_association*"/>
       </fileset>
     </convert-file>
 
@@ -3994,7 +3960,8 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="UCSC"
+                   dataSourceName="UCSC"
+                   dataSetTitle="UCSC transcription factor binding sites"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/tfbs">
@@ -4014,7 +3981,7 @@
     </ant>
   </target>
 
-  <target name="load-tfbs" depends="copy-t1dmine-config">
+  <target name="load-tfbs" depends="copy-stemcell-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4067,7 +4034,8 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="UCSC"
+                   dataSourceName="UCSC"
+                   dataSetTitle="firstEF"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.FirstEFGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/firstEF">
@@ -4087,7 +4055,7 @@
     </ant>
   </target>
 
- <target name="load-firstef" depends="copy-t1dmine-config">
+ <target name="load-firstef" depends="copy-stemcell-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4140,7 +4108,8 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="UCSC"
+                   dataSourceName="UCSC"
+                   dataSetTitle="UCSC encode regions"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.RegionGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/encodeRegions/">
@@ -4213,7 +4182,8 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="T1DBase"
+                   dataSourceName="T1DBase"
+                   dataSetTitle="T1DBase disease regions"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.DiseaseRegionGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/diseaseRegions/">
@@ -4363,7 +4333,7 @@
     </ant>
   </target>
 
-  <target name="load-mousechain" depends="copy-t1dmine-config">
+  <target name="load-mousechain" depends="copy-stemcell-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4387,7 +4357,7 @@
   </target-->
 
   <target name="opposumchain-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="opposumchain"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -4395,7 +4365,7 @@
   </target>
 
   <!--target name="compile-opposumchain-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="opposumchain"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4419,7 +4389,8 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="UCSC"
+                   dataSourceName="UCSC"
+                   dataSetTitle="UCSC opossum chain"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.GFF3RecordHandler">
       <fileset dir ="${shared.data}/human/comparativeGenomics">
@@ -4439,7 +4410,7 @@
     </ant>
   </target>
 
-  <target name="load-opposumchain" depends="copy-t1dmine-config">
+  <target name="load-opposumchain" depends="copy-stemcell-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4461,7 +4432,7 @@
   </target>
 
   <target name="tfbscluster-test"
-          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-t1dmine">
+          depends="prepare-test, build-db-fulldatatest, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="tfbscluster"/>
       <reference torefid="class.path" refid="test.class.path"/>
@@ -4469,7 +4440,7 @@
   </target>
 
   <target name="compile-tfbscluster-java"
-          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-t1dmine">
+          depends="prepare-build-model, compile-flymine-java, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="tfbscluster"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4493,11 +4464,12 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="HSCL"
+                   dataSourceName="HSCL"
+                   dataSetTitle="HSCL transcription factor binding site clusters"                   
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsClusterGFF3RecordHandler">
-      <fileset dir ="${shared.data}/human/tfbscluster">
-        <include name ="*.gff3"/>
+      <fileset dir ="${shared.data}/human/tfbscluster/current">
+        <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
 
@@ -4513,7 +4485,7 @@
     </ant>
   </target>
 
-  <target name="load-tfbscluster" depends="copy-t1dmine-config">
+  <target name="load-tfbscluster" depends="copy-stemcell-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4543,12 +4515,13 @@
                    target="osw.gff3-tgt-items"
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
-                   infoSourceTitle="TFBSSearch"
+                   dataSourceName="HSCL"
+                   dataSetTitle="HSCL conserved non-coding sites"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.CnsGFF3RecordHandler">
-      <fileset dir ="${shared.data}/human/cns">
-        <include name ="*.gff3"/>
-      </fileset>
+      <fileset dir ="${shared.data}/human/cns/current/">
+        <include name ="*"/>
+      </fileset>      
     </retrieve-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -4563,14 +4536,14 @@
     </ant>
   </target>
 
-  <target name="load-cns" depends="copy-t1dmine-config">
+  <target name="load-cns" depends="copy-stemcell-config">
     <taskdef name="load-gff3" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-gff3 integrationWriter="integration.production"
                source="os.gff3-translated"
-               sourceName="tfbscluster"
+               sourceName="cns"
                ignoreDuplicates="false"/>
   </target>
 
@@ -4611,7 +4584,7 @@
   </target>
 
   <target name="build-orthologues-production-mouse"
-          depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid"/>
+          depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid-mouse"/>
 
  <!--mage data for stem cell-->
  <target name="retrieve-mage-stemcell"
@@ -4619,9 +4592,9 @@
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
-      <!--fileset dir="${shared.data}/human/mage/E-EMBL-1"/-->
-      <!--fileset dir="${shared.data}/human/mage/E-MEXP-337"/-->
-      <!--fileset dir="${shared.data}/human/mage/E-MEXP-384"/-->
+      <fileset dir="${shared.data}/human/mage/E-EMBL-1"/>
+      <fileset dir="${shared.data}/human/mage/E-MEXP-337"/>
+      <fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
       <!--fileset dir="${shared.data}/human/mage/E-MEXP-70"/-->
       <!--fileset dir="${shared.data}/human/mage/E-SMDB-3450"/-->
     </copy>
@@ -4694,9 +4667,10 @@
     <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-mage integrationWriter="integration.genomic-test"
-               source="os.mage-translated"
-               sourceName="mage"
+
+    <load-mage integrationWriter="integration.production" 
+               source="os.mage-translated" 
+               sourceName="mage" 
                ignoreDuplicates="false"/>
   </target>
 
@@ -4723,13 +4697,13 @@
     </ant>
   </target>
 
-  <target name="load-cdnaclone-image" depends="copy-t1dmine-config">
+  <target name="load-cdnaclone-image" depends="copy-stemcell-config">
     <taskdef name="load-cdnaclone" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
     <load-cdnaclone integrationWriter="integration.production"
                     source="os.cdnaclone-translated"
-                    sourceName="cdnaclone"/>
+                    sourceName="cdnaclone-image"/>
   </target>
 
   <!-- load CDNAclone image data into production -->
@@ -4744,7 +4718,8 @@
     <convert-file clsName="org.flymine.dataconversion.AffyConverter"
                   osName="osw.cdnaclone-tgt-items"
                   model="cdnaclone">
-      <fileset dir="${shared.data}/human/probeSet/" includes="HG-U133A_annot.csv"/>
+      <fileset dir="${shared.data}/human/probeSet/" 
+               includes="HG-U133A_annot.csv"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -4759,7 +4734,7 @@
     </taskdef>
     <load-cdnaclone integrationWriter="integration.production"
                     source="os.cdnaclone-translated"
-                    sourceName="cdnaclone"/>
+                    sourceName="cdnaclone-probe"/>
   </target>
 
   <!-- load CDNAclone image data into production -->
@@ -4801,9 +4776,10 @@
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-psi integrationWriter="integration.genomic-test"
-              source="os.psi-translated"
-              sourceName="psi-intact"
+
+    <load-psi integrationWriter="integration.production" 
+              source="os.psi-translated" 
+              sourceName="psi-intact" 
               ignoreDuplicates="true"/>
   </target>
 
@@ -4820,7 +4796,7 @@
     <filter-uniprot tgtDir="${build.tmp}" organisms="9606">
       <fileset dir="${shared.data}/uniprot/6.8">
         <include name="uniprot_sprot*"/>
-        <!--include name="uniprot_trembl*"/-->
+        <include name="uniprot_trembl*"/>
       </fileset>
     </filter-uniprot>
   </target>
@@ -4830,9 +4806,10 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-uniprot integrationWriter="integration.genomic-test"
-                  source="os.uniprot-translated"
-                  sourceName="uniprot-hs"
+
+    <load-uniprot integrationWriter="integration.production" 
+                  source="os.uniprot-translated" 
+                  sourceName="uniprot-hs" 
                   ignoreDuplicates="true"/>
   </target>
 
@@ -4915,7 +4892,7 @@
    <!-- build production database - assumes that ensembl databases already retrieved -->
   <target name="stemcell-production-build"
           depends="create-production-model-stemcell, compile-genomic-model-stemcell,jar-genomic,
-                   build-db-production-t1dmine, load-static-t1dmine,
+                   build-db-production-stemcell, load-static-stemcell,
                    build-ensembl-human-production,
                    build-go-production-human,build-go-production-mouse,build-orthologues-production-mouse,
                    build-tfbs-production,
@@ -4924,7 +4901,8 @@
                    build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
                    build-gene-synonyms-for-embl-production,
                    build-tfbscluster-production, build-cns-production,
-                   build-mage-stemcell-production, build-cdnaclone-image-production,
+                   build-mage-stemcell-production, build-cdnaclone-image-production,build-cdnaclone-probeset-production,
+                   build-psi-intact-production-stemcell,                   
                    analyse-db-production, grant-db-production"/>
 
   <target name="build-db-userprofile-stemcell" depends="prepare-build-model">
@@ -4969,8 +4947,7 @@
                             userProfileAlias="osw.userprofile-production"/>
   </target>
 
-
- <target name="build-production-webapp-stemcell"
+  <target name="build-production-webapp-stemcell"
           depends="stemcell-model-style, build-production-webapp">
   </target>
 
@@ -5003,5 +4980,17 @@
                       outputFile="results/acceptance_test.html"
                       database="db.production"/>
 
-  </target>
+  </target>     
+
+  <target name="acceptance-tests-stemcell" depends="prepare">
+    <taskdef name="acceptance-tests" classname="org.intermine.task.AcceptanceTestTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <acceptance-tests configFile="model/genomic/resources/test/stemcell_acceptance_test.conf"
+                      outputFile="results/acceptance_test.html"
+                      database="db.production"/>
+
+  </target>    
+  
 </project>
