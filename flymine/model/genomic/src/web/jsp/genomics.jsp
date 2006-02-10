@@ -132,7 +132,7 @@
         <dl>
           <dt><i>Caenorhabditis elegans</i></dt>
           <dd>
-            Genome information from <a href="www.wormbase.org">WormBase</a>,
+            Genome information from <a href="http://www.wormbase.org">WormBase</a>,
             protein interaction data from 
             <a href="http://www.ebi.ac.uk/intact/">intAct</a>, orthologues and
             paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
