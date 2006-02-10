@@ -67,11 +67,14 @@ public class StoreSequences
 
         ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
+
+        Connection connection = db.getConnection();
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             osw.beginTransaction();
             Contig contig = (Contig) PostProcessUtil.cloneInterMineObject((Contig) resIter.next());
-            String sequence = getSequence(contig.getIdentifier());
+
+            String sequence = getSequence(connection, contig.getIdentifier());
             Sequence seq = (Sequence) DynamicUtil.createObject(
                              Collections.singleton(Sequence.class));
             seq.setResidues(sequence);
@@ -89,10 +92,9 @@ public class StoreSequences
      * @throws SQLException if there are any problems
      * @return a sequence for this contig
      */
-    protected String getSequence(String contigId) throws SQLException {
+    protected String getSequence(Connection connection, String contigId) throws SQLException {
         String sequence = null;
-
-        Connection connection = db.getConnection();
+        
         Statement statement = connection.createStatement();
         ResultSet rs = null;
         String query = null;
