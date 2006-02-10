@@ -33,6 +33,7 @@ public class CreateOverlapRelationsTask extends Task
 
     protected String objectStoreWriter, classNamesToIgnore;
     protected ObjectStoreWriter osw;
+    private boolean ignoreSelfMatches;
 
     /**
      * Sets the value of objectStoreWriter.
@@ -40,6 +41,15 @@ public class CreateOverlapRelationsTask extends Task
      */
     public void setObjectStoreWriter(String objectStoreWriter) {
         this.objectStoreWriter = objectStoreWriter;
+    }
+
+    /**
+     * Set the flag that chooses if self matches should be ignored. Self matches means matches
+     * to other objects of the same class (eg. Gene overlapping Gene).
+     * @param ignoreSelfMatches new ignore self matches flags
+     */
+    public void setIgnoreSelfMatches(boolean ignoreSelfMatches) {
+        this.ignoreSelfMatches = ignoreSelfMatches;
     }
 
     /**
@@ -62,7 +72,7 @@ public class CreateOverlapRelationsTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * @see Task#execute()
      */
     public void execute() throws BuildException {
         if (objectStoreWriter == null) {
@@ -83,7 +93,7 @@ public class CreateOverlapRelationsTask extends Task
                 classNamesToIgnoreList.add(classNames[i].trim());
             }
 
-            cl.createOverlapRelations(classNamesToIgnoreList, false);
+            cl.createOverlapRelations(classNamesToIgnoreList, ignoreSelfMatches);
         } catch (Exception e) {
             throw new BuildException("Failed to create OverlapRelations", e);
         }
