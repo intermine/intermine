@@ -18,13 +18,16 @@
           and the deletions that can be constructed from them have been loaded into
           FlyMine.  Deletions that can be made from existing fly stocks are tagged as
           available in FlyMine. Stocks can be ordered from the Szeged stock centre via
-          the <a href="http://www.drosdel.org.uk/">DrosDel</a> web site.  The DrosDel
-          collection has been reported in Ryder et al (2004) Genetics 167 (2): 797-813
+          the <a href="http://www.drosdel.org.uk/">DrosDel</a> web site.
+        </p>
+        <p>
+          The DrosDel collection has been reported in Ryder et al (2004)
+          Genetics 167 (2): 797-813
           (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529">PubMed: 15238529</a>).
         </p>
       </div>
     </td>
-    <td width="30%" valign="top">
+    <td width="40%" valign="top">
       <div class="heading2">
         Datasets
       </div>
