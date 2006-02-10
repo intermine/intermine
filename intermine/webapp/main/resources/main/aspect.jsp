@@ -16,41 +16,29 @@
 
 <im:box title="${aspect.name}" topRightTile="/aspectPopup.jsp">
 
-<c:if test="${!empty aspect.aspectSources}">
-  <div class="aspectSources">
-    <fmt:message key="aspect.sources.from"/>
-    <ul>
-      <c:forEach items="${aspect.aspectSources}" var="source">
-        <li><a href="${source.url}" target="_blank" class="extlink">${source.name}</a></li>
-      </c:forEach>
-    </ul>
+  <c:if test="${!empty aspect.aspectSources}">
+    <div class="aspectSources">
+      <fmt:message key="aspect.sources.from"/>
+      <ul>
+        <c:forEach items="${aspect.aspectSources}" var="source">
+          <li><a href="${source.url}" target="_blank" class="extlink">${source.name}</a></li>
+        </c:forEach>
+      </ul>
+    </div>
+  </c:if>
+
+  <img src="${ASPECTS[aspect.name].iconImage}" class="aspectPageIcon" align="left"/>
+  <div class="body aspectIntro">
+    ${aspect.introText}
   </div>
-</c:if>
+  <div style="clear:both;"></div>
 
-<img src="${ASPECTS[aspect.name].iconImage}" class="aspectPageIcon" align="left"/>
-<div class="body aspectIntro">
-  ${aspect.introText}
-</div>
-<div style="clear:both;"></div>
+  <c:if test="${!empty aspect.tileName}">
+    <div class="aspectTile">
+      <tiles:insert name="${aspect.tileName}"/>
+    </div>
+  </c:if>
 
-<c:if test="${!empty aspect.tileName}">
-  <div class="aspectTile">
-    <tiles:insert name="${aspect.tileName}"/>
-  </div>
-</c:if>
-
-<div class="heading">
-  <fmt:message key="aspect.starting.points.heading"/>
-</div>
-
-<div class="body aspectStartingPoints">
-  <c:forEach items="${startingPoints}" var="classname" varStatus="status">
-    <im:unqualify className="${classname}" var="name"/>
-    <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">${name}</a><c:if test="${!status.last}">,</c:if>
-  </c:forEach>
-</div>
-
-<%--<c:if test="${!empty CATEGORY_TEMPLATES[aspect.name]}">--%>
   <div class="heading">
     <fmt:message key="aspect.templates.heading"/>
   </div>
@@ -61,7 +49,27 @@
       <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
     </tiles:insert>
   </div>
-<%--</c:if>--%>
+
+  <div class="heading">
+    <fmt:message key="aspect.starting.points.heading"/>
+  </div>
+  <div class="body aspectStartingPoints">
+    <p><fmt:message key="aspect.starting.points.helptext"/>
+
+    <fmt:message key="query.help.link" var="aspectStartingPointsHelpLink"/>
+    <c:set var="aspectStartingPointsHelpUrl" 
+           value="${WEB_PROPERTIES['project.helpLocation']}${aspectStartingPointsHelpLink}"/>
+
+    See the <a href="${WEB_PROPERTIES['project.helpLocation']}/tutorials">tutorials</a>
+      and the <a href="${aspectStartingPointsHelpUrl}">manual</a> to learn
+      about the query builder.
+    </p>
+
+    <c:forEach items="${startingPoints}" var="classname" varStatus="status">
+      <im:unqualify className="${classname}" var="name"/>
+      <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">${name}</a><c:if test="${!status.last}">,</c:if>
+    </c:forEach>
+  </div>
 
 </im:box>
 
