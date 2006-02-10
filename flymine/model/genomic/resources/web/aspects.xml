@@ -11,7 +11,7 @@
     <tile-name>model/genomics.jsp</tile-name>
     <starting-points>
       Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand
-      Orthologue Paralogue GOTerm RepeatRegion TransposableElement TFBindingSite
+      Orthologue Paralogue IntergenicRegion GOTerm RepeatRegion TransposableElement TFBindingSite
       Pseudogene RRNA SnRNA SnoRNA UTR MRNA
     </starting-points> 
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
