@@ -104,6 +104,7 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         if (sequence == null) {
             sequence = createItem("Sequence");
             sequence.setAttribute("residues", residues);
+            sequence.setAttribute("length", residues.size());
             addItem(sequence);
             sequenceMap.put(residues, sequence);
         }
