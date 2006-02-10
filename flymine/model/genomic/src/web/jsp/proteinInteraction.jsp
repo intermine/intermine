@@ -99,7 +99,7 @@ trieve&db=PubMed&dopt=Abstract&list_uids=11805826">PubMed: 11805826</A>)
        </DL>
      </div>
     </TD>
-    <TD width="30%" valign="top">
+    <TD width="40%" valign="top">
       <div class="heading2">
         Datasets
       </div>
