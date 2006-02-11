@@ -110,7 +110,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map expIdNames = new HashMap();
     protected Map sampleToLabel = new HashMap();
     protected Map exptToDataSet = new HashMap();
-    protected Map exptToAssays = null;
+    protected Map exptToAssays = new HashMap();
 
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
@@ -1148,7 +1148,6 @@ public class MageDataTranslator extends DataTranslator
                 assay.setReference("experiment", experimentId);
             }
 
-
             if (experimentId != null) {
                 String assayHandlerClass = getConfig((String) assayToExpName.get(assayId),
                                                         "assayHandlerClass");
@@ -1156,6 +1155,7 @@ public class MageDataTranslator extends DataTranslator
                 if (assayHandlerClass != null) {
                     handlerCls = Class.forName(assayHandlerClass);
                 }
+                LOG.info("assayHandlerClass: " + handlerCls.getName());
                 Constructor con = handlerCls.getConstructor(new Class[]
                     {MageDataTranslator.class});
                 DefaultAssayHandler handler = (DefaultAssayHandler)
@@ -1232,20 +1232,17 @@ public class MageDataTranslator extends DataTranslator
     private String getAssayOrder(Item assay, DefaultAssayHandler handler) throws Exception {
         String expt = (String) assayToExperiment.get(assay.getIdentifier());
 
-        // first time called - set up ordered assay sets for all experiments
-        if (exptToAssays == null) {
-            exptToAssays = new HashMap();
+        // first time called for this experiment - set up ordered assay set
+        if (!exptToAssays.containsKey(expt)) {
+            TreeSet orderedAssays = new TreeSet();
+            exptToAssays.put(expt, orderedAssays);
             Iterator iter = assayToExperiment.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 String assayId = (String) entry.getKey();
-                String exptId = (String) entry.getValue();
-                TreeSet orderedAssays = (TreeSet) exptToAssays.get(exptId);
-                if (orderedAssays == null) {
-                    orderedAssays = new TreeSet();
-                    exptToAssays.put(exptId, orderedAssays);
+                if (expt.equals((String) entry.getValue())) {
+                    orderedAssays.add(handler.getAssayOrderable((Item) assays.get(assayId)));
                 }
-                orderedAssays.add(handler.getAssayOrderable((Item) assays.get(assayId)));
             }
         }
 

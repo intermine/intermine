@@ -109,6 +109,7 @@ public class ArbeitmanAssayHandlerTest extends TestCase
         translator.addToMap(translator.sampleToChars, "1_4", "Age", "1");
         translator.addToMap(translator.sampleToChars, "1_4", "TimeUnit", "days");
         translator.addToMap(translator.sampleToChars, "1_4", "DevelopmentalStage", "adult stage 1");
+        translator.addToMap(translator.sampleToChars, "1_4", "Sex", "female");
         Item a4 = createAssay("0_4", "1_4", expt.getIdentifier());
 
         ArbeitmanAssayHandler handler = new ArbeitmanAssayHandler(translator);

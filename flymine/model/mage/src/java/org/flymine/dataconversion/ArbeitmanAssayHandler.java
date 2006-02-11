@@ -54,8 +54,14 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
 
         // reset primary characteristic (is a hack, should be set correctly in first place)
         Summary summary = findCharacteristics(assay);
+        String stageStr = summary.stage;
+        // adult data is duplicated for male and female, also final time point in
+        // in pupal but makes graph look little confusing if split.
+        if (summary.sex != null && summary.stage.equalsIgnoreCase("adult")) {
+            stageStr = stageStr + " " + summary.sex;
+        }
         sample.setAttribute("primaryCharacteristicType", "stage");
-        sample.setAttribute("primaryCharacteristic", summary.stage + " - " + summary.age
+        sample.setAttribute("primaryCharacteristic", stageStr + " - " + summary.age
                             + " " + summary.unit);
     }
 
@@ -71,7 +77,7 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
             }
         }
 
-        String ageStr = null, unit = null, stageStr = null;
+        String ageStr = null, unit = null, stageStr = null, sex = null;
 
         Map chars = (Map) translator.sampleToChars.get(sample.getIdentifier());
         if (chars != null) {
@@ -86,6 +92,8 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
                     unit = value;
                 } else if (type.equalsIgnoreCase("developmentalstage")) {
                     stageStr = value;
+                } else if (type.equalsIgnoreCase("sex")) {
+                    sex = value;
                 }
             }
         }
@@ -115,7 +123,7 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
                                                + " stageStr was: " + stageStr);
         }
 
-        return new Summary(stage, ageStr, unit);
+        return new Summary(stage, ageStr, unit, sex);
     }
 
 
@@ -146,6 +154,9 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
             age *= 24.0;
         }
 
+        // avoid multiplying by zero
+        age += 1.0;
+
         // times are given from the beginning of the stage rather than an
         // absoulute value.  Need to adjust to order of stages.
         // stages:  embryonic
@@ -175,16 +186,18 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
 
     private class Summary
     {
-        protected String stage, age, unit;
+        protected String stage, age, unit, sex;
 
-        public Summary(String stage, String age, String unit) {
+        public Summary(String stage, String age, String unit, String sex) {
             this.stage = stage;
             this.age = age;
             this.unit = unit;
+            this.sex = sex;
         }
 
         public String toString() {
-            return "stage = " + stage + ", age = " + age + ", unit = " + unit;
+            return "stage = " + stage + " sex = " + sex + ", age = "
+                + age + ", unit = " + unit;
         }
     }
 }
