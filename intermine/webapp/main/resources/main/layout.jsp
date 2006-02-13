@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- layout.jsp -->
@@ -90,7 +91,8 @@
       
       <%-- Construct help page key --%>
       <fmt:message key="${pageName}.help.link" var="helplink"/>
-      <c:if test="${!empty helplink}">
+
+      <c:if test="${!empty helplink && !fn:startsWith(helplink, '???')}">
         <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}${helplink}"/>
       </c:if>
       <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
