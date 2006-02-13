@@ -65,6 +65,53 @@
             </im:querylink>
           </li>
         </ul>
+        <ul>
+          <li>
+            <im:querylink text="All gene / GO annotation pairs from Anopheles (browse)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene Gene.proteins.annotations">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.proteins" type="Protein">
+                </node>
+                <node path="Gene.proteins.annotations" type="GOAnnotation">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.species" type="String">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                </node>
+                <node path="Gene.organism.genus" type="String">
+                  <constraint op="=" value="Anopheles" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+          <li>
+            <im:querylink text="All gene identifiers and GO terms from Anopheles (for export/download)"
+                          skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.proteins.annotations.name Gene.proteins.annotations.identifier Gene.proteins.annotations.evidenceCode">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.proteins" type="Protein">
+                </node>
+                <node path="Gene.proteins.annotations" type="GOAnnotation">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.species" type="String">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                </node>
+                <node path="Gene.organism.genus" type="String">
+                  <constraint op="=" value="Anopheles" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+        </ul>
       </div>
     </td>
   </tr>
