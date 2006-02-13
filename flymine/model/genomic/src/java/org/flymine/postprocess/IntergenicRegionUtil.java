@@ -88,13 +88,13 @@ public class IntergenicRegionUtil
             Integer chrId = (Integer) rr.get(0);
             Location loc = (Location) rr.get(1);
 
-            if (previousChrId == null || chrId.equals(previousChrId)) {
-                locationSet.add(loc);
-            } else {
+            if (previousChrId != null && !chrId.equals(previousChrId)) {
                 Iterator irIter = createIntergenicRegionFeatures(locationSet, previousChrId);
                 storeItergenicRegions(osw, irIter);
                 locationSet = new HashSet();
             }
+
+            locationSet.add(loc);
             previousChrId = chrId;
         }
         
@@ -138,7 +138,6 @@ public class IntergenicRegionUtil
         
         while(locationIter.hasNext()) {
             Location location = (Location) locationIter.next();
-            
             bs.set(location.getStart().intValue(), location.getEnd().intValue() + 1);
         }
         
@@ -164,15 +163,18 @@ public class IntergenicRegionUtil
                 int intergenicEnd;
                 int nextSetBit = bs.nextSetBit(nextIntergenicStart);
 
-                if (nextSetBit == -1 
-                    || bs.nextClearBit(nextSetBit) > chr.getLength().intValue()) {
+                if (nextSetBit == -1) {
                     intergenicEnd = chr.getLength().intValue();
-                    prevEndPos = -1;
                 } else {
                     intergenicEnd = nextSetBit - 1;
-                    prevEndPos = intergenicEnd;
                 }
 
+                if (nextSetBit== -1 
+                    || bs.nextClearBit(nextSetBit) > chr.getLength().intValue()) {
+                    prevEndPos = -1;
+                } else {
+                    prevEndPos = intergenicEnd;
+                }
                 
                 IntergenicRegion intergenicRegion = (IntergenicRegion) 
                     DynamicUtil.createObject(Collections.singleton(IntergenicRegion.class));
