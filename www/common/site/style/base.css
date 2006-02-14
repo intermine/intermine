@@ -39,7 +39,6 @@ span.organism-name
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     padding: 5px;
     margin-bottom: 0px;
-    border-bottom: 1px solid #888;
 }
 
 #header #title
@@ -129,6 +128,7 @@ span.organism-name
   width: 100%;
   background: white;
   border-bottom: 1px solid #888;
+  border-top: 1px solid #888;
 }
 
 #static-content-td {
