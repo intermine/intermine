@@ -161,6 +161,9 @@
     <action path="/tagImport"
             forward="importTags.page"/>
     
+    <action path="/standalone"
+            forward="standalone.page"/>
+
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
