@@ -143,9 +143,6 @@ span.organism-name
   background-color: white;
 }
 
-#static-table td {
-  padding-bottom: 20px;
-}
 
 #static-content ul li
 {
@@ -185,6 +182,7 @@ span.organism-name
 {
     text-align: center;
 }
+
 
 /**************************************/
 
@@ -404,8 +402,44 @@ table.box th.title {
 
 .startbutton {
   border: 1px solid #bbb;
-  border-bottom: 1px solid #aaa;
   padding: 3px 6px 4px 6px;
   margin-top: 20px;
   font-size: 15px;
+}
+
+.dsIconLabel {
+  margin-top: -3px;
+  margin-left: 3px;
+  font-size: 13px;
+}
+
+.dsIconDetail {
+  margin-left: 3px;
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.dsIconImage {
+  border: 1px solid #222;
+  margin-bottom: 5px;
+}
+
+.dsSmallIconImage {
+  border: 1px solid #222;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.aspectPageIcon {
+  float: left;
+  margin: 15px;
+}
+
+table.aspectIconsTable {
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+
+td.aspectIconCell {
+  padding-right: 15px;
 }
