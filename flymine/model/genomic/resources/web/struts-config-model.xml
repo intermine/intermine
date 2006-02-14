@@ -7,6 +7,8 @@
             type="org.flymine.web.ChartRenderer"
             parameter="method"/>
     
+    <action path="/quickStart" forward="flymineQuickStart.page"/>
+    
     <action path="/initGeneMicroArrayDisplayer"
             type="org.flymine.web.GeneMicroArrayDisplayerController"/>
 
