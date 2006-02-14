@@ -40,7 +40,7 @@
       <body>
         
         <div id="header">
-          <table width="100%" cellspacing="0" cellpadding="0">
+          <table width="90%" cellspacing="0" cellpadding="0">
             <tr>
               <td width="1%" align="center" valign="middle">
                 <a href="{$basedir}/">

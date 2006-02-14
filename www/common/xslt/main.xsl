@@ -43,7 +43,7 @@
   </xsl:template>
   
   <xsl:template match="column">
-    <div style="width:{@width};float:left">
+    <div class="column" style="width:{@width}; float:left">
       <xsl:apply-templates/>
     </div>
   </xsl:template>
