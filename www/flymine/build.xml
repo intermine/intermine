@@ -28,7 +28,7 @@
   <property name="xslt" location="xslt"/>
   <property name="common.xslt" location="${common}/xslt"/>
   <property name="cache.dtd" location="${common}/dtd"/>
-  <property name="output.extension" value="html"/>
+  <property name="output.extension" value="shtml"/>
   <property name="branding" value="flymine"/>
 
   <target name="prepare">
@@ -209,7 +209,7 @@
   </target>
 
   <target name="webapp-manual-process" depends="prepare">
-    <exec executable="xmlto">
+    <exec executable="xmlto" failifexecutionfails="false">
       <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m xslt/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
     </exec>
   </target>

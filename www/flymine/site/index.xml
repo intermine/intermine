@@ -1,6 +1,6 @@
 
 <article>
-  <column>
+  <column width="60%">
     <section>
       <title>
         Introduction
@@ -32,16 +32,18 @@
         Datasources
       </title>
       
-      
+      <!--
       <para>
         FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>.
         Release 3.1 of FlyMine incorporates the following data sources:
       </para>
         <sources sources="/sources.xml" version="3.0"/>
+      -->
+      <ssi-include page="/aspectIcons.jsp&amp;cols=2"/>
     </section>
   </column>
   
-  <column>
+  <column width="40%">
     <section>
       <title>
         FlyMine News:
