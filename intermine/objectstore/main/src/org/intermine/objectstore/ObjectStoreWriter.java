@@ -65,6 +65,14 @@ public interface ObjectStoreWriter extends ObjectStore
     public void delete(InterMineObject o) throws ObjectStoreException;
 
     /**
+     * Gets an ID number which is unique in the database.
+     *
+     * @return an Integer
+     * @throws ObjectStoreException if a problem occurs
+     */
+    public Integer getSerial() throws ObjectStoreException;
+
+    /**
      * Check whether the ObjectStoreWriter is performing a transaction
      *
      * @return true if in a transaction, false otherwise

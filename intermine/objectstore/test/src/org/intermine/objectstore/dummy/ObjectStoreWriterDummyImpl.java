@@ -56,11 +56,9 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 
     public void store(InterMineObject o) throws ObjectStoreException {
         if (o.getId() == null) {
-            while (storedObjects.containsKey(new Integer(idCounter))) {
-                idCounter++;
-            }
-            o.setId(new Integer(idCounter));
-            storedObjects.put(new Integer(idCounter), o);
+            Integer newId = getSerial();
+            o.setId(newId);
+            storedObjects.put(newId, o);
         } else {
             storedObjects.put(o.getId(), o);
         }
@@ -68,6 +66,13 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 
     public void delete(InterMineObject o) throws ObjectStoreException {
         storedObjects.remove(o.getId());
+    }
+
+    public Integer getSerial() throws ObjectStoreException {
+        while (storedObjects.containsKey(new Integer(idCounter))) {
+            idCounter++;
+        }
+        return new Integer(idCounter);
     }
 
     public boolean isInTransaction() throws ObjectStoreException {
