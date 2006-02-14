@@ -17,6 +17,7 @@
     <put name="feedbackForm" value="feedbackForm.jsp"/>
   </definition>
   <!--pages-->
+  <definition name="standalone.page" path="/standalone.jsp"/>
   <definition name="login.page" extends="layout.template">
     <put name="body" value="login.jsp"/>
     <put name="pageName" value="login"/>
