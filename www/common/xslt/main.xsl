@@ -43,7 +43,7 @@
   </xsl:template>
   
   <xsl:template match="column">
-    <div style="width:50%;float:left">
+    <div style="width:{@width};float:left">
       <xsl:apply-templates/>
     </div>
   </xsl:template>
@@ -70,5 +70,10 @@
       <xsl:apply-templates mode="copy-no-ns"/>
     </xsl:element>
   </xsl:template>
+  
+  <xsl:template match="ssi-include">
+    <xsl:comment>#include virtual="/query/standalone.do?page=<xsl:value-of select="@page"/>"</xsl:comment>
+  </xsl:template>
+  
   
 </xsl:stylesheet>

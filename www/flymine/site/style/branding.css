@@ -1,7 +1,6 @@
-html, body 
+body 
 {
-    color: #000000;
-    background-color: #F5F0FF;
+    background: #F5F0FF;
 }
 
 a 
@@ -19,6 +18,11 @@ a
 #header p
 {
     color: black;
+}
+
+#header
+{
+   
 }
 
 /**************************************/

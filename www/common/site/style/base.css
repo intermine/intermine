@@ -1,9 +1,9 @@
-html, body
+body
 {
-    /* font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif; */
     font-size: 100%; /* NN4 */
     margin: 0;
     padding: 0;
+    background-color: #fff;
 }
 
 a:link { color:#049; text-decoration:none }
@@ -38,15 +38,16 @@ span.organism-name
 {
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     padding: 5px;
-    border-bottom: solid #888 1px;
     margin-bottom: 0px;
+    border-bottom: 1px solid #888;
 }
 
-#header h1
+#header #title
 {
-    font-size: 1.6em;
+    font-size: 1.8em;
     font-weight: bold;
-    margin: 3px;
+    margin: 0;
+    margin-bottom: 0.1em;
 }
 
 #header h1 a
@@ -56,11 +57,23 @@ span.organism-name
 
 #header p
 {
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: normal;
-    margin: 3px;
     color: black;
-    padding: 0;
+    margin: 0;
+    margin-left: 2px;
+}
+
+#logo {
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+.clear-both {
+  content: ".";
+  visibility: hidden;
+  clear: both;
+  height: 0px;
 }
 
 /**************************************/
@@ -69,8 +82,7 @@ span.organism-name
   vertical-align: top;
   margin: 0px;
   padding: 5px;
-  border: 1px solid #888;
-  background-color: white;
+  border-right: 1px solid #888;
 }
 
 #sidebar .heading {
@@ -115,6 +127,8 @@ span.organism-name
 
 #static-table {
   width: 100%;
+  background: white;
+  border-bottom: 1px solid #888;
 }
 
 #static-content-td {
@@ -125,9 +139,12 @@ span.organism-name
   vertical-align: top;
   margin: 0px;
   padding: 5px;
-  border: solid #888 1px;
   font-size: 12px;
   background-color: white;
+}
+
+#static-table td {
+  padding-bottom: 20px;
 }
 
 #static-content ul li
@@ -173,25 +190,27 @@ span.organism-name
 
 #footer
 {
-    position: absolute; /* For Safari */
+    position: fixed; /* For Safari */
+    bottom: 0px;
+    width: 100%;
     font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
     clear: both;
-    border-top: solid black 1px;
-    margin-top: 8em;
-    padding: 5px 2em 1em 2em;
-    font-size: 1em;
-    font-size/**/: 0.6em; /* Mac IE Hack*/
+    border-top: solid #888 1px;
+    padding: 8px 0;
+    font-size: 10px;
     height: 1em;
 }
 
 #address
 {
     float: left;
+    padding-left: 10px;
 }
 
 #wellcome
 {
     float: right;
+    padding-right: 10px;
 }
 
 /**************************************/

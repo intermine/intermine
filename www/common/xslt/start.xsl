@@ -5,7 +5,6 @@
   xmlns="http://www.w3.org/1999/xhtml">
   
   <xsl:template match="startbutton">
-    <br/>
     <div align="center">
       <a class="startbutton" href="{xsl:concat($webappprefix,'/begin.do')}">
         <xsl:apply-templates/> <img src="images/right-arrow.gif" border="0" alt=""/>

@@ -38,25 +38,45 @@
       </head>
       
       <body>
+        
         <div id="header">
-          <h1>
-            <a href="{$basedir}/">
-              <xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/>
-            </a>
-          </h1>
-          <p>
-            <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
-          </p>
+          <table width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+              <td width="1%" align="center" valign="center">
+                <a href="{$basedir}/">
+                  <img src="{$basedir}/images/logo.png" border="0" id="logo">
+                    <xsl:attribute name="alt">
+                      <xsl:value-of select="$brand/title"/>
+                    </xsl:attribute>
+                  </img>
+                </a>
+              </td>
+              <td width="99%" valign="center">
+                <img src="{$basedir}/images/title.png" border="0" id="title">
+                  <xsl:attribute name="alt">
+                    <xsl:value-of select="$brand/title"/>
+                  </xsl:attribute>
+                </img>
+                <p>
+                  <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
+                </p>
+              </td>
+            </tr>
+          </table>
         </div>
         
         <div id="pagecontent">
-          <table id="static-table" width="100%">
+          <table id="static-table" width="100%" cellspacing="0">
             <tr>
               <td valign="top" id="sidebar" width="5%">
                 <xsl:call-template name="sidebar"/>
               </td>
-              <td valign="top" id="static-content" width="95%">
-                <xsl:apply-templates/>
+              
+              <td valign="top" width="95%">
+                
+                <div id="static-content">
+                  <xsl:apply-templates/>
+                </div>
               </td>
             </tr>
           </table>
