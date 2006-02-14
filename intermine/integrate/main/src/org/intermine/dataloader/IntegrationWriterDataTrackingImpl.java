@@ -209,7 +209,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(newObj.getClass());
             Set modelFieldNames = fieldDescriptors.keySet();
             Set typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
-            if (! modelFieldNames.equals(typeUtilFieldNames)) {
+            if (!modelFieldNames.equals(typeUtilFieldNames)) {
                 throw new ObjectStoreException("Failed to store data not in the model");
             }
             Iterator fieldIter = fieldDescriptors.entrySet().iterator();
