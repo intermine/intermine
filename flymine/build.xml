@@ -2854,18 +2854,27 @@
   <target name="build-production-webapp"
           depends="prepare-build-model, compile-flymine-java,
                    compile-genomic-java, create-so-name-to-classname-map">
-    <property name ="model.css.file" value = "model/genomic/resources/web/model.css"/>
-    <property name ="webapp.properties.file" value ="${resources}/webapp/flymine/global.web.properties"/>
-    <property name ="log4j.properties.file" value ="${resources}/webapp/flymine/log4j.properties"/>
-    <property name ="web.properties.file" value ="model/genomic/resources/web/web.properties"/>
-    <property name ="aspects.properties.file" value="model/genomic/resources/web/aspects.xml"/>
+    <property name="model.css.file" value="model/genomic/resources/web/model.css"/>
+    <property name="webapp.properties.file" value="${resources}/webapp/flymine/global.web.properties"/>
+    <property name="log4j.properties.file" value="${resources}/webapp/flymine/log4j.properties"/>
+    <property name="web.properties.file" value="model/genomic/resources/web/web.properties"/>
+    <property name="aspects.properties.file" value="model/genomic/resources/web/aspects.xml"/>
     <property name="model.images.dir" value="model/genomic/resources/web/images"/>
 
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
       </patternset>
+      <patternset>
+        <include name="WEB-INF/classes/InterMineWebApp.properties"/>
+      </patternset>
     </unwar>
+
+    <concat destfile="${build}/tmp/InterMineWebApp.properties">
+      <fileset file="${build.webapp}/intermine/WEB-INF/classes/InterMineWebApp.properties"/>
+      <fileset file="${model}/genomic/resources/web/model.properties"/>
+    </concat>
+
     <copy file="${intermine.war.path}" tofile="${dist.webapp}/flymine.war" verbose="true"/>
     <ant antfile="${build}/build-model.xml" target="add-model-to-webapp" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
@@ -2880,13 +2889,14 @@
     <copy todir="${build.tmp}"
           file="${resources}/webapp/default.intermine.properties"
           overwrite="true" verbose="true"/>
-    <patternset id="default-intermine-properties">
+    <patternset id="properties-files-for-war">
       <include name="default.intermine.properties"/>
+      <include name="InterMineWebApp.properties"/>
     </patternset>
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-classes" inheritRefs="true">
       <property name="war" value="${dist.webapp}/flymine.war"/>
       <property name="file.dir" value="${build.tmp}"/>
-      <reference torefid="file.names" refid="default-intermine-properties"/>
+      <reference torefid="file.names" refid="properties-files-for-war"/>
     </ant>
 
     <ant antfile="${build}/build-webapp.xml" target="add-to-war-lib" inheritRefs="true">
@@ -4992,5 +5002,4 @@
                       database="db.production"/>
 
   </target>    
-  
 </project>
