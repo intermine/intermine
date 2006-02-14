@@ -5,8 +5,12 @@
 
 <!-- standalone.jsp -->
 
-    <tiles:insert name="${param.page}"/>
+<tiles:insert name="${param.page}"/>
 
+<%
+// Throw away the session that will have been created
+session.invalidate();
+%>
 
 <!-- /standalone.jsp -->
 

@@ -56,7 +56,13 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      * @see TilesRequestProcessor#processPreprocess
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
+        
         try {
+            // Avoid creating a session for each page accessed via SSI
+            if (processPath(request, response).startsWith("/standalone")) {
+                return true;
+            }
+            
             HttpSession session = request.getSession();
             ServletContext sc = session.getServletContext();
             ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
