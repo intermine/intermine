@@ -32,6 +32,7 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -193,13 +194,24 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 throw new ObjectStoreException(e);
             }
         }
+        if (newId == null) {
+            newId = getSerial();
+        }
         InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
         newObj.setId(newId);
+        if (type != FROM_DB) {
+            assignMapping(o.getId(), newId);
+        }
 
         Map trackingMap = new HashMap();
         try {
             Map fieldToEquivalentObjects = new HashMap();
             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(newObj.getClass());
+            Set modelFieldNames = fieldDescriptors.keySet();
+            Set typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
+            if (! modelFieldNames.equals(typeUtilFieldNames)) {
+                throw new ObjectStoreException("Failed to store data not in the model");
+            }
             Iterator fieldIter = fieldDescriptors.entrySet().iterator();
             while (fieldIter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next()).getValue();
@@ -253,9 +265,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                     LOG.error(errMessage);
                                     throw new IllegalArgumentException(errMessage);
                                 }
-                            }
-                            if (type != FROM_DB) {
-                                assignMapping(o.getId(), obj.getId());
                             }
                             //LOG.debug("store() finished simply for object " + oText);
                             return obj;
@@ -343,10 +352,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         while (equivalentIter.hasNext()) {
             InterMineObject objToDelete = (InterMineObject) equivalentIter.next();
             delete(objToDelete);
-        }
-
-        if (type != FROM_DB) {
-            assignMapping(o.getId(), newObj.getId());
         }
 
         // keep track of skeletons that are stored and remove when replaced by real object

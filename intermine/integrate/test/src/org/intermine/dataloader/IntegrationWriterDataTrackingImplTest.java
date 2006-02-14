@@ -954,4 +954,45 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             removeDataFromStore(writer2);
         }
     }
+
+    public void testCircularRecursionBug() throws Exception {
+        Department d = new Department();
+        Manager m = new Manager();
+        d.setManager(m);
+        m.setDepartment(d);
+        d.setName("Bob");
+        m.setName("Fred");
+
+        if (doIds) {
+            d.setId(new Integer(1));
+            m.setId(new Integer(2));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(m, source, skelSource);
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Manager.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Fred")));
+        SingletonResults r = new SingletonResults(q, iw, iw.getSequence());
+        assertEquals("Results: " + r, 1, r.size());
+
+        Manager rm = (Manager) r.get(0);
+        assertNotNull(rm);
+        Department rd = rm.getDepartment();
+        assertNotNull(rd);
+        assertEquals(d.getName(), rd.getName());
+
+        Query q2 = new Query();
+        QueryClass qc2 = new QueryClass(Department.class);
+        q2.addFrom(qc2);
+        q2.addToSelect(qc2);
+        q2.setConstraint(new SimpleConstraint(new QueryField(qc2, "name"), ConstraintOp.EQUALS, new QueryValue("Bob")));
+        SingletonResults r2 = new SingletonResults(q2, iw, iw.getSequence());
+        assertEquals("Results: " + r2, 1, r2.size());
+    }
 }

@@ -34,8 +34,10 @@ public class CreateIndexesTaskTest extends TestCase
     //test defined keys and N-1 keys
     public void testCreateStandardIndexes1() throws Exception {
         List expected = new ArrayList();
-        expected.add("create index Department__key on Department(name, companyId, id)");
-        expected.add("create index Department__key__nulls on Department((name IS NULL))");
+        expected.add("create index Department__key1 on Department(name, companyId, id)");
+        expected.add("create index Department__key1__nulls on Department((name IS NULL))");
+        expected.add("create index Department__key2 on Department(name, managerId, id)");
+        expected.add("create index Department__key2__nulls on Department((name IS NULL))");
         expected.add("create index Department__company on Department(companyId, id)");
         expected.add("create index Department__manager on Department(managerId, id)");
 

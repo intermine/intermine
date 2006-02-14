@@ -328,9 +328,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      *
      * @param source the ID of the object from the source
      * @param dest the ID of the object from the destination
+     * @throws ObjectStoreException if an attempt is made to change an existing mapping
      */
-    public void assignMapping(Integer source, Integer dest) {
+    public void assignMapping(Integer source, Integer dest) throws ObjectStoreException {
         if ((source != null) && (dest != null)) {
+            Integer existingValue = idMap.get(source);
+            if ((existingValue != null) && (!existingValue.equals(dest))) {
+                throw new ObjectStoreException("Error: Attempt to put " + source + " -> "
+                        + dest + " into ID Map, but " + source + " -> " + existingValue
+                        + "exists already");
+            }
             idMap.put(source, dest);
             dbIdsStored.add(dest);
             idMapOps++;
@@ -398,6 +405,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         osw.delete(o);
     }
 
+    /**
+     * Gets an ID number which is unique in the database.
+     *
+     * @return an Integer
+     * @throws ObjectStoreException if a problem occurs
+     */
+    public Integer getSerial() throws ObjectStoreException {
+        return osw.getSerial();
+    }
+        
     /**
      * Check whether the ObjectStore is performing a transaction, delegate to internal
      * ObjectStoreWriter.

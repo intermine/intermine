@@ -344,8 +344,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         d.setCompany(c);
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
-        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
-        PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
+        PrimaryKey pk = (PrimaryKey) PrimaryKeyUtil.getPrimaryKeys(cld).get("key1");
 
         assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, d, cld, pk, null));
     }

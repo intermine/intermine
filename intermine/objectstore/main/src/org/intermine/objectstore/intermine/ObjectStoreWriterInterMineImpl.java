@@ -68,6 +68,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected Batch batch;
     protected String createSituation;
+    protected String closeSituation;
     protected Map recentSequences;
     protected Map tableToInfo;
     protected Map tableToColNameArray;
@@ -302,8 +303,18 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     public synchronized void close() throws ObjectStoreException {
         if (conn == null) {
             // This writer is already closed
-            throw new ObjectStoreException("This ObjectStoreWriter is already closed");
+            throw new ObjectStoreException("This ObjectStoreWriter is already closed in situation: "
+                    + closeSituation + ", present stack trace:");
         }
+        Exception est = new Exception();
+        est.fillInStackTrace();
+        StringWriter message = new StringWriter();
+        PrintWriter pw = new PrintWriter(message);
+        est.printStackTrace(pw);
+        pw.close();
+        closeSituation = message.toString();
+        int index = closeSituation.indexOf("at junit.framework.TestCase.runBare");
+        closeSituation = (index < 0 ? closeSituation : closeSituation.substring(0, index));
         if (connInUse) {
             conn = null;
             throw new ObjectStoreException("Closed ObjectStoreWriter while it is being used. Note"
@@ -691,15 +702,19 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * Gets an ID number which is unique in the database.
      *
      * @return an Integer
-     * @throws SQLException if a problem occurs
+     * @throws ObjectStoreException if a problem occurs
      */
-    public Integer getSerial() throws SQLException {
-        Connection c = null;
+    public Integer getSerial() throws ObjectStoreException {
         try {
-            c = getConnection();
-            return getSerialWithConnection(c);
-        } finally {
-            releaseConnection(c);
+            Connection c = null;
+            try {
+                c = getConnection();
+                return getSerialWithConnection(c);
+            } finally {
+                releaseConnection(c);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error generating serial number", e);
         }
     }
 
