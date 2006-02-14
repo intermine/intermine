@@ -35,7 +35,6 @@
                <%--<c:if test="${status.count % 3 != 0}">
                  <im:hspacer width="82"/>
                </c:if>--%>
-               <im:hspacer width="82"/>
              </div>
              
              </td>
@@ -43,9 +42,9 @@
           </table>
 
           <c:if test="${fn:length(aspectS) != status.count}">
-            <td/>
+            </td>
             <c:if test="${status.count % numCols == 0}">
-              <tr/>
+              </tr>
               <tr valign="top">
             </c:if>
             <td valign="top" width="${100/numCols}%" >
