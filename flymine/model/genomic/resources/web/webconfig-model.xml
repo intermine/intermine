@@ -69,8 +69,9 @@
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -81,8 +82,9 @@
   <class className="org.flymine.model.genomic.Exon">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInSummary="false" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInSummary="false" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
     </fields>
   </class>
@@ -94,6 +96,9 @@
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
                    showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
@@ -168,6 +173,9 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
       <fieldconfig fieldExpr="exonCount"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
     </fields>
   </class>
 
