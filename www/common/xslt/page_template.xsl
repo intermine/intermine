@@ -42,7 +42,7 @@
         <div id="header">
           <table width="100%" cellspacing="0" cellpadding="0">
             <tr>
-              <td width="1%" align="center" valign="center">
+              <td width="1%" align="center" valign="middle">
                 <a href="{$basedir}/">
                   <img src="{$basedir}/images/logo.png" border="0" id="logo">
                     <xsl:attribute name="alt">
@@ -51,7 +51,7 @@
                   </img>
                 </a>
               </td>
-              <td width="99%" valign="center">
+              <td width="99%" valign="middle">
                 <img src="{$basedir}/images/title.png" border="0" id="title">
                   <xsl:attribute name="alt">
                     <xsl:value-of select="$brand/title"/>
