@@ -2265,7 +2265,16 @@
                               ignoreSelfMatches="true"
                               classesToIgnore="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, ProteinBindingSite, Pseudogene, RRNA, RegulatoryRegion, RepeatRegion, Supercontig, TFBindingSite, ThreePrimeUTR, Transcript, TranscriptionStartSite, TransposableElementInsertionSite"/>
   </target>
-
+ <target name="create-overlap-relations-stemcell" depends="compile-genomic-java-from-db">
+    <taskdef name="create-overlap-relations"
+             classname="org.flymine.postprocess.CreateOverlapRelationsTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <create-overlap-relations objectStoreWriter="osw.production"
+                              ignoreSelfMatches="true"
+                              classesToIgnore="Contig, Supercontig, Chromosome, ChromosomeBand, Clone, Scaffold, Exon, RepeatRegion, Transcript, TranscriptionStartSite, Marker, CrossGenomeMatch, TRNA, Promoter, CpGIsland"/>
+  </target>
+  
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
