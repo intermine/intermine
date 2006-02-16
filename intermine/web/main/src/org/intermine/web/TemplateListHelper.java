@@ -59,8 +59,9 @@ public class TemplateListHelper
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
             if (tag.getTagName().startsWith("aspect:")) {
-                String tagName = tag.getTagName().trim();
-                if (StringUtils.equals(aspect, tagName)) {
+                String aspectFromTagName = tag.getTagName().substring(7).trim();
+
+                if (StringUtils.equals(aspect, aspectFromTagName)) {
                     TemplateQuery tq = (TemplateQuery) 
                         p.getSavedTemplates().get(tag.getObjectIdentifier());
                     if (tq != null) {
