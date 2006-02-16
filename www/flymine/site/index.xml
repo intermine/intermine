@@ -12,7 +12,7 @@
         a library of pre-defined queries or construct their own using a
         powerful query builder interface.
       </para>
-      
+      <!--
       <para>
         Full <ulink url="doc/index.xml">user documentation</ulink> is available. 
         For further information about FlyMine please consult the more detailed
@@ -24,12 +24,22 @@
         See <ulink url="doc/manual/quickStartGuide.xml">quick start guide</ulink>
         for more details.
       </para>
+      -->
+    </section>
   
+    
+    <section>
+      <title>
+        Quick search
+      </title>
+      <para>
+        <ssi-include page="browse.tile"/>
+      </para>
     </section>
   
     <section>
       <title>
-        Datasources
+        Aspects
       </title>
       
       <!--
@@ -41,6 +51,7 @@
       -->
       <ssi-include page="/aspectIcons.jsp&amp;cols=2"/>
     </section>
+    
   </column>
   
   <column width="39%">
@@ -65,9 +76,17 @@
       </para>
     </section>
     
-    <startbutton>
-      Start a query...
-    </startbutton>
-    
   </column>
+  
+  <section clear="both">
+    <title>
+      Template search
+    </title>
+    <para>
+      <template-search/>
+      <things-to-do/>
+    </para>
+  </section>
+  
+  
 </article>
