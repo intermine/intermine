@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -62,7 +63,9 @@ public class QueryClassSelectAction extends InterMineAction
             return mapping.findForward("classChooser");
         } else {
             newQuery(className, session);
-
+            Cookie cookie = new Cookie("have-query", "true");
+            cookie.setPath("/");
+            response.addCookie(cookie);
             return mapping.findForward("query");
         }
     }

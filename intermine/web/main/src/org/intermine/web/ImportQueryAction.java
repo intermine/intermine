@@ -42,7 +42,8 @@ public class ImportQueryAction extends InterMineAction
         ImportQueryForm qif = (ImportQueryForm) form;
         
         Map queries = PathQueryBinding.unmarshal(new StringReader(qif.getXml()));
-        SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(), session);
+        SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(),
+                session, response);
         
         return mapping.findForward("query");
     }

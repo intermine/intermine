@@ -57,7 +57,7 @@ public class LoadQueryAction extends DispatchAction
         String queryName = request.getParameter("name");
         
         SessionMethods.logExampleQueryUse(session, queryName);
-        SessionMethods.loadQuery((PathQuery) exampleQueries.get(queryName), session);
+        SessionMethods.loadQuery((PathQuery) exampleQueries.get(queryName), session, response);
         
         return mapping.findForward("query");
     }
@@ -85,7 +85,7 @@ public class LoadQueryAction extends DispatchAction
         
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml));
         PathQuery query = (PathQuery) queries.values().iterator().next();
-        SessionMethods.loadQuery((PathQuery) query, session);
+        SessionMethods.loadQuery((PathQuery) query, session, response);
         
         if (!skipBuilder.booleanValue()) {
             return mapping.findForward("query");

@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,6 +95,10 @@ public class LoginAction extends InterMineAction
                                                 profile.getSavedBags().keySet());
             profile.saveBag(name, bag);
         }
+        
+        Cookie cookie = new Cookie("logged-in", "true");
+        cookie.setPath("/");
+        response.addCookie(cookie);
         
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         return mapping.findForward("history");

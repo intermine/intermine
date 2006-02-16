@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.objectstore.ObjectStore;
@@ -216,8 +218,10 @@ public class SessionMethods
      * Load a query into the session, cloning to avoid modifying the original
      * @param query the query
      * @param session the session
+     * @param response the response
      */
-    public static void loadQuery(PathQuery query, HttpSession session) {
+    public static void loadQuery(PathQuery query, HttpSession session,
+            HttpServletResponse response) {
         session.setAttribute(Constants.QUERY, query.clone());
         //at the moment we can only load queries that have saved using the webapp
         //this is because the webapp satisfies our (dumb) assumption that the view list is not empty
@@ -229,6 +233,10 @@ public class SessionMethods
         session.removeAttribute("prefix");
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         session.removeAttribute(Constants.EDITING_VIEW);
+        
+        Cookie cookie = new Cookie("have-query", "true");
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
     
     /**

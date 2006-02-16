@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,6 +44,9 @@ public class LogoutAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         session.invalidate();
+        Cookie cookie = new Cookie("logged-in", "false");
+        cookie.setPath("/");
+        response.addCookie(cookie);
         return mapping.findForward("begin");
     }
 }

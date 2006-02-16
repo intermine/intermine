@@ -73,7 +73,7 @@ public class TemplateAction extends InterMineAction
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName, 
                                                              templateName, templateType);
         PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
-        SessionMethods.loadQuery(queryCopy, request.getSession());
+        SessionMethods.loadQuery(queryCopy, request.getSession(), response);
         form.reset (mapping, request);
         
         if (!skipBuilder) {
