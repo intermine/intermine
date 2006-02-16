@@ -40,29 +40,83 @@
       <body>
         
         <div id="header">
-          <table width="90%" cellspacing="0" cellpadding="0">
-            <tr>
-              <td width="1%" align="center" valign="middle">
-                <a href="{$basedir}/">
-                  <img src="{$basedir}/images/logo.png" border="0" id="logo">
-                    <xsl:attribute name="alt">
-                      <xsl:value-of select="$brand/title"/>
-                    </xsl:attribute>
-                  </img>
-                </a>
-              </td>
-              <td width="99%" valign="middle">
-                <img src="{$basedir}/images/title.png" border="0" id="title">
-                  <xsl:attribute name="alt">
-                    <xsl:value-of select="$brand/title"/>
-                  </xsl:attribute>
-                </img>
-                <p>
-                  <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
-                </p>
-              </td>
-            </tr>
-          </table>
+          <a href="{$basedir}/">
+            <img src="{$basedir}/images/logo.png" border="0" id="logo">
+              <xsl:attribute name="alt">
+                <xsl:value-of select="$brand/title"/>
+              </xsl:attribute>
+            </img>
+          </a>
+          <div id="title">
+            <h1>
+              <a href="{$basedir}/">
+                <xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/>
+              </a>
+            </h1>
+            <p>
+              <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
+            </p>
+          </div>
+          <div class="clear-both">.</div>
+        </div>
+        
+        
+        <div class="links">
+          <!--<c:if test="${!empty PROFILE.username}">
+            <span class="menu-logged-in-item">
+              ${PROFILE.username}
+            </span>
+          </c:if>-->
+          <span class="menu-item">
+            <a href="/">
+              Home
+            </a>
+          </span>
+          <span class="menu-item">
+            <script type="text/javascript">
+              if (readCookie('have-query') == 'true') {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/query.do')"/>', 'Current query'));
+              } else {
+                document.write('Current query');
+              }
+            </script>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/history.do')}">
+              History
+            </a>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/examples.do')}">
+              Examples
+            </a>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/templateSearch.do')}">
+              Search templates
+            </a>
+            <img src="/query/images/inspect.gif" width="12" height="11" alt="-&gt;"/>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/feedback.do')}">
+              Feedback form
+            </a>
+          </span>
+          <span class="menu-item">
+            <script type="text/javascript">
+              if (readCookie('logged-in') == 'true') {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/logout.do')"/>', 'Log out'));
+              } else {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/login.do')"/>', 'Log in'));
+              }
+            </script>
+          </span>
+          <span class="menu-item">
+            <a href="/doc/manual/index.html">
+              Help
+            </a>
+          </span>
+
         </div>
         
         <div id="pagecontent">

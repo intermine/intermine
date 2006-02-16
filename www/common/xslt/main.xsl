@@ -25,7 +25,8 @@
   <xsl:include href="docbook-flymine.xsl"/>
   <xsl:include href="ulink.xsl"/>
   <xsl:include href="page_template.xsl"/>
-
+  <xsl:include href="template_search.xsl"/>
+  <xsl:include href="things_to_do.xsl"/>
   
   <xsl:template match="index">
     <ul>
@@ -34,7 +35,7 @@
   </xsl:template>
   
   <xsl:template match="section">
-    <div class="box">
+    <div class="box" style="clear:{@clear}">
       <div class="heading2"><xsl:apply-templates select="title"/></div>
       <div class="body">
         <xsl:apply-templates select="*[position()!=1]"/>
