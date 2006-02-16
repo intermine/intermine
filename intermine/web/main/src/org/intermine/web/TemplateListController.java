@@ -48,6 +48,11 @@ public class TemplateListController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         String type = (String) context.getAttribute("type");
         String aspect = (String) context.getAttribute("placement");
+
+        if (aspect.startsWith("aspect:")) {
+            aspect = aspect.substring(7).trim();
+        }
+
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
         List templates = null;
         
