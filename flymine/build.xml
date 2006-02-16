@@ -2873,8 +2873,6 @@
     <unwar src="${intermine.war.path}" dest="${build.webapp}/intermine">
       <patternset>
         <include name="WEB-INF/lib/*.jar"/>
-      </patternset>
-      <patternset>
         <include name="WEB-INF/classes/InterMineWebApp.properties"/>
       </patternset>
     </unwar>
