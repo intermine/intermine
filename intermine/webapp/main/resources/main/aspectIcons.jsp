@@ -12,7 +12,7 @@
 
   <table class="aspectIconsTable" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td width="${100/numCols}%" valign="top">
+      <td width="<fmt:formatNumber value="${100/numCols}" maxFractionDigits="0"/>%" valign="top">
         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
           <c:set var="set" value="${entry.value}"/>
           
@@ -47,7 +47,7 @@
               </tr>
               <tr valign="top">
             </c:if>
-            <td valign="top" width="${100/numCols}%" >
+            <td valign="top" width="<fmt:formatNumber value="${100/numCols}" maxFractionDigits="0"/>%" >
           </c:if>
         </c:forEach>
       </td>

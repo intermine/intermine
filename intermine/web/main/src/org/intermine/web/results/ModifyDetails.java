@@ -91,7 +91,7 @@ public class ModifyDetails extends DispatchAction
             }
         }
         
-        SessionMethods.loadQuery(query, request.getSession());
+        SessionMethods.loadQuery(query, request.getSession(), response);
         QueryMonitorTimeout clientState
                 = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);

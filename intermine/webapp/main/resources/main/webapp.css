@@ -37,9 +37,27 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 
 #header p
 {
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: normal;
   margin: 3px;
+}
+
+#logo {
+  margin-left: 5px;
+  margin-right: 10px;
+  float: left;
+}
+
+#title {
+  margin-top: 0.6em;
+  margin-left: 85px;
+}
+
+.clear-both {
+  content: ".";
+  visibility: hidden;
+  clear: both;
+  height: 0px;
 }
 
 .version {
@@ -154,6 +172,7 @@ form {
   font-size: 12px;
   text-align: right;
   line-height: 125%;
+  margin-left: 10px;
 }
 #topright .wellcome {
   font-size: 11px;

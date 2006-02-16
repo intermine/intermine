@@ -42,7 +42,7 @@ public class BrowseController extends TilesAction
         throws Exception {
 
         // might want to make the operator a model web.properties property
-        context.putAttribute("browseOperator", ConstraintOp.MATCHES.getIndex());
+        //context.putAttribute("browseOperator", ConstraintOp.MATCHES.getIndex());
 
         return null;
     }

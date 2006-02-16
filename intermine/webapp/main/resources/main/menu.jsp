@@ -15,11 +15,13 @@
       <fmt:message key="menu.home"/>
     </html:link>
   </span>
+  <!--
   <span class="menu-item">
     <html:link action="/begin.do">
       <fmt:message key="menu.newquery"/>
     </html:link>
   </span>
+  -->
   <span class="menu-item">
     <c:choose>
       <c:when test="${!empty QUERY}">

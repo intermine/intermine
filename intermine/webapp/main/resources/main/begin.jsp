@@ -97,8 +97,8 @@
           titleKey="begin.heading.browse">
     <div class="body" align="center">
       <tiles:insert name="browse.tile">
-        <tiles:put name="prompt" value="${WEB_PROPERTIES['begin.browse.prompt']}"/>
-        <tiles:put name="templateName" value="${browseTemplateName}"/>
+        <%--<tiles:put name="prompt" value="${WEB_PROPERTIES['begin.browse.prompt']}"/>
+        <tiles:put name="templateName" value="${browseTemplateName}"/>--%>
       </tiles:insert>
       <br/>
       <p class="smallnote">

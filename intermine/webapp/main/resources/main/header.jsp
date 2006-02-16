@@ -4,23 +4,27 @@
 
 <!-- header.jsp -->
 
-<div id="topright">
-  <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span><br/>
-  <div class="contact">${WEB_PROPERTIES['project.contact']}</div>
-  <div class="wellcome">${WEB_PROPERTIES['project.funded.by']}</div>
-</div>
-
 <div id="header">
-  <h1>
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
-      <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
-    </html:link>
-  </h1>
-  <p>
-    <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
-  </p>
+  <div id="topright">
+    <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span><br/>
+    <div class="contact">${WEB_PROPERTIES['project.contact']}</div>
+    <div class="wellcome">${WEB_PROPERTIES['project.funded.by']}</div>
+  </div>
+  
+  <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
+    <img src="model/logo.png" border="0" id="logo"/>
+  </html:link>
+  <div id="title">
+    <h1>
+      <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
+        <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
+      </html:link>
+    </h1>
+    <p>
+      <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
+    </p>
+  </div>
+  <div class="clear-both"></div>
 </div>
-
-
 
 <!-- /header.jsp -->

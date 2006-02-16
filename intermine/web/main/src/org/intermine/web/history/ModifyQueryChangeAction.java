@@ -72,7 +72,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
             sq = (SavedQuery) profile.getSavedQueries().get(queryName);
         }
         
-        SessionMethods.loadQuery(sq.getPathQuery(), session);
+        SessionMethods.loadQuery(sq.getPathQuery(), session, response);
         return mapping.findForward("query");
     }
     
@@ -108,7 +108,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
             return null;
         }
         
-        SessionMethods.loadQuery((PathQuery) sq.getPathQuery(), session);
+        SessionMethods.loadQuery((PathQuery) sq.getPathQuery(), session, response);
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
