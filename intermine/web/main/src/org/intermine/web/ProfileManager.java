@@ -434,7 +434,6 @@ public class ProfileManager
         MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
         
         if (cache.containsKey(key)) {
-            LOG.error("found in cache: " + key);
             return (List) cache.get(key);
         }
         
