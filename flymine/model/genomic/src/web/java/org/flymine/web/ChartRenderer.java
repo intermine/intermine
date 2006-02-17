@@ -138,7 +138,6 @@ public class ChartRenderer extends InterMineAction
             }
         }
 
-
         CategoryAxis xAxis = new CategoryAxis(null);
         NumberAxis yAxis = new NumberAxis("Log2 Ratio");
         LineAndShapeRenderer renderer = new LineAndShapeRenderer();
