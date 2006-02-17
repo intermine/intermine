@@ -15,13 +15,11 @@ import java.awt.RenderingHints;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.Renderer;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
@@ -30,9 +28,8 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.AbstractRenderer;
-import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -44,9 +41,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
-import org.intermine.web.InterMineDispatchAction;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionForm;
@@ -54,18 +49,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * 
+ * Graph the microarray results for a particular gene/experiment
+ *
  * @author Thomas Riley
  */
 public class ChartRenderer extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(ChartRenderer.class);
-    private static final Class[] sig = new Class[] {ActionMapping.class, ActionForm.class,
+    private static final Class[] SIG = new Class[] {ActionMapping.class, ActionForm.class,
         HttpServletRequest.class, HttpServletResponse.class};
-    
+    private final double logE2 = Math.log(2.0);
+
     /**
      * First, check for a cached image, otherwise defer to appropriate method.
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -83,12 +80,12 @@ public class ChartRenderer extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Map graphImageCache = (Map) servletContext.getAttribute(Constants.GRAPH_CACHE);
         String filename = (String) graphImageCache.get(request.getQueryString());
-        
+
         if (filename != null) {
             ServletUtilities.sendTempFile(filename, response);
             return null;
         } else {
-            Method method = getClass().getMethod(request.getParameter("method"), sig);
+            Method method = getClass().getMethod(request.getParameter("method"), SIG);
             if (!method.getName().equals("execute")) { // avoid infinite loop
                 return (ActionForward)
                     method.invoke(this, new Object[] {mapping, form, request, response});
@@ -100,7 +97,15 @@ public class ChartRenderer extends InterMineAction
     }
 
     /**
-     * 
+     * First, check for a cached image, otherwise defer to appropriate method.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
      */
     public ActionForward microarray(
             ActionMapping mapping,
@@ -114,55 +119,58 @@ public class ChartRenderer extends InterMineAction
             .getAttribute(Constants.OBJECTSTORE);
         String experiment = request.getParameter("experiment");
         String gene = request.getParameter("gene");
-        
+
         Results results = MicroArrayHelper.queryMicroArrayResults(experiment, gene, os);
         Iterator iter = results.iterator();
-        
+
         DefaultCategoryDataset xyDataset = new DefaultCategoryDataset();
-        
+
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
             MicroArrayResult result = (MicroArrayResult) rr.get(0);
-            Set assays = result.getAssays();
-            Iterator assayIter = assays.iterator();
-            while (assayIter.hasNext()) {
-                String name = ((MicroArrayAssay) assayIter.next()).getName();
-                xyDataset.addValue(result.getValue(), "value", name);
+            // TODO hack for Arbeitman experiment, should set display label in assay to simplify
+            String label = ((MicroArrayAssay) rr.get(1)).getSample2();
+            if (label != null && !(label.equals(""))) {
+                String series = label.substring(label.indexOf(':'), label.indexOf('-')).trim();
+                // TODO Calculate Log2, should be a flag to set scale
+                xyDataset.addValue((Math.log(result.getValue().floatValue()) / logE2),
+                                   series, (Integer) rr.get(2));
             }
         }
-        
+
+
         CategoryAxis xAxis = new CategoryAxis(null);
-        NumberAxis yAxis = new NumberAxis(null);
-        BarRenderer renderer = new BarRenderer();
-        
+        NumberAxis yAxis = new NumberAxis("Log2 Ratio");
+        LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+
         configureXaxis(xAxis, request);
-        configureYaxis(yAxis, request);        
+        configureYaxis(yAxis, request);
         configureRenderer(renderer, request);
-        
+
         CategoryPlot plot = new CategoryPlot(xyDataset, xAxis, yAxis, renderer);
-        
+
         JFreeChart chart = new JFreeChart(null,
-                AbstractRenderer.DEFAULT_VALUE_LABEL_FONT, plot, false);
-        
+                AbstractRenderer.DEFAULT_VALUE_LABEL_FONT, plot, true);
+
         configureChart(chart, request);
-        
+
         int width = Integer.parseInt(request.getParameter("width"));
         int height = Integer.parseInt(request.getParameter("height"));
-        
+
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
         String filename = ServletUtilities.saveChartAsPNG(chart, width, height, info, session);
         graphImageCache.put(request.getQueryString(), filename);
         ServletUtilities.sendTempFile(filename, response);
         return null;
     }
-    
-    protected void configureRenderer(AbstractRenderer renderer, HttpServletRequest request) {
+
+    private void configureRenderer(AbstractRenderer renderer, HttpServletRequest request) {
         Color barColor = new Color(100, 149, 237);
         renderer.setSeriesPaint(0, barColor);
         renderer.setSeriesOutlinePaint(0, barColor.darker());
     }
-    
-    protected void configureXaxis(Axis axis, HttpServletRequest request) {
+
+    private void configureXaxis(Axis axis, HttpServletRequest request) {
         if (request.getParameter("method").equals("microarray")) {
             ((CategoryAxis) axis).setMaximumCategoryLabelLines(7);
             axis.setLabelAngle(0);
@@ -171,12 +179,12 @@ public class ChartRenderer extends InterMineAction
             axis.setTickLabelsVisible(false);
         }
     }
-    
-    protected void configureYaxis(Axis axis, HttpServletRequest request) {
+
+    private void configureYaxis(Axis axis, HttpServletRequest request) {
         axis.setTickLabelFont(AbstractRenderer.DEFAULT_VALUE_LABEL_FONT.deriveFont(8));
     }
-    
-    protected void configureChart(JFreeChart chart, HttpServletRequest request) {
+
+    private void configureChart(JFreeChart chart, HttpServletRequest request) {
         chart.setBackgroundPaint(java.awt.Color.white);
         chart.setAntiAlias(false);
         chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
