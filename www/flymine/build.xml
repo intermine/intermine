@@ -88,6 +88,8 @@
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="releaseversion" expression="${project.releaseVersion}"/>
+      <param name="webapppath" expression="${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
     </style>
   </target>

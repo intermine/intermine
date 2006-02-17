@@ -16,6 +16,7 @@
   <xsl:param name="branding"/>
   <xsl:variable name="brand" select="document(concat('../../',$branding,'/branding.xml'))/brand"/>
   <xsl:param name="webappprefix"/>
+  <xsl:param name="webapppath"/>
   <xsl:param name="outputext"/>
 
   <xsl:include href="menu.xsl"/>
@@ -73,7 +74,7 @@
   </xsl:template>
   
   <xsl:template match="ssi-include">
-    <xsl:comment>#include virtual="/query/standalone.do?page=<xsl:value-of select="@page"/>"</xsl:comment>
+    <xsl:comment>#include virtual="/<xsl:value-of select="$webapppath"/>/standalone.do?page=<xsl:value-of select="@page"/>"</xsl:comment>
   </xsl:template>
   
   
