@@ -33,7 +33,7 @@
         Biologist - Database analysis and user support (MATERNITY COVER).
         CLOSED.
       </description>
-      <pubDate>Tues, 03 Jan 2006 11:31:00 GMT</pubDate>
+      <pubDate>Tue, 03 Jan 2006 11:31:00 GMT</pubDate>
     </item>
 
     <item>
@@ -83,7 +83,7 @@
       <pubDate>Wed, 1 Jun 2005 14:10:51 GMT</pubDate>
     </item>
     
-    <!--item>
+    <item>
       <title>FlyMine 2.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -91,25 +91,25 @@
         FlyMine 2.0&lt;/a&gt; is now available.
       </description>
       <pubDate>Wed, 30 Mar 2005 16:53:30 GMT</pubDate>
-    </item-->
+    </item>
     
-    <!--item>
+    <item>
       <title>FlyMine 1.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
         FlyMine 1.1 is now available.
       </description>
       <pubDate>Fri, 18 Feb 2005 20:16:58 GMT</pubDate>
-    </item-->
+    </item>
     
-    <!--item>
+    <item>
       <title>FlyMine 1.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
         Initial public release of FlyMine.
       </description>
       <pubDate>Mon, 01 Nov 2004 11:39:21 GMT</pubDate>
-    </item-->
+    </item>
 
   </channel>
 </rss>

@@ -6,9 +6,10 @@
   
   <xsl:template match="news">
     <xsl:variable name="id" select="@id"/>
+    <xsl:variable name="limit" select="@limit"/>
     <xsl:variable name="items" select="document(concat('../../',$branding, '/', $brand/rss[@id=$id]/@file))/rss/channel"/>
     
-    <xsl:for-each select="$items/item">
+    <xsl:for-each select="$items/item[position()&lt;$limit]">
       <div class="news-item">
         <div class="news-item-header">
           <xsl:if test="title">

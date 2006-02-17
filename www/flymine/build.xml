@@ -99,6 +99,7 @@
         <!-- necessary until we can accommodate "presentation" within docbook -->
         <exclude name="doc/presentations/index.xml"/>
         <exclude name="index.xml"/>
+        <exclude name="news.xml"/>
       </fileset>
       <xmlcatalog>
         <dtd 
