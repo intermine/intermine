@@ -2,7 +2,7 @@
 <menu>
   <item title="Main">
     <item url="/index.xml" title="Home"/>
-    <item url="/begin.do" title="Start a query"/>
+    <item url="/news.xml" title="News"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
     <item url="/contact/index.xml" title="Contact"/>
   </item>
