@@ -284,6 +284,7 @@ public class SessionMethods
         String version = webProps.getProperty("project.releaseVersion");
         Cookie cookie = new Cookie("logged-in-" + version, "" + value);
         cookie.setPath("/");
+        response.addCookie(cookie);
     }
     
     /**
