@@ -16,6 +16,7 @@
   <xsl:param name="branding"/>
   <xsl:variable name="brand" select="document(concat('../../',$branding,'/branding.xml'))/brand"/>
   <xsl:param name="webappprefix"/>
+  <xsl:param name="releaseversion"/>
   <xsl:param name="outputext"/>
 
   <xsl:template match="/">
@@ -74,7 +75,7 @@
           </span>
           <span class="menu-item">
             <script type="text/javascript">
-              if (readCookie('have-query') == 'true') {
+              if (readCookie('have-query-<xsl:value-of select="$releaseversion"/>') == 'true') {
                 document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/query.do')"/>', 'Current query'));
               } else {
                 document.write('Current query');
@@ -104,7 +105,7 @@
           </span>
           <span class="menu-item">
             <script type="text/javascript">
-              if (readCookie('logged-in') == 'true') {
+              if (readCookie('logged-in-<xsl:value-of select="$releaseversion"/>') == 'true') {
                 document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/logout.do')"/>', 'Log out'));
               } else {
                 document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/login.do')"/>', 'Log in'));
