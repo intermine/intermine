@@ -10,24 +10,25 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.intermine.web.bag.InterMineBag;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.web.bag.InterMineBag;
+
+import org.apache.commons.lang.StringUtils;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * Action to handle button presses on the main tile
@@ -96,9 +97,7 @@ public class LoginAction extends InterMineAction
             profile.saveBag(name, bag);
         }
         
-        Cookie cookie = new Cookie("logged-in", "true");
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        SessionMethods.setLoggedInCookie(session, response);
         
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         return mapping.findForward("history");

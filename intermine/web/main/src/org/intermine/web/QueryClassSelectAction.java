@@ -11,18 +11,17 @@ package org.intermine.web;
  */
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
 
 /**
  * Implementation of <strong>Action</strong> that processes
@@ -63,9 +62,7 @@ public class QueryClassSelectAction extends InterMineAction
             return mapping.findForward("classChooser");
         } else {
             newQuery(className, session);
-            Cookie cookie = new Cookie("have-query", "true");
-            cookie.setPath("/");
-            response.addCookie(cookie);
+            SessionMethods.setHasQueryCookie(session, response);
             return mapping.findForward("query");
         }
     }
