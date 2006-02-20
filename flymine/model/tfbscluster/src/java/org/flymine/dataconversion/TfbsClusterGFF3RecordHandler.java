@@ -116,7 +116,7 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
         if (sequence == null) {
             sequence = createItem("Sequence");
             sequence.setAttribute("residues", residues);
-            sequence.setAttribute("length", residues.size());
+            sequence.setAttribute("length", residues.length() + "");
             addItem(sequence);
             sequenceMap.put(residues, sequence);
         }
