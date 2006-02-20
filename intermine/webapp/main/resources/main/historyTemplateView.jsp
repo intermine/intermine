@@ -10,12 +10,12 @@
 
   <im:body id="savedTemplates">
   
-		<p>
+    <p>
       <fmt:message key="history.savedtemplates.help"/>
       <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.html"/>
       [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
     </p>
-		
+    
     <%-- Choose the queries to display --%>
     <c:choose>
       <c:when test="${empty PROFILE.savedTemplates}">
@@ -92,6 +92,9 @@
               <td align="center" nowrap>
                 <html:link action="/editTemplate?name=${savedTemplate.value.name}">
                   Edit
+                </html:link> |
+                <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}">
+                  Export
                 </html:link>
               </td>
             </tr>
@@ -106,18 +109,18 @@
       </c:otherwise>
     </c:choose>
   
-		<c:if test="${IS_SUPERUSER}">
-		  <span class="smallnote">
-		    <c:if test="${!empty PROFILE.savedTemplates}">
-		      <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
-		        <fmt:message key="begin.exportTemplates"/>
-		      </html:link><br/>
-		    </c:if>
-		    <html:link action="/import" titleKey="begin.importTemplatesDesc">
-		      <fmt:message key="begin.importTemplates"/>
-		    </html:link>
-		  </span>
-		</c:if>
+    <c:if test="${IS_SUPERUSER}">
+      <span class="smallnote">
+        <c:if test="${!empty PROFILE.savedTemplates}">
+          <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
+            <fmt:message key="begin.exportTemplates"/>
+          </html:link><br/>
+        </c:if>
+        <html:link action="/import" titleKey="begin.importTemplatesDesc">
+          <fmt:message key="begin.importTemplates"/>
+        </html:link>
+      </span>
+    </c:if>
   </im:body>
 
 <!-- /historyTemplates.jsp -->

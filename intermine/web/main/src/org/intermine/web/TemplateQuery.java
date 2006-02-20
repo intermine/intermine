@@ -10,12 +10,17 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * A template query, which consists of a PathQuery, description, category,
@@ -199,5 +204,23 @@ public class TemplateQuery
      */
     public String getKeywords() {
         return keywords;
+    }
+    
+    /**
+     * Convert a template query to XML.
+     * @return this template query as XML.
+     */
+    public String toXml() {
+        StringWriter sw = new StringWriter();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        
+        try {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
+            TemplateQueryBinding.marshal(this, writer);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
+        
+        return sw.toString();
     }
 }

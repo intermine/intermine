@@ -24,6 +24,8 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.XmlUtil;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Exports templates to XML.
  *
@@ -57,8 +59,16 @@ public class TemplatesExportAction extends InterMineAction
             return null;
         }
         
+        String name = request.getParameter("name");
+        
         PrintStream out = new PrintStream(response.getOutputStream());
-        String xml = TemplateHelper.templateMapToXml(templates);
+        String xml = null;
+        
+        if (StringUtils.isNotEmpty(name)) {
+            xml = ((TemplateQuery) templates.get(name)).toXml();
+        } else {
+            xml = TemplateHelper.templateMapToXml(templates);
+        }
         xml = XmlUtil.indentXmlSimple(xml);
         out.print(xml);
         out.flush();
