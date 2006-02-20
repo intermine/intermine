@@ -120,7 +120,7 @@
   </aspect>
 
   <aspect name="Proteins">
-    <subtitle>Protein and protemics data</subtitle>
+    <subtitle>Protein and proteomics data</subtitle>
     <icon-image>model/proteins.png</icon-image>
     <large-image>model/proteins.png</large-image>
     <intro-text>
