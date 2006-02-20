@@ -61,7 +61,7 @@ public class TemplateHelper
     public static final String USER_TEMPLATE = "user";
     /** Type parameter indicating ALL templates */
     public static final String ALL_TEMPLATE = "all";
-    
+
     /**
      * Locate TemplateQuery by identifier. The type parameter
      * @param servletContext the ServletContext
@@ -76,7 +76,7 @@ public class TemplateHelper
                                              String templateName,
                                              String type) {
 
-        ProfileManager pm = 
+        ProfileManager pm =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = null;
         if (userName != null) {
@@ -92,7 +92,7 @@ public class TemplateHelper
                 SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
             return (TemplateQuery) templates.get(templateName);
         } else if (ALL_TEMPLATE.equals(type)) {
-            TemplateQuery tq = findTemplate(servletContext, userName, 
+            TemplateQuery tq = findTemplate(servletContext, userName,
                                             templateName, GLOBAL_TEMPLATE);
             if (tq == null) {
                 return findTemplate(servletContext, userName, templateName, USER_TEMPLATE);
@@ -103,7 +103,7 @@ public class TemplateHelper
             throw new IllegalArgumentException("type: " + type);
         }
     }
-    
+
     /**
      * Create a new PathQuery with input submitted by user contained within
      * a TemplateForm bean.
@@ -114,7 +114,7 @@ public class TemplateHelper
      */
     public static PathQuery templateFormToQuery(TemplateForm tf, TemplateQuery template) {
         PathQuery queryCopy = (PathQuery) template.getQuery().clone();
-        
+
         // Step over nodes and their constraints in order, ammending our
         // PathQuery copy as we go
         int j = 0;
@@ -124,7 +124,7 @@ public class TemplateHelper
                 Constraint c = (Constraint) ci.next();
                 String key = "" + (j + 1);
                 PathNode nodeCopy = (PathNode) queryCopy.getNodes().get(node.getPath());
-                
+
                 if (tf.getUseBagConstraint(key)) {
                     // Replace constraint with bag constraint
                     ConstraintOp constraintOp = ConstraintOp.
@@ -138,7 +138,7 @@ public class TemplateHelper
                     String op = (String) tf.getAttributeOps(key);
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
                     Object constraintValue = tf.getParsedAttributeValues(key);
-                    
+
                     // In query copy, replace old constraint with new one
                     nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
                             new Constraint(constraintOp, constraintValue, false,
@@ -147,15 +147,15 @@ public class TemplateHelper
                 j++;
             }
         }
-        
+
         // Set the desired view list
         if (!StringUtils.isEmpty(tf.getView())) {
             queryCopy.setView(template.getQuery().getAlternativeView(tf.getView()));
         }
-        
+
         return queryCopy;
     }
-    
+
     /**
      * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
      * return a string containing each template seriaised as XML. The root element
@@ -169,7 +169,7 @@ public class TemplateHelper
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         Iterator iter = templates.values().iterator();
-        
+
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("template-list");
@@ -180,10 +180,10 @@ public class TemplateHelper
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-        
+
         return sw.toString();
     }
-    
+
     /**
      * Parse templates in XML format and return a map from template name to
      * TemplateQuery.
@@ -199,7 +199,7 @@ public class TemplateHelper
 
     /**
      * Build a template query given a TemplateBuildState and a PathQuery
-     * 
+     *
      * @param tbs the template build state
      * @param query the path query
      * @return a template query
@@ -214,7 +214,7 @@ public class TemplateHelper
 
 
     /**
-     * Try to fill the TemplateForm argument using the attribute values in the InterMineObject 
+     * Try to fill the TemplateForm argument using the attribute values in the InterMineObject
      * arg and return the number of form fields that aren't set afterwards.
      */
     private static int fillTemplateForm(TemplateQuery template, //String viewName,
@@ -225,17 +225,17 @@ public class TemplateHelper
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
 
         //templateForm.setView(viewName);
-        
+
         for (int constraintIndex = 0; constraintIndex < constraints.size(); constraintIndex++) {
             Constraint c = (Constraint) constraints.get(constraintIndex);
 
             String constraintIdentifier = c.getIdentifier();
             String[] bits = constraintIdentifier.split("\\.");
-            
+
             if (bits.length == 2) {
                 String className = model.getPackageName() + "." + bits[0];
                 String fieldName = bits[1];
-                
+
                 try {
                     Class testClass = Class.forName(className);
 
@@ -243,12 +243,12 @@ public class TemplateHelper
                         ClassDescriptor cd = model.getClassDescriptorByName(className);
                         if (cd.getFieldDescriptorByName(fieldName) != null) {
                             Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
-                            
+
                             if (fieldValue == null) {
                                 // this field is not a good constraint value
                                 continue;
                             }
-                            
+
                             unmatchedConstraintCount--;
 
                             templateForm.setAttributeOps("" + (constraintIndex + 1), equalsString);
@@ -259,14 +259,14 @@ public class TemplateHelper
                     LOG.error(e);
                 } catch (IllegalAccessException e) {
                     LOG.error(e);
-                }                
+                }
             }
         }
 
         return unmatchedConstraintCount;
     }
 
-    
+
     /**
      * Make and return an InlineTemplateTable for the given template and interMineObjectId.
      */
@@ -281,25 +281,25 @@ public class TemplateHelper
             // ignore templates that don't have an attributes only view
             return null;
         }*/
-        
-        int unconstrainedCount = 
+
+        int unconstrainedCount =
             fillTemplateForm(template, /*viewName,*/ object, templateForm, os.getModel());
         if (unconstrainedCount > 0) {
             return null;
         }
 
         templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
-        
-        PathQuery pathQuery = TemplateHelper.templateFormToQuery(templateForm, template);
+
+         PathQuery pathQuery = TemplateHelper.templateFormToQuery(templateForm, template);
         try {
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
-            Results results = os.execute(query);        
-            
+            Results results = os.execute(query);
+
             List columnNames = new ArrayList(pathQuery.getView());
             InlineTemplateTable itt =
                 new InlineTemplateTable(results, columnNames, webProperties);
             List viewNodes = pathQuery.getView();
-                    
+
             /*Iterator viewIter = viewNodes.iterator();
             while (viewIter.hasNext()) {
                 String path = (String) viewIter.next();
@@ -325,19 +325,28 @@ public class TemplateHelper
         //    LOG.error("error while getting inline template information", e);
         } catch (ObjectStoreException e) {
             LOG.error("error while getting inline template information", e);
+            throw new RuntimeException("error while getting inline template information", e);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ObjectStoreException) {
+                // special case: if there is an object store problem it's probably an
+                // ObjectStoreQueryDurationException - returning null will cause the template to
+                // be run again later when, hopefully, the genetic query optimiser will choose a
+                // better plan
+                return null;
+            }
         }
 
         return null;
     }
 
-    
+
     /**
      * The cache tag to use when looking for template tables in the cache.
      */
     public static final String TEMPLATE_TABLE_CACHE_TAG = "template_table_tag";
-    
+
     private static final String NO_USERNAME_STRING = "__NO_USER_NAME__";
-    
+
     /**
      * Register an ObjectCreator for creating inline template tables.
      * @param cache the InterMineCache
@@ -346,7 +355,7 @@ public class TemplateHelper
     public static void registerTemplateTableCreator(InterMineCache cache,
                                                     final ServletContext servletContext) {
         ObjectCreator templateTableCreator = new ObjectCreator() {
-            final ObjectStore os = 
+            final ObjectStore os =
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
             public Serializable create(String templateName, /*String viewName,*/
@@ -356,12 +365,12 @@ public class TemplateHelper
                     // findTemplate() that there is no current user
                     userName = null;
                 }
-                TemplateQuery template = 
-                    TemplateHelper.findTemplate(servletContext, userName, 
+                TemplateQuery template =
+                    TemplateHelper.findTemplate(servletContext, userName,
                                                 templateName, TemplateHelper.ALL_TEMPLATE);
 
                     if (template == null) {
-                        throw new IllegalStateException("Could not find template \"" 
+                        throw new IllegalStateException("Could not find template \""
                                                         + templateName + "\"");
                     }
 
@@ -374,7 +383,7 @@ public class TemplateHelper
                 return makeInlineTemplateTable(servletContext, template, /*viewName,*/ object);
             }
         };
-        
+
         cache.register(TEMPLATE_TABLE_CACHE_TAG, templateTableCreator);
     }
 
@@ -387,9 +396,9 @@ public class TemplateHelper
      * @param userName the user name
      * @return the InlineTemplateTable
      */
-    public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext, 
+    public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
                                                                  String templateName,
-                                                                 Integer interMineObjectId, 
+                                                                 Integer interMineObjectId,
                                                                  String userName) {
         if (userName == null) {
             // the ObjectCreator.create() method can't have a null argument, but null is the signal
