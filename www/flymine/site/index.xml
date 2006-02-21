@@ -9,7 +9,7 @@
       <para>FlyMine is an integrated database of genomic, expression and protein data for <emphasis>Drosophila</emphasis> and <emphasis>Anopheles</emphasis>. Integrating data makes it possible to run sophisticated data mining queries that span domains of biological knowledge. Use <highlights>aspect</highlights> icons below to to find out more about types of data in FlyMine and to start queries.  Use FlyMine to:
       </para>
       <para>
-        <highlights>Browse data -</highlights> Enter any identifier or symbol in the search box to the right to access rich summary pages and integrated tools.  [tutorial 1]
+        <highlights>Browse data -</highlights> Enter any identifier or symbol in the search box to the right to access summary pages and integrated tools.  [tutorial 1]
       </para>
       <para>
         <highlights>Run Template Queries -</highlights> A library of pre-defined ('template') queries that simply require filling in a form is available. Find lists of templates on each aspect page or using the Template Search box below.  [tutorial 2]
