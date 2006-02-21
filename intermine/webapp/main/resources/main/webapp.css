@@ -35,11 +35,18 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   margin: 3px;
 }
 
+#title h1 a
+{
+    text-decoration: none;
+}
+
 #header p
 {
   font-size: 1.1em;
   font-weight: normal;
-  margin: 3px;
+  color: black;
+  margin: 0;
+  margin-left: 2px;
 }
 
 #logo {
