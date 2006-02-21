@@ -11,7 +11,7 @@
   <c:if test="${!empty EXAMPLE_QUERIES}">
     <c:forEach items="${EXAMPLE_QUERIES}" var="exampleQuery" varStatus="status">
       <div class="exampleQuery">
-        <span class="title">
+        <span>
           <fmt:message key="exampleQuery.${exampleQuery.key}.description"/>
         </span>
         <fmt:message key="exampleQuery.${exampleQuery.key}.prefix" var="prefix"/>

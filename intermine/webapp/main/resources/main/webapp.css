@@ -80,7 +80,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   padding: 1px;
   padding-left: 5px;
   padding-right: 5px;
-  margin-top: 8px;
+  margin-top: 0px;
   margin-right: 8px;
   margin-left: 8px;
   margin-bottom: 4px;
@@ -89,9 +89,24 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap;
 }
 
+.boxTopRight {
+  float: right;
+}
+
+.box .title {
+  padding: 5px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  font-weight: bold;
+  background: #eee;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
+}
+
 .body {
   font-size: 12px;
-  margin-top: 9px;
+  margin-top: 10px;
   margin-right: 12px;
   margin-left: 12px;
   margin-bottom: 10px;
@@ -100,6 +115,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 .boxbody {
   background-color: white;
   border-bottom: 1px solid #888;
+  padding-top: 10px;
 }
 
 .altmessage {
@@ -107,16 +123,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   font-style: italic;
   text-align: center;
   color: #888;
-}
-
-table.box {
-  border: 0px solid #888;
-}
-
-table.box > tbody > tr > th {
-  background: #eee;
-  border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
 }
 
 table.history > tbody > tr > td {
@@ -135,14 +141,6 @@ table.history input {
   text-align: right;
   font-size: 11px;
   font-weight: normal;
-}
-
-table.box th.title {
-  padding: 5px;
-  text-align: left;
-  font-weight: normal;
-  font-size: 14px;
-  font-weight: bold;
 }
 
 .arrow {
@@ -481,7 +479,8 @@ hr.seperator {
 /* object details trail navigator styles */
 
 .objectTrail {
-  margin-bottom: 1px;
+//  margin-bottom: 1px;
+  font-weight: bold;
 }
 
 .objectTrailLink {

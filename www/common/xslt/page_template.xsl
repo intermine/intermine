@@ -35,12 +35,23 @@
             <link rel="alternate" type="application/rss+xml" href="{concat($basedir, '/', @file)}" title="News"/>
         </xsl:for-each>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <script type="text/javascript" src="{$basedir}/style/footer.js">;</script>
+        <script type="text/javascript" src="{$basedir}/style/site.js">;</script>
       </head>
       
       <body>
         
         <div id="header">
+          <div id="topright">
+            <span class="version">
+              Version <xsl:value-of select="$releaseversion"/>
+            </span>
+            <div class="contact">
+              <a href="mailto:info%5Bat%5Dflymine.org">info[at]flymine.org</a>
+            </div>
+            <div class="wellcome">
+              <xsl:apply-templates mode="copy-no-ns" select="$brand/funding/node()"/>
+            </div>
+          </div>
           <a href="{$basedir}/">
             <img src="{$basedir}/images/logo.png" border="0" id="logo">
               <xsl:attribute name="alt">
@@ -135,11 +146,6 @@
               </td>
             </tr>
           </table>
-        </div>
-
-        <div id="footer">
-          <div id="address"><a href="mailto:info%5Bat%5Dflymine.org">info[at]flymine.org</a> - Tel: +44 (0)1223 333377 - University of Cambridge - UK</div>
-          <div id="wellcome"><xsl:apply-templates mode="copy-no-ns" select="$brand/funding/node()"/></div>
         </div>
       </body>
     </html>

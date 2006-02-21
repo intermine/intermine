@@ -14,23 +14,9 @@
 </c:if>
 
 <c:if test="${!empty title || !empty topRightTile || !empty topLeftTile}">
-<div style="width:100%">
-  <table class="box" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
-    <tr>
-      <th class="title" align="left">
-        <c:if test="${empty title && !empty topLeftTile}">
-          <tiles:insert name="${topLeftTile}"/>
-        </c:if>
-        ${title}
-        <c:if test="${!empty helpUrl}">
-          <span class="help">
-          [<html:link href="${helpUrl}">
-            <fmt:message key="begin.link.help"/>
-          </html:link>]
-          </span>
-        </c:if>
-      </th>
-      <th class="help" align="right" nowrap="nowrap">
+  <div class="box">
+    <div class="title">
+      <div class="boxTopRight" float="right" nowrap="nowrap">
         <c:choose>
           <c:when test="${!empty topRightTile}">
             <tiles:insert name="${topRightTile}"/>
@@ -40,18 +26,28 @@
             <c:set scope="request" var="shownAspectsPopup" value="${true}"/>
           </c:when>
           <c:otherwise>
-              &nbsp;
+            &nbsp;
           </c:otherwise>
         </c:choose>
-      </th>
-    </tr>
-    <tr>
-      <td valign="top" align="left" colspan="2" class="boxbody">
-        <jsp:doBody/>
-      </td>
-    </tr>
-  </table>
-</div>
+      </div>
+      <div align="left">
+        <c:if test="${empty title && !empty topLeftTile}">
+          <tiles:insert name="${topLeftTile}"/>
+        </c:if>
+        ${title}
+        <c:if test="${!empty helpUrl}">
+          <span class="help">
+            [<html:link href="${helpUrl}">
+              <fmt:message key="begin.link.help"/>
+            </html:link>]
+          </span>
+        </c:if>
+      </div>
+    </div>
+    <div style="clear:both;" class="boxbody">
+      <jsp:doBody/>
+    </div>
+  </div>
 </c:if>
 
 <%-- or just process body if no title --%>
