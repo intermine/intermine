@@ -207,6 +207,7 @@ public class WriteGFFTask extends Task
             incrementCount(objectCounts, feature);
         }
 
+        // special case for t1dmine/stemcellmine
         if (!currentChr.getIdentifier().endsWith("_random")
             && !currentChr.getIdentifier().equals("M")
             && !currentChr.getOrganism().getAbbreviation().equals("MM")
@@ -390,10 +391,7 @@ public class WriteGFFTask extends Task
 
         List synonymValues = (List) synonymMap.get(bioEntity.getId());
 
-        if (synonymValues == null) {
-            LOG.warn("cannot find any synonyms for: " + bioEntity.getId() + " identifier: "
-                     + bioEntity.getIdentifier());
-        } else {
+        if (synonymValues != null) {
             Iterator synonymIter = synonymValues.iterator();
             while (synonymIter.hasNext()) {
                 String thisSynonymValue = (String) synonymIter.next();
