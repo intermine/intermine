@@ -11,9 +11,11 @@ package org.flymine.postprocess;
  */
 
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
@@ -334,7 +336,11 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        Set indexesToCreate = new HashSet();
+        indexesToCreate.add(qfObj);
+        indexesToCreate.add(qcLoc);
+        indexesToCreate.add(qcSub);
+        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate);
         Results res = new Results(q, os, os.getSequence());
 
         return res;
