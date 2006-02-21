@@ -36,7 +36,14 @@
           <li>
             <im:querylink text="FlyReg binding sites" skipBuilder="true">
               <query name="" model="genomic"
-                     view="TFBindingSite TFBindingSite.gene TFBindingSite.factor TFBindingSite.chromosomeLocation"/>
+                     view="TFBindingSite TFBindingSite.gene TFBindingSite.factor TFBindingSite.chromosomeLocation">
+                <node path="TFBindingSite.evidence" type="DataSet">
+                </node>
+                <node path="TFBindingSite.evidence.title" type="String">
+                  <constraint op="=" value="FlyReg data set">
+                  </constraint>
+                </node>
+              </query>
             </im:querylink>
           </li>
           <li>
@@ -44,10 +51,10 @@
               <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
                 <node path="TFBindingSite" type="TFBindingSite">
                 </node>
-                <node path="TFBindingSite.evidence" type="Database">
+                <node path="TFBindingSite.evidence" type="DataSet">
                 </node>
                 <node path="TFBindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyReg">
+                  <constraint op="=" value="FlyReg data set">
                   </constraint>
                 </node>
               </query>
@@ -58,10 +65,10 @@
               <query name="" model="genomic" view="BindingSite">
                 <node path="BindingSite" type="BindingSite">
                 </node>
-                <node path="BindingSite.evidence" type="Database">
+                <node path="BindingSite.evidence" type="DataSet">
                 </node>
                 <node path="BindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyBase">
+                  <constraint op="=" value="FlyBase Drosophila melanogaster data set">
                   </constraint>
                 </node>
               </query>
@@ -73,10 +80,10 @@
               <query name="" model="genomic" view="BindingSite.identifier BindingSite.length BindingSite.chromosome.identifier BindingSite.chromosomeLocation.start BindingSite.chromosomeLocation.end">
                 <node path="BindingSite" type="BindingSite">
                 </node>
-                <node path="BindingSite.evidence" type="Database">
+                <node path="BindingSite.evidence" type="DataSet">
                 </node>
                 <node path="BindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyBase">
+                  <constraint op="=" value="FlyBase Drosophila melanogaster data set">
                   </constraint>
                 </node>
               </query>
