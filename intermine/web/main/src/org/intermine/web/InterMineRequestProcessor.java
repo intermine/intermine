@@ -37,7 +37,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
 {
     private static final Logger LOG = Logger.getLogger(InterMineRequestProcessor.class);
     
-    private static final String LOGON_PATH = "/begin";
+    private static final String LOGON_PATH = "/login";
     private static final String LOGON_INIT_PATH = "/initBegin";
 
     /**
