@@ -4,7 +4,7 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    version='1.0'>
 
-  <xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/html/chunk.xsl"/>
+  <xsl:import href="/software/noarch/docbook-xsl/html/chunk.xsl"/>
 
   <xsl:include href="../../common/xslt/ulink.xsl"/>
   <xsl:include href="../../common/xslt/menu.xsl"/>
