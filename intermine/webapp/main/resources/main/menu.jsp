@@ -15,13 +15,6 @@
       <fmt:message key="menu.home"/>
     </html:link>
   </span>
-  <!--
-  <span class="menu-item">
-    <html:link action="/begin.do">
-      <fmt:message key="menu.newquery"/>
-    </html:link>
-  </span>
-  -->
   <span class="menu-item">
     <c:choose>
       <c:when test="${!empty QUERY}">
@@ -70,11 +63,9 @@
     </c:choose>
   </span>
   <span class="menu-item">
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/index.html">
+    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/">
       <fmt:message key="menu.help"/>
     </html:link>
   </span>
-  
 </div>
-
 <!-- /menu.jsp -->

@@ -8,7 +8,7 @@
 <html:xhtml/>
 
 <%-- Build a query --%>
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualClasschooser.html"/>
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualClasschooser.shtml"/>
 <im:box helpUrl="${helpUrl}"
         titleKey="begin.heading.build">
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -88,7 +88,7 @@
 
 
 <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartBrowsing.html"/>
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartBrowsing.shtml"/>
 <c:set var="browseTemplateName" value="${WEB_PROPERTIES['begin.browse.template']}"/>
 
 <c:if test="${!empty browseTemplateName && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
@@ -144,7 +144,7 @@
 
 
 <%--
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.html"/>
+<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.shtml"/>
 
 <c:if test="${!IS_SUPERUSER}">
   <im:vspacer height="12"/>

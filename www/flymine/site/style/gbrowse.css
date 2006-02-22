@@ -8,6 +8,10 @@
   background: white;
 }
 
+.links {
+  border-bottom: solid 1px #888; 
+}
+
 table td, table th {
   padding: 6px;
 }

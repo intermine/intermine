@@ -32,14 +32,14 @@
           </meta>
         </xsl:for-each>
         <xsl:for-each select="$brand/rss">
-            <link rel="alternate" type="application/rss+xml" href="{concat($basedir, '/', @file)}" title="News"/>
+          <link rel="alternate" type="application/rss+xml" href="{concat($basedir, '/', @file)}" title="News"/>
         </xsl:for-each>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        </meta>
         <script type="text/javascript" src="{$basedir}/style/site.js">;</script>
       </head>
       
       <body>
-        
         <div id="header">
           <div id="topright">
             <span class="version">
@@ -52,6 +52,7 @@
               <xsl:apply-templates mode="copy-no-ns" select="$brand/funding/node()"/>
             </div>
           </div>
+        
           <a href="{$basedir}/">
             <img src="{$basedir}/images/logo.png" border="0" id="logo">
               <xsl:attribute name="alt">
@@ -72,13 +73,7 @@
           <div class="clear-both">.</div>
         </div>
         
-        
         <div class="links">
-          <!--<c:if test="${!empty PROFILE.username}">
-            <span class="menu-logged-in-item">
-              ${PROFILE.username}
-            </span>
-          </c:if>-->
           <span class="menu-item">
             <a href="/">
               Home
@@ -124,11 +119,10 @@
             </script>
           </span>
           <span class="menu-item">
-            <a href="/doc/manual/index.html">
+            <a href="/doc/manual/">
               Help
             </a>
           </span>
-
         </div>
         
         <div id="pagecontent">

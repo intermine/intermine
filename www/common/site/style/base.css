@@ -8,12 +8,10 @@ body
 }
 
 a:link { color:#049; text-decoration:none }
-
 a:visited { color:#049; text-decoration:none }
-
-a:hover { color:#CF4D23; text-decoration:underline }
-
-a:active { color:#58e; text-decoration:none }
+a:link:hover { color:#CF4D23; text-decoration:underline }
+a:visited:hover { color:#CF4D23; text-decoration:underline }
+a:link:active { color:#58e; text-decoration:none }
 
 .openoffice
 {
@@ -80,8 +78,8 @@ span.organism-name
   height: 0px;
 }
 
-
 .links {
+  clear: both;
   background-color: #fff;
   padding: 3px;
   border-top: 1px solid #888;

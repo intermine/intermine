@@ -2921,7 +2921,7 @@
     <copy todir="${build.tmp}" file="${build.model}/genomic/objectstoresummary.properties"/>
 
     <filter token="SITE_PREFIX" value="${www.location}"/>
-    <filter token="HELP_LOCATION" value="${www.help.location}"/>
+    <filter token="HELP_LOCATION" value="${project.helpLocation}"/>
     <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
     <filter token="RELEASE_VERSION" value="${release.version}"/>
     <filter token="CACHE_DIR" value="${webapp.cachedir}"/>
@@ -3108,20 +3108,21 @@
           description="copy the FlyMine/GBrowse configuration file to the gbrowse.conf directory">
     <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX"
             value="${webapp.baseurl}/${webapp.path}/${webapp.viewByID.prefix}"/>
-    <filter token="FLYMINE_SITE_PREFIX"
-            value="${www.location}"/>
-    <filter token="FLYMINE_GBROWSE_DATABASE"
-            value="${gbrowse.database}"/>
-    <filter token="FLYMINE_GBROWSE_DATABASE_HOST"
-            value="${gbrowse.database.host}"/>
-    <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR"
-            value="${gbrowse.database.adaptor}"/>
-    <filter token="FLYMINE_GBROWSE_DATABASE_USER"
-            value="${gbrowse.database.user}"/>
-    <filter token="FLYMINE_GBROWSE_DATABASE_PASSWORD"
-            value="${gbrowse.database.password}"/>
-    <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR"
-            value="${gbrowse.database.adaptor}"/>
+    <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}/${webapp.path}"/>
+    <filter token="FLYMINE_SITE_PREFIX" value="${project.sitePrefix}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE" value="${gbrowse.database}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_HOST" value="${gbrowse.database.host}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR" value="${gbrowse.database.adaptor}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_USER" value="${gbrowse.database.user}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_PASSWORD" value="${gbrowse.database.password}"/>
+    <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR" value="${gbrowse.database.adaptor}"/>
+    <filter token="PROJECT_TITLE" value="FlyMine"/>
+    <filter token="PROJECT_VERSION" value="${project.releaseVersion}"/>
+    <filter token="PROJECT_SUBTITLE" 
+            value="An integrated database for &lt;I&gt;Drosophila&lt;/I&gt; and &lt;I&gt;Anopheles&lt;/I&gt; genomics"/>
+    <filter token="PROJECT_FUNDED_BY" value="${project.funded.by}"/>
+    <filter token="PROJECT_CONTACT" value="${project.contact}"/>
+
     <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
           toFile="${build.gbrowse}/${gbrowse.database.source}.conf"
           filtering="true" overwrite="true"/>
