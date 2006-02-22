@@ -11,78 +11,46 @@
         <emphasis>Drosophila</emphasis>, <emphasis>Anopheles</emphasis> and
         <emphasis>C. elegans</emphasis>.
         Integrating data makes it possible to run sophisticated data mining queries
-        that span domains of biological knowledge. Use FlyMine to:
+        that span domains of biological knowledge.
       </para>
       
       <para>
-        <highlights>Browse data -</highlights> Browse by aspect using the icons below or
-        enter any identifier or symbol
-        in the search box to the right to access summary pages and integrated
-        tools. <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>
-      </para>
-      <para>
-        <highlights>Run Template Queries -</highlights> A library of pre-defined
-        ('template') queries that simply require filling in a form is available.
-        Find lists of templates on each aspect page or use the Template Search
-        box below. <ulink url="doc/tutorials/templates.xml">Tutorial 2</ulink>
-      </para>
-      <para>
-        <highlights>Operate on lists -</highlights> All queries in FlyMine can be
-        performed on lists (or '<highlights>bags</highlights>').  For example, any
-        query that operates on a single gene could be done on a list of gene identifiers
-        you create yourself. <ulink url="doc/tutorials/objectDetails.xml">Tutorial 3</ulink>
-      </para>
-      <para>
-        <highlights>Design your own query -</highlights> Advanced users can use a 
-        flexible query interface to construct their own data mining queries or modify
-        existing template queries. Start a query by choosing a class on an aspect page,
-        <ulink url="/tree.do">browsing the model</ulink> or
-        <ulink url="/classChooser.do">viewing a list of all classes</ulink>.
-        You can save queries for future use and create your
-        own templates by <ulink url="/login.do">creating an account</ulink>.
-        See the <ulink url="doc/manual/index.xml">user manual</ulink> and
-        <ulink url="doc/tutorials/index.xml">tutorials</ulink> for more information.
-      </para>
-      <!--
-      <para>
-        Full <ulink url="doc/index.xml">user documentation</ulink> is available. 
-        For further information about FlyMine please consult the more detailed
-        <ulink url="introduction.xml">introduction</ulink>.
+        <ulink url="what.xml">What can I do with FlyMine?</ulink>
       </para>
       
-      <para>
-        <ulink url="/begin.do">Start a query</ulink> using FlyMine.
-        See <ulink url="doc/manual/quickStartGuide.xml">quick start guide</ulink>
-        for more details.
-      </para>
-      -->
     </section>
   
   
 
   </column>
-  
+
   <column width="39%">
     
     <section>
       <title>
         Browse by identifier
       </title>
-      <para>Search for genes, proteins or any other annotation [help].</para>
+      <para>Search for genes, proteins or any other annotation.
+        <ulink url="doc/tutorials/quickSearch.xml">Help.</ulink></para>
       <para>
         <ssi-include page="browse.tile"/>
       </para>
     </section>
+
+<!--
     
     <section>
       <title>
         FlyMine News:
       </title>
-        <news id="news" limit="3"/> <!-- Source now defined in branding -->
+        <news id="news" limit="3"/>
         <ulink url="news.xml">All news...</ulink>
     </section>
+  -->
 
   </column>
+
+  
 
   <section clear="both">
     <title>
@@ -107,10 +75,10 @@
     <title>
       Template search
     </title>
-    <para>Templates are pre-defined queries that simply require filling in a form.  Find relevant templates on each of the aspects above or use the search box.  Example: enter 'orthologues GO'</para>
     <para>
       <template-search/>
     </para>
+    <ulink url="/templates.do">View all templates...</ulink>
   </section>
   
   

@@ -1,0 +1,52 @@
+<?xml version="1.0" standalone="yes" ?> 
+<article>
+  <section>
+    <title>What can I do with FlyMine?</title>
+     
+    <verbatim><h3>Browse data</h3></verbatim>
+    <para>
+      Enter any identifier or symbol
+      in the search box to access summary pages and integrated
+      tools. <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>
+    </para>
+        
+    <verbatim><h3>Browse aspects</h3></verbatim>
+    <para>
+      Use the aspect icons below to find the
+      types of data in FlyMine and to start queries.
+    </para>
+
+    <verbatim><h3>Run Template Queries</h3></verbatim>
+    <para>
+      Find lists of predefined template queries on each aspect page or use
+      the Template Search box below.
+      <ulink url="doc/tutorials/templates.xml">Tutorial 2</ulink>
+    </para>
+
+    <verbatim><h3>Operate on lists</h3></verbatim>
+    <para>
+      All queries in FlyMine can be
+      performed on lists (or '<emphasis>bags</emphasis>') that you create yourself.
+    </para>
+
+    <verbatim><h3>Design your own query</h3></verbatim>
+    <para>
+      Advanced users can use a 
+      flexible query interface to construct their own data mining queries or modify
+      existing template queries. Start a query by choosing a class on an aspect page,
+      <ulink url="/tree.do">browsing the model</ulink> or
+      <ulink url="/classChooser.do">viewing a list of all classes</ulink>.
+    </para>
+
+    <verbatim><h3>Save queries</h3></verbatim>
+    <para>
+      Save your queries and
+      templates by <ulink url="/login.do">creating an account</ulink>.
+      See the <ulink url="doc/manual/index.xml">user manual</ulink> and
+      <ulink url="doc/tutorials/index.xml">tutorials</ulink> for more information.
+    </para>
+    
+  </section>
+  
+</article>
+

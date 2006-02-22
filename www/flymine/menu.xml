@@ -4,7 +4,6 @@
     <item url="/index.xml" title="Home"/>
     <item url="/news.xml" title="News"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
-    <item url="/contact/index.xml" title="Contact"/>
   </item>
 
   <item title="Previous Releases">
@@ -31,6 +30,7 @@
     <item url="/project/team.xml" title="Team"/>
     <item url="/project/funding.xml" title="Funding"/>
     <item url="/project/jobs.xml" title="Jobs"/>
+    <item url="/contact/index.xml" title="Contact"/>
   </item>
   
   <item title="Related Projects">
