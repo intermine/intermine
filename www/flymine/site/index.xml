@@ -6,19 +6,44 @@
         Introduction
       </title>
       
-      <para>FlyMine is an integrated database of genomic, expression and protein data for <emphasis>Drosophila</emphasis> and <emphasis>Anopheles</emphasis>. Integrating data makes it possible to run sophisticated data mining queries that span domains of biological knowledge. Use <highlights>aspect</highlights> icons below to to find out more about types of data in FlyMine and to start queries.  Use FlyMine to:
+      <para>
+        FlyMine is an integrated database of genomic, expression and protein data for
+        <emphasis>Drosophila</emphasis>, <emphasis>Anopheles</emphasis> and
+        <emphasis>C. elegans</emphasis>.
+        Integrating data makes it possible to run sophisticated data mining queries
+        that span domains of biological knowledge. Use <highlights>aspect</highlights>
+        icons below to to find out more about types of data in FlyMine and to start
+        queries. Use FlyMine to:
+      </para>
+      
+      <para>
+        <highlights>Browse data -</highlights> Browse by aspect using the icons below or
+        enter any identifier or symbol
+        in the search box to the right to access summary pages and integrated
+        tools. <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>
       </para>
       <para>
-        <highlights>Browse data -</highlights> Enter any identifier or symbol in the search box to the right to access summary pages and integrated tools.  [tutorial 1]
+        <highlights>Run Template Queries -</highlights> A library of pre-defined
+        ('template') queries that simply require filling in a form is available.
+        Find lists of templates on each aspect page or use the Template Search
+        box below. <ulink url="doc/tutorials/templates.xml">Tutorial 2</ulink>
       </para>
       <para>
-        <highlights>Run Template Queries -</highlights> A library of pre-defined ('template') queries that simply require filling in a form is available. Find lists of templates on each aspect page or using the Template Search box below.  [tutorial 2]
+        <highlights>Operate on lists -</highlights> All queries in FlyMine can be
+        performed on lists (or '<highlights>bags</highlights>').  For example, any
+        query that operates on a single gene could be done on a list of gene identifiers
+        you create yourself. <ulink url="doc/tutorials/objectDetails.xml">Tutorial 3</ulink>
       </para>
       <para>
-        <highlights>Operate on lists -</highlights> All queries in FlyMine can be performed on lists (or '<highlights>bags</highlights>').  For example, any query that operates on a single gene could use a list of gene identifiers you create yourself. [tutorial 3]
-      </para>
-      <para>
-        <highlights>Design your own query -</highlights> Advanced users can use a flexible query interface to construct their own data mining queries or modify existing template queries. You can save queries for future use and create your own templates. See the [user manual] and [tutorials] for more information.
+        <highlights>Design your own query -</highlights> Advanced users can use a 
+        flexible query interface to construct their own data mining queries or modify
+        existing template queries. Start a query by choosing a class on an aspect page,
+        <ulink url="/tree.do">browsing the model</ulink> or
+        <ulink url="/classChooser.do">viewing a list of all classes</ulink>.
+        You can save queries for future use and create your
+        own templates by <ulink url="/login.do">creating an account</ulink>.
+        See the <ulink url="doc/manual/index.xml">user manual</ulink> and
+        <ulink url="doc/tutorials/index.xml">tutorials</ulink> for more information.
       </para>
       <!--
       <para>
