@@ -7,44 +7,31 @@
   </articleinfo>
 
   <section>
-    <title>Download</title>
-
-    <itemizedlist>
-      <listitem>
-        <para><ulink url="http://download.flymine.org/releases/">Latest
-        release</ulink></para>
-      </listitem>
-
-      <listitem>
-        <para><ulink url="http://download.flymine.org/nightly/">Nightly
-        build</ulink></para>
-      </listitem>
-    </itemizedlist>
-  </section>
-
-  <section>
     <title>Subversion access</title>
 
-    <itemizedlist>
-      <listitem>
-        <para><ulink url="http://subversion.flymine.org">Browse the source</ulink></para>
-      </listitem>
+    <para>
+      All FlyMine source code is available via our read-only public
+      <ulink url="http://subversion.tigris.org/">subversion</ulink> server. If you don't
+      have a subversion client on your computer, you can
+      <ulink url="http://subversion.tigris.org/project_packages.html">download one</ulink>.
+    </para>
 
-      <listitem>
-        <para>Download via SVN (read-only):</para>
+    <para>
+      The URL for our subversion server is <command>svn://subversion.flymine.org</command>. To check
+      out the absolute latest (development) FlyMine/InterMine code you would use the
+      command <command>svn co svn://subversion.flymine.org/trunk</command>.
+    </para>
+    
+    <para>
+      To download previous releases, download a particular branch. Release branches are named
+      'flymine_release_X_X_branch' where X_X is the release version. For example, to check out source
+      code for release 3.1, run the command
+      <command>svn co svn://subversion.flymine.org/branches/flymine_release_3_1_branch/</command>.
+    </para>
+    
+    <para>
+      You can browse available branches <ulink url="http://subversion.flymine.org/branches/">here</ulink>.
+    </para>
 
-        <itemizedlist>
-          <listitem>
-            <para><command>cd</command> to the directory into which you intend
-            to check out the source.</para>
-          </listitem>
-
-          <listitem>
-            <para>Then type <command>svn co svn://subversion.flymine.org/trunk
-            </command></para>
-          </listitem>
-        </itemizedlist>
-      </listitem>
-    </itemizedlist>
   </section>
 </article>
