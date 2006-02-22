@@ -12,7 +12,7 @@
   
     <p>
       <fmt:message key="history.savedtemplates.help"/>
-      <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.html"/>
+      <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.shtml"/>
       [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
     </p>
     

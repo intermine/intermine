@@ -3,7 +3,7 @@ body
     background: #F5F0FF;
 }
 
-a 
+a:link
 {
     color: #00e;
 }

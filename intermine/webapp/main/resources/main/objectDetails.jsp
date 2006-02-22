@@ -86,7 +86,7 @@ Event.observe(window, 'load', loadInlineTemplates, false);
 </script>
 
 <c:set var="helpUrl"
-       value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.html"/>
+       value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.shtml"/>
 
 <%-- figure out whether we should show templates or not --%>
 <c:set var="showTemplatesFlag" value="false"/>

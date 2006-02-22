@@ -46,19 +46,12 @@
     <copy todir="${build.www}/doc">
       <fileset dir="${src.doc}">
         <include name="**/*"/>
-        <exclude name="manual/webapp_manual_params.xsl"/>
       </fileset>
     </copy>
 
-    <filter token="BASEDIR" value="${www.location}"/>
-    <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}/${webapp.path}"/>
-    <filter token="OUTPUT_EXTENSION" value="${output.extension}"/>
-    <filter token="BRANDING" value="${branding}"/>
-    <filter token="SOURCEREF" value="${build.www}"/>
-
-    <copy todir="${build.www}/tmp" filtering="true">
-      <fileset dir="xslt">
-        <include name="webapp_manual_params.xsl"/>
+    <copy todir="${build.www}" filtering="true">
+      <fileset dir="${xslt}">
+        <include name="**/*"/>
       </fileset>
     </copy>
 
@@ -86,7 +79,7 @@
            force="false">
       <exclude name="doc/manual/webapp_manual.xml"/>
       <param name="branding" expression="${branding}" />
-      <param name="basedir" expression="${www.location}" />
+      <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
       <param name="releaseversion" expression="${project.releaseVersion}"/>
       <param name="webapppath" expression="${webapp.path}"/>
@@ -218,9 +211,26 @@
   </target>
 
   <target name="webapp-manual-html" depends="prepare">
-    <antcall target="webapp-manual-process">
-      <param name="output.type" value="xhtml"/>
-    </antcall>
+    <xslt basedir="${dist.www}/doc/manual/"
+          in="${build.www}/doc/manual/webapp_manual.xml"
+          out="${dist.www}/doc/manual/webapp_manual.log"
+          style="xslt/webapp_manual.xsl"
+          force="false">
+      <param name="branding" expression="${branding}" />
+      <param name="basedir" expression="${project.sitePrefix}" />
+      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="releaseversion" expression="${project.releaseVersion}"/>
+      <param name="webapppath" expression="${webapp.path}"/>
+      <param name="outputext" expression="${output.extension}" />
+      
+      <!-- This sets the extension for HTML files to ".html".     -->
+      <param name="html.ext" expression=".shtml"/>
+
+      <!-- This sets the filename based on the ID.                -->
+      <param name="use.id.as.filename" expression="1"/>
+
+      <param name="css.decoration" expression="0"/>
+    </xslt>
   </target>
 
   <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
@@ -229,7 +239,7 @@
     <style basedir="${build.www}/doc/manual"
            in="${build.www}/doc/manual/webapp_manual.xml"
            out="${build.www}/doc/manual/webapp_manual.fo"
-           style="/software/noarch/docbook-xsl/fo/docbook.xsl"
+           style="xslt/webapp_manual.xsl"
            force="false">
       <param name="paper.type" expression="A4" />
       <param name="fop.extensions" expression="1" />

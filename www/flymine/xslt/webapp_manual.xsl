@@ -4,14 +4,11 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    version='1.0'>
 
-  <xsl:import href="../../common/xslt/ulink.xsl"/>
-  <xsl:import href="../../common/xslt/menu.xsl"/>
-  <xsl:import href="../../common/xslt/page_template.xsl"/>
+  <xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/html/chunk.xsl"/>
 
-  <xsl:param name="outputext"/>
-  <xsl:param name="basedir"/>
-  <xsl:param name="branding"/>
-  <xsl:param name="webappprefix"/>
+  <xsl:include href="../../common/xslt/ulink.xsl"/>
+  <xsl:include href="../../common/xslt/menu.xsl"/>
+  <xsl:include href="../../common/xslt/page_template.xsl"/>
 
   <!-- copied so that we can add header, sidebar and pagecontent DIVs -->
   <xsl:template name="chunk-element-content">
@@ -31,17 +28,92 @@
       </xsl:call-template>
 
       <body>
+        <script type="text/javascript" src="{$basedir}/style/site.js">;</script>
         <div id="header">
-          <h1>
-            <a href="{$basedir}">
-              <xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/>
-            </a>
-          </h1>
-          <p>
-            <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
-          </p>
+          <div id="topright">
+            <span class="version">
+              Version <xsl:value-of select="$releaseversion"/>
+            </span>
+            <div class="contact">
+              <a href="mailto:info%5Bat%5Dflymine.org">info[at]flymine.org</a>
+            </div>
+            <div class="wellcome">
+              <xsl:apply-templates mode="copy-no-ns" select="$brand/funding/node()"/>
+            </div>
+          </div>
+        
+          <a href="{$basedir}/">
+            <img src="{$basedir}/images/logo.png" border="0" id="logo">
+              <xsl:attribute name="alt">
+                <xsl:value-of select="$brand/title"/>
+              </xsl:attribute>
+            </img>
+          </a>
+          <div id="title">
+            <h1>
+              <a href="{$basedir}/">
+                <xsl:apply-templates mode="copy-no-ns" select="$brand/title/node()"/>
+              </a>
+            </h1>
+            <p>
+              <xsl:apply-templates mode="copy-no-ns" select="$brand/headline/node()"/>
+            </p>
+          </div>
+          <div class="clear-both">.</div>
         </div>
 
+        <div class="links">
+          <span class="menu-item">
+            <a href="/">
+              Home
+            </a>
+          </span>
+          <span class="menu-item">
+            <script type="text/javascript">
+              if (readCookie('have-query-<xsl:value-of select="$releaseversion"/>') == 'true') {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/query.do')"/>', 'Current query'));
+              } else {
+                document.write('Current query');
+              }
+            </script>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/history.do')}">
+              History
+            </a>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/examples.do')}">
+              Examples
+            </a>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/templateSearch.do')}">
+              Search templates
+            </a>
+            <img src="/query/images/inspect.gif" width="12" height="11" alt="-&gt;"/>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/feedback.do')}">
+              Feedback form
+            </a>
+          </span>
+          <span class="menu-item">
+            <script type="text/javascript">
+              if (readCookie('logged-in-<xsl:value-of select="$releaseversion"/>') == 'true') {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/logout.do')"/>', 'Log out'));
+              } else {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/login.do')"/>', 'Log in'));
+              }
+            </script>
+          </span>
+          <span class="menu-item">
+            <a href="/doc/manual/">
+              Help
+            </a>
+          </span>
+        </div>
+        
         <div id="pagecontent">
           <table id="static-table" width="100%" cellpadding="0" >
             <tr>
