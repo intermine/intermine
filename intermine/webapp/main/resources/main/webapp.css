@@ -783,6 +783,10 @@ div.templateLine {
   margin-bottom: 5px;
   margin-top: 5px;
   padding-left: 3px;
+
+  /* needed to prevent the peekaboo bug on IE:
+     http://www.positioniseverything.net/explorer/peekaboo.html */
+  height: 0.01%;
 }
 
 div.templateIcon {
