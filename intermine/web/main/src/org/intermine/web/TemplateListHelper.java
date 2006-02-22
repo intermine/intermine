@@ -86,9 +86,13 @@ public class TemplateListHelper
      * @return Set of TemplateQuerys
      */
     public static List getAspectTemplateForClass(String aspect,
-                                                ServletContext context,
-                                                InterMineObject object,
-                                                Map fieldExprsOut) {
+                                                 ServletContext context,
+                                                 InterMineObject object,
+                                                 Map fieldExprsOut) {
+        if (aspect.startsWith("aspect:")) {
+            aspect = aspect.substring(7).trim();
+        }
+            
         List templates = new ArrayList();
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         List all = getAspectTemplates(aspect, context);
