@@ -58,6 +58,17 @@ xmlns="http://www.w3.org/1999/xhtml">
 
 <!-- ******* -->
 
+<xsl:template mode="copy-no-ns" match="*">
+   <xsl:element name="{name(.)}">
+       <xsl:copy-of select="@*"/>
+       <xsl:apply-templates mode="copy-no-ns"/>
+   </xsl:element>
+</xsl:template>
+
+<xsl:template match="verbatim">
+   <xsl:apply-templates mode="copy-no-ns"/>
+</xsl:template>
+
 <xsl:template match="article">
 <div class="docbook-page">
 <xsl:apply-templates/>
@@ -289,6 +300,10 @@ xmlns="http://www.w3.org/1999/xhtml">
 
 <xsl:template match="highlights">
 <b><xsl:apply-templates/></b>
+</xsl:template>
+
+<xsl:template match="subtitle">
+<h3><xsl:apply-templates/></h3>
 </xsl:template>
 
 <xsl:template match="filename">

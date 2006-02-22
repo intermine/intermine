@@ -18,7 +18,7 @@
     <table>
       <title></title>
 
-      <tgroup cols="4">
+      <tgroup cols="2">
         <tbody>
           <row>
             <entry><ulink url="http://www.wellcome.ac.uk"> <inlinemediaobject>
@@ -32,7 +32,8 @@
                   <imagedata fileref="../images/bbsrc.gif" />
                 </imageobject>
               </inlinemediaobject> </ulink></entry>
-
+            </row>
+            <row>
             <entry><ulink url="http://www.trin.cam.ac.uk"> <inlinemediaobject>
                 <imageobject>
                   <imagedata fileref="../images/trinity.gif" />

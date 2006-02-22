@@ -14,7 +14,7 @@
         <input type="submit" value="Search" />
         <br/>
         <p class="smallnote">
-           Enter a keyword to find template queries relating to a certain type of data. Select 'Public templates' to search pre-defined templates, 'My templates' to search templates you have created yourself or Everything to search all templates.
+           Enter a keyword to find pre-defined template queries relating to a certain type of data. Select 'Public templates' to search pre-defined templates, 'My templates' to search templates you have created yourself or Everything to search all templates.
         </p>
       </form>
   </xsl:template>
