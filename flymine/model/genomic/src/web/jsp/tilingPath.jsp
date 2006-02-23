@@ -13,7 +13,7 @@
         <dl>
           <dt><i>D. melanogaster</i></dt>
           <dd>
-            Whole genome tiling path primers for ChIP-Chip experiments
+            Whole genome tiling path primers for ChIP-chip experiments
             in <i>D. melanogaster</i>.  The primers were designed to PCR-amplify 1000-1200
             bp overlapping fragments of the release 4.0 genome excluding the transposable
             elements.  The amplimers were designed in such a way that a subset of
@@ -22,7 +22,7 @@
           </dd>
         </dl>
         <p>
-          These Flymine GBrowse view show the relationship between spans, PCR
+          These Flymine GBrowse views show the relationship between spans, PCR
           products and primers.  The PCR products that overlap a promoter
           region are highlighted:
         </p>
@@ -33,6 +33,9 @@
         <div style="margin-left: 20px">
           <img style="border: 1px solid black" src="model/tiling_path_screen_shot_zoom.png"/>
         </div>
+        <p>
+          The purpose of designing the tiling array in this way was to allow the "promoter" amplimers to be organised into separate plates to allow the printing of "promoter" only arrays.  In order to satisfy the need for these promoter amplimers and to attempt to cover the genome optimally, the genome was divided into "tiling path spans".  All spans started or ended with a gene translation start site (ATGs) and/or the start or end of transposons.   Spans covering transposons were excluded.  Each span was then treated as a separate design problem and the terminal amplimer of a span adjacent to a gene start was chosen to be a "promoter" amplimer.  Amplimers were typically in the size range 800-1300bp so "promoter" amplimers cover approximately 1kb upstream of the translation start.  Tiling spans as such are probably not of great interest in their own right as they can include zero, one or two genes depending on relative orientation but are useful in order to understand the relationship between amplimers.
+        </p>
       </div>
     </td>
     <td valign="top" width="40%">

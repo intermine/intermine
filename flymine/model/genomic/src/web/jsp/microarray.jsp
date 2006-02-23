@@ -33,8 +33,4 @@ Identification of genes regulated by synaptic transmission in embryos.
 <DD>
 Identification of changes in gene expression due to Wolbachia infection.
 </DD>
-<P>
-<HR>
-<img src="images/soon.gif"/> We plan to add further microarray experiments from ArrayExpress and other sources.  Discretisation of data will make it simple to query for over/under expression.  We will also add improved tools for graphing and comparing results. 
-<P>
 </div>
