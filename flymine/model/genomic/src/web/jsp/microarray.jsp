@@ -3,32 +3,38 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <div class="heading2">
-Current Data
+Current data
 </div>
 <div class="body">
-<p>The following gene expression experiments were downloaded from <A HREF="http://www.ebi.ac.uk/arrayexpress">ArrayExpress</A>:
+<p>The following gene expression experiments were imported from <A HREF="http://www.ebi.ac.uk/arrayexpress">ArrayExpress</A> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12519949">PubMed: 12519949</A>):
 </p>
-<B><I>D. melanogaster:</I></B>
-<DL>
-<DT>Whitfield W:</DT>
+
+<B>Gene Expression Durng the Life Cycle of <i>Drosophila melanogaster</i> - Arebeitman et al, 2002</B> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791">PubMed: 12351791</A>).  ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
+<p>
+Arbeitman et al, 2002 reported gene expression patterns for nearly one third of all <i>Drosophila</i> genes during a complete time course of development.  Graphs are displayed on summary pages for each gene involved in the experiment showing Log 2 exression ratio for 67 time points across life stages.  For more infomation refer to the <a href="http://genome.med.yale.edu/Lifecycle/">White Lab</a> page at Yale.
+<P>
+<i>An example graph showing expression of the gene 'big brain'.</i>
+<BR>
+<img style="border: 1px solid black" src="model/big_brain_expression.png"/>
+
+<P>
+
+In addition, we have imported three experiments that were performed in the <a href="http://www.flychip.org.uk/">FlyChip</a> facility and submitted to ArrayExpress.
+<BR> 
+<DT><B>Whitfield W:</B> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-1">E-FLYC-1</a></DT>
 <DD>
 Identification of aberrant gene expression in the presence of mutant CP190 protein.
 </DD>
-<DT>Bate M:</DT>
+<DT><B>Bate M:</B> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-2">E-FLYC-2</a></DT>
 <DD>
 Identification of genes regulated by synaptic transmission in embryos.
 </DD>
-<DT>Papafotiou G:</DT>
+<DT><B>Papafotiou G:</B> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-3">E-FLYC-3</a></DT>
 <DD>
 Identification of changes in gene expression due to Wolbachia infection.
 </DD>
-<DT>Roberts I:</DT>
-<DD>
-Comparison the transcriptional profile of 3 cell lines: S2, Kc and S3.
-</DD>
-<DT>White-Cooper H:</DT>
-<DD>
-Identification of genes regulated by the meiotic arrest genes: aly, can, zaa and zab.
-</DD>
-</DL>
+<P>
+<HR>
+<img src="images/soon.gif"/> We plan to add further microarray experiments from ArrayExpress and other sources.  Discretisation of data will make it simple to query for over/under expression.  We will also add improved tools for graphing and comparing results. 
+<P>
 </div>
