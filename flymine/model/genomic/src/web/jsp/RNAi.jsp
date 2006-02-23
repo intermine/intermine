@@ -7,12 +7,12 @@
   <TR>
     <TD valign="top">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <p>
-          Currently FlyMine has RNAi phenotype data only for C. elegans but we hope to
-          add Drosophila data soon.
+          Currently FlyMine has RNAi phenotype data only for <I>C. elegans</I> but we hope to
+          add <i>Drosophila</i> data soon.
         </p>
         <p>
           Phenotypes resulting from the following RNAi experiments have been loaded:
@@ -25,25 +25,25 @@
             Kamath et al (2003) Nature 421 231-237 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12529635">PubMed: 12529635</A>).
           </DT>
           <DD>
-            Systematic functional analysis of the Caenorhabditis elegans genome using RNAi.
+            Systematic functional analysis of the <I>Caenorhabditis elegans</I> genome using RNAi.
           </DD>
           <DT>
             Fraser et al (2000) Nature 408 325-330 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=11099033">PubMed: 11099033</A>).
           </DT>
           <DD>
-            Functional genomic analysis of C. elegans chromosome 1 by systematic RNA interference.
+            Functional genomic analysis of <I>C. elegans</I> chromosome 1 by systematic RNA interference.
           </DD>
           <DT>
             Simmer et al (2003) Plos Biology 1 77-84  (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14551910">PubMed: 14551910</A>).
           </DT>
           <DD>
-            Genome-wide RNAi of C. elegans using the hypersensitive rrf-3 strain reveals novel gene functions.
+            Genome-wide RNAi of <I>C. elegans</I> using the hypersensitive rrf-3 strain reveals novel gene functions.
           </DD>
         </DL>
       </div>
       <TD width="30%" valign="top">
         <div class="heading2">
-          Datasets
+          Explore data sets
         </div>
         <div class="body">
           

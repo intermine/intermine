@@ -7,7 +7,7 @@
   <TR>
     <TD valign="top">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <p>
@@ -26,12 +26,12 @@
 
     <TD width="45%" valign="top">
       <div class="heading2">
-        Datasets
+       Explore data sets
       </div>
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="Orthologues: D. melanogaster vs A. gambiae (browse)" skipBuilder="true">
+            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>A. gambiae</i> (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Orthologue.object Orthologue.subjectTranslation.gene Orthologue">
                 <node path="Orthologue" type="Orthologue">
                 </node>
@@ -55,9 +55,9 @@
             </im:querylink>
           </li> 
           <li>
-            <im:querylink text="D. melanogaster gene identifiers and the
+            <im:querylink text="<i>D. melanogaster</i> gene identifiers and the
                                 identifiers of predicted orthologues in
-                                A. gambiae (for export/download)" skipBuilder="true">
+                                <i>A. gambiae</i> (for export/download)" skipBuilder="true">
               <query name="" model="genomic"
                      view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subjectTranslation.gene.identifier Orthologue.subjectTranslation.gene.symbol">
                 <node path="Orthologue" type="Orthologue">
@@ -84,7 +84,7 @@
         </ul>
         <ul>
           <li>
-            <im:querylink text="Orthologues: D. melanogaster vs C. elegans (browse)" skipBuilder="true">
+            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>C. elegans</i> (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Orthologue.object Orthologue.subject Orthologue">
                 <node path="Orthologue" type="Orthologue">
                 </node>
@@ -108,9 +108,9 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="D. melanogaster gene identifiers and the
+            <im:querylink text="<i>D. melanogaster</i> gene identifiers and the
                                 identifiers of predicted orthologues in
-                                C. elegans (for export/download)" skipBuilder="true">
+                                <i>C. elegans</i> (for export/download)" skipBuilder="true">
               <query name="" model="genomic" 
                      view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol">
                 <node path="Orthologue" type="Orthologue">
@@ -137,7 +137,7 @@
         </ul>
         <ul>
           <li>
-            <im:querylink text="Orthologues: A. gambiae vs C. elegans (browse)" skipBuilder="true">
+            <im:querylink text="Orthologues: <i>A. gambiae</i> vs <i>C. elegans</i> (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Orthologue.object Orthologue.subjectTranslation.gene Orthologue">
                 <node path="Orthologue" type="Orthologue">
                 </node>
@@ -161,9 +161,9 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="A. gambiae gene identifiers and the
+            <im:querylink text="<i>A. gambiae</i> gene identifiers and the
                                 identifiers of predicted orthologues in
-                                C. elegans (for export/download)" skipBuilder="true">
+                                <i>C. elegans</i> (for export/download)" skipBuilder="true">
               <query name="" model="genomic" 
                      view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subjectTranslation.gene.identifier Orthologue.subjectTranslation.gene.symbol">
                 <node path="Orthologue" type="Orthologue">

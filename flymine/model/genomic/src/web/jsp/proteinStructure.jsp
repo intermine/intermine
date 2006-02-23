@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <div class="heading2">
-Current Data
+Current data
 </div>
 <div class="body">
 <DL>

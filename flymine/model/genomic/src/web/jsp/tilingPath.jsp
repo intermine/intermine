@@ -7,7 +7,7 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <dl>

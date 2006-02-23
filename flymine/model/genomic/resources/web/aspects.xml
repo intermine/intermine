@@ -4,9 +4,9 @@
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in FlyMine is provided by
+      The gene structure and other genome annotation in FlyMine are provided by
       a variety of curated source databases.  In most cases FlyMine includes
-      all genome features that have locations (eg. genes and repeat regions).
+      all genome features that have chromosomal locations (eg. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
     <starting-points>
@@ -15,7 +15,7 @@
       Pseudogene RRNA SnRNA SnoRNA UTR MRNA
     </starting-points> 
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Ensembl Anopheles" url="http://www.ensembl.org/Anopheles_gambiae"/>
+    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae"/>
   </aspect>
 
   <aspect name="Gene Expression">
@@ -23,8 +23,7 @@
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
     <intro-text>
-      FlyMine contains selected Microarray gene expression data sets for
-      Drosophila.  We plan to add more soon.
+      FlyMine contains selected Microarray gene expression data sets for  &lt;i&gt;Drosophila melanogaster&lt;/i&gt;.  We plan to add more soon.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
     <starting-points>MicroArrayExperiment MicroArrayAssay CDNAClone Gene</starting-points>
@@ -36,11 +35,12 @@
     <icon-image>model/bindingSites.png</icon-image>
     <large-image>model/bindingSites.png</large-image>
     <intro-text>
-      DNA and Protein binding sites from FlyReg and FlyBase.
+      Protein binding sites from FlyReg and FlyBase.
     </intro-text>
     <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
     <tile-name>model/bindingSites.jsp</tile-name>
     <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
+   <aspect-source name="FlyBase" url="http://www.flybase.org"/>
   </aspect>
 
   <aspect name="DrosDel">
@@ -71,11 +71,11 @@
     <icon-image>model/indac.png</icon-image>
     <large-image>model/indac.png</large-image>
     <intro-text>
-      Long oligos from the International Drosophila Array Consortium.
+      Long oligos from the International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium.
     </intro-text>
     <tile-name>model/indac.jsp</tile-name>
     <starting-points>Transcript Gene MicroarrayOligo</starting-points>
-    <aspect-source name="International Drosophila Array Consortium" url="http://www.indac.net/"/>
+    <aspect-source name="International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium" url="http://www.indac.net/"/>
   </aspect>
 
   <aspect name="RNAi">
@@ -84,8 +84,8 @@
     <large-image>model/rnai.png</large-image>
     <intro-text>
       FlyMine currently contains RNAi experiment results only for
-      Caenorhabditis elegans.  By using orthologues, gene phenotypes in other
-      organisms can be inferred from the C. elegans RNAi experiments.
+      &lt;i&gt;Caenorhabditis elegans&lt;/i&gt;.  By using orthologues, gene phenotypes in other
+      organisms can be inferred from the &lt;i&gt;C. elegans&lt;/i&gt; RNAi experiments.
     </intro-text>
     <tile-name>model/RNAi.jsp</tile-name>
     <starting-points>RNAiExperiment Phenotype Gene</starting-points>
@@ -96,7 +96,7 @@
     <icon-image>model/disease.png</icon-image>
     <large-image>model/disease.png</large-image>
     <intro-text>
-      Homophila Human Disease to Drosophila Database (version 2.1).
+      Homophila Human Disease to &lt;i&gt;Drosophila&lt;/i&gt; Database (version 2.1).
     </intro-text>
     <tile-name>model/diseaseAspect.jsp</tile-name>
     <starting-points>Disease Orthologue BlastMatch Gene</starting-points>
@@ -108,11 +108,11 @@
     <icon-image>model/comparativeGenomics.png</icon-image>
     <large-image>model/comparativeGenomics.png</large-image>
     <intro-text>
-      Orthologues (equivalent genes in different species that evolved
-      from a common ancestor by speciation) and Paralogues (genes from
-      the same homologous superfamily found in another part of the
-      genome of a particular taxon. Paralogues are the result of gene
-      duplication).
+      Orthologues and Paralogues.  Orthologues are equivalent genes in
+      different species that evolved from a common ancestor by
+      speciation.  Paralogues are genes from the same homologous
+      superfamily found in another part of the genome of a particular
+      taxon. Paralogues are the result of gene duplication.
     </intro-text>
     <tile-name>model/inparanoid.jsp</tile-name>
     <starting-points>Gene Orthologue Paralogue</starting-points>
@@ -180,7 +180,7 @@
       their associated biological processes, cellular components and
       molecular functions in a species-independent manner.
 &lt;p&gt;
-      GO annotations for D. melanogaster, C. elegans and A. gambiae have
+      GO annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; have
       been loaded into FlyMine.  The GO annotations are 'attached' to
       Genes and so each gene has a reference (link) to a list of its GO
       annotations (if available).

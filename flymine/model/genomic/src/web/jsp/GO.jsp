@@ -31,12 +31,12 @@
     </td>
     <td width="40%" valign="top">
       <div class="heading2">
-        Dataset links
+        Explore data sets
       </div>
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All gene / GO annotation pairs from Drosophila (browse)" skipBuilder="true">
+            <im:querylink text="All gene / GO annotation pairs from <i>Drosophila</i> (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene Gene.allGoAnnotation">
                 <node path="Gene" type="Gene">
                 </node>
@@ -50,7 +50,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All gene identifiers and GO terms from Drosophila (for export/download)"
+            <im:querylink text="All gene identifiers and GO terms from <i>Drosophila</i> (for export/download)"
                           skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.allGoAnnotation.identifier">
                 <node path="Gene" type="Gene">
@@ -67,7 +67,7 @@
         </ul>
         <ul>
           <li>
-            <im:querylink text="All gene / GO annotation pairs from Anopheles (browse)" skipBuilder="true">
+            <im:querylink text="All gene / GO annotation pairs from <i>Anopheles</i> (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene Gene.proteins.annotations">
                 <node path="Gene" type="Gene">
                 </node>
@@ -89,7 +89,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All gene identifiers and GO terms from Anopheles (for export/download)"
+            <im:querylink text="All gene identifiers and GO terms from <i>Anopheles</i> (for export/download)"
                           skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.proteins.annotations.name Gene.proteins.annotations.identifier Gene.proteins.annotations.evidenceCode">
                 <node path="Gene" type="Gene">

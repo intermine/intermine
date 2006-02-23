@@ -7,12 +7,12 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Major genomes
+        Major data sets
       </div>
     </td>
     <td valign="top">
       <div class="heading2">
-        Dataset links
+        Explore data sets
       </div>
     </td>
   </tr>
@@ -20,28 +20,26 @@
     <td>
       <div class="body">
         <p>
-          <a href="/">FlyMine</a> is a resource aimed at the Drosophila and
-          Anopheles research communities hence the focus is on those organisms.
+          <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
+          <i>Anopheles</i> research communities hence the focus is on those organisms.
         </p>
         <dl>
           <dt>
-            <i>Drosophila melanogaster</i> - 
-            <a href="http://www.flybase.org">
-              <html:img src="model/FlyBase_logo_mini.png"/>
-            </a>
+            <i>Drosophila melanogaster</i>
           </dt>
           <dd>
-            Release 4.2 genome annotation from <a href="http://flybase.bio.indiana.edu">FlyBase</a>.
+            Release 4.2 genome annotation from <a href="http://www.flybase.org">
+              <html:img src="model/FlyBase_logo_mini.png"/> </a>.
           </dd>
           <dt>
-            <i>Anopheles gambiae</i> str. PEST -
-            <a href="http://www.ensembl.org/Anopheles_gambiae">
-              <html:img src="model/ensembl_logo_mini.png"/>
-            </a>
+            <i>Anopheles gambiae</i> str. PEST
+           
           </dt> 
           <dd>
             Release 2b genome annotations from 
-            <a href="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</a>. 
+             <a href="http://www.ensembl.org/Anopheles_gambiae">
+              <html:img src="model/ensembl_logo_mini.png"/>
+            </a>.
           </dd>
         </dl>
       </div>
@@ -50,7 +48,7 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All Drosophila genes (browse)" skipBuilder="true">
+            <im:querylink text="All <i>Drosophila</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">
                 </node>
@@ -64,7 +62,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All Drosophila gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i>Drosophila</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
@@ -78,7 +76,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All Anopheles genes (browse)" skipBuilder="true">
+            <im:querylink text="All <i>Anopheles</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">
                 </node>
@@ -92,7 +90,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All Anopheles gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i>Anopheles</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
@@ -112,12 +110,12 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Minor datasets
+        Minor data sets
       </div>
     </td>
     <td valign="top">
       <div class="heading2">
-        Dataset links
+        Explore data sets
       </div>
     </td>
   </tr>
@@ -134,7 +132,7 @@
           <dd>
             Genome information from <a href="http://www.wormbase.org">WormBase</a>,
             protein interaction data from 
-            <a href="http://www.ebi.ac.uk/intact/">intAct</a>, orthologues and
+            <a href="http://www.ebi.ac.uk/intact/">IntAct</a>, orthologues and
             paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
             terms, Uniprot and Interpro data
           </dd>
@@ -145,7 +143,7 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="Caenorhabditis elegans genes (browse)" skipBuilder="true">
+            <im:querylink text="<i>Caenorhabditis elegans</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">
                 </node>
@@ -159,7 +157,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Caenorhabditis elegans gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="<i>Caenorhabditis elegans</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
