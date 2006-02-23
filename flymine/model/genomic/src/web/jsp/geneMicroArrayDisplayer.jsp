@@ -13,7 +13,7 @@
     </html:link>
     <c:if test="${item.publication.pubMedId != null}">
       <html:img src="model/PubMed_logo_mini.png"/>
-      <html:link action="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=${item.publication.pubMedId}">
+      <html:link href="${WEB_PROPERTIES['pubmed.url.prefix']}${item.publication.pubMedId}">
         ${item.publication.pubMedId}
       </html:link><br/>
     </c:if>
