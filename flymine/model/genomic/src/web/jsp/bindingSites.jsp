@@ -7,7 +7,7 @@
   <TR>
     <TD valign="top">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <DL>
@@ -28,13 +28,13 @@
     </TD>
     <TD width="40%" valign="top">
       <div class="heading2">
-        Datasets
+        Explore data sets
       </div>
       <div class="body">
         
         <ul>
           <li>
-            <im:querylink text="FlyReg binding sites" skipBuilder="true">
+            <im:querylink text="FlyReg binding site data" skipBuilder="true">
               <query name="" model="genomic"
                      view="TFBindingSite TFBindingSite.gene TFBindingSite.factor TFBindingSite.chromosomeLocation">
                 <node path="TFBindingSite.evidence" type="DataSet">
@@ -61,7 +61,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Protein binding sites from FlyBase" skipBuilder="true">
+            <im:querylink text="FlyBase binding site data" skipBuilder="true">
               <query name="" model="genomic" view="BindingSite">
                 <node path="BindingSite" type="BindingSite">
                 </node>
@@ -75,7 +75,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="Protein binding sites from FlyBase for export" 
+            <im:querylink text="FlyBase binding site data for export" 
                           skipBuilder="true">
               <query name="" model="genomic" view="BindingSite.identifier BindingSite.length BindingSite.chromosome.identifier BindingSite.chromosomeLocation.start BindingSite.chromosomeLocation.end">
                 <node path="BindingSite" type="BindingSite">

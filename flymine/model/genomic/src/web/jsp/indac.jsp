@@ -7,7 +7,7 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <p>
@@ -32,7 +32,7 @@
     </td>
     <td valign="top" width="40%">
       <div class="heading2">
-        Data sets
+        Explore data sets
       </div>
       <div class="body">
         <ul>

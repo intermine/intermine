@@ -8,7 +8,7 @@
   <tr>
     <td valign="top" rowspan="2">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <DL>
@@ -60,7 +60,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Drosophila datasets
+        Explore <i>Drosophila</i> data sets
       </div>
       <div class="body">
         <ul>
@@ -257,7 +257,7 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Anopheles datasets
+        Explore <i>Anopheles</i> data sets
       </div>
       <div class="body">
         <ul>

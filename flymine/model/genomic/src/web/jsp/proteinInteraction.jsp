@@ -7,7 +7,7 @@
   <TR>
     <TD valign="top">
       <div class="heading2">
-        Current Data
+        Current data
       </div>
       <div class="body">
         <P><B>High-throughput 2-hybrid protein interaction datasets.</B></P>
@@ -94,7 +94,7 @@ More than 2300 protein-protein interactions were identified, of which 710 are of
     </TD>
     <TD width="40%" valign="top">
       <div class="heading2">
-        Datasets
+       Explore data sets
       </div>
       <div class="body">
         
