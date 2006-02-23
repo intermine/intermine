@@ -27,7 +27,7 @@
       Drosophila.  We plan to add more soon.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
-    <starting-points>MicroArrayExperiment CDNAClone Gene</starting-points>
+    <starting-points>MicroArrayExperiment MicroArrayAssay CDNAClone Gene</starting-points>
     <aspect-source name="Array Express" url="http://www.ebi.ac.uk/arrayexpress/"/>
   </aspect>
 

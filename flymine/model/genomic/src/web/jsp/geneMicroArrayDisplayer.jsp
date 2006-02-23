@@ -10,7 +10,13 @@
   <p>
     <html:link  action="/chartRenderer?method=microarray&amp;gene=${object.identifier}&amp;experiment=${item.identifier}&amp;width=800&amp;height=160">
       <im:abbreviate value="${item.name}" length="65"/>
-    </html:link><br/>
+    </html:link>
+    <c:if test="${item.publication.pubMedId != null}">
+      <html:img src="model/PubMed_logo_mini.png"/>
+      <html:link action="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=${item.publication.pubMedId}">
+        ${item.publication.pubMedId}
+      </html:link><br/>
+    </c:if>
     <img src="<html:rewrite action="/chartRenderer?method=microarray&amp;gene=${object.identifier}&amp;experiment=${item.identifier}&amp;width=600&amp;height=140"/>" width="600" height="140"/>
   </p>
   </c:if>
