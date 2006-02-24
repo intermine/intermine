@@ -22,6 +22,8 @@ div.error_body {
 <!-- error.jsp -->
 <html:xhtml/>
 
+<tiles:insert page="/errorMessages.jsp"/>
+
 <div class="error_body">
 <div class="body"><b><fmt:message key="error.stacktrace"/></b></div>
 

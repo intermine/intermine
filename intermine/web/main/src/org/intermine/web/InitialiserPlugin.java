@@ -43,6 +43,7 @@ import org.intermine.web.aspects.AspectBinding;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.results.DisplayObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionServlet;
@@ -184,6 +185,12 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to find web.properties", e);
             }
         }
+        String archived = webProperties.getProperty("project.standalone");
+        if (StringUtils.isEmpty(archived)) {
+            throw new ServletException("project.standalone not defined, please define in build "
+                    + "properties as true or false");
+        }
+        servletContext.setAttribute(Constants.ARCHIVED, Boolean.valueOf(archived));
         servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
     }
 

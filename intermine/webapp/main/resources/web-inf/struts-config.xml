@@ -95,8 +95,6 @@
   <action-mappings>
 
     <!-- Actions that just forward elsewhere - only used by jsps -->
-    <action path="/query"
-            forward="query.page"/>
     
     <action path="/iqlQuery"
             forward="iqlQuery.page"/>
@@ -130,9 +128,6 @@
 
     <action path="/objectDetails"
             forward="objectDetails.page"/>
-
-    <action path="/begin"
-            forward="begin.page"/>
 
     <action path="/classDescription"
             forward="classDescription.page"/>
@@ -193,6 +188,16 @@
       <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
     </action>
     
+    <action path="/begin"
+            type="org.intermine.web.BeginAction">
+      <forward name="begin" path="begin.page"/>
+    </action>
+    
+    <action path="/query"
+            type="org.intermine.web.QueryAction">
+      <forward name="query" path="query.page"/>
+    </action>
+    
     <action path="/logout"
             type="org.intermine.web.LogoutAction">
       <forward name="begin" path="/begin.do" redirect="true"/>
@@ -216,7 +221,7 @@
     <action path="/userTemplateAction"
             type="org.intermine.web.UserTemplateAction"
             parameter="method">
-      <forward name="begin" path="/begin.do" redirect="true"/>
+      <forward name="begin" path="/history.do" redirect="true"/>
       <forward name="template" path="template.page"/>
     </action>
 
@@ -299,7 +304,7 @@
     <action path="/pollQuery"
             type="org.intermine.web.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
-      <forward name="error" path="/begin.do" redirect="true"/>
+      <forward name="error" path="error.page"/>
       <!-- problem running query -->
       <forward name="failure" path="/query.do" redirect="true"/>
       <!-- implicitly cancelled by user -->
@@ -315,11 +320,11 @@
             type="org.intermine.web.PollQueryAction"
             parameter="followSingleResult">
       <!-- some kind of error in the action to do with session state or the request -->
-      <forward name="error" path="/begin.do" redirect="true"/>
+      <forward name="error" path="error.page"/>
       <!-- problem running query -->
-      <forward name="failure" path="/query.do" redirect="true"/>
+      <forward name="failure" path="error.page"/>
       <!-- implicitly cancelled by user -->
-      <forward name="cancelled" path="/query.do" redirect="true"/>
+      <forward name="cancelled" path="error.page"/>
       <!-- forward to results page -->
       <forward name="results" path="/results.do" redirect="true"/>
       <!-- continue waiting -->
@@ -331,11 +336,11 @@
             type="org.intermine.web.PollQueryAction"
             parameter="followSingleResult">
       <!-- some kind of error in the action to do with session state or the request -->
-      <forward name="error" path="/begin.do" redirect="true"/>
+      <forward name="error" path="error.page"/>
       <!-- problem running query -->
-      <forward name="failure" path="/begin.do" redirect="true"/>
+      <forward name="failure" path="error.page"/>
       <!-- implicitly cancelled by user -->
-      <forward name="cancelled" path="/begin.do" redirect="true"/>
+      <forward name="cancelled" path="error.page"/>
       <!-- forward to results page -->
       <forward name="results" path="/results.do" redirect="true"/>
       <!-- continue waiting -->

@@ -212,4 +212,10 @@ public interface Constants
      * Servlet attribute. The global webapp cache - a InterMineCache object.
      */
     public static final String GLOBAL_CACHE = "GLOBAL_CACHE";
+
+    /**
+     * Servlet attribute - Boolean.TRUE or Boolean.FALSE - whether or not begin.do should
+     * display or whether it should forward to project.sitePrefix
+     */
+    public static final String ARCHIVED = "ARCHIVED";
 }
