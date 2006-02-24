@@ -53,9 +53,13 @@
 </collection>
 </item>  
 <item id="1_2" class="http://www.flymine.org/model/genomic#Translation">
+  <attribute name="identifier" value="1_2"/>
   <reference name="organism" ref_id="-1_1"/>
   <reference name="protein" ref_id="-1_11"/>
   <reference name="transcript" ref_id="1_1"/>
+  <collection name="evidence">
+    <reference ref_id="-1_3"/>
+  </collection>
 </item>
  
 <item id="2_1" class="http://www.flymine.org/model/genomic#Transcript">
@@ -70,9 +74,14 @@
 </collection>
 </item>  
 <item id="2_2" class="http://www.flymine.org/model/genomic#Translation">
+  <attribute name="identifier" value="2_2"/>
   <reference name="organism" ref_id="-1_1"/>
   <reference name="protein" ref_id="-1_11"/>
-  <reference name="transcript" ref_id="2_1"/>
+  <reference name="transcript" ref_id="2_1"/> 
+  <collection name="evidence">
+    <reference ref_id="-1_3"/>
+  </collection>
+
 </item>
 <item id="-1_17" class="http://www.flymine.org/model/genomic#Location">
 <attribute name="end" value="900"/>
