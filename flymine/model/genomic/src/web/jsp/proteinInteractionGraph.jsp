@@ -6,7 +6,7 @@
 
 <c:choose>
   <c:when test="${empty object.proteinInteractions}">
-    <p>No known protein interactions</p>
+    <p>No protein interactions found in FlyMine</p>
   </c:when>
   <c:otherwise>
     <img style="border: 1px solid #ccc"
