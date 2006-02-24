@@ -3,6 +3,60 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
+    <title>FlyMine version 4.0 - release notes</title>
+    
+        <para>Major changes to layout and content of summary pages. These pages can now display the results of template queries inline to give immediate access to data. The www.flymine.org home page now shows aspect icons and query options. Many other interface improvements. Addition of Arbeitman et al, 2002 Drosophila time course microarray data and human disease gene matches from Homophila.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Data</para>
+        <itemizedlist>
+          <listitem><para>NEW: microarray data from "Gene Expression During the Life Cycle of <emphasis>Drosophila melanogaster</emphasis>", Arbeitman et al 2002.</para></listitem>
+          <listitem><para>NEW: added data human disease gene matches from Homophila (http://superfly.ucsd.edu/homophila/).</para></listitem>
+          <listitem><para>NEW: more protein interaction experiments from IntAct - see Protein Interaction aspect.</para></listitem>
+          <listitem><para>NEW: Gene now has an "allGoAnnotation" collection that contains the term assigned to a gene plus all the parents of the term. Using this collection to find genes with a particular term will find all genes with that term *and* any with a more specific term.</para></listitem>
+          <listitem><para>ENHANCEMENT: MRNA now references threePrimeUTR and fivePrimeUTR.</para></listitem>
+          <listitem><para>ENHANCEMENT: <emphasis>D. melanogaster</emphasis> translation symbols now set from FlyBase.</para></listitem>
+          <listitem><para>ENHANCEMENT: <emphasis>D. melanogaster</emphasis> chromosome bands now loaded from FlyBase.</para></listitem>
+          <listitem><para>UPDATE: <emphasis>D. melanogaster</emphasis> genome annotation updated from 4.2 to 4.2.1.</para></listitem>
+          <listitem><para>UPDATE: GO annotation and UniProt proteins updated.</para></listitem>
+          <listitem><para>FIX: <emphasis>D. melanogaster</emphasis> regulatory regions from FlyBase now have chromose location.</para></listitem>
+          <listitem><para>FIX: <emphasis>D. melanogaster</emphasis> insertion sites and point mutations from FlyBase reference genes correctly.</para></listitem>
+          <listitem><para>FIX: <emphasis>A. gambiae</emphasis> genes from ensembl and InParanoid orthlogues now merged correctly.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Tools</para>
+        <itemizedlist>
+          <listitem><para>NEW: a graph of interacting proteins on protein summary pages.</para></listitem>
+          <listitem><para>NEW: graphs of <emphasis>D. melanogaster</emphasis> time course expression on gene details pages (Arbeitman et al, 2002).</para></listitem>
+          <listitem><para>NEW: FASTA retrieval icon to access sequence of all features with sequence.</para></listitem>
+          <listitem><para>FIX: insertion sites now displayed correctly on GBrowse.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>User Interface</para>
+        <itemizedlist>
+          <listitem><para>NEW: Template queries are now viewable inline on object summary pages.</para></listitem>
+          <listitem><para>NEW: bags saved in history can now be subtracted from one another.</para></listitem>
+          <listitem><para>NEW: Query constraint logic can now be manipulated within the query builder - can constrain A AND B/A OR B.</para></listitem>
+          <listitem><para>NEW: Added Run query link to run a query directly from the History page.</para></listitem>
+          <listitem><para>NEW: Template queries can now include a choice of several different output formats.</para></listitem>
+          <listitem><para>ENHANCEMENT: Template search terms are highlighted in results lists.</para></listitem>
+          <listitem><para>ENHANCEMENT: Template building integrated into query builder interface.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Known issues</para>
+      </listitem>
+
+    </itemizedlist>
+  </section>
+
+  <section>
     <title>FlyMine version 3.1 - release notes</title>
     
     <itemizedlist>
@@ -58,7 +112,7 @@
            <listitem><para>The latest version of InterPro (11.0) is not yet available as a mysql dump so we still have version 10.0.</para></listitem>
            <listitem><para>INDAC microarray oligos were designed to FlyBase version 4.0 transcripts. This means a number now map to old transcripts. These oligos can be queried in FlyMine, however the transcript they are designed to will not have merged with a Gene.</para></listitem>
            <listitem><para>A number of proteins from Uniprot have not merged with FlyBase genes.  This means that for certain genes there are two objects - one from Uniprot with no other information.</para></listitem>
-           <listitem><para>Orthologues for Anopheles gambiae did not load.</para></listitem>
+           <listitem><para>Orthologues for <emphasis>A. gambiae</emphasis> did not load.</para></listitem>
         </itemizedlist>
       </listitem>
 
