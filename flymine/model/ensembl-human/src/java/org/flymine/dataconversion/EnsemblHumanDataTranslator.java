@@ -265,6 +265,18 @@ public class EnsemblHumanDataTranslator extends DataTranslator
                     result.add(location);
                 } else if ("translation".equals(className)) {
                     tgtItem.addReference(orgRef);
+                    addReferencedItem(tgtItem, ensemblDs, "evidence", true, "", false);
+                    // if no identifier set the identifier as name (primary key)
+                    if (!tgtItem.hasAttribute("identifier")) {
+                        Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
+                                                        // <- translation_stable_id.translation
+                        if (stableId != null) {
+                            moveField(stableId, tgtItem, "stable_id", "identifier");
+                        } else {
+                            tgtItem.addAttribute(new Attribute("identifier",
+                                                               srcItem.getIdentifier()));
+                        }
+                    }
                     Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
                     if (protein != null) {
                         tgtItem.addReference(new Reference("protein", protein.getIdentifier()));

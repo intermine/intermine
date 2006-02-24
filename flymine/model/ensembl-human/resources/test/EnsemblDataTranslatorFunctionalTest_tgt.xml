@@ -127,6 +127,7 @@
   <attribute name="max_primer_dist" value="170"/>
   <attribute name="min_primer_dist" value="142"/>
   <attribute name="right_primer" value="GCTCCAGCGTCATGGAGG"/>
+  <reference name="organism" ref_id="-1_1"/>
   <collection name="evidence">
     <reference ref_id="-1_3"/>
   </collection>
@@ -136,7 +137,8 @@
     <attribute name="max_primer_dist" value="170"/>
     <attribute name="min_primer_dist" value="142"/>
     <attribute name="name" value="D1S243"/>
-    <attribute name="right_primer" value="GCTCCAGCGTCATGGACT"/>
+    <attribute name="right_primer" value="GCTCCAGCGTCATGGACT"/> 
+    <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_3"/>
     </collection>
@@ -599,10 +601,14 @@
   </collection>
 </item>
 <item id="8_478" class="http://www.flymine.org/model/genomic#Translation">
+  <attribute name="identifier" value="ENSP00000339205"/>
   <attribute name="translationEnd" value="356"/>
   <attribute name="translationStart" value="10"/>
   <reference name="organism" ref_id="-1_1"/>
   <reference name="protein" ref_id="-1_25"/>
   <reference name="transcript" ref_id="3_478"/>
+  <collection name="evidence">
+    <reference ref_id="-1_3"/>
+  </collection>
 </item>
 </items>
