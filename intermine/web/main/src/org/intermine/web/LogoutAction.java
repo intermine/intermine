@@ -43,7 +43,8 @@ public class LogoutAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         session.invalidate();
-        SessionMethods.setLoggedInCookie(session, response);
+        SessionMethods.setLoggedOutCookie(session, response);
+        SessionMethods.setHasQueryCookie(session, response, true);
         return mapping.findForward("begin");
     }
 }

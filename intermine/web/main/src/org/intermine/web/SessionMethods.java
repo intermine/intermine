@@ -235,7 +235,7 @@ public class SessionMethods
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         session.removeAttribute(Constants.EDITING_VIEW);
         
-        setHasQueryCookie(session, response);
+        setHasQueryCookie(session, response, true);
     }
     
     /**
@@ -244,11 +244,12 @@ public class SessionMethods
      * @param session session
      * @param response current response
      */
-    public static void setHasQueryCookie(HttpSession session, HttpServletResponse response) {
+    public static void setHasQueryCookie(HttpSession session, HttpServletResponse response,
+            boolean value) {
         Properties webProps = (Properties) session.getServletContext()
             .getAttribute(Constants.WEB_PROPERTIES);
         String version = webProps.getProperty("project.releaseVersion");
-        Cookie cookie = new Cookie("have-query-" + version, "true");
+        Cookie cookie = new Cookie("have-query-" + version, "" + value);
         cookie.setPath("/");
         response.addCookie(cookie);
     }

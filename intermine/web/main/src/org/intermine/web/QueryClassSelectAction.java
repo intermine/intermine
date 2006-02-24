@@ -62,7 +62,7 @@ public class QueryClassSelectAction extends InterMineAction
             return mapping.findForward("classChooser");
         } else {
             newQuery(className, session);
-            SessionMethods.setHasQueryCookie(session, response);
+            SessionMethods.setHasQueryCookie(session, response, true);
             return mapping.findForward("query");
         }
     }
