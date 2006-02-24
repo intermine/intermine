@@ -13,9 +13,8 @@
   </item>
 
   <item title="Documentation">
-    <item url="/doc/manual/quickStartGuide.xml" title="Quick start guide"/>
+    <item url="/what" title="Get Started"/>
     <item url="/doc/tutorials/index.xml" title="Tutorials"/>
-    <item url="/examples.do" title="Query examples"/>
     <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
   </item>

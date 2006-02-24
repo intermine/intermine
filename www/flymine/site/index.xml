@@ -28,7 +28,7 @@
     
     <section>
       <title>
-        Browse by identifier
+        Quick Search
       </title>
       <para>Search for genes, proteins or any other annotation.
         <ulink url="doc/tutorials/quickSearch.xml">Help.</ulink></para>
@@ -66,7 +66,6 @@
       <sources sources="/sources.xml" version="3.0"/>
     -->
     <ssi-include page="/aspectIcons.jsp&amp;cols=3"/>
-    <things-to-do/>
   </section>
 
     
@@ -81,18 +80,15 @@
     <ulink url="/templates.do">View all templates...</ulink>
   </section>
   
-  
-  <section>
+  <section clear="both">
     <title>
-      Funding and contact details
+      FlyMine QueryBuilder
     </title>
     <para>
-      The FlyMine project is based at the
-      <ulink url="http://www.gen.cam.ac.uk">Department of Genetics</ulink>,
-      <ulink url="http://www.cam.ac.uk">University of Cambridge</ulink> and is a
-      collaboration between the Genetics and
-      <ulink url="http://www.bioc.cam.ac.uk">Biochemistry</ulink> departments of the
-      University of Cambridge.
+      Advanced users can use a flexible query interface to construct their own data mining queries.  See <ulink url="doc/manual">user manual</ulink> and <ulink url="doc/tutorials/">tutorials</ulink>.
+    </para>
+    <para>
+      <things-to-do/>
     </para>
   </section>
   
