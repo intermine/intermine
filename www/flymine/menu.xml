@@ -13,7 +13,7 @@
   </item>
 
   <item title="Documentation">
-    <item url="/what" title="Get Started"/>
+    <item url="/what.shtml" title="Get Started"/>
     <item url="/doc/tutorials/index.xml" title="Tutorials"/>
     <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
