@@ -2132,7 +2132,7 @@
       <property name="model.name" value="genomic"/>
       <property name="precompute.minRows" value="0"/>
       <property name="userprofile.name" value="osw.userprofile-production"/>
-      <property name="username" value="${webapp.superuser}"/>
+      <property name="username" value="${superuser.account}"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
@@ -2922,7 +2922,7 @@
 
     <filter token="SITE_PREFIX" value="${www.location}"/>
     <filter token="HELP_LOCATION" value="${project.helpLocation}"/>
-    <filter token="SITE_SUPERUSER" value="${webapp.superuser}"/>
+    <filter token="SITE_SUPERUSER" value="${superuser.account}"/>
     <filter token="RELEASE_VERSION" value="${release.version}"/>
     <filter token="CACHE_DIR" value="${webapp.cachedir}"/>
     <copy todir="${build.tmp}" filtering="true"
@@ -3020,7 +3020,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/template-queries.xml"
-                              username="${webapp.superuser}"
+                              username="${superuser.account}"
                               osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -3036,7 +3036,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/template-queries.xml"
-                            username="${webapp.superuser}"
+                            username="${superuser.account}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -4859,7 +4859,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/t1dmine/template-queries.xml"
-                              username="${webapp.superuser}"
+                              username="${superuser.account}"
                               osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -4872,7 +4872,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/t1dmine/template-queries.xml"
-                            username="${webapp.superuser}"
+                            username="${superuser.account}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -4946,7 +4946,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <insert-default-templates templatesXml="model/genomic/resources/web/stemcellmine/template-queries.xml"
-                              username="${webapp.superuser}"
+                              username="${superuser.account}"
                               osAlias="os.production"
                               userProfileAlias="osw.userprofile-production"/>
   </target>
@@ -4960,7 +4960,7 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <dump-default-templates fileName="model/genomic/resources/web/stemcellmine/template-queries.xml"
-                            username="${webapp.superuser}"
+                            username="${superuser.account}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
   </target>
