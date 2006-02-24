@@ -2,48 +2,88 @@
 <article>
   <section>
     <title>What can I do with FlyMine?</title>
-     
-    <verbatim><h3>Browse data</h3></verbatim>
     <para>
-      Enter any identifier or symbol
-      in the search box to access summary pages and integrated
-      tools. <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>
+      FlyMine is an integrated database of genomic, expression and
+      protein data for <emphasis>Drosophila</emphasis>,
+      <emphasis>Anopheles</emphasis> and
+      <emphasis>C. elegans</emphasis>. Integrating data makes it
+      possible to run sophisticated data mining queries that span
+      domains of biological knowledge.
+    </para>
+    
+    <verbatim><h3>Quick Search</h3></verbatim>
+    <para>
+      Enter any identifier or symbol in the search box on the FlyMine
+      home page to access summary pages and integrated tools. For
+      example, for the <emphasis>Drosophila</emphasis> gene zen, type
+      FBgn0004053, CG1046, zen or any of its synonyms. For an
+      <emphasis>Anopheles</emphasis> gene, use the
+      <ulink url="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</ulink> 
+      identifiers (eg. ENSANGG00000001499), and for a
+      <emphasis>C.elegans gene</emphasis>, use the 
+      <ulink url="http://www.wormbase.org/">WormBase</ulink>
+      indentifier (eg.T05A10.1d). Where possible, the indentifier for
+      a protein is the UniProt identifier (eg. 18C_DROME). 
+      <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>
     </para>
         
-    <verbatim><h3>Browse aspects</h3></verbatim>
+    <verbatim><h3>Browse Aspects</h3></verbatim>
     <para>
-      Use the aspect icons below to find the
-      types of data in FlyMine and to start queries.
+      FlyMine presents data as 'aspects', with each aspect providing a
+      'view' of a particular type of data (for example Gene Expression
+      or Protein Interactions). Use the aspect icons on the FlyMine
+      home page to run a predefined template query or to build your
+      own query (see below). Certain template queries, as well as the
+      QueryBuilder itself, allow you to perform searches that span
+      more than one aspect.
     </para>
 
     <verbatim><h3>Run Template Queries</h3></verbatim>
     <para>
-      Find lists of predefined template queries on each aspect page or use
-      the Template Search box below.
+      A number of specific queries have been predefined. These template queries range from 
+      fairly simple queries involving just that data type to more complex queries that 
+      involve data sets from other aspects as well. More template queries will be added 
+      as FlyMine develops and we welcome suggestions. Find lists of predefined template 
+      queries on each aspect page or use the Template Search box on the FlyMine home page 
+      or in the top menu on every page. 
       <ulink url="doc/tutorials/templates.xml">Tutorial 2</ulink>
     </para>
 
-    <verbatim><h3>Operate on lists</h3></verbatim>
+    <verbatim><h3>FlyMine QueryBuilder</h3></verbatim>
     <para>
-      All queries in FlyMine can be
-      performed on lists (or '<emphasis>bags</emphasis>') that you create yourself.
+      Advanced users can use a flexible query interface to construct
+      their own data mining queries across the multiple integrated
+      data sources, to modify existing template queries or to create
+      your own template queries. Access the FlyMine QueryBuilder via
+      the FlyMine home page or choose a query starting point on an
+      aspect page.
     </para>
 
-    <verbatim><h3>Design your own query</h3></verbatim>
+    <verbatim><h3>Operate on Lists</h3></verbatim>
     <para>
-      Advanced users can use a 
-      flexible query interface to construct their own data mining queries or modify
-      existing template queries. Start a query by choosing a class on an aspect page,
-      <ulink url="/tree.do">browsing the model</ulink> or
-      <ulink url="/classChooser.do">viewing a list of all classes</ulink>.
+      All queries in FlyMine can be performed on lists (or
+      '<emphasis>bags</emphasis>') that you create yourself. Bags can
+      be created by typing or pasting in a list of identifiers, or
+      uploading a file containing the list. Data from previous queries
+      can also be saved into a bag using the boxes displayed
+      underneath the query results. Saved bags of data can be used to
+      constrain new queries, perform logical operations and can be
+      exported.
     </para>
 
-    <verbatim><h3>Save queries</h3></verbatim>
+    <verbatim><h3>Save Queries</h3></verbatim>
     <para>
-      Save your queries and
-      templates by <ulink url="/login.do">creating an account</ulink>.
-      See the <ulink url="doc/manual/index.xml">user manual</ulink> and
-      <ulink url="doc/tutorials/index.xml">tutorials</ulink> for more information.
+      You can save your bags, queries and templates by 
+      <ulink url="/login.do">creating an account</ulink> using the 'Log in' box
+      in the top menu on every page.
+    </para>
+
+    <verbatim><br/></verbatim>
+    <verbatim><br/></verbatim>
+
+    <para>
+      See the <ulink url="doc/tutorials/index.xml">short tutorials</ulink> and 
+      <ulink url="doc/manual/index.xml">user manual</ulink> for more information.
     </para>
     
   </section>
