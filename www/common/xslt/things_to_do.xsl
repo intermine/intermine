@@ -21,6 +21,11 @@
           Import a query from XML...
         </a>
       </li>
+      <li>
+        <a href="/doc/manual/bk01ch05s02.shtml" style="background: #fff">
+          Help.
+        </a>
+      </li>
     </ul>
   </xsl:template>
   
