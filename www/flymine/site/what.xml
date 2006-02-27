@@ -14,7 +14,7 @@
     <verbatim><h3>Quick Search</h3></verbatim>
     <para>
       Enter any identifier or symbol in the search box on the FlyMine
-      home page to access summary pages and integrated tools.  <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>.  </para>
+      home page to access summary pages and integrated tools.  <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink> <ulink url="doc/tutorials/objectDetails.xml">Tutorial 2</ulink>.  </para>
 
     <para>Some examples:
       <itemizedlist>
@@ -49,7 +49,7 @@
       as FlyMine develops and we welcome suggestions. Find lists of predefined template 
       queries on each aspect page or use the Template Search box on the FlyMine home page 
       and in the top menu on every page. 
-      <ulink url="doc/tutorials/templates.xml">Tutorial 2</ulink>
+      <ulink url="doc/tutorials/templates.xml">Tutorial 3</ulink>
     </para>
 
     <verbatim><h3>FlyMine QueryBuilder</h3></verbatim>
