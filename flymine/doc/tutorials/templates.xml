@@ -3,11 +3,11 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>Tutorial3: <emphasis>Running template queries</emphasis></title>
+    <title>Tutorial 3: <emphasis>Running template queries</emphasis></title>
 
     <para>To enable you to quickly and easily carry out a range of
     queries across the data, FlyMine includes a library of predefined
-    template queries. A template consists of a predefined query form
+    template queries. A template consists of a query form
     in which certain variables can be changed. The variables are
     constraints (filters) on certain types of data, so that a subset
     of that type of data is defined.</para>
@@ -16,27 +16,29 @@
     query.  The template query 'Search for GO annotations for a
     particular gene' will be used as an example.</para>
 
-    <para>Template queries can be accessed in three ways.  1. Each
-    'aspects' page has a set of template queries related to that data
-    type.  2. Through the 'search templates' feature 3. Through
-    certain object details pages (see tutorial3). In this tutorial the
-    template query will be accessed through the genomics
-    aspect.</para>
+    <para>Template queries can be accessed in three ways.</para>
+    <itemizedlist>
+      <listitem><para>Each 'aspect' page has a set of template queries related to that data type.</para></listitem>
+      <listitem><para>Through the 'search templates' feature on the home page and in the top menu.</para></listitem>
+      <listitem><para>Templates also appear on object details pages (see <ulink url="objectDetails.xml">Tutorial 2</ulink>).  
+        </para></listitem>
+    </itemizedlist>
 
-    <para>From the FlyMine home page click on 'start a query' to go to
-    the main query page.  The main query page shows the
-    'aspects'. Aspects provide a 'view' of a particular type of data
-    and how this can be linked with other types of data.  Each aspect
-    includes a set of template queries which range from simple queries
-    involving just that data type to more complex queries which
-    integrate data from other aspects.</para>
+    <para>In this tutorial the template query will be accessed through the genomics aspect.</para>
+
+    <para>The FlyMine home page shows a series of 'aspects'.  These
+    provide a 'view' of a particular type of data and how this can be 
+    linked with other types of data.  Each aspect includes a set of 
+    template queries which range from simple queries involving just that
+    data type to more complex queries which integrate with data from 
+    other aspects.</para>
 
     <para>Click on the 'Genomics' aspect to go to the genomics aspect
     page.</para>
 
        <mediaobject>
           <imageobject>
-            <imagedata fileref="templates1.png" />
+            <imagedata fileref="templatesAspect.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
     
@@ -46,33 +48,38 @@
     to find the template 'Search for GO annotations for a particular
     gene':</para>
 
-   <para>Clicking on the arrow next to a template query takes you to
-    the template query form:</para>
-
-
        <mediaobject>
           <imageobject>
-            <imagedata fileref="templates2.png" />
+            <imagedata fileref="templatesList.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
     
 
+   <para>Clicking on the arrow next to a template query takes you to
+    the template query form:</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="templatesForm.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
 
     <para>This template query has two variables which can be changed
-     (or left as the default (all template queries have default values
-     for all the variables)).  The first variable has a label
-     'synonym.value = '.  This means that you can enter any type of
+     (or left as the default, all template queries have default values
+     for variables).  The first variable has a label
+     'synonym value = '.  This means that you can enter any type of
      gene identifier supported by FlyMine (rather than being limited
-     to a specific type of identifier).  For D. melanogaster genes,
+     to a specific type of identifier).  For <emphasis>D. melanogaster</emphasis> genes,
      therefore, you could enter an FBgn identifier, CG identifier or a
-     gene symbol or name.  Change the default value for this variable
+     gene symbol.  Change the default value for this variable
      to 'zen'</para>
 
      <para>The second variable asks for an organism.  The organism is
      specified for this template because a gene symbol or name may be
-     used by more than one organism. Notice that the organism can be
+     used by for genes in more than one organism. Notice that the organism can be
      selected from a drop-down list.  Leave the organism name set to
-     Drosophila melanogaster.</para>
+     'Drosophila melanogaster'.</para>
 
 
      <para>At the bottom of the template form are two options: 'View
@@ -84,26 +91,27 @@
      'View Results' option allows you to just run the template query
      as it is and go directly to the results.</para>
 
-     <para>Press 'View Query' to see this query displayed in the query
-     builder:</para>
-  
+     <para>Press 'View Results' to see a results table from running
+     this query:</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="templatesResults.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+     
+     <para>Go back to the template query form and press 'View Query'
+     to see this query in the QueryBuilder.  Here you can add more
+     fields to the output or add further constraints.  See the <ulink url="../manual/index.xml">user manual</ulink>
+     and <ulink url="index.xml">tutorials</ulink> for more information
+     on how to do this.</para>
+
       <mediaobject>
           <imageobject>
-            <imagedata fileref="templates3.png" />
+            <imagedata fileref="templatesBuilder.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
      
     
-     <para>Go back to the template query form and press 'View Results'
-     to directly view the results of this query:</para>
-
-       <mediaobject>
-          <imageobject>
-            <imagedata fileref="templates4.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-        </mediaobject>
-     
-
-
   </section>
 </article>
