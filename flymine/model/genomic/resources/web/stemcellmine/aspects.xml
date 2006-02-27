@@ -112,7 +112,7 @@
     <intro-text>
     Protein annotation (including family and domain annotation).
     </intro-text>
-     <tile-name>model/proteins.jsp</tile-name>
+     <tile-name>model/stemcellmine/proteins.jsp</tile-name>
      <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
   </aspect>
 
