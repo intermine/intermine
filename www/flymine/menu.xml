@@ -6,14 +6,14 @@
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
   </item>
 
-  <item title="Previous Releases">
-    <item url="/release-3.0/" title="Release 3.0"/>
-    <item url="/release-2.1/" title="Release 2.1"/>
-    <item url="/release-2.0/" title="Release 2.0"/>
+  <item title="Release info">
+    <item url="/sources.xml" title="Data sources"/>
+    <item url="/release-notes.xml" title="Release notes"/>
+    <item url="/archive.xml" title="Archived releases"/>
   </item>
 
   <item title="Documentation">
-    <item url="/what.shtml" title="Get Started"/>
+    <item url="/what.xml" title="Get Started"/>
     <item url="/doc/tutorials/index.xml" title="Tutorials"/>
     <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
