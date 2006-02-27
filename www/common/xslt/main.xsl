@@ -14,14 +14,15 @@
 
   <xsl:param name="basedir"/>
   <xsl:param name="branding"/>
-  <xsl:variable name="brand" select="document(concat('../../',$branding,'/branding.xml'))/brand"/>
   <xsl:param name="webappprefix"/>
   <xsl:param name="webapppath"/>
   <xsl:param name="outputext"/>
+  <xsl:param name="releaseversion"/>
+
+  <xsl:variable name="brand" select="document(concat('../../',$branding,'/branding.xml'))/brand"/>
 
   <xsl:include href="menu.xsl"/>
   <xsl:include href="rss.xsl"/>
-  <xsl:include href="sources.xsl"/>
   <xsl:include href="start.xsl"/>
   <xsl:include href="docbook-flymine.xsl"/>
   <xsl:include href="ulink.xsl"/>
