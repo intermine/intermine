@@ -33,8 +33,8 @@
     </html:link>
   </span>
   <span class="menu-item">
-    <html:link action="/examples.do">
-      <fmt:message key="menu.examples"/>
+    <html:link action="/bagBuild.do">
+      <fmt:message key="menu.buildBag"/>
     </html:link>
   </span>
   <span class="menu-item">
