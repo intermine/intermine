@@ -7,6 +7,11 @@ body
     background-color: #fff;
 }
 
+a
+{
+    text-decoration: none;
+}
+
 a:link { color:#049; text-decoration:none }
 a:visited { color:#049; text-decoration:none }
 a:link:hover { color:#CF4D23; text-decoration:underline }
@@ -46,11 +51,6 @@ span.organism-name
   margin: 3px;
 }
 
-#title h1 a
-{
-    text-decoration: none;
-}
-
 #title p
 {
     font-size: 1.1em;
@@ -67,8 +67,7 @@ span.organism-name
 }
 
 #title {
-  margin-top: 0.6em;
-  margin-left: 85px;
+  margin-left: 80px;
 }
 
 .clear-both {
@@ -251,7 +250,7 @@ span.organism-name
   padding-right: 5px;
   padding-bottom: 2px;
   padding-top: 2px;
-  background-color: #4E9349;
+  background-color: #f42;
   line-height: 170%;
   font-weight: bold;
   text-shadow: black 0px 0px 2px;

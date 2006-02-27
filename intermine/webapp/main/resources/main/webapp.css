@@ -33,11 +33,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   margin: 3px;
 }
 
-#title h1 a
-{
-    text-decoration: none;
-}
-
 #header p
 {
   font-size: 1.1em;
@@ -54,8 +49,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 }
 
 #title {
-  margin-top: 0.6em;
-  margin-left: 85px;
+  margin-left: 80px;
 }
 
 .clear-both {
@@ -73,7 +67,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   padding-right: 5px;
   padding-bottom: 2px;
   padding-top: 2px;
-  background-color: #4E9349;
+  background-color: #f42;
   line-height: 170%;
   font-weight: bold;
   text-shadow: black 0px 0px 2px;
