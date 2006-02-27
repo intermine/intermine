@@ -7,11 +7,6 @@
   <xsl:template match="things-to-do">
     <ul id="todo">
       <li>
-        <a href="{xsl:concat($webappprefix,'/bagBuild.do')}">
-          Create a bag of identifiers...
-        </a>
-      </li>
-      <li>
         <a href="{xsl:concat($webappprefix,'/classChooser.do')}">
           List all classes...
         </a>
