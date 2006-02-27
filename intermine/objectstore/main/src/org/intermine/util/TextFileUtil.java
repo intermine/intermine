@@ -125,10 +125,16 @@ public abstract class TextFileUtil
             for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
                 Object o = realRow.get(columnIndex);
 
-                if (o instanceof Number || (!quote && o.toString().indexOf(delimiter) < 0)) {
-                    writeUnQuoted(printStream, o);
+                if (o == null) {
+                    writeUnQuoted(printStream, "");
                 } else {
-                    writeQuoted(printStream, o);
+                    if (o instanceof Number
+                        || (!quote && o.toString().indexOf(delimiter) < 0
+                            && !o.toString().equals(""))) {
+                        writeUnQuoted(printStream, o);
+                    } else {
+                        writeQuoted(printStream, o);
+                    }
                 }
 
                 if (columnIndex < realRow.size() - 1) {
