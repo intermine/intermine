@@ -14,17 +14,20 @@
     <verbatim><h3>Quick Search</h3></verbatim>
     <para>
       Enter any identifier or symbol in the search box on the FlyMine
-      home page to access summary pages and integrated tools. For
-      example, for the <emphasis>Drosophila</emphasis> gene zen, type
-      FBgn0004053, CG1046, zen or any of its synonyms. For an
-      <emphasis>Anopheles</emphasis> gene, use the
+      home page to access summary pages and integrated tools.  <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>.  </para>
+
+    <para>Some examples:
+      <itemizedlist>
+        <listitem><para>for the <emphasis>Drosophila</emphasis> gene zen, type
+      FBgn0004053, CG1046, zen or any of its synonyms.</para></listitem>
+        <listitem><para>for <emphasis>A. gambiae</emphasis> genes, use
       <ulink url="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</ulink> 
-      identifiers (eg. ENSANGG00000001499), and for a
-      <emphasis>C.elegans gene</emphasis>, use the 
+      identifiers (eg. ENSANGG00000001499).</para></listitem>
+        <listitem><para>for <emphasis>C. elegans</emphasis> genes, use the 
       <ulink url="http://www.wormbase.org/">WormBase</ulink>
-      indentifier (eg.T05A10.1d). Where possible, the indentifier for
-      a protein is the UniProt identifier (eg. 18C_DROME). 
-      <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink>
+      identifiers or symbols (eg. M117.2, WBGene00003920, par-5).</para></listitem>
+        <listitem><para>for proteins use <ulink url="http://www.uniprot.org">UniProt</ulink> identifiers or primary accessions (eg. 18C_DROME, P16909).</para></listitem>
+      </itemizedlist>
     </para>
         
     <verbatim><h3>Browse Aspects</h3></verbatim>
@@ -41,11 +44,11 @@
     <verbatim><h3>Run Template Queries</h3></verbatim>
     <para>
       A number of specific queries have been predefined. These template queries range from 
-      fairly simple queries involving just that data type to more complex queries that 
-      involve data sets from other aspects as well. More template queries will be added 
+      fairly simple queries to retrieve a particular type of data to more complex queries that 
+      span the different types of data availbale in FlyMine. More template queries will be added 
       as FlyMine develops and we welcome suggestions. Find lists of predefined template 
       queries on each aspect page or use the Template Search box on the FlyMine home page 
-      or in the top menu on every page. 
+      and in the top menu on every page. 
       <ulink url="doc/tutorials/templates.xml">Tutorial 2</ulink>
     </para>
 
@@ -73,7 +76,7 @@
 
     <verbatim><h3>Save Queries</h3></verbatim>
     <para>
-      You can save your bags, queries and templates by 
+      You can save your bags, queries and templates between sessions by
       <ulink url="/login.do">creating an account</ulink> using the 'Log in' box
       in the top menu on every page.
     </para>
