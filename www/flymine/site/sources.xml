@@ -268,7 +268,7 @@
           <version>1.0</version>
         </source>
         <source>
-          <name>flyreg DNase I footprints</name>
+          <name>FlyReg DNase I footprints</name>
           <description>
             DNase I footprints from
             &lt;a
@@ -371,7 +371,7 @@
           <version>1.0</version>
         </source>
         <source>
-          <name>flyreg DNase I footprints</name>
+          <name>FlyReg DNase I footprints</name>
           <description>
             DNase I footprints from
             &lt;a
@@ -395,7 +395,7 @@
             Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
             href="http://www.flybase.org/"&gt;FlyBase&lt;/a&gt;
           </description>
-          <version>Release 4.2</version>
+          <version>Release 4.2.1</version>
         </source>
         <source>
           <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation</name>
@@ -492,7 +492,7 @@
           <version>1.0</version>
         </source>
         <source>
-          <name>flyreg DNase I footprints</name>
+          <name>FlyReg DNase I footprints</name>
           <description>
             DNase I footprints from the
             &lt;a
@@ -644,7 +644,7 @@
           <version>1.0</version>
         </source>
         <source>
-          <name>Flyreg DNase I footprints</name>
+          <name>FlyReg DNase I footprints</name>
           <description>
             DNase I footprints from the
             &lt;a
