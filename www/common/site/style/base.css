@@ -7,11 +7,6 @@ body
     background-color: #fff;
 }
 
-a
-{
-    text-decoration: none;
-}
-
 a:link { color:#049; text-decoration:none }
 a:visited { color:#049; text-decoration:none }
 a:link:hover { color:#CF4D23; text-decoration:underline }
@@ -190,6 +185,9 @@ span.organism-name
   padding-bottom: 30px;
 }
 
+#static-content a:link, #static-content a:visited {
+  text-decoration: underline;
+}
 
 #static-content ul li
 {
