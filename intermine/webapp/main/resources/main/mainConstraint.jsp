@@ -17,7 +17,7 @@
     <html:hidden property="cindex" value="${editingConstraintIndex}"/>
   </c:if>
 
-  <c:if test="${TEMPLATE_BUILD_STATE != null && (editingTemplateConstraint)}"> <%-- || param.deletePath != null)}"> --%>
+  <c:if test="${TEMPLATE_BUILD_STATE != null && (editingTemplateConstraint)}">
     <c:set var="constraint" value="${editingNode.constraints[editingConstraintIndex]}" scope="request"/>
     <tiles:insert page="constraintSettings.jsp"/>
   </c:if>
@@ -244,7 +244,8 @@
           </html:submit>
         </p>
       </c:if>
-      <c:if test="${!editingNode.collection}">
+      <c:if test="${!editingNode.collection && !editingNode.reference &&
+                    !empty editingNode.parent}">
         <p style="text-align: left;">
           <html:radio property="nullConstraint" value="NULL"/><fmt:message key="query.constraint.null"/>
           <html:radio property="nullConstraint" value="NotNULL"/><fmt:message key="query.constraint.notnull"/>
