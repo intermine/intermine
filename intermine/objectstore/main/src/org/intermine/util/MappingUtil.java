@@ -28,12 +28,16 @@ import java.util.Stack;
  */
 public class MappingUtil
 {
-    private static final int PUT_IN_STACK = 0;
     private static final int TAKE_FROM_SET = 1;
     private static final int LOOK_IN_LIST = 2;
-    private static final int PUT_IN_SET = 3;
     private static final int TAKE_FROM_STACK = 4;
     private static final int FINISHED = 5;
+
+    private static final MappingUtilChecker DEFAULT_CHECKER = new MappingUtilChecker() {
+        public boolean check(Map map) {
+            return true;
+        }
+    };
 
     /**
      * Produces a Set of possible mappings from items in the firstSet onto items in the secondSet,
@@ -55,6 +59,31 @@ public class MappingUtil
      * @return a Set of Maps from items in the firstSet onto items in the secondSet
      */
     public static Set findCombinations(Set firstSet, Set secondSet, Comparator comparator) {
+        return findCombinations(firstSet, secondSet, comparator, DEFAULT_CHECKER);
+    }
+
+     /**
+     * Produces a Set of possible mappings from items in the firstSet onto items in the secondSet,
+     * where the mapping maps from one item to another item that is equal according to the
+     * comparator.
+     *
+     * For example, if firstSet is {a1, b1, c2}, and secondSet is {d1, e1, f2}, and the comparator
+     * returns zero when comparing items with the same number, then the result will be a Set that
+     * contains two maps, and these are {a1-&gt;d1, b1-&gt;e1, c2-&gt;f2}, and {a1-&gt;e1,
+     * b1-&gt;d1, c2-&gt;f2}. For more examples, see the MappingUtilTest.java file.
+     *
+     * If firstSet is smaller than secondSet, then there are possible mappings, but if firstSet is
+     * bigger than secondSet, then there are no possible mappings.
+     *
+     * @param firstSet the set of items to map from
+     * @param secondSet the set of items to map to
+     * @param comparator a comparator for the items in the two sets that returns 0 for the required
+     * equivalence operation
+     * @param checker an object that can check a partial mapping for validity
+     * @return a Set of Maps from items in the firstSet onto items in the secondSet
+     */
+    public static Set findCombinations(Set firstSet, Set secondSet, Comparator comparator,
+            MappingUtilChecker checker) {
         List array = new ArrayList(secondSet);
         int arraySize = array.size();
         boolean covered[] = new boolean[arraySize];
@@ -70,12 +99,6 @@ public class MappingUtil
 
         do {
             switch(state) {
-                case PUT_IN_STACK:
-                    stack.push(new Integer(currentIndex));
-                    stack.push(obj);
-                    covered[currentIndex] = true;
-                    state = TAKE_FROM_SET;
-                    break;
                 case TAKE_FROM_SET:
                     // First step - take a table out of the Set.
                     if (set.isEmpty()) {
@@ -104,14 +127,30 @@ public class MappingUtil
                         currentIndex++;
                     }
                     if (currentIndex == arraySize) {
-                        state = PUT_IN_SET;
+                        set.add(obj);
+                        state = TAKE_FROM_STACK;
                     } else {
-                        state = PUT_IN_STACK;
+                        // At this point we want to check whether this is a valid partial
+                        // combination. So first, create the map:
+                        Iterator stackIter = stack.iterator();
+                        Map result = new HashMap();
+                        while (stackIter.hasNext()) {
+                            int indexOfArray = ((Integer) stackIter.next()).intValue();
+                            Object objFromSet = stackIter.next();
+                            result.put(objFromSet, array.get(indexOfArray));
+                        }
+                        result.put(obj, array.get(currentIndex));
+                        // Now, if it is valid, then record it. Otherwise, go back to the beginning
+                        // of LOOK_IN_LIST.
+                        if (checker.check(result)) {
+                            stack.push(new Integer(currentIndex));
+                            stack.push(obj);
+                            covered[currentIndex] = true;
+                            state = TAKE_FROM_SET;
+                        } else {
+                            currentIndex++;
+                        }
                     }
-                    break;
-                case PUT_IN_SET:
-                    set.add(obj);
-                    state = TAKE_FROM_STACK;
                     break;
                 case TAKE_FROM_STACK:
                     if (stack.isEmpty()) {

@@ -377,9 +377,9 @@ public class QueryOptimiser
         // Find the possible mappings from tables in the
         // PrecomputedTable query to tables in the Query
         Set mappings = new ConsistentSet();
-        mappings.addAll(MappingUtil.findCombinations(precompQuery.getFrom(),
-                                                    query.getFrom(),
-                                                    new AbstractTableComparator()));
+        Collection c = MappingUtil.findCombinations(precompQuery.getFrom(),
+                query.getFrom(), new AbstractTableComparator());
+        mappings.addAll(c);
 
         // Create a map from AbstractValue to SelectValue for the PrecomputedTable
         Map valueMap = precomputedTable.getValueMap();
