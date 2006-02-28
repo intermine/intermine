@@ -991,4 +991,19 @@ public class QueryOptimiserTest extends TestCase
             }
         }
     }
+
+/*    public void testRichardsBug() throws Exception {
+        Query q1 = new Query("SELECT DISTINCT a1_.identifier AS a17_, a15_.primaryAccession AS a18_, a15_.identifier AS a19_, a12_.identifier AS a20_, a12_.primaryAccession AS a21_, a14_.shortName AS a22_ FROM Gene AS a1_, Orthologue AS a2_, Gene AS a3_, Protein AS a4_, ProteinInteractor AS a5_, ProteinInteraction AS a6_, ProteinInteractor AS a7_, Protein AS a8_, Gene AS a9_, Orthologue AS a10_, Gene AS a11_, Protein AS a12_, Organism AS a13_, Organism AS a14_, Protein AS a15_, Organism AS a16_, GeneOrthologues AS indirect0, GenesProteins AS indirect1, GenesProteins AS indirect2, GeneOrthologues AS indirect3, GenesProteins AS indirect4, GenesProteins AS indirect5 WHERE a8_.id != a4_.id AND a16_.id = a13_.id AND LOWER(a1_.identifier) = 'cg3481' AND a1_.id = indirect0.Orthologues AND indirect0.Gene = a2_.id AND a2_.subjectId = a3_.id AND a3_.id = indirect1.Proteins AND indirect1.Genes = a4_.id AND a4_.id = a5_.proteinId AND a5_.interactionId = a6_.id AND a6_.id = a7_.interactionId AND a7_.proteinId = a8_.id AND a8_.id = indirect2.Genes AND indirect2.Proteins = a9_.id AND a9_.id = indirect3.Orthologues AND indirect3.Gene = a10_.id AND a10_.subjectId = a11_.id AND a11_.id = indirect4.Proteins AND indirect4.Genes = a12_.id AND a12_.organismId = a13_.id AND a3_.organismId = a14_.id AND a1_.id = indirect5.Proteins AND indirect5.Genes = a15_.id AND a15_.organismId = a16_.id ORDER BY a1_.identifier, a15_.primaryAccession, a15_.identifier, a12_.identifier, a12_.primaryAccession, a14_.shortName");
+        Query pq1 = new Query("SELECT DISTINCT a1_.identifier AS a17_, a15_.primaryAccession AS a18_, a15_.identifier AS a19_, a12_.identifier AS a20_, a12_.primaryAccession AS a21_, a14_.shortName AS a22_, a1_.identifier AS a23_ FROM Gene AS a1_, Orthologue AS a2_, Gene AS a3_, Protein AS a4_, ProteinInteractor AS a5_, ProteinInteraction AS a6_, ProteinInteractor AS a7_, Protein AS a8_, Gene AS a9_, Orthologue AS a10_, Gene AS a11_, Protein AS a12_, Organism AS a13_, Organism AS a14_, Protein AS a15_, Organism AS a16_, GeneOrthologues AS indirect0, GenesProteins AS indirect1, GenesProteins AS indirect2, GeneOrthologues AS indirect3, GenesProteins AS indirect4, GenesProteins AS indirect5 WHERE a8_.id != a4_.id AND a16_.id = a13_.id AND a1_.id = indirect0.Orthologues AND indirect0.Gene = a2_.id AND a2_.subjectId = a3_.id AND a3_.id = indirect1.Proteins AND indirect1.Genes = a4_.id AND a4_.id = a5_.proteinId AND a5_.interactionId = a6_.id AND a6_.id = a7_.interactionId AND a7_.proteinId = a8_.id AND a8_.id = indirect2.Genes AND indirect2.Proteins = a9_.id AND a9_.id = indirect3.Orthologues AND indirect3.Gene = a10_.id AND a10_.subjectId = a11_.id AND a11_.id = indirect4.Proteins AND indirect4.Genes = a12_.id AND a12_.organismId = a13_.id AND a3_.organismId = a14_.id AND a1_.id = indirect5.Proteins AND indirect5.Genes = a15_.id AND a15_.organismId = a16_.id ORDER BY a1_.identifier, a15_.primaryAccession, a15_.identifier, a12_.identifier, a12_.primaryAccession, a14_.shortName, a1_.identifier");
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, "precomp1", con);
+        Set precomps = new HashSet();
+        precomps.add(pt1);
+
+        StringUtil.setNextUniqueNumber(42);
+        BestQueryStorer bestQuery = new BestQueryStorer();
+        QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
+        Set eSet = new HashSet();
+        eSet.add(new Query("SELECT DISTINCT P1710730.a23_ AS a17_, P1710730.a18_, P1710730.a19_, P1710730.a20_, P1710730.a21_, P1710730.a22_ FROM precomp1 AS P1710730 WHERE LOWER(P1710730.a23_) = 'cg3481' ORDER BY P1710730.a23_, P1710730.a18_, P1710730.a19_, P1710730.a20_, P1710730.a21_, P1710730.a22_"));
+        assertEquals(eSet, bestQuery.getQueries());
+    }*/
 }
