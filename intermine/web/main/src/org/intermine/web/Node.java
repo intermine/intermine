@@ -23,9 +23,10 @@ import org.intermine.util.TypeUtil;
  */
 public class Node
 {
-    String fieldName, path, prefix, type, parentType;
-    boolean attribute = false, reference = false, collection = false;
-    int indentation;
+    private Node parent;
+    private String fieldName, path, prefix, type;
+    private boolean attribute = false, reference = false, collection = false;
+    private int indentation;
 
     /**
      * Constructor for a root node
@@ -45,9 +46,9 @@ public class Node
      */
     public Node(Node parent, String fieldName) {
         this.fieldName = fieldName;
+        this.parent = parent;
         prefix = parent.getPath();
         path = prefix + "." + fieldName;
-        parentType = parent.getType();
         
         indentation = path.split("[.]").length - 1;
     }
@@ -59,9 +60,9 @@ public class Node
      * @throws IllegalArgumentException if class or field are not found in the model
      */
     public void setModel(Model model) throws IllegalArgumentException {
-        ClassDescriptor cld = MainHelper.getClassDescriptor(parentType, model);
+        ClassDescriptor cld = MainHelper.getClassDescriptor(getParentType(), model);
         if (cld == null) {
-            throw new IllegalArgumentException("No class '" + parentType + "' found in model"
+            throw new IllegalArgumentException("No class '" + getParentType() + "' found in model"
                                        + " '" + model.getName() + "'");
         }
         FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
@@ -85,7 +86,19 @@ public class Node
      * @return  type of parent node
      */
     public String getParentType() {
-        return parentType;
+        if (parent == null) {
+            return null;
+        } else {
+            return parent.getType();
+        }
+    }
+
+    /**
+     * Get the parent node.
+     * @return the parent node
+     */
+    public Node getParent() {
+        return parent;
     }
 
     /**

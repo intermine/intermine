@@ -9,7 +9,6 @@
 
 <html:xhtml/>
 
-  
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
         <c:forEach begin="1" end="${node.indentation}">
@@ -112,8 +111,16 @@
         </c:otherwise>
       </c:choose>
       <c:choose>
+        <c:when test="${empty node.parent && prefix == path
+                      && empty PROFILE.objectBags && empty loopQueryOps}">
+          <%-- don't offer to constrain if this is the top node, there are no
+               bags and no potential loop queries --%> 
+          <img class="arrow" src="images/constrain-disabled.gif" width="70"
+               height="13" alt="constrain"/> 
+        </c:when>
         <c:when test="${isNull}">
-          <img class="arrow" src="images/constrain-disabled.gif" width="70" height="13" alt="constrain"/>
+          <img class="arrow" src="images/constrain-disabled.gif" width="70"
+               height="13" alt="constrain"/> 
         </c:when>
         <c:otherwise>
           <html:link action="/mainChange?method=addPath&path=${node.path}" title="${addConstraintToTitle}"
