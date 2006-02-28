@@ -2880,6 +2880,11 @@
     <concat destfile="${build}/tmp/InterMineWebApp.properties">
       <fileset file="${build.webapp}/intermine/WEB-INF/classes/InterMineWebApp.properties"/>
       <fileset file="${model}/genomic/resources/web/model.properties"/>
+      <filterchain>
+        <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+          <param type="token" name="HELP_LOCATION" value="${project.helpLocation}"/>
+        </filterreader>
+      </filterchain>
     </concat>
 
     <copy file="${intermine.war.path}" tofile="${dist.webapp}/flymine.war" verbose="true"/>
