@@ -11,9 +11,11 @@ package org.intermine.util;
  */
 
 import java.util.AbstractSet;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -40,19 +42,41 @@ public class ConsistentSet extends AbstractSet
 
     /**
      * Add an object to the set. If an equivalent object already
-     * exists, it will be be replaced by this one.
+     * exists, nothing happens.
      *
      * @param obj the object to be added
      * @return true if the set was altered
-     * @see AbstractSet#add
+     * @see Set#add
      */
     public boolean add(Object obj) {
         int index = list.indexOf(obj);
         if (index != -1) {
-            list.set(index, obj);
-            return true;
+            //list.set(index, obj);
+            return false;
         }
         return list.add(obj);
+    }
+
+    /**
+     * Add a whole Collection of objects to the set.
+     *
+     * @param col the Collection of objects to be added
+     * @return true if the set was altered
+     * @see Set#addAll
+     */
+    public boolean addAll(Collection col) {
+        boolean retval = false;
+        HashSet set = new HashSet(list);
+        Iterator iter = col.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            if (!set.contains(obj)) {
+                set.add(obj);
+                list.add(obj);
+                retval = true;
+            }
+        }
+        return retval;
     }
 
     /**
