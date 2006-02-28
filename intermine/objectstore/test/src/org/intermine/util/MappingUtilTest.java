@@ -299,6 +299,42 @@ public class MappingUtilTest extends TestCase
         assertEquals(result, multiCombinations);
     }
 
+    public void testChecker() throws Exception {
+        Set firstSet = new HashSet();
+        Set secondSet = new HashSet();
+        firstSet.add(a1);
+        firstSet.add(b1);
+        firstSet.add(c2);
+        firstSet.add(d2);
+        secondSet.add(e1);
+        secondSet.add(f1);
+        secondSet.add(g2);
+        secondSet.add(h2);
+        Comparator comparator = new MappingUtilTestComparator();
+        MappingUtilChecker checker = new MappingUtilChecker() {
+            public boolean check(Map map) {
+                Object o = map.get(a1);
+                return (o == null) || o.equals(e1);
+            }
+        };
+        Set combinations = MappingUtil.findCombinations(firstSet, secondSet, comparator, checker);
+
+        Set resultSet = new HashSet();
+        Map result1 = new HashMap();
+        result1.put(a1, e1);
+        result1.put(b1, f1);
+        result1.put(c2, g2);
+        result1.put(d2, h2);
+        resultSet.add(result1);
+        Map result3 = new HashMap();
+        result3.put(a1, e1);
+        result3.put(b1, f1);
+        result3.put(c2, h2);
+        result3.put(d2, g2);
+        resultSet.add(result3);
+
+        assertEquals(resultSet, combinations);
+    }
 
     class MappingUtilTestObject {
         public int number;
