@@ -44,7 +44,7 @@ public class BeginAction extends InterMineAction
        throws Exception {
        Boolean archived = (Boolean) request.getSession().getServletContext()
            .getAttribute(Constants.ARCHIVED);
-       if (archived == Boolean.TRUE) {
+       if (archived.booleanValue()) {
            return mapping.findForward("begin");
        } else {
            return new ForwardParameters(getWebProperties(request)
