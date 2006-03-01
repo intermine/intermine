@@ -5,7 +5,24 @@
   <section>
 <title>Job Opportunities</title>
 
-<para>There are currently no advertised vacancies at FlyMine</para>
+    <para>Computer Officer Grade II (Software Development)</para>
+
+    <para>Salary: GBP 31,274 - GBP 33,646 pa</para> 
+    <para>Limit of tenure: 30 April 2007 *</para>
+
+    <para>We are looking for a software developer to join a Wellcome Trust funded project integrating functional genomics data from the model organisms <emphasis>Drosophila melanogaster</emphasis> and <emphasis>Anopheles gambiae</emphasis>.</para>
+
+    <para>FlyMine (<ulink url="http://www.flymine.org">www.flymine.org</ulink>) is a freely available resource providing a powerful Web interface for researchers to perform complex queries over a wide range of biological data. In building FlyMine we have developed InterMine (<ulink url="http://www.intermine.org">www.intermine.org</ulink>) - a data model independent, object-based data integration and query system with a sophisticated Struts/JSP Web application. As a team, the software developers are responsible for designing, coding, testing and importing data into the system, many parts of which are technically challenging. We work with Java and XML with a PostgreSQL backend, in a Unix/Linux environment. All of our code is freely available under an open source licence.</para>
+
+    <para>You will be involved in all aspects of the system. You will have at least 1 years experience developing software in a small team environment. Java would be a significant advantage as would experience with Web development, particularly Struts and JSP. Experience or interest in working with biological data would be an advantage.</para>
+
+    <para>Funds for this post are available until 30 April 2007 in the first instance, and the post may, subject to availability of funding, be renewed for a further period or periods.</para>
+
+    <para>Informal enquiries to Richard Smith: <email>richard@flymine.org</email>.</para>
+
+    <para>Applications, to include a <ulink url="http://www.admin.cam.ac.uk/offices/personnel/forms/pd18/">PD18</ulink> cover sheet, full CV and details of three referees, should be addressed to Mrs Tracy Oakley, Department of Genetics, University of Cambridge, Downing Street, Cambridge, CB2 3EH, tel: (01223) 333 999, e-mail: <email>t.oakley@gen.cam.ac.uk</email> </para>
+
+    <para>Closing date: 10th March 2006</para>
 
   </section>
 </article>
