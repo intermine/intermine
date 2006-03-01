@@ -119,6 +119,10 @@ public class ExportAction extends InterMineAction
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
+        if (pt == null) {
+            return mapping.getInputForward();
+        }
+        
         int defaultMax = 10000;
 
         int maxExcelSize =
@@ -181,18 +185,25 @@ public class ExportAction extends InterMineAction
                     // see comment on invisibleColumns
                     short outputColumnIndex = (short) (columnIndex - invisibleColumns);
 
+                    if (thisObject == null) {
+                        excelRow.createCell(outputColumnIndex).setCellValue("");
+                        continue;
+                    }
+                    
                     if (thisObject instanceof Number) {
                         float objectAsFloat = ((Number) thisObject).floatValue();
                         excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
-                    } else {
-                        if (thisObject instanceof Date) {
-                            Date objectAsDate = (Date) thisObject;
-                            excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
-                        } else {
-                            excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
-                        }
+                        continue;
                     }
-
+                    
+                    if (thisObject instanceof Date) {
+                        Date objectAsDate = (Date) thisObject;
+                        excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
+                        continue;
+                    }
+                    
+                    // default
+                    excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
                 }
             }
 
