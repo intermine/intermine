@@ -89,7 +89,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
-  height: 0.01%;
+  height: 1.5em;
 }
 
 .boxTopRight {
