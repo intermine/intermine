@@ -88,6 +88,11 @@
             </a>
           </span>
           <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/bagBuild.do')}">
+              Create a bag of identifiers
+            </a>
+          </span>
+          <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/templateSearch.do')}">
               Search templates
             </a>
