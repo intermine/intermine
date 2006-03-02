@@ -121,14 +121,6 @@ public class Dependencies extends Task
         this.type = type;
     }
     
-    protected boolean shouldExecute() {
-        return false;
-    }
-    
-    protected boolean shouldFollow() {
-        return false;
-    }
-    
     /**
      * Execute the task.
      * 
@@ -168,7 +160,6 @@ public class Dependencies extends Task
         
         // Gather list of projects, removing redundancy
         List projects = new ArrayList();
-        List testProjects = new ArrayList();
         followProjectDependencies(getProject().getBaseDir(), projects);
         
         List allProjects = projects;
@@ -262,7 +253,7 @@ public class Dependencies extends Task
         
         if (executeIncludes.length() > 0) {
             executeFileSet.setIncludes(executeIncludes);
-            getProject().addReference(executePathId +".fileset", executeFileSet);
+            getProject().addReference(executePathId + ".fileset", executeFileSet);
         }
         
         if (artifactIncludes.length() > 0) {
@@ -273,6 +264,11 @@ public class Dependencies extends Task
         getProject().addReference(type + ".artifact.fileset", artifactFileSet);
     }
     
+    /**
+     * Return the project name calculated from the path of this project.
+     * @return the project name
+     * @throws BuildException if something goes wrong
+     */
     public String calcThisProjectName() throws BuildException {
         try {
             File dir = getProject().getBaseDir().getCanonicalFile();

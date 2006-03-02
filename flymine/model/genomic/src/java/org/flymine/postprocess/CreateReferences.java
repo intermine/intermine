@@ -889,7 +889,8 @@ public class CreateReferences
 
         if (lastComSeq != null) {
             // clone so we don't change the ObjectStore cache
-            CompositeSequence tempComSeq = (CompositeSequence) PostProcessUtil.cloneInterMineObject(lastComSeq);
+            CompositeSequence tempComSeq =
+                (CompositeSequence) PostProcessUtil.cloneInterMineObject(lastComSeq);
             TypeUtil.setFieldValue(tempComSeq, "results", newCollection);
             osw.store(tempComSeq);
             count++;

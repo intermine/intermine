@@ -10,15 +10,12 @@ package org.flymine.task;
  *
  */
 
-import java.util.Iterator;
-
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.iql.IqlQuery;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.TextFileUtil;
 
 /**

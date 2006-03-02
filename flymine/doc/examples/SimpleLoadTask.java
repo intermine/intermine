@@ -147,6 +147,7 @@ public class SimpleLoadTask extends Task
     private void processFile(File file) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
+            Collection proteinFeatureSingleton = Collections.singleton(ProteinFeature.class);
 
             String line;
 
@@ -165,7 +166,7 @@ public class SimpleLoadTask extends Task
                 String proteinFeatureIdentifier = bits[3];
                 String proteinFeatureName = bits[4];
                 ProteinFeature proteinFeature =
-                    (ProteinFeature) DynamicUtil.createObject(Collections.singleton(ProteinFeature.class));
+                    (ProteinFeature) DynamicUtil.createObject(proteinFeatureSingleton);
 
                 proteinFeature.setIdentifier(proteinFeatureIdentifier);
                 proteinFeature.setName(proteinFeatureName);
@@ -184,12 +185,14 @@ public class SimpleLoadTask extends Task
                     try {
                         featureLocation.setStart(new Integer(Integer.parseInt(proteinStart)));
                     } catch (NumberFormatException e) {
-                        throw new RuntimeException("failed to parse start position: " + proteinStart, e);
+                        throw new RuntimeException("failed to parse start position: " 
+                                                   + proteinStart, e);
                     }
                     try {
                         featureLocation.setEnd(new Integer(Integer.parseInt(proteinEnd)));
                     } catch (NumberFormatException e) {
-                        throw new RuntimeException("failed to parse end position: " + proteinEnd, e);
+                        throw new RuntimeException("failed to parse end position: "
+                                                   + proteinEnd, e);
                     }
                 
                     featureLocation.setSubject(proteinFeature);

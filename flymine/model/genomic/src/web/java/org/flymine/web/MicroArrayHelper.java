@@ -12,7 +12,6 @@ package org.flymine.web;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MicroArrayExperiment;
@@ -31,8 +30,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.PathQuery;
-import org.intermine.web.PathNode;
 
 /**
  * Some static methods that query microarray data.
@@ -121,7 +118,8 @@ public class MicroArrayHelper
                                                    new QueryValue(gene));
         cs.addConstraint(sc);
 
-        QueryCollectionReference maResults = new QueryCollectionReference(qcGene, "microArrayResults");
+        QueryCollectionReference maResults =
+            new QueryCollectionReference(qcGene, "microArrayResults");
         ContainsConstraint cc1 = new ContainsConstraint(maResults, ConstraintOp.CONTAINS, qcMar);
         cs.addConstraint(cc1);
 
