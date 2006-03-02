@@ -35,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -148,7 +147,7 @@ public class SimpleLoadTask extends Task
     private void processFile(File file) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            Collection proteinFeatureSingleton = Collections.singleton(ProteinFeature.class);
+            Set proteinFeatureSingleton = Collections.singleton(ProteinFeature.class);
 
             String line;
 
