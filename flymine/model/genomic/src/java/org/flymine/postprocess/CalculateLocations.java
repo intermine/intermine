@@ -972,7 +972,8 @@ public class CalculateLocations
      */
     private void makeChromosomeBandLocations() throws Exception {
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, ChromosomeBand.class, true);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, ChromosomeBand.class,
+                                                   true);
         results.setBatchSize(500);
 
         Iterator resIter = results.iterator();

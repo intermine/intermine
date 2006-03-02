@@ -1,3 +1,5 @@
+package org.intermine.web;
+
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -8,10 +10,6 @@
  *
  */
 
-package org.intermine.web;
-
-import java.util.Properties;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,13 +18,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 /**
+ * Display the query builder (if there is a curernt query) or redirect to project.sitePrefix.
  * 
- * @author tom riley
+ * @author Tom Riley
  */
 public class BeginAction extends InterMineAction
 {
    /**
-    * Either display the begin.page or redirect to project.sitePrefix.
+    * Either display the query builder or redirect to project.sitePrefix.
     * 
     * @param mapping The ActionMapping used to select this instance
     * @param form The optional ActionForm bean for this request (if any)

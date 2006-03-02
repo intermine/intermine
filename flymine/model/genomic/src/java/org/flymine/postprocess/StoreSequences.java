@@ -88,6 +88,7 @@ public class StoreSequences
 
     /**
      * Get contig sequences from ensembl human src db by contigId
+     * @param connection the Connection to use when creating Statement objects
      * @param contigId the id for the contig
      * @throws SQLException if there are any problems
      * @return a sequence for this contig

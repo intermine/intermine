@@ -47,23 +47,23 @@ public class GeneMicroArrayDisplayerController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        try
-        {
+        try {
             HttpSession session = request.getSession();
-            ObjectStore os = (ObjectStore) session.getServletContext()
-                .getAttribute(Constants.OBJECTSTORE);
+            ObjectStore os =
+                (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
             Gene gene = (Gene) request.getAttribute("object");
-            Results results = MicroArrayHelper.queryExperimentsInvolvingGene(gene.getIdentifier(), os);
+            Results results =
+                MicroArrayHelper.queryExperimentsInvolvingGene(gene.getIdentifier(), os);
             ArrayList experiments = new ArrayList();
             for (Iterator iter = results.iterator(); iter.hasNext(); ) {
                 ResultsRow row = (ResultsRow) iter.next();
                 experiments.add(row.get(0));
             }
             request.setAttribute("experiments", experiments);
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             err.printStackTrace();
         }
-            return null;
+
+        return null;
     }
 }

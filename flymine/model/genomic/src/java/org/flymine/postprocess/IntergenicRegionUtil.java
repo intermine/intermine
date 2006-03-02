@@ -48,7 +48,7 @@ public class IntergenicRegionUtil
     
     /**
      * Create a new IntergenicRegionUtil object that will operate on the given ObjectStoreWriter.
-     * @param osw
+     * @param osw the ObjectStoreWriter to use when creating/changing objects
      */
     public IntergenicRegionUtil(ObjectStoreWriter osw) {
         this.osw = osw;
@@ -56,7 +56,8 @@ public class IntergenicRegionUtil
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
-            dataSource = (DataSource) os.getObjectByExample(dataSource, Collections.singleton("name"));
+            dataSource = (DataSource) os.getObjectByExample(dataSource,
+                                                            Collections.singleton("name"));
         } catch (ObjectStoreException e) {
             throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
         }
@@ -64,7 +65,7 @@ public class IntergenicRegionUtil
 
     /**
      * Create IntergenicRegion objects 
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public void createIntergenicRegionFeatures() throws ObjectStoreException {
         Results results =
@@ -136,7 +137,7 @@ public class IntergenicRegionUtil
         
         Iterator locationIter = locationSet.iterator();
         
-        while(locationIter.hasNext()) {
+        while (locationIter.hasNext()) {
             Location location = (Location) locationIter.next();
             bs.set(location.getStart().intValue(), location.getEnd().intValue() + 1);
         }
@@ -169,7 +170,7 @@ public class IntergenicRegionUtil
                     intergenicEnd = nextSetBit - 1;
                 }
 
-                if (nextSetBit== -1 
+                if (nextSetBit == -1 
                     || bs.nextClearBit(nextSetBit) > chr.getLength().intValue()) {
                     prevEndPos = -1;
                 } else {

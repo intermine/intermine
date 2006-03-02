@@ -185,7 +185,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
 
                 if (object instanceof Sequence) {
                     Sequence sequence = (Sequence) object;
-                    object = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
+                    object =
+                        ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
                     if (object == null) {
                         // no LocatedSequenceFeature found
                         object = ResidueFieldExporter.getProteinForSequence(os, sequence);

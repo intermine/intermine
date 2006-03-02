@@ -92,7 +92,7 @@ public class ProteinInteractionImgRenderer extends InterMineAction
             }
             for (Iterator iter = fn.getEdges().iterator(); iter.hasNext();) {
                 FlyEdge edge = (FlyEdge) iter.next();
-                msg.append(edge.getLabel() +"<br>" );
+                msg.append(edge.getLabel() + "<br>");
             }
             nc = FlyNetworkIntegrator.convertNodesFly2Cy(fn.getNodes());
             ec = FlyNetworkIntegrator.convertEdgesFly2Cy(fn.getEdges());

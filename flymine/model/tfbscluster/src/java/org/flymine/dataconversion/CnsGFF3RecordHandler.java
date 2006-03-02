@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
 
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;

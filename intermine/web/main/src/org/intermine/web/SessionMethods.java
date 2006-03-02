@@ -243,9 +243,10 @@ public class SessionMethods
      * website to display the 'current query' link).
      * @param session session
      * @param response current response
+     * @param value the cookie value
      */
     public static void setHasQueryCookie(HttpSession session, HttpServletResponse response,
-            boolean value) {
+                                         boolean value) {
         Properties webProps = (Properties) session.getServletContext()
             .getAttribute(Constants.WEB_PROPERTIES);
         String version = webProps.getProperty("project.releaseVersion");
