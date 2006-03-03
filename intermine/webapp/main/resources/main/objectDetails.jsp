@@ -30,7 +30,7 @@ function loadInlineTemplate(i) {
   var placement = queue[i][0];
   var templateName = queue[i][1];
   var id = queue[i][2];
-  var uid = placement + '_' + templateName;
+  var uid = placement.replace(/ /, '_') + '_' + templateName;
 
   Element.show('table_'+uid+'_int');
   $('table_'+uid+'_int').innerHTML = placement + templateName + id;
