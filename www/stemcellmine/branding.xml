@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<brand>
+    <title>StemCellMine</title>
+    <stylesheet file="style/base.css"/>
+    <stylesheet file="style/branding.css"/>
+    <meta name="keywords" 
+          content="microarray, database, proteomics, search, bioinformatics, genomics, OQL, integration, query optimiser"/>  
+    <meta name="description" 
+          content="Integrated queryable database for Stem Cell research"/> 
+
+    <headline>An Integrated Datamining Platform for <span class="organism-name" >Stem Cell</span> Research</headline>
+ 
+    <funding>StemCellMine is funded by <a href="http://www.cambridge-mit.org/">The Cambridge-MIT Institute</a>.</funding> 
+    
+</brand>

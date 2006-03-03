@@ -1,0 +1,73 @@
+
+<article>
+  <column width="60%">
+    <section>
+      <title>
+        Introduction
+      </title>
+      
+      <para>
+        StemCellMine is an integrated database of genomic, expression and protein data for
+        <emphasis>Homo sapiens</emphasis>, <emphasis>Mus musculus</emphasis>, 
+        <emphasis>Rattus norvegicus</emphasis>, <emphasis>Monodelphis domestica</emphasis> and
+        <emphasis>Canis familiaris</emphasis> with emphasize on <emphasis>Stem Cell</emphasis> research.
+        Integrating data makes it possible to run sophisticated data mining queries
+        that span domains of biological knowledge.
+      </para>
+      
+      <para>
+        <ulink url="what.xml">What can I do with StemCellMine?</ulink>
+      </para>
+      
+    </section>
+  </column>
+
+  <column width="39%">    
+    <section>
+      <title>
+        Quick Search
+      </title>
+      <para>Search for genes, proteins or any other annotation.
+        <ulink url="http://www.flymine.org/doc/tutorials/quickSearch.xml">Help.</ulink></para>
+      <para>
+        <ssi-include page="browse.tile"/>
+      </para>
+    </section>
+ </column>
+
+  
+
+  <section clear="both">
+    <title>
+      Aspects
+    </title>
+    
+    <para>Choose an aspect to explore the different types of data in StemCellMine and start queries.</para>
+    <ssi-include page="/aspectIcons.jsp&amp;cols=3"/>
+  </section>
+
+    
+  
+  <section clear="both">
+    <title>
+      Template search
+    </title>
+    <para>
+      <template-search/>
+    </para>
+    <ulink url="/templates.do">View all templates...</ulink>
+  </section>
+  
+  <section clear="both">
+    <title>
+      StemCellMine QueryBuilder
+    </title>
+    <para>
+      Advanced users can use a flexible query interface to construct their own data mining queries.  See <ulink url="http://www.flymine.org/doc/manual">user manual</ulink> and <ulink url="http://www.flymine.org/doc/tutorials/">tutorials</ulink>.
+    </para>
+    <para>
+      <things-to-do/>
+    </para>
+  </section>
+  
+</article>
