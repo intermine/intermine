@@ -81,6 +81,7 @@
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="projectcontact" expression="${project.contact}"/>
       <param name="releaseversion" expression="${project.releaseVersion}"/>
       <param name="webapppath" expression="${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
@@ -206,12 +207,6 @@
     </ant>
   </target>
 
-  <target name="webapp-manual-process" depends="prepare">
-    <exec executable="xmlto" failifexecutionfails="false">
-      <arg line="${output.type} ${src.doc}/manual/webapp_manual.xml -m ${build.www}/tmp/webapp_manual_params.xsl -m xslt/webapp_manual.xsl -o ${dist.www}/doc/manual"/>
-    </exec>
-  </target>
-
   <target name="webapp-manual-html" depends="prepare">
     <xslt basedir="${dist.www}/doc/manual/"
           in="${build.www}/doc/manual/webapp_manual.xml"
@@ -221,6 +216,7 @@
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="projectcontact" expression="${project.contact}"/>
       <param name="releaseversion" expression="${project.releaseVersion}"/>
       <param name="webapppath" expression="${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />

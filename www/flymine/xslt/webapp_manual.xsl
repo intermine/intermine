@@ -35,7 +35,7 @@
               Version <xsl:value-of select="$releaseversion"/>
             </span>
             <div class="contact">
-              <a href="mailto:info%5Bat%5Dflymine.org">info[at]flymine.org</a>
+              <xsl:value-of select="$projectcontact" disable-output-escaping="yes"/>
             </div>
             <div class="wellcome">
               <xsl:apply-templates mode="copy-no-ns" select="$brand/funding/node()"/>
