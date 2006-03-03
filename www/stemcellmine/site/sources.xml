@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Note: when adding sources for a new release copy and paste the latest
+     sources element and modify it, including the version number -->
+<article>
+  <section>
+    <title>
+      Current StemCellMine data sources
+    </title>
+    <para>
+ 
+  <sources version="Beta">
+    <source>
+      <name>Ensembl genome annotation.</name>
+      <description>
+        Genome Annotation for H. sapiens from &lt;a
+        href="http://www.ensembl.org/">Ensembl&lt;/a>
+      </description>
+      <version>Release 36.35i</version>
+    </source>
+ 
+    <source>
+          <name>Uniprot proteins</name>
+          <description>
+            Proteins for &lt;i&gt;H. sapiens&lt;/i&gt; from 
+            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
+            (trembl and swissprot)&lt;/a&gt;
+          </description>
+          <version>6.8</version>
+    </source>
+    
+    <source>
+          <name>&lt;i&gt;H. sapiens&lt;/i&gt; protein-protein interactions</name>
+          <description>
+            2-hybrid protein-protein interactions for &lt;i&gt;H. sapiens&lt;/i&gt;
+            from Rual et al (2005) Nature 437:1173-1178 and Stelzl et al (2005) Cell 122:957-968. 
+          </description>
+          <version></version>
+    </source>
+
+     <source>
+          <name>Gene Ontology</name>
+          <description>
+            &lt;a href="http://www.geneontology.org/"&gt;The Gene Ontology&lt;/a&gt;
+          </description>
+          <version>Revision 3.185</version>
+        </source>
+
+    <source>
+      <name>GO annoations</name>
+      <description>
+        &lt;a href="http://www.geneontology.org/GO.current.annotations.shtml">Uniprot Gene Ontology assignments&lt;/a> 
+        for &lt;i&gt;H. sapiens&lt;/i&gt; 
+      </description>
+      <version>January 21, 2006</version>
+    </source>  
+     
+   <source>
+          <name>Microarray gene expression data</name>
+          <description>
+            Three &lt;i&gt;H. sapiens&lt;/i&gt; microarray gene expression experiments from &lt;a
+            href="http://www.ebi.ac.uk/arrayexpress/"&gt;ArrayExpress&lt;/a&gt;
+          </description>
+          <version></version>
+        </source>
+
+    <source>
+          <name>Orthologues and paralogues</name>
+          <description>
+            Orthologues and Paralogues between
+            &lt;i&gt;H.sapiens&lt;/i&gt; and
+            &lt;i&gt;M. musculus&lt;/i&gt;
+            from &lt;a
+            href="http://inparanoid.cgb.ki.se/index.html"&gt;inParanoid&lt;/a&gt;
+          </description>
+          <version>16th April 2005</version>
+        </source>
+
+   <source>
+      <name>Transfac Bindidng Sites</name>
+      <description>
+        Transfac Bindidng Sites for &lt;i&gt;H. sapiens&lt;/i&gt; from &lt;a
+        href="http://genome.ucsc.edu/cgi-bin/hgTables">UCSC&lt;/a>
+      </description>
+      <version>Release May 2004</version>
+    </source>
+
+   <source>
+      <name>TFBSClusters and motifs</name>
+      <description>
+        TFBSClusters and motifs conserved in &lt;i&gt;H. sapiens&lt;/i&gt; that also conserved in
+      &lt;i&gt; M. musculus&lt;/i&gt;, &lt;i&gt;R. norvegicus&lt;/i&gt; and &lt;i&gt;C. familiaris&lt;/i&gt;
+      produced by 
+      &lt;a href="http://hscl.cimr.cam.ac.uk">HSCL&lt;/a>
+      </description>
+      <version>January 31, 2006</version>
+    </source>
+
+    <source>
+      <name>FirstEF</name>
+      <description>
+        First-Exon and Promoter prediction for &lt;i&gt;H. sapiens&lt;/i&gt; from &lt;a
+        href="http://genome.ucsc.edu/cgi-bin/hgTables">UCSC&lt;/a>
+      </description>
+      <version>Release May 2004</version>
+    </source>
+
+   <source>
+      <name>Mouse chain and Opossum chain </name>
+      <description>
+        Mouse chain and Opossum chain annotated by &lt;a
+        href="http://genome.ucsc.edu/cgi-bin/hgTables">UCSC&lt;/a>
+      </description>
+      <version>Release May 2004</version>
+    </source>
+  
+   </sources> 
+   
+</para>
+  </section>
+</article>
+

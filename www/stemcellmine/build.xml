@@ -1,0 +1,206 @@
+<project name="stemcellmine-www" default="transform-site" basedir=".">
+
+  <property name="build.properties.local.base" 
+            value="${user.home}/build.properties.stemcellmine"/>
+  <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
+             else="${build.properties.local.base}">
+    <available file="${build.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${build.properties.local}" property="build.properties.local.present"/>
+  <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
+  
+  <property name="runtime.properties.local.base" value="${user.home}/flymine.properties" />
+  <condition property="runtime.properties.local" value="${runtime.properties.local.base}.${release}"
+             else="${runtime.properties.local.base}">
+    <available file="${runtime.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${runtime.properties.local}" property="runtime.properties.local.present"/>
+  <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
+  
+  <property name="common" location="../common"/>
+  <property name="src.www" location="site"/>
+  <property name="common.src.www" location="${common}/site"/>
+  <property name="src.doc" location="../../flymine/doc"/>
+  <property name="build.www" location="build"/>
+  <property name="build.webapp.manual.html" location="dist/doc/manual"/>
+  <property name="dist.www" location="dist"/>
+  <!--property name="xslt" location="xslt"/-->
+  <property name="common.xslt" location="${common}/xslt"/>
+  <property name="cache.dtd" location="${common}/dtd"/>
+  <property name="output.extension" value="shtml"/>
+  <property name="branding" value="stemcellmine"/>
+
+  <target name="prepare">
+    <property name="build.properties.local" value="${user.home}/build.properties.stemcellmine" />
+    <property file="${build.properties.local}"/>
+    <copy todir="${build.www}">
+      <fileset dir="${src.www}">
+        <include name="**/*"/>
+      </fileset>
+      <fileset dir="${common.src.www}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${build.www}/doc">
+      <fileset dir="${src.doc}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+
+    <!--copy todir="${build.www}" filtering="true">
+      <fileset dir="${xslt}">
+        <include name="**/*"/>
+      </fileset>
+    </copy-->
+    
+    <copy todir="${dist.www}">
+      <fileset dir="${build.www}">
+        <exclude name="**/*.xml"/>
+        <exclude name="**/*.xsl"/>
+      </fileset>
+    </copy>
+    
+    <!--copy file="rss.xml" todir="${dist.www}"/-->
+
+    <mkdir dir="${build.www}/tmp"/>
+  </target>
+
+  <target name="style-site" depends="prepare">
+    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
+           style="${common.xslt}/main.xsl" includes="**/*.xml"
+           force="false">
+      <exclude name="doc/manual/webapp_manual.xml"/>
+      <param name="branding" expression="${branding}" />
+      <param name="basedir" expression="${project.sitePrefix}" />
+      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="releaseversion" expression="${project.releaseVersion}"/>
+      <param name="webapppath" expression="${webapp.path}"/>
+      <param name="outputext" expression="${output.extension}" />
+    </style>
+  </target>
+
+  <target name="validate-site-xml" depends="prepare">
+    <xmlvalidate>
+      <fileset dir="${build.www}" includes="**/*.xml">
+        <exclude name="internal/**"/>
+        <!-- necessary until we can accommodate "presentation" within docbook -->
+        <exclude name="doc/presentations/index.xml"/>
+        <exclude name="index.xml"/>
+        <exclude name="what.xml"/>
+        <exclude name="news.xml"/>
+        <exclude name="sources.xml"/>
+      </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+          location="${cache.dtd}/sdocbook-1.0.dtd"/>
+      </xmlcatalog>
+   </xmlvalidate>
+  </target>
+
+  <target name="validate-site-xhtml"
+          depends="validate-site-xml, style-site">
+    <xmlvalidate warn="yes">
+      <fileset dir="${dist.www}" includes="**/*.html">
+        <exclude name="internal/**"/>
+        <exclude name="images/index.html"/>
+      </fileset>
+      <xmlcatalog>
+        <dtd 
+          publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
+          location="${cache.dtd}/xhtml1-transitional.dtd"/>
+        </xmlcatalog>
+   </xmlvalidate>
+  </target>
+
+  <target name="transform-site"
+          depends="validate-site-xml, style-site, validate-site-xhtml"
+          description="Transform the website contents from XML to HTML"/>
+
+  <target name="release-www" depends="transform-site"
+          description="releases the static website to the webserver">
+    <fixcrlf srcdir="${dist.www}"
+       eol="crlf"
+       includes="**/*.css"/>
+    <chmod perm="a+r" type="file">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <chmod perm="a+rx" type="dir">
+      <fileset dir="${dist.www}">
+        <include name="**/**" />
+      </fileset>
+    </chmod>
+    <exec executable="rsync">
+      <arg line="-e ssh -Cavz --exclude api --exclude tmp --exclude gbrowse --delete ${dist.www}/ ${www.serverlocation}/" />
+    </exec>
+  </target>
+
+  <target name="remove-production-webapp">
+    <ant dir="../../flymine" target="remove-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="release-production-webapp">
+    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+    <ant dir="../../intermine" target="build-webapp" inheritRefs="true"/>
+    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
+    <ant dir="../../flymine" target="distclean" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+    <ant dir="../../flymine" target="build-production-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+    <ant dir="../../flymine" target="release-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="release-production-webapp-nobuild">
+    <ant dir="../../flymine" target="release-webapp" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="release-production-webservice">
+    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
+    <ant dir="../../intermine" target="build-webservice" inheritRefs="true"/>
+    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
+
+    <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
+    <ant dir="../../flymine" target="build-production-webservice" inheritRefs="true"/>
+    <ant dir="../../flymine" target="release-webservice" inheritRefs="true"/>
+  </target>
+
+  <target name="create-indexes-production-attribute" depends="prepare">
+    <ant dir="../../flymine" target="create-indexes-production-attribute" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="dump-userprofile" depends="prepare">
+    <ant dir="../../flymine" target="write-production-userprofile-xml" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="load-userprofile" depends="prepare">
+    <ant dir="../../flymine" target="read-production-userprofile-xml" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="setup-userprofile" depends="prepare">
+    <ant dir="../../flymine" target="build-db-userprofile" inheritRefs="true">
+      <property name="intermine.dist.path" location="../../intermine/dist"/>
+    </ant>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.www}"/>
+    <delete dir="${dist.www}"/>
+  </target>
+</project>

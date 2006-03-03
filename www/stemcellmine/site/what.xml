@@ -1,0 +1,96 @@
+<?xml version="1.0" standalone="yes" ?> 
+<article>
+  <section>
+    <title>What can I do with StemCellMine?</title>
+    <para>
+        StemCellMine is an integrated database of genomic, expression and protein data for
+        <emphasis>Homo sapiens</emphasis>, <emphasis>Mus musculus</emphasis>, 
+        <emphasis>Rattus norvegicus</emphasis>, <emphasis>Monodelphis domestica</emphasis> and
+        <emphasis>Canis familiaris</emphasis> with emphasize on <emphasis>Stem Cell</emphasis> research.
+        Integrating data makes it possible to run sophisticated data mining queries
+        that span domains of biological knowledge.      
+    </para>
+    
+    <verbatim><h3>Quick Search</h3></verbatim>
+    <para>
+      Enter any identifier or symbol in the search box on the StemCellMine
+      home page to access summary pages and integrated tools.  See FlyMine webpage for
+     <ulink url="http://www.flymine.org/doc/tutorials/quickSearch.xml">Tutorial 1</ulink> 
+     <ulink url="http://www.flymine.org/doc/tutorials/objectDetails.xml">Tutorial 2</ulink>. 
+    </para>
+
+    <para>Some examples:
+      <itemizedlist>
+        <listitem><para>for the <emphasis>Homo sapiens</emphasis> gene, type
+        <ulink url="http://www.ensembl.org/Homo_sapiens/index.html">Ensembl</ulink> identifiers (eg. ENSG00000186445),
+        <ulink url="http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/searchgenes.pl">HUGO</ulink> identifiers, (eg. 29997), 
+         or any of its synonyms.</para>
+        </listitem>
+        
+        <listitem><para>for proteins use <ulink url="http://www.uniprot.org">UniProt</ulink> identifiers or primary accessions (eg. COX1_HUMAN, P00395).</para></listitem>
+      </itemizedlist>
+    </para>
+        
+    <verbatim><h3>Browse Aspects</h3></verbatim>
+    <para>
+      StemCellMine presents data as 'aspects', with each aspect providing a
+      'view' of a particular type of data (for example Gene Expression
+      or Protein Interactions). Use the aspect icons on the StemCellMine
+      home page to run a predefined template query or to build your
+      own query (see below). Certain template queries, as well as the
+      QueryBuilder itself, allow you to perform searches that span
+      more than one aspect.
+    </para>
+
+    <verbatim><h3>Run Template Queries</h3></verbatim>
+    <para>
+      A number of specific queries have been predefined. These template queries range from 
+      fairly simple queries to retrieve a particular type of data to more complex queries that 
+      span the different types of data availbale in StemCellMine. More template queries will be added 
+      as StemCellMine develops and we welcome suggestions. Find lists of predefined template 
+      queries on each aspect page or use the Template Search box on the StemCellMine home page 
+      and in the top menu on every page. 
+      <ulink url="http://www.flymine.org/doc/tutorials/templates.xml">Tutorial 3</ulink>
+    </para>
+
+    <verbatim><h3>StemCellMine QueryBuilder</h3></verbatim>
+    <para>
+      Advanced users can use a flexible query interface to construct
+      their own data mining queries across the multiple integrated
+      data sources, to modify existing template queries or to create
+      your own template queries. Access the StemCellMine QueryBuilder via
+      the StemCellMine home page or choose a query starting point on an
+      aspect page.
+    </para>
+
+    <verbatim><h3>Operate on Lists</h3></verbatim>
+    <para>
+      All queries in StemCellMine can be performed on lists (or
+      '<emphasis>bags</emphasis>') that you create yourself. Bags can
+      be created by typing or pasting in a list of identifiers, or
+      uploading a file containing the list. Data from previous queries
+      can also be saved into a bag using the boxes displayed
+      underneath the query results. Saved bags of data can be used to
+      constrain new queries, perform logical operations and can be
+      exported.
+    </para>
+
+    <verbatim><h3>Save Queries</h3></verbatim>
+    <para>
+      You can save your bags, queries and templates between sessions by
+      <ulink url="/login.do">creating an account</ulink> using the 'Log in' box
+      in the top menu on every page.
+    </para>
+
+    <verbatim><br/></verbatim>
+    <verbatim><br/></verbatim>
+
+    <para>
+      See flymine webpage for <ulink url="http://www.flymine.org/doc/tutorials/index.xml">short tutorials</ulink> and 
+      <ulink url="http://www.flymine.org/doc/manual/index.xml">user manual</ulink> for more information.
+    </para>
+    
+  </section>
+  
+</article>
+
