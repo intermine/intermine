@@ -88,18 +88,7 @@
     <script type="text/javascript">
       <!--//<![CDATA[
         $('img_${uid}').src='images/spinner.gif';
-        queueInlineTemplateQuery('${fn:replace(placement, ' ', '_')}', '${templateName}', '${displayObject.object.id}');
-        /*new Ajax.Updater('table_${uid}_int', '<html:rewrite action="/modifyDetails"/>', {
-          parameters:'method=ajaxTemplateCount&template=${templateName}&object=${displayObject.object.id}&type=global&placement=${placement}', asynchronous:true,
-          onComplete: function() {
-            var count = $('count_${uid}').innerHTML;
-            if (count == '0')
-              $('img_${uid}').src='images/blank.gif';
-            else
-              $('img_${uid}').src='images/plus.gif';
-          },
-          evalScripts: true
-        });*/
+        queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}');
       //]]>-->
     </script>
   </c:if>
