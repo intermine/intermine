@@ -3121,14 +3121,14 @@
     <filter token="FLYMINE_GBROWSE_DATABASE_USER" value="${gbrowse.database.user}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE_PASSWORD" value="${gbrowse.database.password}"/>
     <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR" value="${gbrowse.database.adaptor}"/>
-    <filter token="PROJECT_TITLE" value="FlyMine"/>
+    <filter token="PROJECT_TITLE" value="${project.title}"/>
     <filter token="PROJECT_VERSION" value="${project.releaseVersion}"/>
     <filter token="PROJECT_SUBTITLE" 
-            value="An integrated database for &lt;I&gt;Drosophila&lt;/I&gt; and &lt;I&gt;Anopheles&lt;/I&gt; genomics"/>
+            value="${project.subTitle}"/>
     <filter token="PROJECT_FUNDED_BY" value="${project.funded.by}"/>
     <filter token="PROJECT_CONTACT" value="${project.contact}"/>
 
-    <copy file="${model}/genomic/resources/gbrowse/flymine.conf"
+    <copy file="${model}/genomic/resources/gbrowse/${project.title}.conf"
           toFile="${build.gbrowse}/${gbrowse.database.source}.conf"
           filtering="true" overwrite="true"/>
 
