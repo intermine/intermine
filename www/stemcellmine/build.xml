@@ -74,6 +74,7 @@
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="projectcontact" expression="${project.contact}"/>
       <param name="releaseversion" expression="${project.releaseVersion}"/>
       <param name="webapppath" expression="${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
@@ -100,7 +101,7 @@
   </target>
 
   <target name="validate-site-xhtml"
-          depends="validate-site-xml, style-site">
+          depends="validate-site-xml, style-site, webapp-manual-html">
     <xmlvalidate warn="yes">
       <fileset dir="${dist.www}" includes="**/*.html">
         <exclude name="internal/**"/>
@@ -115,7 +116,7 @@
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-site, validate-site-xhtml"
+          depends="validate-site-xml, style-site, webapp-manual-html, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
 
   <target name="release-www" depends="transform-site"
@@ -197,6 +198,30 @@
     <ant dir="../../flymine" target="build-db-userprofile" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine/dist"/>
     </ant>
+  </target>
+
+  <target name="webapp-manual-html" depends="prepare">
+    <xslt basedir="${dist.www}/doc/manual/"
+          in="${build.www}/doc/manual/webapp_manual.xml"
+          out="${dist.www}/doc/manual/webapp_manual.log"
+          style="xslt/webapp_manual.xsl"
+          force="false">
+      <param name="branding" expression="${branding}" />
+      <param name="basedir" expression="${project.sitePrefix}" />
+      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
+      <param name="projectcontact" expression="${project.contact}"/>
+      <param name="releaseversion" expression="${project.releaseVersion}"/>
+      <param name="webapppath" expression="${webapp.path}"/>
+      <param name="outputext" expression="${output.extension}" />
+      
+      <!-- This sets the extension for HTML files to ".html".     -->
+      <param name="html.ext" expression=".shtml"/>
+
+      <!-- This sets the filename based on the ID.                -->
+      <param name="use.id.as.filename" expression="1"/>
+
+      <param name="css.decoration" expression="0"/>
+    </xslt>
   </target>
 
   <target name="clean">
