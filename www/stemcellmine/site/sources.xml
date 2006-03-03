@@ -12,7 +12,7 @@
     <source>
       <name>Ensembl genome annotation.</name>
       <description>
-        Genome Annotation for H. sapiens from &lt;a
+        Genome Annotation for &lt;i&gt;H. sapiens&lt;/i&gt; from &lt;a
         href="http://www.ensembl.org/">Ensembl&lt;/a>
       </description>
       <version>Release 36.35i</version>
