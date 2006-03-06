@@ -65,7 +65,7 @@
       <div class="body">
         <ul>
           <li>
-            <i>Drosophila melanogaster</i> proteins and corresponding genes:
+            <i>D. melanogaster</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="Protein Protein.genes">
@@ -96,7 +96,7 @@
             </span>
           </li>
           <li>
-            <i>Drosophila melanogaster</i> protein domains:
+            <i>D. melanogaster</i> protein domains:
             <im:querylink text="[browse]"
                           skipBuilder="true">
               <query name="" model="genomic" view="ProteinDomain">
@@ -137,7 +137,7 @@
 
           <li>
             <span style="white-space:nowrap">
-              <i>Drosophila melanogaster</i> proteins with corresponding protein domains:
+              <i>D. melanogaster</i> proteins with corresponding protein domains:
               <im:querylink text="[browse]"
                             skipBuilder="true">
                 <query name="" model="genomic" view="ProteinDomain.proteins ProteinDomain" constraintLogic="A and B">
@@ -175,7 +175,7 @@
             </span>
           </li>
           <li>
-            <i>Drosophila melanogaster</i> protein families:
+            <i>D. melanogaster</i> protein families:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="ProteinFamily">
@@ -213,7 +213,7 @@
             </span>
           </li>
           <li>
-            <i>Drosophila melanogaster</i> proteins with corresponding protein families:
+            <i>D. melanogaster</i> proteins with corresponding protein families:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="ProteinFamily.proteins ProteinFamily" constraintLogic="A and B">
@@ -262,7 +262,7 @@
       <div class="body">
         <ul>
           <li>
-            <i>Anopheles</i> proteins and corresponding genes:
+            <i>A. gambiae</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="Protein Protein.genes">
@@ -293,7 +293,7 @@
 
           </li>
           <li>
-            <i>Anopheles</i> protein domains:
+            <i>A. gambiae</i> protein domains:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]"
                             skipBuilder="true">
@@ -332,7 +332,7 @@
             </span>
           </li>
           <li>
-            <i>Anopheles</i> proteins with corresponding protein domains:
+            <i>A. gambiae</i> proteins with corresponding protein domains:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="ProteinDomain.proteins ProteinDomain" constraintLogic="A and B">
@@ -370,7 +370,7 @@
             </span>
           </li>
           <li>
-            <i>Anopheles</i> protein families:
+            <i>A. gambiae</i> protein families:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="ProteinFamily">
@@ -408,7 +408,7 @@
             </span>
           </li>
           <li>
-            <i>Anopheles</i> proteins with corresponding protein families:
+            <i>A. gambiae</i> proteins with corresponding protein families:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]"
                             skipBuilder="true">
