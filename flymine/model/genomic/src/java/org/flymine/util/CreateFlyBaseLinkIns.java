@@ -34,14 +34,13 @@ public class CreateFlyBaseLinkIns
 {
     private static final String DBID = "FlyMine";
     private static final String BURL
-        = "http://www.flymine.org/query/portal.do?origin=flybase&class=Gene&externalid=";
+        = "http://www.flymine.org/query/portal.do?origin=flybase&class=gene&externalid=";
     private static final String NAM = "FlyMine - integrated genomics and proteomics";
     private static final String ICO = "";
     private static final String LKNA = "FlyMine";
-    private static final String LKHE = "<a href=\"http://www.flymine.org/query\">FlyMine</a>"
+    private static final String LKHE = "<a href=\"http://www.flymine.org\">FlyMine</a>"
         + " - integrated Drosophila and Anopheles genomics and proteomics data.";
     private static final String ENDL = System.getProperty("line.separator");
-
 
     /**
      * Create link-in file.
@@ -78,7 +77,7 @@ public class CreateFlyBaseLinkIns
 
         Iterator iter = getFlyBaseIds(os);
         while (iter.hasNext()) {
-            String fbgn = ((Gene) iter.next()).getOrganismDbId();
+            String fbgn = (String) iter.next();
             if (fbgn.startsWith("FBgn") && (fbgn.indexOf("flymine") == -1)) {
                 writer.write(fbgn + "\t" + DBID + "\t" + fbgn + "\t" + fbgn + ENDL);
             }
@@ -89,7 +88,7 @@ public class CreateFlyBaseLinkIns
         Query q = new Query();
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryField qf = new QueryField(qcGene, "organismDbId");
-        q.addToSelect(qcGene);
+        q.addToSelect(qf);
         q.addFrom(qcGene);
         QueryClass qcOrg = new QueryClass(Organism.class);
         q.addFrom(qcOrg);
@@ -101,6 +100,8 @@ public class CreateFlyBaseLinkIns
         QueryObjectReference ref1 = new QueryObjectReference(qcGene, "organism");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcOrg);
         cs.addConstraint(cc1);
+        SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
+        cs.addConstraint(sc2);
         q.setConstraint(cs);
         q.addToOrderBy(qf);
         q.setDistinct(true);
