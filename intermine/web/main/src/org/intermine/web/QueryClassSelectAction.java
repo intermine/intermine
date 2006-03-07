@@ -78,7 +78,7 @@ public class QueryClassSelectAction extends InterMineAction
         PathQuery query = new PathQuery(os.getModel());
         session.setAttribute(Constants.QUERY, query);
         session.setAttribute("path", TypeUtil.unqualifiedName(className));
-        session.removeAttribute("prefix");
+        session.setAttribute("prefix", TypeUtil.unqualifiedName(className));
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         session.removeAttribute(Constants.EDITING_VIEW);
     }
