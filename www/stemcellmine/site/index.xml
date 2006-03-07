@@ -9,7 +9,7 @@
       <para>
         StemCellMine is an integrated database of genomic, expression and protein data for
         <emphasis>Homo sapiens</emphasis>, <emphasis>Mus musculus</emphasis>, 
-        <emphasis>Rattus norvegicus</emphasis>, <emphasis>Monodelphis domestica</emphasis> and
+        <emphasis>Monodelphis domestica</emphasis> and
         <emphasis>Canis familiaris</emphasis> with emphasize on <emphasis>Stem Cell</emphasis> research.
         Integrating data makes it possible to run sophisticated data mining queries
         that span domains of biological knowledge.
@@ -63,7 +63,7 @@
       StemCellMine QueryBuilder
     </title>
     <para>
-      Advanced users can use a flexible query interface to construct their own data mining queries.  See <ulink url="http://www.flymine.org/doc/manual">user manual</ulink> and <ulink url="http://www.flymine.org/doc/tutorials/">tutorials</ulink>.
+      Advanced users can use a flexible query interface to construct their own data mining queries.  See <ulink url="/doc/manual">user manual</ulink> and <ulink url="/doc/tutorials/">tutorials</ulink>.
     </para>
     <para>
       <things-to-do/>

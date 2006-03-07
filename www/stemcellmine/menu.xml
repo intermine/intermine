@@ -9,8 +9,8 @@
 
   <item title="Documentation">
     <item url="/what.xml" title="Get Started"/>
-    <item url="http://www.flymine.org/doc/tutorials/index.shtml" title="Tutorials"/>
-    <item url="http://www.flymine.org//doc/manual/index.shtml" title="User Manual"/>
+    <item url="/doc/tutorials/index.shtml" title="Tutorials"/>
+    <item url="/doc/manual/index.shtml" title="User Manual"/>
   </item>
   
   <item title="Download software">
