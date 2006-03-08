@@ -13,6 +13,8 @@ package org.intermine.util;
 import java.io.*;
 import java.util.*;
 
+import org.intermine.util.TextFileUtil.ObjectFormatter;
+
 import junit.framework.*;
 
 /**
@@ -23,19 +25,35 @@ import junit.framework.*;
 
 public class TextFileUtilTest extends TestCase
 {
+    private ObjectFormatter objectFormatter;
+
     public TextFileUtilTest (String arg) {
         super(arg);
+
+        // example formatter
+        objectFormatter = new ObjectFormatter() {
+            public String format(Object o) {
+                if (o instanceof Map) {
+                    return "\t,";
+                } else {
+                    return null;
+                }
+            }
+        };
     }
 
     private List getTestRows() {
         List rows = new ArrayList();
+        Map map = new HashMap();
+        map.put("key1", "value1");
+        map.put("key2",  new Integer(2));
         rows.add(Arrays.asList(new Object [] {
-                                   new Integer(101), new Integer(102),
+                                   new Integer(101), map,
                                    "string 103", "string 104, with comma"
                                }));
         rows.add(Arrays.asList(new Object [] {
-                                   new Integer(201), new Integer(202),
-                                   "string 203", "string 204\t with tab"
+                                   new Integer(201), map,
+                                   "string 203", "string 204\t with tab", 
                                }));
         return rows;
     }
@@ -50,9 +68,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {true, true, true, true},
-                                            100);
-        expected = "101\t102\tstring 103\tstring 104, with comma\n"
-            + "201\t202\tstring 203\t\"string 204\t with tab\"\n";
+                                            100, objectFormatter);
+        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
+            + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -61,9 +79,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             null,
                                             null,
-                                            100);
-        expected = "101\t102\tstring 103\tstring 104, with comma\n"
-            + "201\t202\tstring 203\t\"string 204\t with tab\"\n";
+                                            100, objectFormatter);
+        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
+            + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -72,9 +90,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {false, true, true, true},
-                                            100);
-        expected = "102\tstring 103\tstring 104, with comma\n"
-            + "202\tstring 203\t\"string 204\t with tab\"\n";
+                                            100, objectFormatter);
+        expected = "\"\t,\"\tstring 103\tstring 104, with comma\n"
+            + "\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -83,9 +101,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {3, 1, 2, 0},
                                             new boolean[] {true, true, true, true},
-                                            100);
-        expected = "string 104, with comma\t102\tstring 103\t101\n"
-            + "\"string 204\t with tab\"\t202\tstring 203\t201\n";
+                                            100, objectFormatter);
+        expected = "string 104, with comma\t\"\t,\"\tstring 103\t101\n"
+            + "\"string 204\t with tab\"\t\"\t,\"\tstring 203\t201\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -94,8 +112,8 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {3, 2, 1, 0},
                                             new boolean[] {false, true, true, false},
-                                            100);
-        expected = "string 103\t102\nstring 203\t202\n";
+                                            100, objectFormatter);
+        expected = "string 103\t\"\t,\"\nstring 203\t\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -104,8 +122,8 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {3, 2, 1, 0},
                                             new boolean[] {false, false, true, false},
-                                            100);
-        expected = "102\n202\n";
+                                            100, objectFormatter);
+        expected = "\"\t,\"\n\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
         
@@ -114,8 +132,8 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {true, true, true, true},
-                                            1);
-        expected = "101\t102\tstring 103\tstring 104, with comma\n";
+                                            1, objectFormatter);
+        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n";
         results = baos.toString();
         assertEquals(expected, results);        
         
@@ -124,9 +142,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {0, 1, 2, 3},
                                             new boolean[] {true, true, true, true},
-                                            -1);
-        expected = "101\t102\tstring 103\tstring 104, with comma\n"
-            + "201\t202\tstring 203\t\"string 204\t with tab\"\n";;
+                                            -1, objectFormatter);
+        expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
+            + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";;
         results = baos.toString();
         assertEquals(expected, results);     
     }
@@ -140,9 +158,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {0, 1, 2, 3},
                                    new boolean[] {true, true, true, true},
-                                   100);
-        expected = "101,102,\"string 103\",\"string 104, with comma\"\n"
-            + "201,202,\"string 203\",\"string 204\t with tab\"\n";
+                                   100, objectFormatter);
+        expected = "101,\"\t,\",\"string 103\",\"string 104, with comma\"\n"
+            + "201,\"\t,\",\"string 203\",\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -151,9 +169,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {0, 1, 2, 3},
                                    new boolean[] {false, true, true, true},
-                                   100);
-        expected = "102,\"string 103\",\"string 104, with comma\"\n"
-            + "202,\"string 203\",\"string 204\t with tab\"\n";
+                                   100, objectFormatter);
+        expected = "\"\t,\",\"string 103\",\"string 104, with comma\"\n"
+            + "\"\t,\",\"string 203\",\"string 204\t with tab\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -162,9 +180,9 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {3, 1, 2, 0},
                                    new boolean[] {true, true, true, true},
-                                   100);
-        expected = "\"string 104, with comma\",102,\"string 103\",101\n"
-            + "\"string 204\t with tab\",202,\"string 203\",201\n";
+                                   100, objectFormatter);
+        expected = "\"string 104, with comma\",\"\t,\",\"string 103\",101\n"
+            + "\"string 204\t with tab\",\"\t,\",\"string 203\",201\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -173,8 +191,8 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {3, 2, 1, 0},
                                    new boolean[] {false, true, true, false},
-                                   100);
-        expected = "\"string 103\",102\n\"string 203\",202\n";
+                                   100, objectFormatter);
+        expected = "\"string 103\",\"\t,\"\n\"string 203\",\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
 
@@ -183,8 +201,8 @@ public class TextFileUtilTest extends TestCase
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {3, 2, 1, 0},
                                    new boolean[] {false, false, true, false},
-                                   100);
-        expected = "102\n202\n";
+                                   100, objectFormatter);
+        expected = "\"\t,\"\n\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
     }

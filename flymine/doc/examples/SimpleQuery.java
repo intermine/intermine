@@ -49,7 +49,7 @@ public class SimpleQuery
 
         Results res = os.execute(q);
 
-        TextFileUtil.writeTabDelimitedTable(System.out, res, null, null, -1);
+        TextFileUtil.writeTabDelimitedTable(System.out, res, null, null, -1, null);
     }
 }
 
