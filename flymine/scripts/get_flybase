@@ -20,6 +20,7 @@ my $org_abbrev = $ARGV[0]
 my $flybase_server = "ftp.flybase.net";
 my $flybase_genomes_dir = "genomes";
 my $flybase_current_dir = "current";
+my $flybase_dir = "flybase";
 my $gff_dir = "gff";
 my $fasta_dir = "fasta";
 
@@ -56,16 +57,19 @@ if (!defined $version) {
     die "can't find file with version number\n";
 }
 
-my $download_dir = "$org_abbrev/$version";
+my $download_dir = "flybase/$org_abbrev/$version";
 
 if (-d $download_dir) {
   die "$download_dir directory already exists - not updating\n";
 }
 
-
-if (!(-d $org_abbrev)) {
-print "creating $org_abbrev\n";
-    mkdir $org_abbrev;
+if (!(-d $flybase_dir)) {
+print "creating $flybase_dir\n";
+    mkdir "$flybase_dir";
+}
+if (!(-d "$flybase_dir/$org_abbrev")) {
+print "creating $flybase_dir/$org_abbrev\n";
+    mkdir "$flybase_dir/$org_abbrev";
 }
 print "creating $download_dir\n";
 mkdir $download_dir;
