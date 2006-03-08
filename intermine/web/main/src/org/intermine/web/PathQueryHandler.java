@@ -39,6 +39,7 @@ class PathQueryHandler extends DefaultHandler
     private PathNode node;
     private Map alternativeViews = new HashMap();
     protected PathQuery query;
+    private Model model = null;
 
     /**
      * Constructor
@@ -59,7 +60,6 @@ class PathQueryHandler extends DefaultHandler
             alternativeViews.put(name, view);
         }
         if (qName.equals("query")) {
-            Model model;
             // reset things
             gencode = 'A';
             alternativeViews = new HashMap();
@@ -93,8 +93,19 @@ class PathQueryHandler extends DefaultHandler
                     || !query.isValid()) {
                 constraintValue = attrs.getValue("value");
             } else {
-                constraintValue = TypeUtil.stringToObject(MainHelper.getClass(node.getType()),
-                                                          attrs.getValue("value"));
+                Class c = null;
+                if (model != null && !node.getType().startsWith(model.getPackageName())) {
+                    String type = model.getPackageName() + "." + node.getType();
+                    try {
+                        c = MainHelper.getClass(type);
+                    } catch (RuntimeException e) {
+                        // ignore - probably a String/BigDecimal etc.
+                    }
+                }
+                if (c == null) {
+                    c = MainHelper.getClass(node.getType());
+                }
+                constraintValue = TypeUtil.stringToObject(c, attrs.getValue("value"));
             }
             String editable = attrs.getValue("editable");
             boolean editableFlag = false;
