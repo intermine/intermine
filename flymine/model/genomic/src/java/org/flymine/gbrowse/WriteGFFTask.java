@@ -139,6 +139,15 @@ public class WriteGFFTask extends Task
                 continue;
             }
 
+            if (feature instanceof ArtificialDeletion) {
+                ArtificialDeletion ad = (ArtificialDeletion) feature;
+                if (!ad.getAvailable().booleanValue()) {
+                    // write only the available deletions because there are too many
+                    // ArtificialDeletions for GBrowse to work well
+                    continue;
+                }
+            }
+            
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 synonymMap = makeSynonymMap(os, resultChrId);
 
