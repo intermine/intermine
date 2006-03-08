@@ -15,6 +15,13 @@
       <fmt:message key="menu.home"/>
     </html:link>
   </span>
+  <c:if test="${WEB_PROPERTIES['project.standalone']}">
+    <span class="menu-item">
+      <html:link action="/begin.do">
+        <fmt:message key="menu.newquery"/>
+      </html:link>
+    </span>
+  </c:if>
   <span class="menu-item">
     <c:choose>
       <c:when test="${!empty QUERY}">
