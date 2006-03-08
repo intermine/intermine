@@ -44,7 +44,7 @@
   </aspect>
 
   <aspect name="DrosDel">
-    <subtitle>P-element&lt;br/&gt;Insertions and&lt;br/&gt;Deletions</subtitle>
+    <subtitle>P-element insertions&lt;br/&gt;and deletions</subtitle>
     <icon-image>model/drosdel.gif</icon-image>
     <large-image>model/drosdel.gif</large-image>
     <intro-text>
@@ -67,7 +67,7 @@
   </aspect>
 
   <aspect name="INDAC">
-    <subtitle>Long Oligos</subtitle>
+    <subtitle>Long oligos</subtitle>
     <icon-image>model/indac.png</icon-image>
     <large-image>model/indac.png</large-image>
     <intro-text>
@@ -92,7 +92,7 @@
   </aspect>
 
   <aspect name="Disease">
-    <subtitle>Human disease matches from Homophila</subtitle>
+    <subtitle>Human disease matches&lt;br/&gt;from Homophila</subtitle>
     <icon-image>model/disease.png</icon-image>
     <large-image>model/disease.png</large-image>
     <intro-text>
@@ -104,7 +104,7 @@
   </aspect>
 
   <aspect name="Comparative Genomics">
-    <subtitle>Orthologues&lt;br/&gt;and Paralogues</subtitle>
+    <subtitle>Orthologues&lt;br/&gt;and paralogues</subtitle>
     <icon-image>model/comparativeGenomics.png</icon-image>
     <large-image>model/comparativeGenomics.png</large-image>
     <intro-text>
@@ -120,7 +120,7 @@
   </aspect>
 
   <aspect name="Proteins">
-    <subtitle>Protein and proteomics data</subtitle>
+    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
     <icon-image>model/proteins.png</icon-image>
     <large-image>model/proteins.png</large-image>
     <intro-text>
