@@ -439,10 +439,14 @@ public class ProfileManager
         
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
-
+        
         q.addFrom(qc);
         q.addToSelect(qc);
         
+        QueryField orderByField = new QueryField(qc, "tagName");
+
+        q.addToOrderBy(orderByField);
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         
         if (tagName != null) {
