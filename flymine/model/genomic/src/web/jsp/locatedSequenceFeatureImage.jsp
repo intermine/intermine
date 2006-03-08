@@ -7,7 +7,9 @@
 <fmt:setBundle basename="model"/>
 
 
-<c:if test="${(!empty object.chromosomeLocation || cld.unqualifiedName == 'Chromosome') && object.organism.abbreviation != 'MM' && object.organism.abbreviation != 'MD'&& object.organism.abbreviation != 'RN'}">
+<c:if test="${(!empty object.chromosomeLocation || cld.unqualifiedName == 'Chromosome')
+            && object.organism.abbreviation != 'MM' && object.organism.abbreviation != 'MD'
+            && object.organism.abbreviation != 'RN' && cld.unqualifiedName != 'ChromosomeBand'}">
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
   
