@@ -10,32 +10,41 @@ package org.intermine.web;
  *
  */
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.intermine.objectstore.query.Results;
 
-import java.util.List;
-import java.util.Date;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TextFileUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.TableExportConfig;
+import org.intermine.web.config.WebConfig;
+import org.intermine.web.results.Column;
+import org.intermine.web.results.DisplayObject;
+import org.intermine.web.results.PagedTable;
 
 import javax.servlet.ServletContext;
-
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-
-import org.apache.log4j.Logger;
-
-import org.apache.poi.hssf.usermodel.*;
-
-import org.intermine.web.config.WebConfig;
-import org.intermine.web.config.TableExportConfig;
-import org.intermine.web.results.PagedTable;
-import org.intermine.web.results.Column;
-import org.intermine.util.TextFileUtil;
-import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file
@@ -112,6 +121,10 @@ public class ExportAction extends InterMineAction
                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         response.setContentType("Application/vnd.ms-excel");
         response.setHeader("Pragma", "no-cache");
@@ -122,6 +135,8 @@ public class ExportAction extends InterMineAction
         if (pt == null) {
             return mapping.getInputForward();
         }
+        
+        TextFileUtil.ObjectFormatter objectFormatter = getObjectFormatter(model, webConfig);
         
         int defaultMax = 10000;
 
@@ -202,8 +217,15 @@ public class ExportAction extends InterMineAction
                         continue;
                     }
                     
-                    // default
-                    excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
+                    String stringifiedObject = objectFormatter.format(thisObject);
+                    
+                    if (stringifiedObject == null) {
+                        // default
+                        excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
+                    } else {
+                        excelRow.createCell(outputColumnIndex).setCellValue(stringifiedObject);
+                    }
+                        
                 }
             }
 
@@ -232,6 +254,10 @@ public class ExportAction extends InterMineAction
                              HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         response.setContentType("text/comma-separated-values");
         response.setHeader("Pragma", "no-cache");
@@ -246,7 +272,8 @@ public class ExportAction extends InterMineAction
         }
 
         TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
-                                   getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1);
+                                   getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1,
+                                   getObjectFormatter(model, webConfig));
 
         return null;
     }
@@ -268,6 +295,10 @@ public class ExportAction extends InterMineAction
                              HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         response.setContentType("text/tab-separated-values");
         response.setHeader("Pragma", "no-cache");
@@ -283,7 +314,8 @@ public class ExportAction extends InterMineAction
 
         TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), allRows,
                                             getOrder(pt), getVisible(pt),
-                                            pt.getMaxRetrievableIndex() + 1);
+                                            pt.getMaxRetrievableIndex() + 1,
+                                            getObjectFormatter(model, webConfig));
 
         return null;
     }
@@ -321,4 +353,49 @@ public class ExportAction extends InterMineAction
         return returnValue;
     }
 
+    /**
+     * An ObjectFormatter that uses the WebConfig to work out which fields to output for the
+     * object.
+     */
+    private TextFileUtil.ObjectFormatter getObjectFormatter(final Model model,
+                                                            final WebConfig webConfig) {
+        TextFileUtil.ObjectFormatter objectFormatter = new TextFileUtil.ObjectFormatter() {
+            public String format(Object o) {
+                if (o instanceof InterMineObject) {
+                    InterMineObject imo = (InterMineObject) o;
+                    Set cds = DisplayObject.getLeafClds(imo.getClass(), model);
+                    StringBuffer sb = new StringBuffer();
+                    Iterator cdIter = cds.iterator();
+                    while (cdIter.hasNext()) {
+                        ClassDescriptor cd = (ClassDescriptor) cdIter.next();
+                        List fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
+                        Iterator fcIter = fieldConfigs.iterator();
+                        sb.append(cd.getUnqualifiedName()).append(" ");
+                        while (fcIter.hasNext()) {
+                            FieldConfig fc = (FieldConfig) fcIter.next();
+                            if (fc.getShowInResults()) {
+                                String fieldExpr = fc.getFieldExpr();
+                                if (fieldExpr.indexOf('.') == -1) {
+                                    try {
+                                        Object value = TypeUtil.getFieldValue(imo, fieldExpr);
+                                        if (value != null) {
+                                            sb.append(fieldExpr).append(": ");
+                                            sb.append(value.toString()).append(" ");
+                                        }
+                                    } catch (IllegalAccessException e) {
+                                        // ignore - there isn't much we can do here
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return sb.toString().trim();
+                } else {
+                    return null;
+                }
+            }
+        };
+
+        return objectFormatter;
+    }
 }

@@ -31,6 +31,23 @@ import java.util.StringTokenizer;
 public abstract class TextFileUtil
 {
     /**
+     * The format() method is called by writeDelimitedTable() to format objects in a more useful
+     * way than the default toString().
+     * @author Kim Rutherford
+     */
+    public interface ObjectFormatter
+    {
+        /**
+         * This method returns a String representation of the argument, formatted in a way that
+         * is useful in a text table.
+         * @param o an Object
+         * @return a String representing the object or null if this formatter can't do anything
+         * with the object (doesn't know how to format it)
+         */
+        String format(Object o);
+    }
+
+    /**
      * Write a list of lists using tab characters to delimit the fields.
      * @param os the OutputStream to write to
      * @param listOfLists the table to write
@@ -40,11 +57,14 @@ public abstract class TextFileUtil
      * means all columns are visible
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
      * listOfLists.  -1 means output all
+     * @param objectFormatter the ObjectFormatter used to attempt to format Objects or null if
+     * toString() should be called instead
      */
     public static void writeTabDelimitedTable(OutputStream os, List listOfLists,
                                               int [] columnOrder, boolean [] columnVisible,
-                                              int maxRows) {
-        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, '\t', false);
+                                              int maxRows, ObjectFormatter objectFormatter) {
+        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, '\t', false,
+                            objectFormatter);
     }
 
     /**
@@ -57,11 +77,14 @@ public abstract class TextFileUtil
      * means all columns are visible
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
      * listOfLists.  -1 means output all
+     * @param objectFormatter the ObjectFormatter used to attempt to format Objects or null if
+     * toString() should be called instead
      */
     public static void writeCSVTable(OutputStream os, List listOfLists,
                                      int [] columnOrder, boolean [] columnVisible,
-                                     int maxRows) {
-        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, ',', true);
+                                     int maxRows, ObjectFormatter objectFormatter) {
+        writeDelimitedTable(os, listOfLists, columnOrder, columnVisible, maxRows, ',', true,
+                            objectFormatter);
     }
 
     /**
@@ -75,10 +98,13 @@ public abstract class TextFileUtil
      * @param maxRows the maximum number of rows to output - read only range 0..maxRows-1 from
      * @param quote quote all strings
      * listOfLists
+     * @param objectFormatter the ObjectFormatter used to attempt to format Objects or null if
+     * toString() should be called instead
      */
     public static void writeDelimitedTable(OutputStream os, List listOfLists,
                                            int [] columnOrder, boolean [] columnVisible,
-                                           int maxRows, char delimiter, boolean quote) {
+                                           int maxRows, char delimiter, boolean quote,
+                                           ObjectFormatter objectFormatter) {
         PrintStream printStream = new PrintStream(os);
 
         // a count of the columns that are invisble - used to get the correct columnIndex
@@ -128,6 +154,14 @@ public abstract class TextFileUtil
                 if (o == null) {
                     writeUnQuoted(printStream, "");
                 } else {
+                    if (objectFormatter != null) {
+                        String formattedObject = objectFormatter.format(o);
+
+                        if (formattedObject != null) {
+                            o = formattedObject;
+                        }
+                    }
+
                     if (o instanceof Number
                         || (!quote && o.toString().indexOf(delimiter) < 0
                             && !o.toString().equals(""))) {
