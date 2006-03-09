@@ -13,11 +13,12 @@
         <p>
           The aim of <A href="http://www.indac.net">INDAC</A> is to produce a widely
           available and uniform set of array reagents so that microarray data collected
-          from different studies may be more easily compared. INDAC has designed a set
+          from different studies may be more easily compared. On behalf of INDAC, the
+          <A href="http://www.flychip.org.uk">FlyChip group</A> has designed a set
           of 70mer long oligonucleotides to release 4.1 of the <I>D. melanogaster</I>
-          genome. Oligos were designed using a custom implementation of 
-          <A href="http://berry.engin.umich.edu/oligoarray2">OligoArray2</A> developed by
-          Dr David Kreil in the <A href="http://www.flychip.org.uk">FlyChip group</A>. 
+          genome. Oligos were designed using a modified version of 
+          <A href="http://berry.engin.umich.edu/oligoarray2">OligoArray2</A> and other
+          post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).
         </p>
         <p>
           Synthesis of the set by <A href="http://www.illumina.com">Illumina</A>
@@ -26,7 +27,7 @@
         </p>
         <p>
           Note that currently FlyMine stores the positions of the oligos relative to
-          the transcript rather chromosome.
+          the transcript rather than to the chromosome.
         </p>
       </div>
     </td>
