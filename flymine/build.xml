@@ -101,7 +101,7 @@
 
   <!-- file data sources -->
   <property name="shared.data" location="/shared/data"/>
-  <property name="flybase.chado.melanogaster" location="${shared.data}/flybase/release_4_2_1"/>
+  <property name="flybase.chado.melanogaster" location="${shared.data}/flybase/dmel/release_4_2_1"/>
   <property name="flybase.chado.melanogaster.fasta" location="${flybase.chado.melanogaster}/fasta"/>
   <property name="flybase.chado.melanogaster.gff" location="${flybase.chado.melanogaster}/gff"/>
   <property name="flybase.uniprot.link.file" location="${flybase.chado.melanogaster}/cg2uniprot.txt"/>
