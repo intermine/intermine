@@ -33,6 +33,7 @@ import org.flymine.model.genomic.Location;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -138,13 +139,15 @@ public abstract class OverlapUtil
         ((ObjectStoreInterMineImpl) os).precompute(q);
 
         Results results = os.execute(q);
-        results.setBatchSize(5000);
 
         // ordered by length - largest first
         final TreeMap locationsByLength = new TreeMap(new SimpleLocLengthComparator());
 
         // ordered by start position - smallest first
         final TreeMap locationsByStartPos = new TreeMap(new SimpleLocStartComparator());
+
+        // a Map from Location ID to subject LocatedSequenceFeature
+        final Map locationSubjectMap = new HashMap();
 
         Iterator resIter = results.iterator();
 
@@ -160,10 +163,12 @@ public abstract class OverlapUtil
 
             locationsByLength.put(location, location);
             locationsByStartPos.put(location, location);
+
+            locationSubjectMap.put(location.getId(), lsf);
         }
 
         return new OverlappingFeaturesIterator(locationsByLength, locationsByStartPos,
-                                               ignoreSelfMatches);
+                                               locationSubjectMap, ignoreSelfMatches);
     }
 
     /**
@@ -195,19 +200,22 @@ public abstract class OverlapUtil
         private Iterator otherLocationIter = null;
         private Location currentLocation = null;
         private Location[] nextReturnValue = null;
+        private final Map locationSubjectMap;
 
         /**
          * Create a new OverlappingFeaturesIterator.
          * @param locationsByLengthMap A Map from LocatedSequenceFeature lengths to Location
          * @param locationsByStartPos A Map from Location start position to Location
+         * @param locationSubjectMap 
          * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of
          * the same class.
          */
         private OverlappingFeaturesIterator(TreeMap locationsByLengthMap,
                                             TreeMap locationsByStartPos,
-                                            boolean ignoreSelfMatches) {
+                                            Map locationSubjectMap, boolean ignoreSelfMatches) {
             super();
             this.locationsByStartPos = locationsByStartPos;
+            this.locationSubjectMap  = locationSubjectMap;
             this.ignoreSelfMatches = ignoreSelfMatches;
             locationsByLengthIter = locationsByLengthMap.entrySet().iterator();
         }
@@ -313,8 +321,12 @@ public abstract class OverlapUtil
 
             while (subRangeIter.hasNext()) {
                 Location otherLocation = (Location) subRangeIter.next();
-                Class thisLocationClass = thisLocation.getSubject().getClass();
-                Class otherLocationClass = otherLocation.getSubject().getClass();
+                LocatedSequenceFeature otherLsf = 
+                    (LocatedSequenceFeature) locationSubjectMap.get(thisLocation.getId());
+                Class thisLocationClass = otherLsf.getClass();
+                LocatedSequenceFeature thisLsf = 
+                    (LocatedSequenceFeature) locationSubjectMap.get(otherLocation.getId());
+                Class otherLocationClass = thisLsf.getClass();
                 if (thisLocation != otherLocation
                     && (!ignoreSelfMatches || !thisLocationClass.equals(otherLocationClass))
                     && (thisLocation.getStart().intValue() <= otherLocation.getStart().intValue()
