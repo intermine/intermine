@@ -9,4 +9,7 @@
     <typedef
         name="xpath-select"
         classname="org.intermine.task.XPathSelect"/>
+    <typedef
+        name="create-properties-file"
+        classname="org.intermine.task.CreatePropertiesFile"/>
 </antlib>
