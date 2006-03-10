@@ -128,14 +128,16 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         BufferedReader reader = null;
         
         if (trimmedText.length() == 0) {
-            if (formFile.getFileName() == null || formFile.getFileName().length() == 0) {
+            if (formFile == null
+                || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagToSave"), request);
                 return mapping.findForward("buildBag");
             } else {
                 reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
             }
         } else {
-            if (formFile.getFileName() == null || formFile.getFileName().length() == 0) {
+            if (formFile == null
+                || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
                 reader = new BufferedReader(new StringReader(trimmedText));
             } else {
                 recordError(new ActionMessage("bagBuild.textAndFilePresent"), request);
