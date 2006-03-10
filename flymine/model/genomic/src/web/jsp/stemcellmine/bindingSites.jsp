@@ -18,16 +18,16 @@
           </DD>
         </DL>
         <DL>
-          <DT>TFBSCluster: <I>H. sapiens</I></DT>
+          <DT>TFBSCluster: <I>H. sapiens, <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I></DT>
           <DD>
-            TFbinding sites for <I>H. sapiens</I> annotated by 
+            TFbinding sites for <I>H. sapiens</I> that are also conserved in <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I> annotated by 
             <A HREF="http://hscl.cimr.cam.ac.uk/">HSCL</A>.
           </DD>
         </DL>
         <DL>
-          <DT>TFBS Library: <I>H. sapiens</I> and <I>M. musculus</I></DT>
+          <DT>TFBS Library: <I>H. sapiens</I>, <I>M. musculus</I>, <I>C. familiaris</I> and <I>R. norvegicus</I></DT>
           <DD>
-            TFBS Library containing above TFBSClusters in <I>H. sapiens</I> that are conserved in <I>M. musculus</I> annotated by 
+            TFBS Library containing above TFBSClusters in <I>H. sapiens</I> that are also conserved in <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I> annotated by 
             <A HREF="http://hscl.cimr.cam.ac.uk/">HSCL</A>.
           </DD>
         </DL>
