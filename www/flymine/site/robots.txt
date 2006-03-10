@@ -121,3 +121,4 @@ Disallow: /release-2.0/iqlQueryAction.do
 Disallow: /release-2.0/loginAction.do
 Disallow: /release-2.0/requestPasswordAction.do
 Disallow: /release-2.0/templateSettingsAction.do
+Disallow: /t1dmine-preview/
