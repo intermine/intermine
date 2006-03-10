@@ -18,7 +18,7 @@
           </DD>
         </DL>
         <DL>
-          <DT>TFBSCluster: <I>H. sapiens, <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I></DT>
+          <DT>TFBSCluster: <I>H. sapiens</I>, <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I></DT>
           <DD>
             TFbinding sites for <I>H. sapiens</I> that are also conserved in <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I> annotated by 
             <A HREF="http://hscl.cimr.cam.ac.uk/">HSCL</A>.
