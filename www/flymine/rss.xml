@@ -27,6 +27,29 @@
     <!-- Add new news at the top here -->
     
     <item>
+      <title>FlyBase links to FlyMine</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flybase.net"&gt;
+        FlyBase&lt;/a&gt; gene reports now include a link directly to
+        FlyMine gene details pages.
+      </description>
+      <pubDate>Mon, 13 Mar 2006 10:55:00 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 4.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 4.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Mon, 13 Mar 2006 10:50:00 GMT</pubDate>
+    </item>
+    
+    <item>
       <title>FlyMine is Recruiting</title>
       <link>http://www.flymine.org/</link>
       <description>

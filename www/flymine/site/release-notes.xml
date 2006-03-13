@@ -20,9 +20,9 @@
           <listitem><para>ENHANCEMENT: <emphasis>D. melanogaster</emphasis> chromosome bands now loaded from FlyBase.</para></listitem>
           <listitem><para>UPDATE: <emphasis>D. melanogaster</emphasis> genome annotation updated from 4.2 to 4.2.1.</para></listitem>
           <listitem><para>UPDATE: GO annotation and UniProt proteins updated.</para></listitem>
-          <listitem><para>FIX: <emphasis>D. melanogaster</emphasis> regulatory regions from FlyBase now have chromose location.</para></listitem>
+          <listitem><para>FIX: <emphasis>D. melanogaster</emphasis> regulatory regions from FlyBase now have chromosome location.</para></listitem>
           <listitem><para>FIX: <emphasis>D. melanogaster</emphasis> insertion sites and point mutations from FlyBase reference genes correctly.</para></listitem>
-          <listitem><para>FIX: <emphasis>A. gambiae</emphasis> genes from ensembl and InParanoid orthlogues now merged correctly.</para></listitem>
+          <listitem><para>FIX: <emphasis>A. gambiae</emphasis> genes from Ensembl and InParanoid orthologues now merged correctly.</para></listitem>
         </itemizedlist>
       </listitem>
 
@@ -51,6 +51,10 @@
 
       <listitem>
         <para>Known issues</para>
+        <itemizedlist>
+          <listitem><para>DATA: Protein interactions from Formstecher et al, 2005 (PubMed: 15710747) are incorrectly assigned to Rain et al, 2001 (PubMed: 11196647) which in IntAct is a secondary reference.</para></listitem>
+          <listitem><para>DATA: OMIM disease names contain the same text repeated multiple times.</para></listitem>
+        </itemizedlist>
       </listitem>
 
     </itemizedlist>
@@ -156,7 +160,7 @@
       <listitem>
         <para>Data - fixes</para>
          <itemizedlist>
-          <listitem><para>Fixed an off by one error with chromsome locations of FlyReg binding sites</para></listitem>
+          <listitem><para>Fixed an off by one error with chromosome locations of FlyReg binding sites</para></listitem>
           <listitem><para>GBrowse images now appear on Transcript details page</para></listitem>
           <listitem><para>Removed duplicate GO (Gene Ontology) Ontology object</para></listitem>
           <listitem><para>Sequences are no longer a mix of upper and lower case - now all lower case</para></listitem>
