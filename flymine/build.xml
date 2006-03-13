@@ -3441,8 +3441,8 @@
                    xmlFile="${stemcellmine.data}/datasets.xml" sourceName="static"/-->
     <load-xml-data integrationWriter="integration.production"
                    xmlFile="${stemcellmine.data}/organisms.xml" sourceName="static"/>
-    <!--load-xml-data integrationWriter="integration.production"
-                   xmlFile="${stemcellmine.data}/ontologies.xml" sourceName="static"/-->
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${stemcellmine.data}/ontologies.xml" sourceName="static"/>
   </target>
   <!-- ENSEMBL HUMAN  CORE MODEL GENERATION -->
 
@@ -4925,7 +4925,7 @@
                    build-gene-synonyms-for-embl-production,
                    build-tfbscluster-production, build-cns-production,
                    build-mage-stemcell-production, build-cdnaclone-image-production,build-cdnaclone-probeset-production,
-                   build-psi-intact-production-stemcell,                   
+                   build-psi-intact-production-stemcell, build-uniprot-hs-production,                  
                    analyse-db-production, grant-db-production"/>
 
   <target name="build-db-userprofile-stemcell" depends="prepare-build-model">
