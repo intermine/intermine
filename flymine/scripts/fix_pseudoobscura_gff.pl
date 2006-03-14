@@ -11,6 +11,8 @@ use strict;
 
 my %id_map = ();
 
+my %start_pos_map = ();
+
 my $re = qr/^(\S+)\t(\S*)\t(\S+)\t(\d+)\t(\d+)\t(\S*)\t(\S*)\t(\S*)\t(\S*)/;
 
 my @genes = ();
@@ -22,6 +24,8 @@ sub parse
   if (my @bits = $gff =~ /$re/) {
     my $source = $bits[1];
     my $type = $bits[2];
+    my $start = $bits[3];
+    my $end = $bits[4];
     my $attributes = $bits[8];
 
     if ($source =~/^blast/) {
@@ -62,6 +66,8 @@ sub parse
                       id => $id,
                       source => $source,
                       type => $type,
+                      start => $start,
+                      end => $end,
                       attributes => \%att_map,
                       orig => $gff,
                      };
@@ -83,6 +89,8 @@ while (<>) {
     }
 
     $id_map{$id} = $parsed;
+
+    push @{$start_pos_map{$parsed->{start}}}, $parsed;
   }
 }
 
@@ -108,6 +116,45 @@ while (my ($id, $parsed_gff) = each (%id_map)) {
     }
   }
 }
+
+# show features that have the same start,end and Parent as another
+sub check_for_duplicate
+{
+  my $type = shift;
+
+  my %features_to_merge = ();
+
+  while (my ($id, $parsed_gff) = each (%id_map)) {
+    my @same_start_features = @{$start_pos_map{$parsed_gff->{start}}};
+
+    for my $test_feature (@same_start_features) {
+      if ($id eq $test_feature->{id}) {
+        next;
+      }
+      if ($parsed_gff->{type} eq $type && $test_feature->{type} eq $type) {
+        if ($parsed_gff->{end} == $test_feature->{end}) {
+#          print "$id == ", $test_feature->{id}, "  start: ", 
+#                $parsed_gff->{start}, "  end: ", $parsed_gff->{end}, "\n";
+          push @{$features_to_merge{$id}}, $test_feature->{id};
+        }
+      }
+    }
+  }
+
+  while (my ($id, $others) = each (%features_to_merge)) {
+    my @all = ($id, @{$others});
+
+    print "all: @all\n";
+    for my $feature_id (@all) {
+      my $feature = $id_map{$feature_id};
+#      print $feature_id, " ", $feature->{source}, "   @{$feature->{attributes}{Parent}}\n";
+    }
+  }
+}
+
+#check_for_duplicate "exon";
+#check_for_duplicate "mRNA";
+
 
 # use Data::Dumper;
 
@@ -151,8 +198,6 @@ sub match_fix
 for my $obj (@genes) {
   match_fix($obj->{id}, 0);
 }
-
-
 
 # print the path to each record (via parent links)
 my %path_map = ();
