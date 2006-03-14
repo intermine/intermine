@@ -10,23 +10,24 @@ package org.flymine.dataconversion;
  *
  */
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
-
 import java.util.HashMap;
-import java.util.Map;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
 
 /**
  * Read Chado GFF3 files are write out only those lines whose types are supported by the FlyMine
@@ -37,7 +38,7 @@ import org.flymine.io.gff3.GFF3Record;
 public class FilterChadoTask extends Task
 {
     private FileSet fileSet;
-    private File tgtDir; 
+    private File tgtDir;
     private Map seenIds = new HashMap();
 
     /**
@@ -112,6 +113,11 @@ public class FilterChadoTask extends Task
                 }
             }
 
+            if (record.getSource() != null && record.getSource().startsWith("blast")) {
+                // ignore records with this source because they have no parents
+                continue RECORD;
+            }
+
             if (typeToKeep(record.getType())) {
                 // if the Name is just the ID plus "-hsp", set the ID to the Name and then remove
                 // the Name
@@ -128,7 +134,7 @@ public class FilterChadoTask extends Task
                     int oldCount = ((Integer) seenIds.get(record.getId())).intValue();
                     record.setId(oldId + "-duplicate-" + oldCount);
                     seenIds.put(record.getId(), new Integer(oldCount + 1));
-                   
+
                 } else {
                     seenIds.put(record.getId(), new Integer(1));
                 }
@@ -142,8 +148,10 @@ public class FilterChadoTask extends Task
         if (type.startsWith("match") || type.equals("aberration_junction")
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
             || type.equals("scaffold") || type.equals("chromosome_arm")
+            || type.equals("golden_path") || type.equals("golden_path_fragment")
             || type.equals("chromosome") || type.equals("mature_peptide")
-            || type.equals("oligo") || type.equals("BAC")) {
+            || type.equals("oligo") || type.equals("BAC")
+            || type.equals("orthologous_region") || type.equals("syntenic_region")) {
             return false;
         }
         return true;

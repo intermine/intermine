@@ -16,6 +16,7 @@
   </class>
   <class name="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="curated" type="java.lang.Boolean"/>
     <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
     <collection name="relations" referenced-type="org.flymine.model.genomic.SymmetricalRelation" ordered="true" reverse-reference="bioEntities"/>
     <collection name="subjects" referenced-type="org.flymine.model.genomic.Relation" ordered="true" reverse-reference="object"/>

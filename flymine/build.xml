@@ -102,8 +102,8 @@
   <!-- file data sources -->
   <property name="shared.data" location="/shared/data"/>
   <property name="flybase.chado.melanogaster" location="${shared.data}/flybase/dmel/release_4_2_1"/>
-  <property name="flybase.chado.melanogaster.fasta" location="${flybase.chado.melanogaster}/fasta"/>
-  <property name="flybase.chado.melanogaster.gff" location="${flybase.chado.melanogaster}/gff"/>
+  <property name="flybase.chado.pseudoobscura"
+            location="${shared.data}/flybase/Drosophila_pseudoobscura/dpse_r20_20051018"/>
   <property name="flybase.uniprot.link.file" location="${flybase.chado.melanogaster}/cg2uniprot.txt"/>
 
   <!-- set up library filesets -->
@@ -289,6 +289,8 @@
     <mkdir dir="${build.src.test}"/>
     <mkdir dir="${build.javadoc}"/>
     <mkdir dir="${build.tmp}"/>
+    <mkdir dir="${build.tmp}/dmel"/>
+    <mkdir dir="${build.tmp}/dpse"/>
     <mkdir dir="${build.gbrowse}"/>
     <mkdir dir="${build.gbrowse.images}"/>
     <mkdir dir="${build.gbrowse.data}"/>
@@ -625,7 +627,7 @@
   <!-- ========== DATA LOADING PIPELINE - ORGANISED BY SOURCE ========== -->
 
   <!-- INTERPRO PIPELINE -->
-  <target name="build-interpro-production" 
+  <target name="build-interpro-production"
           depends="init-paths, build-interpro-prod-database, retrieve-interpro, translate-interpro, load-interpro, update-equivalent-interpro-features"/>
 
   <target name="build-interpro-prod-database" depends="prepare-build-model">
@@ -940,14 +942,19 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <filter-chado tgtDir="${build.tmp}">
-      <fileset dir="${flybase.chado.melanogaster.gff}">
+    <filter-chado tgtDir="${build.tmp}/dmel">
+      <fileset dir="${flybase.chado.melanogaster}/gff">
+        <include name="*.gff"/>
+      </fileset>
+    </filter-chado>
+    <filter-chado tgtDir="${build.tmp}/dpse">
+      <fileset dir="${flybase.chado.pseudoobscura}/gff">
         <include name="*.gff"/>
       </fileset>
     </filter-chado>
   </target>
 
-  <!-- filter only chromosome 4 of Chado for creating small databases -->
+  <!-- filter only chromosome 4 of Drosophila for creating small databases -->
   <target name="filter-chado-small"
           depends="prepare-build-model, compile-genomic-java, compile-chado-java, compile-flymine-java">
     <taskdef
@@ -956,68 +963,84 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <filter-chado tgtDir="${build.tmp}">
-      <fileset dir="${flybase.chado.melanogaster.gff}">
+    <filter-chado tgtDir="${build.tmp}/dmel">
+      <fileset dir="${flybase.chado.melanogaster}/gff">
         <include name="*-4-*.gff"/>
       </fileset>
     </filter-chado>
   </target>
 
   <!--load retrieve chado GFF3 data-->
-  <target name="retrieve-chado" depends="prepare-build-model, compile-genomic-model, compile-chado-java">
-    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="db.name" value="db.common-tgt-items"/>
-      <property name="objectstore.name" value="os.chado-tgt-items-std"/>
-    </ant>
+  <macrodef name="retrieve-chado">
+    <attribute name="organismAbbrev"/>
+    <attribute name="dataSetTitle"/>
+    <attribute name="gffFileDir"/>
+    <sequential>
+      <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+        <property name="model.name" value="genomic"/>
+        <reference torefid="class.path" refid="models.class.path"/>
+        <property name="db.name" value="db.common-tgt-items"/>
+        <property name="objectstore.name" value="os.chado-tgt-items-std"/>
+      </ant>
 
-    <taskdef name="convert-file" classname="org.flymine.task.GFF3ConverterTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
+      <taskdef name="convert-file" classname="org.flymine.task.GFF3ConverterTask">
+        <classpath refid="models.class.path"/>
+      </taskdef>
 
-    <convert-file converter="org.flymine.dataconversion.GFF3Converter"
-                  target="osw.chado-tgt-items"
-                  seqClsName="Chromosome"
-                  orgAbbrev="DM"
-                  dataSourceName="FlyBase"
-                  dataSetTitle="FlyBase Drosophila melanogaster data set"
-                  model="genomic"
-                  handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
-      <fileset dir="${build.tmp}">
-        <include name="*.gff"/>
-      </fileset>
-    </convert-file>
+      <convert-file converter="org.flymine.dataconversion.GFF3Converter"
+                    target="osw.chado-tgt-items"
+                    seqClsName="Chromosome"
+                    orgAbbrev="@{organismAbbrev}"
+                    dataSourceName="FlyBase"
+                    dataSetTitle="@{dataSetTitle}"
+                    model="genomic"
+                    handlerClassName="org.flymine.dataconversion.ChadoGFF3RecordHandler">
+        <fileset dir="@{gffFileDir}">
+          <include name="*.gff"/>
+        </fileset>
+      </convert-file>
 
-    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
-      <property name="model.name" value="genomic"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-      <property name="os.alias" value="os.chado-tgt-items-std"/>
-    </ant>
+      <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+        <property name="model.name" value="genomic"/>
+        <reference torefid="class.path" refid="models.class.path"/>
+        <property name="os.alias" value="os.chado-tgt-items-std"/>
+      </ant>
 
-    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
-      <property name="db.name" value="db.common-tgt-items"/>
-      <reference torefid="class.path" refid="models.class.path"/>
-    </ant>
-  </target>
+      <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+        <property name="db.name" value="db.common-tgt-items"/>
+        <reference torefid="class.path" refid="models.class.path"/>
+      </ant>
+    </sequential>
+  </macrodef>
 
-
-  <!-- Load data from chado tgt items into production -->
-  <target name="load-chado" depends="prepare-build-model, copy-flymine-config">
+  <target name="retrieve-and-load-chado-melanogaster"
+          depends="prepare-build-model, copy-flymine-config, compile-genomic-model, compile-chado-java">
+    <retrieve-chado dataSetTitle="FlyBase Drosophila melanogaster data set"
+                    organismAbbrev="DM" gffFileDir="${build.tmp}/dmel"/> 
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
+    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="false"/>
+  </target>
 
+  <target name="retrieve-and-load-chado-pseudoobscura"
+          depends="prepare-build-model, copy-flymine-config, compile-genomic-model, compile-chado-java">
+    <retrieve-chado dataSetTitle="FlyBase Drosophila pseudoobscura data set"
+                    organismAbbrev="DP" gffFileDir="${build.tmp}/dpse"/>
+    <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
     <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="false"/>
   </target>
 
   <target name="build-flybase-production"
-          depends="compile-genomic-java-from-db, filter-chado, retrieve-chado, load-chado"/>
-
+          depends="compile-genomic-java-from-db, filter-chado,
+                   retrieve-and-load-chado-melanogaster, retrieve-and-load-chado-pseudoobscura"/>
 
   <!-- build a production DB from Chado chromosome 4 - for testing -->
   <target name="build-flybase-production-small"
-          depends="compile-genomic-java-from-db, filter-chado-small, retrieve-chado, load-chado"/>
+          depends="compile-genomic-java-from-db, filter-chado-small,
+                   retrieve-and-load-chado-melanogaster"/>
 
 
   <!-- INPARANOID ORTHOLOGUES PIPELINE -->
@@ -1839,7 +1862,7 @@
 
   <target name="build-tiling_path-production" depends="retrieve-tiling_path, load-tiling_path"/>
 
- 
+
   <!-- LOAD STATIC DATA -->
 
   <!-- Load organism XML data into production database -->
@@ -2274,7 +2297,7 @@
                               ignoreSelfMatches="true"
                               classesToIgnore="Contig, Supercontig, Chromosome, ChromosomeBand, Clone, Scaffold, Exon, RepeatRegion, Transcript, TranscriptionStartSite, Marker, CrossGenomeMatch, TRNA, Promoter, CpGIsland"/>
   </target>
-  
+
   <target name="create-references" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
@@ -2785,12 +2808,20 @@
 
     <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
-      <fileset dir="${flybase.chado.melanogaster.fasta}">
+      <fileset dir="${flybase.chado.melanogaster}/fasta">
         <include name="dmel-all-chromosome-*.fasta"/>
+      </fileset>
+    </read-fasta>
+
+    <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
+                organismAbbreviation="DP" oswAlias="osw.production">
+      <fileset dir="${flybase.chado.pseudoobscura}/fasta">
+        <include name="dpse-all-chromosome-*.fasta"/>
       </fileset>
     </read-fasta>
   </target>
 
+  <!-- load a small chromosome for testing -->
   <target name="read-flybase-chromosome-4-fasta"
           depends="compile-genomic-java, compile-flymine-java">
     <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
@@ -2799,7 +2830,7 @@
 
     <read-fasta className="org.flymine.model.genomic.Chromosome" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
-      <fileset dir="${flybase.chado.melanogaster.fasta}">
+      <fileset dir="${flybase.chado.melanogaster}/fasta">
         <include name="dmel-4-chromosome-*.fasta"/>
       </fileset>
     </read-fasta>
@@ -2813,8 +2844,14 @@
 
     <read-fasta className="org.flymine.model.genomic.Gene" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
-      <fileset dir="${flybase.chado.melanogaster.fasta}">
+      <fileset dir="${flybase.chado.melanogaster}/fasta">
         <include name="dmel-all-gene-*.fasta"/>
+      </fileset>
+    </read-fasta>
+    <read-fasta className="org.flymine.model.genomic.Gene" keyFieldName="identifier"
+                organismAbbreviation="DP" oswAlias="osw.production">
+      <fileset dir="${flybase.chado.pseudoobscura}/fasta">
+        <include name="dpse-all-gene-*.fasta"/>
       </fileset>
     </read-fasta>
   </target>
@@ -2827,8 +2864,14 @@
 
     <read-fasta className="org.flymine.model.genomic.CDS" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production" idSuffix="_CDS">
-      <fileset dir="${flybase.chado.melanogaster.fasta}">
+      <fileset dir="${flybase.chado.melanogaster}/fasta">
         <include name="dmel-all-CDS-*.fasta"/>
+      </fileset>
+    </read-fasta>
+    <read-fasta className="org.flymine.model.genomic.CDS" keyFieldName="identifier"
+                organismAbbreviation="DP" oswAlias="osw.production" idSuffix="_CDS">
+      <fileset dir="${flybase.chado.pseudoobscura}/fasta">
+        <include name="pdse-all-CDS-*.fasta"/>
       </fileset>
     </read-fasta>
   </target>
@@ -3123,7 +3166,7 @@
     <filter token="FLYMINE_GBROWSE_DATABASE_ADAPTOR" value="${gbrowse.database.adaptor}"/>
     <filter token="PROJECT_TITLE" value="${project.title}"/>
     <filter token="PROJECT_VERSION" value="${project.releaseVersion}"/>
-    <filter token="PROJECT_SUBTITLE" 
+    <filter token="PROJECT_SUBTITLE"
             value="${project.subTitle}"/>
     <filter token="PROJECT_FUNDED_BY" value="${project.funded.by}"/>
     <filter token="PROJECT_CONTACT" value="${project.contact}"/>
@@ -3405,14 +3448,14 @@
     </ant>
   </target>
 
-  <target name="compile-genomic-java-stemcell" 
+  <target name="compile-genomic-java-stemcell"
          depends="compile-flymine-java, compile-genomic-model-stemcell">
     <ant antfile="${build}/build-model.xml" target="compile-java" inheritRefs="true">
       <property name="model.name" value="genomic"/>
       <reference torefid="class.path" refid="models.class.path"/>
     </ant>
   </target>
-  
+
  <target name="load-static-t1dmine" depends="prepare-build-model, copy-t1dmine-config">
     <taskdef name="load-xml-data"
              classname="org.intermine.dataloader.XmlDataLoaderTask">
@@ -4488,7 +4531,7 @@
                    seqClsName="Chromosome"
                    orgAbbrev="HS"
                    dataSourceName="HSCL"
-                   dataSetTitle="HSCL transcription factor binding site clusters"                   
+                   dataSetTitle="HSCL transcription factor binding site clusters"
                    model="genomic"
                    handlerClassName="org.flymine.dataconversion.TfbsClusterGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/tfbscluster/current">
@@ -4544,7 +4587,7 @@
                    handlerClassName="org.flymine.dataconversion.CnsGFF3RecordHandler">
       <fileset dir ="${shared.data}/human/cns/current/">
         <include name ="*"/>
-      </fileset>      
+      </fileset>
     </retrieve-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -4691,9 +4734,9 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-mage integrationWriter="integration.production" 
-               source="os.mage-translated" 
-               sourceName="mage" 
+    <load-mage integrationWriter="integration.production"
+               source="os.mage-translated"
+               sourceName="mage"
                ignoreDuplicates="false"/>
   </target>
 
@@ -4741,7 +4784,7 @@
     <convert-file clsName="org.flymine.dataconversion.AffyConverter"
                   osName="osw.cdnaclone-tgt-items"
                   model="cdnaclone">
-      <fileset dir="${shared.data}/human/probeSet/" 
+      <fileset dir="${shared.data}/human/probeSet/"
                includes="HG-U133A_annot.csv"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -4800,9 +4843,9 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-psi integrationWriter="integration.production" 
-              source="os.psi-translated" 
-              sourceName="psi-intact" 
+    <load-psi integrationWriter="integration.production"
+              source="os.psi-translated"
+              sourceName="psi-intact"
               ignoreDuplicates="true"/>
   </target>
 
@@ -4830,9 +4873,9 @@
     </taskdef>
 
 
-    <load-uniprot integrationWriter="integration.production" 
-                  source="os.uniprot-translated" 
-                  sourceName="uniprot-hs" 
+    <load-uniprot integrationWriter="integration.production"
+                  source="os.uniprot-translated"
+                  sourceName="uniprot-hs"
                   ignoreDuplicates="true"/>
   </target>
 
@@ -5003,7 +5046,7 @@
                       outputFile="results/acceptance_test.html"
                       database="db.production"/>
 
-  </target>     
+  </target>
 
   <target name="acceptance-tests-stemcell" depends="prepare">
     <taskdef name="acceptance-tests" classname="org.intermine.task.AcceptanceTestTask">
@@ -5014,5 +5057,5 @@
                       outputFile="results/acceptance_test.html"
                       database="db.production"/>
 
-  </target>    
+  </target>
 </project>

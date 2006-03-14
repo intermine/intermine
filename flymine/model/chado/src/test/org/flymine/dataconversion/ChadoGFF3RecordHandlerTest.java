@@ -77,6 +77,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("organismDbId", "FBgn0024811");
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
+        expectedGene.setAttribute("curated", "true");
 
         assertEquals(6, handler.getItems().size());
 
@@ -141,14 +142,17 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedGene.setAttribute("organismDbId", "FBgn0052011");
         expectedGene.setAttribute("identifier", "CR32011");
         expectedGene.setAttribute("symbol", "CR32011");
+        expectedGene.setAttribute("curated", "true");
 
         Item expectedTranscript = itemFactory.makeItem((String) featureIdentifiers.get(1),
                                                        tgtNs + "Transcript", "");
         expectedTranscript.setAttribute("identifier", "CR32011-RA");
+        expectedTranscript.setAttribute("curated", "true");
 
         Item expectedExon = itemFactory.makeItem((String) featureIdentifiers.get(2),
                                                  tgtNs + "Exon", "");
         expectedExon.setAttribute("identifier", "CR32011:7");
+        expectedExon.setAttribute("curated", "true");
 
         allItems.addAll(handler.getFinalItems());
 
@@ -210,6 +214,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                         expectedGene1.setAttribute("identifier", "CG1629");
                         expectedGene1.setAttribute("symbol", "yellow-h-duplicate-symbol-1");
                         expectedGene1.setReference("organism", handler.getOrganism());
+                        expectedGene1.setAttribute("curated", "true");
                         List evidence = new ArrayList();
                         evidence.add(handler.getDataSet().getIdentifier());
                         expectedGene1.setCollection("evidence", evidence);
@@ -226,6 +231,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
                             expectedGene2.setAttribute("identifier", "CG1629-test");
                             expectedGene2.setAttribute("symbol", "yellow-h-duplicate-symbol-2");
                             expectedGene2.setReference("organism", handler.getOrganism());
+                            expectedGene2.setAttribute("curated", "true");
                             List evidence = new ArrayList();
                             evidence.add(handler.getDataSet().getIdentifier());
                             expectedGene2.setCollection("evidence", evidence);
@@ -262,6 +268,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
 
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
+        expectedGene.setAttribute("curated", "true");
 
         assertEquals(1, handler.getItems().size());
         assertEquals(1, handler.getFinalItems().size());
@@ -292,6 +299,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
 
         expectedGene.setAttribute("identifier", "CG1234");
         expectedGene.setAttribute("symbol", "CG1234");
+        expectedGene.setAttribute("curated", "true");
 
         Item actualGene = (Item) handler.getFinalItems().iterator().next();
 
@@ -341,6 +349,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedCDS.setAttribute("identifier", "CG11023-PA_CDS");
         expectedCDS.addCollection(new ReferenceList("polypeptides",
                         new ArrayList(Collections.singleton(actualTrans.getIdentifier()))));
+        expectedCDS.setAttribute("curated", "true");
 
         Item actualCDS = null;
         iter = handler.getItems().iterator();
@@ -393,6 +402,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         expectedSequenceVariant.setAttribute("identifier", "l(2)gl[275]");
         expectedSequenceVariant.addCollection(new ReferenceList("genes",
                             new ArrayList(Collections.singleton(gene.getIdentifier()))));
+        expectedSequenceVariant.setAttribute("curated", "true");
 
         Item actualSequenceVariant = null;
         iter = handler.getItems().iterator();

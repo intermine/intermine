@@ -10,29 +10,31 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
@@ -186,9 +188,9 @@ public class GFF3Converter
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
-         } else {
+        } else {
             feature = createItem(className);
-         }
+        }
 
         if (names != null) {
             if (cd.getFieldDescriptorByName("symbol") == null) {                
@@ -220,12 +222,17 @@ public class GFF3Converter
 
         // if parents -> create a SimpleRelation
         if (record.getParents() != null) {
+            Set seenParents = new HashSet();
             for (Iterator i = parents.iterator(); i.hasNext();) {
                 String parentName = (String) i.next();
-                Item simpleRelation = createItem("SimpleRelation");
-                simpleRelation.setReference("object", getIdentifier(parentName));
-                simpleRelation.setReference("subject", feature.getIdentifier());
-                handler.addParentRelation(simpleRelation);
+                // add check for duplicate parent IDs to cope with pseudoobscura GFF
+                if (!seenParents.contains(parentName)) {
+                    Item simpleRelation = createItem("SimpleRelation");
+                    simpleRelation.setReference("object", getIdentifier(parentName));
+                    simpleRelation.setReference("subject", feature.getIdentifier());
+                    handler.addParentRelation(simpleRelation);
+                    seenParents.add(parentName);
+                }
             }
         }
 
@@ -271,6 +278,21 @@ public class GFF3Converter
 
             handler.setResult(computationalResult);
             evidence.addRefId(computationalResult.getIdentifier());
+        } else {
+            if (record.getSource() != null) {
+                // this special case added to cope with pseudoobscura data
+                Item computationalResult = createItem("ComputationalResult");
+                
+                Item computationalAnalysis = getComputationalAnalysis(record.getSource());
+                computationalResult.addReference(new Reference("analysis",
+                                                 computationalAnalysis.getIdentifier()));
+                handler.setAnalysis(computationalAnalysis);
+                
+                handler.setResult(computationalResult);
+                evidence.addRefId(computationalResult.getIdentifier());
+
+                feature.addAttribute(new Attribute("curated", "false"));
+            }
         }
 
         feature.addCollection(evidence);
@@ -405,10 +427,10 @@ public class GFF3Converter
 
     /**
      * Create an item with given className
-     * @param className
+     * @param className the new class name
      * @return the created item
      */
-    private Item createItem(String className) {
+    protected Item createItem(String className) {
         return createItem(className, createIdentifier());
     }
 
