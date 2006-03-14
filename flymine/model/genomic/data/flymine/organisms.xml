@@ -72,14 +72,12 @@
     <attribute name="genus" value="Bacillus"/>
     <attribute name="species" value="subtilis"/>
   </item>
-<!--
-  <item id="0_6" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="0_10" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="name" value="Drosophila pseudoobscura"/>
     <attribute name="shortName" value="D. pseudoobscura"/>
     <attribute name="taxonId" value="7237"/>
-    <attribute name="abbreviation" value="DS"/>
+    <attribute name="abbreviation" value="DP"/>
     <attribute name="genus" value="Drosophila"/>
     <attribute name="species" value="pseudoobscura"/>
   </item>
--->
 </items>

@@ -43,9 +43,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     Map references;
     private static final Logger LOG = Logger.getLogger(ChadoGFF3RecordHandler.class);
     private String tgtNs;
-    private Map sources = new HashMap();
     private Set pseudogeneIds = new HashSet();
-    private Item flybaseDataSource;
+    private Map otherOrganismItems = new HashMap();
 
     // items that need extra processing that can only be done after all other GFF features have
     // been read
@@ -86,11 +85,15 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
     }
 
     /**
-     * @see GFF3RecordHandler#process()
+     * @see GFF3RecordHandler#process(GFF3Record)
      */
     public void process(GFF3Record record) {
-
         Item feature = getFeature();
+
+        if (!feature.hasAttribute("curated")) {
+            feature.addAttribute(new Attribute("curated", "true"));
+        }
+
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
         // set Gene.organismDbId
@@ -109,7 +112,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             // if no name set for gene then use CGxx (FlyBase symbol rules)
             if (feature.getAttribute("symbol") == null) {
                 feature.setAttribute("symbol", feature.getAttribute("identifier").getValue());
-                addItem(createSynonym(feature, "symbol", 
+                addItem(createSynonym(feature, "symbol",
                                       feature.getAttribute("symbol").getValue()));
             }
         }
@@ -164,6 +167,11 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             Item translation = getItemFactory().makeItem(null, tgtNs + "Translation", "");
             translation.setReference("organism", getOrganism().getIdentifier());
             translation.setAttribute("identifier", identifier);
+            if (record.getSource() == null) {
+                feature.addAttribute(new Attribute("curated", "true"));
+            } else {
+                feature.addAttribute(new Attribute("curated", "false"));
+            }
             if (feature.getAttribute("symbol") != null) {
                 translation.setAttribute("symbol", feature.getAttribute("symbol").getValue());
             }
@@ -218,6 +226,10 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             combined.addAll(list);
         }
 
+//         if (clsName.equals("SyntenicRegion")) {
+//             makeTargetSyntenicRegion(feature, record);
+//         }
+
         Iterator iter = combined.iterator();
         while (iter.hasNext()) {
             String synonym = (String) iter.next();
@@ -233,7 +245,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if ("Gene".equals(clsName)) {
-            finalItems .add(getFeature());
+            finalItems.add(getFeature());
 
             // unset the feature in the Item set so that it doesn't get stored automatically
             removeFeature();
@@ -245,7 +257,8 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
     /**
      * Return items that need extra processing that can only be done after all other GFF features
-     * have been read.  For ChadoGFF3RecordHandler, the Gene and Pseudogene objects are returned.
+     * have been read.  For ChadoGFF3RecordHandler, the Gene, Pseudogene and targetOrganisms from
+     * SyntenicRegion objects are returned.
      * @return the final Items
      */
     public Collection getFinalItems() {
@@ -262,7 +275,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
             {
                 Attribute symbolAtt = thisGene.getAttribute("symbol");
-                
+
                 if (symbolAtt != null) {
                     String symbol = symbolAtt.getValue();
 
@@ -311,7 +324,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
         }
 
         Iterator genesWithDuplicatedOrganismDbIdsIter = genesWithDuplicatedOrganismDbIds.iterator();
-        
+
         count = 1;
         while (genesWithDuplicatedOrganismDbIdsIter.hasNext()) {
             Item thisGene = (Item) genesWithDuplicatedOrganismDbIdsIter.next();
@@ -336,9 +349,57 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
-        return finalItems;
+        List retList = new ArrayList();
+        retList.addAll(finalItems);
+
+        retList.addAll(otherOrganismItems.values());
+
+        return retList;
     }
 
+
+    /**
+     * @param feature The current Item
+     * @param record The current GFF3Record
+     */
+    protected void makeTargetSyntenicRegion(Item feature, GFF3Record record) {
+        String tgtOrgAbbrev = (String) ((List) record.getAttributes().get("to_species")).get(0);
+        if (tgtOrgAbbrev.equals("dmel")) {
+            tgtOrgAbbrev = "DM";
+        } else {
+            if (tgtOrgAbbrev.equals("dpse")) {
+                tgtOrgAbbrev = "DP";
+            } else {
+                throw new RuntimeException("unknown organism abbreviation: " + tgtOrgAbbrev);
+            }
+        }
+
+        Item tgtOrganism = getOrganismItem(tgtOrgAbbrev);
+
+        feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
+
+        Item tgtSyntenicRegion = getItemFactory().makeItem(null, tgtNs + "SyntenicRegion", "");
+        tgtSyntenicRegion.setReference("organism", tgtOrganism.getIdentifier());
+
+        // use the same ID on both the current SyntenicRegion and the target SyntenicRegion, but
+        // have a different organism
+        tgtSyntenicRegion.setAttribute("identifier", record.getId());
+        feature.setReference("targetSyntenicRegion", tgtSyntenicRegion);
+        tgtSyntenicRegion.setReference("targetSyntenicRegion", feature);
+
+        addItem(tgtSyntenicRegion);
+    }
+
+    private Item getOrganismItem(String orgAbbrev) {
+        if (otherOrganismItems.containsKey(orgAbbrev)) {
+            return (Item) otherOrganismItems.get(orgAbbrev);
+        } else {
+            Item otherOrganismItem = getItemFactory().makeItem(null, tgtNs + "Organism", "");
+            otherOrganismItem.setAttribute("shortName", orgAbbrev);
+            otherOrganismItems.put(orgAbbrev, otherOrganismItem);
+            return otherOrganismItem;
+        }
+    }
 
     /**
      * Clear the list of final items.

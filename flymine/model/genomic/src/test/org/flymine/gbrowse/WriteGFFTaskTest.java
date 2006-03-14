@@ -109,7 +109,7 @@ public class WriteGFFTaskTest extends TestCase
         TransferSequences ts = new TransferSequences(osw);
         ts.transferToLocatedSequenceFeatures();
         WriteGFFTask task = new WriteGFFTask();
-        task.writeGFF(osw.getObjectStore(), new File("build/gbrowse/data"));
+        task.writeGFF(osw.getObjectStore());
     }
 
     public void testStringifyAttributes() throws Exception {
