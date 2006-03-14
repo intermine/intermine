@@ -50,11 +50,6 @@
     <c:set var="label" value="${label}-Genes"/>
   </c:if>
   
-  <c:if test="${type != 'Pseudogenes+Genes'}">
-    <c:set var="type" value="${type}+Pseudogenes"/>
-    <c:set var="label" value="${label}-Pseudogenes"/>
-  </c:if>
-
   <c:set var="name" value="FlyMineInternalID_${object.id}"/>
 
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">
