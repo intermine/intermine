@@ -134,6 +134,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
+      <fieldconfig fieldExpr="length"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
