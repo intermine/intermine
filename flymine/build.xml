@@ -1670,8 +1670,8 @@
       <fileset dir="${shared.data}/go-annotation/">
         <include name="flybase/2005-12-25/gene_association.fb"/>
         <include name="wormbase/2005-12-18/gene_association.wb"/>
-        <include name="uniprot/2005-11-21/gene_association_ag"/>
-        <include name="uniprot/2005-11-21/gene_association_agp"/>
+        <include name="uniprot/2006-01-27/gene_association_ag"/>
+        <include name="uniprot/2006-01-27/gene_association_agp"/>
      </fileset>
     </convert-file>
 
