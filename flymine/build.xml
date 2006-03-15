@@ -1979,7 +1979,14 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227">
-      <fileset dir="${shared.data}/uniprot/6.8">
+      <fileset dir="${shared.data}/uniprot/7.2">
+        <include name="uniprot_sprot*"/>
+        <include name="uniprot_trembl*"/>
+      </fileset>
+    </filter-uniprot>
+
+    <filter-uniprot tgtDir="${build.tmp}" organisms="7237">
+      <fileset dir="${shared.data}/uniprot/7.2">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
