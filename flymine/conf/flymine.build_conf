@@ -43,15 +43,18 @@ dump: mage+cdnaclone
 run: create-utr-references
 run: read-flybase-chromosome-fasta calculate-locations create-references
 run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
+
+dump: postprocess-1
+
 run: homophila-post-process
 run: create-intergenic-region-features
 run: create-indexes-production-attribute
 
-dump: postprocess-1
+dump: postprocess-2
 
 run: set-collection-counts set-name-and-wildtypefunction create-overlap-relations-flymine
 
-dump: postprocess-2-overlap
+dump: postprocess-3-overlap
 
 run: create-symmetrical-relation-references
 
