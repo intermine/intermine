@@ -2883,6 +2883,20 @@
     </read-fasta>
   </target>
 
+  <target name="read-long_oligo-fasta"
+          depends="compile-genomic-java, compile-flymine-java">
+    <taskdef name="read-fasta" classname="org.flymine.task.FastaReadTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <read-fasta className="org.flymine.model.genomic.MicroarrayOligo" keyFieldName="identifier"
+                organismAbbreviation="DM" oswAlias="osw.production">
+      <fileset dir="${shared.data}/long_oligo">
+        <include name="FL002.seq"/>
+      </fileset>
+    </read-fasta>
+  </target>
+
   <!-- Java checkstyle targets -->
   <target name="checkstyle" depends="prepare"
           description="checks the coding style of all the java files in the project">
