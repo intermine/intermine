@@ -10,8 +10,7 @@ run: build-ensembl-anopheles-production
 
 dump: anopheles
 
-run: build-uniprot-dros-production
-run: build-uniprot-production
+run: build-uniprot-dros-production build-uniprot-production
 
 dump: uniprot
 
@@ -35,20 +34,15 @@ run: build-drosdel-production build-homophila-production build-interpro-producti
 
 dump: drosdel+homophila+interpro
 
-run: build-mage-production
-run: build-cdnaclone-bdgp-production
+run: build-mage-production build-cdnaclone-bdgp-production
 
 dump: mage+cdnaclone
 
-run: create-utr-references
-run: read-flybase-chromosome-fasta calculate-locations create-references
-run: update-orthologues make-spanning-locations create-chromosome-locations-and-lengths
+run: create-utr-references read-flybase-chromosome-fasta calculate-locations create-references update-orthologues make-spanning-locations create-chromosome-locations-and-lengths read-long_oligo-fasta
 
 dump: postprocess-1
 
-run: homophila-post-process
-run: create-intergenic-region-features
-run: create-indexes-production-attribute
+run: homophila-post-process create-intergenic-region-features create-indexes-production-attribute
 
 dump: postprocess-2
 
