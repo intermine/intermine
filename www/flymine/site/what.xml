@@ -45,7 +45,7 @@
     <para>
       A number of specific queries have been predefined. These template queries range from 
       fairly simple queries to retrieve a particular type of data to more complex queries that 
-      span the different types of data availbale in FlyMine. More template queries will be added 
+      span the different types of data available in FlyMine. More template queries will be added 
       as FlyMine develops and we welcome <ulink url="/feedback.do">suggestions</ulink>. Find lists of predefined template 
       queries on each aspect page or use the Template Search box on the FlyMine home page 
       and in the top menu on every page. 
@@ -65,7 +65,7 @@
     <verbatim><h3>Operate on Lists</h3></verbatim>
     <para>
       All queries in FlyMine can be performed on lists (or
-      '<emphasis>bags</emphasis>') that you create yourself. Bags can
+      'bags') that you create yourself. Bags can
       be created by typing or pasting in a list of identifiers, or
       uploading a file containing the list. Data from previous queries
       can also be saved into a bag using the boxes displayed
