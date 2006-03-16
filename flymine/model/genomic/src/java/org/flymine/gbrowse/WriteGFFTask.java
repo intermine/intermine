@@ -48,13 +48,15 @@ import org.flymine.model.genomic.ComputationalAnalysis;
 import org.flymine.model.genomic.ComputationalResult;
 import org.flymine.model.genomic.Evidence;
 import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.NcRNA;
 import org.flymine.model.genomic.PCRProduct;
-import org.flymine.model.genomic.Pseudogene;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Synonym;
+import org.flymine.model.genomic.ThreePrimeUTR;
 import org.flymine.model.genomic.Transcript;
 import org.flymine.postprocess.PostProcessUtil;
 
@@ -213,11 +215,14 @@ public class WriteGFFTask extends Task
             }
 
             // process Transcripts but not tRNAs
+            // we can't just check for MRNA because the Transcripts of Pseudogenes aren't MRNAs
             if (feature instanceof Transcript && !(feature instanceof NcRNA)) {
                 seenTranscripts.put(feature, loc);
             }
 
-            if (feature instanceof Exon) {
+            if (feature instanceof Exon
+                // || feature instanceof FivePrimeUTR || feature instanceof ThreePrimeUTR
+                ) {
                 seenTranscriptParts.put(feature, loc);
             }
 
@@ -293,6 +298,8 @@ public class WriteGFFTask extends Task
                                           Map synonymMap, Map evidenceMap) {
         Iterator transcriptIter = seenTranscripts.keySet().iterator();
         while (transcriptIter.hasNext()) {
+            // we can't just use MRNA here because the Transcripts of a pseudogene are Transcripts,
+            // but aren't MRNAs
             Transcript transcript = (Transcript) transcriptIter.next();
             Gene gene = transcript.getGene();
             if (gene == null) {
@@ -300,13 +307,7 @@ public class WriteGFFTask extends Task
             }
             Location transcriptLocation = (Location) seenTranscripts.get(transcript);
 
-            String transcriptFeatureType = null;
-
-            if (gene instanceof Pseudogene) {
-                transcriptFeatureType = "pseudogene_mRNA";
-            } else {
-                transcriptFeatureType = "gene_mRNA";
-            }
+            String transcriptFeatureType = "mRNA";
 
             Map geneNameAttributeMap = new HashMap();
 
@@ -329,13 +330,6 @@ public class WriteGFFTask extends Task
             exonsResults.setNoOptimise();
             exonsResults.setNoExplain();
 
-            String exonFeatureType = null;
-            if (gene instanceof Pseudogene) {
-                exonFeatureType = "pseudogene_CDS";
-            } else {
-                exonFeatureType = "gene_CDS";
-            }
-
             Iterator exonIter = exons.iterator();
             while (exonIter.hasNext()) {
                 Exon exon = (Exon) exonIter.next();
@@ -345,9 +339,42 @@ public class WriteGFFTask extends Task
                 List exonEvidence = (List) evidenceMap.get(exon.getId());
 
                 writeFeature(gffWriter, chr, exon, exonLocation, transcript.getIdentifier(),
-                             exonFeatureType, "mRNA", null, exonSynonymValues, exonEvidence,
+                             "CDS", "mRNA", null, exonSynonymValues, exonEvidence,
                              transcript.getId());
             }
+            
+            /*
+
+            --- we need correct CDS locations before this can work properly
+            --- curently we write out the Exons as CDSs so the exons overlap the CDS feature
+
+            if (transcript instanceof MRNA) {
+            MRNA mRNA = (MRNA) transcript;
+            FivePrimeUTR fivePrimeUTR = mRNA.getFivePrimeUTR();
+            if (fivePrimeUTR != null) {
+                Location fivePrimeUTRLocation = (Location) seenTranscriptParts.get(fivePrimeUTR);
+
+                List fivePrimeUTRSynonymValues = (List) synonymMap.get(fivePrimeUTR.getId());
+                List fivePrimeUTREvidence = (List) evidenceMap.get(fivePrimeUTR.getId());
+
+                writeFeature(gffWriter, chr, fivePrimeUTR, fivePrimeUTRLocation, 
+                             transcript.getIdentifier(), "5'-UTR", "mRNA", null,
+                             fivePrimeUTRSynonymValues, fivePrimeUTREvidence, transcript.getId());
+            }
+            
+            ThreePrimeUTR threePrimeUTR = mRNA.getThreePrimeUTR();
+            if (threePrimeUTR != null) {
+                Location threePrimeUTRLocation = (Location) seenTranscriptParts.get(threePrimeUTR);
+
+                List threePrimeUTRSynonymValues = (List) synonymMap.get(threePrimeUTR.getId());
+                List threePrimeUTREvidence = (List) evidenceMap.get(threePrimeUTR.getId());
+
+                writeFeature(gffWriter, chr, threePrimeUTR, threePrimeUTRLocation, 
+                             transcript.getIdentifier(), "3'-UTR", "mRNA", null, 
+                             threePrimeUTRSynonymValues, threePrimeUTREvidence, transcript.getId());
+            }
+            }
+            */
         }
     }
 
@@ -397,7 +424,6 @@ public class WriteGFFTask extends Task
         }
 
         lineBuffer.append(source).append("\t");
-
         lineBuffer.append(featureType).append("\t");
 
         if (chromosomeLocation == null && bioEntity == chr) {
