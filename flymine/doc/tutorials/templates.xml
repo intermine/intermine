@@ -19,16 +19,16 @@
     <para>Template queries can be accessed in three ways.</para>
     <itemizedlist>
       <listitem><para>Each 'aspect' page has a set of template queries related to that data type.</para></listitem>
-      <listitem><para>Through the 'search templates' feature on the home page and in the top menu.</para></listitem>
+      <listitem><para>Through the 'Search templates' feature on the home page and in the top menu on every page.</para></listitem>
       <listitem><para>Templates also appear on object details pages (see <ulink url="objectDetails.xml">Tutorial 2</ulink>).  
         </para></listitem>
     </itemizedlist>
 
-    <para>In this tutorial the template query will be accessed through the genomics aspect.</para>
+    <para>In this tutorial the template query will be accessed through the Genomics aspect.</para>
 
-    <para>The FlyMine home page shows a series of 'aspects'.  These
+    <para>The FlyMine home page shows a series of 'aspects'. These
     provide a 'view' of a particular type of data and how this can be 
-    linked with other types of data.  Each aspect includes a set of 
+    linked with other types of data. Each aspect includes a set of 
     template queries which range from simple queries involving just that
     data type to more complex queries which integrate with data from 
     other aspects.</para>
@@ -73,7 +73,7 @@
      to a specific type of identifier).  For <emphasis>D. melanogaster</emphasis> genes,
      therefore, you could enter an FBgn identifier, CG identifier or a
      gene symbol.  Change the default value for this variable
-     to 'zen'</para>
+     to 'zen'.</para>
 
      <para>The second variable asks for an organism.  The organism is
      specified for this template because a gene symbol or name may be
