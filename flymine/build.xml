@@ -1060,7 +1060,7 @@
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
                   osName="osw.inparanoid-orthologue-tgt-items"
                   model="genomic">
-      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
+      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="longsqltable.*"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
