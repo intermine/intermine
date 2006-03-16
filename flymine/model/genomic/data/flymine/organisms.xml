@@ -52,7 +52,7 @@
     <attribute name="name" value="Mus musculus"/>
     <attribute name="shortName" value="M. musculus"/>
     <attribute name="taxonId" value="10090"/>
-    <attribute name="abbreviation" value="MS"/>
+    <attribute name="abbreviation" value="MM"/>
     <attribute name="genus" value="Mus"/>
     <attribute name="species" value="musculus"/>
   </item>
@@ -79,5 +79,69 @@
     <attribute name="abbreviation" value="DP"/>
     <attribute name="genus" value="Drosophila"/>
     <attribute name="species" value="pseudoobscura"/>
+  </item>
+  <item id="0_11" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Apis mellifera"/>
+    <attribute name="shortName" value="A. mellifera"/>
+    <attribute name="taxonId" value="7460"/>
+    <attribute name="abbreviation" value="AM"/>
+    <attribute name="genus" value="Apis"/>
+    <attribute name="species" value="mellifera"/>
+  </item>
+  <item id="0_12" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Canis familiaris"/>
+    <attribute name="shortName" value="C. familiaris"/>
+    <attribute name="taxonId" value="9615"/>
+    <attribute name="abbreviation" value="CF"/>
+    <attribute name="genus" value="Canis"/>
+    <attribute name="species" value="familiaris"/>
+  </item>
+  <item id="0_13" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Takifugu rubripes"/>
+    <attribute name="shortName" value="T. rubripes"/>
+    <attribute name="taxonId" value="31033"/>
+    <attribute name="abbreviation" value="FR"/>
+    <attribute name="genus" value="Takifugu"/>
+    <attribute name="species" value="rubripes"/>
+  </item>
+  <item id="0_15" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Gallus gallus"/>
+    <attribute name="shortName" value="G. gallus"/>
+    <attribute name="taxonId" value="9031"/>
+    <attribute name="abbreviation" value="GG"/>
+    <attribute name="genus" value="Gallus"/>
+    <attribute name="species" value="gallus"/>
+  </item>
+  <item id="0_16" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Danio rerio"/>
+    <attribute name="shortName" value="D. rerio"/>
+    <attribute name="taxonId" value="7955"/>
+    <attribute name="abbreviation" value="DR"/>
+    <attribute name="genus" value="Danio"/>
+    <attribute name="species" value="rerio"/>
+  </item>
+  <item id="0_17" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Pan troglodytes"/>
+    <attribute name="shortName" value="P. troglodytes"/>
+    <attribute name="taxonId" value="9598"/>
+    <attribute name="abbreviation" value="PT"/>
+    <attribute name="genus" value="Pan"/>
+    <attribute name="species" value="troglodytes"/>
+  </item>
+  <item id="0_18" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Tetraodon nigroviridis"/>
+    <attribute name="shortName" value="T. nigroviridis"/>
+    <attribute name="taxonId" value="99883"/>
+    <attribute name="abbreviation" value="TN"/>
+    <attribute name="genus" value="Tetraodon"/>
+    <attribute name="species" value="nigroviridis"/>
+  </item>
+  <item id="0_19" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="name" value="Rattus norvegicus"/>
+    <attribute name="shortName" value="R. norvegicus"/>
+    <attribute name="taxonId" value="10116"/>
+    <attribute name="abbreviation" value="RR"/>
+    <attribute name="genus" value="Rattus"/>
+    <attribute name="species" value="norvegicus"/>
   </item>
 </items>
