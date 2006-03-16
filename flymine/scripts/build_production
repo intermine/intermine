@@ -159,7 +159,7 @@ sub get_prop_val
   my $ret_val;
 
   while (my $line = <F>) {
-    if ($line =~ /$key=(.*)/) {
+    if ($line =~ /^\s*$key\s*=\s*(.*)/) {
       $ret_val = $1;
     }
   }
