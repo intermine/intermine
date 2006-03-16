@@ -11,9 +11,9 @@
     details pages have the same basic structure and so this example
     can be extended to other items in the database.</para>
 
-    <para>Enter the gene symbol 'bib' into the quick search box the
-    FlyMine home page.  See <ulink url="quickSearch.xml">Tutorial 1</ulink>
-    for more information.  The query returns just one result so you are taken
+    <para>Enter the gene symbol 'bib' into the Quick Search box on the
+    FlyMine home page. See <ulink url="quickSearch.xml">Tutorial 1</ulink>
+    for more information. The query returns just one result so you are taken
     directly to a summary page for the gene:</para>
 
        <mediaobject>
@@ -23,7 +23,7 @@
         </mediaobject>
 
 
-    <para>The top left shows some summary information for this gene - identifiers, name
+    <para>The top left shows summary information for this gene - identifier, name
     and chromosome coordinates.  Use the '+' boxes next to 'proteins', 'synonyms',
     etc. to open inline tables with more details.  The 'FASTA' buttons retrieve
     sequences for any feature they appear next to.</para>
@@ -47,15 +47,16 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
  
-    <para>This section has more detailed information about this gene divided
-    into 'aspects'.  The aspects correspond to categories of data shown on the FlyMine home page.  Look
-    at the Genomics aspect.  Entries in green show fields directly related to
-    this gene.  Use '+' boxes to open summary tables.  For example, opening
-    'overlappingFeatures' will summarise genome annotation that overlaps the
-    the chromosome coordinates of this gene.</para>   
+    <para>This section has more detailed information about this gene
+    divided into 'aspects'. The aspects correspond to categories of
+    data shown on the FlyMine home page.  Look at the Genomics aspect.
+    Entries in green show fields directly related to this gene. Use
+    '+' boxes to open summary tables. For example, opening
+    'overlappingFeatures' will summarise genome annotation that
+    overlaps the chromosome coordinates of this gene.</para>
 
-    <para>Entries in black text allow you to see the results of pre-defined
-    queries run for this gene ('templates').  Those shown in light grey did
+    <para>Entries in black text allow you to see the results of predefined
+    queries run for this gene ('templates'). Those shown in light grey did
     not return any results.</para>
 
     <para>[details...] links take you to summary pages for related database
