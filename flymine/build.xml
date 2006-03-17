@@ -1181,7 +1181,7 @@
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
                   osName="osw.inparanoid-orthologue-tgt-items"
                   model="genomic">
-      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
+      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="longsqltable.*"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -1749,7 +1749,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-go-dag file="${model}/go/gene_ontology.obo" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" dagName="GO"/>
+    <retrieve-go-dag file="${shared.data}/gene_ontology/gene_ontology.obo" osName="osw.go-dag-tgt-items" termClass="http://www.flymine.org/model/genomic#GOTerm" dagName="GO"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
