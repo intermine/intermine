@@ -1280,7 +1280,7 @@
                   osName="osw.homophila-tgt-items" model="homophila"
                   diseaseFile="${shared.data}/homophila/homophila_diseases.txt"
                   proteinGeneFile="${shared.data}/homophila/protein_gene.txt">
-      <fileset dir="${shared.data}/homophila/" includes="homophila_matches.txt"/>
+      <fileset dir="${shared.data}/homophila/2.1" includes="homophila_matches.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -1783,7 +1783,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
+    <copy file="${shared.data}/gene_ontology/gene_ontology.obo" toDir="${build.model}/go"/>
 
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
@@ -4062,7 +4062,7 @@
 
   <target name="retrieve-go-annotation-human" depends="prepare-build-model, compile-go-java">
 
-    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
+    <copy file="${shared.data}/gene_ontology/gene_ontology.obo" toDir="${build.model}/go"/>
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -4104,7 +4104,7 @@
 
   <target name="retrieve-go-annotation-mouse" depends="prepare-build-model, compile-go-java">
 
-    <copy file="${model}/go/gene_ontology.obo" toDir="${build.model}/go"/>
+    <copy file="${shared.data}/gene_ontology/gene_ontology.obo" toDir="${build.model}/go"/>
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
