@@ -139,6 +139,15 @@ public class PostProcessTask extends Task
                 StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
                 LOG.info("Starting StoreSequences.storeContigSequences()");
                 ss.storeContigSequences();
+            } else if ("fetch-contig-sequences-ensembl".equals(operation)) {
+                if (ensemblDb == null) {
+                    throw new BuildException("ensemblDb attribute is not set");
+                }
+                Database db = DatabaseFactory.getDatabase(ensemblDb);
+                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
+                LOG.info("Starting StoreSequences.storeContigSequences() for ensemblDb:"
+                        + ensemblDb);
+                ss.storeContigSequences();
             } else if ("transfer-sequences-chromosome".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToChromosome()");

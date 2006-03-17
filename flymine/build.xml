@@ -579,10 +579,10 @@
 
   <!-- create merged model from core genomic model and all model additions -->
   <target name="create-production-model" depends="remove-genomic, prepare-build-model,
+                merge-go-model, merge-so-model, merge-uniprot-model,
                 merge-psi-model, merge-rnai-model,
                 merge-ensembl-model, merge-phenotype-model,
-                merge-go-model, merge-uniprot-model,
-                merge-protein_structure-model, merge-so-model, merge-orthologue-model,
+                merge-protein_structure-model, merge-orthologue-model,
                 merge-flyreg-model, merge-tiling_path-model, merge-long_oligo-model,
                 merge-chado-model, merge-homophila-model, merge-interpro-model,
                 merge-cdnaclone-model, merge-drosdel-model, merge-mage-model, merge-shortcuts">
@@ -788,6 +788,19 @@
 
   <!-- ENSEMBL ANOPHELES PIPELINE -->
 
+  <target name="build-ensembl-anoph-small-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_small_ensembl_anoph_set.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_anoph_small"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_small_ensembl_anoph_set.sql"/>
+  </target>
+
+
   <!-- build ensembl anopheles src items database -->
   <target name="build-db-ensembl-anoph-src-items" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -795,6 +808,15 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="db.name" value="db.ensembl-anoph-src-items"/>
       <property name="objectstore.name" value="os.ensembl-anoph-src-items-std"/>
+    </ant>
+  </target>
+
+  <target name="build-db-ensembl-anoph-tgt-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-anoph-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-anoph-tgt-items-std"/>
     </ant>
   </target>
 
@@ -822,6 +844,9 @@
       <property name="objectstore.name" value="os.ensembl-anoph-tgt-items-std"/>
     </ant>
     <copy file="${model}/ensembl/ensembl_mappings" toDir="${build.model}/ensembl"/>
+
+    <copy file="${model}/genomic/resources/flymine/ensembl_config.properties" toDir="${build.model}/ensembl"/>
+
     <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
       <classpath refid="models.class.path"/>
     </taskdef>
@@ -848,9 +873,105 @@
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
-    <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph"/>
+    <load-anoph integrationWriter="integration.production" source="os.ensembl-anoph-translated" sourceName="ensembl-anoph" ignoreDuplicates="true"/>
   </target>
 
+
+  <!-- ENSEMBL HONEY BEE PIPELINE -->
+
+    <target name="build-ensembl-apis-mellifera-small-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_small_ensembl_apis_mellifera_set.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_apis_mellifera_small"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_small_ensembl_apis_mellifera_set.sql"/>
+  </target>
+
+  <!-- build ensembl apis-mellifera src items database -->
+  <target name="build-db-ensembl-apis-mellifera-src-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-apis-mellifera-src-items"/>
+      <property name="objectstore.name" value="os.ensembl-apis-mellifera-src-items-std"/>
+    </ant>
+  </target>
+
+  <target name="build-db-ensembl-apis-mellifera-tgt-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-apis-mellifera-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-apis-mellifera-tgt-items-std"/>
+    </ant>
+  </target>
+
+  <!-- retrieve ensembl apis-mellifera data -->
+  <target name="retrieve-ensembl-apis-mellifera" depends="convert-ensembl">
+    <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-ensembl database="db.ensembl-apis-mellifera" model="ensembl" osName="osw.ensembl-apis-mellifera-src-items"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.ensembl-apis-mellifera-src-items-std"/>
+    </ant>
+  </target>
+
+  <!-- translate ensembl apis-mellifera -->
+  <target name="translate-ensembl-apis-mellifera" depends="convert-ensembl, compile-ensembl-java, compile-genomic-java-from-db">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-apis-mellifera-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-apis-mellifera-tgt-items-std"/>
+    </ant>
+    <copy file="${model}/ensembl/ensembl_mappings" toDir="${build.model}/ensembl"/>
+
+    <copy file="${model}/genomic/resources/flymine/ensembl_config.properties" toDir="${build.model}/ensembl"/>
+
+    <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <translate-data translator="org.flymine.dataconversion.EnsemblDataTranslator"
+                    source="os.ensembl-apis-mellifera-src-items"
+                    target="osw.ensembl-apis-mellifera-tgt-items"
+                    srcModel="ensembl"
+                    tgtModel="genomic"
+                    organism="APM"/>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.ensembl-apis-mellifera-tgt-items-std"/>
+    </ant>
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.ensembl-apis-mellifera-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <!-- Load data from ensembl apis-mellifera tgt items into production -->
+  <target name="load-ensembl-apis-mellifera" depends="prepare-build-model, copy-flymine-config">
+    <taskdef name="load-apis-mellifera" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <!--Remember that the sourceName is the name space of the model !!!-->
+    <load-apis-mellifera
+      integrationWriter="integration.production"
+      source="os.ensembl-apis-mellifera-translated"
+      sourceName="ensembl_apis_mellifera"
+      ignoreDuplicates="true"
+    />
+  </target>
 
   <!-- DROSDEL PIPELINE -->
 
@@ -1060,7 +1181,7 @@
     <convert-file clsName="org.flymine.dataconversion.InparanoidConverter"
                   osName="osw.inparanoid-orthologue-tgt-items"
                   model="genomic">
-      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="longsqltable.*"/>
+      <fileset dir="${shared.data}/orthologues/inparanoid/2005-04-16/" includes="sqltable.*"/>
     </convert-file>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -2178,6 +2299,10 @@
   <target name="build-ensembl-anopheles-production"
           depends="retrieve-ensembl-anopheles,translate-ensembl-anopheles,load-ensembl-anopheles"/>
 
+  <!-- Translates and loads ensembl apis-mellifera data -->
+  <target name="build-ensembl-apis-mellifera-production"
+          depends="retrieve-ensembl-apis-mellifera,translate-ensembl-apis-mellifera,load-ensembl-apis-mellifera"/>
+
   <!-- Retrieve and load orthologue data -->
   <target name="build-orthologues-production"
           depends="retrieve-orthologues-inparanoid,load-orthologues-inparanoid"/>
@@ -2414,15 +2539,15 @@
      </tsv-file-reader>
    </target>
 
-  <target name="post-process">
+  <target name="ensembl-post-process">
     <!--    <antcall target="add-licences"/>  -->
     <antcall target="calculate-locations"/>
     <antcall target="create-chromosome-locations-and-lengths"/>
     <antcall target="analyse-db-production"/>
     <antcall target="create-references"/>
-    <antcall target="homophila-post-process"/>
+    <!--antcall target="homophila-post-process"/-->
     <antcall target="analyse-db-production"/>
-    <antcall target="update-orthologues"/>
+    <!--antcall target="update-orthologues"/-->
     <antcall target="analyse-db-production"/>
     <antcall target="make-spanning-locations"/>
     <antcall target="analyse-db-production"/>
@@ -2500,6 +2625,10 @@
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
+
+    <copy todir="${build.model}/ensembl/resources/test" overwrite="true" failonerror="true" >
+      <fileset file="${model}/genomic/resources/flymine/ensembl_config.properties/"/>
+    </copy>
   </target>
 
   <target name="insert-ensembl-test" depends="prepare-test">
@@ -2512,7 +2641,7 @@
     <delete file="${build.model}/genomic/objectstoresummary.properties"/>
     <insert-xml-data integrationWriter="integration.genomic-test"
                      xmlFile="${build.model}/ensembl/resources/test/EnsemblDataTranslatorFunctionalTest_tgt.xml"
-                     sourceName="ensembl-anoph"/>
+                     sourceName="ensembl"/>
   </target>
 
   <target name="compile-chado-java" depends="compile-flymine-java">
@@ -3840,6 +3969,13 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <fetch-sequences operation="fetch-contig-sequences-human" objectStoreWriter="osw.production" ensemblDb="db.ensembl-human"/>
+  </target>
+
+  <target name="fetch-ensembl-anoph-contig-sequences" depends="compile-genomic-java-from-db">
+    <taskdef name="fetch-sequences" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <fetch-sequences operation="fetch-contig-sequences-ensembl" objectStoreWriter="osw.production" ensemblDb="db.ensembl-anopheles"/>
   </target>
 
   <target name="transfer-sequences-chromosome" depends="compile-genomic-java-from-db">

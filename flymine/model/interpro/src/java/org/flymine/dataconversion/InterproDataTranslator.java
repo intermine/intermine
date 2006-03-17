@@ -811,51 +811,6 @@ public class InterproDataTranslator extends DataTranslator
         }
     }
 
-    /***/
-    private org.intermine.xml.full.Item getItemViaItemPath(
-            org.intermine.xml.full.Item sourceItem, org.intermine.dataconversion.ItemPath itemPath,
-            org.intermine.dataconversion.ItemReader sourceItemReader) throws ObjectStoreException {
-
-        //Have to convert from 'org.intermine.xml.full.Item' to 'org.intermine.model.fulldata.Item'
-        // and back again!!!
-        org.intermine.model.fulldata.Item modelItem = ItemHelper.convert(sourceItem);
-
-        org.intermine.model.fulldata.Item targetItemToConvert =
-                sourceItemReader.getItemByPath(itemPath, modelItem);
-
-        org.intermine.xml.full.Item targetItemToReturn = null;
-
-        if (targetItemToConvert != null) {
-            targetItemToReturn = ItemHelper.convert(targetItemToConvert);
-        }
-
-        return targetItemToReturn;
-    }
-
-    private java.util.List getItemsViaItemPath(
-            org.intermine.xml.full.Item sourceItem, org.intermine.dataconversion.ItemPath itemPath,
-            org.intermine.dataconversion.ItemReader sourceItemReader) throws ObjectStoreException {
-
-        //Have to convert from 'org.intermine.xml.full.Item' to
-        // 'org.intermine.model.fulldata.Item' and back again!!!
-        org.intermine.model.fulldata.Item modelItem = ItemHelper.convert(sourceItem);
-
-        java.util.List targetItemListToConvert
-                = sourceItemReader.getItemsByPath(itemPath, modelItem);
-
-        java.util.List itemList = new ArrayList();
-
-        if (targetItemListToConvert != null) {
-
-            for (Iterator itemIterator
-                    = targetItemListToConvert.iterator(); itemIterator.hasNext();) {
-                itemList.add(ItemHelper.convert((org.intermine.model.fulldata.Item)
-                        itemIterator.next()));
-            }
-        }
-        return itemList;
-    }
-
     /**
      * WE HAVE OVERRIDDEN THE PARENT METHOD TO SET THE BATCH SIZE TO A LOWER VALUE TO AVOID GETTING
      * TO MANY QUERY ITEMS

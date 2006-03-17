@@ -31,8 +31,8 @@ import org.flymine.model.genomic.*;
 import org.apache.log4j.Logger;
 
 /**
- * Transfer sequences from the Contig objects to the other objects that are located on the Contigs
- * and to the objects that the Contigs are located on (eg. Chromosomes).
+ * Transfer sequences from the Assembly objects to the other objects that are located on the
+ * Assemblys and to the objects that the Assemblys are located on (eg. Chromosomes).
  *
  * @author Kim Rutherford
  */
@@ -52,7 +52,7 @@ public class TransferSequences
     }
 
     /**
-     * Copy the contig sequences to the appropriate place in the chromosome sequences and store a
+     * Copy the Assembly sequences to the appropriate place in the chromosome sequences and store a
      * Sequence object for each Chromosome.  Uses the ObjectStoreWriter that was passed to the
      * constructor
      * @throws Exception if there are problems with the transfer
@@ -63,7 +63,7 @@ public class TransferSequences
         ObjectStore os = osw.getObjectStore();
 
         Results results = 
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Contig.class, false);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class, false);
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
 
@@ -76,8 +76,8 @@ public class TransferSequences
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             Chromosome chr = (Chromosome) os.getObjectById(chrId);
-            Contig contig = (Contig) rr.get(1);
-            Location contigOnChrLocation = (Location) rr.get(2);
+            Assembly assembly = (Assembly) rr.get(1);
+            Location assemblyOnChrLocation = (Location) rr.get(2);
 
             if (currentChr == null || !chr.equals(currentChr)) {
                 if (currentChr != null) {
@@ -93,13 +93,13 @@ public class TransferSequences
                 currentChr = chr;
             }
 
-            copySeqArray(currentChrBases, contig.getSequence().getResidues(),
-                         contigOnChrLocation.getStart().intValue(),
-                         contigOnChrLocation.getEnd().intValue(),
-                         contigOnChrLocation.getStrand().intValue());
+            copySeqArray(currentChrBases, assembly.getSequence().getResidues(),
+                         assemblyOnChrLocation.getStart().intValue(),
+                         assemblyOnChrLocation.getEnd().intValue(),
+                         assemblyOnChrLocation.getStrand().intValue());
         }
         if (currentChrBases == null) {
-            LOG.error("in transferToChromosome(): no Contig sequences found");
+            LOG.error("in transferToChromosome(): no Assembly sequences found");
         } else {
             storeNewSequence(currentChr, currentChrBases);
             LOG.info("finished Chromosome: " + currentChr.getIdentifier());
@@ -122,7 +122,7 @@ public class TransferSequences
     /**
      * Use the Location relations to copy the sequence from the Chromosomes to every
      * LocatedSequenceFeature that is located on a Chromosome and which doesn't already have a
-     * sequence (ie. don't copy to Contig).  Uses the ObjectStoreWriter that was passed to the
+     * sequence (ie. don't copy to Assembly).  Uses the ObjectStoreWriter that was passed to the
      * constructor
      * @throws Exception if there are problems with the transfer
      */
@@ -147,7 +147,7 @@ public class TransferSequences
             LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
             Location locationOnChr = (Location) rr.get(2);
 
-            if (feature instanceof Contig) {
+            if (feature instanceof Assembly) {
                 continue;
             }
 
