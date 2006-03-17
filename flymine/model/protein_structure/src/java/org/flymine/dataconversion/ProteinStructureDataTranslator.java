@@ -39,6 +39,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     protected String dataLocation;
     protected Item dataSet;
     protected Map proteinFeatures = new HashMap();
+    protected Item organism;
 
     /**
      * @see DataTranslator#DataTranslator
@@ -48,6 +49,9 @@ public class ProteinStructureDataTranslator extends DataTranslator
             String dataLocation) {
         super(srcItemReader, mapping, srcModel, tgtModel);
         this.dataLocation = dataLocation;
+        // proteins are all Drosophila
+        this.organism = createItem(tgtNs + "Organism", "");
+        organism.setAttribute("abbreviation", "DM");
     }
 
     /**
@@ -80,6 +84,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             Item protein = createItem(tgtNs + "Protein", "");
             protein.addAttribute(new Attribute("primaryAccession", modelledRegion
                                                .getAttribute("uniprot_id").getValue()));
+            protein.setReference("organism", organism.getIdentifier());
             proteinRegion.addReference(new Reference("protein", protein.getIdentifier()));
             Item location = createItem(tgtNs + "Location", "");
             location.addAttribute(new Attribute("start", modelledRegion
@@ -181,5 +186,5 @@ public class ProteinStructureDataTranslator extends DataTranslator
       return paths;
   }
 
-  
+
 }

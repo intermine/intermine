@@ -52,7 +52,7 @@ public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
                                                mapping, srcModel, getTargetModel(tgtNs), "");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
-        //System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
