@@ -31,7 +31,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.apache.log4j.Logger;
 
 /**
- * DataConverter to load flat file linking BDGP clones to Flybase genes.
+ * DataConverter to load flat file linking CompositeSequence to Ensembl genes.
  * @author Wenyan Ji
  */
 public class AffyConverter extends CDNACloneConverter
@@ -45,8 +45,7 @@ public class AffyConverter extends CDNACloneConverter
     protected Item organism;
     protected ItemFactory itemFactory;
     protected Map geneMap = new HashMap();
-    protected Map probeMap = new HashMap();
-    private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:HG-U133A:";
+    private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:";
     private static final String PROBEURL = "https://www.affymetrix.com/LinkServlet?probeset=";
 
     /**
@@ -65,13 +64,25 @@ public class AffyConverter extends CDNACloneConverter
         dataSource.setAttribute("name", "Affymetrix GeneChip");
         writer.store(ItemHelper.convert(dataSource));
 
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Affymetrix HG-U133A annotation data set");
-        writer.store(ItemHelper.convert(dataSet));
+        dataSet1 = createItem("DataSet");
+        dataSet1.setAttribute("title", "Affymetrix Human Genome U133A Array");
+        writer.store(ItemHelper.convert(dataSet1));
+
+        dataSet2 = createItem("DataSet");
+        dataSet2.setAttribute("title", "Affymetrix Human Genome U95Av2 Array");
+        writer.store(ItemHelper.convert(dataSet2));
+        
+        dataSet3 = createItem("DataSet");
+        dataSet3.setAttribute("title", "Affymetrix Mouse Genome 430 2.0 Array");
+        writer.store(ItemHelper.convert(dataSet3));
 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "HS");
         writer.store(ItemHelper.convert(organism));
+
+        organismMM = createItem("Organism");
+        organismMM.setAttribute("abbreviation", "MM");
+        writer.store(ItemHelper.convert(organismMM));
 
     }
 
@@ -94,25 +105,41 @@ public class AffyConverter extends CDNACloneConverter
                 continue;
             }
 
+           
             String probeId = array[0].substring(1);
-            //String geneSymbol= array[14];//this is hugo identifier
+            String probeIdentifier, dataSetId, orgId;
+
+            String chipInfo = array[1];
+            if (chipInfo.equals("Human Genome U133A Array")) {
+                probeIdentifier = probeId.concat("HG-U133A:");
+                dataSetId = dataSet1.getIdentifier();
+                orgId = organism.getIdentifier();
+            } else if (chipInfo.equals("Human Genome U95Av2 Array")) {
+                probeIdentifier = probeId.concat("HG-U95Av2:");
+                dataSetId = dataSet2.getIdentifier();
+                orgId = organism.getIdentifier();
+            } else if (chipInfo.equals("Mouse Genome 430 2.0 Array")) {
+                probeIdentifier = probeId.concat("Mouse430:");
+                dataSetId = dataSet3.getIdentifier();
+                orgId = organismMM.getIdentifier();
+
+            }
+                        
             String geneEnsembl = array[17];
             //don't create probe if no ensembl id is given in the file
-            if (geneEnsembl.startsWith("ENSG")) {               
-                Item probe = createProbe("CompositeSequence", probeId.trim(), 
-                                 organism.getIdentifier(), dataSource.getIdentifier(), 
-                                 dataSet.getIdentifier(), writer);
+            if (geneEnsembl.startsWith("ENSG") || geneEnsembl.startsWith("ENSMUSG")) {               
+                Item probe = createProbe("CompositeSequence", probeIdentifier, 
+                             orgId, dataSource.getIdentifier(), dataSetId, writer);
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken();
-                    Item gene = createGene("Gene", organism.getIdentifier(), token.trim(), writer);
+                    Item gene = createGene("Gene", orgId, token.trim(), writer);
                     rf.addRefId(gene.getIdentifier());
                 }
                 probe.addCollection(rf);
                 writer.store(ItemHelper.convert(probe));
             }
-
         }
 
     }
