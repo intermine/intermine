@@ -41,8 +41,8 @@ public class AffyConverter extends CDNACloneConverter
     protected static final Logger LOG = Logger.getLogger(AffyConverter.class);
 
     protected Item dataSource;
-    protected Item dataSet;
-    protected Item organism;
+    protected Item dataSet1, dataSet2, dataSet3;
+    protected Item organism, organismMM;
     protected ItemFactory itemFactory;
     protected Map geneMap = new HashMap();
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:";
@@ -107,7 +107,9 @@ public class AffyConverter extends CDNACloneConverter
 
            
             String probeId = array[0].substring(1);
-            String probeIdentifier, dataSetId, orgId;
+            String probeIdentifier = null;
+            String dataSetId = null;
+            String orgId = null;
 
             String chipInfo = array[1];
             if (chipInfo.equals("Human Genome U133A Array")) {
