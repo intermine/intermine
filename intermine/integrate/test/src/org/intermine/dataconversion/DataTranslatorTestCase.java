@@ -10,11 +10,7 @@ package org.intermine.dataconversion;
  *
  */
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 import java.io.InputStream;
 
 import org.intermine.xml.full.Item;
@@ -41,7 +37,7 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
     }
 
     /**
-     * @see TestCase#SetUp
+     * @see TargetItemsTestCase#setUp()
      */
     public void setUp() throws Exception {
         super.setUp();
@@ -107,8 +103,10 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * @return the differences between the to
      */
     public static String printCompareItemSets(Set expected, Set actual) {
-        String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, actual);
-        String actualNotExpected = "in actual, not expected: " + compareItemSets(actual, expected);
+        String expectedNotActual = "in expected, not actual: "
+                + makeLogStringFromItemSet(compareItemSets(expected, actual));
+        String actualNotExpected = "in actual, not expected: "
+                + makeLogStringFromItemSet(compareItemSets(actual, expected));
 
         if ((expectedNotActual.length() > 27) || (actualNotExpected.length() > 27)) {
             return expectedNotActual + System.getProperty("line.separator") + actualNotExpected;
@@ -122,5 +120,67 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * @return the source Model
      */
     protected abstract String getSrcModelName();
+
+
+    public static String makeLogStringFromItemSet(Set itemSet){
+
+        TreeSet orderedItemSet = new TreeSet();
+
+        for (Iterator isit = itemSet.iterator(); isit.hasNext(); ) {
+
+            orderedItemSet.add(new ItemLogOrderWrapper((Item)isit.next()));
+        }
+
+        StringBuffer logStringBuffer = new StringBuffer();
+
+        for (Iterator oisit = orderedItemSet.iterator(); oisit.hasNext();) {
+
+            logStringBuffer.append(((ItemLogOrderWrapper)oisit.next()).toString());
+        }
+
+        return logStringBuffer.toString();
+    }
+
+
+    static class ItemLogOrderWrapper implements Comparable {
+
+        private Item item2Wrap;
+
+        ItemLogOrderWrapper(Item item2Wrap) {
+            this.item2Wrap = item2Wrap;
+        }
+
+        public int compareTo(Object o) {
+
+            if (o instanceof ItemLogOrderWrapper) {
+
+                ItemLogOrderWrapper ilow = (ItemLogOrderWrapper) o;
+
+                int compVal = getItemClassName().compareToIgnoreCase(ilow.getItemClassName());
+
+                if (compVal == 0) {
+                    compVal = getItemIdentifier().compareToIgnoreCase(ilow.getItemIdentifier());
+                }
+                return compVal;
+
+            } else {
+                throw new RuntimeException("ItemLogOrderWrapper can't compare with a "
+                        + o.getClass().getName());
+            }
+        }
+
+        String getItemClassName() {
+            return item2Wrap.getClassName();
+        }
+
+        String getItemIdentifier() {
+            return item2Wrap.getIdentifier();
+        }
+
+        public String toString() {
+            return item2Wrap.toString();
+        }
+    }
+
 }
 

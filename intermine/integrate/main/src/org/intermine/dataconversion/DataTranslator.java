@@ -525,6 +525,72 @@ public class DataTranslator
     }
 
     /**
+     * Used to fetch a single src item via a suitable item path.
+     *
+     * @param sourceItem Our starting point.
+     * @param itemPath The path to follow to the item we want.
+     * @param sourceItemReader Where we can get our src item from.
+     *
+     * @return an Item or a null if we can't find it.
+     *
+     * @throws ObjectStoreException if there is some kind of problem reading from the database.
+     * */
+    protected org.intermine.xml.full.Item getItemViaItemPath(
+            org.intermine.xml.full.Item sourceItem, org.intermine.dataconversion.ItemPath itemPath,
+            org.intermine.dataconversion.ItemReader sourceItemReader) throws ObjectStoreException {
+
+        //Have to convert from 'org.intermine.xml.full.Item' to 'org.intermine.model.fulldata.Item'
+        org.intermine.model.fulldata.Item modelItem = ItemHelper.convert(sourceItem);
+
+        org.intermine.model.fulldata.Item targetItemToConvert =
+                sourceItemReader.getItemByPath(itemPath, modelItem);
+
+        org.intermine.xml.full.Item targetItemToReturn = null;
+
+        if (targetItemToConvert != null) {
+            targetItemToReturn = ItemHelper.convert(targetItemToConvert);
+        }
+
+        return targetItemToReturn;
+    }
+
+    /**
+     * Used to fetch a list of src items via a suitable item path.
+     *
+     * @param sourceItem Our starting point.
+     * @param itemPath The path to follow to the items we want.
+     * @param sourceItemReader Where we can get our src items from.
+     *
+     * @return a List of Items or a null if we can't find any.
+     *
+     * @throws ObjectStoreException if there is some kind of problem reading from the database.
+     * */
+    protected java.util.List getItemsViaItemPath(
+            org.intermine.xml.full.Item sourceItem, org.intermine.dataconversion.ItemPath itemPath,
+            org.intermine.dataconversion.ItemReader sourceItemReader) throws ObjectStoreException {
+
+        //Have to convert from 'org.intermine.xml.full.Item' to
+        // 'org.intermine.model.fulldata.Item' and back again!!!
+        org.intermine.model.fulldata.Item modelItem = ItemHelper.convert(sourceItem);
+
+        java.util.List targetItemListToConvert
+                = sourceItemReader.getItemsByPath(itemPath, modelItem);
+
+        java.util.List itemList = new ArrayList();
+
+        if (targetItemListToConvert != null) {
+
+            for (Iterator itemIterator
+                    = targetItemListToConvert.iterator(); itemIterator.hasNext();) {
+                itemList.add(ItemHelper.convert((org.intermine.model.fulldata.Item)
+                        itemIterator.next()));
+            }
+        }
+        return itemList;
+    }    
+
+
+    /**
      * Move a property from one item to another
      * @param fromItem an item to move property from
      * @param toItem an item to move property to

@@ -238,8 +238,13 @@ public class ItemToObjectTranslator extends Translator
         Item item = (Item) o;
         int itemSize = 100;
         Iterator iter = item.getAttributes().iterator();
-        while (iter.hasNext()) {
-            itemSize += ((Attribute) iter.next()).getValue().length() + 50;
+        try {
+            while (iter.hasNext()) {
+                itemSize += ((Attribute) iter.next()).getValue().length() + 50;
+            }
+        } catch (NullPointerException e) {
+            LOG.error("An Attribute caused a NullPointerException!" ,e);
+            throw e;
         }
         iter = item.getCollections().iterator();
         while (iter.hasNext()) {
