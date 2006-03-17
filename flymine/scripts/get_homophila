@@ -12,6 +12,8 @@ use IO::All;
 
 my $homophila_server = "http://superfly.ucsd.edu/homophila";
 my $homophila_data_file = "homophila_all.txt";
+my $homophila_matches_file_tmp = "homophila_matches.txt.tmp";
+my $homophila_diseases_file_tmp = "homophila_diseases.txt.tmp";
 my $homophila_matches_file = "homophila_matches.txt";
 my $homophila_diseases_file = "homophila_diseases.txt";
 
@@ -44,11 +46,11 @@ if ((system "gzip -dr $download_dir") != 0) {
 open HOMOPHILA_DATA, "$download_dir/$homophila_data_file"
   or die "can't open $download_dir/$homophila_data_file\n";
 
-open HOMOPHILA_MATCHES, ">$download_dir/$homophila_matches_file"
-  or die "can't open $download_dir/$homophila_matches_file\n";
+open HOMOPHILA_MATCHES, ">$download_dir/$homophila_matches_file_tmp"
+  or die "can't open $download_dir/$homophila_matches_file_tmp\n";
 
-open HOMOPHILA_DISEASES, ">$download_dir/$homophila_diseases_file"
-  or die "can't open $download_dir/$homophila_diseases_file\n";
+open HOMOPHILA_DISEASES, ">$download_dir/$homophila_diseases_file_tmp"
+  or die "can't open $download_dir/$homophila_diseases_file_tmp\n";
 
 my $line = <HOMOPHILA_DATA>;
 
@@ -69,3 +71,8 @@ while ($line = <HOMOPHILA_DATA>) {
 close HOMOPHILA_DATA;
 close HOMOPHILA_MATCHES;
 close HOMOPHILA_DISEASES;
+
+# sort and uniqify
+system("cat $download_dir/$homophila_matches_file_tmp | sort | uniq > $download_dir/$homophila_matches_file");
+system("cat $download_dir/$homophila_diseases_file_tmp | sort | uniq > $download_dir/$homophila_diseases_file");
+
