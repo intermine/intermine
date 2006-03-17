@@ -25,19 +25,40 @@ my $goa_file_gz = "$goa_file.gz";
 my %taxon_map =
   (7165 => {suffix => 'ag'},
    180454 => {suffix => 'agp'},
+   7460 => {suffix => 'am'},
    9606 => {suffix => 'hs'});
 
 my $godatabase_server = "ftp.geneontology.org";
 my $godatabase_dir = "pub/go/gene-associations";
+my $go_dir = "pub/go/ontology";
+my $go_file = "gene_ontology.obo";
 my $gene_association_prefix = "gene_association";
 
 # the key is the name of the directory to put the gene association file in, the
 # suffix is used to find the file on the server
 my %gene_association_map =
   (flybase => {suffix => 'fb'},
-   wormbase => {suffix => 'wb'});
+   wormbase => {suffix => 'wb'},
+   mgi => {suffix => 'mgi'},
+   rgd => {suffix => 'rgd'},
+   sgd => {suffix => 'sgd'});
 
-#### Get goa files
+# Get latest version of the gene ontology - is updated every 30 mins
+my $go_ftp = Net::FTP->new($godatabase_server, Passive => 1)
+or die "Cannot connect to $godatabase_server: $@";
+
+$go_ftp->login("anonymous",'-anonymous@')
+or die "Cannot login ", $go_ftp->message;
+
+$go_ftp->cwd($go_dir);
+
+my $go_download_dir = "gene_ontology";
+
+print STDERR "Getting $godatabase_server/$go_dir/$go_file to $go_download_dir\n";
+$go_ftp->get($go_file, "$go_download_dir/$go_file")
+    or die "failed to get $godatabase_server/$go_dir/$go_file";
+
+### Get goa files
 my $goa_ftp = Net::FTP->new($uniprot_go_server, Passive => 1)
   or die "Cannot connect to $uniprot_go_server: $@";
 
@@ -57,7 +78,15 @@ $year += 2000;
 
 my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
 
-my $uniprot_download_dir = "go-annotation/uniprot/$date_string";
+# make uniprot directory if necessary
+my $uniprot_dir = "go-annotation/uniprot";
+if (!(-d $uniprot_dir)) {
+    print STDERR "creating directory: $uniprot_dir\n";
+    mkdir $uniprot_dir
+        or die "failed to create directory $uniprot_dir";
+}
+
+my $uniprot_download_dir = "$uniprot_dir/$date_string";
 
 if (-d $uniprot_download_dir) {
   warn "$uniprot_download_dir already exists - skipping download\n";
@@ -132,7 +161,15 @@ for my $source_database (keys %gene_association_map) {
 
   my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
 
-  my $gene_association_download_dir = "go-annotation/$source_database/$date_string";
+  # create directory for source if necessary
+  my $source_dir = "go-annotation/$source_database";
+  if (!(-d $source_dir)) {
+      print STDERR "creating directory: $source_dir\n";
+      mkdir $source_dir
+          or die "failed to create directory $source_dir";
+  }
+
+  my $gene_association_download_dir = "$source_dir/$date_string";
 
   if (-d $gene_association_download_dir) {
     warn "$gene_association_download_dir already exists - skipping download\n";
