@@ -10,6 +10,9 @@ package org.intermine.sql.query;
  *
  */
 
+import org.intermine.util.IdentityMap;
+import java.util.Map;
+
 /**
  * An abstract representation of an item that can be present in the WHERE or HAVING
  * sections of an SQL query.
@@ -117,7 +120,20 @@ public abstract class AbstractConstraint implements SQLStringable
      * @return INDEPENDENT, IMPLIED_BY, IMPLIES, EQUAL, OPPOSITE, EXCLUDES, or OR, depending on the
      * constraints.
      */
-    public abstract int compare(AbstractConstraint obj);
+    public int compare(AbstractConstraint obj) {
+        return compare(obj, IdentityMap.INSTANCE, IdentityMap.INSTANCE);
+    }
+
+    /**
+     * Compare this AbstractConstraint with another, ignoring aliases in member fields and tables.
+     *
+     * @param obj an AbstractConstraint to compare to
+     * @param tableMap a Map from tables in this constraint to tables in obj
+     * @param reverseTableMap a reverse of tableMap
+     * @return INDEPENDENT, IMPLIED_BY, IMPLIES, EQUAL, OPPOSITE, EXCLUDES, or OR, depending on the
+     * constraints.
+     */
+    public abstract int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap);
 
     /**
      * Overrides Object.equals();

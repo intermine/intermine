@@ -11,6 +11,7 @@ package org.intermine.sql.query;
  */
 
 import java.util.*;
+import org.intermine.util.IdentityMap;
 
 /**
  * A representation of a function in an SQL query.
@@ -239,35 +240,63 @@ public class Function extends AbstractValue
     public boolean equals(Object obj) {
         if (obj instanceof Function) {
             Function objF = (Function) obj;
-            if ((operation == PLUS) || (operation == MULTIPLY)) {
-                Map a = new HashMap();
-                Iterator opIter = operands.iterator();
-                while (opIter.hasNext()) {
-                    Object operand = opIter.next();
-                    if (!a.containsKey(operand)) {
-                        a.put(operand, new Integer(1));
-                    } else {
-                        Integer i = (Integer) a.get(operand);
-                        a.put(operand, new Integer(1 + i.intValue()));
+            if (operation == objF.operation) {
+                if ((operation == PLUS) || (operation == MULTIPLY)) {
+                    Map a = new HashMap();
+                    Iterator opIter = operands.iterator();
+                    while (opIter.hasNext()) {
+                        Object operand = opIter.next();
+                        if (!a.containsKey(operand)) {
+                            a.put(operand, new Integer(1));
+                        } else {
+                            Integer i = (Integer) a.get(operand);
+                            a.put(operand, new Integer(1 + i.intValue()));
+                        }
                     }
-                }
-                Map b = new HashMap();
-                opIter = objF.operands.iterator();
-                while (opIter.hasNext()) {
-                    Object operand = opIter.next();
-                    if (!b.containsKey(operand)) {
-                        b.put(operand, new Integer(1));
-                    } else {
-                        Integer i = (Integer) b.get(operand);
-                        b.put(operand, new Integer(1 + i.intValue()));
+                    Map b = new HashMap();
+                    opIter = objF.operands.iterator();
+                    while (opIter.hasNext()) {
+                        Object operand = opIter.next();
+                        if (!b.containsKey(operand)) {
+                            b.put(operand, new Integer(1));
+                        } else {
+                            Integer i = (Integer) b.get(operand);
+                            b.put(operand, new Integer(1 + i.intValue()));
+                        }
                     }
+                    return (a.equals(b));
+                } else {
+                    return (operands.equals(objF.operands));
                 }
-                return (operation == objF.operation) && (a.equals(b));
-            } else {
-                return (operation == objF.operation) && (operands.equals(objF.operands));
             }
         }
         return false;
+    }
+
+    /**
+     * @see AbstractValue#compare
+     */
+    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        if (tableMap instanceof IdentityMap) {
+            return equals(obj) ? EQUAL : INCOMPARABLE;
+        }
+        return EQUAL;
+
+        //throw new RuntimeException("Not implemented");
+/*
+        if ((operation == objF.operation) && (operands.size() == objF.operands.size())) {
+            Iterator opIter = operands.iterator();
+            Iterator oOpIter = objF.operands.iterator();
+            while (opIter.hasNext()) {
+                AbstractValue a = (AbstractValue) opIter.next();
+                AbstractValue b = (AbstractValue) oOpIter.next();
+                if (! a.compare(b, tableMap, reverseTableMap)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;*/
     }
 
     /**
@@ -316,4 +345,3 @@ public class Function extends AbstractValue
         return operands;
     }
 }
-
