@@ -77,7 +77,7 @@ public class DataTranslatorTest extends TestCase
         tgt3.setClassName(tgtNs + "Department");
         Set expected = new HashSet(Arrays.asList(new Object[] {tgt1, tgt2, tgt3}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), getMergeSpec(), getSrcModel(), getTgtModel());
+        translator = new DataTranslator(new MockItemReader(itemMap), getMappings(), getSrcModel(), getTgtModel());
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
         assertEquals(expected, tgtIs.getItems());
@@ -92,7 +92,7 @@ public class DataTranslatorTest extends TestCase
         expected.setIdentifier("1");
         expected.setClassName(tgtNs + "Company");
 
-        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
+        translator = new DataTranslator(null, getMappings(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -113,7 +113,7 @@ public class DataTranslatorTest extends TestCase
         a2.setValue("testname");
         expected.addAttribute(a2);
 
-        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
+        translator = new DataTranslator(null, getMappings(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -138,7 +138,7 @@ public class DataTranslatorTest extends TestCase
         ea1.setValue("testname");
         expected.addAttribute(ea1);
 
-        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
+        translator = new DataTranslator(null, getMappings(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -162,7 +162,7 @@ public class DataTranslatorTest extends TestCase
         r2.setRefId("2");
         expected.addReference(r2);
 
-        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
+        translator = new DataTranslator(null, getMappings(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
@@ -186,15 +186,15 @@ public class DataTranslatorTest extends TestCase
         r2.addRefId("3");
         expected.addCollection(r2);
 
-        translator = new DataTranslator(null, getMergeSpec(), getSrcModel(), getTgtModel());
+        translator = new DataTranslator(null, getMappings(), getSrcModel(), getTgtModel());
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemSubclass() throws Exception {
-        Properties mergeSpec = new Properties();
-        mergeSpec.put("Organisation", "Organisation");
-        mergeSpec.put("Organisation.name", "Organisation.name");
-        mergeSpec.put("Company", "LtdCompany");
+        Properties mappings = new Properties();
+        mappings.put("Organisation", "Organisation");
+        mappings.put("Organisation.name", "Organisation.name");
+        mappings.put("Company", "LtdCompany");
         //hoping that Company.name -> LtdCompany.name as Company subclasses Organisation
 
         Item src1 = itemFactory.makeItem();
@@ -209,18 +209,18 @@ public class DataTranslatorTest extends TestCase
         Attribute aa1 = new Attribute("name", "LtdCompanyName");
         expected.addAttribute(a1);
 
-        translator = new DataTranslator(null, mergeSpec, getSrcModel(), getTgtModel());
+        translator = new DataTranslator(null, mappings, getSrcModel(), getTgtModel());
 
         assertEquals(expected, translator.translateItem(src1).iterator().next());
     }
 
     public void testTranslateItemRestrictedSubclassSingleLevel() throws Exception {
-        Properties mergeSpec = new Properties();
-        mergeSpec.put("Organisation", "Organisation");
-        mergeSpec.put("Organisation.organisationType", "Organisation.organisationType");
-        mergeSpec.put("Organisation.otherProp", "Organisation.otherProp");
-        mergeSpec.put("Company", "Organisation [organisationType=business]");
-        mergeSpec.put("Charity", "Organisation [organisationType=charity] [otherProp=value]");
+        Properties mappings = new Properties();
+        mappings.put("Organisation", "Organisation");
+        mappings.put("Organisation.organisationType", "Organisation.organisationType");
+        mappings.put("Organisation.otherProp", "Organisation.otherProp");
+        mappings.put("Company", "Organisation [organisationType=business]");
+        mappings.put("Charity", "Organisation [organisationType=charity] [otherProp=value]");
 
         // maps to business
         Item src1 = itemFactory.makeItem();
@@ -307,7 +307,7 @@ public class DataTranslatorTest extends TestCase
         exp4.addAttribute(ea4);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3, exp4}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), mergeSpec,
+        translator = new DataTranslator(new MockItemReader(itemMap), mappings,
                                         getSrcModel(), getTgtModel2());
 
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
@@ -316,16 +316,16 @@ public class DataTranslatorTest extends TestCase
     }
 
     public void testGetRestrictionSubclassNested() throws Exception {
-        Properties mergeSpec = new Properties();
-        mergeSpec.put("Organisation", "Organisation");
-        mergeSpec.put("Business", "Organisation [organisationType.type=business]");
-        mergeSpec.put("PrivateBusiness", "Organisation [organisationType.companyModel.model=limited] [organisationType.type=business]");
-        mergeSpec.put("Organisation.organisationType", "Organisation.organisationType");
-        mergeSpec.put("OrganisationType", "OrganisationType");
-        mergeSpec.put("OrganisationType.type", "OrganisationType.type");
-        mergeSpec.put("OrganisationType.companyModel", "OrganisationType.companyModel");
-        mergeSpec.put("CompanyModel", "CompanyModel");
-        mergeSpec.put("CompanyModel.model", "CompanyModel.model");
+        Properties mappings = new Properties();
+        mappings.put("Organisation", "Organisation");
+        mappings.put("Business", "Organisation [organisationType.type=business]");
+        mappings.put("PrivateBusiness", "Organisation [organisationType.companyModel.model=limited] [organisationType.type=business]");
+        mappings.put("Organisation.organisationType", "Organisation.organisationType");
+        mappings.put("OrganisationType", "OrganisationType");
+        mappings.put("OrganisationType.type", "OrganisationType.type");
+        mappings.put("OrganisationType.companyModel", "OrganisationType.companyModel");
+        mappings.put("CompanyModel", "CompanyModel");
+        mappings.put("CompanyModel.model", "CompanyModel.model");
 
         ReferenceDescriptor ref1 = new ReferenceDescriptor("organisationType", "org.intermine.source.OrganisationType", null);
         ClassDescriptor cld1 = new ClassDescriptor("org.intermine.source.Organisation", null, false,
@@ -452,7 +452,7 @@ public class DataTranslatorTest extends TestCase
         exp22.addAttribute(ea22);
         Set expected = new HashSet(Arrays.asList(new Object[] {exp11, exp12, exp21, exp22, exp23}));
 
-        translator = new DataTranslator(new MockItemReader(itemMap), mergeSpec, srcModel, getTgtModel());
+        translator = new DataTranslator(new MockItemReader(itemMap), mappings, srcModel, getTgtModel());
 
         MockItemWriter tgtIs = new MockItemWriter(new HashMap());
         translator.translate(tgtIs);
@@ -488,7 +488,6 @@ public class DataTranslatorTest extends TestCase
         assertEquals("limited", translator.buildRestriction(t, (Item) srcItems.get("src21")));
     }
 
-
     public void testBuildSubclassRestriction() throws Exception {
         Map srcItems = getSrcItems();
         ItemWriter itemWriter = new MockItemWriter(itemMap);
@@ -518,7 +517,6 @@ public class DataTranslatorTest extends TestCase
         sr3.addRestriction("Organisation.organisationType.type", "business");
         sr3.addRestriction("Organisation.organisationType.companyModel.model", "limited");
         assertEquals(sr3, translator.buildSubclassRestriction((Item) srcItems.get("src21"), template3));
-
     }
 
     public void testPromoteField() throws Exception {
@@ -652,17 +650,80 @@ public class DataTranslatorTest extends TestCase
         return srcItems;
     }
 
-    private Properties getMergeSpec() {
-        Properties mergeSpec = new Properties();
-        mergeSpec.put("Organisation", "Organisation");
-        mergeSpec.put("Company", "LtdCompany");
-        mergeSpec.put("Company.address", "LtdCompany.address");
-        mergeSpec.put("Company.departments", "LtdCompany.departments");
-        mergeSpec.put("Company.name", "LtdCompany.name");
-        mergeSpec.put("Address", "Address");
-        mergeSpec.put("Department", "Department");
-        return mergeSpec;
+    private Properties getMappings() {
+        Properties mappings = new Properties();
+        mappings.put("Organisation", "Organisation");
+        mappings.put("Company", "LtdCompany");
+        mappings.put("Company.address", "LtdCompany.address");
+        mappings.put("Company.departments", "LtdCompany.departments");
+        mappings.put("Company.name", "LtdCompany.name");
+        mappings.put("Address", "Address");
+        mappings.put("Department", "Department");
+        return mappings;
     }
+
+    /*
+    public void testMultipleInclusion() throws Exception{
+
+        Properties mappings = new Properties();
+        mappings.put("Charity", "Organisation[organisationType = charity]");
+        mappings.put("Company", "Organisation[organisationType = company]");
+
+        HashMap ourItemMap = new HashMap();
+
+        Item org1 = itemFactory.makeItem("1", srcNs + "Organisation", "");
+        org1.setAttribute("organisationType", "charity");
+
+        Item org2 = itemFactory.makeItem("2", srcNs + "Organisation", "");
+        org2.setAttribute("organisationType", "company");
+
+        Item org3 = itemFactory.makeItem("3", srcNs + "Organisation", "");
+        org3.setAttribute("organisationType", "mafia");
+
+        ItemWriter itemWriter = new MockItemWriter(ourItemMap);
+        itemWriter.store(ItemHelper.convert(org1));
+        itemWriter.store(ItemHelper.convert(org2));
+        itemWriter.store(ItemHelper.convert(org3));
+
+        translator = new DataTranslator(new MockItemReader(ourItemMap),
+                mappings, getSrcModel(), getTgtModel());
+
+        assertEquals("http://www.intermine.org/target#Charity", translator.getTgtItemClassName(org1));
+        assertEquals("http://www.intermine.org/target#Company", translator.getTgtItemClassName(org2));
+        assertNull(translator.getTgtItemClassName(org3));
+    }
+
+
+    public void testSingleExclusion() throws Exception{
+
+        Properties mappings = new Properties();
+        mappings.put("Company", "Organisation[organisationType != charity]");
+
+        HashMap ourItemMap = new HashMap();
+
+        Item org1 = itemFactory.makeItem("1", srcNs + "Organisation", "");
+        org1.setAttribute("organisationType", "charity");
+
+        Item org2 = itemFactory.makeItem("2", srcNs + "Organisation", "");
+        org2.setAttribute("organisationType", "company");
+
+        Item org3 = itemFactory.makeItem("3", srcNs + "Organisation", "");
+        org3.setAttribute("organisationType", "mafia");
+
+        ItemWriter itemWriter = new MockItemWriter(ourItemMap);
+        itemWriter.store(ItemHelper.convert(org1));
+        itemWriter.store(ItemHelper.convert(org2));
+        itemWriter.store(ItemHelper.convert(org3));
+
+        translator = new DataTranslator(new MockItemReader(ourItemMap),
+                mappings, getSrcModel(), getTgtModel());
+
+        assertNull(translator.getTgtItemClassName(org1));
+        assertEquals("http://www.intermine.org/target#Company", translator.getTgtItemClassName(org2));
+        assertEquals("http://www.intermine.org/target#Company", translator.getTgtItemClassName(org3));
+    }
+    */
+
 
     private Model getSrcModel() throws Exception {
         AttributeDescriptor att1 = new AttributeDescriptor("name", "java.lang.String");
