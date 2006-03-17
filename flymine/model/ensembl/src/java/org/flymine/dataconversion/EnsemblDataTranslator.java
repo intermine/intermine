@@ -10,35 +10,16 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.Properties;
-
-import org.intermine.InterMineException;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.dataconversion.ItemReader;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.DataTranslator;
-import org.intermine.dataconversion.FieldNameAndValue;
-import org.intermine.dataconversion.ItemPrefetchDescriptor;
-import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
-import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
+import org.intermine.dataconversion.*;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.*;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.InterMineException;
 import org.intermine.util.XmlUtil;
-
+//import org.intermine.util.PropertiesUtil;
 import org.apache.log4j.Logger;
+
+import java.util.*;
 
 /**
  * Convert Ensembl data in fulldata Item format conforming to a source OWL definition
@@ -46,325 +27,501 @@ import org.apache.log4j.Logger;
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
+ * @author Peter McLaren
  */
 public class EnsemblDataTranslator extends DataTranslator
 {
-    protected static final Logger LOG = Logger.getLogger(EnsemblDataTranslator.class);
-
-    private Item ensemblDataSet;
-    private Reference ensemblDataSetRef;
-    private Item emblDataSource;
-    private Reference emblDataSourceRef;
-    private Item uniprotDb;
-    private Reference uniprotRef;
-    private Item flybaseDb;
-    private Reference flybaseRef;
-    private Map supercontigs = new HashMap();
-    private Map scLocs = new HashMap();
-    private Map exonLocs = new HashMap();
-    private Map exons = new HashMap();
-    private Map flybaseIds = new HashMap();
-    private String orgAbbrev;
-    private Item organism;
-    private Reference organismRef;
-    private Map proteins = new HashMap();
-    private Map proteinIds = new HashMap();
-    private Set proteinSynonyms = new HashSet();
-
-    private Item ensemblSource;
-    private Reference ensemblSourceRef;
 
     /**
-     * @see DataTranslator#DataTranslator
+     * USEFULL CONSTANT
+     * */
+    public static final String EMPTY_STRING = "";
+
+    /**
+     * USEFULL CONSTANT
+     * */
+    public static final String IDENTIFIER = "identifier";
+
+    protected static final String PATH_NAME_SPACE = "http://www.flymine.org/model/ensembl#";
+
+    protected static final ItemPath TRANSCRIPT_VIA_TRANSLATION =
+            new ItemPath("(transcript <- translation.transcript)", PATH_NAME_SPACE);
+
+    protected static final ItemPath EXON_VIA_EXON_TRANSCRIPT =
+            new ItemPath("(exon <- exon_transcript.exon)", PATH_NAME_SPACE);
+
+    protected static final ItemPath SEQ_REGION_VIA_DNA =
+            new ItemPath("(seq_region <- dna.seq_region)", PATH_NAME_SPACE);
+
+    protected static final Logger LOG = Logger.getLogger(EnsemblDataTranslator.class);
+
+    private Map seqIdMap = new HashMap();
+    private Map itemId2SynMap = new HashMap();
+
+    private Map markerSynonymMap = new HashMap();
+
+    //Holds all the information from the Ensembl Config file - i.e. datasources & sets
+    private EnsemblConfig config;
+
+    /**
+     * @param srcItemReader Our source item provider.
+     * @param mergeSpec The contents of our mapping spec.
+     * @param srcModel The data model we are translating items from.
+     * @param tgtModel The data model we are translating items into.
+     * @param ensemblProps Properties that are organism specific.
+     * @param orgAbbrev A suitably short acronym to identify which ogransim to process; 'HS' = Human
      */
-    public EnsemblDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
-                                 Model tgtModel, String orgAbbrev) {
-        super(srcItemReader, mapping, srcModel, tgtModel);
-        this.orgAbbrev = orgAbbrev;
+    public EnsemblDataTranslator(ItemReader srcItemReader,
+                                    Properties mergeSpec,
+                                    Model srcModel,
+                                    Model tgtModel,
+                                    Properties ensemblProps,
+                                    String orgAbbrev) {
+        super(srcItemReader, mergeSpec, srcModel, tgtModel);
 
-        organism = createItem("Organism");
-        organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
-        organismRef = new Reference("organism", organism.getIdentifier());
-
-        ensemblDataSet = createItem("DataSet");
-        // TODO: the dataset name shouldn't be hard coded:
-        ensemblDataSet.addAttribute(new Attribute("title", "Ensembl Anopheles"));
-        ensemblDataSetRef = new Reference("source", ensemblDataSet.getIdentifier());
-
-        ensemblSource = createItem("DataSource");
-        ensemblSource.addAttribute(new Attribute("name", "ensembl"));
-        ensemblSourceRef = new Reference("source", ensemblSource.getIdentifier());
-
-        emblDataSource = createItem("DataSource");
-        emblDataSource.addAttribute(new Attribute("name", "embl"));
-        emblDataSourceRef = new Reference("source", emblDataSource.getIdentifier());
-
-        uniprotDb = createItem("DataSource");
-        uniprotDb.addAttribute(new Attribute("name", "UniProt"));
-        uniprotRef = new Reference("source", uniprotDb.getIdentifier());
+        config = new EnsemblConfig(ensemblProps, orgAbbrev);
     }
 
     /**
-     * @see DataTranslator#translate
+     * @see org.intermine.dataconversion.DataTranslator#translate
      */
     public void translate(ItemWriter tgtItemWriter)
-        throws ObjectStoreException, InterMineException {
-        tgtItemWriter.store(ItemHelper.convert(organism));
-        tgtItemWriter.store(ItemHelper.convert(ensemblSource));
-        tgtItemWriter.store(ItemHelper.convert(ensemblDataSet));
-        tgtItemWriter.store(ItemHelper.convert(emblDataSource));
-        tgtItemWriter.store(ItemHelper.convert(uniprotDb));
+            throws ObjectStoreException, InterMineException {
 
         super.translate(tgtItemWriter);
 
-        for (Iterator i = createSuperContigs().iterator(); i.hasNext();) {
-            Item item = (Item) i.next();
-            if (item.getClassName().equals(tgtNs + "Supercontig")) {
-                Item synonym = createSynonym(item.getIdentifier(), "identifier",
-                        item.getAttribute("identifier").getValue(), ensemblSourceRef);
-                addReferencedItem(item, synonym, "synonyms", true, "subject", false);
-                tgtItemWriter.store(ItemHelper.convert(synonym));
-            }
-            tgtItemWriter.store(ItemHelper.convert(item));
+        tgtItemWriter.store(ItemHelper.convert(config.getOrganism()));
+
+        tgtItemWriter.store(ItemHelper.convert(config.getEnsemblDataSet()));
+
+        for (Iterator dsIt = config.getDataSrcItemIterator(); dsIt.hasNext(); ) {
+
+            tgtItemWriter.store(ItemHelper.convert((Item) dsIt.next()));
         }
-        for (Iterator i = exons.values().iterator(); i.hasNext();) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
-        for (Iterator i = exonLocs.values().iterator(); i.hasNext();) {
-            for (Iterator j = ((Collection) i.next()).iterator(); j.hasNext();) {
-                tgtItemWriter.store(ItemHelper.convert((Item) j.next()));
-            }
-        }
-        for (Iterator i = proteins.values().iterator(); i.hasNext();) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
-        for (Iterator i = proteinSynonyms.iterator(); i.hasNext();) {
-            tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
-        }
-        if (flybaseDb != null) {
-            tgtItemWriter.store(ItemHelper.convert(flybaseDb));
+
+        for (Iterator seqSynIt = itemId2SynMap.values().iterator(); seqSynIt.hasNext();) {
+
+            tgtItemWriter.store(ItemHelper.convert((Item) seqSynIt.next()));
         }
     }
 
     /**
-     * @see DataTranslator#translateItem
+     * @see org.intermine.dataconversion.DataTranslator#translateItem
      */
     protected Collection translateItem(Item srcItem)
-        throws ObjectStoreException, InterMineException {
-
+            throws ObjectStoreException, InterMineException {
         Collection result = new HashSet();
         String srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
-        String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
+        String srcItemClassName = XmlUtil.getFragmentFromURI(srcItem.getClassName());
+
         Collection translated = super.translateItem(srcItem);
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
-                if ("karyotype".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    if (tgtItem.hasAttribute("identifier")) {
-                        Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
-                                tgtItem.getAttribute("identifier").getValue(), ensemblSourceRef);
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        result.add(synonym);
+                if ("dna".equals(srcItemClassName) && !config.doStoreDna()) {
+                    LOG.debug("Skipping a dna item!");
+                    storeTgtItem = false;
+                } else if ("karyotype".equals(srcItemClassName)) {
+
+                    translateKaryotype(srcItem, tgtItem, result);
+                } else if ("exon".equals(srcItemClassName)) {
+
+                    //Skip this exon if it points to invalid transcripts!
+                    if (!isExonToBeKept(srcItem, true)) {
+                        LOG.debug("isExonToBeKept false for Exon:" + srcItem.getIdentifier());
+                        return result;
                     }
-                    Item location = createLocation(srcItem, tgtItem, "chromosome", "chr", true);
-                    location.addAttribute(new Attribute("strand", "0"));
-                    result.add(location);
-                } else if ("exon".equals(className)) {
-                    tgtItem.addReference(organismRef);
+
+                    tgtItem.addReference(config.getOrganismRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
+                    // <- exon_stable_id.exon
                     if (stableId != null) {
-                        moveField(stableId, tgtItem, "stable_id", "identifier");
+                        moveField(stableId, tgtItem, "stable_id", IDENTIFIER);
                     }
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    // more than one item representing same exon -> store up in map
-                    Item location = createLocation(srcItem, tgtItem, "contig", "contig", true);
-                    if (srcItem.hasAttribute("nonUniqueId")) {
-                        storeTgtItem = false;
-                        processExon(srcItem, tgtItem, location);
+                    addReferencedItem(tgtItem, config.getEnsemblDataSet(),
+                            "evidence", true, "", false);
+                    Item location = createLocation(srcItem, tgtItem, true); // seq_region
+                    // seq_region.coord-sys
+                    result.add(location);
+
+                } else if ("gene".equals(srcItemClassName)) {
+                    tgtItem.addReference(config.getOrganismRef());
+                    addReferencedItem(tgtItem, config.getEnsemblDataSet(),
+                            "evidence", true, "", false);
+                    Item comment = createComment(srcItem, tgtItem);
+                    if (comment != null) {
+                        result.add(comment);
+                    }
+                    Item location = createLocation(srcItem, tgtItem, true); // seq_region
+                    // seq_region.coord-sys
+                    result.add(location);
+                    Item anaResult = createAnalysisResult(srcItem, tgtItem); // analysis
+                    result.add(anaResult);
+
+                    // the default gene organismDbId should be its stable id (or identifier if none)
+                    //i.e. for anoph they are the same, but for human they are differant
+                    //note: the organismDbId is effecivly what we choose as a primary accession
+                    // and thus may differ from what we want to assign as the identifier...
+                    if (config.useXrefDbsForGeneIdentifier()) {
+                        result.addAll(doXrefGeneHandling(srcItem, tgtItem, srcNs));
                     } else {
-                        addToLocations(srcItem.getIdentifier(), location);
-                    }
-                } else if ("simple_feature".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    result.add(createAnalysisResult(srcItem, tgtItem));
-                    result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
-                } else if ("repeat_feature".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    result.add(createAnalysisResult(srcItem, tgtItem));
-                    result.add(createLocation(srcItem, tgtItem, "contig", "contig", true));
-                    promoteField(tgtItem, srcItem, "consensus", "repeat_consensus",
-                                "repeat_consensus");
-                    promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
-                    promoteField(tgtItem, srcItem, "identifier", "repeat_consensus", "repeat_name");
-                } else if ("gene".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    // gene name should be its stable id (or identifier if none)
-                    Item stableId = null;
-                    stableId = getStableId("gene", srcItem.getIdentifier(), srcNs);
-                    if (stableId != null) {
-                         moveField(stableId, tgtItem, "stable_id", "identifier");
-                    }
-                    if (!tgtItem.hasAttribute("identifier")) {
-                        tgtItem.addAttribute(new Attribute("identifier", srcItem.getIdentifier()));
-                    }
-                    // display_xref is gene name (?)
-                    //promoteField(tgtItem, srcItem, "symbol", "display_xref", "display_label");
-                    result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
-                    // if no organismDbId set to be same as identifier
-                    if (!tgtItem.hasAttribute("organismDbId")) {
-                        tgtItem.addAttribute(new Attribute("organismDbId",
-                               tgtItem.getAttribute("identifier").getValue()));
+                        result.addAll(doDefaultGeneHandling(srcItem, tgtItem, srcNs));
                     }
 
-                } else if ("contig".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    if (tgtItem.hasAttribute("identifier")) {
-                        Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
-                                   tgtItem.getAttribute("identifier").getValue(), ensemblSourceRef);
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        result.add(synonym);
-                    }
-                } else if ("transcript".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    // SimpleRelation between Gene and Transcript
-                    result.add(createSimpleRelation(tgtItem.getReference("gene").getRefId(),
-                                                    tgtItem.getIdentifier()));
+                } else if ("transcript".equals(srcItemClassName)) {
 
-                    // set transcript identifier to be ensembl stable id
-                    if (!tgtItem.hasAttribute("identifier")) {
-                        Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
+                    translateTranscript(srcItem, tgtItem, result, srcNs);
+
+                } else if ("translation".equals(srcItemClassName)) {
+                    tgtItem.addReference(config.getOrganismRef());
+
+                    // if no identifier set the identifier as name (primary key)
+                    if (!tgtItem.hasAttribute(IDENTIFIER)) {
+                        Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
+                        // <- transcript_stable_id.transcript
                         if (stableId != null) {
-                            moveField(stableId, tgtItem, "stable_id", "identifier");
+                            moveField(stableId, tgtItem, "stable_id", IDENTIFIER);
                         } else {
-                            tgtItem.addAttribute(new Attribute("identifier",
-                                                               srcItem.getIdentifier()));
+                            tgtItem.addAttribute(
+                                    new Attribute(IDENTIFIER, srcItem.getIdentifier()));
                         }
                     }
 
-                    Item translation = ItemHelper.convert(srcItemReader.getItemById(srcItem
-                                                         .getReference("translation").getRefId()));
-                    // Transcript.translation is set by mapping file - add reference to protein
-                    // if no SwissProt or trembl accession found there will not be a protein
-                    String proteinId = getChosenProteinId(translation.getIdentifier(), srcNs);
-
-                    if (proteinId != null) {
-                        tgtItem.addReference(new Reference("protein", proteinId));
-                        result.add(createSimpleRelation(tgtItem.getIdentifier(),
-                                                        proteinId));
-                    }
-
-                    // need to fetch translation to get identifier for CDS
-                    // create CDS and reference from MRNA
-                    Item cds = createItem(tgtNs + "CDS", "");
-                    if (translation != null) {
-                        Item stableId = getStableId("translation",
-                                                    translation.getIdentifier(), srcNs);
-                        cds.setAttribute("identifier",
-                                         stableId.getAttribute("stable_id").getValue() + "_CDS");
-                        cds.addToCollection("polypeptides", translation.getIdentifier());
-                        result.add(createSimpleRelation(cds.getIdentifier(),
-                                                        translation.getIdentifier()));
-                    }
-                    cds.addReference(organismRef);
-                    addReferencedItem(cds, ensemblDataSet, "evidence", true, "", false);
-                    Item synonym = createSynonym(tgtItem.getIdentifier(), "identifier",
-                                                 cds.getAttribute("identifier").getValue(),
-                                                 ensemblSourceRef);
-                    result.add(synonym);
-
-
-                    if (proteinId != null) {
-                        cds.setReference("protein", proteinId);
-                    }
-                    tgtItem.addToCollection("CDSs", cds);
-                    result.add(createSimpleRelation(tgtItem.getIdentifier(),
-                                                    cds.getIdentifier()));
-                    result.add(cds);
-
                 // stable_ids become syonyms, need ensembl DataSet as evidence
-                } else if (className.endsWith("_stable_id")) {
-                    // TODO: should this be:
-                    // addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    tgtItem.addToCollection("evidence", ensemblDataSet);
-                    tgtItem.addAttribute(new Attribute("type", "identifier"));
-                    tgtItem.addReference(ensemblSourceRef);
-                } else if ("chromosome".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    addReferencedItem(tgtItem, ensemblDataSet, "evidence", true, "", false);
-                    if (tgtItem.hasAttribute("identifier")) {
-                        Item synonym = createSynonym(tgtItem.getIdentifier(), "name",
-                                tgtItem.getAttribute("identifier").getValue(), ensemblSourceRef);
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        result.add(synonym);
-                    }
-                } else if ("translation".equals(className)) {
-                    tgtItem.addReference(organismRef);
-                    // if protein can be created it will be put in proteins collection and stored
-                    // at end of translating
-                    Item protein = getProteinByPrimaryAccession(srcItem, srcNs);
+                } else if (srcItemClassName.endsWith("_stable_id")) {
 
-                    // Transcript.translation is set by mapping file - add reference to protein
-                    // if no SwissProt or trembl accession found there will not be a protein
-                    if (protein != null) {
-                        tgtItem.addReference(new Reference("protein", protein.getIdentifier()));
-                        result.add(createSimpleRelation(tgtItem.getIdentifier(),
-                                                        protein.getIdentifier()));
+                    //check to see if the exons point to valid transcripts before making a synonym.
+                    if (srcItemClassName.startsWith("exon")) {
+                        //Skip this exon if it points to invalid transcripts!
+                        if (!isExonToBeKept(srcItem, false)) {
+                            return result;
+                        }
                     }
 
-                    // set translation identifier to be ensembl stable id
-                    Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
-                    if (stableId != null) {
-                        moveField(stableId, tgtItem, "stable_id", "identifier");
-                    } else {
-                        tgtItem.addAttribute(new Attribute("identifier",
-                                                           srcItem.getIdentifier()));
-                    }
-                } else if ("dna".equals(className)) {
-                    tgtItem.setAttribute("length",
-                                         "" + tgtItem.getAttribute("residues").getValue().length());
+                    tgtItem.addToCollection("evidence", config.getEnsemblDataSet());
+                    tgtItem.addReference(config.getEnsemblDataSrcRef());
+                    tgtItem.addAttribute(new Attribute("type", IDENTIFIER));
+                } else if ("repeat_feature".equals(srcItemClassName)) {
 
+                    translateRepeatFeature(srcItem, tgtItem, result);
+                    // repeat_consensus
+                } else if ("marker".equals(srcItemClassName)) {
+                    tgtItem.addReference(config.getOrganismRef());
+                    addReferencedItem(tgtItem,
+                            config.getEnsemblDataSet(), "evidence", true, "", false);
+                    Set locations = createLocations(srcItem, tgtItem, srcNs);
+                    // <- marker_feature.marker
+                    // (<- marker_feature.marker).seq_region
+                    // (<- marker_feature.marker).seq_region.coord_system
+                    List locationIds = new ArrayList();
+                    for (Iterator j = locations.iterator(); j.hasNext();) {
+                        Item location = (Item) j.next();
+                        locationIds.add(location.getIdentifier());
+                        result.add(location);
+                    }
+                    setNameAttribute(srcItem, tgtItem);
+                    // display_marker_synonym
                 }
-
                 if (storeTgtItem) {
                     result.add(tgtItem);
                 }
             }
-        // assembly maps to null but want to create location on a supercontig
-        } else if ("assembly".equals(className)) {
-            Item sc = getSuperContig(srcItem.getAttribute("superctg_name").getValue(),
-                                     srcItem.getReference("chromosome").getRefId(),
-                                     Integer.parseInt(srcItem.getAttribute("chr_start").getValue()),
-                                     Integer.parseInt(srcItem.getAttribute("chr_end").getValue()),
-                                     srcItem.getAttribute("superctg_ori").getValue());
-
-            // locate contig on supercontig - for drosophila and anopheles strans is always 1
-            Item location = createLocation(srcItem, sc, "contig", "superctg", false);
+        } else if ("marker_synonym".equals(srcItemClassName)) {
+            Item synonym = getMarkerSynonym(srcItem);
+            if (synonym != null) {
+                result.add(synonym);
+            }
+            // assembly maps to null but want to create location on a supercontig
+        } else if ("assembly".equals(srcItemClassName)) {
+            Item location = createAssemblyLocation(result, srcItem);
             result.add(location);
+            // seq_region map to null, become Chromosome, Supercontig, Clone and Contig respectively
+        } else if ("seq_region".equals(srcItemClassName)) {
+            Item seq = getSeqItem(srcItem.getIdentifier(), true);
+            seq.addReference(config.getOrganismRef());
+            result.add(seq);
+            //simple_feature map to null, become TRNA/CpGIsland depending on analysis_id(logic_name)
+        } else if ("simple_feature".equals(srcItemClassName)) {
+            Item simpleFeature = createSimpleFeature(srcItem);
+            if (simpleFeature.getIdentifier() != null && simpleFeature.getIdentifier() != "") {
+                result.add(simpleFeature);
+                result.add(createLocation(srcItem, simpleFeature, true));
+                result.add(createAnalysisResult(srcItem, simpleFeature));
+            }
         }
         return result;
     }
 
-    /**
-     * Get a reference to flybase
-     * @return the reference
-     */
-    public Reference getFlybaseRef() {
-        if (flybaseDb == null) {
-            flybaseDb = createItem("DataSource");
-            flybaseDb.addAttribute(new Attribute("name", "FlyBase"));
-            flybaseRef = new Reference("source", flybaseDb.getIdentifier());
+    private void translateKaryotype(Item srcItem, Item tgtItem, Collection result)
+            throws ObjectStoreException {
+
+        tgtItem.addReference(config.getOrganismRef());
+        addReferencedItem(tgtItem, config.getEnsemblDataSet(), "evidence", true, "", false);
+        Item location = createLocation(srcItem, tgtItem, true); // seq_region
+        // seq_region.coord-sys
+        location.addAttribute(new Attribute("strand", "0"));
+        result.add(location);
+
+        if (srcItem.hasReference("seq_region")) {
+            Item seq = (Item) getSeqItem(srcItem.getReference("seq_region").getRefId(), true);
+
+            tgtItem.addReference(new Reference("chromosome", seq.getIdentifier()));
         }
-        return flybaseRef;
+
+        result.add(createSynonym(tgtItem.getIdentifier(), IDENTIFIER,
+                tgtItem.getAttribute(IDENTIFIER).getValue(), config.getEnsemblDataSrcRef())
+        );
     }
+
+    private void translateTranscript(Item srcItem, Item tgtItem, Collection result, String srcNs)
+            throws ObjectStoreException {
+
+        tgtItem.addReference(config.getOrganismRef());
+        addReferencedItem(tgtItem,
+                config.getEnsemblDataSet(), "evidence", true, "", false);
+        // SimpleRelation between Gene and Transcript
+
+        result.add(createSimpleRelation(tgtItem.getReference("gene").getRefId(),
+                tgtItem.getIdentifier()));
+
+        // set transcript identifier to be ensembl stable id
+        if (!tgtItem.hasAttribute(IDENTIFIER)) {
+            Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
+            if (stableId != null) {
+                moveField(stableId, tgtItem, "stable_id", IDENTIFIER);
+            } else {
+                tgtItem.addAttribute(new Attribute(IDENTIFIER,
+                        srcItem.getIdentifier()));
+            }
+        }
+
+        Item translation = getItemViaItemPath(
+                srcItem, TRANSCRIPT_VIA_TRANSLATION, srcItemReader);
+
+        if (translation != null) {
+            // need to fetch translation to get identifier for CDS
+            // create CDS and reference from MRNA
+            Item cds = createItem(tgtNs + "CDS", "");
+            Item stableId = getStableId("translation",
+                    translation.getIdentifier(), srcNs);
+            cds.setAttribute(IDENTIFIER,
+                    stableId.getAttribute("stable_id").getValue() + "_CDS");
+            cds.addToCollection("polypeptides", translation.getIdentifier());
+            result.add(createSimpleRelation(cds.getIdentifier(),
+                    translation.getIdentifier()));
+
+            Item cdsSyn = createSynonym(
+                    cds.getIdentifier(),
+                    IDENTIFIER,
+                    cds.getAttribute(IDENTIFIER).getValue(),
+                    config.getEnsemblDataSrcRef());
+
+            result.add(cdsSyn);
+
+            cds.addReference(config.getOrganismRef());
+            addReferencedItem(cds,
+                    config.getEnsemblDataSet(), "evidence", true, "", false);
+
+            //make a synonym for the tgtitem as well (MRNA)
+            if (cds.hasAttribute(IDENTIFIER)) {
+
+                Item synonym = createSynonym(
+                        tgtItem.getIdentifier(),
+                        IDENTIFIER,
+                        cds.getAttribute(IDENTIFIER).getValue(),
+                        config.getEnsemblDataSrcRef());
+                result.add(synonym);
+
+            } else {
+                LOG.debug("Skipped creating a Synonym for a CDS; tgtitem:"
+                    + tgtItem.getClassName() + " " + tgtItem.getIdentifier());
+            }
+
+            tgtItem.addToCollection("CDSs", cds);
+            result.add(createSimpleRelation(
+                    tgtItem.getIdentifier(), cds.getIdentifier()));
+            result.add(cds);
+        } else {
+
+            LOG.debug("No Translation found for Transcript:" + tgtItem.getIdentifier());
+        }
+
+    }
+
+    private void translateRepeatFeature(Item srcItem, Item tgtItem, Collection result)
+            throws ObjectStoreException {
+        tgtItem.addReference(config.getOrganismRef());
+        addReferencedItem(tgtItem, config.getEnsemblDataSet(), "evidence", true, "", false);
+        result.add(createAnalysisResult(srcItem, tgtItem));
+        // analysis
+        result.add(createLocation(srcItem, tgtItem, true));
+        // seq_region
+        // seq_region.coord_system
+        promoteField(tgtItem, srcItem, "consensus", "repeat_consensus", "repeat_consensus");
+        // repeat_consensus
+        promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
+        // repeat_consensus
+        promoteField(tgtItem, srcItem, IDENTIFIER, "repeat_consensus", "repeat_name");
+
+        //Create a more usable identifier field.
+        StringBuffer newIdBuff = new StringBuffer();
+        newIdBuff.append(tgtItem.getAttribute(IDENTIFIER).getValue() + "_");
+
+        Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
+                srcItem.getReference("seq_region").getRefId()));
+
+        newIdBuff.append(seqRegItem.getAttribute("name").getValue() + ":");
+
+        newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue() + "..");
+        newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
+        tgtItem.removeAttribute(IDENTIFIER);
+        tgtItem.setAttribute(IDENTIFIER, newIdBuff.toString());
+
+        Item rfSyn = createSynonym(tgtItem.getIdentifier(), IDENTIFIER,
+                tgtItem.getAttribute(IDENTIFIER).getValue(), config.getEnsemblDataSrcRef());
+
+        result.add(rfSyn);
+    }
+
+    /**
+     * @param sourceItem - can be an exon or an exon_stable_id source db item.
+     * @param srcIsExonNotExonStableId - flag to distinguish between the 2 possible src items.
+     *
+     * @return a boolean indicating that the exon will be kept
+     * - hence we can store it and make a synonym for it
+     *
+     * @throws ObjectStoreException if there is a problem finding one of the related items.
+     * */
+    private boolean isExonToBeKept(Item sourceItem, boolean srcIsExonNotExonStableId)
+            throws ObjectStoreException {
+
+        int invalidETCount = 0;
+        int validETCount = 0;
+
+        Item srcItem;
+
+        if (srcIsExonNotExonStableId) {
+            srcItem = sourceItem;
+        } else {
+            srcItem = ItemHelper.convert(
+                    srcItemReader.getItemById(sourceItem.getReference("exon").getRefId()));
+        }
+
+        List etList = getItemsViaItemPath(srcItem, EXON_VIA_EXON_TRANSCRIPT, srcItemReader);
+
+        //Loop over the transcripts for each exon to see if they are valid or not...
+        for (Iterator etIt = etList.iterator(); etIt.hasNext();) {
+
+            Item etNext = (Item) etIt.next();
+            Item tscrpt = ItemHelper.convert(srcItemReader.getItemById(
+                    etNext.getReference("transcript").getRefId()));
+
+                        //We only allow protein_coding types in...
+            String bioType = tscrpt.getAttribute("biotype").getValue();
+
+            if (!bioType.equalsIgnoreCase("bacterial_contaminant")) {
+                validETCount++;
+            } else {
+                invalidETCount++;
+                LOG.debug("Found an invalid biotype:" + bioType);
+            }
+        }
+
+        //Check to see if any of the exons are pointing to invalid transcripts...
+        if (validETCount == 0 && invalidETCount == 0) {
+            LOG.debug("Exon with no transcript found!" + (srcItem.hasAttribute(IDENTIFIER)
+                    ? srcItem.getAttribute(IDENTIFIER).getValue() : srcItem.getIdentifier()));
+        } else if (validETCount >= 1 && invalidETCount == 0) {
+            return true;
+        } else if (validETCount == 0 && invalidETCount >= 1) {
+            LOG.debug("Exon with an invalid transcript found!" + (srcItem.hasAttribute(IDENTIFIER)
+                    ? srcItem.getAttribute(IDENTIFIER).getValue() : srcItem.getIdentifier()));
+        } else if (validETCount >= 1 && invalidETCount >= 1) {
+            LOG.debug("Exon with valid and invalid transcripts found!"
+                    + (srcItem.hasAttribute(IDENTIFIER)
+                    ? srcItem.getAttribute(IDENTIFIER).getValue() : srcItem.getIdentifier()));
+            return true; //keep this - but log it
+        }
+
+        return false;
+    }
+
+
+    private Collection doXrefGeneHandling(Item srcItem, Item tgtItem, String srcNs)
+            throws ObjectStoreException {
+
+        Collection results = new HashSet();
+
+        if (srcItem.hasReference("display_xref") && srcItem.getReference("display_xref") != null) {
+
+            Item xref = ItemHelper.convert(
+                    srcItemReader.getItemById(srcItem.getReference("display_xref").getRefId()));
+
+            Item extDb = ItemHelper.convert(
+                    srcItemReader.getItemById(xref.getReference("external_db").getRefId()));
+
+            //If the db xref is ok for setting as the identifier attribute
+            if (config.getGeneXrefDbName().equalsIgnoreCase(
+                    extDb.getAttribute("db_name").getValue())) {
+
+                String xrefDbAc = xref.getAttribute("dbprimary_acc").getValue();
+                tgtItem.addAttribute(new Attribute("organismDbId", xrefDbAc));
+
+                //create the synonym on this xref db id.
+                //NOTE: we treat it as an identifier not as a db 'accesion' for this purpose.
+                results.add(createProductSynonym(tgtItem, IDENTIFIER,
+                        xrefDbAc, config.getEnsemblDataSrcRef()));
+            } else {
+                //if not - just use the default handling...
+                doDefaultGeneHandling(srcItem, tgtItem, srcNs);
+            }
+
+            //If this is ever null then there's a problem with the ensembl data!!!
+            Item stableIdItem = getStableId("gene", srcItem.getIdentifier(), srcNs);
+            // <- gene_stable_id.gene
+            String stableId = stableIdItem.getAttribute("stable_id").getValue();
+            tgtItem.addAttribute(new Attribute(IDENTIFIER, stableId));
+            //create a synonym based on the enseml stable gene id.
+            results.add(createProductSynonym(tgtItem, IDENTIFIER,
+                    stableId, config.getEnsemblDataSrcRef()));
+
+            //Set up all the optional xref synonyms - if the gene is KNOWN it should
+            // have an ensembl xref to another db's accesssion for the same gene.
+            results.addAll(setXrefGeneSynonyms(srcItem, tgtItem));
+
+        } else {
+            LOG.debug("A GENE WITH NO XREF FOUND - RESORTING TO DEFAULT HANDLING FOR THIS ITEM!");
+            return doDefaultGeneHandling(srcItem, tgtItem, srcNs);
+        }
+
+        return results;
+    }
+
+    private Collection doDefaultGeneHandling(Item srcItem, Item tgtItem, String srcNs)
+            throws ObjectStoreException {
+
+        Collection results = new HashSet();
+
+        //If this is ever null then there's a problem with the ensembl data!!!
+        Item stableIdItem = getStableId("gene", srcItem.getIdentifier(), srcNs);
+        // <- gene_stable_id.gene
+        String stableId = stableIdItem.getAttribute("stable_id").getValue();
+
+        //Use the default approach of setting both the organismDbId & identifier to
+        // be the same value - the ensembl stable id.
+        tgtItem.addAttribute(new Attribute("organismDbId", stableId));
+        tgtItem.addAttribute(new Attribute(IDENTIFIER, stableId));
+
+        //Set up all the optional xref synonyms - if the gene is KNOWN it should
+        // have an ensembl xref to another db's accesssion for the same gene.
+        results.addAll(setXrefGeneSynonyms(srcItem, tgtItem));
+
+        return results;
+    }
+
+
+
 
 
     private Item createSimpleRelation(String objectId, String subjectId) {
@@ -376,372 +533,521 @@ public class EnsemblDataTranslator extends DataTranslator
 
     /**
      * Translate a "located" Item into an Item and a location
-     * @param srcItem the source Item
-     * @param tgtItem the target Item (after translation)
-     * @param idPrefix the id prefix for this class
-     * @param locPrefix the start, end and strand prefix for this class
+     *
+     * @param srcItem        the source Item
+     * @param tgtItem        the target Item (after translation)
      * @param srcItemIsChild true if srcItem should be subject of Location
-     * @return the location
+     * @return the location item
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
      */
-    protected Item createLocation(Item srcItem, Item tgtItem, String idPrefix, String locPrefix,
-                                  boolean srcItemIsChild) {
-        String namespace = XmlUtil.getNamespaceFromURI(tgtItem.getClassName());
+    protected Item createLocation(Item srcItem, Item tgtItem,
+                                  boolean srcItemIsChild)
+            throws ObjectStoreException {
+        Item location = createItem(tgtNs + "Location", "");
 
-        Item location = createItem(namespace + "Location", "");
-
-        moveField(srcItem, location, locPrefix + "_start", "start");
-        moveField(srcItem, location, locPrefix + "_end", "end");
+        if (srcItem.hasAttribute("seq_region_start")) {
+            moveField(srcItem, location, "seq_region_start", "start");
+        }
+        if (srcItem.hasAttribute("seq_region_end")) {
+            moveField(srcItem, location, "seq_region_end", "end");
+        }
         location.addAttribute(new Attribute("startIsPartial", "false"));
         location.addAttribute(new Attribute("endIsPartial", "false"));
 
-        if (srcItem.hasAttribute(locPrefix + "_strand")) {
-            moveField(srcItem, location, locPrefix + "_strand", "strand");
+        if (srcItem.hasAttribute("seq_region_strand")) {
+            moveField(srcItem, location, "seq_region_strand", "strand");
         }
-        // if creating location between contig and supercontig strand will always be 1
-        // for drosophila and anopheles
-        if (idPrefix.equals("contig") && locPrefix.equals("superctg")) {
-            location.setAttribute("strand", "1");
-        }
-
         if (srcItem.hasAttribute("phase")) {
             moveField(srcItem, location, "phase", "phase");
         }
         if (srcItem.hasAttribute("end_phase")) {
             moveField(srcItem, location, "end_phase", "endPhase");
         }
-        if (srcItemIsChild) {
-            addReferencedItem(tgtItem, location, "objects", true, "subject", false);
-            moveField(srcItem, location, idPrefix, "object");
-        } else {
-            addReferencedItem(tgtItem, location, "subjects", true, "object", false);
-            moveField(srcItem, location, idPrefix, "subject");
+        if (srcItem.hasAttribute("ori")) {
+            moveField(srcItem, location, "ori", "strand");
         }
+        if (srcItem.hasReference("seq_region")) {
+
+            LOG.info("A seq_region was found for:" + srcItem.getClassName()
+                    + " id:" + srcItem.getIdentifier());
+
+            String refId = srcItem.getReference("seq_region").getRefId();
+            Item seq = (Item) getSeqItem(refId, true);
+
+            if (srcItemIsChild) {
+                addReferencedItem(tgtItem, location, "objects", true, "subject", false);
+                location.addReference(new Reference("object", seq.getIdentifier()));
+            } else {
+                addReferencedItem(tgtItem, location, "subjects", true, "object", false);
+                location.addReference(new Reference("subject", seq.getIdentifier()));
+            }
+        } else {
+
+            LOG.warn("No seq_region found for:" + srcItem.getClassName()
+                    + " id:" + srcItem.getIdentifier());
+        }
+
         return location;
+    }
+
+    /**
+     * @param srcItem ensembl:marker
+     * @param tgtItem flymine:Marker
+     * @param srcNs   source namespace
+     * @return set of locations
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
+     */
+    protected Set createLocations(Item srcItem, Item tgtItem, String srcNs)
+            throws ObjectStoreException {
+        Set result = new HashSet();
+        Set constraints = new HashSet();
+        String value = srcItem.getIdentifier();
+        constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
+                srcNs + "marker_feature", false));
+        constraints.add(new FieldNameAndValue("marker", value, true));
+        Item location = new Item();
+        for (Iterator i = srcItemReader.getItemsByDescription(constraints).iterator();
+             i.hasNext();) {
+            Item feature = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
+
+            location = createLocation(feature, tgtItem, true);
+            location.addAttribute(new Attribute("strand", "0"));
+            result.add(location);
+        }
+        return result;
+    }
+
+    /**
+     * @param srcItem ensembl:marker
+     * @param tgtItem flymine:Marker
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
+     */
+    protected void setNameAttribute(Item srcItem, Item tgtItem) throws ObjectStoreException {
+        if (srcItem.hasReference("display_marker_synonym")) {
+
+            String markerSynRefId = srcItem.getReference("display_marker_synonym").getRefId();
+
+            org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);
+
+            if (markerSyn != null) {
+                Item synonym = ItemHelper.convert(markerSyn);
+                if (synonym.hasAttribute("name")) {
+                    String name = synonym.getAttribute("name").getValue();
+                    tgtItem.addAttribute(new Attribute("name", name));
+                }
+            } else {
+                LOG.warn("setNameAttribute() failed to find marker_synonym:" + markerSynRefId);
+            }
+        }
+    }
+
+    /**
+     * @param results the current collection of items to be stored.
+     * @param srcItem = assembly
+     * @return location item which reflects the relations between chromosome and contig,
+     *         supercontig and contig, clone and contig
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
+     */
+    protected Item createAssemblyLocation(Collection results, Item srcItem)
+            throws ObjectStoreException {
+        int start, end, asmStart, cmpStart, cmpEnd; //asmEnd,
+        int contigLength, bioEntityLength, length;
+        String ori, contigId, bioEntityId;
+
+        contigId = srcItem.getReference("cmp_seq_region").getRefId();
+        bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
+        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
+        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
+
+        contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
+        bioEntityLength = Integer.parseInt(bioEntity.getAttribute("length").getValue());
+        asmStart = Integer.parseInt(srcItem.getAttribute("asm_start").getValue());
+        cmpStart = Integer.parseInt(srcItem.getAttribute("cmp_start").getValue());
+        //asmEnd = Integer.parseInt(srcItem.getAttribute("asm_end").getValue());
+        cmpEnd = Integer.parseInt(srcItem.getAttribute("cmp_end").getValue());
+        ori = srcItem.getAttribute("ori").getValue();
+
+        //some occasions in ensembl, e.g. contig AC087365.3.1.104495 ||AC144832.1.1.45226
+        //Chromosome, Supercontig have shorter length than contig
+        //need to truncate the longer part
+        if (contigLength < bioEntityLength) {
+            length = contigLength;
+        } else {
+            length = bioEntityLength;
+        }
+        if (ori.equals("1")) {
+            start = asmStart - cmpStart + 1;
+            end = start + length - 1;
+        } else {
+            if (cmpEnd == length) {
+                start = asmStart;
+                end = start + length - 1;
+            } else {
+                start = asmStart - (length - cmpEnd);
+                end = start + length - 1;
+            }
+        }
+
+        Item location = createItem(tgtNs + "Location", "");
+        location.addAttribute(new Attribute("start", Integer.toString(start)));
+        location.addAttribute(new Attribute("end", Integer.toString(end)));
+        location.addAttribute(new Attribute("startIsPartial", "false"));
+        location.addAttribute(new Attribute("endIsPartial", "false"));
+        location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
+        location.addReference(new Reference("subject",
+                ((Item) getSeqItem(contigId, true)).getIdentifier()));
+        location.addReference(new Reference("object",
+                ((Item) getSeqItem(bioEntityId, true)).getIdentifier()));
+        return location;
+    }
+
+    /**
+     * @param refId = refId for the seq_region
+     * @param createSynonym = indicates that we should create a synonym for this item if we can.
+     *
+     * @return seq item it could be  chromosome, supercontig, clone or contig
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
+     */
+    protected Item getSeqItem(String refId, boolean createSynonym) throws ObjectStoreException {
+        Item seq = null;
+        Item seqRegion = ItemHelper.convert(srcItemReader.getItemById(refId));
+        if (seqIdMap.containsKey(refId)) {
+            seq = (Item) seqIdMap.get(refId);
+        } else {
+            String property = null;
+            if (seqRegion.hasReference("coord_system")) {
+                Item coord = ItemHelper.convert(srcItemReader.getItemById(
+                        seqRegion.getReference("coord_system").getRefId()));
+
+                if (coord.hasAttribute("name")) {
+                    property = coord.getAttribute("name").getValue();
+                }
+            }
+            if (property != null && property != "") {
+
+                //Produces the classname/type of the item, i.e. Chromosome, Contig, Chunk etc etc
+                String s = (property.substring(0, 1)).toUpperCase().concat(property.substring(1));
+                seq = createItem(tgtNs + s, "");
+                if (seqRegion.hasAttribute("name")) {
+                    seq.addAttribute(new Attribute(IDENTIFIER,
+                            seqRegion.getAttribute("name").getValue()));
+                }
+                if (seqRegion.hasAttribute("length")) {
+                    seq.addAttribute(new Attribute("length",
+                            seqRegion.getAttribute("length").getValue()));
+                }
+                addReferencedItem(seq, config.getEnsemblDataSet(), "evidence", true, "", false);
+                seqIdMap.put(refId, seq);
+
+                if (config.doStoreDna()) {
+
+                    Item dna = getItemViaItemPath(seqRegion, SEQ_REGION_VIA_DNA, srcItemReader);
+                    if (dna != null) {
+                        seq.setReference("sequence", dna);
+                    } else {
+                        LOG.debug("NO DNA ITEM FOUND FOR THIS SEQ ITEM:" + seq.getIdentifier());
+                    }
+                } else {
+                    LOG.debug("SKIPPING doStoreDna for this org abbrev:" + config.getOrgAbbrev());
+                }
+            }
+        }
+
+
+        //If we need to create a Synonym and one hasn't been made for the seq item yet...
+        if (createSynonym && !itemId2SynMap.containsKey(seq.getIdentifier())) {
+
+            if (seq.hasAttribute(IDENTIFIER)) {
+
+                Item seqSyn = createSynonym(
+                        seq.getIdentifier(),
+                        IDENTIFIER,
+                        seq.getAttribute(IDENTIFIER).getValue(),
+                        config.getEnsemblDataSrcRef());
+
+                itemId2SynMap.put(seq.getIdentifier(), seqSyn);
+
+            } else {
+
+                LOG.debug("Skipped creating a synonym for a seq item with no identifier:"
+                        + seq.getClassName() + " id:" + seq.getIdentifier());
+            }
+        }
+
+        return seq;
     }
 
     /**
      * Create an AnalysisResult pointed to by tgtItem evidence reference.  Move srcItem
      * analysis reference and score to new AnalysisResult.
+     *
      * @param srcItem item in src namespace to move fields from
      * @param tgtItem item that will reference AnalysisResult
      * @return new AnalysisResult item
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
      */
-    protected Item createAnalysisResult(Item srcItem, Item tgtItem) {
+    protected Item createAnalysisResult(Item srcItem, Item tgtItem)
+            throws ObjectStoreException {
         Item result = createItem(tgtNs + "ComputationalResult", "");
-        moveField(srcItem, result, "analysis", "analysis");
-        moveField(srcItem, result, "score", "score");
-        result.addReference(ensemblDataSetRef);
-        ReferenceList evidence = new ReferenceList("evidence",
-                                     Arrays.asList(new Object[] {result.getIdentifier(),
-                                                   ensemblDataSet.getIdentifier()}));
+        if (srcItem.hasReference("analysis")) {
+            moveField(srcItem, result, "analysis", "analysis");
+        }
+        if (srcItem.hasAttribute("score")) {
+            moveField(srcItem, result, "score", "score");
+        }
+        result.addReference(config.getEnsemblDataSetRef());
+        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
+        {result.getIdentifier(), config.getEnsemblDataSet().getIdentifier()}));
         tgtItem.addCollection(evidence);
         return result;
     }
 
-    private Item getSuperContig(String name, String chrId, int start, int end, String strand) {
-        Item supercontig = (Item) supercontigs.get(name);
-        if (supercontig == null) {
-            supercontig = createItem(tgtNs + "Supercontig", "");
-            Item chrLoc = createItem(tgtNs + "Location", "");
-            chrLoc.addAttribute(new Attribute("start", "" + Integer.MAX_VALUE));
-            chrLoc.addAttribute(new Attribute("end", "" + Integer.MIN_VALUE));
-            chrLoc.addAttribute(new Attribute("startIsPartial", "false"));
-            chrLoc.addAttribute(new Attribute("endIsPartial", "false"));
-            chrLoc.addAttribute(new Attribute("strand", strand));
-            chrLoc.addReference(new Reference("subject", supercontig.getIdentifier()));
-            chrLoc.addReference(new Reference("object", chrId));
-
-            supercontig.addAttribute(new Attribute("identifier", name));
-            ReferenceList subjects = new ReferenceList();
-            subjects.setName("subjects");
-            supercontig.addCollection(subjects);
-            supercontig.addCollection(new ReferenceList("objects",
-                           new ArrayList(Collections.singletonList(chrLoc.getIdentifier()))));
-            addReferencedItem(supercontig, ensemblDataSet, "evidence", true, "", false);
-            supercontig.addReference(organismRef);
-            supercontigs.put(name, supercontig);
-            scLocs.put(name, chrLoc);
+    /**
+     * Create comment class referenced by Gene item if there is a description field
+     * in gene
+     *
+     * @param srcItem gene
+     * @param tgtItem gene
+     * @return new comment item
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
+     */
+    protected Item createComment(Item srcItem, Item tgtItem)
+            throws ObjectStoreException {
+        Item comment = null;
+        if (srcItem.hasAttribute("description")) {
+            comment = createItem(tgtNs + "Comment", "");
+            moveField(srcItem, comment, "description", "text");
+            tgtItem.addReference(new Reference("comment", comment.getIdentifier()));
         }
 
-        Item chrLoc = (Item) scLocs.get(name);
-        if (Integer.parseInt(chrLoc.getAttribute("start").getValue()) > start) {
-            chrLoc.getAttribute("start").setValue("" + start);
-        }
-        if (Integer.parseInt(chrLoc.getAttribute("end").getValue()) < end) {
-            chrLoc.getAttribute("end").setValue("" + end);
-        }
-
-        return supercontig;
-    }
-
-    private Collection createSuperContigs() {
-        Set results = new HashSet();
-        Iterator i = supercontigs.values().iterator();
-        while (i.hasNext()) {
-            Item sc = (Item) i.next();
-            results.add(sc);
-            results.add(scLocs.get(sc.getAttribute("identifier").getValue()));
-        }
-        return results;
-    }
-
-    private String getChosenProteinId(String id, String srcNs) throws ObjectStoreException {
-        String chosenId = (String) proteinIds.get(id);
-        if (chosenId == null) {
-            Item translation = ItemHelper.convert(srcItemReader.getItemById(id));
-            Item protein = getProteinByPrimaryAccession(translation, srcNs);
-            if (protein != null) {
-                chosenId = protein.getIdentifier();
-                proteinIds.put(id, chosenId);
-            }
-        }
-        return chosenId;
-    }
-
-    private Item getProteinByPrimaryAccession(Item translation, String srcNs)
-        throws ObjectStoreException {
-        Item protein = createItem(tgtNs + "Protein", "");
-
-        Set synonyms = new HashSet();
-        String value = translation.getIdentifier();
-        Set constraints = new HashSet();
-        constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    srcNs + "object_xref", false));
-        constraints.add(new FieldNameAndValue("ensembl", value, true));
-        Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
-        // set specific ids and add synonyms
-
-        String swissProtId = null;
-        String tremblId = null;
-        while (objectXrefs.hasNext()) {
-            Item objectXref = ItemHelper.convert(
-                                  (org.intermine.model.fulldata.Item) objectXrefs.next());
-            Item xref = ItemHelper.convert(srcItemReader
-                        .getItemById(objectXref.getReference("xref").getRefId()));
-
-            String accession = null;
-            String dbname = null;
-            if (xref != null) {
-                accession = xref.getAttribute("dbprimary_acc").getValue();
-                Item externalDb = ItemHelper.convert(srcItemReader
-                                  .getItemById(xref.getReference("external_db").getRefId()));
-                if (externalDb != null) {
-                    dbname =  externalDb.getAttribute("db_name").getValue();
-                }
-            }
-            //LOG.error("processing: " + accession + ", " + dbname);
-
-            if (accession != null && !accession.equals("")
-                && dbname != null && !dbname.equals("")) {
-                if (dbname.equals("SWISSPROT")) {
-                    swissProtId = accession;
-                    Item synonym = createSynonym(protein.getIdentifier(), "accession", accession,
-                                                 uniprotRef);
-                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                    synonyms.add(synonym);
-                } else if (dbname.equals("SPTREMBL")) {
-                    tremblId = accession;
-                    Item synonym = createSynonym(protein.getIdentifier(), "accession", accession,
-                                                 uniprotRef);
-                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                    synonyms.add(synonym);
-                } else if (dbname.equals("protein_id") || dbname.equals("prediction_SPTREMBL")) {
-                    Item synonym = createSynonym(protein.getIdentifier(), "identifier", accession,
-                                                 emblDataSourceRef);
-                    addReferencedItem(protein, synonym, "synonyms", true, "subject", false);
-                    synonyms.add(synonym);
-                }
-            }
-        }
-
-        // we have a set of synonyms, if we don't want to create a protein these will be discarded
-
-        // we want to create a Protein only if there is Swiss-Prot or Trembl id
-        // set of synonyms will be discarded if no protein created
-        // TODO: sort out how we wish to model translations/proteins in genomic model
-        String primaryAcc = null;
-        if (swissProtId != null) {
-            primaryAcc = swissProtId;
-        } else if (tremblId != null) {
-            primaryAcc = tremblId;
-        }
-
-        // try to find a protein with this accession, otherwise create if an accession
-        Item chosenProtein = (Item) proteins.get(primaryAcc);
-        if (chosenProtein == null && primaryAcc != null) {
-            protein.addAttribute(new Attribute("primaryAccession", primaryAcc));
-            addReferencedItem(protein, ensemblDataSet, "evidence", true, "", false);
-
-            // set up additional references/collections
-            protein.addReference(organismRef);
-//             if (translation.hasReference("start_exon")) {
-//                 protein.addReference(new Reference("startExon",
-//                             translation.getReference("start_exon").getRefId()));
-//             }
-//             if (translation.hasReference("end_exon")) {
-//                 protein.addReference(new Reference("endExon",
-//                             translation.getReference("end_exon").getRefId()));
-//             }
-            proteins.put(primaryAcc, protein);
-            proteinSynonyms.addAll(synonyms);
-            chosenProtein = protein;
-        }
-
-        // add mapping between this translation and target protein
-        if (chosenProtein != null) {
-            proteinIds.put(translation.getIdentifier(), chosenProtein.getIdentifier());
-        } else {
-            LOG.info("no protein created for translation: " + translation.getIdentifier());
-        }
-        return chosenProtein;
+        return comment;
     }
 
     /**
-     * Find external database accession numbers in ensembl to set as Synonyms
-     * @param srcItem it in source format ensembl:gene
-     * @param tgtItem translate item flymine:Gene
-     * @param srcNs namespace of source model
-     * @return a set of Synonyms
-     * @throws ObjectStoreException if problem retrieving items
+     * Create a simpleFeature item depends on the logic_name attribute in analysis
+     * will become TRNA, or CpGIsland
+     *
+     * @param srcItem ensembl: simple_feature
+     * @return new simpleFeature item
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
      */
-    protected Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs)
-        throws ObjectStoreException {
-        // additional gene information is in xref table only accessible via translation
-        Set synonyms = new HashSet();
-        // get transcript
-        Set constraints = new HashSet();
-        constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    srcNs + "transcript", false));
-        constraints.add(new FieldNameAndValue("gene", srcItem.getIdentifier(), true));
-        Item transcript = ItemHelper.convert((org.intermine.model.fulldata.Item) srcItemReader
-                                        .getItemsByDescription(constraints).iterator().next());
+    protected Item createSimpleFeature(Item srcItem) throws ObjectStoreException {
+        Item simpleFeature = new Item();
+        if (srcItem.hasReference("analysis")) {
 
-        String translationId = transcript.getReference("translation").getRefId();
-        // find xrefs
+            Item analysis = ItemHelper.convert(
+                    srcItemReader.getItemById(srcItem.getReference("analysis").getRefId()));
+            if (analysis.hasAttribute("logic_name")) {
 
-        constraints = new HashSet();
-        constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    srcNs + "object_xref", false));
-        constraints.add(new FieldNameAndValue("ensembl", translationId, true));
-        Iterator objectXrefs = srcItemReader.getItemsByDescription(constraints).iterator();
-        while (objectXrefs.hasNext()) {
-            Item objectXref = ItemHelper.convert(
-                                (org.intermine.model.fulldata.Item) objectXrefs.next());
-            Item xref = ItemHelper.convert(srcItemReader
-                        .getItemById(objectXref.getReference("xref").getRefId()));
-            String accession = null;
-            String dbname = null;
-            if (xref != null) {
-                if (xref.hasAttribute("dbprimary_acc")) {
-                    accession = xref.getAttribute("dbprimary_acc").getValue();
-                    Reference dbRef = xref.getReference("external_db");
-                    if (dbRef != null && dbRef.getRefId() != null) {
-                        Item externalDb = ItemHelper.convert(srcItemReader
-                                                             .getItemById(dbRef.getRefId()));
-                        if (externalDb != null) {
-                            dbname =  externalDb.getAttribute("db_name").getValue();
-                        }
-                    }
+                String name = analysis.getAttribute("logic_name").getValue();
+                if (name.equals("tRNAscan")) {
+                    simpleFeature = createItem(tgtNs + "TRNA", "");
+                } else if (name.equals("CpG")) {
+                    simpleFeature = createItem(tgtNs + "CpGIsland", "");
+                } else if (name.equals("Eponine")) {
+                    simpleFeature = createItem(tgtNs + "TranscriptionStartSite", "");
+                    //} else if (name.equals("FirstEF")) {
+                    //5 primer exon and promoter including coding and noncoding
                 }
-            }
-            if (accession != null && !accession.equals("")
-                && dbname != null && !dbname.equals("")) {
-                if (dbname.equals("flybase_gene") || dbname.equals("flybase_symbol")) {
-                    Item synonym = createItem(tgtNs + "Synonym", "");
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonym.addAttribute(new Attribute("value", accession));
-                    if (dbname.equals("flybase_symbol")) {
-                        synonym.addAttribute(new Attribute("type", "symbol"));
-                        tgtItem.addAttribute(new Attribute("symbol", accession));
-                    } else { // flybase_gene
-                        synonym.addAttribute(new Attribute("type", "identifier"));
-                        // temporary fix to deal with broken FlyBase identfiers in ensembl
-                        String value = accession;
-                        Set idSet = (Set) flybaseIds.get(accession);
-                        if (idSet == null) {
-                            idSet = new HashSet();
-                        } else {
-                            value += "_flymine_" + idSet.size();
-                        }
-                        idSet.add(value);
-                        flybaseIds.put(accession, idSet);
-                        tgtItem.addAttribute(new Attribute("organismDbId", value));
-                    }
-                    synonym.addReference(getFlybaseRef());
-                    synonyms.add(synonym);
-                }
+
+                StringBuffer newIdBuff = new StringBuffer();
+                newIdBuff.append(name + "_");
+
+                Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
+                        srcItem.getReference("seq_region").getRefId()));
+
+                newIdBuff.append(seqRegItem.getAttribute("name").getValue() + ":");
+                newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue() + "..");
+                newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
+
+                simpleFeature.addReference(config.getOrganismRef());
+                simpleFeature.addAttribute(new Attribute(IDENTIFIER, newIdBuff.toString()));
+                addReferencedItem(simpleFeature,
+                        config.getEnsemblDataSet(), "evidence", true, "", false);
+
+                Item sfSyn = createSynonym(
+                            simpleFeature.getIdentifier(),
+                            IDENTIFIER,
+                            newIdBuff.toString(),
+                            config.getEnsemblDataSrcRef());
+
+                itemId2SynMap.put(simpleFeature.getIdentifier(), sfSyn);
             }
         }
+        return simpleFeature;
+    }
+
+    /**
+     * Finds external database accession numbers & labels in ensembl to set as Synonyms!
+     *
+     * Note: that only a small proportion of the genes in Anoph for example have these external
+     * references - it is usually only for KNOWN genes. Human on the other hand has >30k genes,
+     * most of which are known, and of them most have a valid Hugo reference.
+     *
+     * @param srcItem - it in source format ensembl:gene
+     * @param tgtItem - translate item flymine:Gene
+     *
+     * @return a set of Synonyms
+     * @throws org.intermine.objectstore.ObjectStoreException if problem retrieving any items
+     */
+    protected Set setXrefGeneSynonyms(Item srcItem, Item tgtItem)
+            throws ObjectStoreException {
+
+        Set synonyms = new HashSet();
+
+        if (srcItem.hasReference("display_xref")) {
+            Item xref = ItemHelper.convert(srcItemReader.getItemById(
+                    srcItem.getReference("display_xref").getRefId()));
+
+            //DBNAME
+            String dbname = null;
+            //look for the reference to an xref database - the external_db
+            if (xref.hasReference("external_db")) {
+                Reference extDbRef = xref.getReference("external_db");
+                Item extDb = ItemHelper.convert(srcItemReader.getItemById(extDbRef.getRefId()));
+                dbname = extDb.getAttribute("db_name").getValue();
+            } else {
+                LOG.debug("No external_db ref found for srcItem:" + srcItem.getIdentifier());
+                //return as we can't create a synonym without a source db xref
+                return synonyms;
+            }
+
+            //ACCESSION
+            String accession = null;
+            //look for a primary accession - if we have one we may be able to create a synonym
+            if (xref.hasAttribute("dbprimary_acc")) {
+                accession = xref.getAttribute("dbprimary_acc").getValue();
+            } else {
+                LOG.debug("No dbprimary_acc attr found for srcItem:" + srcItem.getIdentifier());
+            }
+            //check to see if we have a valid accession & dbname.
+            if (accession != null && !accession.equals(EMPTY_STRING)
+                    && dbname != null && !dbname.equals(EMPTY_STRING)) {
+                //If we have a valid xref for this dsname then we can create the synonym for the
+                // external database accession.
+                //NOTE: if the xref is being used as an alternative identifier it will already have
+                // a synonym with type 'identifier'.
+                if (config.containsXrefDataSourceNamed(dbname)) {
+                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
+                    LOG.debug("Creating Synonym for dbname:" + dbname);
+                    synonyms.add(createProductSynonym(tgtItem, "accession", accession, extDbRef));
+                } else {
+                    LOG.debug("Skipped! Can't create a Synonym for db:" + dbname);
+                }
+            } else {
+                LOG.debug("Skipped! Bad dbprimary_acc:" + accession + " or dbname:" + dbname);
+            }
+
+            //SYMBOL
+            String symbol = null;
+            //look for the display label - since we might be able to use it as a symbol synonym.
+            if (xref.hasAttribute("display_label")) {
+                symbol = xref.getAttribute("display_label").getValue();
+            } else {
+                LOG.debug("No display_label attr found for srcItem:" + srcItem.getIdentifier());
+            }
+            //check to see if we have a valid display_lable (synonym) & dbname.
+            if (symbol != null && !symbol.equals(EMPTY_STRING)
+                    && dbname != null && !dbname.equals(EMPTY_STRING)) {
+                //Now check to see if we can create a synonym that represents a synbol as well.
+                if (config.containsXrefSymbolDataSourceNamed(dbname)) {
+                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
+                    LOG.debug("Creating Symbol Synonym for dbname:" + dbname);
+                    synonyms.add(createProductSynonym(tgtItem, "symbol", symbol, extDbRef));
+                } else {
+                    LOG.debug("Skipped creating a Symbol Synonym for db:" + dbname);
+                }
+            } else {
+                LOG.debug("Skipped! Bad display_label:" + accession + " or dbname:" + dbname);
+            }
+
+        } else {
+            LOG.debug("Skipped! As no display_xref was found for srcItem:" + srcItem.getClassName()
+                    + " id:" + srcItem.getIdentifier());
+        }
+
         return synonyms;
     }
 
-    // keep exon with the lowest identifier
-    private void processExon(Item srcItem, Item exon, Item loc) {
-        String nonUniqueId = srcItem.getAttribute("nonUniqueId").getValue();
-        if (exons.containsKey(nonUniqueId)) {
-            Item chosenExon = null;
-            Item otherExon = null;
-            String oldIdentifier = ((Item) exons.get(nonUniqueId)).getIdentifier();
-            if (Integer.parseInt(oldIdentifier.substring(oldIdentifier.indexOf("_") + 1))
-                > Integer.parseInt(exon.getIdentifier()
-                                   .substring(exon.getIdentifier().indexOf("_") + 1))) {
-                chosenExon = exon;
-                otherExon = (Item) exons.get(nonUniqueId);
-            } else {
-                chosenExon = (Item) exons.get(nonUniqueId);
-                otherExon = exon;
-            }
-            // exon in map needs all locations in objects collection
-            Set objects = new HashSet();
-            objects.addAll(chosenExon.getCollection("objects").getRefIds());
-            objects.addAll(otherExon.getCollection("objects").getRefIds());
-            objects.add(loc.getIdentifier());
-            chosenExon.addCollection(new ReferenceList("objects", new ArrayList(objects)));
 
-            // all locs need chosen exon as subject
-            addToLocations(nonUniqueId, loc);
-            Iterator iter = ((Collection) exonLocs.get(nonUniqueId)).iterator();
-            while (iter.hasNext()) {
-                Item location = (Item) iter.next();
-                location.addReference(new Reference("subject", chosenExon.getIdentifier()));
-            }
+    /**
+     * Creates a synonym for a gene/protein product.
+     * <p/>
+     * This method is for 1-M
+     *
+     * @param refItem - the item that the synonym needs to reference.
+     * @param type    - i.e. accession or symbol
+     * @param value   - the value of the type provided
+     * @param dsRef   - which data source is this synonym from
+     * @see org.intermine.dataconversion.DataTranslator#addReferencedItem
+     */
+    private Item createProductSynonym(Item refItem,
+                                      String type,
+                                      String value,
+                                      Reference dsRef) {
 
-            exons.put(nonUniqueId, chosenExon);
-        } else {
-            exons.put(nonUniqueId, exon);
-            addToLocations(nonUniqueId, loc);
-        }
+        Item synonym = createSynonym(refItem.getIdentifier(), type, value, dsRef);
+
+        addReferencedItem(refItem, synonym, "synonyms", true, "subject", false);
+
+        return synonym;
     }
 
-    private void addToLocations(String nonUniqueId, Item location) {
-        Set locs = (Set) exonLocs.get(nonUniqueId);
-        if (locs == null) {
-            locs = new HashSet();
-            exonLocs.put(nonUniqueId, locs);
-        }
-        locs.add(location);
-    }
-
-    // ensemblType should be part of name before _stable_id
+    /**
+     * Find stable_id for various ensembl type
+     *
+     * @param ensemblType could be gene, exon, transcript or translation
+     *                    it should be part of name before _stable_id
+     * @param identifier  srcItem identifier, srcItem could be gene, exon, transcript/translation
+     * @param srcNs       namespace of source model
+     * @return a set of Synonyms
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          if problem retrieving items
+     */
     private Item getStableId(String ensemblType, String identifier, String srcNs) throws
-        ObjectStoreException {
-        //String value = identifier.substring(identifier.indexOf("_") + 1);
+            ObjectStoreException {
         String value = identifier;
         Set constraints = new HashSet();
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    srcNs + ensemblType + "_stable_id", false));
+                srcNs + ensemblType + "_stable_id", false));
         constraints.add(new FieldNameAndValue(ensemblType, value, true));
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
         if (stableIds.hasNext()) {
             return ItemHelper.convert((org.intermine.model.fulldata.Item) stableIds.next());
         } else {
+            StringBuffer bob = new StringBuffer();
+            bob.append("getStableId unable to find a stableId for:");
+            bob.append(ensemblType);
+            bob.append("__");
+            bob.append(identifier);
+            bob.append("__");
+            bob.append(srcNs);
+
+            LOG.debug(bob.toString());
             return null;
         }
     }
 
+    /**
+     * Create synonym item
+     *
+     * @param subjectId = synonym reference to subject
+     * @param type      = synonym type
+     * @param value     = synonym value
+     * @param ref       = synonym reference to source
+     * @return synonym item
+     */
     private Item createSynonym(String subjectId, String type, String value, Reference ref) {
-        Item synonym = createItem("Synonym");
+        Item synonym = createItem(tgtNs + "Synonym", "");
         synonym.addReference(new Reference("subject", subjectId));
         synonym.addAttribute(new Attribute("type", type));
         synonym.addAttribute(new Attribute("value", value));
@@ -750,133 +1056,564 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslatorTask#execute
+     * Create synonym item for marker
+     *
+     * @param srcItem = marker_synonym
+     *                marker_synonym in ensembl may have same marker_id, source and name
+     *                but with different marker_synonym_id,
+     *                check before create synonym
+     * @return synonym item
+     */
+    private Item getMarkerSynonym(Item srcItem) {
+        Item synonym = new Item();
+        String subjectId = srcItem.getReference("marker").getRefId();
+        Set synonymSet = new HashSet();
+        synonymSet = (HashSet) markerSynonymMap.get(subjectId);
+
+        String value = srcItem.getAttribute("name").getValue();
+        Reference ref = new Reference();
+        //TODO: NO HARDCODING!!!!!
+        if (srcItem.hasAttribute("source")) {
+            String source = srcItem.getAttribute("source").getValue();
+            if (source.equalsIgnoreCase("genbank")) {
+                ref = config.getDataSrcRefByDataSrcName("genbank");
+            } else if (source.equalsIgnoreCase("gdb")) {
+                ref = config.getDataSrcRefByDataSrcName("gdb");
+            } else if (source.equalsIgnoreCase("unists")) {
+                ref = config.getDataSrcRefByDataSrcName("unists");
+            } else {
+                ref = config.getEnsemblDataSrcRef();
+            }
+        } else {
+            ref = config.getEnsemblDataSrcRef();
+        }
+
+        int createItem = 1;
+        int flag;
+        if (synonymSet == null) {
+            synonym = createSynonym(subjectId, IDENTIFIER, value, ref);
+            synonymSet = new HashSet(Arrays.asList(new Object[]{synonym}));
+            markerSynonymMap.put(subjectId, synonymSet);
+        } else {
+            Iterator i = synonymSet.iterator();
+            while (i.hasNext()) {
+                Item item = (Item) i.next();
+                if (item.getReference("source").getRefId().equals(ref.getRefId())
+                        && item.getAttribute("value").getValue().equalsIgnoreCase(value)) {
+                    flag = 0;
+                } else {
+                    flag = 1;
+                }
+                createItem = createItem * flag;
+            }
+
+            if (createItem == 1) {
+                synonym = createSynonym(subjectId, IDENTIFIER, value, ref);
+                synonymSet.add(synonym);
+                markerSynonymMap.put(subjectId, synonymSet);
+            } else {
+                synonym = null;
+            }
+        }
+        return synonym;
+    }
+
+    /**
+     * @see org.flymine.task.DataTranslatorTask#execute
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
+        String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
+        String classname = ObjectStoreItemPathFollowingImpl.CLASSNAME;
 
-        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/ensembl#repeat_feature",
-               Collections.singleton(desc));
+        //karyotype
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("karyotype.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        ItemPrefetchDescriptor desc1
+                = new ItemPrefetchDescriptor("karyotype.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
+        paths.put("http://www.flymine.org/model/ensembl#karyotype",
+                Collections.singleton(desc));
 
-        HashSet descSet = new HashSet();
-        //desc = new ItemPrefetchDescriptor("transcript.display_xref");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref",
-        //ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        //descSet.add(desc);
-
-        desc = new ItemPrefetchDescriptor(
-                "(transcript.translation");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("translation",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        //exon
+        Set descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("exon <- exon_stable_id.exon");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "exon"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#exon_stable_id", false));
         descSet.add(desc);
-        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl)");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
-        desc2.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#object_xref", false));
-        desc.addPath(desc2);
-        ItemPrefetchDescriptor desc3 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2.addPath(desc3);
-        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
-        desc4.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3.addPath(desc4);
-
-        desc = new ItemPrefetchDescriptor("(transcript <- transcript_stable_id.transcript)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "transcript"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#transcript_stable_id", false));
+        desc = new ItemPrefetchDescriptor("exon.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc1 = new ItemPrefetchDescriptor("exon.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
         descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#exon", descSet);
 
-        paths.put("http://www.flymine.org/model/ensembl#transcript", descSet);
-
-
+        //gene
         descSet = new HashSet();
-        //desc = new ItemPrefetchDescriptor("gene.display_xref");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref",
-        //ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc = new ItemPrefetchDescriptor("gene <- gene_stable_id.gene");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#gene_stable_id", false));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("gene.analysis");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("gene.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc1 = new ItemPrefetchDescriptor("gene.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
+        descSet.add(desc);
+        //not suitable for homo_sapiens_core_31_35d
+        //desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
+        //desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
+        //desc.addConstraint(new FieldNameAndValue(classname,
+        //              "http://www.flymine.org/model/ensembl-human#gene_description", false));
         //descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("(gene <- gene_stable_id.gene)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#gene_stable_id", false));
+        desc = new ItemPrefetchDescriptor("gene.display_xref");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
+        desc1 = new ItemPrefetchDescriptor("gene.display_xref.external_db");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("external_db", identifier));
+        desc.addPath(desc1);
         descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("(gene <- transcript.gene)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "gene"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#transcript", false));
-        desc2 = new ItemPrefetchDescriptor(
-                "(gene <- transcript.gene).translation");
-        descSet.add(desc);
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("translation",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
-        desc3 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl)");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
-        desc3.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#object_xref", false));
-        desc2.addPath(desc3);
-        desc4 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref");
-        desc4.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3.addPath(desc4);
-        ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
-                "((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db");
-        desc5.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc4.addPath(desc5);
         paths.put("http://www.flymine.org/model/ensembl#gene", descSet);
 
-        desc = new ItemPrefetchDescriptor("contig.dna");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("dna",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        paths.put("http://www.flymine.org/model/ensembl#contig", Collections.singleton(desc));
-
+        //transcript
         descSet = new HashSet();
-        desc = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "ensembl"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#object_xref", false));
-        desc2 = new ItemPrefetchDescriptor(
-                "(translation <- object_xref.ensembl).xref");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3 = new ItemPrefetchDescriptor("(translation <- object_xref.ensembl).xref.external_db");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic("external_db",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2.addPath(desc3);
-        desc.addPath(desc2);
+        desc = new ItemPrefetchDescriptor("transcript <- transcript_stable_id.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "transcript"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#transcript_stable_id", false));
         descSet.add(desc);
-        desc = new ItemPrefetchDescriptor("(translation <- translation_stable_id.translation)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "translation"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#translation_stable_id", false));
+        desc = new ItemPrefetchDescriptor("transcript.gene");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("gene", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("transcript.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc1 = new ItemPrefetchDescriptor("transcript.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#transcript", descSet);
+
+        //translation
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("translation <- translation_stable_id.translation");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "translation"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#translation_stable_id", false));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("translation.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("transcript", identifier));
+        descSet.add(desc);
+        desc1 = new ItemPrefetchDescriptor("translation.transcript.display_xref");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
+        ItemPrefetchDescriptor desc2 =
+                new ItemPrefetchDescriptor("translation.transcript.display_xref.external_db");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("external_db", identifier));
+        desc1.addPath(desc2);
+        desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl#translation", descSet);
 
-        desc = new ItemPrefetchDescriptor("(exon <- exon_stable_id.exon)");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic(
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER, "exon"));
-        desc.addConstraint(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
-                    "http://www.flymine.org/model/ensembl#exon_stable_id", false));
-        paths.put("http://www.flymine.org/model/ensembl#exon", Collections.singleton(desc));
+        //repeat_feature
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("repeat_feature.analysis");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("repeat_feature.repeat_consensus");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("repeat_consensus", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("repeat_feature.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc1 = new ItemPrefetchDescriptor("repeat_feature.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#repeat_feature", descSet);
+
+        //marker
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("marker.display_marker_synonym");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("display_marker_synonym", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("marker <- marker_feature.marker");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "marker"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#marker_feature", false));
+        desc1 = new ItemPrefetchDescriptor("(<- marker_feature.marker).seq_region");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc2 = new ItemPrefetchDescriptor("(<- marker_feature.marker).seq_region.coord_system");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc1.addPath(desc2);
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#marker",
+                Collections.singleton(desc));
+
+        //assembly
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("assembly.asm_seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("asm_seq_region", identifier));
+        desc2 = new ItemPrefetchDescriptor("assembly.asm_seq_region.coord_system");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc2);
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("assembly.cmp_seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("cmp_seq_region", identifier));
+        desc2 = new ItemPrefetchDescriptor("assembly.cmp_seq_region.coord_system");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc2);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#assembly", descSet);
+
+        //seq_region
+        desc = new ItemPrefetchDescriptor("seq_region.coord_system");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        paths.put("http://www.flymine.org/model/ensembl#seq_region",
+                Collections.singleton(desc));
+
+        //simple_feature
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("simple_feature.analysis");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("analysis", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("simple_feature.seq_region");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("seq_region", identifier));
+        desc1 = new ItemPrefetchDescriptor("simple_feature.seq_region.coord_system");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
+        desc.addPath(desc1);
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#simple_feature", descSet);
 
         return paths;
     }
+
+    /**
+     * Utility class to keep the contents of the ensembl_config file in for reference while the
+     * translator is running...
+     * */
+    class EnsemblConfig
+    {
+
+        private String orgAbbrev;
+
+        private Item organism = null;
+        private Reference organismRef = null;
+
+        private boolean useXrefDbsForGeneIdentifier;
+        private boolean storeDna;
+
+
+        private EnsemblPropsUtil propsUtil;
+
+        private Map dataSourceName2ItemMap;
+        private Map dataSourceName2RefMap;
+
+        private Item ensemblDataSrc;
+        private Reference ensemblDataSrcRef;
+
+        private Item ensemblDataSet;
+        private Reference ensemblDataSetRef;
+
+        private Set xrefDataSourceNames;
+        private String geneXrefDbName = null;
+
+        private Set xrefSymbolDataSourceNames;
+
+        /**
+         * Constructor.
+         *
+         * @param ensemblProps a represesntation of the ensembl_config file's contents.
+         * @param orgAbbrev A suitably short acronym to identify which ogransim to process.
+         * */
+        EnsemblConfig(Properties ensemblProps, String orgAbbrev) {
+
+            if (orgAbbrev == null || "".equals(orgAbbrev)) {
+                throw new RuntimeException(
+                        "EnsemblConfig: must have the organism abbreviation set!");
+            }
+
+            this.orgAbbrev = orgAbbrev;
+
+            if (ensemblProps == null) {
+                throw new RuntimeException(
+                        "EnsemblConfig: can't find any ensembl_config.properties!");
+            }
+
+            propsUtil = new EnsemblPropsUtil(ensemblProps);
+            Properties organismProps = propsUtil.stripStart(orgAbbrev, ensemblProps);
+
+            organism = createItem(tgtNs + "Organism", "");
+            organism.addAttribute(new Attribute("abbreviation", orgAbbrev));
+            organism.addAttribute(new Attribute("name",
+                    organismProps.getProperty("organism.name")));
+            organism.addAttribute(new Attribute("taxonId",
+                    organismProps.getProperty("organism.taxonId")));
+            organismRef = new Reference("organism", organism.getIdentifier());
+
+            //This boolean indicates that we want to use configurable identifier fields...
+            useXrefDbsForGeneIdentifier = Boolean.valueOf(
+                    organismProps.getProperty("flag.useXrefDbsForGeneIdentifier")).booleanValue();
+
+            storeDna = Boolean.valueOf(
+                    organismProps.getProperty("flag.storeDna")).booleanValue();
+
+            //Load up all the data source names that we will allow xref synonyms to be set for.
+            xrefDataSourceNames = new HashSet(propsUtil.getPropertiesStartingWith(
+                    orgAbbrev + ".datasource.xref.synonym").values());
+
+            dataSourceName2ItemMap = new HashMap();
+            dataSourceName2RefMap = new HashMap();
+
+            initDataSourceAndDataSourceRefMaps();
+            initEnsemblDataSrc();
+            initEnsemblDataSet();
+
+            //try and load the props if we need to use custom gene identifiers - i.e. Hugo for Human
+            if (useXrefDbsForGeneIdentifier) {
+
+                geneXrefDbName = organismProps.getProperty("gene.identifier.xref.dataSourceName");
+
+                //if it aint set - complain!
+                if (geneXrefDbName == null) {
+                    throw new RuntimeException(
+                            "EnsemblConfig: gene.identifier.xref.dataSourceName property not set!");
+                }
+
+                if (!dataSourceName2ItemMap.containsKey(geneXrefDbName.toLowerCase())) {
+                    throw new RuntimeException(
+                            "EnsemblConfig(1): gene.identifier.xref.dataSourceName:"
+                            + geneXrefDbName + " has no matching common.datasource");
+                }
+            }
+
+            //Load up all the data source names that we will allow xref synonyms to be set for.
+            xrefSymbolDataSourceNames = new HashSet(propsUtil.getPropertiesStartingWith(
+                    orgAbbrev + ".datasource.xref.synonym.symbol").values());
+            //Better check there's a matching data source for each of these!
+            for (Iterator symbolIt = xrefSymbolDataSourceNames.iterator(); symbolIt.hasNext(); ) {
+
+                Object nextSymbol = symbolIt.next();
+
+                if (!dataSourceName2ItemMap.containsKey(nextSymbol.toString().toLowerCase())) {
+                    throw new RuntimeException(
+                            "EnsemblConfig(2): datasource.xref.synonym.symbol:"
+                            + nextSymbol.toString() + " has no matching common.datasource");
+                }
+            }
+        }
+
+
+        private void initDataSourceAndDataSourceRefMaps() {
+
+            //Get the names of all the available datasources
+            Properties dsNames = propsUtil.getPropertiesStartingWith("common.datasource.name");
+
+            for (Iterator dsnIt = dsNames.values().iterator(); dsnIt.hasNext(); ) {
+
+                String dsName = dsnIt.next().toString().toLowerCase();
+                Properties dsnNextProps = propsUtil.getPropertiesStartingWith(
+                        "common.datasource." + dsName);
+
+                Item nextDataSource = createItem(tgtNs + "DataSource", "");
+
+                nextDataSource.addAttribute(new Attribute("name", dsName));
+
+                nextDataSource.addAttribute(new Attribute("url",
+                        dsnNextProps.getProperty("common.datasource."
+                        + dsName.toLowerCase() + ".url")));
+
+                nextDataSource.addAttribute(new Attribute("description",
+                        dsnNextProps.getProperty("common.datasource."
+                        + dsName.toLowerCase() + ".description")));
+
+                dataSourceName2ItemMap.put(dsName.toLowerCase(), nextDataSource);
+                dataSourceName2RefMap.put(dsName.toLowerCase(),
+                        new Reference("source", nextDataSource.getIdentifier()));
+            }
+        }
+
+        private void initEnsemblDataSrc() {
+
+            String ensembl = "ensembl";
+
+            if (hasDataSourceNamed(ensembl)) {
+                ensemblDataSrc      = getDataSrcByName(ensembl);
+                ensemblDataSrcRef   = getDataSrcRefByDataSrcName(ensembl);
+            } else {
+                throw new RuntimeException("!!! Ensembl DataSrc Not Found !!!");
+            }
+        }
+
+        private void initEnsemblDataSet() {
+
+            String propStem = orgAbbrev + ".ensembl.dataset";
+
+            Properties props = propsUtil.getPropertiesStartingWith(propStem);
+
+            ensemblDataSet = createItem(tgtNs + "DataSet", "");
+            ensemblDataSet.addAttribute(
+                    new Attribute("title", props.getProperty(propStem + ".title")));
+
+            String dsName = props.getProperty(propStem + ".dataSourceName");
+
+            Item dataSrc = getDataSrcByName(dsName);
+            ensemblDataSet.addReference(new Reference("dataSource", dataSrc.getIdentifier()));
+            ensemblDataSetRef = new Reference("source", ensemblDataSet.getIdentifier());
+        }
+
+        //------------------------------------------------------------------------------------------
+
+
+        /**
+         * @return An abbreviated string representing the current organism.
+         */
+        String getOrgAbbrev() {
+            return orgAbbrev;
+        }
+
+        /**
+         * @return The current Organism Item
+         */
+        Item getOrganism() {
+            return organism;
+        }
+
+
+        /**
+         * @return A reference to the current organism
+         */
+        Reference getOrganismRef() {
+            return organismRef;
+        }
+
+        /**
+         * @return Do we want to use any external db ids - i.e. SwissProt/Uniprot etc for Genes?
+         * */
+        boolean useXrefDbsForGeneIdentifier() {
+            return useXrefDbsForGeneIdentifier;
+        }
+
+        /**
+         * @return Do we want to get the DNA sequences now or later?
+         * */
+        boolean doStoreDna() {
+            return storeDna;
+        }
+
+        /**
+         * @return The name of the datasource where we want to get any xref dbid's from
+         * */
+        String getGeneXrefDbName() {
+            return geneXrefDbName;
+        }
+
+        /**
+         * @return Get's the Ensembl Data Source Item
+         * */
+        Item getEnsemblDataSrc() {
+            return ensemblDataSrc;
+        }
+
+        /**
+         * @return Get's a reference to the Ensembl Data Source Item
+         * */
+        Reference getEnsemblDataSrcRef() {
+            return ensemblDataSrcRef;
+        }
+
+        /**
+         * @return Gets the current Ensembl Data Set being processed.
+         * */
+        Item getEnsemblDataSet() {
+            return ensemblDataSet;
+        }
+
+        /**
+         * @return Gets a reference to the current Ensembl Data Set being processed.
+         * */
+        Reference getEnsemblDataSetRef() {
+            return ensemblDataSetRef;
+        }
+
+        /**
+         * @param xrefDataSourceName a data source name to check
+         *
+         * @return have we seen this xref data source name before
+         * */
+        boolean containsXrefDataSourceNamed(String xrefDataSourceName) {
+            return xrefDataSourceNames.contains(xrefDataSourceName);
+        }
+
+        /**
+         * @param xrefSymbolDataSourceName a data source name that we represents a symbol
+         *
+         * @return have we seen this data source name before
+         * */
+        boolean containsXrefSymbolDataSourceNamed(String xrefSymbolDataSourceName) {
+            return xrefSymbolDataSourceNames.contains(xrefSymbolDataSourceName);
+        }
+
+        /**
+         * @param dataSrcName a data source name to check for
+         *
+         * @return have we seen this data source name before
+         * */
+        boolean hasDataSourceNamed(String dataSrcName) {
+            return dataSourceName2ItemMap.containsKey(dataSrcName.toLowerCase());
+        }
+
+        /**
+         * @param dataSrcName A named data source of interest
+         *
+         * @return a data source item
+         *
+         * @throws RuntimeException if we can't find the datasource - check the config file
+         * */
+        Item getDataSrcByName(String dataSrcName) {
+
+            if (hasDataSourceNamed(dataSrcName.toLowerCase())) {
+                    return (Item) dataSourceName2ItemMap.get(dataSrcName.toLowerCase());
+            }
+
+            throw new RuntimeException("Can't find a data source named:" + dataSrcName);
+        }
+
+        /**
+         * @param dataSrcName name of a data source to look for the reference of
+         *
+         * @return a boolean indicating if we have found the reference or not
+         * */
+        boolean hasDataSrcRefForDataSrcNamed(String dataSrcName) {
+            return dataSourceName2RefMap.containsKey(dataSrcName.toLowerCase());
+        }
+
+        /**
+         * @param dataSrcName name of a data source to look for the reference of
+         *
+         * @return A reference to the datasource
+         *
+         * @throws RuntimeException if we can't find the reference
+         * */
+        Reference getDataSrcRefByDataSrcName(String dataSrcName) throws RuntimeException {
+            if (hasDataSrcRefForDataSrcNamed(dataSrcName.toLowerCase())) {
+                return (Reference) dataSourceName2RefMap.get(dataSrcName.toLowerCase());
+            }
+
+            throw new RuntimeException("Can't find a reference for a data source named:"
+                    + dataSrcName);
+        }
+
+        /**
+         * @return provides an Iterator of all the known data source items.
+         * */
+        Iterator getDataSrcItemIterator() {
+            return dataSourceName2ItemMap.values().iterator();
+        }
+    }
+
 }

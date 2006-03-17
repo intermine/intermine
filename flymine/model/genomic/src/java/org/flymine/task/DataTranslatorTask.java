@@ -135,15 +135,30 @@ public class DataTranslatorTask extends Task
             }
             Model src = Model.getInstanceByName(srcModel);
             Model tgt = Model.getInstanceByName(tgtModel);
+
             //TODO: Fix this hard coded bodgieness ???
             if ("org.flymine.dataconversion.EnsemblDataTranslator".equals(translator)
                 || "org.flymine.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
+
+                Properties ensemblProps = new Properties();
+                InputStream epis = getClass().getClassLoader().getResourceAsStream(
+                        "ensembl_config.properties");
+
+                ensemblProps.load(epis);
+
                 if (organism == null) {
                     throw new BuildException("organism attribute not set");
                 }
-                types = new Class[]
-                    {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
-                args = new Object[] {reader, mappingProps, src, tgt, organism};
+                types = new Class[] {
+                    ItemReader.class,
+                    Properties.class,
+                    Model.class,
+                    Model.class,
+                    Properties.class,
+                    String.class
+                };
+
+                args = new Object[] {reader, mappingProps, src, tgt, ensemblProps, organism};
 
             //TODO: Fix this hard coded bodgieness ???
             } else if ("org.flymine.dataconversion.ProteinStructureDataTranslator"

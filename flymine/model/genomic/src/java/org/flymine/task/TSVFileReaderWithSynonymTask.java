@@ -1,5 +1,15 @@
 package org.flymine.task;
 
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
@@ -26,24 +36,21 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.HashSet;
 
-/*
- * Copyright (C) 2002-2005 FlyMine
+/**
+ * Reads TSV files, but also produces Synonyms while processing the file
  *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask{
+ * @author Peter Mclaren - added the Synonym handling bit.
+ * */
+public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
+{
 
     protected ItemFactory itemFactory;
-
     protected String dataSourceName = null;
     private DataSource dataSource = null;
 
-
+    /**
+     * Suitable constructor.
+     * */
     public TSVFileReaderWithSynonymTask () {
         super();
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
@@ -124,7 +131,7 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask{
                                     //If we have found the name column - create a synonym on it.
                                     if ("name".equalsIgnoreCase(columnFD.getName())) {
 
-                                        Synonym syn = newSynonym((BioEntity)o, "name", rowValue);
+                                        Synonym syn = newSynonym((BioEntity) o, "name", rowValue);
                                         if (this.dataSource != null) {
                                             syn.setSource(dataSource);
                                         } else {
