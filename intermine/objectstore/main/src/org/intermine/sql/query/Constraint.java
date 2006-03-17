@@ -10,6 +10,8 @@ package org.intermine.sql.query;
  *
  */
 
+import java.util.Map;
+
 /**
  * A representation of a normal constraint, comparing two AbstractValue objects.
  *
@@ -105,42 +107,47 @@ public class Constraint extends AbstractConstraint
      *
      * @see AbstractConstraint#compare
      */
-    public int compare(AbstractConstraint obj) {
+    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof Constraint) {
             Constraint objC = (Constraint) obj;
-            // This is a normal constraint object.
             switch (operation) {
                 case EQ:
                     switch (objC.operation) {
                         case EQ:
-                            if (left.equals(objC.left)) {
-                                return (right.equals(objC.right) ? EQUAL
-                                        : (right.notEqualTo(objC.right) ? EXCLUDES : INDEPENDENT));
-                            } else if (left.equals(objC.right)) {
-                                return (right.equals(objC.left) ? EQUAL
-                                        : (right.notEqualTo(objC.left) ? EXCLUDES : INDEPENDENT));
-                            } else if (right.equals(objC.left)) {
-                                return (left.notEqualTo(objC.right) ? EXCLUDES : INDEPENDENT);
-                            } else if (right.equals(objC.right)) {
-                                return (left.notEqualTo(objC.left) ? EXCLUDES : INDEPENDENT);
+                            if (left.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                return (right.valueEquals(objC.right, tableMap, reverseTableMap)
+                                        ? EQUAL : (right.notEqualTo(objC.right, tableMap,
+                                                reverseTableMap) ? EXCLUDES : INDEPENDENT));
+                            } else if (left.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                return (right.valueEquals(objC.left, tableMap, reverseTableMap)
+                                        ? EQUAL : (right.notEqualTo(objC.left, tableMap,
+                                                reverseTableMap) ? EXCLUDES : INDEPENDENT));
+                            } else if (right.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                return (left.notEqualTo(objC.right, tableMap, reverseTableMap)
+                                        ? EXCLUDES : INDEPENDENT);
+                            } else if (right.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                return (left.notEqualTo(objC.left, tableMap, reverseTableMap)
+                                        ? EXCLUDES : INDEPENDENT);
                             } else {
                                 return INDEPENDENT;
                             }
                         case LT:
-                            if (left.equals(objC.left)) {
-                                return (right.lessThan(objC.right) ? IMPLIES
-                                        : (right.greaterOrEqual(objC.right) ? EXCLUDES
-                                            : INDEPENDENT));
-                            } else if (left.equals(objC.right)) {
-                                return (right.greaterThan(objC.left) ? IMPLIES
-                                        : (right.lessOrEqual(objC.left) ? EXCLUDES : INDEPENDENT));
-                            } else if (right.equals(objC.left)) {
-                                return (left.lessThan(objC.right) ? IMPLIES
-                                        : (left.greaterOrEqual(objC.right) ? EXCLUDES
-                                            : INDEPENDENT));
-                            } else if (right.equals(objC.right)) {
-                                return (left.greaterThan(objC.left) ? IMPLIES
-                                        : (left.lessOrEqual(objC.left) ? EXCLUDES : INDEPENDENT));
+                            if (left.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                return (right.lessThan(objC.right, tableMap, reverseTableMap)
+                                        ? IMPLIES : (right.greaterOrEqual(objC.right, tableMap,
+                                                reverseTableMap) ? EXCLUDES : INDEPENDENT));
+                            } else if (left.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                return (right.greaterThan(objC.left, tableMap, reverseTableMap)
+                                        ? IMPLIES : (right.lessOrEqual(objC.left, tableMap,
+                                                reverseTableMap) ? EXCLUDES : INDEPENDENT));
+                            } else if (right.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                return (left.lessThan(objC.right, tableMap, reverseTableMap)
+                                        ? IMPLIES : (left.greaterOrEqual(objC.right, tableMap,
+                                                reverseTableMap) ? EXCLUDES : INDEPENDENT));
+                            } else if (right.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                return (left.greaterThan(objC.left, tableMap, reverseTableMap)
+                                        ? IMPLIES : (left.lessOrEqual(objC.left, tableMap,
+                                                reverseTableMap) ? EXCLUDES : INDEPENDENT));
                             } else {
                                 return INDEPENDENT;
                             }
@@ -149,58 +156,67 @@ public class Constraint extends AbstractConstraint
                 case LT:
                     switch (objC.operation) {
                         case EQ:
-                            if (left.equals(objC.left)) {
-                                return (objC.right.lessThan(right) ? IMPLIED_BY
-                                        : (objC.right.greaterOrEqual(right) ? EXCLUDES
+                            if (left.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                return (objC.right.lessThan(right, reverseTableMap, tableMap)
+                                        ? IMPLIED_BY : (objC.right.greaterOrEqual(right,
+                                                reverseTableMap, tableMap) ? EXCLUDES
                                             : INDEPENDENT));
-                            } else if (left.equals(objC.right)) {
-                                return (objC.left.lessThan(right) ? IMPLIED_BY
-                                        : (objC.left.greaterOrEqual(right) ? EXCLUDES
+                            } else if (left.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                return (objC.left.lessThan(right, reverseTableMap, tableMap)
+                                        ? IMPLIED_BY : (objC.left.greaterOrEqual(right,
+                                                reverseTableMap, tableMap) ? EXCLUDES
                                             : INDEPENDENT));
-                            } else if (right.equals(objC.left)) {
-                                return (objC.right.greaterThan(left) ? IMPLIED_BY
-                                        : (objC.right.lessOrEqual(left) ? EXCLUDES : INDEPENDENT));
-                            } else if (right.equals(objC.right)) {
-                                return (objC.left.greaterThan(left) ? IMPLIED_BY
-                                        : (objC.left.lessOrEqual(left) ? EXCLUDES : INDEPENDENT));
+                            } else if (right.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                return (objC.right.greaterThan(left, reverseTableMap, tableMap)
+                                        ? IMPLIED_BY : (objC.right.lessOrEqual(left,
+                                                reverseTableMap, tableMap) ? EXCLUDES
+                                            : INDEPENDENT));
+                            } else if (right.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                return (objC.left.greaterThan(left, reverseTableMap, tableMap)
+                                        ? IMPLIED_BY : (objC.left.lessOrEqual(left,
+                                                reverseTableMap, tableMap) ? EXCLUDES
+                                            : INDEPENDENT));
                             } else {
                                 return INDEPENDENT;
                             }
                         case LT:
-                            if (left.equals(objC.left)) {
-                                if (right.equals(objC.right)) {
+                            if (left.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                if (right.valueEquals(objC.right, tableMap, reverseTableMap)) {
                                     return EQUAL;
-                                } else if (right.lessThan(objC.right)) {
+                                } else if (right.lessThan(objC.right, tableMap, reverseTableMap)) {
                                     return IMPLIES;
-                                } else if (right.greaterThan(objC.right)) {
+                                } else if (right.greaterThan(objC.right, tableMap,
+                                            reverseTableMap)) {
                                     return IMPLIED_BY;
                                 } else {
                                     return INDEPENDENT;
                                 }
-                            } else if (left.equals(objC.right)) {
-                                if (right.equals(objC.left)
-                                        || right.lessThan(objC.left)) {
+                            } else if (left.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                if (right.valueEquals(objC.left, tableMap, reverseTableMap)
+                                        || right.lessThan(objC.left, tableMap, reverseTableMap)) {
                                     return EXCLUDES;
-                                } else if (right.greaterThan(objC.left)) {
+                                } else if (right.greaterThan(objC.left, tableMap,
+                                            reverseTableMap)) {
                                     return OR;
                                 } else {
                                     return INDEPENDENT;
                                 }
-                            } else if (right.equals(objC.left)) {
-                                if (left.equals(objC.right)
-                                        || left.greaterThan(objC.right)) {
+                            } else if (right.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                                if (left.valueEquals(objC.right, tableMap, reverseTableMap)
+                                        || left.greaterThan(objC.right, tableMap,
+                                            reverseTableMap)) {
                                     return EXCLUDES;
-                                } else if (left.lessThan(objC.right)) {
+                                } else if (left.lessThan(objC.right, tableMap, reverseTableMap)) {
                                     return OR;
                                 } else {
                                     return INDEPENDENT;
                                 }
-                            } else if (right.equals(objC.right)) {
-                                if (left.equals(objC.left)) {
+                            } else if (right.valueEquals(objC.right, tableMap, reverseTableMap)) {
+                                if (left.valueEquals(objC.left, tableMap, reverseTableMap)) {
                                     return EQUAL;
-                                } else if (left.greaterThan(objC.left)) {
+                                } else if (left.greaterThan(objC.left, tableMap, reverseTableMap)) {
                                     return IMPLIES;
-                                } else if (left.lessThan(objC.left)) {
+                                } else if (left.lessThan(objC.left, tableMap, reverseTableMap)) {
                                     return IMPLIED_BY;
                                 } else {
                                     return INDEPENDENT;
@@ -211,18 +227,19 @@ public class Constraint extends AbstractConstraint
                     break;
                 case LIKE:
                     if (objC.operation == LIKE) {
-                        return (left.equals(objC.left) && right.equals(objC.right)
+                        return (left.valueEquals(objC.left, tableMap, reverseTableMap)
+                                && right.valueEquals(objC.right, tableMap, reverseTableMap)
                                 ? EQUAL : INDEPENDENT);
                     }
                     break;
                 case GORNULL:
                     if (objC.operation == GORNULL) {
-                        if (left.equals(objC.left)) {
-                            if (right.equals(objC.right)) {
+                        if (left.valueEquals(objC.left, tableMap, reverseTableMap)) {
+                            if (right.valueEquals(objC.right, tableMap, reverseTableMap)) {
                                 return EQUAL;
-                            } else if (right.lessThan(objC.right)) {
+                            } else if (right.lessThan(objC.right, tableMap, reverseTableMap)) {
                                 return IMPLIED_BY;
-                            } else if (right.greaterThan(objC.right)) {
+                            } else if (right.greaterThan(objC.right, tableMap, reverseTableMap)) {
                                 return IMPLIES;
                             }
                         }

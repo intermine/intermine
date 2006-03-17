@@ -82,15 +82,16 @@ public class ConstraintSet extends AbstractConstraint
      *
      * @see AbstractConstraint#compare
      */
-    public int compare(AbstractConstraint obj) {
+    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof ConstraintSet) {
-            return alterComparisonAnd(internalCompare(obj),
-                    alterComparisonSwitch(((ConstraintSet) obj).internalCompare(this)));
+            return alterComparisonAnd(internalCompare(obj, tableMap, reverseTableMap),
+                    alterComparisonSwitch(((ConstraintSet) obj).internalCompare(this,
+                            reverseTableMap, tableMap)));
         } else if (obj instanceof NotConstraint) {
             NotConstraint objNC = (NotConstraint) obj;
-            return alterComparisonNotObj(compare(objNC.con));
+            return alterComparisonNotObj(compare(objNC.con, tableMap, reverseTableMap));
         }
-        return internalCompare(obj);
+        return internalCompare(obj, tableMap, reverseTableMap);
     }
 
     /**
@@ -109,10 +110,12 @@ public class ConstraintSet extends AbstractConstraint
      * constructing any such ConstraintSets, so it ought to be alright.
      *
      * @param obj an AbstractConstraint to compare to
+     * @param tableMap a Map from tables in this constraint to tables in obj
+     * @param reverseTableMap a reverse of tableMap
      * @return INDEPENDENT, IMPLIED_BY, IMPLIES, EQUAL, OPPOSITE, EXCLUDES, or OR, depending on the
      * constraints.
      */
-    protected int internalCompare(AbstractConstraint obj) {
+    protected int internalCompare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         int currentComp = 3; // This is a "A is false, but we don't know about B" comparison.
                              // We use it because it is the identity, with the
                              // AbstractConstraint.alterComparisonAORB operator. It happens to be
@@ -122,7 +125,7 @@ public class ConstraintSet extends AbstractConstraint
             AbstractConstraint con = (AbstractConstraint) consIter.next();
             currentComp = alterComparisonSwitch(alterComparisonAORB(
                         alterComparisonSwitch(currentComp),
-                        alterComparisonSwitch(con.compare(obj))));
+                        alterComparisonSwitch(con.compare(obj, tableMap, reverseTableMap))));
         }
         return currentComp;
     }

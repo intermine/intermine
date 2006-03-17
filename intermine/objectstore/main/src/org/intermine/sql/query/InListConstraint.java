@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -106,13 +107,14 @@ public class InListConstraint extends AbstractConstraint
      *
      * @see AbstractConstraint#compare
      */
-    public int compare(AbstractConstraint obj) {
+    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof InListConstraint) {
             InListConstraint objC = (InListConstraint) obj;
-            return (left.equals(objC.left) && right.equals(objC.right) ? EQUAL : INDEPENDENT);
+            return (left.valueEquals(objC.left, tableMap, reverseTableMap)
+                    && right.equals(objC.right) ? EQUAL : INDEPENDENT);
         } else if (obj instanceof NotConstraint) {
             NotConstraint objNC = (NotConstraint) obj;
-            return alterComparisonNotObj(compare(objNC.con));
+            return alterComparisonNotObj(compare(objNC.con, tableMap, reverseTableMap));
         }
         return INDEPENDENT;
     }

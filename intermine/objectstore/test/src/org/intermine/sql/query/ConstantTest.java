@@ -83,23 +83,23 @@ public class ConstantTest extends TestCase
     }
 
     public void testCompare() throws Exception {
-        assertEquals(AbstractValue.INCOMPARABLE, c4.compare(c6));
-        assertEquals(AbstractValue.INCOMPARABLE, c6.compare(c4));
-        assertEquals(AbstractValue.INCOMPARABLE, c3.compare(c6));
-        assertEquals(AbstractValue.INCOMPARABLE, c6.compare(c3));
-        assertEquals(AbstractValue.NOT_EQUAL, c3.compare(c5));
-        assertEquals(AbstractValue.NOT_EQUAL, c5.compare(c3));
-        assertEquals(AbstractValue.LESS, c4.compare(c5));
-        assertEquals(AbstractValue.GREATER, c5.compare(c4));
-        assertEquals(AbstractValue.LESS, c1.compare(c3));
-        assertEquals(AbstractValue.GREATER, c3.compare(c1));
-        assertEquals(AbstractValue.INCOMPARABLE, c1.compare(null));
-        assertEquals(AbstractValue.GREATER, c5.compare(c7));
-        assertEquals(AbstractValue.LESS, c7.compare(c8));
-        assertEquals(AbstractValue.LESS, c8.compare(c9));
-        assertEquals(AbstractValue.LESS, c7.compare(c10));
-        assertEquals(AbstractValue.GREATER, c10.compare(c11));
-        assertEquals(AbstractValue.GREATER, c10.compare(c12));
+        assertEquals(AbstractValue.INCOMPARABLE, c4.compare(c6, null, null));
+        assertEquals(AbstractValue.INCOMPARABLE, c6.compare(c4, null, null));
+        assertEquals(AbstractValue.INCOMPARABLE, c3.compare(c6, null, null));
+        assertEquals(AbstractValue.INCOMPARABLE, c6.compare(c3, null, null));
+        assertEquals(AbstractValue.NOT_EQUAL, c3.compare(c5, null, null));
+        assertEquals(AbstractValue.NOT_EQUAL, c5.compare(c3, null, null));
+        assertEquals(AbstractValue.LESS, c4.compare(c5, null, null));
+        assertEquals(AbstractValue.GREATER, c5.compare(c4, null, null));
+        assertEquals(AbstractValue.LESS, c1.compare(c3, null, null));
+        assertEquals(AbstractValue.GREATER, c3.compare(c1, null, null));
+        assertEquals(AbstractValue.INCOMPARABLE, c1.compare(null, null, null));
+        assertEquals(AbstractValue.GREATER, c5.compare(c7, null, null));
+        assertEquals(AbstractValue.LESS, c7.compare(c8, null, null));
+        assertEquals(AbstractValue.LESS, c8.compare(c9, null, null));
+        assertEquals(AbstractValue.LESS, c7.compare(c10, null, null));
+        assertEquals(AbstractValue.GREATER, c10.compare(c11, null, null));
+        assertEquals(AbstractValue.GREATER, c10.compare(c12, null, null));
     }
 
 }

@@ -43,6 +43,7 @@ import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SubQueryConstraint;
 import org.intermine.sql.query.Table;
 import org.intermine.util.ConsistentSet;
+import org.intermine.util.IdentityMap;
 import org.intermine.util.MappingUtil;
 import org.intermine.util.StringUtil;
 
@@ -378,7 +379,8 @@ public class QueryOptimiser
         // PrecomputedTable query to tables in the Query
         Set mappings = new ConsistentSet();
         Collection c = MappingUtil.findCombinations(precompQuery.getFrom(),
-                query.getFrom(), new AbstractTableComparator());
+                query.getFrom(), new AbstractTableComparator(),
+                new OptimiserMappingChecker(precompQuery.getWhere(), query.getWhere()));
         mappings.addAll(c);
 
         // Create a map from AbstractValue to SelectValue for the PrecomputedTable
@@ -701,6 +703,25 @@ public class QueryOptimiser
      * than some element in set2
      */
     protected static boolean compareConstraints(Set set1, Set set2, Set equalsSet) {
+        return compareConstraints(set1, set2, equalsSet, IdentityMap.INSTANCE,
+                IdentityMap.INSTANCE);
+    }
+
+    /**
+     * Compares 2 sets of AbstractConstraints
+     *
+     * @param set1 the first set
+     * @param set2 the second set
+     * @param equalsSet a Set that should be passed in empty - it will be populated with those
+     * AbstractConstraints that have an equal in the other set. Note that if the return value is
+     * false, then the contents of this Set is undefined
+     * @param tableMap a Map from Table to Table
+     * @param reverseTableMap the reverse of tableMap
+     * @return true if every element of set1 is equal or less restrictive
+     * than some element in set2
+     */
+    protected static boolean compareConstraints(Set set1, Set set2, Set equalsSet, Map tableMap,
+            Map reverseTableMap) {
         Iterator set1Iter = set1.iterator();
         while (set1Iter.hasNext()) {
             AbstractConstraint constraint1 = (AbstractConstraint) set1Iter.next();
@@ -708,7 +729,7 @@ public class QueryOptimiser
             Iterator set2Iter = set2.iterator();
             while (set2Iter.hasNext()) {
                 AbstractConstraint constraint2 = (AbstractConstraint) set2Iter.next();
-                int compareResult = constraint2.compare(constraint1);
+                int compareResult = constraint2.compare(constraint1, reverseTableMap, tableMap);
                 if (AbstractConstraint.checkComparisonImplies(compareResult)) {
                     match = true;
                     if (AbstractConstraint.checkComparisonEquals(compareResult)) {

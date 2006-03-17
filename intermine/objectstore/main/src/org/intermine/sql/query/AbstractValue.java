@@ -10,6 +10,8 @@ package org.intermine.sql.query;
  *
  */
 
+import java.util.Map;
+
 /**
  * An abstract representation of an item that can be present in the SELECT, GROUP BY,
  * or ORDER BY sections of an SQL query, as well as in a constraint.
@@ -65,15 +67,14 @@ public abstract class AbstractValue implements SQLStringable
     public abstract int hashCode();
  
     /**
-     * Compare the value of this AbstractValue with another. This only really makes sense with
-     * Constants.
+     * Compare the value of this AbstractValue with another.
      *
      * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
      * @return EQUAL, LESS, GREATER, NOT_EQUAL, or INCOMPARABLE
      */
-    public int compare(AbstractValue obj) {
-        return (equals(obj) ? EQUAL : INCOMPARABLE);
-    }
+    public abstract int compare(AbstractValue obj, Map tableMap, Map reverseTableMap);
 
     /**
      * Compare the value of this AbstractValue with another to see if it is less. This only really
@@ -81,10 +82,12 @@ public abstract class AbstractValue implements SQLStringable
      * result being false does not imply greater than or equal - it may be incomparable.
      *
      * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
      * @return true if this is less than obj
      */
-    public boolean lessThan(AbstractValue obj) {
-        return (compare(obj) == LESS);
+    public boolean lessThan(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        return (compare(obj, tableMap, reverseTableMap) == LESS);
     }
 
     /**
@@ -93,10 +96,12 @@ public abstract class AbstractValue implements SQLStringable
      * result being false does not imply less than or equal - it may be incomparable.
      *
      * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
      * @return true if this is more than obj
      */
-    public boolean greaterThan(AbstractValue obj) {
-        return (compare(obj) == GREATER);
+    public boolean greaterThan(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        return (compare(obj, tableMap, reverseTableMap) == GREATER);
     }
 
     /**
@@ -105,10 +110,12 @@ public abstract class AbstractValue implements SQLStringable
      * may be incomparable.
      *
      * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
      * @return true if this is definitely not equal to obj
      */
-    public boolean notEqualTo(AbstractValue obj) {
-        int compareVal = compare(obj);
+    public boolean notEqualTo(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == NOT_EQUAL) || (compareVal == LESS) || (compareVal == GREATER);
     }
 
@@ -119,10 +126,12 @@ public abstract class AbstractValue implements SQLStringable
      * result being false does not imply less than - it may be incomparable.
      *
      * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
      * @return true if this is more than obj
      */
-    public boolean greaterOrEqual(AbstractValue obj) {
-        int compareVal = compare(obj);
+    public boolean greaterOrEqual(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == GREATER) || (compareVal == EQUAL);
     }
 
@@ -133,12 +142,26 @@ public abstract class AbstractValue implements SQLStringable
      * result being false does not imply greater than - it may be incomparable.
      *
      * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
      * @return true if this is less than obj
      */
-    public boolean lessOrEqual(AbstractValue obj) {
-        int compareVal = compare(obj);
+    public boolean lessOrEqual(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == LESS) || (compareVal == EQUAL);
     }
 
-
+    /**
+     * Compare the value of this AbstractValue with another to see if it is equal. It uses the
+     * compare method of AbstractValue.
+     *
+     * @param obj an AbstractValue to compare to
+     * @param tableMap a mapping between tablenames of the two elements
+     * @param reverseTableMap a reverse of tableMap
+     * @return true if this is equal to obj
+     */
+    public boolean valueEquals(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        int compareVal = compare(obj, tableMap, reverseTableMap);
+        return (compareVal == EQUAL);
+    }
 }

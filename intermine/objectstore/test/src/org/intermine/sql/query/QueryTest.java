@@ -12,6 +12,7 @@ package org.intermine.sql.query;
 
 import junit.framework.*;
 import java.util.*;
+import org.intermine.util.IdentityMap;
 
 public class QueryTest extends TestCase
 {
@@ -23,6 +24,7 @@ public class QueryTest extends TestCase
 
     public void setUp()
     {
+        // SELECT mytable.a FROM mytable WHERE mytable.a = 1
         q1 = new Query();
         Table t = new Table("mytable");
         Constant c = new Constant("1");
@@ -32,6 +34,7 @@ public class QueryTest extends TestCase
         q1.addSelect(sv);
         q1.addWhere(new Constraint(f, Constraint.EQ, c));
 
+        // SELECT mytable.a FROM mytable WHERE mytable.a = 1
         q2 = new Query();
         t = new Table("mytable");
         c = new Constant("1");
@@ -41,6 +44,7 @@ public class QueryTest extends TestCase
         q2.addSelect(sv);
         q2.addWhere(new Constraint(f, Constraint.EQ, c));
 
+        // SELECT anotherTable.b FROM anotherTable WHERE anotherTable.b = 2
         q3 = new Query();
         t = new Table("anotherTable");
         c = new Constant("2");
@@ -310,8 +314,8 @@ public class QueryTest extends TestCase
         assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bA));
         assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bB));
         assertEquals(AbstractConstraint.EQUAL, aC.compare(bC));
-        assertEquals(AbstractConstraint.IMPLIES, a.internalCompare(b));
-        assertEquals(AbstractConstraint.IMPLIES, b.internalCompare(a));
+        assertEquals(AbstractConstraint.IMPLIES, a.internalCompare(b, IdentityMap.INSTANCE, IdentityMap.INSTANCE));
+        assertEquals(AbstractConstraint.IMPLIES, b.internalCompare(a, IdentityMap.INSTANCE, IdentityMap.INSTANCE));
         assertEquals(AbstractConstraint.EQUAL, a.compare(b));
         assertEquals(lq1.getSQLString(), lq2.getSQLString());
         assertEquals(lq1, lq2);

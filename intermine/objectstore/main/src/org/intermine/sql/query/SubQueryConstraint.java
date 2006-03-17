@@ -10,6 +10,8 @@ package org.intermine.sql.query;
  *
  */
 
+import java.util.Map;
+
 /**
  * A representation of a constraint where an AbstractValue is IN the results of a Query.
  *
@@ -60,18 +62,19 @@ public class SubQueryConstraint extends AbstractConstraint
      *
      * @see AbstractConstraint#compare
      */
-    public int compare(AbstractConstraint obj) {
+    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof SubQueryConstraint) {
             SubQueryConstraint objC = (SubQueryConstraint) obj;
-            return (left.equals(objC.left) && right.equals(objC.right) ? EQUAL : INDEPENDENT);
+            return (left.valueEquals(objC.left, tableMap, reverseTableMap)
+                    && right.equals(objC.right) ? EQUAL : INDEPENDENT);
+            // TODO: Implement this a bit better maybe? Two unequal queries may actually have the
+            // same set of results. Also, a Query with less Constraints should result in a
+            // SubQueryConstraint that is less restrictive. Complicated.
         } else if (obj instanceof NotConstraint) {
             NotConstraint objNC = (NotConstraint) obj;
-            return alterComparisonNotObj(compare(objNC.con));
+            return alterComparisonNotObj(compare(objNC.con, tableMap, reverseTableMap));
         }
         return INDEPENDENT;
-        // TODO: Implement this a bit better maybe? Two unequal queries may actually have the same
-        // set of results. Also, a Query with less Constraints should result in a SubQueryConstraint
-        // that is less restrictive. Complicated.
     }
 
     /**

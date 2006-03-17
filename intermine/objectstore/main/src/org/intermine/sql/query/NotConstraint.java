@@ -10,6 +10,8 @@ package org.intermine.sql.query;
  *
  */
 
+import java.util.Map;
+
 /**
  * A representation of a constraint that is represented here as the inverse of another Constraint.
  *
@@ -70,8 +72,8 @@ public class NotConstraint extends AbstractConstraint
      *
      * @see AbstractConstraint#compare
      */
-    public int compare(AbstractConstraint obj) {
-        return alterComparisonNotThis(con.compare(obj));
+    public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
+        return alterComparisonNotThis(con.compare(obj, tableMap, reverseTableMap));
     }
 
     /**

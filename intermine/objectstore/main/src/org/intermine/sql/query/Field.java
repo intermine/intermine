@@ -10,6 +10,8 @@ package org.intermine.sql.query;
  *
  */
 
+import java.util.Map;
+
 /**
  * A representation of a field in a table.
  *
@@ -103,5 +105,27 @@ public class Field extends AbstractValue
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Compare this field to another AbstractValue.
+     *
+     * @see AbstractValue#compare
+     */
+    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
+        if (obj instanceof Field) {
+            Field objField = (Field) obj;
+            AbstractTable t = (AbstractTable) tableMap.get(table);
+            AbstractTable revT = (AbstractTable) reverseTableMap.get(objField.table);
+            if ((t == null) && (revT == null)) {
+                return EQUAL;
+            } else if ((t == null) || (revT == null)) {
+                return INCOMPARABLE;
+            } else {
+                return name.equals(objField.name) && t.equalsOnlyAlias(objField.table) ? EQUAL
+                    : INCOMPARABLE;
+            }
+        }
+        return INCOMPARABLE;
     }
 }

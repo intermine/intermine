@@ -11,11 +11,14 @@ package org.intermine.sql.query;
  */
 
 import junit.framework.*;
+import java.util.*;
 
 public class ConstraintTest extends TestCase
 {
-    private AbstractValue v1, v2, v3, v4, a, b, c;
-    private Constraint c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12;
+    private Table t1, t2;
+    private AbstractValue v1, v2, v3, v4, a, b, c, ab;
+    private Constraint c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, cb1, cb2, cb3, cb4, cb5, cb7, cb8;
+    private Map mapping;
 
     public ConstraintTest(String arg1) {
         super(arg1);
@@ -26,9 +29,11 @@ public class ConstraintTest extends TestCase
         v2 = new Constant("2");
         v3 = new Constant("'Flibble'");
         v4 = new Constant("'Flobble'");
-        a = new Field("a", new Table("table1"));
-        b = new Field("b", new Table("table1"));
-        c = new Field("c", new Table("table1"));
+        t1 = new Table("table1");
+        t2 = new Table("table2");
+        a = new Field("a", t1);
+        b = new Field("b", t1);
+        c = new Field("c", t1);
         c1 = new Constraint(a, Constraint.EQ, v1);
         c2 = new Constraint(a, Constraint.EQ, v2);
         c3 = new Constraint(a, Constraint.LT, v1);
@@ -41,6 +46,19 @@ public class ConstraintTest extends TestCase
         c10 = new Constraint(a, Constraint.LT, b);
         c11 = new Constraint(b, Constraint.LT, a);
         c12 = new Constraint(a, Constraint.EQ, c);
+
+        ab = new Field("a", t2);
+        cb1 = new Constraint(ab, Constraint.EQ, v1);
+        cb2 = new Constraint(ab, Constraint.EQ, v2);
+        cb3 = new Constraint(ab, Constraint.LT, v1);
+        cb4 = new Constraint(ab, Constraint.LT, v2);
+        cb5 = new Constraint(v1, Constraint.LT, ab);
+        cb7 = new Constraint(ab, Constraint.LIKE, v3);
+        cb8 = new Constraint(ab, Constraint.LIKE, v4);
+
+        mapping = new HashMap();
+        mapping.put(t1, t2);
+        mapping.put(t2, t1);
     }
 
     public void testGetSQLString() throws Exception {
@@ -56,6 +74,13 @@ public class ConstraintTest extends TestCase
         assertEquals("table1.a < table1.b", c10.getSQLString());
         assertEquals("table1.b < table1.a", c11.getSQLString());
         assertEquals("table1.a = table1.c", c12.getSQLString());
+        assertEquals("table2.a = 1", cb1.getSQLString());
+        assertEquals("table2.a = 2", cb2.getSQLString());
+        assertEquals("table2.a < 1", cb3.getSQLString());
+        assertEquals("table2.a < 2", cb4.getSQLString());
+        assertEquals("1 < table2.a", cb5.getSQLString());
+        assertEquals("table2.a LIKE 'Flibble'", cb7.getSQLString());
+        assertEquals("table2.a LIKE 'Flobble'", cb8.getSQLString());
     }
 
     public void testCompare() throws Exception {
@@ -128,5 +153,29 @@ public class ConstraintTest extends TestCase
         assertEquals(AbstractConstraint.INDEPENDENT, c12.compare(c11));
         assertEquals(AbstractConstraint.EQUAL, c12.compare(c12));
 
+        assertEquals(AbstractConstraint.EQUAL, c1.compare(cb1, mapping, mapping));
+        assertEquals(AbstractConstraint.EQUAL, c2.compare(cb2, mapping, mapping));
+        assertEquals(AbstractConstraint.EQUAL, c3.compare(cb3, mapping, mapping));
+        assertEquals(AbstractConstraint.EQUAL, c4.compare(cb4, mapping, mapping));
+        assertEquals(AbstractConstraint.EQUAL, c5.compare(cb5, mapping, mapping));
+        assertEquals(AbstractConstraint.EQUAL, c7.compare(cb7, mapping, mapping));
+        assertEquals(AbstractConstraint.EQUAL, c8.compare(cb8, mapping, mapping));
+
+        assertEquals(AbstractConstraint.INDEPENDENT, c1.compare(c1, mapping, mapping));
+        assertEquals(AbstractConstraint.INDEPENDENT, c2.compare(c2, mapping, mapping));
+        assertEquals(AbstractConstraint.INDEPENDENT, c3.compare(c3, mapping, mapping));
+        assertEquals(AbstractConstraint.INDEPENDENT, c4.compare(c4, mapping, mapping));
+        assertEquals(AbstractConstraint.INDEPENDENT, c5.compare(c5, mapping, mapping));
+        assertEquals(AbstractConstraint.INDEPENDENT, c7.compare(c7, mapping, mapping));
+        assertEquals(AbstractConstraint.INDEPENDENT, c8.compare(c8, mapping, mapping));
+
+        assertEquals(AbstractConstraint.EXCLUDES, c1.compare(cb2, mapping, mapping));
+        assertEquals(AbstractConstraint.EXCLUDES, cb1.compare(c2, mapping, mapping));
+        assertEquals(AbstractConstraint.EXCLUDES, c1.compare(cb3, mapping, mapping));
+        assertEquals(AbstractConstraint.EXCLUDES, cb1.compare(c3, mapping, mapping));
+        assertEquals(AbstractConstraint.IMPLIES, c1.compare(cb4, mapping, mapping));
+        assertEquals(AbstractConstraint.IMPLIES, cb1.compare(c4, mapping, mapping));
+        assertEquals(AbstractConstraint.EXCLUDES, c1.compare(cb5, mapping, mapping));
+        assertEquals(AbstractConstraint.EXCLUDES, cb1.compare(c5, mapping, mapping));
     }
 }

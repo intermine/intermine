@@ -11,6 +11,7 @@ package org.intermine.sql.query;
  */
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * A representation of a constant value in an SQL query.
@@ -54,7 +55,7 @@ public class Constant extends AbstractValue
     public boolean equals(Object obj) {
         if (obj instanceof Constant) {
             Constant objConstant = (Constant) obj;
-            return compare(objConstant) == EQUAL;
+            return compare(objConstant, null, null) == EQUAL;
         }
         return false;
     }
@@ -75,7 +76,7 @@ public class Constant extends AbstractValue
      *
      * @see AbstractValue#compare
      */
-    public int compare(AbstractValue obj) {
+    public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof Constant) {
             Constant objC = (Constant) obj;
             if (value.equals(objC.value)) {
