@@ -18,7 +18,7 @@ package org.flymine.networkview.network;
 public class FlyNode extends FlyHashGraphElement 
     {
     
-    private static final long serialVersionUID = 999999999002L;
+    private static final long serialVersionUID = 9999902903901L;
 
     /**
      * Constructs a new FlyNode

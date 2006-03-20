@@ -25,7 +25,7 @@ import cytoscape.data.Semantics;
 public class FlyNetwork implements Serializable
 {
 
-    private static final long serialVersionUID = 999999999004L;
+    private static final long serialVersionUID = 9999902905901L;
     
     /**
      * name of the interaction type attribute -> "interaction"
@@ -104,7 +104,9 @@ public class FlyNetwork implements Serializable
             // copy all attriute information
             for (Iterator iter = e.getAttributeNames().iterator(); iter.hasNext();) {
                 String name = (String) iter.next();
-                newEdge.setAttribute(name, e.getAttributeValue(name));
+                Object value = e.getAttributeValue(name);
+                int flag = e.getAttributeFlag(name);
+                newEdge.setAttribute(name, value, flag);
             }
             edges.put(newEdge.getLabel(), newEdge);
             return true;
@@ -222,6 +224,7 @@ public class FlyNetwork implements Serializable
      * This will check if the networks contain the same elements.
      * Each element in one network need to have the same attributes 
      * as it's corresponding element in the other network.
+     * This is not equal to the equals() method and does not change the hashcode() method
      * @param net the network to compare with
      * @return true if the networks contain the same information
      */
