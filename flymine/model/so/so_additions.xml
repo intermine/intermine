@@ -139,7 +139,6 @@
     <collection name="spliceosomalIntrons" referenced-type="org.flymine.model.genomic.SpliceosomalIntron" ordered="true" reverse-reference="branchSites"/>
   </class>
   <class name="org.flymine.model.genomic.TelomeraseRNA" extends="org.flymine.model.genomic.EnzymaticRNA" is-interface="true"/>
-  <class name="org.flymine.model.genomic.IntergenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.GenePart" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="transcripts"/>
     <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts"/>
@@ -173,8 +172,8 @@
   <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.Region" is-interface="true">
     <collection name="regulatoryRegions" referenced-type="org.flymine.model.genomic.RegulatoryRegion" ordered="true" reverse-reference="gene"/>
     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="gene"/>
-    <reference name="upstreamIntergenicRegion" referenced-type="org.flymine.model.genomic.IntergenicRegion" reverse-reference="downstreamGene"/>
-    <reference name="downstreamIntergenicRegion" referenced-type="org.flymine.model.genomic.IntergenicRegion" reverse-reference="upstreamGene"/>
+    <reference name="upstreamIntergenicRegion" referenced-type="org.flymine.model.genomic.IntergenicRegion"/>
+    <reference name="downstreamIntergenicRegion" referenced-type="org.flymine.model.genomic.IntergenicRegion"/>
   </class>
   <class name="org.flymine.model.genomic.MethylatedC" extends="org.flymine.model.genomic.MethylatedBaseFeature" is-interface="true"/>
   <class name="org.flymine.model.genomic.Contig" extends="org.flymine.model.genomic.Assembly org.flymine.model.genomic.AssemblyComponent" is-interface="true">
@@ -291,7 +290,6 @@
   <class name="org.flymine.model.genomic.EnzymaticRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
   <class name="org.flymine.model.genomic.TransposableElementInsertionSite" extends="org.flymine.model.genomic.InsertionSite" is-interface="true"/>
   <class name="org.flymine.model.genomic.IntergenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true">
-    <reference name="upstreamGene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="downstreamIntergenicRegion"/>
-    <reference name="downstreamGene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="upstreamIntergenicRegion"/>
+    <collection name="adjacentGenes" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
 </classes>
