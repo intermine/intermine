@@ -28,9 +28,15 @@ Sequence.residues = dna.sequence
 Synonym = exon_stable_id, gene_stable_id, transcript_stable_id, translation_stable_id
 Synonym.subject = exon_stable_id.exon, gene_stable_id.gene, transcript_stable_id.transcript, translation_stable_id.translation
 Synonym.value = exon_stable_id.stable_id, gene_stable_id.stable_id, translation_stable_id.stable_id, transcript_stable_id.stable_id
-MRNA = transcript [biotype = protein_coding]
+MRNA = transcript
 MRNA.gene = transcript.gene
 TRNA = transcript [biotype = tRNA]
 TRNA.gene = transcript.gene
 MiRNA = transcript [biotype = miRNA]
 MiRNA.gene = transcript.gene
+RRNA = transcript [biotype = rRNA]
+RRNA.gene = transcript.gene
+SnoRNA = transcript [biotype = snoRNA]
+SnoRNA.gene = transcript.gene
+SnRNA = transcript [biotype = snRNA]
+SnRNA.gene = transcript.gene

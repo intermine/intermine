@@ -60,6 +60,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
     private Map markerSynonymMap = new HashMap();
 
+    private String srcNs;
+
     //Holds all the information from the Ensembl Config file - i.e. datasources & sets
     private EnsemblConfig config;
 
@@ -111,7 +113,7 @@ public class EnsemblDataTranslator extends DataTranslator
     protected Collection translateItem(Item srcItem)
             throws ObjectStoreException, InterMineException {
         Collection result = new HashSet();
-        String srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
+        srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
         String srcItemClassName = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
         Collection translated = super.translateItem(srcItem);
@@ -119,9 +121,20 @@ public class EnsemblDataTranslator extends DataTranslator
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
-                if ("dna".equals(srcItemClassName) && !config.doStoreDna()) {
-                    LOG.debug("Skipping a dna item!");
-                    storeTgtItem = false;
+                if ("dna".equals(srcItemClassName)) {
+
+                    if (config.doStoreDna()) {
+
+                        if (srcItem.hasAttribute("sequence")) {
+                            int seqLen = srcItem.getAttribute("sequence").getValue().length();
+                            tgtItem.setAttribute("length", Integer.toString(seqLen));
+                        } else {
+                            LOG.warn("A DNA item has no sequence! " + srcItem.getIdentifier());
+                        }
+                    } else {
+                        LOG.debug("Skipping a DNA item! " + srcItem.getIdentifier());
+                        storeTgtItem = false;
+                    }
                 } else if ("karyotype".equals(srcItemClassName)) {
 
                     translateKaryotype(srcItem, tgtItem, result);
@@ -214,10 +227,10 @@ public class EnsemblDataTranslator extends DataTranslator
                     // <- marker_feature.marker
                     // (<- marker_feature.marker).seq_region
                     // (<- marker_feature.marker).seq_region.coord_system
-                    List locationIds = new ArrayList();
+                    //List locationIds = new ArrayList();
                     for (Iterator j = locations.iterator(); j.hasNext();) {
                         Item location = (Item) j.next();
-                        locationIds.add(location.getIdentifier());
+                        //locationIds.add(location.getIdentifier());
                         result.add(location);
                     }
                     setNameAttribute(srcItem, tgtItem);
@@ -244,7 +257,8 @@ public class EnsemblDataTranslator extends DataTranslator
             //simple_feature map to null, become TRNA/CpGIsland depending on analysis_id(logic_name)
         } else if ("simple_feature".equals(srcItemClassName)) {
             Item simpleFeature = createSimpleFeature(srcItem);
-            if (simpleFeature.getIdentifier() != null && simpleFeature.getIdentifier() != "") {
+            if (simpleFeature.getIdentifier() != null
+                    && !simpleFeature.getIdentifier().equals("")) {
                 result.add(simpleFeature);
                 result.add(createLocation(srcItem, simpleFeature, true));
                 result.add(createAnalysisResult(srcItem, simpleFeature));
@@ -264,7 +278,7 @@ public class EnsemblDataTranslator extends DataTranslator
         result.add(location);
 
         if (srcItem.hasReference("seq_region")) {
-            Item seq = (Item) getSeqItem(srcItem.getReference("seq_region").getRefId(), true);
+            Item seq = getSeqItem(srcItem.getReference("seq_region").getRefId(), true);
 
             tgtItem.addReference(new Reference("chromosome", seq.getIdentifier()));
         }
@@ -323,21 +337,6 @@ public class EnsemblDataTranslator extends DataTranslator
             addReferencedItem(cds,
                     config.getEnsemblDataSet(), "evidence", true, "", false);
 
-            //make a synonym for the tgtitem as well (MRNA)
-            if (cds.hasAttribute(IDENTIFIER)) {
-
-                Item synonym = createSynonym(
-                        tgtItem.getIdentifier(),
-                        IDENTIFIER,
-                        cds.getAttribute(IDENTIFIER).getValue(),
-                        config.getEnsemblDataSrcRef());
-                result.add(synonym);
-
-            } else {
-                LOG.debug("Skipped creating a Synonym for a CDS; tgtitem:"
-                    + tgtItem.getClassName() + " " + tgtItem.getIdentifier());
-            }
-
             tgtItem.addToCollection("CDSs", cds);
             result.add(createSimpleRelation(
                     tgtItem.getIdentifier(), cds.getIdentifier()));
@@ -366,14 +365,17 @@ public class EnsemblDataTranslator extends DataTranslator
 
         //Create a more usable identifier field.
         StringBuffer newIdBuff = new StringBuffer();
-        newIdBuff.append(tgtItem.getAttribute(IDENTIFIER).getValue() + "_");
+        newIdBuff.append(tgtItem.getAttribute(IDENTIFIER).getValue());
+        newIdBuff.append("_");
 
         Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
                 srcItem.getReference("seq_region").getRefId()));
 
-        newIdBuff.append(seqRegItem.getAttribute("name").getValue() + ":");
+        newIdBuff.append(seqRegItem.getAttribute("name").getValue());
+        newIdBuff.append(":");
 
-        newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue() + "..");
+        newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue());
+        newIdBuff.append("..");
         newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
         tgtItem.removeAttribute(IDENTIFIER);
         tgtItem.setAttribute(IDENTIFIER, newIdBuff.toString());
@@ -573,7 +575,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     + " id:" + srcItem.getIdentifier());
 
             String refId = srcItem.getReference("seq_region").getRefId();
-            Item seq = (Item) getSeqItem(refId, true);
+            Item seq = getSeqItem(refId, true);
 
             if (srcItemIsChild) {
                 addReferencedItem(tgtItem, location, "objects", true, "subject", false);
@@ -607,7 +609,7 @@ public class EnsemblDataTranslator extends DataTranslator
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                 srcNs + "marker_feature", false));
         constraints.add(new FieldNameAndValue("marker", value, true));
-        Item location = new Item();
+        Item location;
         for (Iterator i = srcItemReader.getItemsByDescription(constraints).iterator();
              i.hasNext();) {
             Item feature = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
@@ -633,10 +635,17 @@ public class EnsemblDataTranslator extends DataTranslator
             org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);
 
             if (markerSyn != null) {
-                Item synonym = ItemHelper.convert(markerSyn);
-                if (synonym.hasAttribute("name")) {
-                    String name = synonym.getAttribute("name").getValue();
-                    tgtItem.addAttribute(new Attribute("name", name));
+
+                if (markerSyn.getClassName().equals(srcNs + "marker_synonym")) {
+
+                    Item synonym = ItemHelper.convert(markerSyn);
+                    if (synonym.hasAttribute("name")) {
+                        String name = synonym.getAttribute("name").getValue();
+                        tgtItem.addAttribute(new Attribute("name", name));
+                    }
+                } else {
+                    LOG.warn("Found a " + markerSyn.getClassName()
+                            + " while looking for a marker_synonym");
                 }
             } else {
                 LOG.warn("setNameAttribute() failed to find marker_synonym:" + markerSynRefId);
@@ -699,9 +708,9 @@ public class EnsemblDataTranslator extends DataTranslator
         location.addAttribute(new Attribute("endIsPartial", "false"));
         location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
         location.addReference(new Reference("subject",
-                ((Item) getSeqItem(contigId, true)).getIdentifier()));
+                (getSeqItem(contigId, true)).getIdentifier()));
         location.addReference(new Reference("object",
-                ((Item) getSeqItem(bioEntityId, true)).getIdentifier()));
+                (getSeqItem(bioEntityId, true)).getIdentifier()));
         return location;
     }
 
@@ -728,7 +737,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     property = coord.getAttribute("name").getValue();
                 }
             }
-            if (property != null && property != "") {
+            if (property != null && !property.equals("")) {
 
                 //Produces the classname/type of the item, i.e. Chromosome, Contig, Chunk etc etc
                 String s = (property.substring(0, 1)).toUpperCase().concat(property.substring(1));
@@ -760,9 +769,11 @@ public class EnsemblDataTranslator extends DataTranslator
 
 
         //If we need to create a Synonym and one hasn't been made for the seq item yet...
-        if (createSynonym && !itemId2SynMap.containsKey(seq.getIdentifier())) {
 
-            if (seq.hasAttribute(IDENTIFIER)) {
+        if (createSynonym && !itemId2SynMap.containsKey(
+                seq != null ? seq.getIdentifier() : "NO_ID_HERE!")) {
+
+            if (seq != null && seq.hasAttribute(IDENTIFIER)) {
 
                 Item seqSyn = createSynonym(
                         seq.getIdentifier(),
@@ -775,7 +786,8 @@ public class EnsemblDataTranslator extends DataTranslator
             } else {
 
                 LOG.debug("Skipped creating a synonym for a seq item with no identifier:"
-                        + seq.getClassName() + " id:" + seq.getIdentifier());
+                        +  (seq != null ? seq.getClassName() + " id:"
+                        +  seq.getIdentifier() : "seq is null"));
             }
         }
 
@@ -859,13 +871,13 @@ public class EnsemblDataTranslator extends DataTranslator
                 }
 
                 StringBuffer newIdBuff = new StringBuffer();
-                newIdBuff.append(name + "_");
+                newIdBuff.append(name).append("_");
 
                 Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
                         srcItem.getReference("seq_region").getRefId()));
 
-                newIdBuff.append(seqRegItem.getAttribute("name").getValue() + ":");
-                newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue() + "..");
+                newIdBuff.append(seqRegItem.getAttribute("name").getValue()).append(":");
+                newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue()).append("..");
                 newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
 
                 simpleFeature.addReference(config.getOrganismRef());
@@ -908,7 +920,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     srcItem.getReference("display_xref").getRefId()));
 
             //DBNAME
-            String dbname = null;
+            String dbname;
             //look for the reference to an xref database - the external_db
             if (xref.hasReference("external_db")) {
                 Reference extDbRef = xref.getReference("external_db");
@@ -1014,11 +1026,10 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     private Item getStableId(String ensemblType, String identifier, String srcNs) throws
             ObjectStoreException {
-        String value = identifier;
         Set constraints = new HashSet();
         constraints.add(new FieldNameAndValue(ObjectStoreItemPathFollowingImpl.CLASSNAME,
                 srcNs + ensemblType + "_stable_id", false));
-        constraints.add(new FieldNameAndValue(ensemblType, value, true));
+        constraints.add(new FieldNameAndValue(ensemblType, identifier, true));
         Iterator stableIds = srcItemReader.getItemsByDescription(constraints).iterator();
 
         if (stableIds.hasNext()) {
@@ -1065,13 +1076,13 @@ public class EnsemblDataTranslator extends DataTranslator
      * @return synonym item
      */
     private Item getMarkerSynonym(Item srcItem) {
-        Item synonym = new Item();
+        Item synonym;
         String subjectId = srcItem.getReference("marker").getRefId();
-        Set synonymSet = new HashSet();
+        Set synonymSet;
         synonymSet = (HashSet) markerSynonymMap.get(subjectId);
 
         String value = srcItem.getAttribute("name").getValue();
-        Reference ref = new Reference();
+        Reference ref;
         //TODO: NO HARDCODING!!!!!
         if (srcItem.hasAttribute("source")) {
             String source = srcItem.getAttribute("source").getValue();
