@@ -4941,8 +4941,10 @@
     <convert-file clsName="org.flymine.dataconversion.AffyConverter"
                   osName="osw.cdnaclone-tgt-items"
                   model="cdnaclone">
+
       <fileset dir="${shared.data}/human/probeSet/"
-               includes="HG-U133A_annot.csv"/>
+               includes="*.csv"/>
+
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
