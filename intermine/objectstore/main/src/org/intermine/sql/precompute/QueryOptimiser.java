@@ -11,6 +11,7 @@ package org.intermine.sql.precompute;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -320,9 +321,16 @@ public class QueryOptimiser
     protected static SortedMap mergeMultiple(Set precomputedTables, Query query,
             Query originalQuery) {
         SortedMap result = new TreeMap();
-        Iterator precompIter = precomputedTables.iterator();
-        while (precompIter.hasNext()) {
-            PrecomputedTable p = (PrecomputedTable) precompIter.next();
+        // Do precomputed tables is decreasing order of number of constituent tables
+        Object sorted[] = (Object[]) precomputedTables.toArray();
+        Arrays.sort(sorted, new Comparator() {
+            public int compare(Object a, Object b) {
+                return ((PrecomputedTable) b).getQuery().getFrom().size()
+            - ((PrecomputedTable) a).getQuery().getFrom().size();
+            }
+        });
+        for (int i = 0; i < sorted.length; i++) {
+            PrecomputedTable p = (PrecomputedTable) sorted[i];
             Set mergeResult = merge(p, query, originalQuery);
             if (!mergeResult.isEmpty()) {
                 result.put(p, mergeResult);
