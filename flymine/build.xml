@@ -3021,7 +3021,7 @@
     <read-fasta className="org.flymine.model.genomic.MicroarrayOligo" keyFieldName="identifier"
                 organismAbbreviation="DM" oswAlias="osw.production">
       <fileset dir="${shared.data}/long_oligo">
-        <include name="FL002.seq"/>
+        <include name="indac_1.0.fasta"/>
       </fileset>
     </read-fasta>
   </target>
