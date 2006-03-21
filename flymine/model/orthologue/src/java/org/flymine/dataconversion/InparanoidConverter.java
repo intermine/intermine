@@ -99,8 +99,8 @@ public class InparanoidConverter extends FileConverter
             String geneId = null;
             String transId = null;
 
-            // S. cerevisciae files have gene id, no translations
-            if (("modSC".equals(array[2]) || "modRR".equals(array[2]))) {
+            // some files have gene id, no translations
+            if ("modSC".equals(array[2]) || "modRR".equals(array[2]) || "modMM".equals(array[2])) {
                 geneId = array[4];
             } else {
                 transId = array[4];
