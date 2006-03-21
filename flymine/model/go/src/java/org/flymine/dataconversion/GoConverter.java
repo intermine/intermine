@@ -54,6 +54,7 @@ public class GoConverter extends FileConverter
     protected Map withTypes = new LinkedHashMap();
     protected Map synonymTypes = new HashMap();
     protected Map productWrapperMap = new LinkedHashMap();;
+    private String geneAttribute;
 
     protected ItemFactory itemFactory;
 
@@ -105,6 +106,16 @@ public class GoConverter extends FileConverter
      */
     public void setOntology(File ontology) {
         this.ontology = ontology;
+    }
+
+    /**
+     * Set which attribute of gene to assign identifier to - can be
+     * 'organismDbId' or 'identifier'
+     *
+     * @param geneattribute attribute name
+     */
+    public void setGeneattribute(String geneattribute) {
+        this.geneAttribute = geneattribute;
     }
 
     /**
@@ -563,7 +574,7 @@ public class GoConverter extends FileConverter
 
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
-            idField = "organismDbId";
+            idField = geneAttribute;
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
             idField = "primaryAccession";
@@ -640,6 +651,10 @@ public class GoConverter extends FileConverter
      * @return the datasource
      */
     protected Item newDatasource(String code) {
+        // TEST both 'GOA' and 'Gene Ontology' mean same thing
+        if (code.equals("GOA")) {
+            code = "Gene Ontology";
+        }
         Item item = (Item) datasources.get(code);
         if (item == null) {
             item = createItem("DataSource");
@@ -657,6 +672,8 @@ public class GoConverter extends FileConverter
                 title = "MGI";
             } else if ("SGD".equals(code)) {
                 title = "SGD";
+            } else if ("RGD".equals(code)) {
+                title = "RGD";
             } else if ("PINC".equals(code)) {
                 title = "PINC";
             } else if ("HGNC".equals(code)) {

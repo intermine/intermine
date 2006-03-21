@@ -946,7 +946,7 @@
                     target="osw.ensembl-apis-mellifera-tgt-items"
                     srcModel="ensembl"
                     tgtModel="genomic"
-                    organism="APM"/>
+                    organism="AM"/>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1787,12 +1787,16 @@
 
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter" model="genomic"
-                  ontology="${build}/model/go/gene_ontology.obo">
+                  ontology="${build}/model/go/gene_ontology.obo"
+                  geneAttribute="identifier">
       <fileset dir="${shared.data}/go-annotation/">
-        <include name="flybase/2005-12-25/gene_association.fb"/>
-        <include name="wormbase/2005-12-18/gene_association.wb"/>
+        <include name="flybase/2006-03-12/gene_association.fb"/>
+        <include name="mgi/2006-03-11/gene_association.mgi"/>
+        <include name="sgd/2006-03-15/gene_association.sgd"/>
+        <include name="rgd/2006-03-12/gene_association.rgd"/>
         <include name="uniprot/2006-01-27/gene_association_ag"/>
         <include name="uniprot/2006-01-27/gene_association_agp"/>
+        <include name="uniprot/2006-01-27/gene_association_am"/>
      </fileset>
     </convert-file>
 
@@ -1819,7 +1823,54 @@
                         ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation"/>
+  <!-- wormbase go annotation needs to set Gene.organismDbId and use appropriate key -->
+  <target name="retrieve-go-annotation-wormbase" depends="prepare-build-model, compile-go-java">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.go-dag-tgt-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <copy file="${shared.data}/gene_ontology/gene_ontology.obo" toDir="${build.model}/go"/>
+
+    <convert-file osName="osw.go-annotation-tgt-items"
+                  clsName="org.flymine.dataconversion.GoConverter" model="genomic"
+                  ontology="${build}/model/go/gene_ontology.obo"
+                  geneAttribute="organismDbId">
+      <fileset dir="${shared.data}/go-annotation/">
+        <include name="wormbase/2006-03-12/gene_association.wb"/>
+     </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.go-annotation-tgt-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
+  </target>
+
+  <target name="load-go-annotation-wormbase"  depends="copy-genomic-config">
+    <taskdef name="load-go-annotation" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-go-annotation integrationWriter="integration.production"
+                        source="os.go-annotation-translated"
+                        sourceName="goa-wormbase"
+                        ignoreDuplicates="true"/>
+  </target>
+
+  <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation, retrieve-go-annotation-wormbase, load-go-annotation-wormbase"/>
 
   <!--load GFF3 data for flyreg -->
   <target name="retrieve-flyreg"
@@ -2013,8 +2064,8 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-  <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454">
-      <fileset dir="${shared.data}/uniprot/6.8">
+  <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454 7460">
+      <fileset dir="${shared.data}/uniprot/7.2">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -2099,14 +2150,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <filter-uniprot tgtDir="${build.tmp}" organisms="7227">
-      <fileset dir="${shared.data}/uniprot/7.2">
-        <include name="uniprot_sprot*"/>
-        <include name="uniprot_trembl*"/>
-      </fileset>
-    </filter-uniprot>
-
-    <filter-uniprot tgtDir="${build.tmp}" organisms="7237">
+    <filter-uniprot tgtDir="${build.tmp}" organisms="7227 7237">
       <fileset dir="${shared.data}/uniprot/7.2">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
@@ -5019,7 +5063,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="9606">
-      <fileset dir="${shared.data}/uniprot/6.8">
+      <fileset dir="${shared.data}/uniprot/7.2">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
