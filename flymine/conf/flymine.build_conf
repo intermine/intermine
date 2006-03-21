@@ -18,6 +18,10 @@ run: build-flybase-production
 
 dump: drosophila
 
+run: build-ensembl-apis-mellifera-production
+
+dump: apis
+
 run: build-go-production build-psi-production build-rnai-production
 
 dump: load-stage-1
