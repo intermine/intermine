@@ -64,8 +64,8 @@ public class GFF3Converter
     private Map identifierMap = new HashMap();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
-    
-    
+
+
 
     /**
      * Constructor
@@ -79,7 +79,7 @@ public class GFF3Converter
      */
 
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgAbbrev,
-                         String dataSourceName, String dataSetTitle, Model tgtModel, 
+                         String dataSourceName, String dataSetTitle, Model tgtModel,
                          GFF3RecordHandler handler) {
 
         this.writer = writer;
@@ -90,10 +90,10 @@ public class GFF3Converter
         this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         this.organism = getOrganism();
-        
+
         this.dataSet = createItem("DataSet");
         dataSet.addAttribute(new Attribute("title", dataSetTitle));
-        
+
         this.dataSource = createItem("DataSource");
         dataSource.addAttribute(new Attribute("name", dataSourceName));
 
@@ -193,7 +193,7 @@ public class GFF3Converter
         }
 
         if (names != null) {
-            if (cd.getFieldDescriptorByName("symbol") == null) {                
+            if (cd.getFieldDescriptorByName("symbol") == null) {
                 feature.addAttribute(new Attribute("name", (String) names.get(0)));
                 for (Iterator i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
@@ -217,7 +217,7 @@ public class GFF3Converter
                 }
             }
         }
-        
+
         feature.addReference(getOrgRef());
 
         // if parents -> create a SimpleRelation
@@ -236,26 +236,32 @@ public class GFF3Converter
             }
         }
 
-        
-        Item location = createItem("Location");
-        location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
-        location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
-        if (record.getStrand() != null && record.getStrand().equals("+")) {
-            location.addAttribute(new Attribute("strand", "1"));
-        } else if (record.getStrand() != null && record.getStrand().equals("-")) {
-            location.addAttribute(new Attribute("strand", "-1"));
+
+        Item relation;
+
+        if (record.getStart() < 1 || record.getEnd() < 1) {
+            relation = createItem("SimpleRelation");
         } else {
-            location.addAttribute(new Attribute("strand", "0"));
+            relation = createItem("Location");
+            relation.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
+            relation.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
+            if (record.getStrand() != null && record.getStrand().equals("+")) {
+                relation.addAttribute(new Attribute("strand", "1"));
+            } else if (record.getStrand() != null && record.getStrand().equals("-")) {
+                relation.addAttribute(new Attribute("strand", "-1"));
+            } else {
+                relation.addAttribute(new Attribute("strand", "0"));
+            }
+
+            if (record.getPhase() != null) {
+                relation.addAttribute(new Attribute("phase", record.getPhase()));
+            }
         }
-        
-        if (record.getPhase() != null) {
-            location.addAttribute(new Attribute("phase", record.getPhase()));
-        }
-        location.addReference(new Reference("object", seq.getIdentifier()));
-        location.addReference(new Reference("subject", feature.getIdentifier()));
-        location.addCollection(new ReferenceList("evidence",
+        relation.addReference(new Reference("object", seq.getIdentifier()));
+        relation.addReference(new Reference("subject", feature.getIdentifier()));
+        relation.addCollection(new ReferenceList("evidence",
                                Arrays.asList(new Object[] {dataSet.getIdentifier()})));
-        handler.setLocation(location);
+        handler.setLocation(relation);
 
         ReferenceList evidence = new ReferenceList("evidence");
         evidence.addRefId(dataSet.getIdentifier());
@@ -282,12 +288,12 @@ public class GFF3Converter
             if (record.getSource() != null) {
                 // this special case added to cope with pseudoobscura data
                 Item computationalResult = createItem("ComputationalResult");
-                
+
                 Item computationalAnalysis = getComputationalAnalysis(record.getSource());
                 computationalResult.addReference(new Reference("analysis",
                                                  computationalAnalysis.getIdentifier()));
                 handler.setAnalysis(computationalAnalysis);
-                
+
                 handler.setResult(computationalResult);
                 evidence.addRefId(computationalResult.getIdentifier());
 
@@ -297,7 +303,7 @@ public class GFF3Converter
 
         feature.addCollection(evidence);
         handler.setFeature(feature);
-        
+
         String orgAbb = null;
         String tgtSeqIdentifier = null;
         if (record.getAttributes().get("Organism") != null) {
@@ -322,8 +328,8 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
-        
-           
+
+
         try {
             Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
@@ -334,9 +340,9 @@ public class GFF3Converter
             LOG.error("Problem writing item to the itemwriter");
             throw e;
         }
-        
+
     }
-                      
+
 
     private String getIdentifier(String id) {
         String identifier = (String) identifierMap.get(id);
@@ -448,6 +454,6 @@ public class GFF3Converter
         return "0_" + itemid++;
     }
 
-   
+
 }
 
