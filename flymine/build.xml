@@ -1280,7 +1280,7 @@
                   osName="osw.homophila-tgt-items" model="homophila"
                   diseaseFile="${shared.data}/homophila/homophila_diseases.txt"
                   proteinGeneFile="${shared.data}/homophila/protein_gene.txt">
-      <fileset dir="${shared.data}/homophila/2.1" includes="homophila_matches.txt"/>
+      <fileset dir="${shared.data}/homophila/current" includes="homophila_matches.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
