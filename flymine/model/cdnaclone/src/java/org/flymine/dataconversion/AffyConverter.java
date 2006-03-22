@@ -107,21 +107,22 @@ public class AffyConverter extends CDNACloneConverter
 
            
             String probeId = array[0].substring(1);
-            String probeIdentifier = null;
+            String probePre = null;
             String dataSetId = null;
             String orgId = null;
 
             String chipInfo = array[1];
+            
             if (chipInfo.equals("Human Genome U133A Array")) {
-                probeIdentifier = probeId.concat("HG-U133A:");
+                probePre = PROBEPREFIX + "HG-U133A:";
                 dataSetId = dataSet1.getIdentifier();
                 orgId = organism.getIdentifier();
             } else if (chipInfo.equals("Human Genome U95Av2 Array")) {
-                probeIdentifier = probeId.concat("HG-U95Av2:");
+                probePre = PROBEPREFIX + "HG-U95Av2:";
                 dataSetId = dataSet2.getIdentifier();
                 orgId = organism.getIdentifier();
             } else if (chipInfo.equals("Mouse Genome 430 2.0 Array")) {
-                probeIdentifier = probeId.concat("Mouse430:");
+                probePre = PROBEPREFIX + "Mouse430:";
                 dataSetId = dataSet3.getIdentifier();
                 orgId = organismMM.getIdentifier();
 
@@ -130,7 +131,7 @@ public class AffyConverter extends CDNACloneConverter
             String geneEnsembl = array[17];
             //don't create probe if no ensembl id is given in the file
             if (geneEnsembl.startsWith("ENSG") || geneEnsembl.startsWith("ENSMUSG")) {               
-                Item probe = createProbe("CompositeSequence", probeIdentifier, 
+                Item probe = createProbe("CompositeSequence", probePre, probeId, 
                              orgId, dataSource.getIdentifier(), dataSetId, writer);
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
@@ -177,11 +178,11 @@ public class AffyConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createProbe(String clsName, String id, String orgId, 
+     private Item createProbe(String clsName, String probePre, String id, String orgId, 
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
-        probe.setAttribute("identifier", PROBEPREFIX + id);
+        probe.setAttribute("identifier", probePre + id);
         probe.setAttribute("name", id);
         probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);
