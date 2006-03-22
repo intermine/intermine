@@ -911,7 +911,7 @@
   </target>
 
   <!-- retrieve ensembl apis-mellifera data -->
-  <target name="retrieve-ensembl-apis-mellifera" depends="convert-ensembl">
+  <target name="retrieve-ensembl-apis-mellifera" depends="convert-ensembl, build-db-ensembl-apis-mellifera-src-items">
     <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
     </taskdef>
