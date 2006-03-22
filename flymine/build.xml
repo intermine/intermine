@@ -1141,7 +1141,7 @@
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="false"/>
+    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="flybase-dmel" ignoreDuplicates="false"/>
   </target>
 
   <target name="retrieve-and-load-chado-pseudoobscura"
@@ -1151,7 +1151,7 @@
     <taskdef name="load-chado" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
-    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="chado" ignoreDuplicates="false"/>
+    <load-chado integrationWriter="integration.production" source="os.chado-translated" sourceName="flybase-dpse" ignoreDuplicates="false"/>
   </target>
 
   <target name="build-flybase-production"
