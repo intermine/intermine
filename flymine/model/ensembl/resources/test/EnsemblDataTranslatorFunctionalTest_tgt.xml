@@ -432,6 +432,7 @@
 
 
   <item id="40_1" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="length" value="14"/>
     <attribute name="residues" value="BLAH_BLAH_BLAH"/>
   </item>
 
@@ -439,7 +440,7 @@
       <reference name="object" ref_id="-1_61"/>
       <reference name="subject" ref_id="8_478"/>
     </item>
-  <item id="-1_66" class="http://www.flymine.org/model/genomic#SimpleRelation">
+  <item id="-1_65" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="4_1"/>
     <reference name="subject" ref_id="3_1"/>
   </item>
@@ -447,7 +448,7 @@
     <reference name="object" ref_id="4_327"/>
     <reference name="subject" ref_id="3_478"/>
   </item>
-  <item id="-1_65" class="http://www.flymine.org/model/genomic#SimpleRelation">
+  <item id="-1_64" class="http://www.flymine.org/model/genomic#SimpleRelation">
     <reference name="object" ref_id="3_478"/>
     <reference name="subject" ref_id="-1_61"/>
   </item>
@@ -607,12 +608,6 @@
     <attribute name="value" value="1"/>
     <reference name="source" ref_id="-1_9"/>
     <reference name="subject" ref_id="-1_40"/>
-  </item>
-  <item id="-1_64" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="ENSP00000339205_CDS"/>
-    <reference name="source" ref_id="-1_9"/>
-    <reference name="subject" ref_id="3_478"/>
   </item>
   <item id="22_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>

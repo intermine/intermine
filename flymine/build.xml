@@ -2665,14 +2665,14 @@
 
 
   <target name="ensembl-test" depends="prepare-test, convert-ensembl, build-db-fulldatatest">
+    <copy todir="${build.model}/ensembl/resources/test" overwrite="true" failonerror="true" >
+      <fileset file="${model}/genomic/resources/flymine/ensembl_config.properties/"/>
+    </copy>
+
     <ant antfile="${build}/build-model.xml" target="test-java" inheritRefs="true">
       <property name="model.name" value="ensembl"/>
       <reference torefid="class.path" refid="test.class.path"/>
     </ant>
-
-    <copy todir="${build.model}/ensembl/resources/test" overwrite="true" failonerror="true" >
-      <fileset file="${model}/genomic/resources/flymine/ensembl_config.properties/"/>
-    </copy>
   </target>
 
   <target name="insert-ensembl-test" depends="prepare-test">
