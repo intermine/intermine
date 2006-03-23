@@ -1,0 +1,3 @@
+*     *       *       *       *       bash ~/public_html/tests/update_and_full_test.sh >> ~/public_html/tests/build.log 2>&1
+0 23 * * * ~/public_html/tests/nightly_restart.sh >> ~/public_html/tests/build.log 2>&1
+
