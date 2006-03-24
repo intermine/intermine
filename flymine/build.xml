@@ -1278,8 +1278,8 @@
     </taskdef>
     <convert-file clsName="org.flymine.dataconversion.HomophilaConverter"
                   osName="osw.homophila-tgt-items" model="homophila"
-                  diseaseFile="${shared.data}/homophila/homophila_diseases.txt"
-                  proteinGeneFile="${shared.data}/homophila/protein_gene.txt">
+                  diseaseFile="${shared.data}/homophila/current/homophila_diseases.txt"
+                  proteinGeneFile="${shared.data}/homophila/current/protein_gene.txt">
       <fileset dir="${shared.data}/homophila/current" includes="homophila_matches.txt"/>
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
