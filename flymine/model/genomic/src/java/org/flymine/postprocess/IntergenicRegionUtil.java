@@ -88,14 +88,12 @@ public class IntergenicRegionUtil
         Integer previousChrId = null;
         Set locationSet = new HashSet();
         Map locToGeneMap = new HashMap();
-
+    
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
             Gene gene = (Gene) rr.get(1);
             Location loc = (Location) rr.get(2);
-
-            addToLocToGeneMap(locToGeneMap, loc, gene);
 
             if (previousChrId != null && !chrId.equals(previousChrId)) {
                 Iterator irIter = createIntergenicRegionFeatures(locationSet, locToGeneMap,
@@ -105,8 +103,9 @@ public class IntergenicRegionUtil
                 locToGeneMap = new HashMap();
             }
 
+            addToLocToGeneMap(locToGeneMap, loc, gene);
+        
             locationSet.add(loc);
-            // geneSet.add(gene);
             previousChrId = chrId;
         }
 
@@ -248,6 +247,10 @@ public class IntergenicRegionUtil
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
 
+                String identifier = "integenic_region_chr" + chr.getIdentifier()
+                    + "_" + location.getStart() + ".." + location.getEnd();
+                intergenicRegion.setIdentifier(identifier);
+
                 Set adjacentGenes = new HashSet();
 
                 List nextGenes = (List) locToGeneMap.get(new Integer(newLocEnd + 1));
@@ -286,13 +289,9 @@ public class IntergenicRegionUtil
                     }
                 }
 
-                intergenicRegion.setAdjacentGenes(adjacentGenes);
-
-                String identifier = "integenic_region_chr" + chr.getIdentifier()
-                    + "_" + location.getStart() + ".." + location.getEnd();
-                intergenicRegion.setIdentifier(identifier);
-
                 synonym.setValue(intergenicRegion.getIdentifier());
+
+                intergenicRegion.setAdjacentGenes(adjacentGenes);
 
                 return intergenicRegion;
             }
