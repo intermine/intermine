@@ -273,37 +273,37 @@ public class MageConverterTest extends TestCase
         expected.setClassName(ns + "DerivedBioAssayData");
         expected.setIdentifier("2_2");
         expected.addAttribute(createAttribute("identifier","dbad1"));
-        expected.addReference(createReference("bioDataValues","11_17"));
+        expected.addReference(createReference("bioDataValues","12_21"));
         expected.addReference(createReference("quantitationTypeDimension", "8_10"));
         expected.addReference(createReference("bioAssayDimension", "0_0"));
         expected.addReference(createReference("designElementDimension", "3_3"));
 
-        Item d=createItems(ns+"BioDataTuples","11_17", "");
+        Item d=createItems(ns+"BioDataTuples","12_21", "");
         ReferenceList rl=new ReferenceList();
         rl.setName("bioAssayTupleData");
 
-        Item d1=createItems(ns+"BioAssayDatum", "12_18","" );
+        Item d1=createItems(ns+"BioAssayDatum", "11_17","" );
         d1.addReference(createReference("feature", "4_4"));
         d1.addReference(createReference("quantitationType", "9_11"));
         d1.addReference(createReference("bioAssay", "1_1"));
         d1.addAttribute(createAttribute("value", "1.006"));
         rl.addRefId(d1.getIdentifier());
 
-        Item d2=createItems(ns+"BioAssayDatum", "12_19","" );
+        Item d2=createItems(ns+"BioAssayDatum", "11_18","" );
         d2.addReference(createReference("feature", "4_4"));
         d2.addReference(createReference("quantitationType", "9_15"));
         d2.addReference(createReference("bioAssay","1_1"));
         d2.addAttribute(createAttribute("value", "234"));
         rl.addRefId(d2.getIdentifier());
 
-        Item d3=createItems(ns+"BioAssayDatum", "12_20","" );
+        Item d3=createItems(ns+"BioAssayDatum", "11_19","" );
         d3.addReference(createReference("feature", "4_6"));
         d3.addReference(createReference("quantitationType", "9_11"));
         d3.addReference(createReference("bioAssay", "1_1"));
         d3.addAttribute(createAttribute("value", "435.223"));
         rl.addRefId(d3.getIdentifier());
 
-        Item d4=createItems(ns+"BioAssayDatum", "12_21","" );
+        Item d4=createItems(ns+"BioAssayDatum", "11_20","" );
         d4.addReference(createReference("feature", "4_6"));
         d4.addReference(createReference("quantitationType", "9_15"));
         d4.addReference(createReference("bioAssay","1_1"));
@@ -320,9 +320,11 @@ public class MageConverterTest extends TestCase
         Iterator i = itemWriter.getItems().iterator();
         while(i.hasNext()) {
             Item item = (Item) i.next();
+            //System.out.println("item: " + item.getClassName()+ " id "+ item.getIdentifier());
             if (item.getClassName().endsWith("BioAssayDatum")
                 || item.getClassName().endsWith("BioDataTuples")
                 || item.getClassName().endsWith("DerivedBioAssayData")) {
+                //System.out.println("itemclassname: " + item.getClassName());
                 results.add(item);
             }
         }
