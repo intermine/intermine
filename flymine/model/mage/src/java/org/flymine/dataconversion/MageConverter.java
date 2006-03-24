@@ -165,7 +165,7 @@ public class MageConverter extends FileConverter
      * @param types comma separated list of quantitation types
      */
     public void setQuantitationtypes(String types) {
-        StringTokenizer st = new StringTokenizer(types, ",");
+        StringTokenizer st = new StringTokenizer(types.toLowerCase(), ",");
         while (st.hasMoreTokens()) {
             qTypes.add(((String) st.nextToken()).trim());
         }
@@ -329,102 +329,128 @@ public class MageConverter extends FileConverter
 
 
         if (className.equals("DerivedBioAssayData")) {
-            BioAssayData bad = (BioAssayData) obj;
-            String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
-                .getFilenameURI();
+            BioAssayData bad = (BioAssayData) obj;            
 
-            // TODO throw an exception if all dimensions are > 1
-            BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
-            BioDataCube.Order order = bdc.getOrder(); //DBQ
-            // Order 2 = DBQ, if anyhting different this code *may* not work so throw
-            // an exception just in case.
-            System.err .println("BioDataCube.Order " + order.getValue());
-            if (order.getValue() != 2) {
-                throw new IllegalArgumentException(
-                    "BioDataCube has order other than DBQ "
-                     + "(was: " + order.getValue() + ")."
-                     + " Current code may not work.");
-            }
-            List rowNames = null; //D
-            DesignElementDimension ddimension =
+            DesignElementDimension ddimension = //D
                   (DesignElementDimension) bad.getDesignElementDimension();
-
-            if (ddimension instanceof FeatureDimension) {
-                rowNames = ((FeatureDimension) ddimension).getContainedFeatures();
-            } else if (ddimension instanceof ReporterDimension) {
-                rowNames = ((ReporterDimension) ddimension).getReporters();
-            } else if (ddimension instanceof CompositeSequenceDimension) {
-                rowNames = ((CompositeSequenceDimension) ddimension).getCompositeSequences();
-            }
-
             QuantitationTypeDimension qdimension =
                 (QuantitationTypeDimension) bad.getQuantitationTypeDimension(); //Q
-            List qtList = qdimension.getQuantitationTypes();
-
-
             BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension();  //B
-            HasBioAssays.BioAssays_list colTypes = bdimension.getBioAssays();
-
-            boolean emptyFile = false;
-            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-            if (is.available() == 0) {
-                emptyFile = true;
-                LOG.warn("Ignoring empty data file: " + fileName);
+            
+            List cubeD = null; //D    
+            if (ddimension instanceof FeatureDimension) {
+                cubeD = ((FeatureDimension) ddimension).getContainedFeatures();
+            } else if (ddimension instanceof ReporterDimension) {
+                cubeD = ((ReporterDimension) ddimension).getReporters();
+            } else if (ddimension instanceof CompositeSequenceDimension) {
+                cubeD = ((CompositeSequenceDimension) ddimension).getCompositeSequences();
             }
-
-            System.err .println("Reading data from: " + fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-            Item bdt = makeItem("BioDataTuples");
-            ReferenceList dataList = new ReferenceList("bioAssayTupleData");
-            boolean storeTuple = false;
+          
+            List cubeQ = qdimension.getQuantitationTypes();
+          
+            HasBioAssays.BioAssays_list cubeB = bdimension.getBioAssays();
+          
 
             // if all three dimensions are greater than 1 then this code will not work,
             // need to look into re-writing with better access to contents of BioDataCube.
-            if ((rowNames.size() > 1) && (colTypes.size() > 1) && (qtList.size() > 1)) {
+            if ((cubeD.size() > 1) && (cubeQ.size() > 1) && (cubeB.size() > 1)) {
                 throw new IllegalArgumentException("All dimensions of BioDataCube were > 1 "
                                                    + "it is unlikely that the current code will "
                                                    + "work.");
             }
-
-            for (Iterator i = rowNames.iterator(); i.hasNext() && !emptyFile;) {
-                DesignElement feature = (DesignElement) i.next();
-                String s = br.readLine();
-                StringTokenizer st = new StringTokenizer(s, "\t");
-                for (Iterator j = colTypes.iterator(); j.hasNext();) {
-                    BioAssay ba = (BioAssay) j.next();
-                    for (Iterator k = qtList.iterator(); k.hasNext();) {
-                        QuantitationType qt = (QuantitationType) k.next();
-                        String value = st.nextToken();
-
-                        if (qTypes.contains(qt.getName())) {
-                            storeTuple = true;
-                            Item datum = makeItem("BioAssayDatum");
-                            dataList.addRefId(datum.getIdentifier());
-                            datum.setReference("quantitationType", findItemIdentifier(qt, true));
-                            if (feature instanceof Feature) {
-                                datum.setReference("feature",
-                                         findItemIdentifier(feature, true));
-                            } else if (feature instanceof Reporter) {
-                                datum.setReference("reporter", findItemIdentifier(feature, true));
-                            } else if (feature instanceof CompositeSequence) {
-                                datum.setReference("compositeSequence",
-                                         findItemIdentifier(feature, true));
-                            }
-                            datum.setAttribute("value", value);
-                            datum.setReference("bioAssay", findItemIdentifier(ba, true));
-                            storeItem(datum);
-                        }
+                  
+            boolean foundQType = false;
+            for (Iterator iter = cubeQ.iterator(); iter.hasNext(); ) {
+                QuantitationType qqt = (QuantitationType) iter.next();
+                if (qqt.getName() != null && !foundQType
+                    && qTypes.contains(qqt.getName().toLowerCase())) {
+                    foundQType = true;
+                    String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
+                                      .getFilenameURI();
+                    System.err .println("Reading data from: " + fileName);
+                    BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
+                    //bioDataCube.order give 3 dimensions and tell which dimensions are which 
+                    BioDataCube.Order order = bdc.getOrder(); //DBQ
+                    if (order == null) {
+                        throw new IllegalArgumentException("No order has been set for "
+                                                           + "BioDataCube! ");
                     }
-                }
+
+                    boolean emptyFile = false;
+                    InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
+                    if (is.available() == 0) {
+                        emptyFile = true;
+                        LOG.warn("Ignoring empty data file: " + fileName);
+                    }
+                                        
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    //cope with all the possible dimension arrangements
+                    int cubeOrder = order.getValue();
+                    switch (cubeOrder) {
+                    case 0: //BDQ                        
+                        if (cubeB.size() == 1) {                        
+                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeD.size() == 1) {                        
+                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if  (cubeQ.size() == 1) {                        
+                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        }                                    
+                        break;
+                    
+                    case 1: //BQD
+                        if (cubeB.size() == 1) {                        
+                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeD.size() == 1) {                        
+                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if  (cubeQ.size() == 1) {                        
+                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        }                                    
+                        break;
+
+                    case 2: //DBQ
+                        if (cubeD.size() == 1) {
+                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeB.size() == 1) {
+                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeQ.size() == 1) {
+                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        }
+                    case 3: //DQB
+                        if (cubeD.size() == 1) {
+                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeB.size() == 1) {
+                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeQ.size() == 1) {
+                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        }
+                    case 4: //QBD
+                        if (cubeD.size() == 1) {
+                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeB.size() == 1) {
+                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeQ.size() == 1) {
+                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        }
+                        
+                    case 5: //QDB 
+                        if (cubeD.size() == 1) {
+                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeB.size() == 1) {
+                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        } else if (cubeQ.size() == 1) {
+                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                        }
+                        
+                    default: 
+                        break;                        
+                    }   
+                                        
+                 } 
             }
-            if (storeTuple) {
-                bdt.addCollection(dataList);
-                storeItem(bdt); // store BioDataTuple item
-                item.setReference("bioDataValues", bdt.getIdentifier());
-            }
+
         }
 
+        
         if (seenMap.containsKey(obj) || seenMap.containsKey(objId)) {
             storeItem = true;
         } else {
@@ -438,11 +464,271 @@ public class MageConverter extends FileConverter
         if (storeItem) {
             storeItem(item);
         }
+
         return itemId;
-     }
+    }
 
+       
+    /**
+     * Create bioAssayDatum from found quantitationType
+     * @param value reading from fileExternal
+     * @param de: DesignElement
+     * @param ba: bioAssay
+     * @param qt: quantitationTye
+     * @return the created item
+     * @throws Exception if problems occur
+     */
+    private Item makeBioAssayDatum(String value, DesignElement de, BioAssay ba, 
+            QuantitationType qt) 
+        throws Exception {
+        Item datum = makeItem("BioAssayDatum");
+        
+        datum.setAttribute("value", value);
+                            
+        if (de instanceof Feature) {
+            datum.setReference("feature", findItemIdentifier(de, true));
+        } else if (de instanceof Reporter) {
+            datum.setReference("reporter", findItemIdentifier(de, true));
+        } else if (de instanceof CompositeSequence) {
+            datum.setReference("compositeSequence", findItemIdentifier(de, true));
+        }
+        
+        datum.setReference("bioAssay", findItemIdentifier(ba, true));
+        datum.setReference("quantitationType", findItemIdentifier(qt, true));
+        
+        return datum;
+    }
 
-    private String checkNameValueType(Object obj, HashMap map, String key) throws Exception  {
+    private void processBD(BufferedReader br, Set qTypes, 
+                           HasBioAssays.BioAssays_list cubeB, 
+                           List cubeD, List cubeQ, Item item)
+        throws Exception {
+        boolean storeTuple = false;
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        QuantitationType qt = (QuantitationType) cubeQ.get(0);  
+        if (qTypes.contains(qt.getName().toLowerCase())) {                       
+            for (Iterator i = cubeD.iterator(); i.hasNext();) {
+                BioAssay ba = (BioAssay) i.next();
+                String s = br.readLine();
+                if (s != null) {
+                    StringTokenizer st = new StringTokenizer(s, "\t");
+                    for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
+                        DesignElement de = (DesignElement) j.next();
+                        String value = st.nextToken();                                    
+                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
+                        storeItem(datum);   
+                        storeTuple = true;   
+                        tupleList.addRefId(datum.getIdentifier());
+                     
+                    }
+                }
+            }
+        }        
+        processTuples(storeTuple, tupleList, item);
+    }
+    
+    /**
+     * @param br: bufferedReader read one line every time
+     * @param qTypes: all the quantitationTypes from build file
+     * @param cubeB: bioAssay list
+     * @param cubeD: designElement list
+     * @param cubeQ: quantitationType list
+     * @param item: derivedBioAssayData
+     * @throws Exception if problems occur
+     */    
+    private void processDB(BufferedReader br, Set qTypes, 
+                           HasBioAssays.BioAssays_list cubeB, 
+                           List cubeD, List cubeQ, Item item) 
+        throws Exception {
+        boolean storeTuple = false;
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        QuantitationType qt = (QuantitationType) cubeQ.get(0);  
+        if (qTypes.contains(qt.getName().toLowerCase())) {                       
+            for (Iterator i = cubeD.iterator(); i.hasNext();) {
+                DesignElement de = (DesignElement) i.next();    
+                String s = br.readLine();
+                if (s != null) {
+                    StringTokenizer st = new StringTokenizer(s, "\t");
+                    for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {                    
+                        BioAssay ba = (BioAssay) j.next();                                
+                        String value = st.nextToken();   
+                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
+                        storeItem(datum);   
+                        storeTuple = true;   
+                        tupleList.addRefId(datum.getIdentifier());
+                    }
+                }
+            }
+        }
+        processTuples(storeTuple, tupleList, item);
+    }
+
+    /**
+     * @param br: bufferedReader read one line every time
+     * @param qTypes: all the quantitationTypes from build file
+     * @param cubeB: bioAssay list
+     * @param cubeD: designElement list
+     * @param cubeQ: quantitationType list
+     * @param item: derivedBioAssayData
+     * @throws Exception if problems occur
+     */    
+    private void processBQ(BufferedReader br, Set qTypes, 
+                           HasBioAssays.BioAssays_list cubeB, 
+                           List cubeD, List cubeQ, Item item) 
+        throws Exception {
+        boolean storeTuple = false;
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        DesignElement de = (DesignElement) cubeD.get(0);                            
+        for (Iterator i = cubeB.iterator(); i.hasNext();) {
+            BioAssay ba = (BioAssay) i.next();
+            String s = br.readLine();
+            if (s != null) {
+                StringTokenizer st = new StringTokenizer(s, "\t");
+                for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
+                    QuantitationType qt = (QuantitationType) j.next();
+                    String value = st.nextToken();                                    
+                    if (qTypes.contains(qt.getName().toLowerCase())) {
+                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
+                        storeItem(datum);   
+                        storeTuple = true;   
+                        tupleList.addRefId(datum.getIdentifier());
+                    }
+                }
+            }
+        }
+        processTuples(storeTuple, tupleList, item);
+    }
+ 
+
+    /**
+     * @param br: bufferedReader read one line every time
+     * @param qTypes: all the quantitationTypes from build file
+     * @param cubeB: bioAssay list
+     * @param cubeD: designElement list
+     * @param cubeQ: quantitationType list
+     * @param item: derivedBioAssayData
+     * @throws Exception if problems occur
+     */     
+    private void processQB(BufferedReader br, Set qTypes, 
+                           HasBioAssays.BioAssays_list cubeB, 
+                           List cubeD, List cubeQ, Item item) 
+        throws Exception {
+        boolean storeTuple = false;
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        DesignElement de = (DesignElement) cubeD.get(0);                            
+        for (Iterator i = cubeQ.iterator(); i.hasNext();) {
+            QuantitationType qt = (QuantitationType) i.next();               
+            String s = br.readLine();
+            if (s != null) {
+                StringTokenizer st = new StringTokenizer(s, "\t");
+                if (qTypes.contains(qt.getName().toLowerCase())) {
+                    for (Iterator j = cubeB.iterator(); j.hasNext(); ) {
+                        BioAssay ba = (BioAssay) j.next();
+                        String value = st.nextToken();  
+                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
+                        storeItem(datum);   
+                        storeTuple = true;   
+                        tupleList.addRefId(datum.getIdentifier());
+                    }
+                }
+            }
+        }
+        processTuples(storeTuple, tupleList, item);
+    }
+    
+    /**
+     * @param br: bufferedReader read one line every time
+     * @param qTypes: all the quantitationTypes from build file
+     * @param cubeB: bioAssay list
+     * @param cubeD: designElement list
+     * @param cubeQ: quantitationType list
+     * @param item: derivedBioAssayData
+     * @throws Exception if problems occur
+     */    
+    private void processDQ(BufferedReader br, Set qTypes, 
+                           HasBioAssays.BioAssays_list cubeB, 
+                           List cubeD, List cubeQ, Item item) 
+        throws Exception {
+        boolean storeTuple = false;
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        BioAssay ba = (BioAssay) cubeB.get(0);                            
+        for (Iterator i = cubeD.iterator(); i.hasNext();) {
+            DesignElement de = (DesignElement) i.next();
+            String s = br.readLine();
+            if (s != null) {
+                StringTokenizer st = new StringTokenizer(s, "\t");
+                for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
+                    QuantitationType qt = (QuantitationType) j.next();  
+                    String value = st.nextToken();                                    
+                    if (qTypes.contains(qt.getName().toLowerCase())) {
+                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
+                        storeItem(datum);   
+                        storeTuple = true;   
+                        tupleList.addRefId(datum.getIdentifier());                        
+                    }
+                }
+            } 
+        }
+        processTuples(storeTuple, tupleList, item);
+    }
+ 
+    /**
+     * @param br: bufferedReader read one line every time
+     * @param qTypes: all the quantitationTypes from build file
+     * @param cubeB: bioAssay list
+     * @param cubeD: designElement list
+     * @param cubeQ: quantitationType list
+     * @param item: derivedBioAssayData
+     * @throws Exception if problems occur
+     */  
+    private void processQD(BufferedReader br, Set qTypes, 
+                         HasBioAssays.BioAssays_list cubeB, 
+                         List cubeD, List cubeQ, Item item) 
+        throws Exception {
+        boolean storeTuple = false;
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        BioAssay ba = (BioAssay) cubeB.get(0);                            
+        for (Iterator i = cubeQ.iterator(); i.hasNext();) {
+            QuantitationType qt = (QuantitationType) i.next();     
+            String s = br.readLine();
+            if (s != null) {            
+                StringTokenizer st = new StringTokenizer(s, "\t");
+                if (qTypes.contains(qt.getName().toLowerCase())) {
+                    for (Iterator j = cubeD.iterator(); j.hasNext(); ) {
+                        DesignElement de = (DesignElement) j.next();
+                        String value = st.nextToken();      
+                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
+                        storeItem(datum);   
+                        storeTuple = true;   
+                        tupleList.addRefId(datum.getIdentifier());                               
+                    }
+                }
+            }
+        } 
+        processTuples(storeTuple, tupleList, item); 
+    }
+
+    
+    /**
+     * create BioDataTuples
+     * @param storeTuple: boolean
+     * @param tupleList: referenceList created during procesDBQ
+     * @param item: derivedBioAssayData adding reference pointing to BioDataTuples
+     * @throws Exception if problems occur
+     */      
+    private void processTuples (boolean storeTuple, ReferenceList tupleList, 
+                                Item item) 
+        throws Exception {     
+        if (storeTuple) {
+            Item bdt = makeItem("BioDataTuples");
+            bdt.addCollection(tupleList);
+            storeItem(bdt); // store BioDataTuple item
+            item.setReference("bioDataValues", bdt.getIdentifier());
+        }   
+    }
+
+    private String checkNameValueType(Object obj, HashMap map, String key) 
+        throws Exception  {
 
         TypeUtil.FieldInfo info = (TypeUtil.FieldInfo) map.get(key);
         Method m = info.getGetter();
