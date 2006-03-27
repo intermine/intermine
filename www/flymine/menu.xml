@@ -17,6 +17,7 @@
     <item url="/doc/tutorials/index.xml" title="Tutorials"/>
     <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
+    <item url="/link.xml" title="Link to FlyMine"/>
   </item>
   
   <item url="/download/index.xml" title="Download software">
