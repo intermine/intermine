@@ -1,0 +1,73 @@
+<?xml version="1.0" standalone="yes" ?> 
+<article>
+  <section>
+    <title>How do I link to FlyMine?</title>
+
+    <verbatim><h3>Links to details pages</h3></verbatim>
+    <para>
+Links can be set up directly to the details pages of many types of entry in FlyMine.
+A link isn't to a specific page but runs a search for the given identifier.  This
+searches all identifiers, symbols and synonyms in FlyMine and will bring
+up either a details page or a list of possibilities.  This is 
+exactly the same as running a Quick Search from the FlyMine home page.
+</para>
+
+<para>
+The URL to use takes the form:
+
+<verbatim><B>www.flymine.org/query/portal.do?externalid=identifier&amp;origin=MySite</B></verbatim>
+</para>
+
+<para>
+Note that using www.flymine.org/<verbatim><B>query</B></verbatim> will always redirect
+to the latest FlyMine release, please don't create links to the URL of a particular 
+release.
+</para>
+
+<para>
+The <verbatim><B>origin</B></verbatim> in the URL is optional but will allow us to show a specific welcome/help
+message to incoming users from your site.  It also helps us keep track of incoming links.
+Let us know what you want to use.
+</para>
+
+<para>
+A typical URL to link to a gene details page:
+
+<ulink url="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase">www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase</ulink>
+</para>
+<para>
+
+Some other examples:
+<itemizedlist>
+    <listitem><para>A protein: <ulink url="http://www.flymine.org/query/portal.do?externalid=ZEN1_DROME">www.flymine.org/query/portal.do?externalid=ZEN1_DROME</ulink></para></listitem>
+<listitem><para>A FlyReg binding site: <ulink url="http://www.flymine.org/query/portal.do?externalid=FPID004210">www.flymine.org/query/portal.do?externalid=FPID004210</ulink></para></listitem>
+<listitem><para>A DrosDel deletion: <ulink url="http://www.flymine.org/query/portal.do?externalid=Df(2L)ED7666">www.flymine.org/query/portal.do?externalid=Df(2L)ED7666</ulink></para></listitem>
+</itemizedlist>
+</para>
+
+<para>
+If you would like to link to a paricular type of entry and have suggstions for additional templates
+you would like to see there please <ulink url="contact">let us know</ulink>, this is easy to configure.
+</para>
+
+<verbatim><h3>Links to aspect pages</h3></verbatim>
+<para>
+Links directly to aspect pages in the latest release take the form:
+</para>
+<para>
+<verbatim><B>www.flymine.org/query/aspect.do?name=aspect+name</B></verbatim>
+</para>
+<para>
+Where aspect+name is the name of the aspect as shown on the FlyMine home page - match case and replace any spaces with '+'.</para>
+
+<para>
+For example:
+<itemizedlist>
+    <listitem><para><ulink url="http://www.flymine.org/query/aspect.do?name=INDAC">www.flymine.org/query/aspect.do?name=INDAC</ulink></para></listitem>
+    <listitem><para><ulink url="http://www.flymine.org/query/aspect.do?name=Protein+Interactions">www.flymine.org/query/aspect.do?name=Protein+Interactions</ulink></para></listitem>
+</itemizedlist>
+</para>
+
+</section>
+
+</article>
