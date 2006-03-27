@@ -134,8 +134,6 @@ public class PsiDataTranslator extends DataTranslator
                         LOG.warn("NO HOST_ORGANISM FOUND FOR SRC_ITEM:" + srcItem.getIdentifier());
                     }
 
-
-
                 } else if ("InteractionElementType".equals(className)) {
 
                     Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
@@ -188,12 +186,11 @@ public class PsiDataTranslator extends DataTranslator
                     result.add(interaction);
                 } else if ("ProteinInteractorType".equals(className)) {
                     Item xref = getReference(srcItem, "xref");
-                    Item dbXref = (xref != null ? getReference(xref, "primaryRef") : null);
-                    Attribute dbAttr = (dbXref != null ? dbXref.getAttribute("db") : null);
+                    Item primDbXref = (xref != null ? getReference(xref, "primaryRef") : null);
+                    Attribute dbAttr = (primDbXref != null ? primDbXref.getAttribute("db") : null);
                     String dbAttrStr = (dbAttr != null ? dbAttr.getValue() : "");
-
                     if ("uniprotkb".equals(dbAttrStr) || "uniprot".equals(dbAttrStr)) {
-                        String value = dbXref.getAttribute("id").getValue();
+                        String value = primDbXref.getAttribute("id").getValue();
                         tgtItem.addAttribute(new Attribute("primaryAccession", value));
                         Item synonym = createItem("Synonym");
                         addReferencedItem(synonym, dataSource, "source", false, "", false);
@@ -201,7 +198,46 @@ public class PsiDataTranslator extends DataTranslator
                         synonym.addAttribute(new Attribute("type", "accession"));
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         result.add(synonym);
+                    } else {
+                        //Since there's no usable Uniprot id, we'll just use the Intact internal id.
+                        Iterator secondaryDbXrefIt = getCollection(xref, "secondaryRefs");
+
+                        boolean foundIntact = false;
+                        String intactId = null;
+                        while (secondaryDbXrefIt.hasNext() && !foundIntact) {
+
+                            Item nextDbXref = (Item) secondaryDbXrefIt.next();
+                            Attribute nextDbAttr = nextDbXref.getAttribute("db");
+                            if (nextDbAttr.getValue().equalsIgnoreCase("intact")) {
+
+                                Attribute idAttr = nextDbXref.getAttribute("id");
+                                intactId = idAttr.getValue();
+                                foundIntact = true;
+                            }
+                        }
+
+                        if (foundIntact && intactId != null) {
+                            tgtItem.addAttribute(
+                                    new Attribute("primaryAccession", "IntAct:" + intactId));
+                            Item synonym = createItem("Synonym");
+                            addReferencedItem(synonym, dataSource, "source", false, "", false);
+                            synonym.addAttribute(new Attribute("value", "IntAct:" + intactId));
+                            synonym.addAttribute(new Attribute("type", "identifier"));
+                            addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                            result.add(synonym);
+                            Item idSynonym = createItem("Synonym");
+                            addReferencedItem(idSynonym, dataSource, "source", false, "", false);
+                            idSynonym.addAttribute(new Attribute("value", intactId));
+                            idSynonym.addAttribute(new Attribute("type", "identifier"));
+                            addReferencedItem(
+                                    tgtItem, idSynonym, "synonyms", true, "subject", false);
+                            result.add(idSynonym);
+                        } else {
+                            throw new RuntimeException(
+                                "Can't set a suitable primaryAccession for this ProteinInteractor");
+                        }
                     }
+
                     if (srcItem.getAttribute("sequence") != null) {
                         Item seq = createItem("Sequence");
                         String srcResidues = srcItem.getAttribute("sequence").getValue();

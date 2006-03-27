@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entrySet xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" level="1" version="1" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+<entrySet xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" level="1"
+          version="1"
+          xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
     <entry>
         <source releaseDate="2004-03-30">
             <names>
@@ -35,7 +37,7 @@
                 </interactionDetection>
                 <participantDetection>
                     <names>
-                        <shortLabel>nucleotide sequence </shortLabel>
+                        <shortLabel>nucleotide sequence</shortLabel>
                         <fullName>nucleotide sequence identification</fullName>
                     </names>
                     <xref>
@@ -43,15 +45,27 @@
                     </xref>
                 </participantDetection>
                 <attributeList>
-                    <attribute name="comment">Preys used for Y2H screens: 1)cDNA libraries made from embryo and adult fly (Clontech) and 2)using predicted ORF from BDGP (Berkeley Drosophila Genome Project) release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly to obtain 10306 validated preys.</attribute>
-                    <attribute name="comment">11159 validated baits were obtained using predicted ORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo, larvae 1,2 and 3, and adult fly.</attribute>
-                    <attribute name="confidence-mapping">The authors assign a numerical confidence value between 0 and 1 to each interaction. Interactions with a confidence of 0.5 or higher are considered as high confidence interactions. All others are considered as low confidence interactions. For simplified extraction of subsets, the _high_ and _low_ classification has been added in IntAct.</attribute>
+                    <attribute name="comment">Preys used for Y2H screens: 1)cDNA libraries made from
+                        embryo and adult fly (Clontech) and 2)using predicted ORF from BDGP
+                        (Berkeley Drosophila Genome Project) release 1 and 2 and a mixture of cDNA
+                        libraries from embryo, larvae 1,2 and 3, and adult fly to obtain 10306
+                        validated preys.</attribute>
+                    <attribute name="comment">11159 validated baits were obtained using predicted
+                        ORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo,
+                        larvae 1,2 and 3, and adult fly.</attribute>
+                    <attribute name="confidence-mapping">The authors assign a numerical confidence
+                        value between 0 and 1 to each interaction. Interactions with a confidence of
+                        0.5 or higher are considered as high confidence interactions. All others are
+                        considered as low confidence interactions. For simplified extraction of
+                        subsets, the _high_ and _low_ classification has been added in
+                        IntAct.</attribute>
                 </attributeList>
             </experimentDescription>
             <experimentDescription id="EBI-12">
                 <names>
                     <shortLabel>gavin-2002</shortLabel>
-                    <fullName>Functional organization of the yeast proteome by systematic analysis of protein complexes.</fullName>
+                    <fullName>Functional organization of the yeast proteome by systematic analysis
+                        of protein complexes.</fullName>
                 </names>
                 <bibref>
                     <xref>
@@ -92,6 +106,23 @@
             </experimentDescription>
         </experimentList>
         <interactorList>
+            <proteinInteractor id="EBI-767965">
+                <names>
+                    <shortLabel>gyn4 prs</shortLabel>
+                    <fullName>Arabidopsis GYN4 proline-rich sequence</fullName>
+                </names>
+                <xref>
+                    <primaryRef db="pubmed" id="16120600"/>
+                    <secondaryRef db="intact" id="EBI-767965" secondary="gyn4 prs"/>
+                </xref>
+                <organism ncbiTaxId="3702">
+                    <names>
+                        <shortLabel>arath</shortLabel>
+                        <fullName>Arabidopsis thaliana</fullName>
+                    </names>
+                </organism>
+                <sequence>AKSGPPPGFTGAKQN</sequence>
+            </proteinInteractor>
             <proteinInteractor id="EBI-124027">
                 <names>
                     <shortLabel>fkh_drome</shortLabel>
@@ -133,11 +164,14 @@
                     <primaryRef db="uniprot" id="P53905" secondary="lsm7_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000005091" secondary="LSM7" version=""/>
                     <secondaryRef db="go" id="GO:0005688" secondary="C:snRNP U6" version=""/>
-                    <secondaryRef db="go" id="GO:0017070" secondary="F:U6 snRNA binding activity" version=""/>
+                    <secondaryRef db="go" id="GO:0017070" secondary="F:U6 snRNA binding activity"
+                                  version=""/>
                     <secondaryRef db="go" id="GO:0006402" secondary="P:mRNA catabolism" version=""/>
                     <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
+                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -156,10 +190,13 @@
                     <secondaryRef db="sgd" id="S000005499" secondary="CDC33" version=""/>
                     <secondaryRef db="go" id="GO:0005840" secondary="C:ribosome" version=""/>
                     <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus" version=""/>
-                    <secondaryRef db="go" id="GO:0000074" secondary="P:regulation of cell cycle" version=""/>
+                    <secondaryRef db="go" id="GO:0000074" secondary="P:regulation of cell cycle"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR001040" secondary="TIF_eIF_4E" version=""/>
-                    <secondaryRef db="go" id="GO:0003743" secondary="F:translation initiation facto" version=""/>
-                    <secondaryRef db="go" id="GO:0006413" secondary="P:translational initiation" version=""/>
+                    <secondaryRef db="go" id="GO:0003743" secondary="F:translation initiation facto"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0006413" secondary="P:translational initiation"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -176,12 +213,15 @@
                 <xref>
                     <primaryRef db="uniprot" id="P39517" secondary="dhh1_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000002319" secondary="DHH1" version=""/>
-                    <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding activity" version=""/>
-                    <secondaryRef db="go" id="GO:0000290" secondary="P:deadenylation-dependent deca" version=""/>
+                    <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding activity"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0000290" secondary="P:deadenylation-dependent deca"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR001410" secondary="DEAD" version=""/>
                     <secondaryRef db="interpro" id="IPR000629" secondary="DEAD_box" version=""/>
                     <secondaryRef db="interpro" id="IPR001650" secondary="Helicase_C" version=""/>
-                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing" version=""/>
+                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -198,11 +238,15 @@
                 <xref>
                     <primaryRef db="uniprot" id="Q06819" secondary="dib1_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000006286" secondary="DIB1" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR004123" secondary="DIM1" version=""/>
-                    <secondaryRef db="interpro" id="IPR006663" secondary="Thioredox_dom2" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="interpro" id="IPR006663" secondary="Thioredox_dom2"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -219,13 +263,17 @@
                 <xref>
                     <primaryRef db="uniprot" id="P47017" secondary="lsm1_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000003660" secondary="LSM1" version=""/>
-                    <secondaryRef db="go" id="GO:0000290" secondary="P:deadenylation-dependent deca" version=""/>
+                    <secondaryRef db="go" id="GO:0000290" secondary="P:deadenylation-dependent deca"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing" version=""/>
-                    <secondaryRef db="go" id="GO:0005845" secondary="C:mRNA cap complex" version=""/>
+                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0005845" secondary="C:mRNA cap complex"
+                                  version=""/>
                     <secondaryRef db="go" id="GO:0000339" secondary="F:RNA cap binding" version=""/>
                     <secondaryRef db="go" id="GO:0006364" secondary="P:rRNA processing" version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot" version=""/>
+                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -242,13 +290,17 @@
                 <xref>
                     <primaryRef db="uniprot" id="P38203" secondary="lsm2_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000000122" secondary="LSM2" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR006649" secondary="snRNP" version=""/>
                     <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                     <secondaryRef db="go" id="GO:0006364" secondary="P:rRNA processing" version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot" version=""/>
+                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -265,14 +317,18 @@
                 <xref>
                     <primaryRef db="uniprot" id="P40070" secondary="lsm4_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000000914" secondary="LSM4" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="uniprot" id="Q07091" secondary="lsm4_yeast" version="46"/>
                     <secondaryRef db="interpro" id="IPR006649" secondary="snRNP" version=""/>
                     <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                     <secondaryRef db="go" id="GO:0006364" secondary="P:rRNA processing" version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot" version=""/>
+                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -289,12 +345,16 @@
                 <xref>
                     <primaryRef db="uniprot" id="Q06406" secondary="lsm6_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000002786" secondary="LSM6" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR006649" secondary="snRNP" version=""/>
                     <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
+                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -311,10 +371,14 @@
                 <xref>
                     <primaryRef db="uniprot" id="P25644" secondary="pat1_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000000673" secondary="PAT1" version=""/>
-                    <secondaryRef db="go" id="GO:0005843" secondary="C:cytosolic small ribosomal su" version=""/>
-                    <secondaryRef db="go" id="GO:0007059" secondary="P:chromosome segregation" version=""/>
-                    <secondaryRef db="go" id="GO:0006446" secondary="P:regulation of translational" version=""/>
-                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing" version=""/>
+                    <secondaryRef db="go" id="GO:0005843" secondary="C:cytosolic small ribosomal su"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0007059" secondary="P:chromosome segregation"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0006446" secondary="P:regulation of translational"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing"
+                                  version=""/>
                     <secondaryRef db="uniprot" id="Q8NKJ3" secondary="pat1_yeast" version="47"/>
                 </xref>
                 <organism ncbiTaxId="4932">
@@ -333,11 +397,14 @@
                     <primaryRef db="uniprot" id="P49960" secondary="pr24_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000004881" secondary="PRP24" version=""/>
                     <secondaryRef db="go" id="GO:0000244" secondary="P:snRNP recycling" version=""/>
-                    <secondaryRef db="go" id="GO:0000245" secondary="P:spliceosome assembly" version=""/>
+                    <secondaryRef db="go" id="GO:0000245" secondary="P:spliceosome assembly"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR008669" secondary="Lsm_interact" version=""/>
                     <secondaryRef db="interpro" id="IPR000504" secondary="RNA_rec_mot" version=""/>
-                    <secondaryRef db="go" id="GO:0005681" secondary="C:spliceosome complex" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0005681" secondary="C:spliceosome complex"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -354,11 +421,14 @@
                 <xref>
                     <primaryRef db="uniprot" id="P20053" secondary="prp4_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000006382" secondary="PRP4" version=""/>
-                    <secondaryRef db="go" id="GO:0046540" secondary="C:U4/U6 x U5 tri-snRNP complex" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0046540" secondary="C:U4/U6 x U5 tri-snRNP complex"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR003648" secondary="SFM" version=""/>
                     <secondaryRef db="interpro" id="IPR001680" secondary="WD40" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR011046" secondary="WD40_like" version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
@@ -376,10 +446,13 @@
                 <xref>
                     <primaryRef db="uniprot" id="P19735" secondary="prp6_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000000259" secondary="PRP6" version=""/>
-                    <secondaryRef db="go" id="GO:0046540" secondary="C:U4/U6 x U5 tri-snRNP complex" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0046540" secondary="C:U4/U6 x U5 tri-snRNP complex"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR003107" secondary="HAT" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR008941" secondary="TPR-like" version=""/>
                     <secondaryRef db="interpro" id="IPR010491" secondary="PRP1_N" version=""/>
                 </xref>
@@ -398,11 +471,15 @@
                 <xref>
                     <primaryRef db="uniprot" id="Q06217" secondary="smd2_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000004265" secondary="SMD2" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
+                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -427,10 +504,14 @@
                     <secondaryRef db="interpro" id="IPR005517" secondary="EFG_IV" version=""/>
                     <secondaryRef db="interpro" id="IPR004161" secondary="EFTU_D2" version=""/>
                     <secondaryRef db="interpro" id="IPR009022" secondary="EFG_III_V" version=""/>
-                    <secondaryRef db="interpro" id="IPR009000" secondary="Translat_factor" version=""/>
-                    <secondaryRef db="go" id="GO:0004004" secondary="F:ATP-dependent RNA helicase a" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="interpro" id="IPR009000" secondary="Translat_factor"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0004004" secondary="F:ATP-dependent RNA helicase a"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -447,10 +528,13 @@
                 <xref>
                     <primaryRef db="uniprot" id="Q12368" secondary="q12368" version="29"/>
                     <secondaryRef db="sgd" id="S000002256" secondary="SNU23" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR007087" secondary="Znf_C2H2" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -467,10 +551,13 @@
                 <xref>
                     <primaryRef db="uniprot" id="Q12420" secondary="q12420" version="29"/>
                     <secondaryRef db="sgd" id="S000005835" secondary="SNU66" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot" version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act" version=""/>
+                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
+                                  version=""/>
+                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
+                                  version=""/>
                     <secondaryRef db="interpro" id="IPR005011" secondary="SART_1" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s" version=""/>
+                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
+                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -530,7 +617,7 @@
                     <primaryRef db="intact" id="EBI-196436" secondary="fkh-cg10032-1"/>
                 </xref>
                 <attributeList>
-                    <attribute name="author-confidence"> 0.06</attribute>
+                    <attribute name="author-confidence">0.06</attribute>
                     <attribute name="author-confidence">low</attribute>
                 </attributeList>
             </interaction>
