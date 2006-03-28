@@ -1,0 +1,17 @@
+*** src/cytoscape/visual/VisualMappingManager.bkp	2005-12-16 11:05:14.000000000 +0000
+--- src/cytoscape/visual/VisualMappingManager.java	2006-01-17 10:50:36.000000000 +0000
+*************** public class VisualMappingManager extend
+*** 71,76 ****
+--- 71,82 ----
+  
+    }
+  
++   public VisualMappingManager( CyNetworkView networkView, CalculatorCatalog catalog) {
++     this.networkView = networkView;
++     this.logger = logger;
++     this.catalog = catalog;
++   }
++ 
+    
+     /**
+     * Attempts to load a CalculatorCatalog object, using the information
