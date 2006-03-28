@@ -1,0 +1,11 @@
+
+<project name="ui-lib" default="default" basedir=".">
+  <description>build, test, package cytoscape-ui-plugin-interface</description>
+  <import file="../../../imbuild/library.xml"/>
+  
+  <target name="-post-jar">
+    <copy file="${dist.jar}" toDir="/home/flo/.newworkspace/CytoscapePlugin/"/>
+  </target>
+  
+</project>
+

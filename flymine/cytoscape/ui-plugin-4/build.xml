@@ -1,0 +1,8 @@
+
+<project name="ui-plugin-4" default="default" basedir=".">
+  <description>build, test, package ui-plugin-testimpl4</description>
+  <import file="../../../imbuild/library.xml"/>
+  
+  
+</project>
+
