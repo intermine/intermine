@@ -112,6 +112,11 @@ public class MageDataTranslator extends DataTranslator
     protected Map exptToDataSet = new HashMap();
     protected Map exptToAssays = new HashMap();
 
+    //experiment E-MEXP-70
+    protected Map derivedBANameMap = new HashMap(); //dba itemId, dba name
+    protected Map measuredBANameMap = new HashMap();//mbaname, mba itemId
+    protected Map dba2MbaMap = new HashMap();//dbaId, mbaIds
+
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
     String compositeSeqNs = null;
@@ -238,9 +243,16 @@ public class MageDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
 
         super.translate(tgtItemWriter);
-
+        LOG.info(measuredBANameMap); 
+        LOG.info(derivedBANameMap); 
         Iterator i;
 
+        i = derivedBANameMap.keySet().iterator(); 
+        while (i.hasNext()) {
+            String dbaId = (String) i.next();
+            dba2MbaMap.put(dbaId, processDBA2MBA(dbaId));
+        }
+            
         i = processOrganism().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
@@ -490,6 +502,12 @@ public class MageDataTranslator extends DataTranslator
          }
          assays.put(tgtItem.getIdentifier(), tgtItem);
 
+         //set measuredBANameMap(name, MicroArrayAssay item identifier)
+         if (srcItem.hasAttribute("name")) {
+             String name = srcItem.getAttribute("name").getValue();
+             measuredBANameMap.put(name, tgtItem.getIdentifier());
+         }
+
      }
 
 
@@ -586,7 +604,13 @@ public class MageDataTranslator extends DataTranslator
                     }
                 }
             }
+        } 
+        
+        if (srcItem.hasAttribute("name")) {
+            String name = srcItem.getAttribute("name").getValue();
+            derivedBANameMap.put(srcItem.getIdentifier(), name);
         }
+            
 
         return baList;
     }
@@ -780,6 +804,7 @@ public class MageDataTranslator extends DataTranslator
      * @param srcItem =  mage:compositeSequence
      * @throws ObjectStoreException if problem occured during translating
      * set compositeSeqToReporter map
+     * compositeSeqToReporter: compositeSequence item identifier: reporter Ids as list
      */
     protected void setCompositeSeqToReporter(Item srcItem)
         throws ObjectStoreException {
@@ -1344,6 +1369,9 @@ public class MageDataTranslator extends DataTranslator
         } else if (holder.derivedAssayId > 0) {
             assayId = derivedBioAssayNs + holder.derivedAssayId;
             assayIds = (List) bioAssayMap.get(assayId);
+            if (assayIds.size() == 0) {
+                assayIds = (List) dba2MbaMap.get(assayId);
+            }
         }
         if (assayIds.size() > 0) {
             maResult.addCollection(new ReferenceList("assays", assayIds));
@@ -1439,6 +1467,34 @@ public class MageDataTranslator extends DataTranslator
         }
         return maResult;
     }
+
+    /**
+     * for E-MEXP-70, the only relation between derived and measued bioassay 
+     * via their names
+     * @param dbaId identifier for DerivedBioAssay
+     * @return list of measuredBioAssay
+     */
+    protected List processDBA2MBA(String dbaId) {
+        List mbaList = new ArrayList();
+        
+        String name = (String) derivedBANameMap.get(dbaId);
+        String name1 = null;
+        String name2 = null;
+        if (name != null) {
+            if (name.indexOf("vs") > 0) {
+                name1 = name.substring(0, name.indexOf("vs")).trim();
+                name2 = name.substring(name.indexOf("vs") + 2).trim();
+                mbaList.add(measuredBANameMap.get(name1));
+                mbaList.add(measuredBANameMap.get(name2));
+            } else {
+                mbaList.add(measuredBANameMap.get(name.trim())); 
+            }
+        }
+                
+        return mbaList;            
+        
+    }
+    
 
     /**
      * set Sample.assay
@@ -1755,10 +1811,10 @@ public class MageDataTranslator extends DataTranslator
         descSet.add(path.getItemPrefetchDescriptor());
 
         path = new ItemPath(
-            "Reporter.immobilizedCharacteristics.type", srcNs);
+                            "Reporter.immobilizedCharacteristics.type", srcNs);//prefetch
         descSet.add(path.getItemPrefetchDescriptor());
         path = new ItemPath(
-            "Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);
+                            "Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);//line764 760 739
         descSet.add(path.getItemPrefetchDescriptor());
 
         path = new ItemPath(
