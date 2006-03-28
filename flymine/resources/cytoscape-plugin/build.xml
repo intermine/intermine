@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!-- ======================================================= -->
+<!-- ======================================================= -->
+
+<project name="CytoscapePlugin" default="delete-FlyMinePlugin-jar" basedir=".">
+
+  <!-- FlyMinePlugin base directory -->
+  <property name="flymineplugin-base.dir" value="/home/flo/.workspace/CytoscapePlugin"/>
+  <!-- flymine base dir -->
+  <property name="flymine-base.dir" value="/home/flo/svn/dev/flymine"/>
+  <!-- cytoscape plugin directory -->
+  <property name="cytoscape-plugin.dir" value="/home/flo/FlyMine/Cytoscape/cvs/cytoscape/build/cytoscape-v2.2/plugins"/>
+  <!-- CyPlugin dir to store the networkview package classes -->
+  <property name="networkview-CyPlugin-dest.dir" value="${flymineplugin-base.dir}/src/org/flymine/networkview"/>
+  <!-- binary source dir of networkview build by eclipse -->
+  <property name="networkview-eclipse-src.dir" value="${flymine-base.dir}/build-eclipse/org/flymine/networkview"/>
+  <!-- source dir of networkview.network -->
+  <property name="networkview-network-src.dir" value="${flymine-base.dir}/model/genomic/src/java/org/flymine/networkview/network"/>
+  <!-- source dir of networkview package -->
+  <property name="networkview-src.dir" value="${flymine-base.dir}/model/genomic/src/java/org/flymine/networkview"/>
+  <!-- source dir of networkview test cases -->
+  <property name="networkviewtest-src.dir" value="${flymine-base.dir}/model/genomic/src/test/org/flymine/networkview"/>
+  <!-- The directory containing CyPlugin source code -->
+  <property name="CytoscapePlugin-src.dir" value="${flymineplugin-base.dir}/org"/>
+  <!-- ProteinInteractionExporter source directory -->
+  <property name="piExporter-src.dir" value="${flymine-base.dir}/model/genomic/src/web/java/org/flymine/web"/>
+  <!-- backup directory -->
+  <property name="backup.dir" value="/home/flo/FlyMine/backup"/>
+
+	
+  <property file="my.properties"/>
+
+
+  <propertyfile
+	file="my.properties"
+	comment="My properties">
+  	<entry  key="date.formated-day"
+	  type="date" value="now" pattern="DDD"/>
+	<entry  key="date.formated"
+	  type="date" value="now" pattern="dd-MMMM-yyyy"/>
+  	<entry  key="build.number"
+  		type="int" default="000" operation="+" pattern="000"/>
+  </propertyfile>
+
+  <!-- ======================================================= -->
+  
+  <target name="do-nothing"></target>
+
+  <target name="delete-FlyMinePlugin-jar" description="remove generated FlyMinePlugin.jar files.">
+    <delete file="${cytoscape-plugin.dir}/FlyMinePlugin.jar"/>
+    <delete file="FlyMinePlugin.jar"/>
+  </target>
+
+  <target name="delete-Network-jar" description="remove generated FlyNetwork.jar">
+    <delete file="FlyNetwork.jar"/>
+  </target>
+
+  <target name="build-CytoscapePlugin-jar" description="build plugin jar file.">
+     <jar destfile="FlyMinePlugin.jar">
+     	<fileset dir="bin">
+     		<include name="org/flymine/plugin/*.class"/>
+     	</fileset>
+     	<fileset dir="${flymineplugin-base.dir}">
+     		<include name="intermine.properties"/>
+     		<include name="default.intermine.properties"/>
+     		<include name="PluginLogger.props"/>
+     		<include name="vizmap-flymine.props"/>
+     	</fileset>
+  	</jar>
+  </target>
+
+  <target name="build-Network-jar" description="build network jar file.">
+     <jar destfile="FlyNetwork.jar"
+          basedir="/home/flo/svn/dev/flymine/build-eclipse/"
+          includes="org/flymine/networkview/**/*.class"/>
+  	<copy file="FlyNetwork.jar" todir="${flymine-base.dir}/cytoscape/ui-lib/lib/"/>
+  	<copy file="FlyNetwork.jar" todir="${flymine-base.dir}/cytoscape/ui-plugin-4/lib/"/>
+  </target>
+
+  <target name="copy-cy-jar" description="copy jar file to cytoscape release plugin folder.">
+    <copy file="FlyMinePlugin.jar"
+          tofile="${cytoscape-plugin.dir}/FlyMinePlugin.jar"/>
+  </target>
+
+  <target name="release-FlyMinePlugin-jar" depends="build-CytoscapePlugin-jar, copy-cy-jar"
+          description="release jar file to cytoscape release plugin folder.">
+    <echo>
+        ***********************************************
+		releasing plugin file
+		***********************************************
+    </echo>
+  </target>
+
+  <target name="copy-cy-networkview-network-src" description="copy Flynetwork classes to CyPlugin">
+    <copy todir="${networkview-CyPlugin-dest.dir}">
+  		<fileset dir ="${networkview-eclipse-src.dir}">
+  			<include name="**/QueryBuilderPlugin.class"/>
+  			<include name="**/QueryBuilderListener.class"/>
+  			<include name="**/NetworkHandlerIface.class"/>
+  		</fileset>
+    </copy>
+  </target>
+
+  <target name="update-FlyPlugin-src" description="copy Flynetwork sources to FlyPlugin">
+    <copy todir="${networkview-FlyPlugin-dest.dir}">
+  		<fileset dir ="${networkview-network-src.dir}">
+  			<exclude name="*2.java"/>
+  		</fileset>
+    </copy>
+  </target>
+	
+  <target name="update-FlyPlugin-flynet-src" description="copy relevant FlyNetwork src to FlyPlugin dir">
+  	<copy todir="${flyPlugin-src.dir}/flymine/networkview/network">
+		<fileset dir="${networkview-src.dir}/network">
+			<include name="**/*.java"/>
+			<exclude name="*2.java"/>
+		</fileset>
+  	</copy>
+  	<copy file="${networkview-src.dir}/FlyNetworkIntegrator.java"
+  		tofile="${flyPlugin-src.dir}/flymine/networkview/FlyNetworkIntegrator.java"/>
+  </target>
+
+  <target name="backup" description="backup java files">
+  	<property name="backup-current.dir" value="${backup.dir}/build${build.number}-${date.formated}"/>
+  	<mkdir dir="${backup-current.dir}"/>
+    <copy todir="${backup-current.dir}/CyPlugin/java">
+  		<fileset dir ="${CytoscapePlugin-src.dir}"/>
+    </copy>
+    <copy todir="${backup-current.dir}/FlyPlugin">
+  		<fileset dir ="${flyPlugin-src.dir}"/>
+    </copy>
+    <copy todir="${backup-current.dir}/networkview">
+  		<fileset dir ="${networkview-src.dir}"/>
+    </copy>
+    <copy todir="${backup-current.dir}/networkviewtest">
+  		<fileset dir ="${networkviewtest-src.dir}"/>
+    </copy>
+    <copy todir="${backup-current.dir}/ProteinInteractionExporter">
+  		<fileset dir ="${piExporter-src.dir}" casesensitive="yes">
+    		<include name="**/*.java"/>
+  		</fileset>
+    </copy>
+    <copy todir="${backup-current.dir}/ui-lib">
+  		<fileset dir ="${flymine-base.dir}/cytoscape/ui-lib/src"/>
+    </copy>
+    <copy todir="${backup-current.dir}/ui1">
+  		<fileset dir ="${flymine-base.dir}/cytoscape/ui-plugin-1/src"/>
+    </copy>
+    <copy todir="${backup-current.dir}/ui2">
+  		<fileset dir ="${flymine-base.dir}/cytoscape/ui-plugin-2/src"/>
+    </copy>
+    <copy todir="${backup-current.dir}/ui3">
+  		<fileset dir ="${flymine-base.dir}/cytoscape/ui-plugin-3/src"/>
+    </copy>
+    <copy todir="${backup-current.dir}/ui4">
+   		<fileset dir ="${flymine-base.dir}/cytoscape/ui-plugin-4/src"/>
+    </copy>
+    <copy file="my.properties" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="build.xml" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="PluginLogger.props" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="default.intermine.properties" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="intermine.properties" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="vizmap-flymine.props" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="ui-plugins.xml" todir="${backup-current.dir}/CyPlugin"/>
+  	<copy file="/home/flo/svn/dev/flymine/model/genomic/resources/web/webconfig-model.xml" todir="${backup-current.dir}"/>
+  	<copy file="/home/flo/svn/dev/flymine/model/genomic/resources/web/model.properties" todir="${backup-current.dir}"/>
+    <copy file="/home/flo/svn/dev/flymine/model/genomic/resources/web/struts-config-model.xml" todir="${backup-current.dir}"/>
+  	<copy file="/home/flo/svn/dev/flymine/model/genomic/src/web/jsp/proteinInteractionGraph.jsp" todir="${backup-current.dir}"/>
+  </target>
+
+
+</project>
