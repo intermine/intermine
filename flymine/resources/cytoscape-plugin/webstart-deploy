@@ -1,0 +1,164 @@
+notes on how to set up cytoscape webstart + plugin
+
+************************** prepare flymine stuff ******************************************************
+check all the flymine stuff needed to support cytoscape:  
+  org.flymine.web.ProteinInteractionExporter  # to export SIF files
+  org.flymine.web.ProteinInteractionViewExporter  # to run cytoscape webstart from the webapp.
+              # will create a file containing (only) the protein-interactions in SIF format
+              # which will be stored in the data directory of the cytoscape webstart dir
+              # the content of the data dir is then packed up as data.jar and signed
+              # then it will create a jnlp string (pointing to the sif file) used to launch
+              # the webstart application
+  org.flymine.web.PIUtil          # Utility class used by the exporters, contains the jnlp string
+  org.flymine.web.JARSigner2      # class responsible for signing the jar file
+  org.flymine.web.SignatureFile2  # class needed by JARSigner2
+    model/genomic/resources/web:
+    webconfig-model.xml           # add new exporters:
+      <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
+                          className="org.flymine.web.ProteinInteractionExporter"/>
+      <tableExportConfig id="proteinInteractionViewExporter" actionPath="/exportAction?type=proteinInteractionViewExporter"
+                           className="org.flymine.web.ProteinInteractionViewExporter"/>
+
+    model.properties              # add text of exporter links
+  => build production webapp with new cytoscape webstart support
+  
+
+************************** set up cytoscape webstart **************************************************
+
+checkout cytoscape source (I used version 2.2 release candidate 2 -> worked fine! newest co has some changes in it's used libraries 
+            -> can cause problems)
+  cvs -d :pserver:anonymous@bordeaux.ucsd.edu:/cvsdir5 co -r cyto-2_2-rc2 cytoscape
+
+
+patch following files (modified to work with java headless mode) -> see patch files
+  VisualMappingManager.java  # added new Constructor that will NOT look for a default CalculatorCatalog but use a specified one
+  phoebe.jar                 # -> for Image-Creation without having to run Cytoscape
+  piccolo.jar
+
+
+copy needed flymine jars to cytoscape/lib dir
+(all jar files in cytoscape/lib will be copied and signed when running 'ant webstart' -> they have to be unsigned! in the cytoscape/lib directory)
+  ant.jar                       commons-digester.jar            icu4j.jar                    nsuml.jar              ui-lib.jar
+  antlr.jar                     commons-discovery.jar           intermine-objectstore.jar    postgresql.jar         velocity-1.3.jar
+  axis.jar                      commons-io-1.1-dev.jar          jakarta-oro.jar              saaj.jar               wsdl4j.jar
+  castor-0.9.5.3-xml.jar        commons-lang-2.0.jar            jaxrpc.jar                   x-api-1.0.jar          xercesImpl-2.6.1.jar
+  cglib-full-2.0.1-patched.jar  commons-logging-1.0.jar         jena-2.1.jar                 stax-ri-1.0.jar
+  commons-beanutils-1.6.1.jar   flymine-webservice-client.jar   libread  log4j.jar           torque-gen-3.2-dev.jar
+  (use xerces from intermine (xercesImpl-2.6.1.jar) NOT from cytoscape, otherwise the webservice will not work correctly -> check jnlp files)
+
+  all needed jar files have to be specified in one of the jnlp files otherwise cytoscape webstart will not be able to find the resources
+
+  notes on some jar files:
+    - FlyNetwork.jar                 # all the FlyNetwork stuff
+    - Intermine-objectstore.jar      # needed for the plugin
+    - flymine-webservice-client.jar  # needed for the plugin
+    - ui-lib.jar                     # interfaces for the ui-plugins
+    - jars containing server specific info:
+      FlyMinePlugin.jar              # -> intermine.properties  # webservice properties
+                                     # -> SampleFlyPlugin.java  # which server to load the ui-plugins from, which objectstore to use
+
+  additional plugins of interest:
+    - rowan.jar        # extensions to the filter plugin
+    - exesto.jar       # rowan.jar depends on this jar
+
+
+
+security notes:
+  Avoid any exceptions because of security settings:
+  ( this is a reply i got on the java forum about the security/policy problems 
+  while running cytoscape with webstart)
+  (http://forum.java.sun.com/thread.jspa?threadID=704885&tstart=0)
+  The most likely reason is that the code throwing the exception wasn't loaded
+  by the JNLPClassLoader, but by some other class loader created by the application.
+  If an application creates a classloader that dosn't extend SecureClassLoader,
+  and then runs it with a SecurityManager installed, then the permissions are
+  determined by the java.policy file in the lib/security file of the jre. If it
+  does extend SecureClassLoader, then it implements SecureClassLoader.getPermissions(),
+  and that method is responsible for assigning the permission set. The easiest
+  way around this is just to remove the security manager:
+    System.setSecurityManager(null);
+
+  or create your own Policy that allows basically everything:
+    Policy.setPolicy(new Policy()
+    {
+        public PermissionCollection getPermissions(CodeSource codesource) {
+            Permissions perms = new Permissions();
+            perms.add(new AllPermission());
+            System.out.println("** ** ** ** ** new permissions set");
+            return (perms);
+        }
+        public void refresh() {
+        }
+    });
+
+
+
+run ant webstart (in cytoscape dir)
+  # will create a build/webstart dir and sign & copy all jar files from the cytoscape/lib directory
+
+copy FlyMinePlugin.jar into the plugin directory
+
+copy webstart dir to tomcat (and modify)
+
+  not needed:  cy1.jnlp         # default jnlp file to run standard cytoscape webstart application
+               tax_report.txt   # cytoscape default stuff
+               data.jar         # cytoscape default stuff
+
+  don't know how to specify these yet
+      cytoscape.props  # optional -> loading of this file with webstart is not working in cytoscape version 2.2
+      vizmap.props     # optional -> loading of this file with webstart is not working in cytoscape version 2.2
+
+  needed:   cytoscape.jar    # 
+      info.jnlp      # lists all non cytoscape jars (can be signed different than the ones in the first jnlp)
+      lib/           # all needed jar files (signed)
+      plugins/       # the plugins to load (signed)
+      data/          # the data to go in the data.jar file (currently: cytoscape.props, vizmap.props, interaction.sif, projectFile)
+                     # see ProteinInteractionViewExporter.java -> builds the data.jar file
+
+jnlp files:
+    1. a dynamically created one (containing the reference to the actual sif file) cy1.jnlp
+      see org.flymine.web.PIUtil->buildJNLP
+    2. a static one located on the server (responsible for loading all additional - non cytoscape - jar files) info.jnlp
+
+      
+remove plugins/data-aux.jar and plugins/cpath.jar
+  -> some classes in data-aux.jar clash with classes in the ant.jar and cpath.jar is dependent on data-aux.jar
+
+
+
+delete data.jar    # the data.jar we use is created each time the application is launched from the flymine webpage
+        # the created data.jar contains the users network as sif format
+
+
+check all path information
+  -> in PIUtil.java, ProteinInteractionViewExporter.java, SampleFlyPlugin, jnlp files, ...
+
+
+************************** set up ui-plugin stuff *****************************************************
+set up location to load ui-plugins from
+  - create a new location for the ui-plugins on a server 
+  - create a file 'ui-plugins.xml' that specifies which ui-plugins to load
+  - syntax: 
+      <plugins>
+        <plugin   name="queryUI-1"
+                  url="http://aragorn:8080/classload/ui-plugin-1.jar"
+                  uiClass="org.flymine.networkview.querybuilder.QueryBuilderPlugin1"/>
+      </plugins>
+  - place the ui-plugins at the specified url
+  - point the SampleFlyPlugin to the that location -> set pluginLocation in SampleFlyPlugin.java
+  - build the SampleFlyPlugin.jar and place it in the plugin dir of cytoscape webstart
+
+
+************************** list of files containing location specific or hard coded information *******
+PIUtil.java
+ProteinInteractionExporter.java
+ProteinInteractionViewExporter.java
+ui-plugins.xml
+FlyMinePlugin.java
+intermine.properties
+info.jnlp
+
+
+
+
+
