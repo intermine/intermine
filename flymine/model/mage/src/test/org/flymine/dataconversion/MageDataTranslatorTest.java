@@ -180,10 +180,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item expItem1 = createTgtItem("MicroArrayAssay", "2_1", "");
         expItem1.setReference("experiment", "-1_1");
-        expItem1.setAttribute("name", "assay-A");
+        expItem1.setAttribute("name", "Day0(3)");
         expItem1.setAttribute("displayOrder", "0");
         Item expItem2 = createTgtItem("MicroArrayAssay", "2_2", "");
-        expItem2.setAttribute("name", "assay-B");
+        expItem2.setAttribute("name", "Day10(3)");
         expItem2.setAttribute("displayOrder", "1");
         expItem2.setReference("experiment", "-1_1");
         Item expItem3 = createTgtItem("MicroArrayExperiment", "-1_1", "");

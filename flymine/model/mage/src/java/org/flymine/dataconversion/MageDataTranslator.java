@@ -496,17 +496,20 @@ public class MageDataTranslator extends DataTranslator
      protected void translateMicroArrayAssay(Item srcItem, Item tgtItem)
          throws ObjectStoreException {
 
-         if (srcItem.hasAttribute("identifier")) {
+         //set measuredBANameMap(name, MicroArrayAssay item identifier)
+         if (srcItem.hasAttribute("name")) {
+             String name = srcItem.getAttribute("name").getValue();
+             tgtItem.setAttribute("name", name);
+             measuredBANameMap.put(name, tgtItem.getIdentifier());
+         }
+
+         if (!tgtItem.hasAttribute("name") 
+             && srcItem.hasAttribute("identifier")) {
              String identifier = srcItem.getAttribute("identifier").getValue();
              tgtItem.setAttribute("name", identifier);
          }
          assays.put(tgtItem.getIdentifier(), tgtItem);
 
-         //set measuredBANameMap(name, MicroArrayAssay item identifier)
-         if (srcItem.hasAttribute("name")) {
-             String name = srcItem.getAttribute("name").getValue();
-             measuredBANameMap.put(name, tgtItem.getIdentifier());
-         }
 
      }
 
@@ -1418,7 +1421,7 @@ public class MageDataTranslator extends DataTranslator
         } else if (holder.compositeSeqId > 0) {
             String materialId = compositeSeqNs + holder.compositeSeqId;
             reporterIds = (List) compositeSeqToReporter.get(materialId);
-            //maResult.setReference("material", materialId);
+            maResult.setReference("material", materialId);
         }
         if (reporterIds.size() > 0) {
             maResult.addCollection(new ReferenceList("reporters", reporterIds));
