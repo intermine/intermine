@@ -34,11 +34,11 @@ import cytoscape.data.Semantics;
  */
 public abstract class FlyNetworkIntegrator
 {
-    private static Logger LOG = Logger.getLogger(FlyNetworkIntegrator.class);
+    private static final Logger LOG = Logger.getLogger(FlyNetworkIntegrator.class);
 
     /**
      * Integrates all elements of the flymine network into cytoscape.
-     * (Needs to run within Cytoscape)
+     * (Needs to run within the running Cytoscape instance -> uses static methods)
      * @param nw network to integrate into cytoscape
      */
     public static void integrateNetwork(FlyNetwork nw) {
@@ -96,6 +96,7 @@ public abstract class FlyNetworkIntegrator
      * @param cyAtts cytoscape CyAttributes to insert the attributes into
      * @param ge FlyHashGraphElement to get the attributes from
      */
+    /*
     protected static void addAttributesOld(CyAttributes cyAtts, FlyHashGraphElement ge) {
         for (Iterator it = ge.getAttributeNames().iterator(); it.hasNext();) {
             String name = (String) it.next();
@@ -307,6 +308,7 @@ public abstract class FlyNetworkIntegrator
             }
         }
     }
+    */
     
     /**
      * This will insert all ge's attributes into cytoscape's CyAttributes
@@ -322,10 +324,13 @@ public abstract class FlyNetworkIntegrator
             Object o = ge.getAttributeValue(name);
             int flag = ge.getAttributeFlag(name);
 
+            LOG.debug("flag: " + flag);
             if (!cyAtts.hasAttribute(element, name)) {
+                LOG.debug("attribute " + name + " does not exist.");
                 // TODO: set lists!! handle COUNT flag
-                if (flag == FlyValueWrapper.COUNT) {
-                    if (o instanceof String) {
+                if (o instanceof String) {
+                    // type String -> create list if flag is set to COUNT or ADD
+                    if (flag == FlyValueWrapper.COUNT) {
                         ArrayList list = new ArrayList();
                         list.add((String) o);
                         cyAtts.setAttributeList(element, name, list);
@@ -337,14 +342,18 @@ public abstract class FlyNetworkIntegrator
                         }
                         // TODO: check attribute exists and has propper type -> error else
                         cyAtts.setAttribute(element, counterName, new Integer(list.size()));
-                    } else { // value is not of type String
-                        LOG.error("The COUNT flag is not supported with attributes " 
-                                + "that do not have a String value.");
+                    } else if (flag == FlyValueWrapper.ADD) {
+                        ArrayList list = new ArrayList();
+                        list.add(o);
+                        cyAtts.setAttributeList(element, name, list);
+                    }else { 
+                        setAttribute(cyAtts, element, name, o);
                     }
-                } else { // not COUNT
+                } else { // not String
                     setAttribute(cyAtts, element, name, o);
                 }
-            } else {
+            } else { // attribute already exists
+                LOG.debug("attribute " + name + " exists.");
                 if (flag == FlyValueWrapper.NOT_OVERWRITE) {
                     // do nothing! we do not want to overwrite existing values
                 } else if (flag == FlyValueWrapper.OVERWRITE) {
@@ -430,9 +439,10 @@ public abstract class FlyNetworkIntegrator
                                 // since all values in a list have to be of the same type
                                 // we just have to check the first one
                                 if (list.contains(flyValue)) { // prevent duplicate entries
-                                    LOG.warn("List attached to attribute " + name 
-                                            + " already contains value "  + flyValue 
-                                            + ". Skipping value!");
+                                    LOG.warn("List attached to attribute '" + name 
+                                            + "' of element '" + element
+                                            + "' already contains value '"  + flyValue 
+                                            + "'. Skipping value!");
                                 } else {
                                     list.add(flyValue);
                                 }
@@ -462,7 +472,7 @@ public abstract class FlyNetworkIntegrator
                         LOG.error("Value for attribute '" + name + "' is not of type String! " 
                                 + "Other types are not supported, ignoring value!");
                     }
-                } else { // flag
+                } else { // unknown flag type or no flag at all
                     LOG.error("Discovered unhanded flag type: " + flag);
                 }
             }
