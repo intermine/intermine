@@ -150,7 +150,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Item srcItem1 = createSrcItem("DerivedBioAssay", "57_709", "");
         srcItem1.setCollection("derivedBioAssayData", new ArrayList(Arrays.asList(new Object[]{"58_710"})));
         srcItem1.setCollection("derivedBioAssayMap", new ArrayList(Arrays.asList(new Object[]{"1_1"})));
-
+        srcItem1.setAttribute("name", "Day0(3) vs Day10(3)");
+       
         Item srcItem2 = createSrcItem("DerivedBioAssayData", "58_710", "");
         srcItem2.addReference(new Reference("bioDataValues", "58_739"));
 
@@ -165,11 +166,13 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item srcItem6 = createSrcItem("MeasuredBioAssay", "2_1", "");
         srcItem6.setAttribute("identifier", "assay-A");
+        srcItem6.setAttribute("name", "Day0(3)");
         Item srcItem61 = createSrcItem("MeasuredBioAssay", "2_2", "");
         srcItem61.setAttribute("identifier", "assay-B");
+        srcItem61.setAttribute("name", "Day10(3)");
 
-        Set src = new HashSet(Arrays.asList(new Object[] {srcItem1, srcItem2, srcItem3, srcItem4,
-                              srcItem5, srcItem6, srcItem61}));
+        Set src = new HashSet(Arrays.asList(new Object[] {srcItem1,srcItem2, srcItem3, srcItem4,
+            srcItem5, srcItem6, srcItem61}));
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
@@ -191,8 +194,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         HashSet expected=new HashSet(Arrays.asList(new Object[]{expItem1, expItem2, expItem3, expItem4, expItem5}));
 
-        MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
-        translator.translate(tgtIw);
+         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
+         translator.translate(tgtIw);
 
         assertEquals(expected, tgtIw.getItems());
 
@@ -200,6 +203,11 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expAssays.put(expItem1.getIdentifier(), expItem1);
         expAssays.put(expItem2.getIdentifier(), expItem2);
         assertEquals(expAssays, translator.assays);
+    
+        List mbaList = new ArrayList();
+        mbaList = (List) translator.processDBA2MBA("57_709");
+        List expectedList = Arrays.asList(new Object[]{"2_1", "2_2"});
+        assertEquals(expectedList, mbaList);        
     }
 
 
