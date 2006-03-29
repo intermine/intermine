@@ -507,12 +507,12 @@ public class MageConverter extends FileConverter
         ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
         QuantitationType qt = (QuantitationType) cubeQ.get(0);  
         if (qTypes.contains(qt.getName().toLowerCase())) {                       
-            for (Iterator i = cubeD.iterator(); i.hasNext();) {
+            for (Iterator i = cubeB.iterator(); i.hasNext();) {
                 BioAssay ba = (BioAssay) i.next();
                 String s = br.readLine();
                 if (s != null) {
                     StringTokenizer st = new StringTokenizer(s, "\t");
-                    for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
+                    for (Iterator j = cubeD.iterator(); j.hasNext(); ) {
                         DesignElement de = (DesignElement) j.next();
                         String value = st.nextToken();                                    
                         Item datum = makeBioAssayDatum(value, de, ba, qt); 
@@ -549,7 +549,7 @@ public class MageConverter extends FileConverter
                 String s = br.readLine();
                 if (s != null) {
                     StringTokenizer st = new StringTokenizer(s, "\t");
-                    for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {                    
+                    for (Iterator j = cubeB.iterator(); j.hasNext(); ) {                    
                         BioAssay ba = (BioAssay) j.next();                                
                         String value = st.nextToken();   
                         Item datum = makeBioAssayDatum(value, de, ba, qt); 
