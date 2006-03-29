@@ -8,7 +8,7 @@ class SqlTreeParser extends TreeParser;
 
 options {
     exportVocab = Sql;
-    k = 6;
+    k = 1;
     buildAST = true;
     defaultErrorHandler = false;
 }
