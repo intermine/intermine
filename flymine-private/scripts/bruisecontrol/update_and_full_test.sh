@@ -171,12 +171,12 @@ fi
 #if [ $BUILD_RESULT -ne 0 ]; then
   # Email to say the build failed
 #  printf "The build failed!\n\n" > MSG
-#  echo "Full ant log file: http://galadriel.flymine.org/~tom/tests/archived/$TIME_STAMP/" >> MSG
+#  echo "Full ant log file: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/" >> MSG
 #  printf "\n\nLast check-in:\n\n" >> MSG
 #  echo "$UPDATE" >> MSG
 #  printf "\n\nTail of log file:\n\n" >> MSG
 #  tail -n 100 "$ARCHIVE_TO/ant_log.txt" >> MSG
-#  cat MSG | mail -s "[BruiseControl] Build failed at $TIME_STAMP" tom@flymine.org
+#  cat MSG | mail -s "[BruiseControl] Build failed at $TIME_STAMP" bruiser@flymine.org
 #else
   # Email test results
   # Blame people via email
@@ -189,10 +189,10 @@ fi
 #  else
 #    echo "failures set is not equal - should email $BLAME"
      echo "Emailing $BLAME..."
-#  BLAME=tom
-    printf "JUnit results: http://galadriel.flymine.org/~tom/tests/archived/$TIME_STAMP/junit/\n\n" > MSG
-    printf "Checkstyle results: http://galadriel.flymine.org/~tom/tests/archived/$TIME_STAMP/checkstyle/\n\n" >> MSG
-    printf "Ant output: http://galadriel.flymine.org/~tom/tests/archived/$TIME_STAMP/ant_log.txt\n\n" >> MSG
+#  BLAME=bruiser
+    printf "JUnit results: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/junit/\n\n" > MSG
+    printf "Checkstyle results: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/checkstyle/\n\n" >> MSG
+    printf "Ant output: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/ant_log.txt\n\n" >> MSG
     printf "Last update:\n\n" >> 'MSG'
     echo "$UPDATE" >> 'MSG'
     #printf "\n\n------------------------------------------------------------\nTest failures diff:\n\n$DIFF" >> 'MSG'
