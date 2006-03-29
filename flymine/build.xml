@@ -3394,11 +3394,11 @@
     </chmod>
 
     <exec executable="rsync">
-      <arg line="-e ssh -Cavz ${build.gbrowse}/${gbrowse.database.source}.conf ${gbrowse.config.directory}/" />
+      <arg line="-e ssh -avz ${build.gbrowse}/${gbrowse.database.source}.conf ${gbrowse.config.directory}/" />
     </exec>
 
     <exec executable="rsync">
-      <arg line="-e ssh -Cavz ${build.gbrowse.images} ${gbrowse.www.directory}/images/buttons/" />
+      <arg line="-e ssh -avz ${build.gbrowse.images} ${gbrowse.www.directory}/images/buttons/" />
     </exec>
   </target>
 
