@@ -1,0 +1,64 @@
+--- antlr-2.7.6/antlr/JavaCodeGenerator.java	2005-12-10 01:37:12.000000000 +0000
++++ antlr-2.7.6-custom/antlr/JavaCodeGenerator.java	2006-03-28 13:41:45.000000000 +0100
+@@ -699,6 +699,7 @@
+ 	        println("import antlr.SemanticException;");
+ 	        println("import antlr.ParserSharedInputState;");
+ 	        println("import antlr.collections.impl.BitSet;");
++            println("import java.util.IdentityHashMap;");
+ 	        if ( genAST ) {
+ 				println("import antlr.collections.AST;");
+ 				println("import java.util.Hashtable;");
+@@ -2605,6 +2606,10 @@
+ 	            _println(s.comment);
+ 					}
+ 	
++            if ((grammar instanceof ParserGrammar) && (rblk.returnAction == null)) {
++                println("IdentityHashMap " + s.getId() + "Cache = new IdentityHashMap();");
++            }
++
+ 	        // Gen method access and final qualifier
+ 	        print(s.access + " final ");
+ 	
+@@ -2663,8 +2668,20 @@
+ 	        tabs++;
+ 	
+ 	        // Convert return action to variable declaration
+-	        if (rblk.returnAction != null)
++	        if (rblk.returnAction != null) {
+ 	            println(rblk.returnAction + ";");
++            } else if (grammar instanceof ParserGrammar) {
++                println("Object retval = " + s.getId() + "Cache.get(LT(1));");
++                println("if (retval instanceof RecognitionException) {");
++                println("\tthrow (RecognitionException) retval;");
++                println("} else if (retval instanceof TokenStreamException) {");
++                println("\tthrow (TokenStreamException) retval;");
++                println("} else if ((retval instanceof AST) && (inputState.guessing != 0)) {");
++                println("\treturnAST = (AST) retval;");
++                println("} else {");
++                println("\ttry {");
++                tabs += 2;
++            }
+ 	
+ 	        // print out definitions needed by rules for various grammar types
+ 	        println(commonLocalVars);
+@@ -2861,6 +2878,20 @@
+ 	            tabs--;
+ 	            println("}");
+ 	        }
++
++            if ((grammar instanceof ParserGrammar) && (rblk.returnAction == null)) {
++                println(s.getId() + "Cache.put(LT(1), returnAST);");
++                tabs--;
++                println("} catch (RecognitionException e) {");
++                println("\t" + s.getId() + "Cache.put(LT(1), e);");
++                println("\tthrow e;");
++                println("} catch (TokenStreamException e) {");
++                println("\t" + s.getId() + "Cache.put(LT(1), e);");
++                println("\tthrow e;");
++                println("}");
++                tabs--;
++                println("}");
++            }
+ 	
+ 	        tabs--;
+ 	        println("}");
