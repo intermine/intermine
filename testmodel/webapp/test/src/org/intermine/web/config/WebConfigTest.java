@@ -10,13 +10,13 @@ package org.intermine.web.config;
  *
  */
 
-import junit.framework.TestCase;
+import org.intermine.metadata.Model;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.intermine.metadata.Model;
+import junit.framework.TestCase;
 
 public class WebConfigTest extends TestCase
 {

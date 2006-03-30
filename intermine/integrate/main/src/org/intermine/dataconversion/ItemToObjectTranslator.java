@@ -243,7 +243,7 @@ public class ItemToObjectTranslator extends Translator
                 itemSize += ((Attribute) iter.next()).getValue().length() + 50;
             }
         } catch (NullPointerException e) {
-            LOG.error("An Attribute caused a NullPointerException!" ,e);
+            LOG.error("An Attribute caused a NullPointerException!", e);
             throw e;
         }
         iter = item.getCollections().iterator();

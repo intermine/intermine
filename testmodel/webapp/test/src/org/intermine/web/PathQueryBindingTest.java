@@ -10,20 +10,22 @@ package org.intermine.web;
  *
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the PathQueryBinding class

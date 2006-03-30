@@ -12,17 +12,19 @@ package org.intermine.web.results;
 
 import java.util.Collections;
 
-import javax.servlet.http.HttpServletRequest;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
-import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts.action.ActionMapping;
 
 import servletunit.struts.MockStrutsTestCase;
 

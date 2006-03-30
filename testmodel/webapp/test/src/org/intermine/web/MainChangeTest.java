@@ -10,11 +10,13 @@ package org.intermine.web;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.intermine.metadata.Model;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the MainChange class

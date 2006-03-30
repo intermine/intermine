@@ -48,15 +48,12 @@ import org.flymine.model.genomic.ComputationalAnalysis;
 import org.flymine.model.genomic.ComputationalResult;
 import org.flymine.model.genomic.Evidence;
 import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.NcRNA;
 import org.flymine.model.genomic.PCRProduct;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Synonym;
-import org.flymine.model.genomic.ThreePrimeUTR;
 import org.flymine.model.genomic.Transcript;
 import org.flymine.postprocess.PostProcessUtil;
 

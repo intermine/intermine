@@ -3,8 +3,9 @@ package org.intermine.web.history;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.metadata.Model;
 import org.intermine.web.Constants;
 import org.intermine.web.Constraint;
 import org.intermine.web.PathQuery;
