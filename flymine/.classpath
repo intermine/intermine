@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="build/resources"/>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
 	<classpathentry kind="src" path="model/interpro/src/java"/>
 	<classpathentry kind="src" path="model/interpro/src/test"/>
@@ -11,6 +12,7 @@
 	<classpathentry kind="src" path="model/tfbs/src/test"/>
 	<classpathentry kind="src" path="model/tfbscluster/src/java"/>
 	<classpathentry kind="src" path="model/tfbscluster/src/test"/>
+	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="src" path="model/genomic/resources/flymine"/>
 	<classpathentry excluding="flymine/" kind="src" path="model/genomic/resources"/>
 	<classpathentry excluding="resources/|src/java/|src/test/" kind="src" path="model/mage"/>
@@ -74,7 +76,6 @@
 	<classpathentry kind="src" path="model/psi/src/java"/>
 	<classpathentry kind="src" path="model/psi/src/test"/>
 	<classpathentry kind="src" path="model/ensembl/src/test"/>
-	<classpathentry kind="lib" path="build/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/fulldata"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
@@ -91,8 +92,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
-	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="model/mage/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ant-tasks"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.0-rc1.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.0-rc1.jar"/>
