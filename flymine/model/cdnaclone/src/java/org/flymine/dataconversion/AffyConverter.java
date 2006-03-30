@@ -71,7 +71,7 @@ public class AffyConverter extends CDNACloneConverter
         dataSet2 = createItem("DataSet");
         dataSet2.setAttribute("title", "Affymetrix Human Genome U95Av2 Array");
         writer.store(ItemHelper.convert(dataSet2));
-        
+
         dataSet3 = createItem("DataSet");
         dataSet3.setAttribute("title", "Affymetrix Mouse Genome 430 2.0 Array");
         writer.store(ItemHelper.convert(dataSet3));
@@ -105,14 +105,14 @@ public class AffyConverter extends CDNACloneConverter
                 continue;
             }
 
-           
+
             String probeId = array[0].substring(1);
             String probePre = null;
             String dataSetId = null;
             String orgId = null;
 
             String chipInfo = array[1];
-            
+
             if (chipInfo.equals("Human Genome U133A Array")) {
                 probePre = PROBEPREFIX + "HG-U133A:";
                 dataSetId = dataSet1.getIdentifier();
@@ -127,11 +127,11 @@ public class AffyConverter extends CDNACloneConverter
                 orgId = organismMM.getIdentifier();
 
             }
-                        
+
             String geneEnsembl = array[17];
             //don't create probe if no ensembl id is given in the file
-            if (geneEnsembl.startsWith("ENSG") || geneEnsembl.startsWith("ENSMUSG")) {               
-                Item probe = createProbe("CompositeSequence", probePre, probeId, 
+            if (geneEnsembl.startsWith("ENSG") || geneEnsembl.startsWith("ENSMUSG")) {
+                Item probe = createProbe("CompositeSequence", probePre, probeId,
                              orgId, dataSource.getIdentifier(), dataSetId, writer);
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
@@ -178,7 +178,7 @@ public class AffyConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createProbe(String clsName, String probePre, String id, String orgId, 
+     private Item createProbe(String clsName, String probePre, String id, String orgId,
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);

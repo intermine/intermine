@@ -10,15 +10,16 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.iql.IqlQuery;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 
 import junit.framework.TestCase;
-
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.objectstore.query.Results;
-import org.intermine.metadata.Model;
 
 public class PagedResultsTest extends TestCase
 {

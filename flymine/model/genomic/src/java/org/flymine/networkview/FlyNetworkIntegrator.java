@@ -346,7 +346,7 @@ public abstract class FlyNetworkIntegrator
                         ArrayList list = new ArrayList();
                         list.add(o);
                         cyAtts.setAttributeList(element, name, list);
-                    }else { 
+                    } else { 
                         setAttribute(cyAtts, element, name, o);
                     }
                 } else { // not String

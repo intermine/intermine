@@ -10,6 +10,14 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.intermine.objectstore.query.ResultsRow;
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -20,7 +28,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.IdUpgrader;
@@ -32,11 +39,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
 import java.io.Reader;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

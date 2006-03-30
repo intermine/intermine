@@ -15,10 +15,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import org.intermine.objectstore.query.ConstraintOp;
+
 import junit.framework.TestCase;
 
 import org.apache.struts.action.ActionErrors;
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Test the static parseValue method on MainForm.

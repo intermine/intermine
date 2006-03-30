@@ -10,18 +10,10 @@ package org.intermine.web.task;
  *
  */
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.Test;
-
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -32,8 +24,18 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.web.MainHelper;
 import org.intermine.web.TemplateQuery;
+
+import java.io.InputStream;
+
+import junit.framework.Test;
 
 /**
  * Tests for PrecomputeTemplatesTask.

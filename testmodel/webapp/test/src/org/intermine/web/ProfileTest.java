@@ -10,11 +10,9 @@ package org.intermine.web;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.util.Date;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -23,6 +21,8 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
+
+import junit.framework.TestCase;
 
 public class ProfileTest extends TestCase
 {

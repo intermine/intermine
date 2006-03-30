@@ -12,10 +12,12 @@ package org.intermine.web;
 
 import java.util.HashMap;
 
-import junit.framework.TestCase;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
+
+import org.intermine.metadata.Model;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the MainHelper class
