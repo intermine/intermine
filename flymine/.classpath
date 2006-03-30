@@ -93,6 +93,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="model/mage/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.0-rc1.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.0-rc1.jar"/>
 	<classpathentry kind="output" path="build-eclipse"/>
