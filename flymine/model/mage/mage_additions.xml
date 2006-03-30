@@ -72,6 +72,7 @@
   <attribute name="isControl" type="java.lang.Boolean"/>
   <attribute name="value" type="java.lang.Float"/>
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="results"/>
+  <reference name="material" referenced-type="org.flymine.model.genomic.CompositeSequence" reverse-reference="results"/>
   <collection name="assays" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
   <collection name="reporters" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="microArrayResults"/>
