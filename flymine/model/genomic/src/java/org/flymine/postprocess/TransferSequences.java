@@ -11,24 +11,49 @@ package org.flymine.postprocess;
  */
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.biojava.bio.symbol.SymbolList;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.seq.DNATools;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 
-import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 
-import org.intermine.objectstore.query.ResultsRow;
-import org.flymine.model.genomic.*;
+import org.flymine.model.genomic.Assembly;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.ChromosomeBand;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.RankedRelation;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Supercontig;
+import org.flymine.model.genomic.Transcript;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.log4j.Logger;
+import org.biojava.bio.seq.DNATools;
+import org.biojava.bio.symbol.IllegalAlphabetException;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SymbolList;
 
 /**
  * Transfer sequences from the Assembly objects to the other objects that are located on the
@@ -40,7 +65,6 @@ import org.apache.log4j.Logger;
 public class TransferSequences
 {
     protected ObjectStoreWriter osw;
-
     private static final Logger LOG = Logger.getLogger(TransferSequences.class);
 
     /**
@@ -59,7 +83,6 @@ public class TransferSequences
      */
     public void transferToChromosome()
         throws Exception {
-        osw.beginTransaction();
         ObjectStore os = osw.getObjectStore();
 
         Results results = 
@@ -67,10 +90,12 @@ public class TransferSequences
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
 
+        Map chromosomeTempFiles = new HashMap();
+
         Iterator resIter = results.iterator();
 
         Chromosome currentChr = null;
-        char[] currentChrBases = null;
+        RandomAccessFile currentChrBases = null;
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
@@ -79,42 +104,92 @@ public class TransferSequences
             Assembly assembly = (Assembly) rr.get(1);
             Location assemblyOnChrLocation = (Location) rr.get(2);
 
+            if (assembly instanceof Supercontig) {
+                continue;
+            }
+            
             if (currentChr == null || !chr.equals(currentChr)) {
                 if (currentChr != null) {
-                    storeNewSequence(currentChr, currentChrBases);
-                    LOG.info("finished Chromosome: " + currentChr.getIdentifier());
+                    currentChrBases.close();
+                    LOG.info("finished writing temp file for Chromosome: " + currentChr.getIdentifier());
                 }
-                currentChrBases = new char[chr.getLength().intValue()];
-                // fill with '.' so we can see the parts of the Chromosome sequence that haven't
-                // been set
-                for (int i = 0; i < currentChrBases.length; i++) {
-                    currentChrBases[i] = '.';
-                }
+
+                File tempFile = getTempFile(chr);
+                currentChrBases = getChromosomeTempSeqFile(chr, tempFile);
+                chromosomeTempFiles.put(chr, tempFile);
+
                 currentChr = chr;
             }
 
             copySeqArray(currentChrBases, assembly.getSequence().getResidues(),
                          assemblyOnChrLocation.getStart().intValue(),
-                         assemblyOnChrLocation.getEnd().intValue(),
                          assemblyOnChrLocation.getStrand().intValue());
         }
         if (currentChrBases == null) {
             LOG.error("in transferToChromosome(): no Assembly sequences found");
         } else {
-            storeNewSequence(currentChr, currentChrBases);
-            LOG.info("finished Chromosome: " + currentChr.getIdentifier());
+            currentChrBases.close();
+            storeTempSequences(chromosomeTempFiles);
+            LOG.info("finished writing temp file for Chromosome: " + currentChr.getIdentifier());
         }
-        osw.commitTransaction();
     }
 
-    private void storeNewSequence(LocatedSequenceFeature feature, char [] featureBases)
+    private File getTempFile(Chromosome chr) throws IOException {
+        String prefix = "transfer_sequences_temp_" + chr.getId() + "_" + chr.getIdentifier();
+        return File.createTempFile(prefix, null);
+    }
+
+    /**
+     * Initialise the given File by setting it's length to the length of the Chromosome and
+     * initialising it with "." characters.
+     * @throws IOException 
+     */
+    private RandomAccessFile getChromosomeTempSeqFile(Chromosome chr, File tempFile)
+                                                      throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
+
+        byte[] bytes;
+        try {
+            bytes = "....................................................".getBytes("US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("unexpected exception", e);
+        }
+
+        // fill with '.' so we can see the parts of the Chromosome sequence that haven't
+        // been set
+        for (int i = 0; i < chr.getLength().intValue(); i++) {
+            raf.write(bytes);
+        }
+
+        raf.setLength(chr.getLength().longValue());
+        
+        return raf;
+    }
+
+    private void storeTempSequences(Map chromosomeTempFiles)
+        throws ObjectStoreException, IOException {
+        Iterator chromosomeTempFilesIter = chromosomeTempFiles.keySet().iterator();
+
+        while (chromosomeTempFilesIter.hasNext()) {
+            Chromosome chr = (Chromosome) chromosomeTempFilesIter.next();
+            File file = (File) chromosomeTempFiles.get(chr);
+            FileReader reader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String sequenceString = bufferedReader.readLine();
+            osw.beginTransaction();
+            storeNewSequence(chr, sequenceString);
+            osw.commitTransaction();
+        }
+    }
+
+    private void storeNewSequence(LocatedSequenceFeature feature, String sequenceString)
         throws ObjectStoreException {
         Sequence sequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        sequence.setResidues(new String(featureBases));
-        sequence.setLength(featureBases.length);
+        sequence.setResidues(sequenceString);
+        sequence.setLength(sequenceString.length());
         feature.setSequence(sequence);
-        feature.setLength(new Integer(featureBases.length));
+        feature.setLength(new Integer(sequenceString.length()));
         osw.store(feature);
         osw.store(sequence);
     }
@@ -222,24 +297,24 @@ public class TransferSequences
         return subSeqString;
     }
 
-    private void copySeqArray(char[] destArray, String sourceSequence,
-                              int start, int end, int strand)
-        throws IllegalSymbolException, IllegalAlphabetException {
-        char[] sourceArray;
+    private void copySeqArray(RandomAccessFile raf, String sourceSequence,
+                              int start, int strand)
+        throws IllegalSymbolException, IllegalAlphabetException, IOException {
+
+        byte[] byteArray = new byte[sourceSequence.length()];
 
         if (strand == -1) {
             SymbolList symbolList = DNATools.createDNA(sourceSequence);
 
             symbolList = DNATools.reverseComplement(symbolList);
 
-            sourceArray = symbolList.seqString().toCharArray();
+            byteArray = symbolList.seqString().getBytes("US-ASCII");
         } else {
-            sourceArray = sourceSequence.toLowerCase().toCharArray();
+            byteArray = sourceSequence.toLowerCase().getBytes("US-ASCII");
         }
 
-        int charsToCopy = end - start + 1;
-
-        System.arraycopy(sourceArray, 0, destArray, start - 1, charsToCopy);
+        raf.seek(start - 1);
+        raf.write(byteArray);
     }
 
     /**
@@ -312,15 +387,11 @@ public class TransferSequences
 
            Transcript transcript =  (Transcript) rr.get(0);
 
-           RankedRelation rankedRelation = (RankedRelation) rr.get(1);
            Exon exon = (Exon) rr.get(2);
-           Sequence sequence = (Sequence) rr.get(3);
-           String sequenceString = sequence.getResidues();
-
            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                if (currentTranscript != null) {
                    storeNewSequence(currentTranscript,
-                                    currentTranscriptBases.toString().toCharArray());
+                                    currentTranscriptBases.toString());
                    i++;
                }
                currentTranscriptBases = new StringBuffer();
@@ -337,7 +408,7 @@ public class TransferSequences
         if (currentTranscript == null) {
             LOG.error("in transferToTranscripts(): no Transcripts found");
         } else {
-            storeNewSequence(currentTranscript, currentTranscriptBases.toString().toCharArray());
+            storeNewSequence(currentTranscript, currentTranscriptBases.toString());
         }
 
         osw.commitTransaction();

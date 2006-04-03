@@ -319,6 +319,7 @@ public class TransferSequencesTest extends TestCase
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
+        storedChromosome.setIdentifier("store_chromosome");
 
         storedSupercontig =
             (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
