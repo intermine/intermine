@@ -1,5 +1,3 @@
-CLASSPATH=/software/noarch/junit/
-
 RUNNING_FILE=~/public_html/tests/.running
 TRUNK_DIR=~/public_html/tests/trunk
 BUILD_PROJ=$TRUNK_DIR/intermine/all
@@ -54,19 +52,17 @@ touch "$RUNNING_FILE"
 
 #BLAME=$(svn status -v -u | grep '^.......\*' | cut -c 28-40 | sort -u)
 NEXT=$(($(svn info | grep "Revision" | cut -c 11-)+1))
-BLAME=$(svn log -r $NEXT:HEAD | grep '^r[0-9]' | awk '{print $3;}' | sort | uniq | xargs | perl -p -e 's/\s/, /g;')
+BLAME=$(svn log -r $NEXT:HEAD | grep '^r[0-9]' | awk '{print $3;}' | sort | uniq | xargs | perl -p -e 's/\s/\@flymine.org, /g;')
 echo "BLAME = $BLAME"
 
 umask 0022
 mkdir -p "$ARCHIVE_TO"
 mkdir -p "$LATEST_DIR"
 
-#cd $TRUNK_DIR/..
-rm -rf $TRUNK_DIR
-svn co svn://svn.flymine.org/flymine/trunk $TRUNK_DIR
+svn update svn://svn.flymine.org/flymine/trunk $TRUNK_DIR
 
 cd $BUILD_PROJ
-#ant clean-all
+ant clean-all
 cd $TRUNK_DIR
 UPDATE=$(svn up)
 cd $BUILD_PROJ
