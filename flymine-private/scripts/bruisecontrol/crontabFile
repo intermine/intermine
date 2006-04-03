@@ -1,4 +1,4 @@
 @reboot	( cd $HOME/apache-tomcat-5.5.16 JAVA_HOME=/software/arch/jdk PATH=/software/arch/jdk/bin/:$PATH ./bin/startup.sh )
-*/5     *       *       *       *       $HOME/public_html/tests/trunk/flymine-private/scripts/bruisecontrol/update_and_full_test.sh >> ~/public_html/tests/build.log 2>&1
-0 23 * * * $HOME/public_html/tests/nightly_restart.sh >> $HOME/public_html/tests/build.log 2>&1
+*/5     *       *       *       *       $HOME/public_html/tests/trunk/flymine-private/scripts/bruisecontrol/update_and_full_test.sh >> ~/public_html/tests/archived/build.log 2>&1
+0	23	*	*	*	$HOME/public_html/tests/nightly_restart.sh >> $HOME/public_html/tests/archived/build.log 2>&1
 
