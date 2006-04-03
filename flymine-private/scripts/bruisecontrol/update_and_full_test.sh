@@ -1,3 +1,5 @@
+#!/bin/sh -
+
 RUNNING_FILE=~/public_html/tests/.running
 TRUNK_DIR=~/public_html/tests/trunk
 BUILD_PROJ=$TRUNK_DIR/intermine/all
@@ -7,6 +9,7 @@ ARCHIVE_TO=$ARCHIVED_DIR/$TIME_STAMP
 LATEST_DIR=$ARCHIVED_DIR/latest
 STD_ERR=~/public_html/tests/stderr.log
 JUNIT_FAIL_FILE=~/public_html/tests/previous_junit_failures
+URL_PREFIX='http://bc.flymine.org'
 
 . ~/.bashrc
 
@@ -186,9 +189,9 @@ fi
 #    echo "failures set is not equal - should email $BLAME"
      echo "Emailing $BLAME..."
 #  BLAME=bruiser
-    printf "JUnit results: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/junit/\n\n" > MSG
-    printf "Checkstyle results: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/checkstyle/\n\n" >> MSG
-    printf "Ant output: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/ant_log.txt\n\n" >> MSG
+    printf "JUnit results: $URL_PREFIX/$TIME_STAMP/junit/\n\n" > MSG
+    printf "Checkstyle results: $URL_PREFIX/$TIME_STAMP/checkstyle/\n\n" >> MSG
+    printf "Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt\n\n" >> MSG
     printf "Last update:\n\n" >> 'MSG'
     echo "$UPDATE" >> 'MSG'
     #printf "\n\n------------------------------------------------------------\nTest failures diff:\n\n$DIFF" >> 'MSG'
