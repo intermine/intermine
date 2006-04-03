@@ -33,6 +33,10 @@
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
   
+  <taglib>
+    <taglib-uri>http://jakarta.apache.org/taglibs/string-1.1</taglib-uri>
+    <taglib-location>/WEB-INF/string.tld</taglib-location>
+  </taglib>
 </web-app>
 
 

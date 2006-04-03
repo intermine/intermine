@@ -42,7 +42,7 @@
             <tr>
               <td>
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
-                  <c:out value="${savedBag.key}"/>
+                  <c:out value="${savedBag.key}" escapeXml="false"/>
                 </html:multibox>
               </td>
               
