@@ -150,14 +150,17 @@ public class TransferSequences
 
         byte[] bytes;
         try {
-            bytes = "....................................................".getBytes("US-ASCII");
+            bytes = ("......................................................................."
+                            + ".............................................").getBytes("US-ASCII");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("unexpected exception", e);
         }
 
+        int writeCount = chr.getLength().intValue() / bytes.length + 1;
+        
         // fill with '.' so we can see the parts of the Chromosome sequence that haven't
         // been set
-        for (int i = 0; i < chr.getLength().intValue(); i++) {
+        for (int i = 0; i < writeCount ; i++) {
             raf.write(bytes);
         }
 
