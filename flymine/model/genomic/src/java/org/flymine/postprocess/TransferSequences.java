@@ -136,7 +136,7 @@ public class TransferSequences
 
     private File getTempFile(Chromosome chr) throws IOException {
         String prefix = "transfer_sequences_temp_" + chr.getId() + "_" + chr.getIdentifier();
-        return File.createTempFile(prefix, null);
+        return File.createTempFile(prefix, null, new File ("build"));
     }
 
     /**
