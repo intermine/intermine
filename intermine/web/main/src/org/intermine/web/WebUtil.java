@@ -112,34 +112,38 @@ public abstract class WebUtil
     public static String wildcardSqlToUser(String exp) {
         StringBuffer sb = new StringBuffer();
 
-        Pattern pattern = Pattern.compile("(%|\\\\%|_|\\\\_|\\|\\*|\\?|.)");
-        Matcher matcher = pattern.matcher(exp);
-        
-        while (matcher.find()) {
-            String group = matcher.group();
+        // To quote a '%' in PostgreSQL we need to pass \\% because it strips one level of
+        // backslashes when parsing a string and another when parsing a LIKE expression.
+        // Java needs backslashes to be backslashed in strings, hence all the blashslashes below
+        // see. http://www.postgresql.org/docs/7.3/static/functions-matching.html
 
-            if (group.equals("%")) {
+        for (int i = 0; i < exp.length(); i++) {
+            String substring = exp.substring(i);
+            if (substring.startsWith("%")) {
                 sb.append("*");
             } else {
-                if (group.equals("_")) {
+                if (substring.startsWith("_")) {
                     sb.append("?");
                 } else {
-                    if (group.equals("\\%")) {
+                    if (substring.startsWith("\\\\%")) {
                         sb.append("%");
+                        i += 2;
                     } else {
-                        if (group.equals("\\_")) {
+                        if (substring.startsWith("\\\\_")) {
                             sb.append("_");
+                            i += 2;
                         } else {
-                            if (group.equals("*")) {
+                            if (substring.startsWith("*")) {
                                 sb.append("\\*");
                             } else {
-                                if (group.equals("?")) {
+                                if (substring.startsWith("?")) {
                                     sb.append("\\?");
                                 } else {
-                                    if (group.equals("\\")) {
+                                    if (substring.startsWith("\\\\\\\\")) {
+                                        i += 3;
                                         sb.append("\\\\");
                                     } else {
-                                        sb.append(group);
+                                        sb.append(substring.charAt(0));
                                     }
                                 }
                             }
@@ -162,34 +166,33 @@ public abstract class WebUtil
     public static String wildcardUserToSql(String exp) {
         StringBuffer sb = new StringBuffer();
 
-        Pattern pattern = Pattern.compile("(\\*|\\\\\\*|\\?|\\\\\\?|\\|%|_|.)");
-        Matcher matcher = pattern.matcher(exp);
-        
-        while (matcher.find()) {
-            String group = matcher.group();
-
-            if (group.equals("*")) {
+        for (int i = 0; i < exp.length(); i++) {
+            String substring = exp.substring(i);
+            if (substring.startsWith("*")) {
                 sb.append("%");
             } else {
-                if (group.equals("?")) {
+                if (substring.startsWith("?")) {
                     sb.append("_");
                 } else {
-                    if (group.equals("\\*")) {
+                    if (substring.startsWith("\\*")) {
                         sb.append("*");
+                        i++;
                     } else {
-                        if (group.equals("\\?")) {
+                        if (substring.startsWith("\\?")) {
                             sb.append("?");
+                            i++;
                         } else {
-                            if (group.equals("%")) {
-                                sb.append("\\%");
+                            if (substring.startsWith("%")) {
+                                sb.append("\\\\%");
                             } else {
-                                if (group.equals("_")) {
-                                    sb.append("\\_");
+                                if (substring.startsWith("_")) {
+                                    sb.append("\\\\_");
                                 } else {
-                                    if (group.equals("\\")) {
-                                        sb.append("\\\\");
+                                    if (substring.startsWith("\\")) {
+                                        sb.append("\\\\\\\\");
+                                        i++;
                                     } else {
-                                        sb.append(group);
+                                        sb.append(substring.charAt(0));
                                     }
                                 }
                             }

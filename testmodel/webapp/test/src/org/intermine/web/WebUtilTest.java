@@ -34,14 +34,17 @@ public class WebUtilTest extends TestCase
         value = WebUtil.wildcardSqlToUser("%a");
         assertEquals("wildcardSqlToUser(%a)", "*a", value);
 
-        value = WebUtil.wildcardSqlToUser("\\%a");
-        assertEquals("wildcardSqlToUser(\\%a)", "%a", value);
+        value = WebUtil.wildcardSqlToUser("a\\\\\\\\a");
+        assertEquals("wildcardSqlToUser(a\\\\\\\\a)", "a\\\\a", value);
+
+        value = WebUtil.wildcardSqlToUser("\\\\%a");
+        assertEquals("wildcardSqlToUser(\\\\%a)", "%a", value);
 
         value = WebUtil.wildcardSqlToUser("_a");
         assertEquals("wildcardSqlToUser(_a)", "?a", value);
 
-        value = WebUtil.wildcardSqlToUser("\\_a");
-        assertEquals("wildcardSqlToUser(\\_a)", "_a", value);
+        value = WebUtil.wildcardSqlToUser("\\\\_a");
+        assertEquals("wildcardSqlToUser(\\\\_a)", "_a", value);
 
         value = WebUtil.wildcardSqlToUser("?a");
         assertEquals("wildcardSqlToUser(?a)", "\\?a", value);
@@ -49,14 +52,8 @@ public class WebUtilTest extends TestCase
         value = WebUtil.wildcardSqlToUser("*a");
         assertEquals("wildcardSqlToUser(*a)", "\\*a", value);
 
-        value = WebUtil.wildcardSqlToUser("\\?a");
-        assertEquals("wildcardSqlToUser(\\?a)", "\\\\\\?a", value);
-
-        value = WebUtil.wildcardSqlToUser("\\*a");
-        assertEquals("wildcardSqlToUser(\\*a)", "\\\\\\*a", value);
-
-        value = WebUtil.wildcardSqlToUser("*?%_\\*\\?\\%\\_");
-        assertEquals("wildcardSqlToUser(*?%_\\*\\?\\%\\_)", "\\*\\?*?\\\\\\*\\\\\\?%_", value);
+        value = WebUtil.wildcardSqlToUser("*?%_\\\\%\\\\_");
+        assertEquals("wildcardSqlToUser(*?%_\\\\%\\\\_)", "\\*\\?*?%_", value);
     }
 
 
@@ -69,6 +66,9 @@ public class WebUtilTest extends TestCase
         
         value = WebUtil.wildcardUserToSql("*a");
         assertEquals("wildcardUserToSql(*a)", "%a", value);
+ 
+        value = WebUtil.wildcardUserToSql("a\\\\a");
+        assertEquals("wildcardUserToSql(a\\a)", "a\\\\\\\\a", value);
 
         value = WebUtil.wildcardUserToSql("\\*a");
         assertEquals("wildcardUserToSql(\\*a)", "*a", value);
@@ -80,18 +80,24 @@ public class WebUtilTest extends TestCase
         assertEquals("wildcardUserToSql(\\?a)", "?a", value);
 
         value = WebUtil.wildcardUserToSql("_a");
-        assertEquals("wildcardSqlToUser(_a)", "\\_a", value);
+        assertEquals("wildcardSqlToUser(_a)", "\\\\_a", value);
 
         value = WebUtil.wildcardUserToSql("%a");
-        assertEquals("wildcardSqlToUser(%a)", "\\%a", value);
+        assertEquals("wildcardSqlToUser(%a)", "\\\\%a", value);
 
-        value = WebUtil.wildcardUserToSql("\\_a");
-        assertEquals("wildcardUserToSql(\\_a)", "\\\\\\_a", value);
-
-        value = WebUtil.wildcardUserToSql("\\%a");
-        assertEquals("wildcardUserToSql(\\%a)", "\\\\\\%a", value);
-
-        value = WebUtil.wildcardUserToSql("*?%_\\*\\?\\%\\_");
-        assertEquals("wildcardUserToSql(*?%_\\*\\?\\%\\_)", "%_\\%\\_*?\\\\\\%\\\\\\_", value);
+        value = WebUtil.wildcardUserToSql("*?%_\\*\\?");
+        assertEquals("wildcardUserToSql(*?%_\\*\\?\\%\\_)", "%_\\\\%\\\\_*?", value);
+    }
+    
+    public void testWildcardRoundTrip() {
+        String[] testStrings = {
+            "*?%_\\*\\?", "a?b*d\\?e\\*f%g_h",
+            "\\\\*?%_a %_\\*..whuiwefhuw\\?\\?\\?????\\??||???? <>"
+        };
+        
+        for (int i = 0; i < testStrings.length; i++) {
+            assertEquals("testing: " + testStrings[i], testStrings[i],
+                         WebUtil.wildcardSqlToUser(WebUtil.wildcardUserToSql(testStrings[i])));
+        }
     }
 }
