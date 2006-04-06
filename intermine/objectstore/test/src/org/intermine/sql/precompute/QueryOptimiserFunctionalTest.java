@@ -175,7 +175,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         while (precompsIter.hasNext()) {
             String name = (String) precompsIter.next();
             Query q = new Query((String) precomps.get(name));
-            PrecomputedTable pt = new PrecomputedTable(q, name, con);
+            PrecomputedTable pt = new PrecomputedTable(q, q.getSQLString(), name, "test", con);
             if ("precomp_table2Table3onCol1".equals(name)) {
                 toDelete = pt;
             }

@@ -59,10 +59,10 @@ public class PrecomputedTableTest extends TestCase
         q2.addSelect(sv);
         q2.addWhere(new Constraint(f, Constraint.LT, c));
 
-        pt1 = new PrecomputedTable(q1, "precomp1", con);
-        pt2 = new PrecomputedTable(q1, "precomp1", con);
-        pt3 = new PrecomputedTable(q1, "precomp2", con);
-        pt4 = new PrecomputedTable(q2, "precomp2", con);
+        pt1 = new PrecomputedTable(q1, q1.getSQLString(), "precomp1", null, con);
+        pt2 = new PrecomputedTable(q1, q1.getSQLString(), "precomp1", null, con);
+        pt3 = new PrecomputedTable(q1, q1.getSQLString(), "precomp2", null, con);
+        pt4 = new PrecomputedTable(q2, q1.getSQLString(), "precomp2", null, con);
     }
 
     public void tearDown() throws SQLException {
@@ -71,7 +71,7 @@ public class PrecomputedTableTest extends TestCase
 
     public void testPrecomputedTableWithNullName() throws Exception {
         try {
-            PrecomputedTable pt = new PrecomputedTable(new Query(), null, con);
+            PrecomputedTable pt = new PrecomputedTable(new Query(), "", null, null, con);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -80,7 +80,7 @@ public class PrecomputedTableTest extends TestCase
 
     public void testPrecomputedTableWithNullQuery() throws Exception {
         try {
-            PrecomputedTable pt = new PrecomputedTable(null, "precomp", con);
+            PrecomputedTable pt = new PrecomputedTable(null, "", "precomp", null, con);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -131,39 +131,39 @@ public class PrecomputedTableTest extends TestCase
         result.put(v3, s3);
 
         Query q1 = new Query("SELECT 'c1' AS alias1, 'c2' AS alias2, 'c3' AS alias3 FROM table");
-        PrecomputedTable pt = new PrecomputedTable(q1, "name", con);
+        PrecomputedTable pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals(result, pt.getValueMap());
     }
 
     public void testOrderByField() throws Exception {
         Query q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
-        PrecomputedTable pt = new PrecomputedTable(q1, "name", con);
+        PrecomputedTable pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals("orderby_field", pt.getOrderByField());
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.name AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
-        pt = new PrecomputedTable(q1, "name", con);
+        pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals(null, pt.getOrderByField());
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.name AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
-        pt = new PrecomputedTable(q1, "name", con);
+        pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals(null, pt.getOrderByField());
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
-        pt = new PrecomputedTable(q1, "name", con);
+        pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
     }
 
     public void testCompareTo() throws Exception {
         Query q1 = new Query("SELECT a.b AS c FROM a");
-        PrecomputedTable pt1 = new PrecomputedTable(q1, "fred", con);
+        PrecomputedTable pt1 = new PrecomputedTable(q1, q1.getSQLString(), "fred", null, con);
 
         Query q2 = new Query("SELECT a.b AS c FROM a, b");
-        PrecomputedTable pt2 = new PrecomputedTable(q2, "fred", con);
+        PrecomputedTable pt2 = new PrecomputedTable(q2, q1.getSQLString(), "fred", null, con);
 
         Query q3 = new Query("SELECT a.b AS c FROM a");
-        PrecomputedTable pt3 = new PrecomputedTable(q3, "bob", con);
+        PrecomputedTable pt3 = new PrecomputedTable(q3, q1.getSQLString(), "bob", null, con);
 
         Query q4 = new Query("SELECT a.b AS c FROM a, b");
-        PrecomputedTable pt4 = new PrecomputedTable(q4, "bob", con);
+        PrecomputedTable pt4 = new PrecomputedTable(q4, q1.getSQLString(), "bob", null, con);
 
         TreeSet ts = new TreeSet();
         ts.add(pt1);

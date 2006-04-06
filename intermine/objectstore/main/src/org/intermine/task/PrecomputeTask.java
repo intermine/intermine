@@ -191,7 +191,7 @@ public class PrecomputeTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, true);
+            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, true, "PrecomputeTask");
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query
                     + " with indexes " + indexes, e);
@@ -212,7 +212,7 @@ public class PrecomputeTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, true);
+            ((ObjectStoreInterMineImpl) os).precompute(query, true, "PrecomputeTask");
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query, e);
         }

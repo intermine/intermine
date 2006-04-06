@@ -271,7 +271,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         indexes.add(qc1);
         indexes.add(f1);
         indexes.add(f2);
-        String tableName = ((ObjectStoreInterMineImpl) os).precompute(q, indexes);
+        String tableName = ((ObjectStoreInterMineImpl) os).precompute(q, indexes, "test");
         Connection con = null;
         Map indexMap = new HashMap();
         try {
@@ -317,7 +317,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addToSelect(longo);
         q.addToSelect(qc);
         q.setDistinct(false);
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "test");
 
         Results r = os.execute(q);
         r.setBatchSize(1);
@@ -360,7 +360,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addToSelect(longo);
         q.addToSelect(qc);
         q.setDistinct(false);
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "test");
 
         Results r = os.execute(q);
         r.setBatchSize(1);
