@@ -80,7 +80,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             Query q2 = QueryCloner.cloneQuery(q1);
             long time2 = System.currentTimeMillis();
             System.out.println("Access to results took " + (time2 - time1) + " ms");
-            ((ObjectStoreInterMineImpl) os).precompute(q2);
+            ((ObjectStoreInterMineImpl) os).precompute(q2, "test");
             long time3 = System.currentTimeMillis();
             System.out.println("Precomputing took " + (time3 - time2) + " ms");
             Results r2 = os.execute(q2);

@@ -42,7 +42,9 @@ public class PrecomputedTable implements SQLStringable, Comparable
     /** The name of the field that is generated as the order by field */
     public static final String ORDERBY_FIELD = "orderby_field";
     protected Query q;
+    protected String originalSql;
     protected String name;
+    protected String category;
     protected Map valueMap;
     protected String orderByField;
     protected String generationSqlString;
@@ -52,19 +54,29 @@ public class PrecomputedTable implements SQLStringable, Comparable
      * Construct a new PrecomputedTable
      *
      * @param q the Query that this PrecomputedTable materialises
+     * @param originalSql the original SQL text that appears in the index table
      * @param name the name of this PrecomputedTable
+     * @param category the type of PrecomputedTable this is. Note that a value of "template" denotes
+     * PrecomputedTables that are managed automatically by the webapp. Such tables are liable to be
+     * created and deleted at random
      * @param conn a Connection to use to work out if the order by fields are compatible with a
      * unified orderby_field
      */
-    public PrecomputedTable(Query q, String name, Connection conn) {
+    public PrecomputedTable(Query q, String originalSql, String name, String category,
+            Connection conn) {
         if (q == null) {
             throw (new NullPointerException("q cannot be null"));
         }
         if (name == null) {
             throw (new NullPointerException("the name of a precomputed table cannot be null"));
         }
+        if (originalSql == null) {
+            throw new NullPointerException("Original sql string cannot be null");
+        }
         this.q = q;
+        this.originalSql = originalSql;
         this.name = name;
+        this.category = category;
         // Now build the valueMap. Do not alter this Query from now on...
         valueMap = new HashMap();
         Iterator valueIter = q.getSelect().iterator();
@@ -205,12 +217,30 @@ public class PrecomputedTable implements SQLStringable, Comparable
     }
 
     /**
+     * Returns the original SQL text stored in the index for this PrecomputedTable
+     *
+     * @return an SQL String
+     */
+    public String getOriginalSql() {
+        return originalSql;
+    }
+
+    /**
      * Gets the name of this PrecomputedTable
      *
      * @return the name of the PrecomputedTable
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the category of this PrecomputedTable
+     *
+     * @return a String
+     */
+    public String getCategory() {
+        return category;
     }
 
     /**

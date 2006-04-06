@@ -32,15 +32,16 @@ import org.apache.log4j.Logger;
  * Manages all the Precomputed tables in a given database.
  *
  * @author Andrew Varley
+ * @author Matthew Wakeling
  */
 public class PrecomputedTableManager
 {
     private static final Logger LOG = Logger.getLogger(PrecomputedTableManager.class);
 
     protected TreeSet precomputedTables = new TreeSet();
+    protected Map types = new HashMap();
     protected Database database = null;
     protected Connection conn = null;
-    protected Set queryStrings = new HashSet();
     protected static final String TABLE_INDEX = "precompute_index";
     protected static Map instances = new HashMap();
 
@@ -147,11 +148,16 @@ public class PrecomputedTableManager
         if (pt == null) {
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
-        String queryString = pt.getQuery().getSQLString();
-        if (!queryStrings.contains(queryString)) {
+        String queryString = pt.getOriginalSql();
+        Map queryStrings = (Map) types.get(pt.getCategory());
+        if (queryStrings == null) {
+            queryStrings = new HashMap();
+            types.put(pt.getCategory(), queryStrings);
+        }
+        if (!queryStrings.containsKey(queryString)) {
             addTableToDatabase(pt, indexes);
             precomputedTables.add(pt);
-            queryStrings.add(queryString);
+            queryStrings.put(queryString, pt);
         }
     }
 
@@ -167,7 +173,7 @@ public class PrecomputedTableManager
             deleteTableFromDatabase(pt.getName());
             iter.remove();
         }
-        queryStrings.clear();
+        types.clear();
     }
 
     /**
@@ -188,7 +194,8 @@ public class PrecomputedTableManager
 
         deleteTableFromDatabase(pt.getName());
         precomputedTables.remove(pt);
-        String queryString = pt.getQuery().getSQLString();
+        String queryString = pt.getOriginalSql();
+        Map queryStrings = (Map) types.get(pt.getCategory());
         queryStrings.remove(queryString);
     }
 
@@ -256,9 +263,10 @@ public class PrecomputedTableManager
 
             // Create the entry in the index table
             PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
-                                                           + TABLE_INDEX + " VALUES(?,?)");
+                                                           + TABLE_INDEX + " VALUES(?,?,?)");
             pstmt.setString(1, pt.getName());
-            pstmt.setString(2, pt.getQuery().getSQLString());
+            pstmt.setString(2, pt.getOriginalSql());
+            pstmt.setString(3, pt.getCategory());
             pstmt.execute();
             if (!con.getAutoCommit()) {
                 con.commit();
@@ -397,10 +405,17 @@ public class PrecomputedTableManager
         while (res.next()) {
             String tableName = res.getString(1);
             String queryString = res.getString(2);
+            String category = res.getString(3);
             try {
-                precomputedTables.add(new PrecomputedTable(new Query(queryString, false),
-                            tableName, con));
-                queryStrings.add(queryString);
+                PrecomputedTable pt = new PrecomputedTable(new Query(queryString, false),
+                            queryString, tableName, category, con);
+                precomputedTables.add(pt);
+                Map queryStrings = (Map) types.get(category);
+                if (queryStrings == null) {
+                    queryStrings = new HashMap();
+                    types.put(pt.getCategory(), queryStrings);
+                }
+                queryStrings.put(queryString, pt);
             } catch (IllegalArgumentException e) {
                 // This would be a poor query string in the TABLE_INDEX
                 failedCount++;
@@ -418,9 +433,41 @@ public class PrecomputedTableManager
      */
     protected void setupDatabase(Connection con) throws SQLException {
         Statement stmt = con.createStatement();
-        stmt.execute("CREATE TABLE " + TABLE_INDEX + "(name varchar(255), statement BYTEA)");
+        stmt.execute("CREATE TABLE " + TABLE_INDEX
+                + "(name varchar(255), statement BYTEA, category varchar(255))");
         if (!con.getAutoCommit()) {
             con.commit();
         }
+    }
+
+    /**
+     * Returns a PrecomputedTable object if one exists in the manager with the given category and
+     * original SQL string.
+     *
+     * @param category a String
+     * @param sql the original SQL string used to create the PrecomputedTable
+     * @return a PrecomputedTable or null
+     */
+    public PrecomputedTable lookupSql(String category, String sql) {
+        Map queryStrings = (Map) types.get(category);
+        if (queryStrings != null) {
+            return (PrecomputedTable) queryStrings.get(sql);
+        }
+        return null;
+    }
+
+    /**
+     * Returns a Map from original SQL to PrecomputedTable for a given category in the manager.
+     *
+     * @param category a String
+     * @return a Map
+     */
+    public Map lookupCategory(String category) {
+        Map queryStrings = (Map) types.get(category);
+        if (queryStrings == null) {
+            queryStrings = new HashMap();
+            types.put(category, queryStrings);
+        }
+        return queryStrings;
     }
 }
