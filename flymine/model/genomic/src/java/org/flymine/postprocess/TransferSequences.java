@@ -89,6 +89,7 @@ public class TransferSequences
             PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class, false);
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
+        results.setNoPrefetch();
 
         Map chromosomeTempFiles = new HashMap();
 
