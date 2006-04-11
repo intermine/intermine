@@ -1475,7 +1475,7 @@
     <convert-xml schema="${model}/psi/psi.xsd"
                  model="psi"
                  osName="osw.psi-src-items">
-      <fileset dir="${shared.data}/psi">
+      <fileset dir="${shared.data}/psi/intact/2006-04-02">
         <include name="caeel*.xml"/>
         <include name="drome*.xml"/>
         <include name="yeast*.xml"/>
@@ -2088,7 +2088,7 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-  <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454 7460">
+  <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454 7460 4932">
       <fileset dir="${shared.data}/uniprot/7.2">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
