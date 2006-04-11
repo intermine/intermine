@@ -800,6 +800,18 @@
          src="${build.resources}/make_small_ensembl_anoph_set.sql"/>
   </target>
 
+  <target name="build-ensembl-anoph-clean-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_clean_ensembl_anoph_set.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_anoph_clean"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_clean_ensembl_anoph_set.sql"/>
+  </target>
+
 
   <!-- build ensembl anopheles src items database -->
   <target name="build-db-ensembl-anoph-src-items" depends="prepare-build-model">
@@ -889,6 +901,18 @@
          userid="rns"
          password="rns"
          src="${build.resources}/make_small_ensembl_apis_mellifera_set.sql"/>
+  </target>
+
+    <target name="build-ensembl-apis-mellifera-clean-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_clean_ensembl_apis_mellifera_set.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_apis_mellifera_clean"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_clean_ensembl_apis_mellifera_set.sql"/>
   </target>
 
   <!-- build ensembl apis-mellifera src items database -->

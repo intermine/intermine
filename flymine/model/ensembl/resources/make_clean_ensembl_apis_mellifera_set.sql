@@ -1,7 +1,7 @@
-drop database ensembl_apis_mellifera_small;
-create database ensembl_apis_mellifera_small;
+drop database ensembl_apis_mellifera_clean;
+create database ensembl_apis_mellifera_clean;
 
-USE ensembl_apis_mellifera_small;
+USE ensembl_apis_mellifera_clean;
 
 create table coord_system as select * from apis_mellifera_core_37_2d.coord_system;
 create table meta_coord as select * from apis_mellifera_core_37_2d.meta_coord;
@@ -14,7 +14,7 @@ create table gene_seq_region_id as select seq_region_id from (
 create index idx_gsrid_sr_id on gene_seq_region_id(seq_region_id);
 
 create table gene as select * from apis_mellifera_core_37_2d.gene
-where seq_region_id in (select seq_region_id from gene_seq_region_id) limit 20;
+where seq_region_id in (select seq_region_id from gene_seq_region_id);
 create index idx_g_id on gene(gene_id);
 create index idx_g_x_id on gene(display_xref_id);
 create index idx_g_sr_id on gene(seq_region_id);
@@ -143,26 +143,6 @@ create table misc_set as select * from apis_mellifera_core_37_2d.misc_set limit 
 create table map as select * from apis_mellifera_core_37_2d.map limit 0;
 create table marker_map_location as select * from apis_mellifera_core_37_2d.marker_map_location limit 0;
 create table assembly_exception as select * from apis_mellifera_core_37_2d.assembly_exception limit 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,7 +1,7 @@
-drop database ensembl_anoph_small;
-create database ensembl_anoph_small;
+drop database ensembl_anoph_clean;
+create database ensembl_anoph_clean;
 
-USE ensembl_anoph_small;
+USE ensembl_anoph_clean;
 
 create table coord_system as select * from anopheles_gambiae_core_37_3.coord_system;
 create table meta_coord as select * from anopheles_gambiae_core_37_3.meta_coord;
@@ -10,11 +10,11 @@ create table meta_coord as select * from anopheles_gambiae_core_37_3.meta_coord;
 create table gene_seq_region_id as select seq_region_id from (
     select seq_region_id from anopheles_gambiae_core_37_3.seq_region
     where coord_system_id = 1 and name not like '%_hap_%'
-) bob LIMIT 1;
+) bob;
 create index idx_gsrid_sr_id on gene_seq_region_id(seq_region_id);
 
 create table gene as select * from anopheles_gambiae_core_37_3.gene
-where seq_region_id in (select seq_region_id from gene_seq_region_id) LIMIT 20;
+where seq_region_id in (select seq_region_id from gene_seq_region_id);
 create index idx_g_id on gene(gene_id);
 create index idx_g_x_id on gene(display_xref_id);
 create index idx_g_sr_id on gene(seq_region_id);
