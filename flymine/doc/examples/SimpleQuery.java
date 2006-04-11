@@ -39,7 +39,7 @@ public class SimpleQuery
 
 // optional:
 //         System.err.println ("starting precompute(): " + q);
-//         ((ObjectStoreInterMineImpl) os).precompute(q);
+//         ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
 
         System.err.println ("finished precompute()");
         Results r = os.execute(q);
