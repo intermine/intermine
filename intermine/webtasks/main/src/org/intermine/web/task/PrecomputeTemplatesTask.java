@@ -50,6 +50,7 @@ import org.intermine.web.TemplateQuery;
 public class PrecomputeTemplatesTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PrecomputeTemplatesTask.class);
+    public static final String PRECOMPUTE_CATEGORY_TEMPLATE = "template";
 
     protected String alias;
     protected int minRows = -1;
@@ -65,7 +66,7 @@ public class PrecomputeTemplatesTask extends Task
     public void setAlias(String alias) {
         this.alias = alias;
     }
-    
+
     /**
      * Set the alias of the userprofile object store.
      * @param userProfileAlias the object store alias of the userprofile database
@@ -90,7 +91,7 @@ public class PrecomputeTemplatesTask extends Task
     public void setUsername(String user) {
         username = user;
     }
-    
+
     /**
      * @see Task#execute
      */
@@ -314,7 +315,7 @@ public class PrecomputeTemplatesTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes);
+            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, PRECOMPUTE_CATEGORY_TEMPLATE);
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query
                     + " with indexes " + indexes, e);
