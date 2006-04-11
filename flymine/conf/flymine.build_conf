@@ -6,6 +6,10 @@ run: create-production-model compile-genomic-model jar-genomic build-db-producti
 
 dump: static
 
+run: build-ensembl-apis-mellifera-production
+
+dump: apis
+
 run: build-ensembl-anopheles-production
 
 dump: anopheles
@@ -17,10 +21,6 @@ dump: uniprot
 run: build-flybase-production
 
 dump: drosophila
-
-run: build-ensembl-apis-mellifera-production
-
-dump: apis
 
 run: build-go-production build-psi-production build-rnai-production
 
@@ -56,11 +56,15 @@ dump: postprocess-3-overlap
 
 run: create-symmetrical-relation-references
 
+dump: postprocess-4-symm-relations
+
+run: read-flybase-cds-fasta create-flybase-to-uniprot-refs update-publications grant-db-production
+
+dump: postprocess-5
+
 # run in its own process - it's a memory hog
 run: transfer-sequences
-run: read-flybase-cds-fasta create-flybase-to-uniprot-refs update-publications grant-db-production
 
 dump: complete
 
 run: acceptance-tests
-
