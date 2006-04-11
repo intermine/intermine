@@ -85,7 +85,7 @@ public class TransferSequences
         throws Exception {
         ObjectStore os = osw.getObjectStore();
 
-        Results results = 
+        Results results =
             PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class, false);
         // could try reducing further if still OutOfMemeory problems
         results.setBatchSize(20);
@@ -108,7 +108,7 @@ public class TransferSequences
             if (assembly instanceof Supercontig) {
                 continue;
             }
-            
+
             if (currentChr == null || !chr.equals(currentChr)) {
                 if (currentChr != null) {
                     currentChrBases.close();
@@ -143,7 +143,7 @@ public class TransferSequences
     /**
      * Initialise the given File by setting it's length to the length of the Chromosome and
      * initialising it with "." characters.
-     * @throws IOException 
+     * @throws IOException
      */
     private RandomAccessFile getChromosomeTempSeqFile(Chromosome chr, File tempFile)
                                                       throws IOException {
@@ -158,7 +158,7 @@ public class TransferSequences
         }
 
         int writeCount = chr.getLength().intValue() / bytes.length + 1;
-        
+
         // fill with '.' so we can see the parts of the Chromosome sequence that haven't
         // been set
         for (int i = 0; i < writeCount ; i++) {
@@ -166,7 +166,7 @@ public class TransferSequences
         }
 
         raf.setLength(chr.getLength().longValue());
-        
+
         return raf;
     }
 
@@ -279,7 +279,7 @@ public class TransferSequences
 //                                        + "\n  startPos: " + startPos + " endPos " + endPos
 //                                        + "\n chromosomeSequence.substr(0,1000) " +
 //                                        chromosomeSequenceString.substring(0,1000)
-//                                        + "\n location.getObject() " 
+//                                        + "\n location.getObject() "
 //                                        + locationOnChr.getObject().toString()
 //                                        + " location.getSubject() " +
 //                                        locationOnChr.getSubject().toString() + " "
@@ -375,7 +375,7 @@ public class TransferSequences
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(200);
 

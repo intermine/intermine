@@ -671,7 +671,7 @@ public class CreateReferences
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -762,7 +762,7 @@ public class CreateReferences
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -854,7 +854,7 @@ public class CreateReferences
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -935,7 +935,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -1064,7 +1064,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -1114,7 +1114,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
