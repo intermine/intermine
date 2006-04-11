@@ -375,7 +375,7 @@ public class TransferSequences
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(200);
 

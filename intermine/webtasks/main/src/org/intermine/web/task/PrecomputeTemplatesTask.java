@@ -315,7 +315,8 @@ public class PrecomputeTemplatesTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, PRECOMPUTE_CATEGORY_TEMPLATE);
+            ((ObjectStoreInterMineImpl) os).precompute(query, indexes,
+                                                       PRECOMPUTE_CATEGORY_TEMPLATE);
         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + query
                     + " with indexes " + indexes, e);

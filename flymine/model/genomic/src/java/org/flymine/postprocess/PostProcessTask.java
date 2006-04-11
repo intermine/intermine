@@ -38,6 +38,11 @@ public class PostProcessTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
+    /**
+     * The category to pass to ObjectStoreInterMineImpl.precomute().
+     */
+    public static final String PRECOMPUTE_CATEGORY = "precompute";
+
     protected String operation, objectStore, objectStoreWriter, ensemblDb;
     protected File outputFile;
     protected ObjectStoreWriter osw;

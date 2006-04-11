@@ -26,6 +26,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.task.PrecomputeTask;
 
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
@@ -136,7 +137,7 @@ public abstract class OverlapUtil
             cs.addConstraint(chromosomeConstraint);
         }
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
 
         Results results = os.execute(q);
 
