@@ -583,8 +583,8 @@ public class GoConverter extends FileConverter
         }
 
         Item product = createItem(clsName);
-        product.addReference(new Reference("organism", organismId));
-        product.addAttribute(new Attribute(idField, accession));
+        product.setReference("organism", organismId);
+        product.setAttribute(idField, accession);
 
         //Record some evidence that says we got/matched the gene from GO data.
         product.addToCollection("evidence", newDatasource("Gene Ontology"));
