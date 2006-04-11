@@ -108,7 +108,7 @@ public class PostProcessUtil
         cs.addConstraint(cc1);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
         return res.iterator();
@@ -186,7 +186,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -229,7 +229,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
         return res.iterator();
@@ -269,7 +269,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
         return res.iterator();
@@ -340,7 +340,8 @@ public class PostProcessUtil
         indexesToCreate.add(qfObj);
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
-        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
+                                                   PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;
@@ -381,7 +382,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;
@@ -443,7 +444,7 @@ public class PostProcessUtil
         cs.addConstraint(cc4);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;

@@ -329,7 +329,7 @@ public class CreateReferences
                 thisSourceObject = (InterMineObject) rr.get(1);
             } else {
                 thisDestObject = (InterMineObject) rr.get(1);
-                thisSourceObject = (InterMineObject) rr.get(0);;
+                thisSourceObject = (InterMineObject) rr.get(0);
             }
 
             if (lastDestObject == null
@@ -548,7 +548,6 @@ public class CreateReferences
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             BioEntity object1 = (BioEntity) rr.get(0);
-            SymmetricalRelation relation = (SymmetricalRelation) rr.get(1);
             BioEntity object2 = (BioEntity) rr.get(2);
 
             if (lastObject == null || !object1.getId().equals(lastObject.getId())) {
@@ -671,7 +670,7 @@ public class CreateReferences
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -762,7 +761,7 @@ public class CreateReferences
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -854,7 +853,7 @@ public class CreateReferences
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -935,7 +934,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -1064,7 +1063,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -1114,7 +1113,7 @@ public class CreateReferences
 
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
