@@ -16,7 +16,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 
 /**
  * Internal use only. Precompute tables.
- * 
+ *
  * @author Markus Brosch
  */
 public class PrecomputeTable {
@@ -28,13 +28,13 @@ public class PrecomputeTable {
         + "FROM org.flymine.model.genomic.Location AS a1_, "
         + "org.flymine.model.genomic.Chromosome AS a5_, "
         + "org.flymine.model.genomic.BioEntity AS a6_ "
-        + "WHERE (a1_.object CONTAINS a5_ AND a1_.subject CONTAINS a6_)";    
+        + "WHERE (a1_.object CONTAINS a5_ AND a1_.subject CONTAINS a6_)";
     System.err.println("query: " + queryString);
     Query q = new IqlQuery(queryString, model.getPackageName()).toQuery();
     System.err.print("starting precompute(): " + q);
     TextProgressBar p = new TextProgressBar();
     p.start();
-    ((ObjectStoreInterMineImpl) os).precompute(q);
+    ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
     p.stop();
     System.err.println("finished precompute()");
   }
