@@ -80,6 +80,7 @@ public class GoConverterTest extends TestCase
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
         converter.setOntology(onotologyFile);
+        converter.setGeneattribute("organismDbId");
         converter.process(reader);
         converter.close();
 
@@ -116,6 +117,7 @@ public class GoConverterTest extends TestCase
     public void testCreateWithObjects() throws Exception {
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
+        converter.setGeneattribute("organismDbId");
 
         List expected = new ArrayList();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
