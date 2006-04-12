@@ -151,6 +151,14 @@ public class QueryOptimiser
             }
             return new BestQueryFallback(null, query);
         }
+        Set precomputedTables = ptm.getPrecomputedTables();
+        OptimiserCache cache = OptimiserCache.getInstance(database);
+        return optimiseWith(query, originalQuery, database, explainConnection, context, precomputedTables, cache);
+    }
+
+    public static BestQuery optimiseWith(String query, Query originalQuery, Database database,
+            Connection explainConnection, QueryOptimiserContext context, Set precomputedTables,
+            OptimiserCache cache) throws SQLException {
         callCount++;
         if (callCount % REPORT_INTERVAL == 0) {
             LOG.info("Optimiser called " + callCount + " times");
@@ -158,7 +166,6 @@ public class QueryOptimiser
         long start = new Date().getTime();
         long parseTime = 0;
         // If we want to do any query caching, here is where we should do it.
-        OptimiserCache cache = OptimiserCache.getInstance(database);
         LimitOffsetQuery limitOffsetQuery = new LimitOffsetQuery(query);
         LOG.debug("Original Query: " + limitOffsetQuery.getQuery() + ", "
                 + limitOffsetQuery.getLimit() + ", " + limitOffsetQuery.getOffset());
@@ -200,7 +207,6 @@ public class QueryOptimiser
                 }
                 parseTime = new Date().getTime();
                 remapAliasesToAvoidPrecomputePrefix(originalQuery);
-                Set precomputedTables = ptm.getPrecomputedTables();
                 recursiveOptimise(precomputedTables, originalQuery, bestQuery, originalQuery);
             } catch (BestQueryException e) {
                 // Ignore - bestQuery decided to cut short the search
