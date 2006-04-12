@@ -1,698 +1,296 @@
+<?xml version="1.0"?>
 <items>
-    <item id="-1_8" class="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="description"
-                   value="Functional organization of the yeast proteome by systematic analysisof protein complexes."/>
-        <attribute name="title" value="gavin-2002"/>
-        <reference name="dataSource" ref_id="-1_1"/>
-    </item>
-
-    <item id="-1_14" class="http://www.flymine.org/model/genomic#Location">
-        <attribute name="end" value="346"/>
-        <attribute name="start" value="103"/>
-        <reference name="object" ref_id="0_60"/>
-        <reference name="subject" ref_id="-1_13"/>
-        <collection name="evidence">
-            <reference ref_id="-1_11"/>
-        </collection>
-    </item>
-
-    <item id="-1_51" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P07260"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_79"/>
-    </item>
-
-    <item id="-1_53" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P49960"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_185"/>
-    </item>
-
-    <item id="-1_30" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_92"/>
-    </item>
-
-    <item id="0_293" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0018"/>
-    </item>
-
-    <item id="-1_36" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_211"/>
-    </item>
-
-    <item id="-1_40" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="Q06819"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_105"/>
-    </item>
-
-    <item id="0_185" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P49960"/>
-        <reference name="organism" ref_id="0_196"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_53"/>
-        </collection>
-    </item>
-
-    <item id="-1_4" class="http://www.flymine.org/model/genomic#Sequence">
-        <attribute name="length" value="15"/>
-        <attribute name="residues" value="AKSGPPPGFTGAKQN"/>
-    </item>
-
-    <item id="-1_2" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="IntAct:EBI-767965"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_47"/>
-    </item>
-
-    <item id="-1_38" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="Q06406"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_160"/>
-    </item>
-
-    <item id="0_90" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_117" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P47017"/>
-        <reference name="organism" ref_id="0_129"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_43"/>
-        </collection>
-    </item>
-
-    <item id="-1_23" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_131"/>
-    </item>
-
-    <item id="-1_3" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="EBI-767965"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_47"/>
-    </item>
-
-    <item id="-1_37" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_236"/>
-    </item>
-
-    <item id="0_302" class="http://www.flymine.org/model/genomic#ExperimentalResult">
-        <reference name="analysis" ref_id="0_25"/>
-        <reference name="source" ref_id="-1_8"/>
-        <collection name="relations">
-            <reference ref_id="-1_21"/>
-        </collection>
-    </item>
-
-    <item id="-1_47" class="http://www.flymine.org/model/genomic#Publication">
-        <attribute name="pubMedId" value="14605208"/>
-    </item>
-
-    <item id="0_286" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0117"/>
-    </item>
-
-    <item id="0_129" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_27" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_266"/>
-    </item>
-
-    <item id="0_222" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_266" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="Q12420"/>
-        <reference name="organism" ref_id="0_275"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_5"/>
-        </collection>
-    </item>
-
-    <item id="-1_31" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_79"/>
-    </item>
-
-    <item id="0_160" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="Q06406"/>
-        <reference name="organism" ref_id="0_171"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_38"/>
-        </collection>
-    </item>
-
-    <item id="-1_9" class="http://www.flymine.org/model/genomic#Publication">
-        <attribute name="pubMedId" value="11805826"/>
-    </item>
-
-    <item id="0_158" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_29" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_185"/>
-    </item>
-
-    <item id="-1_35" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_160"/>
-    </item>
-
-    <item id="-1_45" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="Q9VI89"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_60"/>
-    </item>
-
-    <item id="0_255" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="Q12368"/>
-        <reference name="organism" ref_id="0_264"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_56"/>
-        </collection>
-    </item>
-
-    <item id="-1_33" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_224"/>
-    </item>
-
-    <item id="0_275" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_145" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P40070"/>
-        <reference name="organism" ref_id="0_158"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_6"/>
-        </collection>
-    </item>
-
-    <item id="0_234" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_56" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="Q12368"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_255"/>
-    </item>
-
-    <item id="-1_57" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P14734"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_54"/>
-    </item>
-
-    <item id="0_196" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_103" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_198" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P20053"/>
-        <reference name="organism" ref_id="0_209"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_42"/>
-        </collection>
-    </item>
-
-    <item id="0_60" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="Q9VI89"/>
-        <reference name="organism" ref_id="0_64"/>
-        <reference name="sequence" ref_id="-1_46"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_45"/>
-        </collection>
-    </item>
-
-    <item id="0_33" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0109"/>
-    </item>
-
-    <item id="-1_41" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P36048"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_236"/>
-    </item>
-
-    <item id="0_143" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_12" class="http://www.flymine.org/model/genomic#ProteinInteraction">
-        <attribute name="shortName" value="fkh-cg10032-1"/>
-        <reference name="experiment" ref_id="0_6"/>
-        <collection name="evidence">
-            <reference ref_id="-1_1"/>
-            <reference ref_id="0_278"/>
-        </collection>
-        <collection name="interactingRegions">
-            <reference ref_id="-1_17"/>
-        </collection>
-        <collection name="interactors">
-            <reference ref_id="-1_19"/>
-            <reference ref_id="-1_20"/>
-        </collection>
-    </item>
-
-    <item id="-1_42" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P20053"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_198"/>
-    </item>
-
-    <item id="-1_15" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0117"/>
-    </item>
-
-    <item id="0_79" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P07260"/>
-        <reference name="organism" ref_id="0_90"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_51"/>
-        </collection>
-    </item>
-
-    <item id="0_92" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P39517"/>
-        <reference name="organism" ref_id="0_103"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_55"/>
-        </collection>
-    </item>
-
-    <item id="0_64" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="7227"/>
-    </item>
-
-    <item id="-1_11" class="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="description"
-                   value="A protein interaction map of Drosophila melanogaster."/>
-        <attribute name="title" value="giot-2003-ex1"/>
-        <reference name="dataSource" ref_id="-1_1"/>
-    </item>
-
-    <item id="0_264" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_105" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="Q06819"/>
-        <reference name="organism" ref_id="0_115"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_40"/>
-        </collection>
-    </item>
-
-    <item id="0_58" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="7227"/>
-    </item>
-
-    <item id="-1_52" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P53905"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_66"/>
-    </item>
-
-    <item id="-1_55" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P39517"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_92"/>
-    </item>
-
-    <item id="-1_34" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_255"/>
-    </item>
-
-    <item id="0_131" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P38203"/>
-        <reference name="organism" ref_id="0_143"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_7"/>
-        </collection>
-    </item>
-
-    <item id="0_236" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P36048"/>
-        <reference name="organism" ref_id="0_253"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_41"/>
-        </collection>
-    </item>
-
-    <item id="-1_44" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P25644"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_173"/>
-    </item>
-
-    <item id="-1_13" class="http://www.flymine.org/model/genomic#ProteinRegion">
-        <reference name="protein" ref_id="0_60"/>
-    </item>
-
-    <item id="-1_17" class="http://www.flymine.org/model/genomic#ProteinInteractionRegion">
-        <attribute name="name" value="binding site"/>
-        <reference name="interaction" ref_id="-1_12"/>
-        <reference name="location" ref_id="-1_14"/>
-        <reference name="ontologyTerm" ref_id="-1_18"/>
-        <reference name="protein" ref_id="0_60"/>
-    </item>
-
-    <item id="-1_39" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P19735"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_211"/>
-    </item>
-
-    <item id="0_183" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_24" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_198"/>
-    </item>
-
-    <item id="-1_20" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="bait"/>
-        <reference name="interaction" ref_id="-1_12"/>
-        <reference name="protein" ref_id="0_54"/>
-    </item>
-
-    <item id="0_17" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0078"/>
-    </item>
-
-    <item id="0_47" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="IntAct:EBI-767965"/>
-        <reference name="organism" ref_id="0_52"/>
-        <reference name="sequence" ref_id="-1_4"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_2"/>
-            <reference ref_id="-1_3"/>
-        </collection>
-    </item>
-
-    <item id="-1_16" class="http://www.flymine.org/model/genomic#Annotation">
-        <reference name="property" ref_id="-1_15"/>
-        <reference name="subject" ref_id="-1_13"/>
-        <collection name="evidence">
-            <reference ref_id="-1_11"/>
-        </collection>
-    </item>
-
-    <item id="-1_54" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="Q06217"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_224"/>
-    </item>
-
-    <item id="-1_10" class="http://www.flymine.org/model/genomic#Comment">
-        <attribute name="text" value="589 bait proteins TAP-tagged."/>
-        <attribute name="type" value="comment"/>
-        <reference name="source" ref_id="-1_8"/>
-    </item>
-
-    <item id="0_13" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0018"/>
-    </item>
-
-    <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
-        <attribute name="name" value="IntAct"/>
-    </item>
-
-    <item id="0_211" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P19735"/>
-        <reference name="organism" ref_id="0_222"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_39"/>
-        </collection>
-    </item>
-
-    <item id="0_38" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0082"/>
-    </item>
-
-    <item id="0_278" class="http://www.flymine.org/model/genomic#ExperimentalResult">
-        <attribute name="confidence" value="0.06"/>
-        <attribute name="confidenceDesc" value="low"/>
-        <reference name="analysis" ref_id="0_6"/>
-        <reference name="source" ref_id="-1_11"/>
-        <collection name="relations">
-            <reference ref_id="-1_12"/>
-        </collection>
-    </item>
-
-    <item id="0_322" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
-        <attribute name="identifier" value="MI:0191"/>
-    </item>
-
-    <item id="-1_58" class="http://www.flymine.org/model/genomic#Sequence">
-        <attribute name="length" value="6"/>
-        <attribute name="residues" value="TAGCAT"/>
-    </item>
-
-    <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P40070"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_145"/>
-    </item>
-
-    <item id="0_115" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_54" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P14734"/>
-        <reference name="organism" ref_id="0_58"/>
-        <reference name="sequence" ref_id="-1_58"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_57"/>
-        </collection>
-    </item>
-
-    <item id="-1_49" class="http://www.flymine.org/model/genomic#Comment">
-        <attribute name="text"
-                   value="The authors assign a numerical confidencevalue between 0 and 1 to each interaction. Interactions with a confidence of0.5 or higher are considered as high confidence interactions. All others areconsidered as low confidence interactions. For simplified extraction ofsubsets, the _high_ and _low_ classification has been added inIntAct."/>
-        <attribute name="type" value="confidence-mapping"/>
-        <reference name="source" ref_id="-1_11"/>
-    </item>
-
-    <item id="0_66" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P53905"/>
-        <reference name="organism" ref_id="0_77"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_52"/>
-        </collection>
-    </item>
-
-    <item id="0_173" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="P25644"/>
-        <reference name="organism" ref_id="0_183"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_44"/>
-        </collection>
-    </item>
-
-    <item id="0_224" class="http://www.flymine.org/model/genomic#Protein">
-        <attribute name="primaryAccession" value="Q06217"/>
-        <reference name="organism" ref_id="0_234"/>
-        <collection name="synonyms">
-            <reference ref_id="-1_54"/>
-        </collection>
-    </item>
-
-    <item id="-1_5" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="Q12420"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_266"/>
-    </item>
-
-    <item id="-1_48" class="http://www.flymine.org/model/genomic#Comment">
-        <attribute name="text"
-                   value="Preys used for Y2H screens: 1)cDNA libraries made fromembryo and adult fly (Clontech) and 2)using predicted ORF from BDGP(Berkeley Drosophila Genome Project) release 1 and 2 and a mixture of cDNAlibraries from embryo, larvae 1,2 and 3, and adult fly to obtain 10306validated preys."/>
-        <attribute name="type" value="comment"/>
-        <reference name="source" ref_id="-1_11"/>
-    </item>
-
-    <item id="-1_43" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P47017"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_117"/>
-    </item>
-
-    <item id="0_25" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
-        <attribute name="hostOrganism" value="Saccharomyces cerevisiae"/>
-        <reference name="interactionDetection" ref_id="0_33"/>
-        <reference name="participantDetection" ref_id="0_38"/>
-        <reference name="publication" ref_id="-1_9"/>
-        <collection name="comments">
-            <reference ref_id="-1_10"/>
-        </collection>
-    </item>
-
-    <item id="-1_50" class="http://www.flymine.org/model/genomic#Comment">
-        <attribute name="text"
-                   value="11159 validated baits were obtained using predictedORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo,larvae 1,2 and 3, and adult fly."/>
-        <attribute name="type" value="comment"/>
-        <reference name="source" ref_id="-1_11"/>
-    </item>
-
-    <item id="0_209" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_52" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="3702"/>
-    </item>
-
-    <item id="0_6" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
-        <attribute name="hostOrganism" value="Saccharomyces cerevisiae"/>
-        <reference name="interactionDetection" ref_id="0_13"/>
-        <reference name="participantDetection" ref_id="0_17"/>
-        <reference name="publication" ref_id="-1_47"/>
-        <collection name="comments">
-            <reference ref_id="-1_48"/>
-            <reference ref_id="-1_49"/>
-            <reference ref_id="-1_50"/>
-        </collection>
-    </item>
-
-    <item id="-1_28" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_117"/>
-    </item>
-
-    <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="accession"/>
-        <attribute name="value" value="P38203"/>
-        <reference name="source" ref_id="-1_1"/>
-        <reference name="subject" ref_id="0_131"/>
-    </item>
-
-    <item id="-1_26" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="bait"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_66"/>
-    </item>
-
-    <item id="-1_22" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_105"/>
-    </item>
-
-    <item id="-1_25" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_173"/>
-    </item>
-
-    <item id="-1_19" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_12"/>
-        <reference name="protein" ref_id="0_60"/>
-    </item>
-
-    <item id="0_77" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_32" class="http://www.flymine.org/model/genomic#ProteinInteractor">
-        <attribute name="role" value="prey"/>
-        <reference name="interaction" ref_id="-1_21"/>
-        <reference name="protein" ref_id="0_145"/>
-    </item>
-
-    <item id="0_171" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="0_253" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="4932"/>
-    </item>
-
-    <item id="-1_18" class="http://www.flymine.org/model/genomic#OntologyTerm">
-        <attribute name="identifier" value="MI:0117"/>
-    </item>
-
-    <item id="-1_21" class="http://www.flymine.org/model/genomic#ProteinInteraction">
-        <attribute name="shortName" value="ga-205"/>
-        <reference name="experiment" ref_id="0_25"/>
-        <collection name="evidence">
-            <reference ref_id="-1_1"/>
-            <reference ref_id="0_302"/>
-        </collection>
-        <collection name="interactors">
-            <reference ref_id="-1_22"/>
-            <reference ref_id="-1_23"/>
-            <reference ref_id="-1_24"/>
-            <reference ref_id="-1_25"/>
-            <reference ref_id="-1_26"/>
-            <reference ref_id="-1_27"/>
-            <reference ref_id="-1_28"/>
-            <reference ref_id="-1_29"/>
-            <reference ref_id="-1_30"/>
-            <reference ref_id="-1_31"/>
-            <reference ref_id="-1_32"/>
-            <reference ref_id="-1_33"/>
-            <reference ref_id="-1_34"/>
-            <reference ref_id="-1_35"/>
-            <reference ref_id="-1_36"/>
-            <reference ref_id="-1_37"/>
-        </collection>
-    </item>
-
-    <item id="-1_46" class="http://www.flymine.org/model/genomic#Sequence">
-        <attribute name="length" value="6"/>
-        <attribute name="residues" value="CATTAG"/>
-    </item>
+  <item id="0_47" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="P14734"/>
+    <reference name="organism" ref_id="0_51"/>
+    <reference name="sequence" ref_id="-1_31"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_30"/>
+    </collection>
+  </item>
+  <item id="-1_11" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="14605208"/>
+  </item>
+  <item id="-1_6" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="589 bait proteins TAP-tagged."/>
+    <attribute name="type" value="comment"/>
+    <reference name="source" ref_id="-1_4"/>
+  </item>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
+    <attribute name="hostOrganism" value="Saccharomyces cerevisiae"/>
+    <reference name="interactionDetection" ref_id="0_13"/>
+    <reference name="participantDetection" ref_id="0_17"/>
+    <reference name="publication" ref_id="-1_11"/>
+    <collection name="comments">
+      <reference ref_id="-1_12"/>
+      <reference ref_id="-1_13"/>
+      <reference ref_id="-1_14"/>
+    </collection>
+  </item>
+  <item id="0_51" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="-1_19" class="http://www.flymine.org/model/genomic#ProteinInteractor">
+    <attribute name="role" value="bait"/>
+    <reference name="interaction" ref_id="-1_15"/>
+    <reference name="protein" ref_id="0_59"/>
+  </item>
+  <item id="0_17" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0078"/>
+  </item>
+  <item id="-1_26" class="http://www.flymine.org/model/genomic#Annotation">
+    <reference name="property" ref_id="-1_25"/>
+    <reference name="subject" ref_id="-1_23"/>
+    <collection name="evidence">
+      <reference ref_id="-1_10"/>
+    </collection>
+  </item>
+  <item id="0_53" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="Q9VI89"/>
+    <reference name="organism" ref_id="0_57"/>
+    <reference name="sequence" ref_id="-1_9"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_8"/>
+    </collection>
+  </item>
+  <item id="-1_17" class="http://www.flymine.org/model/genomic#ProteinInteractor">
+    <attribute name="role" value="prey"/>
+    <reference name="interaction" ref_id="-1_15"/>
+    <reference name="protein" ref_id="0_85"/>
+  </item>
+  <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="Q9VI89"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_53"/>
+  </item>
+  <item id="0_108" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="4932"/>
+  </item>
+  <item id="-1_14" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="11159 validated baits were obtained using predictedORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo,larvae 1,2 and 3, and adult fly."/>
+    <attribute name="type" value="comment"/>
+    <reference name="source" ref_id="-1_10"/>
+  </item>
+  <item id="0_72" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="P07260"/>
+    <reference name="organism" ref_id="0_83"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_2"/>
+    </collection>
+  </item>
+  <item id="-1_31" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="length" value="6"/>
+    <attribute name="residues" value="TAGCAT"/>
+  </item>
+  <item id="0_25" class="http://www.flymine.org/model/genomic#ProteinInteractionExperiment">
+    <attribute name="hostOrganism" value="Saccharomyces cerevisiae"/>
+    <reference name="interactionDetection" ref_id="0_33"/>
+    <reference name="participantDetection" ref_id="0_38"/>
+    <reference name="publication" ref_id="-1_5"/>
+    <collection name="comments">
+      <reference ref_id="-1_6"/>
+    </collection>
+  </item>
+  <item id="0_13" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0018"/>
+  </item>
+  <item id="-1_5" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="11805826"/>
+  </item>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="IntAct"/>
+  </item>
+  <item id="-1_13" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="Preys used for Y2H screens: 1)cDNA libraries made fromembryo and adult fly (Clontech) and 2)using predicted ORF from BDGP(Berkeley Drosophila Genome Project) release 1 and 2 and a mixture of cDNAlibraries from embryo, larvae 1,2 and 3, and adult fly to obtain 10306validated preys."/>
+    <attribute name="type" value="comment"/>
+    <reference name="source" ref_id="-1_10"/>
+  </item>
+  <item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="P53905"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_59"/>
+  </item>
+  <item id="-1_24" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="346"/>
+    <attribute name="start" value="103"/>
+    <reference name="object" ref_id="0_53"/>
+    <reference name="subject" ref_id="-1_23"/>
+    <collection name="evidence">
+      <reference ref_id="-1_10"/>
+    </collection>
+  </item>
+  <item id="0_83" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="4932"/>
+  </item>
+  <item id="0_85" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="P39517"/>
+    <reference name="organism" ref_id="0_96"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_3"/>
+    </collection>
+  </item>
+  <item id="0_70" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="4932"/>
+  </item>
+  <item id="0_38" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0082"/>
+  </item>
+  <item id="-1_25" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0117"/>
+  </item>
+  <item id="-1_15" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+    <attribute name="shortName" value="ga-205"/>
+    <reference name="experiment" ref_id="0_25"/>
+    <collection name="evidence">
+      <reference ref_id="-1_1"/>
+      <reference ref_id="0_135"/>
+    </collection>
+    <collection name="interactors">
+      <reference ref_id="-1_16"/>
+      <reference ref_id="-1_17"/>
+      <reference ref_id="-1_18"/>
+      <reference ref_id="-1_19"/>
+    </collection>
+  </item>
+  <item id="0_126" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0018"/>
+  </item>
+  <item id="-1_30" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="P14734"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_47"/>
+  </item>
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="P07260"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_72"/>
+  </item>
+  <item id="0_59" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="P53905"/>
+    <reference name="organism" ref_id="0_70"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_7"/>
+    </collection>
+  </item>
+  <item id="0_98" class="http://www.flymine.org/model/genomic#Protein">
+    <attribute name="primaryAccession" value="Q06819"/>
+    <reference name="organism" ref_id="0_108"/>
+    <collection name="synonyms">
+      <reference ref_id="-1_20"/>
+    </collection>
+  </item>
+  <item id="-1_4" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="description" value="Functional organization of the yeast proteome by systematic analysisof protein complexes."/>
+    <attribute name="title" value="gavin-2002"/>
+    <reference name="dataSource" ref_id="-1_1"/>
+  </item>
+  <item id="0_119" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0117"/>
+  </item>
+  <item id="-1_12" class="http://www.flymine.org/model/genomic#Comment">
+    <attribute name="text" value="The authors assign a numerical confidencevalue between 0 and 1 to each interaction. Interactions with a confidence of0.5 or higher are considered as high confidence interactions. All others areconsidered as low confidence interactions. For simplified extraction ofsubsets, the _high_ and _low_ classification has been added inIntAct."/>
+    <attribute name="type" value="confidence-mapping"/>
+    <reference name="source" ref_id="-1_10"/>
+  </item>
+  <item id="-1_23" class="http://www.flymine.org/model/genomic#ProteinRegion">
+    <reference name="protein" ref_id="0_53"/>
+  </item>
+  <item id="-1_29" class="http://www.flymine.org/model/genomic#ProteinInteractor">
+    <attribute name="role" value="prey"/>
+    <reference name="interaction" ref_id="-1_21"/>
+    <reference name="protein" ref_id="0_53"/>
+  </item>
+  <item id="0_96" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="4932"/>
+  </item>
+  <item id="-1_16" class="http://www.flymine.org/model/genomic#ProteinInteractor">
+    <attribute name="role" value="prey"/>
+    <reference name="interaction" ref_id="-1_15"/>
+    <reference name="protein" ref_id="0_98"/>
+  </item>
+  <item id="-1_3" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="P39517"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_85"/>
+  </item>
+  <item id="0_33" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0109"/>
+  </item>
+  <item id="-1_21" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+    <attribute name="shortName" value="fkh-cg10032-1"/>
+    <reference name="experiment" ref_id="0_6"/>
+    <collection name="evidence">
+      <reference ref_id="-1_1"/>
+      <reference ref_id="0_111"/>
+    </collection>
+    <collection name="interactingRegions">
+      <reference ref_id="-1_27"/>
+    </collection>
+    <collection name="interactors">
+      <reference ref_id="-1_22"/>
+      <reference ref_id="-1_29"/>
+    </collection>
+  </item>
+  <item id="-1_28" class="http://www.flymine.org/model/genomic#OntologyTerm">
+    <attribute name="identifier" value="MI:0117"/>
+  </item>
+  <item id="-1_18" class="http://www.flymine.org/model/genomic#ProteinInteractor">
+    <attribute name="role" value="prey"/>
+    <reference name="interaction" ref_id="-1_15"/>
+    <reference name="protein" ref_id="0_72"/>
+  </item>
+  <item id="0_57" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="0_135" class="http://www.flymine.org/model/genomic#ExperimentalResult">
+    <reference name="analysis" ref_id="0_25"/>
+    <reference name="source" ref_id="-1_4"/>
+    <collection name="relations">
+      <reference ref_id="-1_15"/>
+    </collection>
+  </item>
+  <item id="-1_27" class="http://www.flymine.org/model/genomic#ProteinInteractionRegion">
+    <attribute name="name" value="binding site"/>
+    <reference name="interaction" ref_id="-1_21"/>
+    <reference name="location" ref_id="-1_24"/>
+    <reference name="ontologyTerm" ref_id="-1_28"/>
+    <reference name="protein" ref_id="0_53"/>
+  </item>
+  <item id="-1_10" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
+    <attribute name="title" value="giot-2003-ex1"/>
+    <reference name="dataSource" ref_id="-1_1"/>
+  </item>
+  <item id="0_143" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
+    <attribute name="identifier" value="MI:0191"/>
+  </item>
+  <item id="-1_22" class="http://www.flymine.org/model/genomic#ProteinInteractor">
+    <attribute name="role" value="bait"/>
+    <reference name="interaction" ref_id="-1_21"/>
+    <reference name="protein" ref_id="0_47"/>
+  </item>
+  <item id="-1_20" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="accession"/>
+    <attribute name="value" value="Q06819"/>
+    <reference name="source" ref_id="-1_1"/>
+    <reference name="subject" ref_id="0_98"/>
+  </item>
+  <item id="0_111" class="http://www.flymine.org/model/genomic#ExperimentalResult">
+    <attribute name="confidence" value="0.06"/>
+    <attribute name="confidenceDesc" value="low"/>
+    <reference name="analysis" ref_id="0_6"/>
+    <reference name="source" ref_id="-1_10"/>
+    <collection name="relations">
+      <reference ref_id="-1_21"/>
+    </collection>
+  </item>
+  <item id="-1_9" class="http://www.flymine.org/model/genomic#Sequence">
+    <attribute name="length" value="6"/>
+    <attribute name="residues" value="CATTAG"/>
+  </item>
 </items>
