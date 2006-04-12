@@ -23,7 +23,7 @@ import org.apache.tools.ant.Task;
  */
 public class AddDerivedDataTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(AddDerivedDataTask.class);
+    //private static final Logger LOG = Logger.getLogger(AddDerivedDataTask.class);
 
     protected File srcFile, tgtFile;
     protected String extension;
