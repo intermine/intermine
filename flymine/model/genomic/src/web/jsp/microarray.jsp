@@ -9,7 +9,7 @@ Current data
 <p>The following gene expression experiments were imported from <A HREF="http://www.ebi.ac.uk/arrayexpress">ArrayExpress</A> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12519949">PubMed: 12519949</A>):
 </p>
 
-<B>Gene Expression Durng the Life Cycle of <i>Drosophila melanogaster</i> - Arebeitman et al, 2002</B> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791">PubMed: 12351791</A>).  ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
+<B>Gene Expression Durng the Life Cycle of <i>Drosophila melanogaster</i> - Arbeitman et al, 2002</B> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791">PubMed: 12351791</A>).  ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
 <p>
 Arbeitman et al, 2002 reported gene expression patterns for nearly one third of all <i>Drosophila</i> genes during a complete time course of development.  Graphs are displayed on summary pages for each gene involved in the experiment showing Log 2 exression ratio for 67 time points across life stages.  For more infomation refer to the <a href="http://genome.med.yale.edu/Lifecycle/">White Lab</a> page at Yale.
 <P>
