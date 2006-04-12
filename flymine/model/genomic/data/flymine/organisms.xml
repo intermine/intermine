@@ -56,22 +56,22 @@
     <attribute name="genus" value="Mus"/>
     <attribute name="species" value="musculus"/>
   </item>
-  <item id="0_8" class="http://www.flymine.org/model/genomic#Organism">
+  <!-- not in release 5.0 item id="0_8" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="name" value="Schizosaccharomyces pombe"/>
     <attribute name="shortName" value="S. pombe"/>
     <attribute name="taxonId" value="4896"/>
     <attribute name="abbreviation" value="SP"/>
     <attribute name="genus" value="Schizosaccharomyces"/>
     <attribute name="species" value="pombe"/>
-  </item>
-  <item id="0_9" class="http://www.flymine.org/model/genomic#Organism">
+  </item-->
+  <!-- not in release 5.0 item id="0_9" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="name" value="Bacillus subtilis"/>
     <attribute name="shortName" value="B. subtilis"/>
     <attribute name="taxonId" value="1423"/>
     <attribute name="abbreviation" value="BS"/>
     <attribute name="genus" value="Bacillus"/>
     <attribute name="species" value="subtilis"/>
-  </item>
+  </item-->
   <item id="0_10" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="name" value="Drosophila pseudoobscura"/>
     <attribute name="shortName" value="D. pseudoobscura"/>
