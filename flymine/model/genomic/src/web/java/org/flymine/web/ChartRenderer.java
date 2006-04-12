@@ -10,17 +10,37 @@ package org.flymine.web;
  *
  */
 
-import java.awt.Color;
-import java.awt.RenderingHints;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
+
+import org.flymine.model.genomic.MicroArrayAssay;
+import org.flymine.model.genomic.MicroArrayResult;
+
+import java.awt.Color;
+import java.awt.RenderingHints;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.lang.reflect.Method;
+import java.nio.channels.FileChannel;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
@@ -32,21 +52,6 @@ import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.data.category.DefaultCategoryDataset;
-
-import org.flymine.model.genomic.MicroArrayResult;
-import org.flymine.model.genomic.MicroArrayAssay;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.Constants;
-import org.intermine.web.InterMineAction;
-
-import org.apache.log4j.Logger;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Graph the microarray results for a particular gene/experiment
@@ -158,8 +163,28 @@ public class ChartRenderer extends InterMineAction
 
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
         String filename = ServletUtilities.saveChartAsPNG(chart, width, height, info, session);
-        graphImageCache.put(request.getQueryString(), filename);
-        ServletUtilities.sendTempFile(filename, response);
+
+        // make a copy because the temp file returned by saveChartAsPNG() will be deleted when the
+        // session ends
+        File oldFile = new File(System.getProperty("java.io.tmpdir"), filename);
+        File cacheFile = new File(System.getProperty("java.io.tmpdir"), filename + "_flymine");
+        FileChannel in = null;
+        FileChannel out = null;
+        try {          
+            in = new FileInputStream(oldFile).getChannel();
+            out = new FileOutputStream(cacheFile).getChannel();
+            in.transferTo (0, in.size(), out);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+        }
+        // cache the copy, not the original
+        graphImageCache.put(request.getQueryString(), cacheFile.getName());
+        ServletUtilities.sendTempFile(cacheFile.getName(), response);
         return null;
     }
 
