@@ -57,10 +57,12 @@ import org.biomage.BioAssayData.ReporterDimension;
 import org.biomage.BioAssayData.DerivedBioAssayData;
 import org.biomage.BioAssayData.DataExternal;
 import org.biomage.BioAssayData.QuantitationTypeDimension;
+import org.biomage.BioAssayData.BioAssayMap;
 import org.biomage.Interface.HasBioAssays;
 import org.biomage.DesignElement.DesignElement;
 import org.biomage.Common.MAGEJava;
 import org.biomage.Common.Identifiable;
+import org.biomage.QuantitationType.SpecializedQuantitationType;
 
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
@@ -499,6 +501,16 @@ public class MageConverter extends FileConverter
         return datum;
     }
 
+
+    /**
+     * @param br: bufferedReader read one line every time
+     * @param qTypes: all the quantitationTypes from build file
+     * @param cubeB: bioAssay list
+     * @param cubeD: designElement list
+     * @param cubeQ: quantitationType list
+     * @param item: derivedBioAssayData
+     * @throws Exception if problems occur
+     */    
     private void processBD(BufferedReader br, Set qTypes, 
                            HasBioAssays.BioAssays_list cubeB, 
                            List cubeD, List cubeQ, Item item)
@@ -762,6 +774,23 @@ public class MageConverter extends FileConverter
         fw.close();
     }
 
+    /**
+     * reading derivedBioAssay (eg Fold Change, logRatio etc) data from supplymentary material
+     * then added to MageML
+     * @param reader access to original MAGE ML files
+     * @param newMageFile file to write altered MAGE ML to
+     * @param fileName added to the end of normalised filenames
+     * @throws Exception of anything goes wrong
+     */
+    public static void processDerivedBioAssaysFromSup(Reader reader, File newMageFile, 
+        String fileName) throws Exception {
+        MAGEJava mage = MageConverter.readMage(reader);
+        MageConverter.addDerivedBioAssaysFromSup(mage, fileName);
+        FileWriter fw = new FileWriter(newMageFile);
+        mage.writeMAGEML(fw);
+        fw.flush();
+        fw.close();
+    }
 
     // will alter MAGEJava object in place
     private static void addDerivedBioAssays(MAGEJava mage, String extension) {
@@ -857,6 +886,111 @@ public class MageConverter extends FileConverter
         }
     }
 
+    /**
+     * added derivedBioAssayData to MageML
+     * @param mage MAGEJava
+     * @param supFileName supplymentary filename
+     */
+    private static void addDerivedBioAssaysFromSup(MAGEJava mage, String supFileName) {
+        
+        Map mageIds = new HashMap();
+        Set dbas = new HashSet();
+        BioAssayData_package badPkg = mage.getBioAssayData_package();
+        
+        SpecializedQuantitationType sqt = new SpecializedQuantitationType();
+        sqt.setIdentifier(nextMageIdentifier(mageIds, "QuantitationType"));
+        sqt.setName("Fold Change");
+        OntologyEntry dataType = new OntologyEntry();
+        dataType.setValue("integer");
+        sqt.setDataType(dataType);
+        OntologyEntry scale = new OntologyEntry();
+        scale.setValue("linear");
+        sqt.setScale(scale);
+        QuantitationType_package qtp = mage.getQuantitationType_package();
+        qtp.addToQuantitationType_list(sqt);
+
+        QuantitationTypeDimension qtDimension = new QuantitationTypeDimension();
+        qtDimension.setIdentifier(nextMageIdentifier(mageIds, "QuantitationTypeDimension"));
+        qtDimension.addToQuantitationTypes(sqt);
+
+
+        BioAssay_package baPkg = mage.getBioAssay_package();
+
+        DerivedBioAssay dba = new DerivedBioAssay();
+        dba.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssay"));
+        BioAssayMap bam = new BioAssayMap();
+        bam.setIdentifier(nextMageIdentifier(mageIds, "BioAssayMap"));
+        
+        DerivedBioAssayData dbad = new DerivedBioAssayData();
+        dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));   
+        BioDataCube bdc = new BioDataCube();
+        bdc.setValueOrder(2);
+        DataExternal data = new DataExternal();
+        data.setFilenameURI(supFileName);
+        bdc.setDataExternal(data);
+        dbad.setBioDataValues(bdc);
+
+        
+        Iterator bioAssayIter = baPkg.getBioAssay_list().iterator();
+        //HasSourceBioAssays.SourceBioAssays_list sbaList ;//= new HasSourceBioAssays();
+        while (bioAssayIter.hasNext()) {
+            BioAssay bioAssay = (BioAssay) bioAssayIter.next();
+            
+            if (bioAssay instanceof MeasuredBioAssay) {
+                Iterator dataIter = ((MeasuredBioAssay) bioAssay)
+                    .getMeasuredBioAssayData().iterator();
+                bam.addToSourceBioAssays(bioAssay);
+                //sbaList.addToSourceBioAssay(bioAssay);
+                
+                while (dataIter.hasNext()) {
+                    MeasuredBioAssayData mbad = (MeasuredBioAssayData) dataIter.next();
+
+                    // dbad.DesignElementDimension
+                    DesignElementDimension ded = mbad.getDesignElementDimension();
+                    dbad.setDesignElementDimension(mbad.getDesignElementDimension());
+                    
+                    // TODO BioAssayDimension.bioAssays
+                    // only seems to reference MeasuredBioAssay?
+
+                    //DerivedBioAssayData dbad = new DerivedBioAssayData();
+                    //dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));
+
+                   
+                    // dbad.QuantitationTypeDimension
+                    // TODO look at what is done with this in Translator
+                    dbad.setQuantitationTypeDimension(qtDimension);
+
+                    // dbad.BioAssayDimension
+                    BioAssayDimension bdimension = new BioAssayDimension();
+                    //dbad.setBioAssayDimension(nextMageIdentifier(mageIds, "BioAssayDimension"));
+                    dbad.setBioAssayDimension(bdimension);
+
+                    dba.addToDerivedBioAssayData(dbad);
+                    badPkg.addToBioAssayData_list(dbad);
+                    badPkg.addToQuantitationTypeDimension_list(qtDimension);
+                    dbas.add(dba);
+
+                }
+            }
+        }
+        //bam.setSourceBioAssays(sbaList);
+        bam.setBioAssayMapTarget(dba);
+
+        Experiment_package expPkg = mage.getExperiment_package();
+
+        Iterator dbaIter = dbas.iterator();
+        while (dbaIter.hasNext()) {
+            DerivedBioAssay bioAssay = (DerivedBioAssay) dbaIter.next();
+            baPkg.addToBioAssay_list(bioAssay);
+            Iterator expIter = expPkg.getExperiment_list().iterator();
+            while (expIter.hasNext()) {
+                Experiment exp = (Experiment) expIter.next();
+                exp.addToBioAssays(bioAssay);
+            }
+        }
+    }
+
+
     private static String nextMageIdentifier(Map mageIds, String clsName) {
         Integer nextId = (Integer) mageIds.get(clsName);
         if (nextId == null) {
@@ -900,5 +1034,4 @@ public class MageConverter extends FileConverter
             return s.replaceAll("\"", "\\\\\"");
         }
     }
-
 }

@@ -237,14 +237,14 @@ public class MageDataTranslator extends DataTranslator
 //     }
 
     /**
-     * @see DataTranslator#translate
- identifier=    */
+     * @see DataTranslator#translate 
+     */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
 
         super.translate(tgtItemWriter);
-        LOG.info(measuredBANameMap); 
-        LOG.info(derivedBANameMap); 
+        //LOG.info(measuredBANameMap); 
+        //LOG.info(derivedBANameMap); 
         Iterator i;
 
         i = derivedBANameMap.keySet().iterator(); 
@@ -1420,10 +1420,10 @@ public class MageDataTranslator extends DataTranslator
             }
         } else if (holder.compositeSeqId > 0) {
             String materialId = compositeSeqNs + holder.compositeSeqId;
-            reporterIds = (List) compositeSeqToReporter.get(materialId);
-            maResult.setReference("material", materialId);
+            maResult.setReference("material", materialId);            
+            reporterIds = (List) compositeSeqToReporter.get(materialId);            
         }
-        if (reporterIds.size() > 0) {
+        if (reporterIds != null && reporterIds.size() > 0) {
             maResult.addCollection(new ReferenceList("reporters", reporterIds));
             Iterator iter = reporterIds.iterator();
             while (iter.hasNext()) {
@@ -1813,11 +1813,11 @@ public class MageDataTranslator extends DataTranslator
         path = new ItemPath("Reporter.failTypes", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
 
-        path = new ItemPath(
-                            "Reporter.immobilizedCharacteristics.type", srcNs);//prefetch
+        path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs); 
+        //prefetch
         descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath(
-                            "Reporter.immobilizedCharacteristics.sequenceDatabases.database", srcNs);//line764 760 739
+        path = new ItemPath("Reporter.immobilizedCharacteristics.sequenceDatabases.database", 
+                            srcNs); //line764 760 739
         descSet.add(path.getItemPrefetchDescriptor());
 
         path = new ItemPath(

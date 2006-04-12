@@ -23,10 +23,11 @@ import org.apache.tools.ant.Task;
  */
 public class AddDerivedDataTask extends Task
 {
-    //private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
+    private static final Logger LOG = Logger.getLogger(AddDerivedDataTask.class);
 
     protected File srcFile, tgtFile;
     protected String extension;
+    protected String fileName;
 
     /**
      * The original MAGE-ML file.
@@ -56,20 +57,35 @@ public class AddDerivedDataTask extends Task
         this.extension = extension;
     }
 
+    /**
+     * @param filename supplyment filename to provide derivedBioAssayData
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     /**
      * @see Task#execute
      */
     public void execute() throws BuildException {
-        if (srcFile == null || tgtFile == null || extension == null) {
+        if (srcFile == null || tgtFile == null || (extension == null && fileName == null)) {
             throw new BuildException("Must set all parameters");
         }
 
-        try {
-            MageConverter.processDerivedBioAssays(new FileReader(srcFile), tgtFile,
+        if (extension != null && fileName == null) {
+            try {
+                MageConverter.processDerivedBioAssays(new FileReader(srcFile), tgtFile,
                                                   extension);
-        } catch (Exception e) {
-            throw new BuildException(e);
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
+        } else if (extension == null && fileName != null) {
+            try {
+                MageConverter.processDerivedBioAssaysFromSup(new FileReader(srcFile), tgtFile,
+                                                  fileName);
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
         }
     }
 }
