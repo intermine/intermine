@@ -155,7 +155,7 @@ public class PrecomputedTableManager
             types.put(pt.getCategory(), queryStrings);
         }
         if (!queryStrings.containsKey(queryString)) {
-            addTableToDatabase(pt, indexes);
+            addTableToDatabase(pt, indexes, true);
             precomputedTables.add(pt);
             queryStrings.put(queryString, pt);
         }
@@ -213,10 +213,11 @@ public class PrecomputedTableManager
      *
      * @param pt the PrecomputedTable to add
      * @param indexes a Collection of Strings that are indexes to create
+     * @param record whether to record this table in the index
      * @throws SQLException if an error occurs in the underlying database
      */
-    protected void addTableToDatabase(PrecomputedTable pt,
-            Collection indexes) throws SQLException {
+    public void addTableToDatabase(PrecomputedTable pt,
+            Collection indexes, boolean record) throws SQLException {
         Connection con = null;
         try {
             con = (conn == null ? database.getConnection() : conn);
@@ -317,7 +318,7 @@ public class PrecomputedTableManager
      * @param name the name of the PrecomputedTable to delete
      * @throws SQLException if an error occurs in the underlying database
      */
-    protected void deleteTableFromDatabase(String name) throws SQLException {
+    public void deleteTableFromDatabase(String name) throws SQLException {
         OptimiserCache oc = OptimiserCache.getInstance(database);
         oc.flush();
         Connection con = null;

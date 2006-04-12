@@ -62,9 +62,9 @@ public class OptimiserCache
     protected int untilNextExpiration = EXPIRE_INTERVAL;
     
     /**
-     * Private constructor for this object - should only be called by getInstance().
+     * Constructor for this object.
      */
-    protected OptimiserCache() {
+    public OptimiserCache() {
         cacheLines = new HashMap();
         evictionQueue = new TreeMap();
     }

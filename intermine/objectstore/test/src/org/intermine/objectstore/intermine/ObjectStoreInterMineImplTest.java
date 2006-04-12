@@ -296,6 +296,18 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         assertEquals(expectedIndexMap, indexMap);
     }
 
+    public void testGoFaster() throws Exception {
+        Query q = new IqlQuery("SELECT Company, Department FROM Company, Department WHERE Department.company CONTAINS Company", "org.intermine.model.testmodel").toQuery();
+        try {
+            ((ObjectStoreInterMineImpl) os).goFaster(q);
+            Results r = os.execute(q);
+            r.get(0);
+            assertEquals(3, r.size());
+        } finally {
+            ((ObjectStoreInterMineImpl) os).releaseGoFaster(q);
+        }
+    }
+
     public void testPrecomputeWithNullsInOrder() throws Exception {
         Types t1 = new Types();
         t1.setIntObjType(null);

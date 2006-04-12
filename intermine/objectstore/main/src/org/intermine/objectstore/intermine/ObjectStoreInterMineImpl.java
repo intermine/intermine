@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
+import org.intermine.objectstore.query.Results;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.BestQuery;
@@ -58,6 +60,7 @@ import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.precompute.QueryOptimiserContext;
+import org.intermine.sql.precompute.OptimiserCache;
 import org.intermine.sql.query.ExplainResult;
 //import org.intermine.sql.query.PostgresExplainResult;
 import org.intermine.sql.writebatch.Batch;
@@ -105,6 +108,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int minBagTableSize = -1;
     protected Map bagConstraintTables = Collections.synchronizedMap(new WeakHashMap());
     protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
+    protected Map goFasterMap = Collections.synchronizedMap(new IdentityHashMap());
+    protected Map goFasterCacheMap = Collections.synchronizedMap(new IdentityHashMap());
     protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
 
     protected InterMineLogger logger = null;
@@ -712,8 +717,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long startOptimiseTime = System.currentTimeMillis();
             ExplainResult explainResult = null;
             if (optimise && everOptimise) {
-                BestQuery bestQuery = QueryOptimiser.optimise(sql, null, db, null,
-                        (explain ? limitedContext : QueryOptimiserContext.DEFAULT));
+                PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(q);
+                BestQuery bestQuery;
+                if (pt != null) {
+                    OptimiserCache oCache = (OptimiserCache) goFasterCacheMap.get(q);
+                    bestQuery = QueryOptimiser.optimiseWith(sql, null, db, null,
+                            (explain ? limitedContext : QueryOptimiserContext.DEFAULT),
+                            Collections.singleton(pt), oCache);
+                } else {
+                    bestQuery = QueryOptimiser.optimise(sql, null, db, null,
+                            (explain ? limitedContext : QueryOptimiserContext.DEFAULT));
+                }
                 sql = bestQuery.getBestQueryString();
                 if (bestQuery instanceof BestQueryExplainer) {
                     explainResult = ((BestQueryExplainer) bestQuery).getBestExplainResult();
@@ -1292,6 +1306,71 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
     }
 
+    /**
+     * Makes a certain Query go faster, using extra resources. The user should release
+     * the resources later by calling releaseGoFaster on the same Query. Failure to release
+     * resources may result in an overall degradation in performance.
+     *
+     * @param q the Query to speed up
+     * @throws ObjectStoreException if something is wrong
+     */
+    public void goFaster(Query q) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            goFasterWithConnection(q, c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Makes a certain Query go faster, using extra resources. The user should release
+     * the resources later by calling releaseGoFaster on the same Query. Failure to release
+     * resources may result in an overall degradation in performance.
+     *
+     * @param q the Query to speed up
+     * @param c the Connection to use
+     * @throws ObjectStoreException if something is wrong
+     */
+    public void goFasterWithConnection(Query q, Connection c) throws ObjectStoreException {
+        if (goFasterMap.containsKey(q)) {
+            throw new ObjectStoreException("Error - this Query is already going faster");
+        }
+        try {
+            String sql = SqlGenerator.generate(q, schema, db, null,
+                    SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP);
+            PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
+                    "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+            ptm.addTableToDatabase(pt, new HashSet(), false);
+            goFasterMap.put(q, pt);
+            goFasterCacheMap.put(q, new OptimiserCache());
+        } catch (SQLException e) {
+            throw new ObjectStoreException(e);
+        }
+    }
+
+    /**
+     * Releases the resources used by goFaster().
+     *
+     * @param q the Query for which to release resources
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void releaseGoFaster(Query q) throws ObjectStoreException {
+        try {
+            PrecomputedTable pt = (PrecomputedTable) goFasterMap.remove(q);
+            if (pt != null) {
+                goFasterCacheMap.remove(q);
+                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+                ptm.deleteTableFromDatabase(pt.getName());
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException(e);
+        }
+    }
 
     /**
      * Return a unique integer from a SEQUENCE in the database.
