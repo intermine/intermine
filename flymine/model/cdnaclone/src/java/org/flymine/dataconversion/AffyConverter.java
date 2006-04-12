@@ -130,8 +130,9 @@ public class AffyConverter extends CDNACloneConverter
 
             String geneEnsembl = array[17];
             //don't create probe if no ensembl id is given in the file
-            if (geneEnsembl.startsWith("ENSG") || geneEnsembl.startsWith("ENSMUSG")) {
-                Item probe = createProbe("CompositeSequence", probePre, probeId,
+            if (geneEnsembl.startsWith("ENSG") 
+                || geneEnsembl.startsWith("ENSMUSG")) {               
+                Item probe = createProbe("CompositeSequence", probePre, probeId, 
                              orgId, dataSource.getIdentifier(), dataSetId, writer);
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
