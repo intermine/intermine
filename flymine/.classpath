@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="build/resources"/>
+	<classpathentry exported="true" kind="lib" path="resources/test"/>
+	<classpathentry exported="true" kind="lib" path="build/resources">
+		<accessrules>
+			<accessrule kind="nonaccessible" pattern="test/"/>
+		</accessrules>
+	</classpathentry>
 	<classpathentry kind="src" path="model/ensembl/src/java"/>
 	<classpathentry kind="src" path="model/interpro/src/java"/>
 	<classpathentry kind="src" path="model/interpro/src/test"/>
@@ -12,7 +17,6 @@
 	<classpathentry kind="src" path="model/tfbs/src/test"/>
 	<classpathentry kind="src" path="model/tfbscluster/src/java"/>
 	<classpathentry kind="src" path="model/tfbscluster/src/test"/>
-	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="src" path="model/genomic/resources/flymine"/>
 	<classpathentry excluding="flymine/" kind="src" path="model/genomic/resources"/>
 	<classpathentry excluding="resources/|src/java/|src/test/" kind="src" path="model/mage"/>
