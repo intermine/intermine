@@ -1814,13 +1814,13 @@
                   ontology="${build}/model/go/gene_ontology.obo"
                   geneAttribute="identifier">
       <fileset dir="${shared.data}/go-annotation/">
-        <include name="flybase/2006-03-12/gene_association.fb"/>
-        <include name="mgi/2006-03-11/gene_association.mgi"/>
-        <include name="sgd/2006-03-15/gene_association.sgd"/>
-        <include name="rgd/2006-03-12/gene_association.rgd"/>
-        <include name="uniprot/2006-01-27/gene_association_ag"/>
-        <include name="uniprot/2006-01-27/gene_association_agp"/>
-        <include name="uniprot/2006-01-27/gene_association_am"/>
+        <include name="flybase/2006-03-26/gene_association.fb"/>
+        <include name="mgi/2006-03-25/gene_association.mgi"/>
+        <include name="sgd/2006-04-12/gene_association.sgd"/>
+        <include name="rgd/2006-03-26/gene_association.rgd"/>
+        <include name="uniprot/2006-03-04/gene_association_ag"/>
+        <include name="uniprot/2006-03-04/gene_association_agp"/>
+        <include name="uniprot/2006-03-04/gene_association_am"/>
      </fileset>
     </convert-file>
 
