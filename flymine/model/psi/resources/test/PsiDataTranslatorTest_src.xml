@@ -145,7 +145,7 @@
                     <fullName>Fork head protein</fullName>
                 </names>
                 <xref>
-                    <primaryRef db="uniprot" id="P14734" secondary="fkh_drome" version=""/>
+                    <primaryRef db="uniprot" id="P14734-1" secondary="fkh_drome" version=""/>
                 </xref>
                 <sequence>TAGCAT</sequence>
                 <organism ncbiTaxId="7227">

@@ -244,6 +244,11 @@ public class PsiDataTranslator extends DataTranslator
                         String dbAttrStr = (dbAttr != null ? dbAttr.getValue() : "");
                         if ("uniprotkb".equals(dbAttrStr) || "uniprot".equals(dbAttrStr)) {
                             String value = primDbXref.getAttribute("id").getValue();
+                            // accessions like P14734-1 are isoform identifiers, remove the '-n'
+                            // to get back to main protein id
+                            if (value.indexOf("-") > 0) {
+                                value = value.substring(0, value.indexOf("-"));
+                            }
                             tgtItem.addAttribute(new Attribute("primaryAccession", value));
                             Item synonym = createItem("Synonym");
                             addReferencedItem(synonym, dataSource, "source", false, "", false);
