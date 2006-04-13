@@ -39,26 +39,27 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         Collection srcItems = getSrcItems();
 
         // print out source items XML - result of running XmlConverter on PSI XML
-        //FileWriter writer = new FileWriter(new File("src.xml"));
-        //writer.write(FullRenderer.render(srcItems));
-        //writer.write(FullRenderer.render(srcItems));
-        //writer.close();
-
+//         FileWriter writer = new FileWriter(new File("src.xml"));
+//         writer.write(FullRenderer.render(srcItems));
+//         writer.write(FullRenderer.render(srcItems));
+//         writer.close();
+        String organisms = "7227 4932";
         DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
-                                                          mapping, srcModel, getTargetModel(tgtNs));
+                                                          mapping, srcModel, getTargetModel(tgtNs),
+                                                          organisms);
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
 
         //Use to write out the translated file if you want to make a new tgts file for testing
-        /*
-        FileWriter fw = new FileWriter(new File("/home/pmclaren/svn/dev/flymine/psi_tgts.xml"));
-        fw.write("<items>");
-        fw.write(tgtIw.getItems().toString());
-        fw.write("</items>");
-        fw.flush();
-        fw.close();
-        */
+
+//         FileWriter fw = new FileWriter(new File("psi_tgts.xml"));
+//         fw.write("<items>");
+//         fw.write(tgtIw.getItems().toString());
+//         fw.write("</items>");
+//         fw.flush();
+//         fw.close();
+
         System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
 
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
