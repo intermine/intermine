@@ -34,7 +34,7 @@ import org.intermine.metadata.Model;
 public class DataTranslatorTask extends Task
 {
     protected String translator, source, targetAlias, srcModel, tgtModel, organism,
-        dataLocation, mapping;
+        dataLocation, mapping, organisms;
 
     /**
      * Set the translator
@@ -82,6 +82,14 @@ public class DataTranslatorTask extends Task
      */
     public void setOrganism(String organism) {
         this.organism = organism;
+    }
+
+    /**
+     * Set a space separated list of taxon ids (for psi)
+     * @param organism a list of taxon ids
+     */
+    public void setOrganisms(String organisms) {
+        this.organisms = organisms;
     }
 
     /**
@@ -169,6 +177,14 @@ public class DataTranslatorTask extends Task
                 types = new Class[]
                     {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
                 args = new Object[] {reader, mappingProps, src, tgt, dataLocation};
+            } else if ("org.flymine.dataconversion.PsiDataTranslator"
+                       .equals(translator)) {
+                if (organisms == null) {
+                    throw new BuildException("organisms attribute not set");
+                }
+                types = new Class[]
+                    {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
+                args = new Object[] {reader, mappingProps, src, tgt, organisms};
             } else {
                 types = new Class[] {ItemReader.class, Properties.class, Model.class, Model.class};
                 args = new Object[] {reader, mappingProps, src, tgt};
