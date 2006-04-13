@@ -53,12 +53,6 @@
                     <attribute name="comment">11159 validated baits were obtained using predicted
                         ORF from BDGP release 1 and 2 and a mixture of cDNA libraries from embryo,
                         larvae 1,2 and 3, and adult fly.</attribute>
-                    <attribute name="confidence-mapping">The authors assign a numerical confidence
-                        value between 0 and 1 to each interaction. Interactions with a confidence of
-                        0.5 or higher are considered as high confidence interactions. All others are
-                        considered as low confidence interactions. For simplified extraction of
-                        subsets, the _high_ and _low_ classification has been added in
-                        IntAct.</attribute>
                 </attributeList>
             </experimentDescription>
             <experimentDescription id="EBI-12">
@@ -104,6 +98,45 @@
                     <attribute name="comment">589 bait proteins TAP-tagged.</attribute>
                 </attributeList>
             </experimentDescription>
+            <experimentDescription id="EBI-13">
+                <names>
+                    <shortLabel>pombe interactions</shortLabel>
+                    <fullName>Contains no interactions from organisms we want, should be
+                        rejected.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="100000001" secondary="" version=""/>
+                    </xref>
+                </bibref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>tandem affinity puri</shortLabel>
+                        <fullName>tandem affinity purification</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0109" secondary="" version=""/>
+                        <secondaryRef db="pubmed" id="10504710" secondary="" version=""/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>peptide massfingerpr</shortLabel>
+                        <fullName>peptide massfingerprinting</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0082" secondary="" version=""/>
+                        <secondaryRef db="pubmed" id="10967324" secondary="" version=""/>
+                        <secondaryRef db="pubmed" id="11752590" secondary="" version=""/>
+                    </xref>
+                </participantDetection>
+            </experimentDescription>
         </experimentList>
         <interactorList>
             <proteinInteractor id="EBI-124027">
@@ -146,15 +179,6 @@
                 <xref>
                     <primaryRef db="uniprot" id="P53905" secondary="lsm7_yeast" version="46"/>
                     <secondaryRef db="sgd" id="S000005091" secondary="LSM7" version=""/>
-                    <secondaryRef db="go" id="GO:0005688" secondary="C:snRNP U6" version=""/>
-                    <secondaryRef db="go" id="GO:0017070" secondary="F:U6 snRNA binding activity"
-                                  version=""/>
-                    <secondaryRef db="go" id="GO:0006402" secondary="P:mRNA catabolism" version=""/>
-                    <secondaryRef db="interpro" id="IPR001163" secondary="snRNP_Sm" version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
-                                  version=""/>
-                    <secondaryRef db="interpro" id="IPR010920" secondary="Sm_like_riboprot"
-                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -171,15 +195,6 @@
                 <xref>
                     <primaryRef db="uniprot" id="P07260" secondary="if4e_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000005499" secondary="CDC33" version=""/>
-                    <secondaryRef db="go" id="GO:0005840" secondary="C:ribosome" version=""/>
-                    <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus" version=""/>
-                    <secondaryRef db="go" id="GO:0000074" secondary="P:regulation of cell cycle"
-                                  version=""/>
-                    <secondaryRef db="interpro" id="IPR001040" secondary="TIF_eIF_4E" version=""/>
-                    <secondaryRef db="go" id="GO:0003743" secondary="F:translation initiation facto"
-                                  version=""/>
-                    <secondaryRef db="go" id="GO:0006413" secondary="P:translational initiation"
-                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -196,15 +211,6 @@
                 <xref>
                     <primaryRef db="uniprot" id="P39517" secondary="dhh1_yeast" version="47"/>
                     <secondaryRef db="sgd" id="S000002319" secondary="DHH1" version=""/>
-                    <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding activity"
-                                  version=""/>
-                    <secondaryRef db="go" id="GO:0000290" secondary="P:deadenylation-dependent deca"
-                                  version=""/>
-                    <secondaryRef db="interpro" id="IPR001410" secondary="DEAD" version=""/>
-                    <secondaryRef db="interpro" id="IPR000629" secondary="DEAD_box" version=""/>
-                    <secondaryRef db="interpro" id="IPR001650" secondary="Helicase_C" version=""/>
-                    <secondaryRef db="go" id="GO:0000932" secondary="C:cytoplasmic mRNA processing"
-                                  version=""/>
                 </xref>
                 <organism ncbiTaxId="4932">
                     <names>
@@ -215,26 +221,33 @@
             </proteinInteractor>
             <proteinInteractor id="EBI-166">
                 <names>
-                    <shortLabel>dib1_yeast</shortLabel>
+                    <shortLabel>dib1_pombe</shortLabel>
                     <fullName>Spliceosomal protein DIB1</fullName>
                 </names>
                 <xref>
-                    <primaryRef db="uniprot" id="Q06819" secondary="dib1_yeast" version="47"/>
+                    <primaryRef db="uniprot" id="Q06870" secondary="dib1_pombe" version="47"/>
                     <secondaryRef db="sgd" id="S000006286" secondary="DIB1" version=""/>
-                    <secondaryRef db="go" id="GO:0030532" secondary="C:small nuclear ribonucleoprot"
-                                  version=""/>
-                    <secondaryRef db="go" id="GO:0008248" secondary="F:pre-mRNA splicing factor act"
-                                  version=""/>
-                    <secondaryRef db="interpro" id="IPR004123" secondary="DIM1" version=""/>
-                    <secondaryRef db="interpro" id="IPR006663" secondary="Thioredox_dom2"
-                                  version=""/>
-                    <secondaryRef db="go" id="GO:0000398" secondary="P:nuclear mRNA splicing, via s"
-                                  version=""/>
                 </xref>
-                <organism ncbiTaxId="4932">
+                <organism ncbiTaxId="4896">
                     <names>
-                        <shortLabel>yeast</shortLabel>
-                        <fullName>Saccharomyces cerevisiae</fullName>
+                        <shortLabel>pombe</shortLabel>
+                        <fullName>Schizosaccharomyces pombe</fullName>
+                    </names>
+                </organism>
+            </proteinInteractor>
+            <proteinInteractor id="EBI-666">
+                <names>
+                    <shortLabel>protein_pombe</shortLabel>
+                    <fullName>A made up protein</fullName>
+                </names>
+                <xref>
+                    <primaryRef db="uniprot" id="Q01111" secondary="dib1_pombe" version="47"/>
+                    <secondaryRef db="sgd" id="S000009999" secondary="DIB1" version=""/>
+                </xref>
+                <organism ncbiTaxId="4896">
+                    <names>
+                        <shortLabel>pombe</shortLabel>
+                        <fullName>Schizosaccharomyces pombe</fullName>
                     </names>
                 </organism>
             </proteinInteractor>
@@ -330,6 +343,43 @@
                 <xref>
                     <primaryRef db="intact" id="EBI-139" secondary="ga-205"/>
                 </xref>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pombe interaction</shortLabel>
+                    <fullName>This should be ignored by translator</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-13"/>
+                </experimentList>
+                <participantList>
+                    <proteinParticipant>
+                        <proteinInteractorRef ref="EBI-166"/>
+                        <role>bait</role>
+                        <isTaggedProtein>true</isTaggedProtein>
+                        <isOverexpressedProtein>true</isOverexpressedProtein>
+                    </proteinParticipant>
+                    <proteinParticipant>
+                        <proteinInteractorRef ref="EBI-666"/>
+                        <role>prey</role>
+                    </proteinParticipant>
+                </participantList>
+                <interactionType>
+                    <names>
+                        <shortLabel>classical two hybrid</shortLabel>
+                        <fullName>classical two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018" secondary="" version=""/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-196436" secondary="fkh-cg10032-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="author-confidence">0.06</attribute>
+                    <attribute name="author-confidence">low</attribute>
+                </attributeList>
             </interaction>
         </interactionList>
     </entry>

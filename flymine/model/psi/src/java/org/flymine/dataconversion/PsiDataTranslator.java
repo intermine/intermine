@@ -35,6 +35,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -52,6 +54,9 @@ public class PsiDataTranslator extends DataTranslator
     private Item dataSource;
     private Map pubs = new HashMap();
     private Map dataSetMap = new HashMap();
+    private Set organisms = new HashSet();
+    private Set exptsToStore = new HashSet();
+    private Map exptMap = new HashMap();
 
     protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
 
@@ -59,8 +64,18 @@ public class PsiDataTranslator extends DataTranslator
      * @see DataTranslator#DataTranslator
      */
     public PsiDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
-                             Model tgtModel) {
+                             Model tgtModel, String orgStr) {
         super(srcItemReader, mapping, srcModel, tgtModel);
+        setOrganisms(orgStr);
+    }
+
+    /**
+     * A space separated list of of NCBI taxonomy ids for which we want to retrieve
+     * interactions.
+     * @param orgStr a list of taxon ids
+     */
+    public void setOrganisms(String orgStr) {
+        organisms.addAll(Arrays.asList(orgStr.split("\\s")));
     }
 
     /**
@@ -79,6 +94,12 @@ public class PsiDataTranslator extends DataTranslator
         while (iter.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) iter.next()));
         }
+
+        iter = exptsToStore.iterator();
+        while (iter.hasNext()) {
+            tgtItemWriter.storeAll(ItemHelper
+                                .convertToFullDataItems((List) exptMap.get(iter.next())));
+        }
     }
 
     /**
@@ -89,16 +110,28 @@ public class PsiDataTranslator extends DataTranslator
         Collection result = new HashSet();
         String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
         Collection translated = super.translateItem(srcItem);
+        boolean storeTgtItem = true;
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 Item tgtItem = (Item) i.next();
                 if ("ExperimentType".equals(className)) {
+                    storeTgtItem = false;
+                    // TODO we need to check that there is anything to store in this experiment,
+                    // we only want those that contain interactions for selected organisms
+
+                    // put experiment and associated data in a exptMap, exptsToStore will
+                    // define identifiers of experiments that should be stored.
+
+                    List exptData = new ArrayList();
+                    exptMap.put(tgtItem.getIdentifier(), exptData);
+                    exptData.add(tgtItem);
                     Item dataSetItem =
                         getDataSetFromNamesType(getReference(srcItem, "names"));
                     Item pub = getPub(srcItem);
                     if (pub != null) {
                         tgtItem.addReference(new Reference("publication", pub.getIdentifier()));
-                        result.add(pub);
+                        //result.add(pub);
+                        exptData.add(pub);
                     }
                     Item attributeList = getReference(srcItem, "attributeList");
                     if (attributeList != null) {
@@ -114,7 +147,8 @@ public class PsiDataTranslator extends DataTranslator
                                                                .getValue()));
                             comment.addReference(new Reference("source",
                                                                dataSetItem.getIdentifier()));
-                            result.add(comment);
+                            //result.add(comment);
+                            exptData.add(comment);
                             addToCollection(tgtItem, "comments", comment);
                         }
                     }
@@ -135,9 +169,8 @@ public class PsiDataTranslator extends DataTranslator
                     }
 
                 } else if ("InteractionElementType".equals(className)) {
-
+                    storeTgtItem = false;
                     Item exptType = (Item) getCollection(getReference(srcItem, "experimentList"),
-
                                                         "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
 
@@ -175,76 +208,101 @@ public class PsiDataTranslator extends DataTranslator
                             }
                         }
                     }
+                    // if createProteinInteraction returns null it means it has been rejected
                     Item interaction = createProteinInteraction(srcItem, tgtItem, result, dataSet);
+                    if (interaction != null) {
+                        storeTgtItem = true;
+                        interaction.addReference(new Reference("experiment",
+                                                               exptType.getIdentifier()));
 
-                    interaction.addReference(new Reference("experiment", exptType.getIdentifier()));
-
-                    interaction.addCollection(new ReferenceList("evidence",
+                        interaction.addCollection(new ReferenceList("evidence",
                             Arrays.asList(new Object[] {dataSource.getIdentifier()})));
 
-                    addReferencedItem(tgtItem, interaction, "relations", true, "evidence", true);
-                    result.add(interaction);
+                        addReferencedItem(tgtItem, interaction, "relations", true,
+                                          "evidence", true);
+                        result.add(interaction);
+
+                        // store this experiment
+                        exptsToStore.add(exptType.getIdentifier());
+                    }
                 } else if ("ProteinInteractorType".equals(className)) {
-                    Item xref = getReference(srcItem, "xref");
-                    Item primDbXref = (xref != null ? getReference(xref, "primaryRef") : null);
-                    Attribute dbAttr = (primDbXref != null ? primDbXref.getAttribute("db") : null);
-                    String dbAttrStr = (dbAttr != null ? dbAttr.getValue() : "");
-                    if ("uniprotkb".equals(dbAttrStr) || "uniprot".equals(dbAttrStr)) {
-                        String value = primDbXref.getAttribute("id").getValue();
-                        tgtItem.addAttribute(new Attribute("primaryAccession", value));
-                        Item synonym = createItem("Synonym");
-                        addReferencedItem(synonym, dataSource, "source", false, "", false);
-                        synonym.addAttribute(new Attribute("value", value));
-                        synonym.addAttribute(new Attribute("type", "accession"));
-                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                        result.add(synonym);
-                    } else {
-                        //Since there's no usable Uniprot id, we'll just use the Intact internal id.
-                        Iterator secondaryDbXrefIt = getCollection(xref, "secondaryRefs");
+                    // only store if this protein is for an accepted organism
+                    Item organism = getReference(srcItem, "organism");
+                    String taxId = organism.getAttribute("ncbiTaxId").getValue();
 
-                        boolean foundIntact = false;
-                        String intactId = null;
-                        while (secondaryDbXrefIt.hasNext() && !foundIntact) {
+                    // TODO interactions are only stored if they contain at least two interactors
+                    // from accepted organisms.  Proteins are only stored if they are from an
+                    // an accpted organism.  In the case that an interaction is between one
+                    // accepted and one not accepted then an 'orphan' protein could be stored.
+                    // This is not too serious but a little untidy.
 
-                            Item nextDbXref = (Item) secondaryDbXrefIt.next();
-                            Attribute nextDbAttr = nextDbXref.getAttribute("db");
-                            if (nextDbAttr.getValue().equalsIgnoreCase("intact")) {
+                    if (organisms.contains(taxId)) {
+                        Item xref = getReference(srcItem, "xref");
+                        Item primDbXref = (xref != null ? getReference(xref, "primaryRef") : null);
+                        Attribute dbAttr = (primDbXref != null
+                                            ? primDbXref.getAttribute("db") : null);
+                        String dbAttrStr = (dbAttr != null ? dbAttr.getValue() : "");
+                        if ("uniprotkb".equals(dbAttrStr) || "uniprot".equals(dbAttrStr)) {
+                            String value = primDbXref.getAttribute("id").getValue();
+                            tgtItem.addAttribute(new Attribute("primaryAccession", value));
+                            Item synonym = createItem("Synonym");
+                            addReferencedItem(synonym, dataSource, "source", false, "", false);
+                            synonym.addAttribute(new Attribute("value", value));
+                            synonym.addAttribute(new Attribute("type", "accession"));
+                            addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                            result.add(synonym);
+                        } else {
+                            //Since there's no usable Uniprot id, just use the Intact internal id.
+                            Iterator secondaryDbXrefIt = getCollection(xref, "secondaryRefs");
 
-                                Attribute idAttr = nextDbXref.getAttribute("id");
-                                intactId = idAttr.getValue();
-                                foundIntact = true;
+                            boolean foundIntact = false;
+                            String intactId = null;
+                            while (secondaryDbXrefIt.hasNext() && !foundIntact) {
+
+                                Item nextDbXref = (Item) secondaryDbXrefIt.next();
+                                Attribute nextDbAttr = nextDbXref.getAttribute("db");
+                                if (nextDbAttr.getValue().equalsIgnoreCase("intact")) {
+
+                                    Attribute idAttr = nextDbXref.getAttribute("id");
+                                    intactId = idAttr.getValue();
+                                    foundIntact = true;
+                                }
+                            }
+
+                            if (foundIntact && intactId != null) {
+                                tgtItem.addAttribute(
+                                    new Attribute("primaryAccession", "IntAct:" + intactId));
+                                Item synonym = createItem("Synonym");
+                                addReferencedItem(synonym, dataSource, "source", false, "", false);
+                                synonym.addAttribute(new Attribute("value", "IntAct:" + intactId));
+                                synonym.addAttribute(new Attribute("type", "identifier"));
+                                addReferencedItem(tgtItem, synonym, "synonyms",
+                                                  true, "subject", false);
+                                result.add(synonym);
+                                Item idSynonym = createItem("Synonym");
+                                addReferencedItem(idSynonym, dataSource, "source",
+                                                  false, "", false);
+                                idSynonym.addAttribute(new Attribute("value", intactId));
+                                idSynonym.addAttribute(new Attribute("type", "identifier"));
+                                addReferencedItem(
+                                    tgtItem, idSynonym, "synonyms", true, "subject", false);
+                                result.add(idSynonym);
+                            } else {
+                                throw new RuntimeException(
+                                "Can't set a suitable primaryAccession for this ProteinInteractor");
                             }
                         }
 
-                        if (foundIntact && intactId != null) {
-                            tgtItem.addAttribute(
-                                    new Attribute("primaryAccession", "IntAct:" + intactId));
-                            Item synonym = createItem("Synonym");
-                            addReferencedItem(synonym, dataSource, "source", false, "", false);
-                            synonym.addAttribute(new Attribute("value", "IntAct:" + intactId));
-                            synonym.addAttribute(new Attribute("type", "identifier"));
-                            addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                            result.add(synonym);
-                            Item idSynonym = createItem("Synonym");
-                            addReferencedItem(idSynonym, dataSource, "source", false, "", false);
-                            idSynonym.addAttribute(new Attribute("value", intactId));
-                            idSynonym.addAttribute(new Attribute("type", "identifier"));
-                            addReferencedItem(
-                                    tgtItem, idSynonym, "synonyms", true, "subject", false);
-                            result.add(idSynonym);
-                        } else {
-                            throw new RuntimeException(
-                                "Can't set a suitable primaryAccession for this ProteinInteractor");
+                        if (srcItem.getAttribute("sequence") != null) {
+                            Item seq = createItem("Sequence");
+                            String srcResidues = srcItem.getAttribute("sequence").getValue();
+                            seq.setAttribute("residues", srcResidues);
+                            seq.setAttribute("length", "" + srcResidues.length());
+                            tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
+                            result.add(seq);
                         }
-                    }
-
-                    if (srcItem.getAttribute("sequence") != null) {
-                        Item seq = createItem("Sequence");
-                        String srcResidues = srcItem.getAttribute("sequence").getValue();
-                        seq.setAttribute("residues", srcResidues);
-                        seq.setAttribute("length", "" + srcResidues.length());
-                        tgtItem.addReference(new Reference("sequence", seq.getIdentifier()));
-                        result.add(seq);
+                    } else {
+                        storeTgtItem = false;
                     }
                 } else if ("CvType".equals(className)) {
                     Item xref = getReference(srcItem, "xref");
@@ -254,8 +312,16 @@ public class PsiDataTranslator extends DataTranslator
                                                            primaryRef.getAttribute("id")
                                                            .getValue()));
                     }
+                } else if ("Organism_ProteinInteractorType".equals(className)) {
+                    String taxonId = srcItem.getAttribute("ncbiTaxId").getValue();
+                    if (!organisms.contains(taxonId)) {
+                        storeTgtItem = false;
+                    }
                 }
-                result.add(tgtItem);
+
+                if (storeTgtItem) {
+                    result.add(tgtItem);
+                }
             }
         }
         return result;
@@ -291,9 +357,14 @@ public class PsiDataTranslator extends DataTranslator
             Item srcInteractionElementItem, Item tgtExperimentalResult, Collection result,
             Item dataSetItem)
         throws ObjectStoreException {
+
+        // we only want to create an interaction between proteins of the same organism
+        // and that are for organisms we are interested in.
         Item interaction = createItem("ProteinInteraction");
 
         Item participants = getReference(srcInteractionElementItem, "participantList");
+        List interactionOrganisms = new ArrayList();
+        Set interactors = new HashSet();
 
         for (Iterator i = getCollection(participants, "proteinParticipants"); i.hasNext();) {
             Item participant = (Item) i.next();
@@ -314,43 +385,76 @@ public class PsiDataTranslator extends DataTranslator
             Item interactor = createItem("ProteinInteractor");
             interactor.setAttribute("role", role);
 
-            Reference proteinRef =
+            // check the protein organism
+            Item protein = getReference(participant, "proteinInteractorRef");
+            Item organism = getReference(protein, "organism");
+            String taxonId = organism.getAttribute("ncbiTaxId").getValue();
+            if (organisms.contains(taxonId)) {
+                interactionOrganisms.add(taxonId);
+                Reference proteinRef =
                     new Reference("protein",
-                            participant.getReference("proteinInteractorRef").getRefId());
-            interactor.setReference("protein", proteinRef.getRefId());
-            interactor.setReference("interaction", interaction.getIdentifier());
-            interaction.addToCollection("interactors", interactor);
-            result.add(interactor);
+                                  participant.getReference("proteinInteractorRef").getRefId());
+                interactor.setReference("protein", proteinRef.getRefId());
+                interactor.setReference("interaction", interaction.getIdentifier());
+                interaction.addToCollection("interactors", interactor);
+                interactors.add(interactor);
+            }
+
+            //result.add(interactor);
         }
 
-        String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");
+        // more than protein from accepted organisms -> keep
+        if (interactionOrganisms.size() > 1) {
+            result.addAll(interactors);
+            String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");
 
-        if (iShortName != null) {
-            interaction.setAttribute("shortName", iShortName);
-            LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
-        } else {
-            LOG.debug("No names reference for srcItem "
-                      + srcInteractionElementItem.getIdentifier());
-        }
+            if (iShortName != null) {
+                interaction.setAttribute("shortName", iShortName);
+                LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
+            } else {
+                LOG.debug("No names reference for srcItem "
+                          + srcInteractionElementItem.getIdentifier());
+            }
 
-        //<confidence unit="author-confidence" value="D"/>
-        Item conf = getReference(srcInteractionElementItem, "confidence");
+            //<confidence unit="author-confidence" value="D"/>
+            Item conf = getReference(srcInteractionElementItem, "confidence");
 
-        if (conf != null) {
-            LOG.debug("CONFIDENCE TAG FOUND IN INTERACTION:"
-                    + (iShortName != null ? iShortName : interaction.getIdentifier()));
+            if (conf != null) {
+                LOG.debug("CONFIDENCE TAG FOUND IN INTERACTION:"
+                          + (iShortName != null ? iShortName : interaction.getIdentifier()));
 
-            tgtExperimentalResult.addAttribute(
+                tgtExperimentalResult.addAttribute(
                     new Attribute("confidenceUnit", conf.getAttribute("unit").getValue()));
 
-            tgtExperimentalResult.addAttribute(
+                tgtExperimentalResult.addAttribute(
                     new Attribute("confidenceValue", conf.getAttribute("value").getValue()));
-        } else {
-            LOG.debug("NO CONFIDENCE TAG FOUND IN INTERACTION:"
-                    + (iShortName != null ? iShortName : interaction.getIdentifier()));
+            } else {
+                LOG.debug("NO CONFIDENCE TAG FOUND IN INTERACTION:"
+                          + (iShortName != null ? iShortName : interaction.getIdentifier()));
+            }
+
+            return interaction;
         }
 
-        return interaction;
+        // make sure this interaction has at least two interacting proteins from an
+        // accepted organism
+//         String keepInteraction = false;
+//         Iteractor orgIter = oranisms.iterator();
+//         while (orgIter.hasNext()) {
+//             String nextOrg = orgIter.next();
+//             if (interactionOrgs.contains(nextOrg)) {
+//                 if (((Integer) interactionOrgs.get(nextOrg)).parseInt() > 1) {
+//                     keepInteraction = true;
+//                 }
+//             }
+//         }
+
+        // we can store this interaction
+
+        // experiment can be stored
+
+        // we don't want to store this interaction
+        return null;
     }
 
     /**
@@ -371,7 +475,8 @@ public class PsiDataTranslator extends DataTranslator
         Reference namesRef = itemWithSomeNames.getReference("names");
 
         if (namesRef == null) {
-            LOG.debug("An 'itemWithSomeNames' has no 'names'!" + itemWithSomeNames.getIdentifier());
+            LOG.debug("An 'itemWithSomeNames' has no 'names'!"
+                      + itemWithSomeNames.getIdentifier());
             return null;
         }
 
@@ -529,6 +634,14 @@ public class PsiDataTranslator extends DataTranslator
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc2.addPath(desc3);
+        desc = new ItemPrefetchDescriptor("ExperimentType.names");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("names",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("ExperimentType.hostOrganism");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("hostOrganism",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descSet.add(desc);
         paths.put("http://www.flymine.org/model/psi#ExperimentType", descSet);
 
         descSet = new HashSet();
