@@ -48,10 +48,8 @@ import org.apache.tools.ant.types.FileSet;
  * */
 public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
 {
-
     protected ItemFactory itemFactory;
     protected String dataSourceName = null;
-    private DataSource dataSource = null;
 
     /**
      * Suitable constructor.
@@ -59,17 +57,6 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
     public TSVFileReaderWithSynonymTask () {
         super();
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-
-        dataSource =
-            (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-        dataSource.setName(dataSourceName);
-        try {
-            ObjectStore os = getObjectStoreWriter().getObjectStore();
-            dataSource = (DataSource) os.getObjectByExample(dataSource,
-                                                            Collections.singleton("name"));
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
-        }
     }
 
     /**
@@ -91,6 +78,18 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
      */
     void executeInternal(ObjectStoreWriter osw, DelimitedFileConfiguration dfc)
         throws BuildException {
+
+        DataSource dataSource =
+            (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource.setName(dataSourceName);
+        try {
+            ObjectStore os = getObjectStoreWriter().getObjectStore();
+            dataSource = (DataSource) os.getObjectByExample(dataSource,
+                                                            Collections.singleton("name"));
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
+        }
+        
         setClassName(dfc.getConfigClassDescriptor().getName());
         setKeyFieldName(dfc.keyFieldDescriptor.getName());
 
@@ -146,23 +145,13 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
                                     if ("name".equalsIgnoreCase(columnFD.getName())) {
 
                                         Synonym syn = newSynonym((BioEntity) o, "name", rowValue);
-                                        if (this.dataSource != null) {
-                                            syn.setSource(dataSource);
-                                        } else {
-                                            LOG.warn("NO DATASOURCE SET!");
-                                        }
                                         osw.store(syn);
                                     }
-
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            if (this.dataSource != null) {
-                osw.store(dataSource);
             }
 
             osw.commitTransaction();
@@ -188,13 +177,4 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
 
         return syn;
     }
-
-    private DataSource newDataSource() {
-
-        HashSet bob = new HashSet();
-        bob.add(DataSource.class);
-        DataSource ds = (DataSource) DynamicUtil.createObject(bob);
-        return ds;
-    }
-
 }
