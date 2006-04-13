@@ -10,31 +10,36 @@ package org.flymine.task;
  *
  */
 
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TextFileUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.DynamicUtil;
-import org.intermine.model.InterMineObject;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TextFileUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.ItemFactory;
+
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.DataSource;
+import org.flymine.model.genomic.Synonym;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Synonym;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.DataSource;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.HashSet;
 
 /**
  * Reads TSV files, but also produces Synonyms while processing the file
@@ -54,6 +59,17 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
     public TSVFileReaderWithSynonymTask () {
         super();
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+
+        dataSource =
+            (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource.setName(dataSourceName);
+        try {
+            ObjectStore os = getObjectStoreWriter().getObjectStore();
+            dataSource = (DataSource) os.getObjectByExample(dataSource,
+                                                            Collections.singleton("name"));
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
+        }
     }
 
     /**
@@ -63,8 +79,6 @@ public class TSVFileReaderWithSynonymTask extends TSVFileReaderTask
      * */
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
-        this.dataSource = newDataSource();
-        this.dataSource.setName(this.dataSourceName);
     }
 
     private static final Logger LOG = Logger.getLogger(TSVFileReaderWithSynonymTask.class);
