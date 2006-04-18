@@ -1815,7 +1815,6 @@
                   ontology="${build}/model/go/gene_ontology.obo"
                   geneAttribute="identifier">
       <fileset dir="${shared.data}/go-annotation/">
-        <include name="flybase/2006-03-26/gene_association.fb"/>
         <include name="mgi/2006-03-25/gene_association.mgi"/>
         <include name="sgd/2006-04-12/gene_association.sgd"/>
         <include name="rgd/2006-03-26/gene_association.rgd"/>
@@ -1848,8 +1847,8 @@
                         ignoreDuplicates="true"/>
   </target>
 
-  <!-- wormbase go annotation needs to set Gene.organismDbId and use appropriate key -->
-  <target name="retrieve-go-annotation-wormbase" depends="prepare-build-model, compile-go-java">
+  <!-- wormbase/flybase go annotation needs to set Gene.organismDbId and use appropriate key -->
+  <target name="retrieve-go-annotation-organismdbid" depends="prepare-build-model, compile-go-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -1869,6 +1868,7 @@
                   geneAttribute="organismDbId">
       <fileset dir="${shared.data}/go-annotation/">
         <include name="wormbase/2006-03-12/gene_association.wb"/>
+        <include name="flybase/2006-03-26/gene_association.fb"/>
      </fileset>
     </convert-file>
 
@@ -1884,18 +1884,18 @@
     </ant>
   </target>
 
-  <target name="load-go-annotation-wormbase"  depends="copy-genomic-config">
+  <target name="load-go-annotation-organismdbid"  depends="copy-genomic-config">
     <taskdef name="load-go-annotation" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
 
     <load-go-annotation integrationWriter="integration.production"
                         source="os.go-annotation-translated"
-                        sourceName="goa-wormbase"
+                        sourceName="goa-organismdbid"
                         ignoreDuplicates="true"/>
   </target>
 
-  <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation, retrieve-go-annotation-wormbase, load-go-annotation-wormbase"/>
+  <target name="build-go-production" depends="retrieve-go-dag, load-go-dag, retrieve-go-annotation, load-go-annotation, retrieve-go-annotation-organismdbid, load-go-annotation-organismdbid"/>
 
   <!--load GFF3 data for flyreg -->
   <target name="retrieve-flyreg"
