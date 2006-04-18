@@ -264,6 +264,11 @@ public class TransferSequences
 
             String featureSeq = getSubSequence(chromosomeSequence, locationOnChr);
 
+            if (featureSeq == null) {
+                // probably the locationOnChr is out of range
+                continue;
+            }
+
             Sequence sequence =
                 (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
             sequence.setResidues(featureSeq);
@@ -287,6 +292,13 @@ public class TransferSequences
         int charsToCopy =
             locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
         String chromosomeSequenceString = chromosomeSequence.getResidues();
+
+        if (charsToCopy > chromosomeSequenceString.length()) {
+            LOG.error("LocatedSequenceFeature too long, ignoring - Location: " +
+                      locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+            return null;
+        }
+
         int startPos = locationOnChr.getStart().intValue() - 1;
         int endPos = startPos + charsToCopy;
 
