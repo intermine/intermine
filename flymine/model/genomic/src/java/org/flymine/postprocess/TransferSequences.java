@@ -35,6 +35,7 @@ import org.flymine.model.genomic.Assembly;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.ChromosomeBand;
 import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.RankedRelation;
@@ -227,11 +228,30 @@ public class TransferSequences
             Location locationOnChr = (Location) rr.get(2);
 
             if (feature instanceof Assembly) {
+                LOG.error("in transferToLocatedSequenceFeatures() ignoring: "
+                          + feature);
                 continue;
             }
 
             if (feature instanceof ChromosomeBand) {
+                LOG.error("in transferToLocatedSequenceFeatures() ignoring: "
+                          + feature);
                 continue;
+            }
+
+            if (feature instanceof Transcript) {
+                LOG.error("in transferToLocatedSequenceFeatures() ignoring: "
+                          + feature);
+                continue;
+            }
+
+            if (feature instanceof Gene) {
+                Gene gene = (Gene) feature;
+                if (gene.getLength().intValue() > 2000000) {
+                    LOG.error("gene too long in transferToLocatedSequenceFeatures() ignoring: "
+                              + gene);
+                    continue;
+                }
             }
 
             Chromosome chr = (Chromosome) os.getObjectById(chrId);
