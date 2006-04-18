@@ -25,7 +25,7 @@
           </DD>
         </DL>
         <DL>
-          <DT>TFBS Library: <I>H. sapiens</I>, <I>M. musculus</I>, <I>C. familiaris</I> and <I>R. norvegicus</I></DT>
+          <DT>TFBS Library: <I>H. sapiens</I>, <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I></DT>
           <DD>
             TFBS Library containing above TFBSClusters in <I>H. sapiens</I> that are also conserved in <I>M. musculus</I>, <I>C. familiaris</I> and <I>M. domestica</I> annotated by 
             <A HREF="http://hscl.cimr.cam.ac.uk/">HSCL</A>.
