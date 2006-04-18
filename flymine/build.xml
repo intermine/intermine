@@ -2528,11 +2528,27 @@
     <mappings operation="make-spanning-locations" objectStoreWriter="osw.production"/>
   </target>
 
-  <target name="transfer-sequences" depends="compile-genomic-java-from-db">
+  <target name="transfer-sequences-chromosome" depends="compile-genomic-java-from-db">
+    <taskdef name="transfer-sequences" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <transfer-sequences operation="transfer-sequences-chromosome" 
+                        objectStoreWriter="osw.production"/>
+  </target>
+
+  <target name="transfer-sequences-located-sequence-feature" depends="compile-genomic-java-from-db">
     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
       <classpath refid="models.class.path"/>
     </taskdef>
-    <mappings operation="transfer-sequences" objectStoreWriter="osw.production"/>
+    <mappings operation="transfer-sequences-located-sequence-feature"
+              objectStoreWriter="osw.production"/>
+  </target>
+
+  <target name="transfer-sequences-transcripts" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="transfer-sequences-transcripts" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="update-publications" depends="compile-genomic-java-from-db">
@@ -4045,13 +4061,6 @@
       <classpath refid="models.class.path"/>
     </taskdef>
     <fetch-sequences operation="fetch-contig-sequences-ensembl" objectStoreWriter="osw.production" ensemblDb="db.ensembl-anopheles"/>
-  </target>
-
-  <target name="transfer-sequences-chromosome" depends="compile-genomic-java-from-db">
-    <taskdef name="transfer-sequences" classname="org.flymine.postprocess.PostProcessTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <transfer-sequences operation="transfer-sequences-chromosome" objectStoreWriter="osw.production"/>
   </target>
 
   <target name="post-process-t1dmine">

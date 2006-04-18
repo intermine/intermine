@@ -63,7 +63,15 @@ run: read-flybase-cds-fasta create-flybase-to-uniprot-refs update-publications g
 dump: postprocess-5
 
 # run in its own process - it's a memory hog
-run: transfer-sequences
+run: transfer-sequences-chromosome
+
+dump: postprocess-6-chr-sequences
+
+run: transfer-sequences-located-sequence-feature
+
+dump: postprocess-7-lsf-sequences
+
+run: transfer-sequences-transcripts
 
 dump: complete
 

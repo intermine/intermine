@@ -157,12 +157,12 @@ public class PostProcessTask extends Task
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
-            } else if ("transfer-sequences".equals(operation)) {
+            } else if ("transfer-sequences-located-sequence-feature".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToChromosome()");
-                ts.transferToChromosome();
                 LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
+            } else if ("transfer-sequences-transcripts".equals(operation)) {
+                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
             } else if ("make-spanning-locations".equals(operation)) {
