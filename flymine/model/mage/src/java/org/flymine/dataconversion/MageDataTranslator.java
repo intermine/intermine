@@ -114,8 +114,8 @@ public class MageDataTranslator extends DataTranslator
 
     //experiment E-MEXP-70
     protected Map derivedBANameMap = new HashMap(); //dba itemId, dba name
-    protected Map measuredBANameMap = new HashMap();//mbaname, mba itemId
-    protected Map dba2MbaMap = new HashMap();//dbaId, mbaIds
+    protected Map measuredBANameMap = new HashMap(); //mbaname, mba itemId
+    protected Map dba2MbaMap = new HashMap(); //dbaId, mbaIds
 
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
