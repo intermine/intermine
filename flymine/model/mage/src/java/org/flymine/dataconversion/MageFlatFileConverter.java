@@ -60,17 +60,23 @@ public class MageFlatFileConverter extends FileConverter
     public MageFlatFileConverter(ItemWriter writer)
         throws ObjectStoreException, MetaDataException, IOException {
         super(writer);
-
+        
+        readConfig();
+        System.out.println("config " + config);
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
-        readConfig();
-
         dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Affymetrix GeneChip");
+        dataSource.setAttribute("name", "Proceedings of the National Academy of Sciences USA");
+        dataSource.setAttribute("url", "http://www.pnas.org/");
         writer.store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "Affymetrix Mouse Genome 430 2.0 Array");
+        dataSet.setReference("dataSource", dataSource.getIdentifier());
+        dataSet.setAttribute("title", "E-SMDB-3450");
+        dataSet.setAttribute("description", "Rossi et al, 2005: Compare blood stem cells from young vs old mice");     
+        
+        dataSet.setAttribute("url", 
+                "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
         writer.store(ItemHelper.convert(dataSet));
 
         organismMM = createItem("Organism");
