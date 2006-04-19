@@ -40,7 +40,7 @@
     </td>
     <td valign="top" width="40%">
       <div class="heading2">
-        Current data sets
+        Bulk download
       </div>
 
       <div class="body">

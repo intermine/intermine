@@ -60,7 +60,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Explore <i>Drosophila</i> data sets
+        Bulk download <i>Drosophila</i> data
       </div>
       <div class="body">
         <ul>
@@ -257,7 +257,7 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Explore <i>Anopheles</i> data sets
+        Bulk download <i>Anopheles</i> data
       </div>
       <div class="body">
         <ul>

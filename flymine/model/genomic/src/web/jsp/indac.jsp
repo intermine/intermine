@@ -33,7 +33,7 @@
     </td>
     <td valign="top" width="40%">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
       <div class="body">
         <ul>

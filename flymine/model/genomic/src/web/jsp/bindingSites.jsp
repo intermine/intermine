@@ -28,7 +28,7 @@
     </TD>
     <TD width="40%" valign="top">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
       <div class="body">
         
