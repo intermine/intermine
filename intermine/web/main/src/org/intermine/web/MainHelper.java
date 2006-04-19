@@ -56,6 +56,7 @@ import org.intermine.web.bag.InterMineIdBag;
  * Helper methods for main controller and main action
  * @author Mark Woodbridge
  * @author Thomas Riley
+ * @author Matthew Wakeling
  */
 public class MainHelper
 {
@@ -248,10 +249,6 @@ public class MainHelper
                 Constraint c = (Constraint) j.next();
                 String code = c.getCode();
                 ConstraintSet cs = (ConstraintSet) codeToCS.get(code);
-                if (cs == null) {
-                    // Only one constraint
-                    cs = andcs;
-                }
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
                     Collection bag = (Collection) savedBags.get(c.getValue());
                     if (bag instanceof InterMineIdBag) {
@@ -259,27 +256,22 @@ public class MainHelper
                         QueryField qf = new QueryField((QueryClass) qn, "id");
                         cs.addConstraint(new BagConstraint(qf, c.getOp(), bag));
                     } else {
-                        cs.addConstraint(new BagConstraint(qn,
-                                                       c.getOp(),
-                                                       bag));
+                        cs.addConstraint(new BagConstraint(qn, c.getOp(), bag));
                     }
                 } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL
                         || c.getOp() == ConstraintOp.IS_NULL) {
-                        cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn,
-                                                              c.getOp()));
+                        cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn, c.getOp()));
                     } else {
                         if (qn.getType().equals(String.class)) {
                             // do a case-insensitive search
                             QueryFunction qf = new QueryFunction((QueryField) qn,
                                                                  QueryFunction.LOWER);
                             String lowerCaseValue = ((String) c.getValue()).toLowerCase();
-                            cs.addConstraint(new SimpleConstraint(qf,
-                                                                  c.getOp(),
+                            cs.addConstraint(new SimpleConstraint(qf, c.getOp(),
                                                                   new QueryValue(lowerCaseValue)));
                         } else {
-                            cs.addConstraint(new SimpleConstraint((QueryField) qn,
-                                                                  c.getOp(),
+                            cs.addConstraint(new SimpleConstraint((QueryField) qn, c.getOp(),
                                                                   new QueryValue(c.getValue())));
                         }
                     }
@@ -311,6 +303,14 @@ public class MainHelper
                 }
             }
         }
+
+        if (andcs.getConstraints().isEmpty()) {
+            q.setConstraint(null);
+        } else if (andcs.getConstraints().size() == 1) {
+            q.setConstraint((org.intermine.objectstore.query.Constraint)
+                    (andcs.getConstraints().iterator().next()));
+        }
+
 
         //build the SELECT list
         for (Iterator i = view.iterator(); i.hasNext();) {
