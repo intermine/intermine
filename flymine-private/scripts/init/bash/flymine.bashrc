@@ -17,15 +17,23 @@ shopt -s cdspell
 shopt -s checkwinsize
 shopt -s cmdhist
 shopt -s histappend
-set -o nounset
 
 # Set up the prompt
 case $TERM in
     *term | rxvt )
-	PS1="\u@\h:\w\$ \[\033]0;\u@\h:\w\007\]" ;;
+	PS1="\u@\h:\w\$ \[\033]0;\u@\h:\w\007\]"
+        if [ "$COLORTERM" = "gnome-terminal" ]
+        then
+	    PS1="\u@\h:\w\$ "
+        fi
+        ;;
     *)
 	PS1="\u@\h:\w\$ " ;;
 esac
+
+# Set up the shell (part 2)
+
+set -o nounset
 
 case $machine in
 Linux)
