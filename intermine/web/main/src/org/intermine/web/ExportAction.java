@@ -184,15 +184,15 @@ public class ExportAction extends InterMineAction
 
                     HSSFRow excelRow = sheet.createRow((short) rowIndex);
 
-                    // a count of the columns that we have seen so far are invisble - used to get the
-                    // correct columnIndex for the call to createCell()
+                    // a count of the columns that we have seen so far are invisble - used to get
+                    // the correct columnIndex for the call to createCell()
                     int invisibleColumns = 0;
 
                     for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                         Column thisColumn = (Column) columns.get(columnIndex);
 
-                        // the column order from PagedTable.getList() isn't necessarily the order that
-                        // the user has chosen for the columns
+                        // the column order from PagedTable.getList() isn't necessarily the order
+                        // that the user has chosen for the columns
                         int realColumnIndex = thisColumn.getIndex();
 
                         if (!thisColumn.isVisible()) {
@@ -286,8 +286,8 @@ public class ExportAction extends InterMineAction
             }
 
             TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
-                                       getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1,
-                                       getObjectFormatter(model, webConfig));
+                    getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1,
+                    getObjectFormatter(model, webConfig));
         } finally {
             if (os instanceof ObjectStoreInterMineImpl) {
                 ((ObjectStoreInterMineImpl) os).releaseGoFaster(((Results) allRows).getQuery());
