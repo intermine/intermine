@@ -12,7 +12,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
     </td>
   </tr>
@@ -115,7 +115,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
     </td>
   </tr>
