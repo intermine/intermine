@@ -29,6 +29,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
 
 import org.flymine.model.genomic.Assembly;
@@ -113,7 +114,8 @@ public class TransferSequences
             if (currentChr == null || !chr.equals(currentChr)) {
                 if (currentChr != null) {
                     currentChrBases.close();
-                    LOG.info("finished writing temp file for Chromosome: " + currentChr.getIdentifier());
+                    LOG.info("finished writing temp file for Chromosome: "
+                             + currentChr.getIdentifier());
                 }
 
                 File tempFile = getTempFile(chr);
@@ -162,7 +164,7 @@ public class TransferSequences
 
         // fill with '.' so we can see the parts of the Chromosome sequence that haven't
         // been set
-        for (int i = 0; i < writeCount ; i++) {
+        for (int i = 0; i < writeCount; i++) {
             raf.write(bytes);
         }
 
@@ -193,10 +195,11 @@ public class TransferSequences
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         sequence.setResidues(sequenceString);
         sequence.setLength(sequenceString.length());
-        feature.setSequence(sequence);
+        osw.store(sequence);
+        feature.proxySequence(new ProxyReference(osw.getObjectStore(),
+                                                 sequence.getId(), Sequence.class));
         feature.setLength(new Integer(sequenceString.length()));
         osw.store(feature);
-        osw.store(sequence);
     }
 
     /**
@@ -273,9 +276,10 @@ public class TransferSequences
                 (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
             sequence.setResidues(featureSeq);
             sequence.setLength(featureSeq.length());
-            feature.setSequence(sequence);
-            osw.store(feature);
             osw.store(sequence);
+            feature.proxySequence(new ProxyReference(osw.getObjectStore(),
+                                                     sequence.getId(), Sequence.class));
+            osw.store(feature);
             i++;
             if (i % 1000 == 0) {
                 long now = System.currentTimeMillis();
@@ -294,8 +298,8 @@ public class TransferSequences
         String chromosomeSequenceString = chromosomeSequence.getResidues();
 
         if (charsToCopy > chromosomeSequenceString.length()) {
-            LOG.error("LocatedSequenceFeature too long, ignoring - Location: " +
-                      locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+            LOG.error("LocatedSequenceFeature too long, ignoring - Location: "
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
             return null;
         }
 
