@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<!-- NOT VALIDATING (yet!) -->
+<article>
+    <section>
+        <title>2006</title><itemizedlist>
+        <listitem><presentation name="FlyMine-dros-conf-2006">Presentation - Drosophila conference, Houston, 2006</presentation></listitem>
+</itemizedlist>
+    </section>
+    <section>
+        <title>2005</title><itemizedlist>
+        <listitem><presentation name="CCBI_workshop_2005">CCBI Bioinformatics workshop, Cambridge, 2005</presentation></listitem>
+        <listitem><presentation name="Drosophila-conf-2005">46th Annual Drosophila Research Conference, San Diego, 2005</presentation></listitem>
+</itemizedlist>
+    </section>
+    <section>
+        <title>2004</title><itemizedlist>
+        <listitem><presentation name="Temblor-CCPN">Temblor CCPN Workshop, Cambridge, 2004</presentation></listitem>
+        <listitem><presentation name="DROS2004">45th Annual Drosophila Research Conference, Washington, 2004 (poster)</presentation></listitem>
+        <listitem><presentation name="ISMB2004_flymine">ISMB, Glasgow, 2004 and Genome Informatics, Cambridge, 2004(FlyMine poster)</presentation></listitem>
+        <listitem><presentation name="ISMB2004_intermine">ISMB, Glasgow, 2004 and Genome Informatics, Cambridge, 2004(InterMine poster)</presentation></listitem>
+        <listitem><presentation name="BOSC_2004">BOSC, Glasgow, 2004</presentation></listitem>
+</itemizedlist>
+    </section>
+    <section>
+        <title>2003</title><itemizedlist>
+        <listitem><presentation name="E-Science2003">Cambridge E-Science forum</presentation></listitem>
+        <listitem><presentation name="ISMB2003">ISMB, Brisbane, 2003 (poster)</presentation></listitem>
+        <listitem><presentation name="BOSC2003">BOSC, Brisbane, 2003</presentation></listitem>
+</itemizedlist>
+</section>
+
+</article>
