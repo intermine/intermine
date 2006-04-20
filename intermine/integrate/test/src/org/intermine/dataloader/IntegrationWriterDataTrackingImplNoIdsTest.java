@@ -24,4 +24,8 @@ public class IntegrationWriterDataTrackingImplNoIdsTest extends IntegrationWrite
     public static Test suite() {
         return OneTimeTestCase.buildSuite(IntegrationWriterDataTrackingImplNoIdsTest.class);
     }
+
+    public void testCircularRecursionBug() throws Exception {
+        // This doesn't work. See ticket #702
+    }
 }
