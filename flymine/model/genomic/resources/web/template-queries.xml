@@ -1330,7 +1330,6 @@
     <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Disease" type="class" />
     <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
     <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.BlastMatch" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Gene"
-         type="class" />
+    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
   </tags>
 </userprofile>
