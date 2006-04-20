@@ -31,6 +31,7 @@ import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Transcript;
+import org.flymine.postprocess.CalculateLocations;
 import org.flymine.postprocess.TransferSequences;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -106,6 +107,9 @@ public class WriteGFFTaskTest extends TestCase
     }
 
     public void testWriteGFF() throws Exception {
+        CalculateLocations cl = new CalculateLocations(osw);
+        cl.createLocations();
+        cl.setChromosomeLocationsAndLengths();
         TransferSequences ts = new TransferSequences(osw);
         ts.transferToLocatedSequenceFeatures();
         WriteGFFTask task = new WriteGFFTask();
@@ -186,7 +190,8 @@ public class WriteGFFTaskTest extends TestCase
 
         storedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         storedGene.setIdentifier("gene1");
-
+        storedGene.setLength(new Integer(420));
+        
         storedTranscript1 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         storedTranscript1.setIdentifier("trans1");
