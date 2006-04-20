@@ -137,6 +137,7 @@ public class DatabaseUtil
         "CURSOR",
         "CYCLE",
         "DATA",
+        "DATABASE",
         "DATE",
         "DAY",
         "DEALLOCATE",
