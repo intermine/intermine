@@ -1815,8 +1815,8 @@
                   ontology="${build}/model/go/gene_ontology.obo"
                   geneAttribute="identifier">
       <fileset dir="${shared.data}/go-annotation/">
-        <include name="mgi/2006-03-25/gene_association.mgi"/>
-        <include name="sgd/2006-04-12/gene_association.sgd"/>
+        <include name="mgi/2006-04-15/gene_association.mgi"/>
+        <include name="sgd/2006-04-19/gene_association.sgd"/>
         <include name="rgd/2006-03-26/gene_association.rgd"/>
         <include name="uniprot/2006-03-04/gene_association_ag"/>
         <include name="uniprot/2006-03-04/gene_association_agp"/>
@@ -2090,7 +2090,7 @@
     </taskdef>
 
   <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454 7460 4932">
-      <fileset dir="${shared.data}/uniprot/7.2">
+      <fileset dir="${shared.data}/uniprot/7.5">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -2176,7 +2176,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 7237">
-      <fileset dir="${shared.data}/uniprot/7.2">
+      <fileset dir="${shared.data}/uniprot/7.5">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -5097,7 +5097,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="9606">
-      <fileset dir="${shared.data}/uniprot/7.4">
+      <fileset dir="${shared.data}/uniprot/7.5">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
