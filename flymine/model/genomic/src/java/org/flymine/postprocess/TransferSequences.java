@@ -20,6 +20,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
@@ -376,12 +377,6 @@ public class TransferSequences
         q.addToSelect(qcTranscript);
         q.addToOrderBy(qcTranscript);
 
-        QueryClass qcRankedRelation = new QueryClass(RankedRelation.class);
-        q.addFrom(qcRankedRelation);
-        q.addToSelect(qcRankedRelation);
-        QueryField qfObj = new QueryField(qcRankedRelation, "rank");
-        q.addToOrderBy(qfObj);
-
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
@@ -390,18 +385,25 @@ public class TransferSequences
         q.addFrom(qcExonSequence);
         q.addToSelect(qcExonSequence);
 
+        QueryClass qcExonLocation = new QueryClass(Location.class);
+        q.addFrom(qcExonLocation);
+        q.addToSelect(qcExonLocation);
+
+        QueryField qfExonStart = new QueryField(qcExonLocation, "start");
+        q.addToOrderBy(qfExonStart);
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryObjectReference rankTransRef =
-            new QueryObjectReference(qcRankedRelation, "object");
+        QueryCollectionReference exonsRef =
+            new QueryCollectionReference(qcTranscript, "exons");
         ContainsConstraint cc1 =
-            new ContainsConstraint(rankTransRef, ConstraintOp.CONTAINS, qcTranscript);
+            new ContainsConstraint(exonsRef, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(cc1);
 
-        QueryObjectReference rankExonRef =
-            new QueryObjectReference(qcRankedRelation, "subject");
+        QueryObjectReference locRef =
+            new QueryObjectReference(qcExon, "chromosomeLocation");
         ContainsConstraint cc2 =
-            new ContainsConstraint(rankExonRef, ConstraintOp.CONTAINS, qcExon);
+            new ContainsConstraint(locRef, ConstraintOp.CONTAINS, qcExonLocation);
         cs.addConstraint(cc2);
 
         QueryObjectReference sequenceRef = new QueryObjectReference(qcExon, "sequence");
@@ -424,10 +426,9 @@ public class TransferSequences
         int i = 0;
         while (resIter.hasNext()) {
            ResultsRow rr = (ResultsRow) resIter.next();
-
            Transcript transcript =  (Transcript) rr.get(0);
+           Exon exon = (Exon) rr.get(1);
 
-           Exon exon = (Exon) rr.get(2);
            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                if (currentTranscript != null) {
                    storeNewSequence(currentTranscript,
