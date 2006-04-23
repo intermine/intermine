@@ -161,7 +161,7 @@ public class PrecomputeTemplatesTask extends Task
 
             if (resultsInfo.getRows() >= minRows) {
                 LOG.info("precomputing template " + entry.getKey());
-                precompute(os, qai.getQuery(), qai.getIndexes());
+                precompute(os, qai.getQuery(), qai.getIndexes(), template.getName());
             }
         }
     }
@@ -310,16 +310,16 @@ public class PrecomputeTemplatesTask extends Task
      * @param indexes the index QueryNodes
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query, Collection indexes)
-        throws BuildException {
+    protected void precompute(ObjectStore os, Query query, Collection indexes,
+                              String name) throws BuildException {
         long start = System.currentTimeMillis();
 
         try {
             ((ObjectStoreInterMineImpl) os).precompute(query, indexes,
                                                        PRECOMPUTE_CATEGORY_TEMPLATE);
         } catch (ObjectStoreException e) {
-            throw new BuildException("Exception while precomputing query: " + query
-                    + " with indexes " + indexes, e);
+            throw new BuildException("Exception while precomputing query: " + name
+                                     + ", " + query + " with indexes " + indexes, e);
         }
 
         LOG.info("precompute(indexes) of took "
