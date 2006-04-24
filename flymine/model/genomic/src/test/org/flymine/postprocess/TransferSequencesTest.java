@@ -158,6 +158,9 @@ public class TransferSequencesTest extends TestCase
         CalculateLocations cl = new CalculateLocations(osw);
         cl.fixPartials();
         cl.createLocations();
+        CreateReferences cr = new CreateReferences(osw);
+        cr.insertReferences();
+        cl.setChromosomeLocationsAndLengths();
         TransferSequences ts = new TransferSequences(osw);
         ts.transferToChromosome();
         ts.transferToLocatedSequenceFeatures();
