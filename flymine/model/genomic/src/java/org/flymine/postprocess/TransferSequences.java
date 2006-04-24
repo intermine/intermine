@@ -427,8 +427,7 @@ public class TransferSequences
         while (resIter.hasNext()) {
            ResultsRow rr = (ResultsRow) resIter.next();
            Transcript transcript =  (Transcript) rr.get(0);
-           Exon exon = (Exon) rr.get(1);
-
+           
            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                if (currentTranscript != null) {
                    storeNewSequence(currentTranscript,
@@ -438,8 +437,15 @@ public class TransferSequences
                currentTranscriptBases = new StringBuffer();
                currentTranscript = transcript;
            }
-
-           currentTranscriptBases.append(exon.getSequence().getResidues());
+           
+           Sequence exonSequence = (Sequence) rr.get(2);
+           Location  location = (Location) rr.get(3);
+           
+           if (location.getStrand() != null && location.getStrand().intValue() == -1) {
+               currentTranscriptBases.insert(0, exonSequence.getResidues());
+           } else {
+               currentTranscriptBases.append(exonSequence.getResidues());
+           }
            if (i % 100 == 0) {
                long now = System.currentTimeMillis();
                LOG.info("Set sequences for " + i + " Transcripts"
