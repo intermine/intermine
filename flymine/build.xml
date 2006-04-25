@@ -666,6 +666,7 @@
   <target name="retrieve-interpro" depends="convert-interpro, build-db-interpro-src-items">
     <taskdef name="retrieve-interpro" classname="org.intermine.dataconversion.DBRetrieverTask">
       <classpath refid="models.class.path"/>
+    </taskdef>
     <retrieve-interpro database="db.interpro" model="interpro" osName="osw.interpro-src-items"/>
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
