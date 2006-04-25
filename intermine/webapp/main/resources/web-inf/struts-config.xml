@@ -519,6 +519,11 @@
       <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
+    <action path="/removeFavourite"
+    		type="org.intermine.web.RemoveFavouriteAction">
+      <forward name="history" path="history.page" redirect="true"/>
+    </action>
+
     <!-- Other actions -->
     
     <action path="/portal"
@@ -600,6 +605,12 @@
             type="org.intermine.web.TemplateController"
             validate="false"
             name="templateForm"/>
+
+    <action path="/initFavourites"
+            type="org.intermine.web.FavouritesController"/>
+            
+    <action path="/starTemplate"
+            type="org.intermine.web.StarTemplateController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
