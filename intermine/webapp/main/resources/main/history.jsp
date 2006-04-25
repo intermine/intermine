@@ -83,6 +83,19 @@
           </c:otherwise>
         </c:choose>
       </td>
+      <td width="1%" class="tab ${HISTORY_PAGE=='favourites'?'selected':'not-selected'}"
+        nowrap>
+        <c:choose>
+          <c:when test="${HISTORY_PAGE=='favourites'}">
+            Favourites
+          </c:when>
+          <c:otherwise>
+            <html:link action="/history?page=favourites">
+              Favourites
+            </html:link>
+          </c:otherwise>
+        </c:choose>
+      </td>
       <td width="99%" class="tab-space" align="right" >
         &nbsp;
       </td>
@@ -105,6 +118,9 @@
     </c:when>
     <c:when test="${HISTORY_PAGE=='templates'}">
       <tiles:get name="historyTemplateView.jsp"/>
+    </c:when>
+    <c:when test="${HISTORY_PAGE=='favourites'}">
+      <tiles:insert name="favourites.tile" />
     </c:when>
   </c:choose>
 
