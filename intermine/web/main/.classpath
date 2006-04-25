@@ -4,20 +4,21 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="src" path="/userprofile"/>
-	<classpathentry exported="true" kind="lib" path="lib/standard-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/snowball-1.1-dev.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-2.5-final-20040302.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mail.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/lucene-1.4.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jstl-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-validator.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/standard-1.1.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/snowball-1.1-dev.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/poi-2.5-final-20040302.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/mail.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/lucene-1.4.3.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/jstl-1.1.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/commons-validator.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/commons-fileupload-1.0.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/activation.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry exported="true" kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" exported="true" path="lib/struts.jar"/>
 	<classpathentry kind="lib" path="lib/highlighter-dev.jar"/>
 	<classpathentry kind="src" path="build/gen/src"/>
+	<classpathentry kind="lib" path="lib/dwr.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
