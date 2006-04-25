@@ -3,7 +3,7 @@
   <bags/>
   <queries>
   </queries>
-  <template-list>
+  <template-queries>
     <template name="AAA_organismProteins1" description="Show all the proteins from a particular organism." important="false">
       <query name="AAA_organismProteins1" model="genomic" view="Protein">
         <node path="Protein" type="Protein">
@@ -1706,5 +1706,5 @@
         </node>
       </query>
     </template>
-  </template-list>
+  </template-queries>
 </userprofile>
