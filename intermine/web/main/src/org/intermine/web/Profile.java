@@ -12,15 +12,17 @@ package org.intermine.web;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.lucene.store.Directory;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
-
-import org.apache.commons.collections.map.ListOrderedMap;
-import org.apache.lucene.store.Directory;
+import org.intermine.web.tagging.TagTypes;
 
 /**
  * Class to represent a user of the webapp
@@ -117,6 +119,12 @@ public class Profile
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
         if (manager != null) {
+            List favourites = (List) manager
+                    .getTags("favourite", name, TagTypes.TEMPLATE, username);
+            for (Iterator iter = favourites.iterator(); iter.hasNext();) {
+                Tag tag = (Tag) iter.next();
+                manager.deleteTag(tag);
+            }
             manager.saveProfile(this);
         }
         buildTemplateCategories();
