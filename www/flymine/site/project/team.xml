@@ -45,9 +45,9 @@
           </row>
 
           <row>
-            <entry>Tom Riley</entry>
+            <entry>Xavier Watkins</entry>
             <entry>Software Developer</entry>
-            <entry><email>tom [at] flymine.org</email></entry>
+            <entry><email>xavier [at] flymine.org</email></entry>
           </row>
 
           <row>
@@ -74,11 +74,6 @@
             <entry><email>hilde [at] flymine.org</email></entry>
           </row>
 
-          <row>
-            <entry>Debashis Rana</entry>
-            <entry>Postdoctoral Research Associate</entry>
-            <entry><email>rana [at] flymine.org</email></entry>
-          </row>
         </tbody>
       </tgroup>
     </table>
@@ -89,13 +84,23 @@
       <tgroup cols="2">
         <tbody>
           <row>
-            <entry>Andrew Varley</entry>
-            <entry>Senior Software Developer</entry>
+            <entry>Debashis Rana</entry>
+            <entry>Postdoctoral Research Associate</entry>
+          </row>
+
+          <row>
+            <entry>Tom Riley</entry>
+            <entry>Software Developer</entry>
           </row>
 
           <row>
             <entry>Mark Woodbridge</entry>
             <entry>Software Developer</entry>
+          </row>
+
+          <row>
+            <entry>Andrew Varley</entry>
+            <entry>Senior Software Developer</entry>
           </row>
 
           <row>
