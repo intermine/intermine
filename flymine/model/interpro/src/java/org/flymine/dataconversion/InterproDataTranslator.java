@@ -177,6 +177,12 @@ public class InterproDataTranslator extends DataTranslator
     protected Collection translateItem(Item srcItem)
             throws ObjectStoreException, InterMineException {
 
+        // Needed so that STAX can find it's implementation classes
+        ClassLoader cl = null;
+        try {
+        cl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         Set result = new HashSet();
         String srcItemClassName = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
@@ -224,6 +230,14 @@ public class InterproDataTranslator extends DataTranslator
             }
         }
         return result;
+
+
+    } catch (Exception e2) {
+        throw new RuntimeException(e2);
+    } finally {
+        Thread.currentThread().setContextClassLoader(cl);
+    }
+
     }
 
     private Set processProteinItem(
@@ -352,19 +366,23 @@ public class InterproDataTranslator extends DataTranslator
 
             org.intermine.xml.full.Item nextMatch = (org.intermine.xml.full.Item) matchIt.next();
             org.intermine.xml.full.Reference proteinRef = nextMatch.getReference(PROTEIN);
+            if (proteinRef != null) {
             org.intermine.xml.full.Item nextProtein =
                     ItemHelper.convert(this.srcItemReader.getItemById(proteinRef.getRefId()));
 
-            if (nextProtein != null) {
+                if (nextProtein != null) {
 
-                if (nextProtein.hasAttribute(PROTEIN_AC)) {
+                    if (nextProtein.hasAttribute(PROTEIN_AC)) {
 
-                    addToCollection(tgtItem, PROTEINS, nextProtein);
+                        addToCollection(tgtItem, PROTEINS, nextProtein);
+                    } else {
+                        LOG.warn("METHOD-MATCHES-PROTEIN - PROTEIN_AC NOT FOUND!");
+                    }
                 } else {
-                    LOG.warn("METHOD-MATCHES-PROTEIN - PROTEIN_AC NOT FOUND!");
+                    LOG.warn("METHOD-MATCHES-PROTEIN - NULL PROTEIN FROM REFERENCE!");
                 }
             } else {
-                LOG.warn("METHOD-MATCHES-PROTEIN - NULL PROTEIN FROM REFERENCE!");
+                LOG.warn("METHOD WITH NO RELATED MATCHes FOUND!" + srcItem.getIdentifier());
             }
         }
         {
@@ -424,19 +442,25 @@ public class InterproDataTranslator extends DataTranslator
             org.intermine.xml.full.Item nextSuperMatch =
                     (org.intermine.xml.full.Item) supermatchIt.next();
             org.intermine.xml.full.Reference proteinRef = nextSuperMatch.getReference(PROTEIN);
-            org.intermine.xml.full.Item nextProtein =
-                    ItemHelper.convert(this.srcItemReader.getItemById(proteinRef.getRefId()));
 
-            if (nextProtein != null) {
+            if (proteinRef != null) {
 
-                if (nextProtein.hasAttribute(PROTEIN_AC)) {
+                org.intermine.xml.full.Item nextProtein =
+                        ItemHelper.convert(this.srcItemReader.getItemById(proteinRef.getRefId()));
 
-                    addToCollection(tgtItem, PROTEINS, nextProtein);
+                if (nextProtein != null) {
+
+                    if (nextProtein.hasAttribute(PROTEIN_AC)) {
+
+                        addToCollection(tgtItem, PROTEINS, nextProtein);
+                    } else {
+                        LOG.warn("ENTRY-SUPERMATCH-PROTEIN - PROTEIN_AC NOT FOUND!");
+                    }
                 } else {
-                    LOG.warn("ENTRY-SUPERMATCH-PROTEIN - PROTEIN_AC NOT FOUND!");
+                    LOG.warn("ENTRY-SUPERMATCH-PROTEIN - NULL PROTEIN FROM REFERENCE!");
                 }
             } else {
-                LOG.warn("ENTRY-SUPERMATCH-PROTEIN - NULL PROTEIN FROM REFERENCE!");
+                LOG.warn("ENTRY-SUPERMATCH-PROTEIN - NO REFERENCE TO ENTRY FOUND!");
             }
         }
         //SET THE INTERPRO ACCESSION (ENTRY_AC) TO BE THE IDENTIFIER IN THE TGT ITEM
@@ -472,10 +496,15 @@ public class InterproDataTranslator extends DataTranslator
                         = (org.intermine.xml.full.Item) e2caIt.next();
                 org.intermine.xml.full.Reference caRef
                         = nextE2CAItem.getReference(COMMON_ANNOTATION);
-                org.intermine.xml.full.Item caItem =
-                        ItemHelper.convert(this.srcItemReader.getItemById(caRef.getRefId()));
+                if (caRef != null) {
+                    org.intermine.xml.full.Item caItem =
+                            ItemHelper.convert(this.srcItemReader.getItemById(caRef.getRefId()));
 
-                addToCollection(tgtItem, COMMENTS, caItem);
+                    addToCollection(tgtItem, COMMENTS, caItem);
+                } else {
+                    LOG.debug("ENTRY WITHOUT A COMMENT FOUND!" + srcItem.getIdentifier());
+                }
+
             }
         }
 
@@ -512,7 +541,7 @@ public class InterproDataTranslator extends DataTranslator
         // WARN IF NONE FOUND!
         org.intermine.xml.full.Reference cvdbRefSrc = srcItem.getReference(CV_DATABASE);
 
-        Item dataSetItem = null;
+        Item dataSetItem;
 
         if (cvdbRefSrc != null) {
 
@@ -570,7 +599,7 @@ public class InterproDataTranslator extends DataTranslator
 
     private Item procureDataSourceAndSetItem(String dbName) {
 
-        Item dataSource = null;
+        Item dataSource;
 
         if (!dbNameToDbSourceItemMap.containsKey(dbName)) {
 
@@ -593,7 +622,7 @@ public class InterproDataTranslator extends DataTranslator
 
     private Item procureDataSetItem(Item parentDataSourceItem) {
 
-        Item dataSet = null;
+        Item dataSet;
 
         if (!dataSourceToDbSetItemMap.containsKey(parentDataSourceItem)) {
 
@@ -644,8 +673,8 @@ public class InterproDataTranslator extends DataTranslator
      * Establishs a Datasource evidence item for source items that refer directly to the cv_db
      * table in the interpro schema of which the PROTEIN and METHOD tables are of current interest.
      *
-     * Also the call to procureDataSourceAndSetItem ensures that the datasource item will 
-     * actually be created as the interpro_mappings file no longer handles 
+     * Also the call to procureDataSourceAndSetItem ensures that the datasource item will
+     * actually be created as the interpro_mappings file no longer handles
      * the cv_database -- datasource item
      * conversion.
      * */
@@ -707,7 +736,8 @@ public class InterproDataTranslator extends DataTranslator
             }
 
         } else {
-            LOG.warn("SKIPPING SYNONYM CREATION FOR TGTITEM:" + tgtItem.getClassName());
+            LOG.warn("SKIPPING SYNONYM CREATION FOR TGTITEM:"
+                    + (tgtItem != null ? tgtItem.getClassName() : "NULL" ));
         }
 
         return extraDatabaseSynonym;
@@ -788,7 +818,7 @@ public class InterproDataTranslator extends DataTranslator
 
             Iterator cvetAttrIt = cvetAttrSet.iterator();
 
-            org.intermine.model.fulldata.Attribute cvetAttrNext = null;
+            org.intermine.model.fulldata.Attribute cvetAttrNext;
 
             while (cvetAttrIt.hasNext()) {
 

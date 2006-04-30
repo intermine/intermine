@@ -53,6 +53,9 @@ public class EnsemblDataTranslator extends DataTranslator
     protected static final ItemPath SEQ_REGION_VIA_DNA =
             new ItemPath("(seq_region <- dna.seq_region)", PATH_NAME_SPACE);
 
+    protected static final ItemPath MARKER_VIA_MARKER_SYNONYM =
+            new ItemPath("(marker <- marker_synonym.marker)", PATH_NAME_SPACE);
+
     protected static final Logger LOG = Logger.getLogger(EnsemblDataTranslator.class);
 
     private Map seqIdMap = new HashMap();
@@ -221,6 +224,14 @@ public class EnsemblDataTranslator extends DataTranslator
                     // repeat_consensus
                 } else if ("marker".equals(srcItemClassName)) {
                     tgtItem.addReference(config.getOrganismRef());
+
+                    //is there an identifier set?
+                    if (!srcItem.hasAttribute("identifier")) {
+
+                        //ok try and look up any related marker_synonym items...
+
+                    }
+
                     addReferencedItem(tgtItem,
                             config.getEnsemblDataSet(), "evidence", true, "", false);
                     Set locations = createLocations(srcItem, tgtItem, srcNs);
