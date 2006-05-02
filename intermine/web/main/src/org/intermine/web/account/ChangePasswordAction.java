@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.account;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,17 +21,20 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.web.account.LoginHandler;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.RequestPasswordAction;
 
 /**
- * Action to handle button presses on the main tile
+ * @author Xavier Watkins
  * 
- * @author Mark Woodbridge
  */
-public class LoginAction extends LoginHandler
+public class ChangePasswordAction extends InterMineAction
 {
+
     /**
-     * Method called for login in
+     * Method called when user has finished updating a constraint
      * 
      * @param mapping
      *            The ActionMapping used to select this instance
@@ -48,11 +53,12 @@ public class LoginAction extends LoginHandler
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        LoginForm lf = (LoginForm) form;
-
-        doLogin(servletContext, request, response, session, pm, lf.getUsername(), lf.getPassword());
-
-        recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
-        return mapping.findForward("history");
+        String username = ((ChangePasswordForm) form).getUsername();
+        String password = ((ChangePasswordForm) form).getNewpassword();
+        pm.setPassword(username, password);
+        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        RequestPasswordAction.email(username, password, webProperties);
+        recordMessage(new ActionMessage("password.changed", username), request);
+        return mapping.findForward("login");
     }
 }

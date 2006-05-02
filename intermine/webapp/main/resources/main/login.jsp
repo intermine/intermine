@@ -1,5 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+
 
 <!-- login.jsp -->
 <html:xhtml/>
@@ -14,13 +16,19 @@
       <tr>
         <td><fmt:message key="login.password"/></td>
         <td><html:password property="password"/><br/></td>
-        <td><html:submit property="action"><fmt:message key="login.login"/></html:submit></td>
+        <td><html:submit property="action"><fmt:message key="login.login"/></html:submit>
+        &nbsp;&nbsp;<html:link action="/createAccount.do">...or create an account</html:link>
+        </td>
       </tr>
     </table>
   </html:form>
 
   <br/>
+ </div>
 
+<im:box titleKey="login.heading.password">
+<div class="body">
+        
   <html:form action="/requestPasswordAction">  
     <fmt:message key="login.needspassword"/><br/><br/>
     <table>
@@ -31,5 +39,31 @@
       </tr>
     </table>
   </html:form>
-</div>
+  
+  <br/>
+  
+  <html:form action="/changePasswordAction">  
+    <fmt:message key="password.changepassword"/><br/><br/>
+    <table>
+      <tr>
+        <td><fmt:message key="password.username"/></td>
+        <td><html:text property="username"/></td>
+      </tr>
+      <tr>
+        <td><fmt:message key="password.oldpassword"/></td>
+        <td><html:password property="oldpassword"/></td>
+      </tr>
+      <tr>
+        <td><fmt:message key="password.newpassword"/></td>
+        <td><html:password property="newpassword"/></td>
+      </tr>
+      <tr>
+        <td><fmt:message key="password.newpassword2"/></td>
+        <td><html:password property="newpassword2"/></td>
+        <td><html:submit property="action"><fmt:message key="password.passwordchange"/></html:submit></td>
+      </tr>
+    </table>
+  </html:form>
+  </div>
+  </im:box>
 <!-- /login.jsp -->

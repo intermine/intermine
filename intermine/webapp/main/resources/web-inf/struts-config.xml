@@ -73,6 +73,11 @@
     <form-bean name="templateSettingsForm"
                type="org.intermine.web.TemplateSettingsForm"/>
     
+    <form-bean name="createAccountForm"
+               type="org.intermine.web.account.CreateAccountForm"/>
+               
+    <form-bean name="changePasswordForm" 
+    		   type="org.intermine.web.account.ChangePasswordForm"/>
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -158,6 +163,9 @@
     
     <action path="/standalone"
             forward="standalone.page"/>
+            
+	<action path="/createAccount"
+            forward="createAccount.page"/>
 
     <!-- Actions that provide downloads -->
 
@@ -169,7 +177,7 @@
     
     <action path="/exportQuery"
             type="org.intermine.web.ExportQueryAction"/>
-            
+
     <!-- Actions invoked using links -->
     
     <action path="/modifyQueryChange"
@@ -522,6 +530,20 @@
     <action path="/removeFavourite"
     		type="org.intermine.web.RemoveFavouriteAction">
       <forward name="history" path="history.page" redirect="true"/>
+    </action>
+
+    <action path="/createAccountAction"
+            type="org.intermine.web.account.CreateAccountAction"
+            name="createAccountForm"
+            input="createAccount">
+      <forward name="history" path="history.page"/>
+    </action>
+
+    <action path="/changePasswordAction"
+            type="org.intermine.web.account.ChangePasswordAction"
+            name="changePasswordForm"
+            input="login">
+      <forward name="login" path="login.page"/>
     </action>
 
     <!-- Other actions -->

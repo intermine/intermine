@@ -135,7 +135,7 @@ public class ProfileManager
      * @param username the username
      * @param password the password
      */
-    private void setPassword(String username, String password) {
+    public void setPassword(String username, String password) {
         UserProfile userProfile = getUserProfile(username);
         userProfile.setPassword(password);
         try {

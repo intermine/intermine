@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.account;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,6 +10,9 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,18 +21,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.intermine.web.account.LoginHandler;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.RequestPasswordAction;
 
 /**
- * Action to handle button presses on the main tile
+ * @author Xavier Watkins
  * 
- * @author Mark Woodbridge
  */
-public class LoginAction extends LoginHandler
+public class CreateAccountAction extends LoginHandler
 {
     /**
-     * Method called for login in
+     * Method called when user has finished updating a constraint
      * 
      * @param mapping
      *            The ActionMapping used to select this instance
@@ -48,11 +52,26 @@ public class LoginAction extends LoginHandler
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        LoginForm lf = (LoginForm) form;
+        String username = ((CreateAccountForm) form).getUsername();
+        String password = ((CreateAccountForm) form).getPassword();
+        pm.saveProfile(new Profile(pm, username, password, new HashMap(), new HashMap(),
+                new HashMap()));
+        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        RequestPasswordAction.email(username, password, webProperties);
+        /*
+         * This code generates an MD5 key for the given username which is then
+         * encoded in Hexadecimal. This could later be used for account
+         * activation.
+         * 
+         * try { MessageDigest md5 = MessageDigest.getInstance("MD5"); byte[]
+         * buffer = username.getBytes(); md5.update(buffer); byte[] array =
+         * md5.digest(); String encoded = HexBin.encode(array); } catch
+         * (NoSuchAlgorithmException e) { }
+         */
 
-        doLogin(servletContext, request, response, session, pm, lf.getUsername(), lf.getPassword());
+        doLogin(servletContext, request, response, session, pm, username, password);
 
-        recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         return mapping.findForward("history");
     }
+
 }
