@@ -19,14 +19,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryObjectReference; 
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.DataSource;
@@ -43,6 +51,8 @@ import org.flymine.model.genomic.Synonym;
  */
 public class IntronUtil
 {
+    private static final Logger LOG = Logger.getLogger(IntronUtil.class);
+    
     private ObjectStoreWriter osw = null;
     private ObjectStore os;
     private DataSet dataSet;
@@ -73,11 +83,11 @@ public class IntronUtil
      * Create Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
-    public void createIntronFeatures() throws ObjectStoreException {
-        Results results =
-            PostProcessUtil.findLocationAndObjects(os, Transcript.class, Exon.class, false);
-        results.setBatchSize(500);
-
+    public void createIntronFeatures() 
+        throws ObjectStoreException, IllegalAccessException {
+        Set locationSet = new HashSet();
+        Integer transcriptId = null;
+   
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
         dataSet.setTitle("FlyMine introns");
         dataSet.setDescription("Introns created by FlyMine");
@@ -85,39 +95,38 @@ public class IntronUtil
         dataSet.setUrl("http://www.flymine.org");
         dataSet.setDataSource(dataSource);
 
-        Iterator resIter = results.iterator();
-
-        Integer previousTranscriptId = null;
-        Set locationSet = new HashSet();
+        int exonCounts;
+        Query q = new Query();
+        //q.setDistinct(false);
+        QueryClass qc = new QueryClass(Transcript.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Results results = new Results(q, os, os.getSequence());
+        results.setBatchSize(500);
+        Iterator resultsIter = results.iterator();
         
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            Integer transcriptId = (Integer) rr.get(0);
-            Exon exon = (Exon) rr.get(1);
-            Location loc = (Location) rr.get(2);
-            
-            if (previousTranscriptId != null && !transcriptId.equals(previousTranscriptId)) {
-                createIntronFeatures(locationSet, previousTranscriptId);
-                locationSet = new HashSet();
+        while (resultsIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resultsIter.next();            
+            Transcript o = (Transcript) rr.get(0);
+            exonCounts = Integer.parseInt((TypeUtil.getFieldValue(o, "exonCount")).toString());
+            if (exonCounts > 1) {
+                transcriptId = o.getId();
+                locationSet = getLocationSet(os, transcriptId);
+                Set intronSet = createIntronFeatures(locationSet, transcriptId);
             }
-            locationSet.add(loc);
-            previousTranscriptId = transcriptId;
-            
         }
-
-        if (previousTranscriptId != null) {
-            createIntronFeatures(locationSet, previousTranscriptId);
-
-            // we've created some Intron objects so store() the DataSet
-            osw.store(dataSet);
-        }
-
+  
         for (Iterator i = intronMap.keySet().iterator(); i.hasNext();) {
             String identifier = (String) i.next();
             Intron intron = (Intron) intronMap.get(identifier);
+            LOG.info("intronMap " + identifier );
             osw.store(intron);
             osw.store(intron.getChromosomeLocation());
             osw.store((InterMineObject) intron.getSynonyms().iterator().next());
+        }
+
+        if (intronMap.size() > 1) {
+            osw.store(dataSet);
         }
 
     }
@@ -137,6 +146,9 @@ public class IntronUtil
         final Transcript transcript = (Transcript) os.getObjectById(transcriptId);
         final BitSet bs = new BitSet(transcript.getLength().intValue() + 1);
         
+        if (locationSet.size() == 1) {
+            return null;
+        }
         Chromosome chr = (Chromosome) transcript.getChromosome();
         
         Iterator locationIter = locationSet.iterator();
@@ -224,5 +236,54 @@ public class IntronUtil
         }
         return intronSet;
     }
+
+   
+    private Set getLocationSet(ObjectStore os, Integer transcriptId) 
+        throws ObjectStoreException, IllegalAccessException{
+        Set locationSet = new HashSet();
+        
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        Query q = new Query();
+        QueryClass qct = new QueryClass(Transcript.class);
+        QueryField qf = new QueryField(qct, "id");
+        SimpleConstraint sc1 = new SimpleConstraint(qf, ConstraintOp.EQUALS,
+                                            new QueryValue(transcriptId));
+        
+        q.addFrom(qct);
+        q.addToSelect(qf);   
+        q.addToOrderBy(qf);
+        cs.addConstraint(sc1);
+        
+        QueryCollectionReference ref1 = new QueryCollectionReference(qct, "exons");
+        QueryClass qce = new QueryClass(Exon.class);
+        q.addFrom(qce);
+        q.addToSelect(qce);        
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qce);
+        cs.addConstraint(cc1);
+        
+        QueryClass qcl = new QueryClass(Location.class);
+        q.addFrom(qcl);
+        q.addToSelect(qcl);
+        QueryObjectReference ref2 = new QueryObjectReference(qcl, "subject");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qce);
+        cs.addConstraint(cc2);
+        
+        q.setConstraint(cs);
+
+        Results res = new Results(q, os, os.getSequence());
+        Iterator iter = res.iterator();
+        while (iter.hasNext()) {
+            ResultsRow rr = (ResultsRow) iter.next();
+            Integer id = (Integer)rr.get(0);
+            Location loc = (Location) rr.get(2);
+            locationSet.add(loc);
+        }
+ 
+        return locationSet;
+    }
+
+
+    
 
 }

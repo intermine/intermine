@@ -64,6 +64,7 @@ public class IntronTest extends TestCase{
     private HashSet toStore = new HashSet();
     private HashSet locationSet1 = new HashSet();
     private HashSet locationSet2 = new HashSet();
+    private HashSet locationSet3 = new HashSet();
 
     public IntronTest(String arg) {
         super(arg);
@@ -110,7 +111,12 @@ public class IntronTest extends TestCase{
 
         Integer t2id = createTranscriptT2(100);
         Set intronSet2 = iru.createIntronFeatures(locationSet2, t2id);
-        assertEquals(3, intronSet2.size());   
+        assertEquals(3, intronSet2.size());  
+
+        Integer t3id = createTranscriptT3(100);
+        Set intronSet3 = iru.createIntronFeatures(locationSet3, t2id);
+        assertEquals(null, intronSet3);
+        
     }
        
     public void testCreateIntronFeaturesRef() throws Exception {
@@ -145,6 +151,7 @@ public class IntronTest extends TestCase{
             assertNotNull(ir.getChromosome());
             assertNotNull(ir.getOrganism());
             assertNotNull(ir.getLength());
+            System.out.println("length " + ir.getLength().intValue());
             assertTrue(ir.getLength().intValue() > 0);
             assertEquals(1, ir.getEvidence().size());
             
@@ -205,7 +212,7 @@ public class IntronTest extends TestCase{
         
         int[][] exonInfo = {
             {20, 1, 200},
-            {24, 301, 500},
+            {21, 301, 500},
             {22, 601, 1000},
         };
 
@@ -219,13 +226,13 @@ public class IntronTest extends TestCase{
             exons[i].setId(new Integer(exonId));
             exons[i].setLength(new Integer(end - start + 1));
             exons[i].setChromosome(chr);
-            exonLocs[i] = createLocation(t1, exons[i], 1, start, end);
+            exonLocs[i] = createLocation(chr, exons[i], 1, start, end);
             exonLocs[i].setId(new Integer(exonId + 100));
             exons[i].setChromosomeLocation(exonLocs[i]);
             // System.out.println("exonLocs[" + i + "]" + exonLocs[i]);
             locationSet1.add(exonLocs[i]);
         }
-        
+        t1.setExons(new HashSet(Arrays.asList(exons)));
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
 
@@ -265,7 +272,7 @@ public class IntronTest extends TestCase{
         toStore.add(t2);
 
         int[][] exonInfo = {
-            {19, 1, 200},
+            {20, 1, 200},
             {21, 301, 500},
             {23, 701, 1150},
         };
@@ -280,13 +287,13 @@ public class IntronTest extends TestCase{
             exons[i].setId(new Integer(exonId));
             exons[i].setLength(new Integer(end - start + 1));
             exons[i].setChromosome(chr);
-            exonLocs[i] = createLocation(t2, exons[i], 1, start, end);
+            exonLocs[i] = createLocation(chr, exons[i], 1, start, end);
             exonLocs[i].setId(new Integer(exonId + 100));
             //System.out.println("exonLocs[" + i + "]" + exonLocs[i]);
             exons[i].setChromosomeLocation(exonLocs[i]);
             locationSet2.add(exonLocs[i]);             
         }
-        
+        t2.setExons(new HashSet(Arrays.asList(exons)));
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
 
@@ -299,7 +306,60 @@ public class IntronTest extends TestCase{
         return t2.getId();
 
     }
-   
+    /**
+     * special test case for which only one exon in the transcript, 
+     * then no intron is created in this case
+     */
+
+    private Integer createTranscriptT3(int idStart) throws ObjectStoreException {
+        Set toStore = new HashSet();
+        locationSet3 = new HashSet();
+        
+        Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        chr.setIdentifier("X");
+        chr.setLength(new Integer(10000));
+        chr.setId(new Integer(101));
+        chr.setOrganism(organism);
+        toStore.add(chr);
+        
+        Transcript t3 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));       
+        t3.setLength(new Integer(1000));
+        t3.setId(new Integer(10));
+        t3.setIdentifier("ENST00000306001");
+        t3.setOrganism(organism);
+        t3.setExonCount(new Integer(1));
+        t3.setChromosome(chr); 
+        Location location = createLocation(chr, t3, 1, 1, 1000);        
+        t3.setChromosomeLocation(location);
+        toStore.add(location);
+        toStore.add(t3);
+
+        Exon exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+        exon.setLength(new Integer(1000));
+        exon.setId(new Integer(140));
+        exon.setOrganism(organism);
+        exon.setChromosome(chr); 
+        Location exonLoc = createLocation(chr, exon, 1, 1, 1000);        
+        exon.setChromosomeLocation(exonLoc);
+        toStore.add(location);
+        toStore.add(exon);
+        
+        locationSet3.add(exonLoc);
+        
+        
+        toStore.add(exon);
+        toStore.add(exonLoc);
+
+        Iterator iter = toStore.iterator();
+        while (iter.hasNext()) {
+            InterMineObject o = (InterMineObject) iter.next();
+            osw.store(o);
+        } 
+
+        return t3.getId();
+
+    }
+
     private Location createLocation(BioEntity object, BioEntity subject, int strand,
                                     int start, int end) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
