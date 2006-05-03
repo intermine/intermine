@@ -62,7 +62,7 @@ public class MageFlatFileConverter extends FileConverter
         super(writer);
         
         readConfig();
-        System.out.println("config " + config);
+        LOG.info("config " + config);
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
         dataSource = createItem("DataSource");
@@ -73,10 +73,11 @@ public class MageFlatFileConverter extends FileConverter
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
         dataSet.setAttribute("title", "E-SMDB-3450");
-        dataSet.setAttribute("description", "Rossi et al, 2005: Compare blood stem cells from young vs old mice");     
+        dataSet.setAttribute("description", 
+                "Rossi et al, 2005: Compare blood stem cells from young vs old mice");     
         
         dataSet.setAttribute("url", 
-                "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
+        "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
         writer.store(ItemHelper.convert(dataSet));
 
         organismMM = createItem("Organism");
