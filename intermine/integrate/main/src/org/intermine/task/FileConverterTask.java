@@ -141,8 +141,12 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
             throw new BuildException(e);
         } finally {
             try {
-                writer.close();
-                osw.close();
+                if (writer != null) {
+                    writer.close();
+                }
+                if (writer != null) {
+                    osw.close();
+                }
             } catch (Exception e) {
                 throw new BuildException(e);
             }
