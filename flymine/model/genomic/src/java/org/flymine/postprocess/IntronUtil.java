@@ -82,6 +82,7 @@ public class IntronUtil
     /**
      * Create Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
+     * @throws IllegalAccessException if there is an ObjectStore problem
      */
     public void createIntronFeatures() 
         throws ObjectStoreException, IllegalAccessException {
@@ -119,7 +120,7 @@ public class IntronUtil
         for (Iterator i = intronMap.keySet().iterator(); i.hasNext();) {
             String identifier = (String) i.next();
             Intron intron = (Intron) intronMap.get(identifier);
-            LOG.info("intronMap " + identifier );
+            LOG.info("intronMap " + identifier);
             osw.store(intron);
             osw.store(intron.getChromosomeLocation());
             osw.store((InterMineObject) intron.getSynonyms().iterator().next());
@@ -237,9 +238,15 @@ public class IntronUtil
         return intronSet;
     }
 
-   
+    /**
+     * @param os objectStore
+     * @param transcriptId Integer
+     * @return all the exons locationSet for the particular transcriptId
+     * @throws ObjectStoreException if there is an ObjectStore problem
+     * @throws IllegalAccessException if there is an ObjectStore problem
+     */
     private Set getLocationSet(ObjectStore os, Integer transcriptId) 
-        throws ObjectStoreException, IllegalAccessException{
+        throws ObjectStoreException, IllegalAccessException {
         Set locationSet = new HashSet();
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -275,15 +282,11 @@ public class IntronUtil
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
-            Integer id = (Integer)rr.get(0);
+            Integer id = (Integer) rr.get(0);
             Location loc = (Location) rr.get(2);
             locationSet.add(loc);
         }
- 
         return locationSet;
     }
-
-
-    
 
 }
