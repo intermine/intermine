@@ -13,6 +13,9 @@
       <xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
     </xsl:if>
 
+    <xsl:if test="@title='Internal'">
+      <xsl:comment>#if expr="$REMOTE_ADDR=/^192.168.128./" </xsl:comment>
+    </xsl:if>
     <div class="heading">
       <xsl:value-of select="@title"/>
     </div>
@@ -33,6 +36,10 @@
         </ul>
       </xsl:if>
     </div>
+
+    <xsl:if test="@title='Internal'">
+      <xsl:comment>#endif </xsl:comment>
+    </xsl:if>
   </xsl:for-each>
 </xsl:template>
 
