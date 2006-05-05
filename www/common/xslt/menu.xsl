@@ -24,6 +24,28 @@
       <!-- list menu sub-elements -->
       <xsl:if test="item">
         <ul>
+          <!-- process news items -->
+          <xsl:for-each select="news">
+            <xsl:variable name="id" select="@id"/>
+            <xsl:variable name="limit" select="@limit"/>
+            <xsl:variable name="items" select="document(concat('../../',$branding, '/', $brand/rss[@id=$id]/@file))/rss/channel"/>
+            
+            <xsl:for-each select="$items/item[position()&lt;=$limit]">
+              <li>
+                <xsl:if test="title">
+                  <div>
+                    <a>
+                      <xsl:attribute name="href">
+                        <xsl:value-of select="$basedir"/>/news.shtml
+                      </xsl:attribute>
+                      <xsl:value-of select="title"/>
+                    </a>
+                  </div>
+                  <div class="news-date">(<xsl:value-of select="pubDate"/>)</div>
+                </xsl:if>
+              </li>
+            </xsl:for-each>
+          </xsl:for-each>
           <xsl:for-each select="item">
             <li>
                 <!-- Display the link after alteration -->

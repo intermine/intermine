@@ -7,24 +7,18 @@
     <language>en-gb</language>
     <managingEditor>info@flymine.org</managingEditor>
     <webMaster>info@flymine.org</webMaster>
-    <!--
-      
-      Example news item:
-      
-      <item>
-        <title>Star City</title>
-        <link>http://www.flymine.org/</link>
-        <description>
-          How do Americans get ready to work with Russians aboard the
-          International Space Station? They take a crash course in culture,
-          language and protocol at Russia's Star City.
-        </description>
-        <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
-      </item>
-    
-    -->
-    
+
     <!-- Add new news at the top here -->
+    <item>
+      <title>Possible disruption to FlyMine</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Due to a server room upgrade, the &lt;a href="http://www.flymine.org"&gt;
+        FlyMine&lt;/a&gt; service will be at risk from 8am Monday 8th May 2006
+        for 48 hours.  We hope to keep any disruption to a minimum.
+      </description>
+      <pubDate>Fri, 5 May 2006 12:04 GMT</pubDate>
+    </item>
     
     <item>
       <title>FlyBase links to FlyMine</title>
@@ -34,7 +28,7 @@
         FlyBase&lt;/a&gt; gene reports now include a link directly to
         FlyMine gene details pages.
       </description>
-      <pubDate>Mon, 13 Mar 2006 10:55:00 GMT</pubDate>
+      <pubDate>Mon, 13 Mar 2006 10:55 GMT</pubDate>
     </item>
     
     <item>
@@ -46,9 +40,10 @@
         &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
         release notes&lt;/a&gt;.
       </description>
-      <pubDate>Mon, 13 Mar 2006 10:50:00 GMT</pubDate>
+      <pubDate>Mon, 13 Mar 2006 10:50 GMT</pubDate>
     </item>
     
+    <!--
     <item>
       <title>FlyMine is Recruiting</title>
       <link>http://www.flymine.org/</link>
@@ -56,8 +51,9 @@
         Biologist - Database analysis and user support (MATERNITY COVER).
         CLOSED.
       </description>
-      <pubDate>Tue, 03 Jan 2006 11:31:00 GMT</pubDate>
+      <pubDate>Tue, 03 Jan 2006 11:31 GMT</pubDate>
     </item>
+    -->
 
     <item>
       <title>Cambridge University Network Maintenance</title>
@@ -67,7 +63,7 @@
         unavailable from approximately 9am until 5pm GMT on Thursday 29th
         December 2005 due to network maintenance.
       </description>
-      <pubDate>Mon, 22 Dec 2005 15:05:18 GMT</pubDate>
+      <pubDate>Thu, 22 Dec 2005 15:05 GMT</pubDate>
     </item>
     
     <item>
@@ -79,7 +75,7 @@
         &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
         release notes&lt;/a&gt;.
       </description>
-      <pubDate>Mon, 7 Nov 2005 13:36:00 GMT</pubDate>
+      <pubDate>Mon, 7 Nov 2005 13:36 GMT</pubDate>
     </item>
     
     <item>
@@ -91,7 +87,7 @@
         &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
         release notes&lt;/a&gt;.
       </description>
-      <pubDate>Thu, 1 Sep 2005 13:23:51 GMT</pubDate>
+      <pubDate>Thu, 1 Sep 2005 13:23 GMT</pubDate>
     </item>
     
     <item>
@@ -103,7 +99,7 @@
         &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
         release notes&lt;/a&gt;.
       </description>
-      <pubDate>Wed, 1 Jun 2005 14:10:51 GMT</pubDate>
+      <pubDate>Wed, 1 Jun 2005 14:10 GMT</pubDate>
     </item>
     
     <item>
@@ -113,7 +109,7 @@
         &lt;a href="http://www.flymine.org/release-2.0/begin.do"&gt;
         FlyMine 2.0&lt;/a&gt; is now available.
       </description>
-      <pubDate>Wed, 30 Mar 2005 16:53:30 GMT</pubDate>
+      <pubDate>Wed, 30 Mar 2005 16:53 GMT</pubDate>
     </item>
     
     <item>
@@ -122,7 +118,7 @@
       <description>
         FlyMine 1.1 is now available.
       </description>
-      <pubDate>Fri, 18 Feb 2005 20:16:58 GMT</pubDate>
+      <pubDate>Fri, 18 Feb 2005 20:16 GMT</pubDate>
     </item>
     
     <item>
@@ -131,7 +127,7 @@
       <description>
         Initial public release of FlyMine.
       </description>
-      <pubDate>Mon, 01 Nov 2004 11:39:21 GMT</pubDate>
+      <pubDate>Mon, 01 Nov 2004 11:39 GMT</pubDate>
     </item>
 
   </channel>
