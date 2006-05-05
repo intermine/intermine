@@ -87,11 +87,11 @@
         nowrap>
         <c:choose>
           <c:when test="${HISTORY_PAGE=='favourites'}">
-            Favourites
+            Favourites&nbsp;<img src="images/star_active.gif" title="Favourites">
           </c:when>
           <c:otherwise>
             <html:link action="/history?page=favourites">
-              Favourites
+              Favourites&nbsp;<img src="images/star_active.gif" title="Favourites">
             </html:link>
           </c:otherwise>
         </c:choose>
