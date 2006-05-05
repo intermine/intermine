@@ -3,9 +3,9 @@
 <!--starTemplate.jsp-->
 
 <c:if test="${! empty PROFILE.username}">
-	<script type='text/javascript' src='/test/dwr/interface/AjaxServices.js'></script>
-	<script type='text/javascript' src='/test/dwr/engine.js'></script>
-	<script type='text/javascript' src='/test/dwr/util.js'></script>
+	<script type='text/javascript' src='dwr/interface/AjaxServices.js'></script>
+	<script type='text/javascript' src='dwr/engine.js'></script>
+	<script type='text/javascript' src='dwr/util.js'></script>
 	<script language="javascript">
 		function setFavouriteTemplate(templateName, image){
 			AjaxServices.setFavouriteTemplate(templateName);
