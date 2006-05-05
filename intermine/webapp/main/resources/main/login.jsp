@@ -23,12 +23,21 @@
     </table>
   </html:form>
 
+<script language="javascript">
+	var visibility = 'block';
+	function toggleDiv(){
+		document.getElementById('passwordDiv').style.display=visibility;
+		if(visibility=='block') visibility='none';
+		else visibility='block';
+	}
+</script>
   <br/>
- </div>
+<a href="javascript:toggleDiv();" >Change password / Forgotten password</a>
+</div>
 
-<im:box titleKey="login.heading.password">
-<div class="body">
-        
+<div id="passwordDiv" style="display:none;">
+  <im:box titleKey="login.passwordrequest">
+  <div class="body">
   <html:form action="/requestPasswordAction">  
     <fmt:message key="login.needspassword"/><br/><br/>
     <table>
@@ -39,11 +48,13 @@
       </tr>
     </table>
   </html:form>
-  
+  </div>
+  </im:box>
   <br/>
-  
+
+  <im:box titleKey="password.changepassword">
+  <div class="body">
   <html:form action="/changePasswordAction">  
-    <fmt:message key="password.changepassword"/><br/><br/>
     <table>
       <tr>
         <td><fmt:message key="password.username"/></td>
@@ -66,4 +77,5 @@
   </html:form>
   </div>
   </im:box>
+</div>
 <!-- /login.jsp -->
