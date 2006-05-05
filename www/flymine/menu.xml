@@ -12,6 +12,11 @@
     <item url="/archive.xml" title="Archived releases"/>
   </item>
 
+  <item title="News">
+    <news id="news" limit="3"/>
+    <item url="/news.xml" title="All news"/>
+  </item>
+
   <item title="Documentation">
     <item url="/what.xml" title="Get Started"/>
     <item url="/doc/tutorials/index.xml" title="Tutorials"/>

@@ -273,7 +273,13 @@
   </xsl:template>
 
   <xsl:template match="para">
-    <p><xsl:apply-templates/></p>
+    <p>
+      <xsl:attribute name="style">
+        <xsl:value-of select="@style"/>
+      </xsl:attribute>
+        
+      <xsl:apply-templates/>
+    </p>
   </xsl:template>
 
   <xsl:template match="abstract | date | keywords | copyright"/>

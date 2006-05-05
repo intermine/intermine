@@ -18,6 +18,14 @@
         <ulink url="what.xml">What can I do with FlyMine?</ulink>
       </para>
       
+      <para style="color:#e00;">
+        Notice of possible service disruption:
+        Due to a server room upgrade, the <a
+        href="http://www.flymine.org">FlyMine</a> service will be at risk from
+        8am Monday 8th May 2006 for 48 hours.  We hope to keep any disruption
+        to a minimum.
+      </para>
+
     </section>
   
   
@@ -37,20 +45,7 @@
       </para>
     </section>
 
-<!--
-    
-    <section>
-      <title>
-        FlyMine News:
-      </title>
-        <news id="news" limit="3"/>
-        <ulink url="news.xml">All news...</ulink>
-    </section>
-  -->
-
   </column>
-
-  
 
   <section clear="both">
     <title>
