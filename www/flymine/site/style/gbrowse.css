@@ -35,18 +35,18 @@ table td, table th, .whiteboxwithborder {
                     background-color: white;
                     border: solid 1px #888;
                   }
-/*.searchbody       {
-	            font-size: small;
+.searchbody       {
+                    background-color: white;
+                    border: solid 1px #888;
                   }
 .settingstitle    {
-	            font-size: small;
+                    background-color: white;
+                    border: solid 1px #888;
                   }
 .settingsbody     {                     
-	            font-size: small;
+                    background-color: white;
+                    border: solid 1px #888;
                   }
-.uploadtitle      {
-	            font-size: small;
-                  }*/
 .uploadbody       {
                     background-color: #FFFFFF;
                     border: solid 1px #888; 
