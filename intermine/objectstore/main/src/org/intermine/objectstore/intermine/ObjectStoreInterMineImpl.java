@@ -1305,6 +1305,45 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             throw new ObjectStoreException(e);
         }
     }
+    
+    /**
+     * Checks if a query is precomputed or not for the given type
+     * 
+     * @param query the query
+     * @param type the type
+     * @return
+     * @throws ObjectStoreException
+     * @throws SQLException
+     */
+    public boolean isPrecomputed(Query query, String type) throws ObjectStoreException,
+            SQLException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            return isPrecomputedWithConnection(c, query, type);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Checks if a query is precomputed or not for the given type and connection
+     * 
+     * @param c the connection
+     * @param query the query
+     * @param type the type
+     * @return
+     * @throws ObjectStoreException
+     * @throws SQLException
+     */
+    public boolean isPrecomputedWithConnection(Connection c, Query query, String type)
+            throws ObjectStoreException, SQLException {
+        PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+        String SQLquery = generateSql(c, query, 0, Integer.MAX_VALUE);
+        return (ptm.lookupSql(type, SQLquery) != null);
+    }
 
     /**
      * Makes a certain Query go faster, using extra resources. The user should release

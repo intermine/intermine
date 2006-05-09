@@ -160,6 +160,7 @@
   </definition>
   <definition name="favourites.tile" path="/historyFavouritesView.jsp" controllerUrl="/initFavourites.do"/>
   <definition name="starTemplate.tile" path="/shared/starTemplate.jsp" controllerUrl="/starTemplate.do" />
+  <definition name="precomputeTemplate.tile" path="precompute.jsp" controllerUrl="/precomputeTemplate.do" />
   
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

@@ -68,7 +68,7 @@
 				    </html:link>
                     <tiles:insert name="starTemplate.tile">
                       <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
-                    </tiles:insert>                  
+                    </tiles:insert>
                     <c:if test="${IS_SUPERUSER}">
                       <c:set var="taggable" value="${savedTemplate.value}"/>
                       <tiles:insert name="inlineTagEditor.tile">
@@ -98,6 +98,11 @@
                 <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}">
                   Export
                 </html:link>
+                <c:if test="${IS_SUPERUSER}">
+	                <tiles:insert name="precomputeTemplate.tile">
+	                	<tiles:put name="templateName" value="${savedTemplate.value.name}"/>
+	                </tiles:insert>
+                </c:if>
               </td>
             </tr>
           </c:forEach>

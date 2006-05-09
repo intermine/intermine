@@ -634,6 +634,9 @@
     <action path="/starTemplate"
             type="org.intermine.web.StarTemplateController"/>
 
+    <action path="/precomputeTemplate"
+            type="org.intermine.web.PrecomputeTemplateController"/>
+
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
 
