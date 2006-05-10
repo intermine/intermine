@@ -117,7 +117,8 @@ public class MageConverter extends FileConverter
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());
-    
+        System.out.println("refMap.size: " + refMap.size());
+        System.out.println("seenMap.size: " + seenMap.size());
        
     }
 
@@ -333,11 +334,11 @@ public class MageConverter extends FileConverter
         if (className.equals("DerivedBioAssayData")) {
             BioAssayData bad = (BioAssayData) obj;            
 
-            DesignElementDimension ddimension = //D
-                  (DesignElementDimension) bad.getDesignElementDimension();
+            DesignElementDimension ddimension = 
+                (DesignElementDimension) bad.getDesignElementDimension(); //D
             QuantitationTypeDimension qdimension =
                 (QuantitationTypeDimension) bad.getQuantitationTypeDimension(); //Q
-            BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension();  //B
+            BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension(); //B
             
             List cubeD = null; //D    
             if (ddimension instanceof FeatureDimension) {
@@ -360,36 +361,29 @@ public class MageConverter extends FileConverter
                                                    + "it is unlikely that the current code will "
                                                    + "work.");
             }
-                  
-            boolean foundQType = false;
-            for (Iterator iter = cubeQ.iterator(); iter.hasNext(); ) {
-                QuantitationType qqt = (QuantitationType) iter.next();
-                if (qqt.getName() != null && !foundQType
-                    && qTypes.contains(qqt.getName().toLowerCase())) {
-                    foundQType = true;
-                    String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
+            
+            BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
+            //bioDataCube.order give 3 dimensions and tell which dimensions are which 
+            BioDataCube.Order order = bdc.getOrder(); //DBQ
+            if (order == null) {
+                throw new IllegalArgumentException("No order has been set for "
+                                                   + "BioDataCube! ");
+            }
+            String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                                       .getFilenameURI();
-                    System.err .println("Reading data from: " + fileName);
-                    BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
-                    //bioDataCube.order give 3 dimensions and tell which dimensions are which 
-                    BioDataCube.Order order = bdc.getOrder(); //DBQ
-                    if (order == null) {
-                        throw new IllegalArgumentException("No order has been set for "
-                                                           + "BioDataCube! ");
-                    }
-
-                    boolean emptyFile = false;
-                    InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-                    if (is.available() == 0) {
-                        emptyFile = true;
-                        LOG.warn("Ignoring empty data file: " + fileName);
-                    }
+            System.err .println("Reading data from: " + fileName);
+            boolean emptyFile = false;
+            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
+            if (is.available() == 0) {
+                emptyFile = true;
+                LOG.warn("Ignoring empty data file: " + fileName);
+            }
                                         
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                    //cope with all the possible dimension arrangements
-                    int cubeOrder = order.getValue();
-                    switch (cubeOrder) {
-                    case 0: //BDQ                        
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            int cubeOrder = order.getValue();
+            
+            switch (cubeOrder) {
+                   case 0: //BDQ                        
                         if (cubeB.size() == 1) {                        
                             processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
                         } else if (cubeD.size() == 1) {                        
@@ -445,11 +439,8 @@ public class MageConverter extends FileConverter
                         
                     default: 
                         break;                        
-                    }   
+            }   
                                         
-                 } 
-            }
-
         }
 
         
