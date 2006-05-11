@@ -4,6 +4,10 @@
 <html:xhtml/>
 
   <im:body id="savedTemplates">
+
+    <p>
+      <fmt:message key="history.favouritetemplates.help"/>
+    </p>
   
 	<c:choose>
 		<c:when test="${empty favouriteTemplates}">
