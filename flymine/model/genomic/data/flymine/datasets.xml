@@ -261,8 +261,16 @@
         <attribute name="title" value="Ensembl Anopheles"/>
         <attribute name="description"
             value="The Ensembl Anopheles gambiae genome annotation"/>
-        <attribute name="version" value="32.2g"/>
+        <attribute name="version" value="37.3"/>
         <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
+        <reference name="dataSource" ref_id="210"/>
+    </item>
+    <item id="212" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Ensembl Apis"/>
+        <attribute name="description"
+            value="The Ensembl Apis mellifera genome annotation"/>
+        <attribute name="version" value="37.2d"/>
+        <attribute name="url" value="http://www.ensembl.org/Apis_mellifera"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
 
