@@ -536,7 +536,8 @@
             type="org.intermine.web.account.CreateAccountAction"
             name="createAccountForm"
             input="createAccount">
-      <forward name="history" path="history.page"/>
+      <forward name="createAccount" path="createAccount.page"/>
+      <forward name="history" path="history.page" redirect="true"/>
     </action>
 
     <action path="/changePasswordAction"
