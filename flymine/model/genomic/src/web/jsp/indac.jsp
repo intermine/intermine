@@ -46,7 +46,7 @@
           <li>
             <im:querylink text="All INDAC microarray oligo identifiers and the identifier
                                 of the associated transcript (for export/download)" skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.distance3Prime MicroarrayOligo.tm MicroarrayOligo.transcript.identifier"/>
+              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.transcript.identifier"/>
             </im:querylink>
           </li>
         </ul>
@@ -55,7 +55,7 @@
             <im:querylink text="All INDAC microarray oligos identifiers and
                                 their locations on the associated transcript
                                 (for export/download)" skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.distance3Prime MicroarrayOligo.tm MicroarrayOligo.objects.start MicroarrayOligo.objects.end MicroarrayOligo.objects.subject.identifier">
+              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.objects.start MicroarrayOligo.objects.end MicroarrayOligo.objects.subject.identifier">
                 <node path="MicroarrayOligo" type="MicroarrayOligo">
                 </node>
                 <node path="MicroarrayOligo.objects" type="Location">
