@@ -432,9 +432,15 @@ public class ProfileManager
                         String userName) {
         Map cache = getTagCache();
         MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
+
+        org.intermine.web.LogMe.log("i", "searching for: " + tagName + " " + objectIdentifier
+                                    + " " + type + " " + userName);
         
         if (cache.containsKey(key)) {
+            org.intermine.web.LogMe.log("i", "found in cache");
             return (List) cache.get(key);
+        } else {
+            org.intermine.web.LogMe.log("i", "not found in cache");
         }
         
         Query q = new Query();
@@ -491,8 +497,7 @@ public class ProfileManager
         SingletonResults results =
             new SingletonResults(q, userprofileOS, userprofileOS.getSequence());
 
-        LOG.error("adding to cache: " + key);
-        cache.put(key, new ArrayList (results));
+        addToCache(cache, key, results);
         
         return results;
     }
@@ -500,6 +505,64 @@ public class ProfileManager
     private MultiKey makeKey(String tagName, String objectIdentifier, String type,
                              String userName) {
         return new MultiKey(tagName, objectIdentifier, type, userName);
+    }
+
+    private void addToCache(Map cache, MultiKey key, List results) {
+        LOG.error("adding to cache: " + key);
+        cache.put(key, new ArrayList (results));
+
+        int keyNullPartCount = 0;
+
+        for (int i = 0; i < 4; i++) {
+            if (key.getKey(i) == null) {
+                keyNullPartCount++;
+            }
+        }
+
+        Iterator resIter = results.iterator();
+        
+        while (resIter.hasNext()) {
+            Tag tag = (Tag) resIter.next();
+            org.intermine.web.LogMe.log("i", "adding to cache: " + tag.getTagName() + " "
+                                        + tag.getObjectIdentifier() + " "
+                                        + tag.getType() + " " + tag.getUserProfile().getUsername());
+
+            Object[] tagKeys = new Object[4];
+            tagKeys[0] = tag.getTagName();
+            tagKeys[1] = tag.getObjectIdentifier();
+            tagKeys[2] = tag.getType();
+            tagKeys[3] = tag.getUserProfile().getUsername();
+
+            if (keyNullPartCount == 2) {
+                // special case that allows the cache to be primed in a struts controller
+                // eg. calling getTags(null, null, "template", "superuser@flymine") will prime the
+                // cache so that getTags(null, "some_id", "template", "superuser@flymine") and
+                // getTags("some_tag", null, "template", "superuser@flymine") will be fast
+                for (int i = 0; i < 4; i++) {
+                    if (key.getKey(i) == null) {
+                        Object[] keysCopy = (Object[]) tagKeys.clone();
+                        keysCopy[i] = null;
+                        MultiKey keyCopy = new MultiKey(keysCopy);
+                        if (cache.containsKey(keyCopy)) {
+                            List existingList = (List) cache.get(keyCopy);
+                            if (existingList instanceof ArrayList) {
+                                existingList.add(tag);
+                            } else {
+                                ArrayList listCopy = new ArrayList(existingList);
+                                listCopy.add(tag);
+                                cache.put(keyCopy, listCopy);
+                            }
+                        } else {
+                            List newList = new ArrayList();
+                            newList.add(tag);
+                            cache.put(keyCopy, newList);
+                        }
+                    }
+                }
+
+            }
+        }
+
     }
 
     private Map getTagCache() {

@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.web.Constants;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.Profile;
+import org.intermine.web.SessionMethods;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -44,12 +47,25 @@ public class HistoryController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         String page = request.getParameter("page");
+
         
         if (!StringUtils.isEmpty(page)) {
             session.setAttribute(Constants.HISTORY_PAGE, page);
         }
-        
+
+        if (page != null) {
+            if (page.equals("templates")) {
+                // prime the tags cache so that the templates tags will be quick to access
+                String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+                if (userName != null) {
+                    // discard result
+                    pm.getTags(null, null, "template", userName);
+                }
+            }
+        }
+
         return null;
     }
 }
