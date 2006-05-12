@@ -19,11 +19,10 @@
       </para>
       
       <para style="color:#e00;">
-        Notice of possible service disruption: Due to a server room upgrade,
-        the <a href="http://www.flymine.org">FlyMine</a> service will be at
-        risk from 8am Tuesday 9th May 2006 until 5pm Thursday 11th May 2006.
-        We hope to keep any disruption to a minimum.  Note that archived
-        releases will not be available until the upgrade is complete.
+        12/05/06: Due to continued problems with the air conditioning in FlyMine's
+        server room the site is currently running on backup server.  All funtionality
+        is available but queries may run slowly.  We hope to have this fixed as
+        soon as possible.
       </para>
 
     </section>
