@@ -139,14 +139,17 @@ public class PsiDataTranslator extends DataTranslator
                              j.hasNext();) {
                             Item attribute = (Item) j.next();
                             Item comment = createItem("Comment");
-                            comment.addAttribute(new Attribute("type",
-                                                               attribute.getAttribute("name")
-                                                               .getValue()));
-                            comment.addAttribute(new Attribute("text",
-                                                               attribute.getAttribute("attribute")
-                                                               .getValue()));
+                            if (attribute.hasAttribute("name")) {
+                                comment.addAttribute(new Attribute("type",
+                                        attribute.getAttribute("name").getValue()));
+                            }
+                            if (attribute.hasAttribute("attribute")) {
+                                comment.addAttribute(new Attribute("text",
+                                        attribute.getAttribute("attribute").getValue()));
+                            }
+                            
                             comment.addReference(new Reference("source",
-                                                               dataSetItem.getIdentifier()));
+                                     dataSetItem.getIdentifier()));
                             //result.add(comment);
                             exptData.add(comment);
                             addToCollection(tgtItem, "comments", comment);
