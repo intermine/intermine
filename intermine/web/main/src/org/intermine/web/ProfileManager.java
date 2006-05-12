@@ -433,14 +433,14 @@ public class ProfileManager
         Map cache = getTagCache();
         MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
 
-        org.intermine.web.LogMe.log("i", "searching for: " + tagName + " " + objectIdentifier
-                                    + " " + type + " " + userName);
+//        org.intermine.web.LogMe.log("i", "searching for: " + tagName + " " + objectIdentifier
+//                                    + " " + type + " " + userName);
         
         if (cache.containsKey(key)) {
-            org.intermine.web.LogMe.log("i", "found in cache");
+//            org.intermine.web.LogMe.log("i", "found in cache");
             return (List) cache.get(key);
         } else {
-            org.intermine.web.LogMe.log("i", "not found in cache");
+//            org.intermine.web.LogMe.log("i", "not found in cache");
         }
         
         Query q = new Query();
@@ -523,9 +523,9 @@ public class ProfileManager
         
         while (resIter.hasNext()) {
             Tag tag = (Tag) resIter.next();
-            org.intermine.web.LogMe.log("i", "adding to cache: " + tag.getTagName() + " "
-                                        + tag.getObjectIdentifier() + " "
-                                        + tag.getType() + " " + tag.getUserProfile().getUsername());
+//            org.intermine.web.LogMe.log("i", "adding to cache: " + tag.getTagName() + " "
+//                                        + tag.getObjectIdentifier() + " "
+//                                        + tag.getType() + " " + tag.getUserProfile().getUsername());
 
             Object[] tagKeys = new Object[4];
             tagKeys[0] = tag.getTagName();
