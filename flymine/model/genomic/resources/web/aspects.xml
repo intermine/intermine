@@ -175,15 +175,6 @@
       address the need for consistent descriptions of gene products in
       different databases.
 &lt;p&gt;
-      The GO collaborators are developing three structured, controlled
-      vocabularies (ontologies) that describe gene products in terms of
-      their associated biological processes, cellular components and
-      molecular functions in a species-independent manner.
-&lt;p&gt;
-      GO annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; have
-      been loaded into FlyMine.  The GO annotations are 'attached' to
-      Genes and so each gene has a reference (link) to a list of its GO
-      annotations (if available).
     </intro-text>
     <starting-points>Gene GOTerm GOAnnotation</starting-points>
     <tile-name>model/GO.jsp</tile-name>
