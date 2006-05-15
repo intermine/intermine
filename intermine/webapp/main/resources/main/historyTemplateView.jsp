@@ -98,7 +98,7 @@
                 <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}">
                   Export
                 </html:link>
-                <c:if test="${IS_SUPERUSER}">
+                <c:if test="${IS_SUPERUSER && savedTemplate.value.valid}">
 	                <tiles:insert name="precomputeTemplate.tile">
 	                	<tiles:put name="templateName" value="${savedTemplate.value.name}"/>
 	                </tiles:insert>
