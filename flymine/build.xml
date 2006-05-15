@@ -161,6 +161,7 @@
       <path refid="base.class.path"/>
       <pathelement location="${build.model}/genomic"/>
       <pathelement location="${build.model}/genomic/flymine"/>
+      <pathelement location="${build.model}/genomic/stemcell"/>
     </path>
 
     <mkdir dir="${build.webapp.intermine.lib}"/>
@@ -674,7 +675,7 @@
       <reference torefid="class.path" refid="models.class.path"/>
       <property name="os.alias" value="os.interpro-src-items-std"/>
     </ant>
-  </target>
+   </target>
 
   <target name="translate-interpro"
           depends="prepare-build-model, compile-interpro-java, compile-genomic-java-from-db">
@@ -812,6 +813,65 @@
          userid="rns"
          password="rns"
          src="${build.resources}/make_clean_ensembl_anoph_set.sql"/>
+  </target>
+
+   <target name="build-ensembl-hs-small-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_small_ensembl_hs.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_hs_small"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_small_ensembl_hs.sql"/>
+  </target>
+
+  <!-- retrieve ensembl anopheles data -->
+  <target name="retrieve-ensembl-hs" depends="convert-ensembl, build-db-ensembl-human-src-items">
+    <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <retrieve-ensembl database="db.ensembl-human" model="ensembl" osName="osw.ensembl-human-src-items"/>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.ensembl-human-src-items-std"/>
+    </ant>
+  </target>
+
+  <!-- translate ensembl anopheles -->
+  <target name="translate-ensembl-hs" depends="convert-ensembl, compile-ensembl-java, compile-genomic-java-from-db">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.ensembl-human-tgt-items"/>
+      <property name="objectstore.name" value="os.ensembl-human-tgt-items-std"/>
+    </ant>
+    <copy file="${model}/ensembl/ensembl_mappings" toDir="${build.model}/ensembl"/>
+
+    <copy file="${model}/genomic/resources/flymine/ensembl_config.properties" toDir="${build.model}/ensembl"/>
+
+    <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <translate-data translator="org.flymine.dataconversion.EnsemblDataTranslator"
+                    source="os.ensembl-human-src-items"
+                    target="osw.ensembl-human-tgt-items"
+                    srcModel="ensembl"
+                    tgtModel="genomic"
+                    organism="HS"/>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.ensembl-human-tgt-items-std"/>
+    </ant>
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.ensembl-human-tgt-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>
   </target>
 
 
@@ -1598,6 +1658,14 @@
     </ant>
   </target>
 
+  <target name="build-db-mage-tgt-items" depends="prepare-build-model">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.mage-tgt-items-std"/>
+    </ant>
+  </target>
   <target name="retrieve-mage-timecourse" depends="prepare, prepare-build-model, compile-mage-java, convert-mage">
     <!-- MAGEstk toolkit wants write access to source files (?) -->
     <copy todir="${build.tmp}/mage">
@@ -2275,6 +2343,15 @@
     <db-insert-model database="db.production" modelName="genomic"/>
   </target>
 
+  <target name="update-metadata-stemcell-production" depends="copy-stemcell-config">
+        <!-- compile-genomic-model-->
+        <!-- compile-genomic-model-stemcell-->
+    <taskdef name="db-insert-model"
+             classname="org.intermine.task.StoreMetadataTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <db-insert-model database="db.production" modelName="genomic"/>
+  </target>
   <!-- Build genomic model database to hold production data -->
   <target name="build-db-production" depends="compile-genomic-model, copy-flymine-config">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -2611,6 +2688,13 @@
        <classpath refid="models.class.path"/>
      </taskdef>
      <mappings operation="set-collection-counts" objectStoreWriter="osw.production"/>
+   </target>
+
+    <target name="create-intron-features" depends="compile-genomic-java-from-db">
+     <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+       <classpath refid="models.class.path"/>
+     </taskdef>
+     <mappings operation="create-intron-features" objectStoreWriter="osw.production"/>
    </target>
 
    <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db">
@@ -3818,6 +3902,7 @@
     </ant>
   </target>
 
+  
   <!-- translate ensembl human data -->
   <target name="translate-ensembl-human" depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -4086,6 +4171,7 @@
       <antcall target="update-orthologues"/>
       <antcall target="analyse-db-production"/>
       <antcall target="set-collection-counts"/>
+      <antcall target="create-intron-features"/>
       <antcall target="update-publications"/>
       <antcall target="analyse-db-production"/-->
   </target>
@@ -4159,8 +4245,8 @@
                   clsName="org.flymine.dataconversion.GoConverter"
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
-      <fileset dir="${shared.data}/go-annotation/human">
-        <include name="current_gene_association*"/>
+      <fileset dir="${shared.data}/go-annotation/uniprot/2006-03-04">
+        <include name="gene_association_hs"/>
       </fileset>
     </convert-file>
 
@@ -4201,8 +4287,8 @@
                   clsName="org.flymine.dataconversion.GoConverter"
                   model="genomic"
                   ontology="${build}/model/go/gene_ontology.obo">
-      <fileset dir="${shared.data}/go-annotation/mouse">
-        <include name="current_gene_association*"/>
+      <fileset dir="${shared.data}/go-annotation/mgi/2006-05-06">
+        <include name="gene_association.mgi"/>
       </fileset>
     </convert-file>
 
@@ -4889,19 +4975,29 @@
   <target name="build-orthologues-production-mouse"
           depends="retrieve-orthologues-inparanoid-mouse,load-orthologues-inparanoid-mouse"/>
 
- <!--mage data for stem cell-->
- <target name="retrieve-mage-stemcell"
-         depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
-    <!-- MAGEstk toolkit wants write access to source files (?) -->
-    <delete dir="${build}/tmp/mage"/>
+ <!--mage data E-SMDB-3450 for stem cell>
+<target name="retrieve-mage-smdb" depends="prepare, prepare-build-model, compile-mage-java, convert-mage">
     <copy todir="${build.tmp}/mage">
-      <fileset dir="${shared.data}/human/mage/E-EMBL-1"/>
-      <fileset dir="${shared.data}/human/mage/E-MEXP-337"/>
-      <fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
-      <!--fileset dir="${shared.data}/human/mage/E-MEXP-70"/-->
-      <!--fileset dir="${shared.data}/human/mage/E-SMDB-3450"/-->
+       <fileset dir="${shared.data}/human/mage/E-SMDB-3450"/>
     </copy>
 
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
+
+    <taskdef name="add-derived-data" classname="org.flymine.dataconversion.AddDerivedDataTask">
+      <classpath refid="mage.class.path"/>
+    </taskdef>
+
+    <add-derived-data srcFile="${build}/tmp/mage/Exptset_3450.xml" tgtFile="${build}/tmp/mage/Exptset.xml" fileName="03280Table4-1.txt"/>
+  </target-->
+
+ <target name="retrieve-mage-stemcell"
+         depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
+    <!-- MAGEstk toolkit wants write access to source files (?)-->
+    <delete dir="${build}/tmp/mage"/>
+    <copy todir="${build.tmp}/mage">
+      <fileset dir="${shared.data}/human/mage/E-MEXP-337"/>
+      <fileset dir="${shared.data}/human/mage/E-MEXP-384"/>
+    </copy>
     <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
@@ -4918,7 +5014,7 @@
     <convert-file osName="osw.mage-src-items"
                   clsName="org.flymine.dataconversion.MageConverter"
                   model="mage"
-                  quantitationtypes="Log2Ratio, Average Expression Level">
+                  quantitationtypes="Log2Ratio, Average Expression Level, Fold Change">
       <fileset dir="${build.tmp}/mage/">
         <include name="*.xml"/>
       </fileset>
@@ -4976,12 +5072,93 @@
                sourceName="mage"
                ignoreDuplicates="false"/>
   </target>
+   <target name="retrieve-mage-stemcell2"
+         depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
+    <!-- MAGEstk toolkit wants write access to source files (?) -->
+    <delete dir="${build}/tmp/mage"/>
+    <copy todir="${build.tmp}/mage">
+      <fileset dir="${shared.data}/human/mage/E-EMBL-1"/>
+      <fileset dir="${shared.data}/human/mage/E-MEXP-70"/>
+    </copy>
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
+
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-src-items"/>
+      <property name="objectstore.name" value="os.mage-src-items-std"/>
+    </ant>
+
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="mage.class.path"/>
+    </taskdef>
+
+    <convert-file osName="osw.mage-src-items"
+                  clsName="org.flymine.dataconversion.MageConverter"
+                  model="mage"
+                  quantitationtypes="Log2Ratio, Average Expression Level, Fold Change">
+      <fileset dir="${build.tmp}/mage/">
+        <include name="*.xml"/>
+      </fileset>
+    </convert-file>
+
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.mage-src-items-std"/>
+    </ant>
+
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <property name="db.name" value="db.common-src-items"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+    </ant>    
+  </target>
+  <target name="load-mage-stemcell2" depends = "prepare-build-model, copy-stemcell-config">
+    <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+
+    <load-mage integrationWriter="integration.production"
+               source="os.mage-translated"
+               sourceName="mage2"
+               ignoreDuplicates="false"/>
+  </target>
 
   <target name="build-mage-stemcell-production"
-          depends="retrieve-mage-stemcell, translate-mage-stemcell, load-mage-stemcell"/>
+          depends="retrieve-mage-stemcell, translate-mage-stemcell, load-mage-stemcell, retrieve-mage-stemcell2, translate-mage-stemcell, load-mage-stemcell2, retrieve-mage-smdb, load-mage-smdb"/>
 
+  <target name="retrieve-mage-smdb"
+          depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-tgt-items">
 
+    <copy file="${model}/genomic/resources/stemcell/mage_config.properties" toDir="${build.model}/mage"/>
+    <echo message="CLASSPATH: ${models.class.path}"/>
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <convert-file clsName="org.flymine.dataconversion.MageFlatFileConverter"
+                  osName="osw.mage-tgt-items"
+                  model="mage">
+      <fileset dir="${shared.data}/human/mage/E-SMDB-3450/" includes="03280Table4-1.txt"/>
+    </convert-file>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.mage-tgt-items-std"/>
+    </ant>
+  </target>
 
+  <target name="load-mage-smdb" depends="copy-stemcell-config">
+    <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <load-mage integrationWriter="integration.production"
+               source="os.mage-translated"
+               sourceName="mage"/>
+  </target>
+
+  <!-- load mage smdb data into production -->
+  <target name="build-mage-smdb-production" depends="retrieve-mage-smdb, load-mage-smdb"/>
 
 <!-- CDNACLONE/image PIPELINE -->
   <target name="retrieve-cdnaclone-image" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
@@ -5023,7 +5200,7 @@
                   model="cdnaclone">
 
       <fileset dir="${shared.data}/human/probeSet/"
-               includes="*.csv"/>
+               includes="HG_U95Av2_annot.csv"/>
 
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -5061,9 +5238,11 @@
     <convert-xml schema="${model}/psi/psi.xsd"
                  model="psi"
                  osName="osw.psi-src-items">
-      <fileset dir="${shared.data}/human/psi">
-        <include name="rual/human*.xml"/>
-        <include name="stelzl/human*.xml"/>
+      <fileset dir="${shared.data}/human/psi/intact/2006-05-09">
+        <include name="human_rual*.xml"/>
+        <include name="human_stelzl*.xml"/>
+        <include name="human_small*.xml"/>
+        <include name="mouse_small*.xml"/>
        </fileset>
     </convert-xml>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
