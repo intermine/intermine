@@ -47,6 +47,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.sql.query.Constraint;
 
 public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCase
 {
@@ -704,5 +705,19 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
                 e.printStackTrace(System.out);
             }
         }
+    }
+    
+    public void testIsPrecomputed() throws Exception{
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        QueryField qf = new QueryField(qc,"age");
+        SimpleConstraint sc = new SimpleConstraint(qf,ConstraintOp.GREATER_THAN,new QueryValue(new Integer(20)));
+        q.addToSelect(qc);
+        q.addFrom(qc);
+        q.setConstraint(sc);
+        assertFalse(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
+        ((ObjectStoreInterMineImpl)os).precompute(q, "template");
+        assertTrue(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
+        
     }
 }
