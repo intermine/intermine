@@ -508,8 +508,9 @@ public class MageConverter extends FileConverter
         throws Exception {
         boolean storeTuple = false;
         ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        QuantitationType qt = (QuantitationType) cubeQ.get(0);  
-        if (qTypes.contains(qt.getName().toLowerCase())) {                       
+        QuantitationType qt = (QuantitationType) cubeQ.get(0); 
+        if (qt.getName() != null 
+            && qTypes.contains(qt.getName().toLowerCase())) {
             for (Iterator i = cubeB.iterator(); i.hasNext();) {
                 BioAssay ba = (BioAssay) i.next();
                 String s = br.readLine();
@@ -545,8 +546,9 @@ public class MageConverter extends FileConverter
         throws Exception {
         boolean storeTuple = false;
         ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        QuantitationType qt = (QuantitationType) cubeQ.get(0);  
-        if (qTypes.contains(qt.getName().toLowerCase())) {                       
+        QuantitationType qt = (QuantitationType) cubeQ.get(0);
+        if (qt.getName() != null 
+            && qTypes.contains(qt.getName().toLowerCase())) {
             for (Iterator i = cubeD.iterator(); i.hasNext();) {
                 DesignElement de = (DesignElement) i.next();    
                 String s = br.readLine();
@@ -589,8 +591,9 @@ public class MageConverter extends FileConverter
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
                     QuantitationType qt = (QuantitationType) j.next();
-                    String value = st.nextToken();                                    
-                    if (qTypes.contains(qt.getName().toLowerCase())) {
+                    String value = st.nextToken();  
+                    if (qt.getName() != null 
+                        && qTypes.contains(qt.getName().toLowerCase())) {
                         Item datum = makeBioAssayDatum(value, de, ba, qt); 
                         storeItem(datum);   
                         storeTuple = true;   
@@ -624,7 +627,8 @@ public class MageConverter extends FileConverter
             String s = br.readLine();
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, "\t");
-                if (qTypes.contains(qt.getName().toLowerCase())) {
+                if (qt.getName() != null 
+                    && qTypes.contains(qt.getName().toLowerCase())) {
                     for (Iterator j = cubeB.iterator(); j.hasNext(); ) {
                         BioAssay ba = (BioAssay) j.next();
                         String value = st.nextToken();  
@@ -662,8 +666,9 @@ public class MageConverter extends FileConverter
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
                     QuantitationType qt = (QuantitationType) j.next();  
-                    String value = st.nextToken();                                    
-                    if (qTypes.contains(qt.getName().toLowerCase())) {
+                    String value = st.nextToken();  
+                    if (qt.getName() != null 
+                        && qTypes.contains(qt.getName().toLowerCase())) {
                         Item datum = makeBioAssayDatum(value, de, ba, qt); 
                         storeItem(datum);   
                         storeTuple = true;   
@@ -696,7 +701,8 @@ public class MageConverter extends FileConverter
             String s = br.readLine();
             if (s != null) {            
                 StringTokenizer st = new StringTokenizer(s, "\t");
-                if (qTypes.contains(qt.getName().toLowerCase())) {
+                if (qt.getName() != null 
+                    && qTypes.contains(qt.getName().toLowerCase())) {
                     for (Iterator j = cubeD.iterator(); j.hasNext(); ) {
                         DesignElement de = (DesignElement) j.next();
                         String value = st.nextToken();      
