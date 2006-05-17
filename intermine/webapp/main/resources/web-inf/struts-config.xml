@@ -167,6 +167,9 @@
 	<action path="/createAccount"
             forward="createAccount.page"/>
 
+	<action path="/changePassword"
+            forward="changePassword.page"/>
+
     <!-- Actions that provide downloads -->
 
     <action path="/getAttributeAsFile"
@@ -543,8 +546,9 @@
     <action path="/changePasswordAction"
             type="org.intermine.web.account.ChangePasswordAction"
             name="changePasswordForm"
-            input="login">
-      <forward name="login" path="login.page"/>
+            input="changePassword">
+      <forward name="changePassword" path="changePassword.page"/>
+      <forward name="history" path="history.page"/>
     </action>
 
     <!-- Other actions -->
