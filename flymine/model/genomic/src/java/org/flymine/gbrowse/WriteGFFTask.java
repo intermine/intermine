@@ -47,6 +47,7 @@ import org.flymine.model.genomic.ChromosomeBand;
 import org.flymine.model.genomic.ComputationalAnalysis;
 import org.flymine.model.genomic.ComputationalResult;
 import org.flymine.model.genomic.Evidence;
+import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
@@ -171,6 +172,13 @@ public class WriteGFFTask extends Task
                 }
             }
 
+            if (feature instanceof CDS) {
+                // ignore for now as it interferes with the CDS GFF records created by
+                // writeTranscriptsAndExons() for use by the processed_transcript 
+                // aggregator
+                continue;
+            }
+            
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
