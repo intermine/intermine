@@ -32,6 +32,7 @@ public class ConverterTask extends Task
 {
     protected String model;
     protected String osName;
+    protected String excludeList;
 
     /**
      * Set the objectstore name
@@ -47,6 +48,14 @@ public class ConverterTask extends Task
      */
     public void setModel(String model) {
         this.model = model;
+    }
+
+    /**
+     * Sets the list of classes to NOT try and convert
+     *@param excludeList the suitably formatted list of classs to exclude. 
+     * */
+    public void setExcludeList(String excludeList) {
+        this.excludeList = excludeList;
     }
 
     /**
