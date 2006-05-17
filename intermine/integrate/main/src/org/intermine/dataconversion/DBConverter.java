@@ -15,10 +15,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
-import java.util.Stack;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
@@ -57,6 +54,8 @@ public class DBConverter extends DataConverter
     protected long count = 0;
     protected long start, time, times[];
 
+    protected String excludeList;
+
     /**
      * Constructor
      *
@@ -64,12 +63,15 @@ public class DBConverter extends DataConverter
      * @param db the Database
      * @param reader the DBReader used to retrieve Items
      * @param writer the ItemWriter used to handle the resultant Items
+     * @param excludeList A Source Item Class name to skip - TODO: should be a list at some point.
      */
-    protected DBConverter(Model model, Database db, DBReader reader, ItemWriter writer) {
+    protected DBConverter(
+            Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
         super(writer);
         this.model = model;
         this.db = db;
         this.reader = reader;
+        this.excludeList = excludeList;
     }
 
     /**
@@ -81,7 +83,7 @@ public class DBConverter extends DataConverter
     public void process() throws Exception {
         // if source db table has a non-unique id need to create a unique identifier
         // references to the non-unique id will be pointed at an arbitrary unique
-        // identifier dor that group of items.  It is assumed that the group of items
+        // identifier for that group of items.  It is assumed that the group of items
         // will become one after data translation.
 
         try {
@@ -180,9 +182,15 @@ public class DBConverter extends DataConverter
      */
     protected void processClassDescriptor(ClassDescriptor cld) throws Exception {
         try {
+            String clsName = TypeUtil.unqualifiedName(cld.getName());
+
+            if (isClassExcluded(clsName)) {
+                LOG.debug("CLASS WAS EXCLUDED:" + clsName);
+                return;
+            }
+
             c = db.getConnection();
 
-            String clsName = TypeUtil.unqualifiedName(cld.getName());
             Iterator iter;
 
             boolean idsProvided = idsProvided(cld);
@@ -421,4 +429,22 @@ public class DBConverter extends DataConverter
         return id;
     }
 
+
+    /**
+     * Checks to see if the current class should be excluded from the retrieve - possibly due to
+     * out of memory problem.
+     *
+     * TODO: We should make the list have some kind of format so we can exclude more than one class!
+     *
+     * @param className A classname to check for exclusion.
+     * @return a boolean indicating true if the class is to be excluded otherwise false.
+     * */
+    protected boolean isClassExcluded(String className) {
+
+        if (excludeList != null && className != null
+                && className.equalsIgnoreCase(this.excludeList)) {
+            return true;
+        }
+        return false;
+    }
 }
