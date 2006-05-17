@@ -24,17 +24,20 @@ Molecular evidence for stem cell function of the slow-dividing fraction among hu
 </DT>
 <DD>Human B-cell differentiation</DD>
 
-<!--
+
 <DT>Shim MH (2004):<A href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15246160">PubMed: 15246160</A> 
 </DT>
 <DD>
 Gene Expression Profile in Primary Human CD30+/CD38lo Cells Differentiating Along the Megakaryocyte Lineage
 </DD>
+</DL>
+
+<DL>
+<B><I>M. musculus:</I></B>
 <DT>Rossi DJ (2005):<A href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15967997">PubMed: 15967997</A> 
 </DT>
 <DD>
 Compare blood stem cells from young vs old mice
 </DD>
--->
 </DL>
 </div>

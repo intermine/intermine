@@ -25,5 +25,37 @@
            A Human Protein-Protein Interaction Network: A Resource for Annotating the Proteome.<BR>  
            3127 novel interactions among 2052 proteins.<BR>
          </DD>
+         <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.
+             <im:querylink text=" H. sapiens experiment list" skipBuilder="true">
+                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                         <constraint op="=" value="H. sapiens" description="" identifier="" code="A"></constraint>
+                     </node>
+                 </query>
+             </im:querylink>
+         </DT>
+       </DL>
+
+       <P><B><I>M. musculus</I></B></P>
+       <DL>
+        <DT>A number of protein interactions and complexes from smaller scale experiments are available.
+             <im:querylink text=" M. musculus experiment list" skipBuilder="true">
+                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                         <constraint op="=" value="M. musculus" description="" identifier="" code="A"></constraint>
+                     </node>
+                 </query>
+             </im:querylink>
+         </DT>
        </DL>
 </div> 
