@@ -7,7 +7,7 @@
 <div class="links">
   <c:if test="${!empty PROFILE.username}">
     <span class="menu-logged-in-item">
-      ${PROFILE.username}
+      <html:link action="/changePassword.do" title="Change Password">${PROFILE.username}</html:link>
     </span>
   </c:if>
   <span class="menu-item">

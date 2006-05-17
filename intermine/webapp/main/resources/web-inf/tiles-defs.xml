@@ -122,6 +122,10 @@
     <put name="body" value="createAccount.jsp"/>
     <put name="pageName" value="createAccount"/>
   </definition>
+  <definition name="changePassword.page" extends="layout.template">
+    <put name="body" value="changePassword.jsp"/>
+    <put name="pageName" value="changePassword"/>
+  </definition>
   <!--tiles-->
   <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>

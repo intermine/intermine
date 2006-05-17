@@ -59,6 +59,6 @@ public class ChangePasswordAction extends InterMineAction
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         RequestPasswordAction.email(username, password, webProperties);
         recordMessage(new ActionMessage("password.changed", username), request);
-        return mapping.findForward("login");
+        return mapping.findForward("history");
     }
 }

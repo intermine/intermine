@@ -32,7 +32,7 @@
 	}
 </script>
   <br/>
-<a href="javascript:toggleDiv();" >Change password / Forgotten password</a>
+<a href="javascript:toggleDiv();" >Forgotten password</a>
 </div>
 
 <div id="passwordDiv" style="display:none;">
@@ -51,31 +51,6 @@
   </div>
   </im:box>
   <br/>
-
-  <im:box titleKey="password.changepassword">
-  <div class="body">
-  <html:form action="/changePasswordAction">  
-    <table>
-      <tr>
-        <td><fmt:message key="password.username"/></td>
-        <td><html:text property="username"/></td>
-      </tr>
-      <tr>
-        <td><fmt:message key="password.oldpassword"/></td>
-        <td><html:password property="oldpassword"/></td>
-      </tr>
-      <tr>
-        <td><fmt:message key="password.newpassword"/></td>
-        <td><html:password property="newpassword"/></td>
-      </tr>
-      <tr>
-        <td><fmt:message key="password.newpassword2"/></td>
-        <td><html:password property="newpassword2"/></td>
-        <td><html:submit property="action"><fmt:message key="password.passwordchange"/></html:submit></td>
-      </tr>
-    </table>
-  </html:form>
-  </div>
-  </im:box>
+  
 </div>
 <!-- /login.jsp -->
