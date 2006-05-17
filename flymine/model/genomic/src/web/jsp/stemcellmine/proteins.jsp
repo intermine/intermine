@@ -9,9 +9,10 @@ Current Data
 <DL>
 <DT><A href="http://www.ebi.uniprot.org/index.shtml">Uniprot Knowledgebase (UniProtKB)</A></DT>
 <DD>
-All proteins from the <A href="http://www.ebi.uniprot.org/index.shtml">UniProt Knowledgebase</A> (version 6.8) for the following organisms have been loaded:
+All proteins from the <A href="http://www.ebi.uniprot.org/index.shtml">UniProt Knowledgebase</A> (version 7.7) for the following organisms have been loaded:
 <UL>
-<LI><I>H. sapiens</I>
+<LI><I>H. sapiens</I></LI>
+<LI><I>M. musculus</I></LI>
 </UL>
 For each protein record in Uniprot the following information is extracted and loaded into StemCellMine:
 <UL>

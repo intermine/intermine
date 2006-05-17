@@ -9,7 +9,7 @@ Current Data
 <DT>
 <DT><I>H. sapiens</I></DT>
 <DD>
-Release 36.35i genome annotation from <A href="http://www.ensembl.org/Homo_sapiens/index.html">Ensembl</A>.
+Release 37.35j genome annotation from <A href="http://www.ensembl.org/Homo_sapiens/index.html">Ensembl</A>.
 </DD>
 <DD>
 firstEF: First-Exon and Promoter Prediction from <A href="http://genome.ucsc.edu/">UCSC</A>.
