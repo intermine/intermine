@@ -643,7 +643,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
             String markerSynRefId = srcItem.getReference("display_marker_synonym").getRefId();
 
-            org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);//prefetch
+            org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);
+            //prefetch
 
             if (markerSyn != null) {
 
