@@ -87,11 +87,11 @@ public class InparanoidConverter extends FileConverter
             lineNum++;
             String[] array = line.split("\t");
 
-            if (array.length < 8) {
-                throw new IllegalArgumentException("Line " + lineNum
-                                                   + " does not have at lease eight elements: "
-                                                   + line);
-            }
+            // if (array.length < 8) {
+//                 throw new IllegalArgumentException("Line " + lineNum
+//                                                    + " does not have at lease eight elements: "
+//                                                    + line);
+//             }
 
             String type = null;
 
@@ -107,7 +107,7 @@ public class InparanoidConverter extends FileConverter
             }
 
             // for ensembl data we can create corresponding genes, parse id from additional info
-            if (array[2].startsWith("ens")) {
+            if (array[2].startsWith("ens") && array.length > 7) {
                 String info = array[7];
                 StringTokenizer tok = new StringTokenizer(info, " ");
                 while (tok.hasMoreTokens()) {
