@@ -185,7 +185,7 @@ public class DBConverter extends DataConverter
             String clsName = TypeUtil.unqualifiedName(cld.getName());
 
             if (isClassExcluded(clsName)) {
-                LOG.debug("CLASS WAS EXCLUDED:" + clsName);
+                LOG.error("CLASS WAS EXCLUDED:" + clsName);
                 return;
             }
 

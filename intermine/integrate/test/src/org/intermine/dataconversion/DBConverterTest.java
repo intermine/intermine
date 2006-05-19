@@ -43,13 +43,14 @@ public class DBConverterTest extends TestCase {
     private Map map;
     private DBReader reader;
     private ItemFactory itemFactory = new ItemFactory();
+    private String excludeList = null;
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
         Database db = DatabaseFactory.getDatabase("db.unittest");
         itemWriter = new MockItemWriter(new HashMap());
         reader = new MockDBReader();
-        converter = new MockDBConverter(model, db, reader, itemWriter);
+        converter = new MockDBConverter(model, db, reader, itemWriter, excludeList);
         blank = new ArrayList();
         map = new HashMap();
     }
@@ -392,9 +393,10 @@ public class DBConverterTest extends TestCase {
     class MockDBConverter extends DBConverter {
         private int identifier = 2;
         private boolean isUnique = true;
+        //private String excludeList = null;
 
-        public MockDBConverter(Model model, Database db, DBReader reader, ItemWriter writer) {
-            super(model, db, reader, writer);
+        public MockDBConverter(Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
+            super(model, db, reader, writer, excludeList);
         }
 
         protected void setIsUnique(boolean b) {
