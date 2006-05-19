@@ -158,9 +158,7 @@ public class PsiDataTranslator extends DataTranslator
 
                     Item hostOrganismItem = getReference(srcItem, "hostOrganism");
                     if (hostOrganismItem != null) {
-
                         String hostOrgFullName  = findNameInNamesList(hostOrganismItem, "fullName");
-
                         if (hostOrgFullName != null) {
                             tgtItem.setAttribute("hostOrganism", hostOrgFullName);
                             LOG.debug("PIE.hostOrganism:" + hostOrgFullName);
@@ -177,17 +175,13 @@ public class PsiDataTranslator extends DataTranslator
                                                         "experimentRefs").next();
                     addReferencedItem(tgtItem, exptType, "analysis", false, "", false);
 
-
                     // get: tgt.experimentList.experimentRefs[0].names.shortLabel
                     // and  tgt.experimentList.experimentRefs[0].names.fullName
                     Iterator experimentRefsIter =
                         getCollection(getReference(srcItem, "experimentList"), "experimentRefs");
                     Item namesType = getReference((Item) experimentRefsIter.next(), "names");
-
                     Item dataSet = getDataSetFromNamesType(namesType);
-
                     tgtItem.setReference("source", dataSet);
-
                     // set confidence from attributeList
                     if (srcItem.getReference("attributeList") != null) {
                         for (Iterator j = getCollection(getReference(srcItem, "attributeList"),
@@ -196,7 +190,6 @@ public class PsiDataTranslator extends DataTranslator
                             Attribute valueAttr = attrItem.getAttribute("attribute");
                             Attribute nameAttr = attrItem.getAttribute("name");
                             if (valueAttr != null && nameAttr != null) {
-
                                 String value = valueAttr.getValue().trim();
                                 String name = nameAttr.getValue().trim();
                                 if (Character.isDigit(value.charAt(0))
@@ -261,43 +254,46 @@ public class PsiDataTranslator extends DataTranslator
                             result.add(synonym);
                         } else {
                             //Since there's no usable Uniprot id, just use the Intact internal id.
-                            Iterator secondaryDbXrefIt = getCollection(xref, "secondaryRefs");
+                            if(xref.hasCollection("secondaryRefs")) {
+                                Iterator secondaryDbXrefIt = getCollection(xref, "secondaryRefs");
 
-                            boolean foundIntact = false;
-                            String intactId = null;
-                            while (secondaryDbXrefIt.hasNext() && !foundIntact) {
+                                boolean foundIntact = false;
+                                String intactId = null;
+                                while (secondaryDbXrefIt.hasNext() && !foundIntact) {
 
-                                Item nextDbXref = (Item) secondaryDbXrefIt.next();
-                                Attribute nextDbAttr = nextDbXref.getAttribute("db");
-                                if (nextDbAttr.getValue().equalsIgnoreCase("intact")) {
-
-                                    Attribute idAttr = nextDbXref.getAttribute("id");
-                                    intactId = idAttr.getValue();
-                                    foundIntact = true;
+                                    Item nextDbXref = (Item) secondaryDbXrefIt.next();
+                                    Attribute nextDbAttr = nextDbXref.getAttribute("db");
+                                    if (nextDbAttr.getValue().equalsIgnoreCase("intact")) {
+                                        
+                                        Attribute idAttr = nextDbXref.getAttribute("id");
+                                        intactId = idAttr.getValue();
+                                        foundIntact = true;
+                                    }
                                 }
-                            }
 
-                            if (foundIntact && intactId != null) {
-                                tgtItem.addAttribute(
-                                    new Attribute("primaryAccession", "IntAct:" + intactId));
-                                Item synonym = createItem("Synonym");
-                                addReferencedItem(synonym, dataSource, "source", false, "", false);
-                                synonym.addAttribute(new Attribute("value", "IntAct:" + intactId));
-                                synonym.addAttribute(new Attribute("type", "identifier"));
-                                addReferencedItem(tgtItem, synonym, "synonyms",
-                                                  true, "subject", false);
-                                result.add(synonym);
-                                Item idSynonym = createItem("Synonym");
-                                addReferencedItem(idSynonym, dataSource, "source",
-                                                  false, "", false);
-                                idSynonym.addAttribute(new Attribute("value", intactId));
-                                idSynonym.addAttribute(new Attribute("type", "identifier"));
-                                addReferencedItem(
-                                    tgtItem, idSynonym, "synonyms", true, "subject", false);
-                                result.add(idSynonym);
-                            } else {
-                                throw new RuntimeException(
-                                "Can't set a suitable primaryAccession for this ProteinInteractor");
+                                if (foundIntact && intactId != null) {
+                                    tgtItem.addAttribute(
+                                            new Attribute("primaryAccession", "IntAct:" + intactId));
+                                    Item synonym = createItem("Synonym");
+                                    addReferencedItem(synonym, dataSource, "source", false, "", false);
+                                    synonym.addAttribute(new Attribute("value", "IntAct:" + intactId));
+                                    synonym.addAttribute(new Attribute("type", "identifier"));
+                                    addReferencedItem(tgtItem, synonym, "synonyms",
+                                                      true, "subject", false);
+                                    result.add(synonym);
+                                    Item idSynonym = createItem("Synonym");
+                                    addReferencedItem(idSynonym, dataSource, "source",
+                                                      false, "", false);
+                                    idSynonym.addAttribute(new Attribute("value", intactId));
+                                    idSynonym.addAttribute(new Attribute("type", "identifier"));
+                                    addReferencedItem(
+                                       tgtItem, idSynonym, "synonyms", true, "subject", false);
+                                    result.add(idSynonym);
+                                
+                                } else {
+                                    throw new RuntimeException(
+                                              "Can't set a suitable primaryAccession for this ProteinInteractor");
+                                }
                             }
                         }
 
@@ -348,19 +344,21 @@ public class PsiDataTranslator extends DataTranslator
             dataSetItem = createItem("DataSet");
             dataSetItem.addAttribute(new Attribute("title", shortName));
             if (fullNameAttr != null) {
-
-                dataSetItem.addAttribute(new Attribute("description", fullNameAttr.getValue()));
+                dataSetItem.addAttribute(new Attribute(
+                            "description", fullNameAttr.getValue()));
             } else {
                 LOG.debug("NO FULLNAME ATTR FOUND FOR THIS SHORTNAME:" + shortName);
             }
             dataSetItem.setReference("dataSource", dataSource);
-
             dataSetMap.put(shortName, dataSetItem);
         }
 
         return dataSetItem;
     }
+    /**
+     * @param srcInteractionElementItem = InteractionElementType
 
+    */
     private Item createProteinInteraction(
             Item srcInteractionElementItem, Item tgtExperimentalResult, Collection result,
             Item dataSetItem)
@@ -414,8 +412,7 @@ public class PsiDataTranslator extends DataTranslator
         // more than protein from accepted organisms -> keep
         if (interactionOrganisms.size() > 1) {
             result.addAll(interactors);
-            String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");
-
+            String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");////prefetch
             if (iShortName != null) {
                 interaction.setAttribute("shortName", iShortName);
                 LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
@@ -425,7 +422,7 @@ public class PsiDataTranslator extends DataTranslator
             }
 
             //<confidence unit="author-confidence" value="D"/>
-            Item conf = getReference(srcInteractionElementItem, "confidence");
+            Item conf = getReference(srcInteractionElementItem, "confidence");//prefetch
 
             if (conf != null) {
                 LOG.debug("CONFIDENCE TAG FOUND IN INTERACTION:"
@@ -489,7 +486,7 @@ public class PsiDataTranslator extends DataTranslator
         }
 
         org.intermine.model.fulldata.Item namesItem =
-                this.srcItemReader.getItemById(namesRef.getRefId());
+                this.srcItemReader.getItemById(namesRef.getRefId());//prefetch
 
         boolean shortLabelFound = false;
         String iShortName = null;
@@ -618,141 +615,204 @@ public class PsiDataTranslator extends DataTranslator
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
-
+        String identifier = ObjectStoreItemPathFollowingImpl.IDENTIFIER;
         Set descSet = new HashSet();
-        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("ExperimentType.attributeList");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("attributeList",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+
+        //ExperimentType
+        ItemPrefetchDescriptor desc = new ItemPrefetchDescriptor("ExperimentType.names");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("names",
+                    identifier));
         descSet.add(desc);
-        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
-                "ExperimentType.attributeList.attributes");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("attributes",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
+        
         desc = new ItemPrefetchDescriptor("ExperimentType.bibref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("bibref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        descSet.add(desc);
-        desc2 = new ItemPrefetchDescriptor("ExperimentType.bibref.xref");
+                    identifier));        
+        ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor("ExperimentType.bibref.xref");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
+                    identifier));        
         ItemPrefetchDescriptor desc3 = new
             ItemPrefetchDescriptor("ExperimentType.bibref.xref.primaryRef");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc2.addPath(desc3);
-        desc = new ItemPrefetchDescriptor("ExperimentType.names");
-        desc.addConstraint(new ItemPrefetchConstraintDynamic("names",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        desc.addPath(desc2);
         descSet.add(desc);
+        
+        desc = new ItemPrefetchDescriptor("ExperimentType.attributeList");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("attributeList",
+                    identifier));
+        desc2 = new ItemPrefetchDescriptor(
+                "ExperimentType.attributeList.attributes");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("attributes",
+                    identifier));
+        desc.addPath(desc2);
+        descSet.add(desc);
+
         desc = new ItemPrefetchDescriptor("ExperimentType.hostOrganism");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("hostOrganism",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
+        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor("ExperimentType.hostOrganism.fullName");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("fullName",
+                    identifier));
+        desc2 = new ItemPrefetchDescriptor("ExperimentType.hostOrganism.fullName.names");
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("names",
+                    identifier));
+        desc1.addPath(desc2);
+        desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/psi#ExperimentType", descSet);
 
+        //InteractionElementType
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("InteractionElementType.experimentList");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("experimentList",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        descSet.add(desc);
+                    identifier));
         desc2 = new ItemPrefetchDescriptor("InteractionElementType.experimentList.experimentRefs");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("experimentRefs",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
+        desc3 = new ItemPrefetchDescriptor("InteractionElementType.experimentList.experimentRefs.names");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("names",
+                    identifier));
+        desc2.addPath(desc3);
         desc.addPath(desc2);
+        descSet.add(desc);
+
         desc = new ItemPrefetchDescriptor("InteractionElementType.attributeList");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("attributeList",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        descSet.add(desc);
+                    identifier));
         desc2 = new ItemPrefetchDescriptor("InteractionElementType.attributeList.attributes");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("attributes",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc.addPath(desc2);
+        descSet.add(desc);
+
         desc = new ItemPrefetchDescriptor("InteractionElementType.participantList");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("participantList",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        descSet.add(desc);
+                    identifier));        
+        desc1 = 
+            new ItemPrefetchDescriptor("InteractionElementType.participantList.proteinParticipants");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("proteinParticipants",
+                    identifier));        
+        desc3 = new ItemPrefetchDescriptor("InteractionElementType.participantList.proteinParticipants.proteinInteractorRef");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("proteinInteractorRef",
+                    identifier));
+        ItemPrefetchDescriptor desc4 = 
+            new ItemPrefetchDescriptor("InteractionElementType.participantList.proteinParticipants.proteinInteractorRef.organism");
+        desc4.addConstraint(new ItemPrefetchConstraintDynamic("organism",
+                    identifier));
+        desc3.addPath(desc4);
+        desc1.addPath(desc3);
+        desc.addPath(desc1);
+        
         desc2 = new ItemPrefetchDescriptor(
-                "InteractionElementType.participantList.proteinParticipants");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("proteinParticipants",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc.addPath(desc2);
-        desc3 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList");
-        desc3.addConstraint(new ItemPrefetchConstraintDynamic("featureList",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc2.addPath(desc3);
-        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("featureList",
+                    identifier));
+        desc4 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features");
         desc4.addConstraint(new ItemPrefetchConstraintDynamic("features",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc3.addPath(desc4);
+                    identifier));
         ItemPrefetchDescriptor desc5 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".featureDescription");
         desc5.addConstraint(new ItemPrefetchConstraintDynamic("featureDescription",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc4.addPath(desc5);
+                    identifier));
         ItemPrefetchDescriptor desc6 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".featureDescription.xref");
         desc6.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc5.addPath(desc6);
+                    identifier));
+        
         ItemPrefetchDescriptor desc7 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".featureDescription.xref.primaryRef");
         desc7.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc6.addPath(desc7);
+                    identifier));
+        desc6.addPath(desc7);//InteractionElementType.participantList.proteinParticipants.featureList.features.featureDescription.xref.primaryRef
+        desc5.addPath(desc6);//InteractionElementType.participantList.proteinParticipants.featureList.features.featureDescription.xref
+        desc4.addPath(desc5);
+        desc6 = new ItemPrefetchDescriptor(
+                "InteractionElementType.participantList.proteinParticipants.featureList.features"
+                + ".featureDescription.names");
+        desc6.addConstraint(new ItemPrefetchConstraintDynamic("names",
+                    identifier));
+        desc5.addPath(desc6);//InteractionElementType.participantList.proteinParticipants.featureList.features.featureDescription.names
         desc5 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".location");
         desc5.addConstraint(new ItemPrefetchConstraintDynamic("location",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc4.addPath(desc5);
+                    identifier));        
         desc6 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".location.begin");
         desc6.addConstraint(new ItemPrefetchConstraintDynamic("begin",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc5.addPath(desc6);
-        desc6 = new ItemPrefetchDescriptor(
+                    identifier)); 
+        desc7 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".location.end");
-        desc6.addConstraint(new ItemPrefetchConstraintDynamic("end",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
-        desc5.addPath(desc6);
+        desc7.addConstraint(new ItemPrefetchConstraintDynamic("end",
+                    identifier));
+        desc5.addPath(desc7);//InteractionElementType.participantList.proteinParticipants.featureList.features.location.end
+        desc5.addPath(desc6);//InteractionElementType.participantList.proteinParticipants.featureList.features.location.begin
+        desc4.addPath(desc5);//InteractionElementType.participantList.proteinParticipants.featureList.features.location
+
+        desc2.addPath(desc4);//InteractionElementType.participantList.proteinParticipants.featureList.features
+        desc1.addPath(desc2);
+        desc.addPath(desc1);
+                
         desc3 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.proteinInteractorRef");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("proteinInteractorRef",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc2.addPath(desc3);
+        desc.addPath(desc2);
+        descSet.add(desc);
+
+        desc = new ItemPrefetchDescriptor("InteractionElementType.shortLabel");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("shortLabel",
+                    identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("InteractionElementType.confidence");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("confidence",
+                    identifier));
+        descSet.add(desc);
         paths.put("http://www.flymine.org/model/psi#InteractionElementType", descSet);
 
+        //ProteinInteractorType
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("ProteinInteractorType.organism");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("organism",
+                    identifier));
+        descSet.add(desc);
         desc = new ItemPrefetchDescriptor("ProteinInteractorType.xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc2 = new ItemPrefetchDescriptor("ProteinInteractorType.xref.primaryRef");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc.addPath(desc2);
+        desc3 = new ItemPrefetchDescriptor("ProteinInteractorType.xref.secondaryRefs");
+        desc3.addConstraint(new ItemPrefetchConstraintDynamic("secondaryRefs",
+                    identifier));
+        desc.addPath(desc3);
+        descSet.add(desc);
         paths.put("http://www.flymine.org/model/psi#ProteinInteractorType",
-                  Collections.singleton(desc));
+                  descSet);
 
+        //Source_Entry_EntrySet
         desc = new ItemPrefetchDescriptor("Source_Entry_EntrySet.names");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("names",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         paths.put("http://www.flymine.org/model/psi#Source_Entry_EntrySet",
                   Collections.singleton(desc));
 
+        //CvType
         desc = new ItemPrefetchDescriptor("CvType.xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("xref",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc2 = new ItemPrefetchDescriptor("CvType.xref.primaryRef");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
-                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+                    identifier));
         desc.addPath(desc2);
         paths.put("http://www.flymine.org/model/psi#CvType", Collections.singleton(desc));
 
