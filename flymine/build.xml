@@ -833,7 +833,11 @@
       <classpath refid="models.class.path"/>
     </taskdef>
 
-    <retrieve-ensembl database="db.ensembl-human" model="ensembl" osName="osw.ensembl-human-src-items"/>
+    <retrieve-ensembl database="db.ensembl-human" 
+                      model="ensembl" 
+                      osName="osw.ensembl-human-src-items" 
+                      excludeList="dna"/>
+
 
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -2166,7 +2170,22 @@
       </fileset>
     </filter-uniprot>
   </target>
+  
+  <target name="filter-uniprot-stemcell" depends="prepare-build-model, compile-uniprot-java">
+    <taskdef
+      name="filter-uniprot"
+      classname="org.flymine.dataconversion.UniprotFilterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
 
+  <filter-uniprot tgtDir="${build.tmp}" organisms="9606 10090">
+      <fileset dir="${shared.data}/uniprot/7.5">
+        <include name="uniprot_sprot*"/>
+        <include name="uniprot_trembl*"/>
+      </fileset>
+    </filter-uniprot>
+  </target>
+  
   <target name="retrieve-uniprot" depends="prepare-build-model">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -3947,6 +3966,8 @@
   <!--LOAD PRODUCTION DATA  -->
   <target name="build-ensembl-human-production"
           depends="retrieve-ensembl-human,translate-ensembl-human,load-ensembl-human"/>
+<target name="build-ensembl-hs-production"
+          depends="retrieve-ensembl-hs,translate-ensembl-hs,load-ensembl-human"/>
 
  <!--GENE SYNONYMS FROM ENSEMBL-HUMAN ENSMART-->
   <!--Retrieve gene synonyms for EntrezGene, file is tab separated format -->
@@ -4286,7 +4307,8 @@
     <convert-file osName="osw.go-annotation-tgt-items"
                   clsName="org.flymine.dataconversion.GoConverter"
                   model="genomic"
-                  ontology="${build}/model/go/gene_ontology.obo">
+                  ontology="${build}/model/go/gene_ontology.obo"
+                  geneAttribute="identifier">
       <fileset dir="${shared.data}/go-annotation/mgi/2006-05-06">
         <include name="gene_association.mgi"/>
       </fileset>
@@ -5256,6 +5278,33 @@
     </ant>
   </target>
 
+  <target name="translate-psi-stemcell" depends="compile-psi-java, compile-genomic-java-from-db">
+    <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+      <property name="objectstore.name" value="os.psi-tgt-items-std"/>
+    </ant>
+    <copy file="${model}/psi/psi_mappings" toDir="${build.model}/psi"/>
+    <taskdef name="translate-data" classname="org.flymine.task.DataTranslatorTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <translate-data translator="org.flymine.dataconversion.PsiDataTranslator"
+                    source="os.psi-src-items"
+                    target="osw.psi-tgt-items"
+                    srcModel="psi"
+                    tgtModel="genomic"
+                    organisms="9606 10090"/>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.psi-tgt-items-std"/>
+    </ant>
+    <ant antfile="${build}/build-model.xml" target="analyse-db" inheritRefs="true">
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="db.name" value="db.common-tgt-items"/>
+    </ant>
+  </target>
   <target name="load-psi-intact-stemcell" depends="copy-stemcell-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
@@ -5268,7 +5317,7 @@
   </target>
 
   <target name="build-psi-intact-production-stemcell"
-          depends="retrieve-psi-intact-stemcell, translate-psi, load-psi-intact-stemcell"/>
+          depends="retrieve-psi-intact-stemcell, translate-psi-stemcell, load-psi-intact-stemcell"/>
 
 
  <target name="filter-uniprot-hs" depends="prepare-build-model, compile-uniprot-java">
@@ -5278,7 +5327,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="9606">
-      <fileset dir="${shared.data}/uniprot/7.5">
+      <fileset dir="${shared.data}/uniprot/7.7">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
