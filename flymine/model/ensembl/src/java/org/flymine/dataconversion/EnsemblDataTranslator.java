@@ -582,8 +582,8 @@ public class EnsemblDataTranslator extends DataTranslator
         }
         if (srcItem.hasReference("seq_region")) {
 
-            LOG.info("A seq_region was found for:" + srcItem.getClassName()
-                    + " id:" + srcItem.getIdentifier());
+            LOG.debug("A seq_region was found for:" + srcItem.getClassName()
+                      + " id:" + srcItem.getIdentifier());
 
             String refId = srcItem.getReference("seq_region").getRefId();
             Item seq = getSeqItem(refId, true);
@@ -643,7 +643,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
             String markerSynRefId = srcItem.getReference("display_marker_synonym").getRefId();
 
-            org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);
+            org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);//prefetch
 
             if (markerSyn != null) {
 
@@ -1160,6 +1160,15 @@ public class EnsemblDataTranslator extends DataTranslator
 
         //exon
         Set descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("exon <- exon_transcript.exon");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "exon"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#exon_transcript", false));
+        descSet.add(desc);
+        desc1 = new ItemPrefetchDescriptor("(<- exon_transcript.exon).transcript");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic("transcript", identifier));
+        desc.addPath(desc1);
+        descSet.add(desc);
         desc = new ItemPrefetchDescriptor("exon <- exon_stable_id.exon");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "exon"));
         desc.addConstraint(new FieldNameAndValue(classname,
@@ -1173,6 +1182,11 @@ public class EnsemblDataTranslator extends DataTranslator
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl#exon", descSet);
 
+        //exon_stable_id
+        desc = new ItemPrefetchDescriptor("exon_stable_id.exon");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("exon", identifier));
+        paths.put("http://www.flymine.org/model/ensembl#exon_stable_id",
+                Collections.singleton(desc));
         //gene
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("gene <- gene_stable_id.gene");
@@ -1189,12 +1203,6 @@ public class EnsemblDataTranslator extends DataTranslator
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         desc.addPath(desc1);
         descSet.add(desc);
-        //not suitable for homo_sapiens_core_31_35d
-        //desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
-        //desc.addConstraint(new FieldNameAndValue(classname,
-        //              "http://www.flymine.org/model/ensembl-human#gene_description", false));
-        //descSet.add(desc);
         desc = new ItemPrefetchDescriptor("gene.display_xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
         desc1 = new ItemPrefetchDescriptor("gene.display_xref.external_db");
@@ -1202,9 +1210,21 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl#gene", descSet);
+ 
+        //gene_stable_id
+        desc = new ItemPrefetchDescriptor("gene_stable_id.gene");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("gene", identifier));
+        paths.put("http://www.flymine.org/model/ensembl#gene_stable_id",
+                Collections.singleton(desc));
 
         //transcript
         descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("transcript <- translation.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "transcript"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#translation", false));
+        descSet.add(desc);
+
         desc = new ItemPrefetchDescriptor("transcript <- transcript_stable_id.transcript");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "transcript"));
         desc.addConstraint(new FieldNameAndValue(classname,
@@ -1220,6 +1240,12 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl#transcript", descSet);
+
+         //transcript_stable_id
+        desc = new ItemPrefetchDescriptor("transcript_stable_id.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("transcript", identifier));
+        paths.put("http://www.flymine.org/model/ensembl#transcript_stable_id",
+                Collections.singleton(desc));
 
         //translation
         descSet = new HashSet();
@@ -1240,6 +1266,12 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl#translation", descSet);
+ 
+        //translation_stable_id
+        desc = new ItemPrefetchDescriptor("translation_stable_id.translation");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("translation", identifier));
+        paths.put("http://www.flymine.org/model/ensembl#translation_stable_id",
+                Collections.singleton(desc));
 
         //repeat_feature
         descSet = new HashSet();
@@ -1261,6 +1293,11 @@ public class EnsemblDataTranslator extends DataTranslator
         descSet = new HashSet();
         desc = new ItemPrefetchDescriptor("marker.display_marker_synonym");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("display_marker_synonym", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("marker <- marker_synonym.marker");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "marker"));
+        desc.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#marker_synonym", false));
         descSet.add(desc);
         desc = new ItemPrefetchDescriptor("marker <- marker_feature.marker");
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "marker"));
