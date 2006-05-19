@@ -86,7 +86,7 @@ public class DataTranslatorTask extends Task
 
     /**
      * Set a space separated list of taxon ids (for psi)
-     * @param organism a list of taxon ids
+     * @param organisms a list of taxon ids
      */
     public void setOrganisms(String organisms) {
         this.organisms = organisms;
@@ -167,6 +167,8 @@ public class DataTranslatorTask extends Task
                 };
 
                 args = new Object[] {reader, mappingProps, src, tgt, ensemblProps, organism};
+
+               
 
             //TODO: Fix this hard coded bodgieness ???
             } else if ("org.flymine.dataconversion.ProteinStructureDataTranslator"
