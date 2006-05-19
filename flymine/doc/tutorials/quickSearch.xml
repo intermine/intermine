@@ -3,38 +3,45 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>Tutorial 1: <emphasis>Browsing FlyMine - running a quick search</emphasis></title>
+    <title>Tutorial 1: <emphasis>Browsing FlyMine - running a Quick Search</emphasis></title>
 
-    <para>This tutorial will guide you through running a quick
-    search. The tutorial will show you how to run a quick search for
+    <para>This tutorial will guide you through running a Quick
+    Search. The tutorial will show you how to run a Quick Search for
     the 'bib' gene.</para>
 
-    <para>The quick search allows you to access all the information
+    <para>The Quick Search allows you to access all the information
     that is available for a particular database entry and provides a
     good way to browse the database.</para>
 
-    <para>The quick search box is found in the top right of the FlyMine 
-    home page.  You can use this to search for anything with an identifier or
-    symbol, for example genes, proteins, transcripts or binding sites.</para>
+    <para>The Quick Search box is found in the top right of the FlyMine 
+    home page. You can use this to search for anything with an identifier or
+    symbol, for example genes, exons, transcripts, proteins, protein domains 
+    and families, INDAC microarray oligos and transcription factor binding sites.</para>
 
     <para>Some example identifiers:    </para>
       <itemizedlist>
-        <listitem><para>for the <emphasis>Drosophila</emphasis> gene zen, type
-      FBgn0004053, CG1046, zen or any of its synonyms.</para></listitem>
+        <listitem><para>for <emphasis>Drosophila</emphasis> genes, use the symbol, full name,
+         <ulink url="http://www.flybase.org">FlyBase</ulink> ID or any synonym (eg. zen, zerknullt, FBgn0004053, 
+         CG1046, z1, zen1, BG:DS00276.9, zerknullt 1, zerknult, l(3)84Ad).</para></listitem>
         <listitem><para>for <emphasis>A. gambiae</emphasis> genes, use
-      <ulink url="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</ulink> 
-      identifiers (eg. ENSANGG00000001499).</para></listitem>
+         <ulink url="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</ulink> 
+         identifiers (eg. ENSANGG00000001499).</para></listitem>
+        <listitem><para>for <emphasis>Apis mellifera</emphasis> genes, use
+         <ulink url="http://www.ensembl.org/Apis_mellifera/index.html">Ensembl</ulink> 
+         identifiers (eg. ENSAPMG00000012500).</para></listitem>
         <listitem><para>for <emphasis>C. elegans</emphasis> genes, use the 
-      <ulink url="http://www.wormbase.org/">WormBase</ulink>
-      identifiers or symbols (eg. M117.2, WBGene00003920, par-5).</para></listitem>
-        <listitem><para>for proteins use <ulink url="http://www.uniprot.org">UniProt</ulink> identifiers or primary accessions (eg. 18C_DROME, P16909).</para></listitem>
+         <ulink url="http://www.wormbase.org/">WormBase</ulink>
+         identifiers or symbols (eg. M117.2, WBGene00003920, par-5, ftt-1).</para></listitem>
+        <listitem><para>for proteins, use <ulink url="http://www.uniprot.org">UniProt</ulink> 
+         identifiers or primary accessions (eg. 18C_DROME, P16909).</para></listitem>
+        <listitem><para>for protein domains or families, use 
+         <ulink url="http://www.ebi.ac.uk/interpro">InterPro</ulink> 
+         (eg. IPR001254, IPR001804).</para></listitem>
       </itemizedlist>
 
 
     <para>Enter the gene symbol 'bib' into the search box and press
     'Search':</para>
-
-
 
        <mediaobject>
           <imageobject>
