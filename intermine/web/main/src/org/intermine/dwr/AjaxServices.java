@@ -12,6 +12,8 @@ package org.intermine.dwr;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +24,10 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.Constants;
-import org.intermine.web.MainHelper;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.TemplateQuery;
+import org.intermine.web.TemplateHelper;
 import org.intermine.web.tagging.TagTypes;
 
 import uk.ltd.getahead.dwr.WebContext;
@@ -33,9 +35,9 @@ import uk.ltd.getahead.dwr.WebContextFactory;
 
 /**
  * This class contains the methods called through DWR Ajax
- * 
+ *
  * @author Xavier Watkins
- * 
+ *
  */
 public class AjaxServices
 {
@@ -43,7 +45,7 @@ public class AjaxServices
 
     /**
      * Creates a favourite Tag for the given templateName
-     * 
+     *
      * @param templateName
      *            the name of the template we want to set as a favourite
      */
@@ -72,11 +74,13 @@ public class AjaxServices
         TemplateQuery template = (TemplateQuery) templates.get(templateName);
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
-        Query query = MainHelper.makeQuery(template.getQuery(), profile.getSavedBags());
+        List indexes = new ArrayList();
+        Query query = TemplateHelper.getPrecomputeQuery(template, indexes);
+
         try {
             if (!os.isPrecomputed(query, "template")) {
                 session.setAttribute("precomputing_" + templateName, "true");
-                os.precompute(query, "template");
+                os.precompute(query, indexes, "template");
                 session.removeAttribute("precomputing_" + templateName);
             }
         } catch (SQLException e) {
