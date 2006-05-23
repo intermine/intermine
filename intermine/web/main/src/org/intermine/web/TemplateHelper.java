@@ -426,7 +426,7 @@ public class TemplateHelper
         PathQuery queryClone = (PathQuery) PathQueryBinding.unmarshal(reader).values()
             .iterator().next();
 
-        TemplateQuery clone = new TemplateQuery(templategetName(), template.getDescription(),
+        TemplateQuery clone = new TemplateQuery(template.getName(), template.getDescription(),
                                                 queryClone, template.isImportant(),
                                                 template.getKeywords());
         return clone;
