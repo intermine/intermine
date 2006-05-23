@@ -422,9 +422,7 @@ public class TemplateHelper
      * @return a clone of the original template
      */
     public static TemplateQuery cloneTemplate(TemplateQuery template) {
-        Reader reader = new StringReader(template.getQuery().toXml());
-        PathQuery queryClone = (PathQuery) PathQueryBinding.unmarshal(reader).values()
-            .iterator().next();
+        PathQuery queryClone = (PathQuery) template.getQuery().clone();
 
         TemplateQuery clone = new TemplateQuery(template.getName(), template.getDescription(),
                                                 queryClone, template.isImportant(),
