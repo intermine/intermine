@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
@@ -409,5 +412,72 @@ public class TemplateHelper
         InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
         return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
                                                templateName, interMineObjectId, userName);
+    }
+
+
+    /**
+     * Clone for operations that need to alter a template but not change the original,
+     * for example when removing constraints for precomputing.
+     * @param template the query to clone
+     * @return a clone of the original template
+     */
+    public static TemplateQuery cloneTemplate(TemplateQuery template) {
+        Reader reader = new StringReader(template.getQuery().toXml());
+        PathQuery queryClone = (PathQuery) PathQueryBinding.unmarshal(reader).values()
+            .iterator().next();
+
+        TemplateQuery clone = new TemplateQuery(templategetName(), template.getDescription(),
+                                                queryClone, template.isImportant(),
+                                                template.getKeywords());
+        return clone;
+    }
+
+
+
+    /**
+     * Get an ObjectStore query to precompute this template - remove editable constraints
+     * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
+     * to create additional indexes on (i.e. those added to select list).  Original
+     * template is left unaltered.
+     * @param template to generate precompute query for
+     * @param indexes any additional indexes to be created will be added to this list.
+     * @return the query to precompute
+     */
+    public static Query getPrecomputeQuery(TemplateQuery template, List indexes) {
+        // generate query with editable constraints removed
+        TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
+
+
+        // dummy call to makeQuery() to fill in pathToQueryNode map
+        List indexPaths = new ArrayList();
+        // find nodes with editable constraints to index and possibly add to select list
+        Iterator niter = template.getNodes().iterator();
+        while (niter.hasNext()) {
+            PathNode node = (PathNode) niter.next();
+            // look for editable constraints
+            List ecs = template.getConstraints(node);
+            if (ecs != null && ecs.size() > 0) {
+                // NOTE: at one point this exhibited a bug where aliases were repeated
+                // in the generated query, seems to be fixed now though.
+                String path = node.getPath();
+                Set view = new HashSet(templateClone.getQuery().getView());
+                if (!view.contains(path)) {
+                    templateClone.getQuery().getView().add(path);
+                }
+                indexPaths.add(path);
+            }
+        }
+
+        HashMap pathToQueryNode = new HashMap();
+        Query query = MainHelper.makeQuery(templateClone.getQuery(), new HashMap(),
+                                           pathToQueryNode);
+
+        // create additional indexes on fields added to select list
+        Iterator indexIter = indexPaths.iterator();
+        while (indexIter.hasNext()) {
+            String path = (String) indexIter.next();
+            indexes.add(pathToQueryNode.get(path));
+        }
+        return query;
     }
 }

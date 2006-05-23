@@ -1269,7 +1269,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     sql, "precomputed_table_" + tableNumber, category, c);
             Set stringIndexes = new HashSet();
-            if (indexes != null) {
+            if (indexes != null && !indexes.isEmpty()) {
                 Map aliases = q.getAliases();
                 stringIndexes = new HashSet();
                 String all = null;
@@ -1305,10 +1305,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             throw new ObjectStoreException(e);
         }
     }
-    
+
     /**
      * Checks if a query is precomputed or not for the given type
-     * 
+     *
      * @param query the query
      * @param type the type
      * @return
@@ -1330,7 +1330,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Checks if a query is precomputed or not for the given type and connection
-     * 
+     *
      * @param c the connection
      * @param query the query
      * @param type the type

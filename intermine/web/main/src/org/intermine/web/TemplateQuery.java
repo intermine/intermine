@@ -106,11 +106,18 @@ public class TemplateQuery
 
 
     /**
-     * Remove the editable constraints from the template query
+     * Return a clone of this template query with all editable constraints
+     * removed - i.e. a query that will return all possible results of executing
+     * the template.  The original template is left unaltered.
+     * @return a clone of the original tempate without editable constraints.
      */
-    public void removeEditableConstraints() {
+    public TemplateQuery cloneWithoutEditableConstraints() {
+        TemplateQuery clone = TemplateHelper.cloneTemplate(this);
+
+        PathQuery queryClone = clone.getQuery();
+
         // Find the editable constraints in the query.
-        Iterator iter = query.getNodes().entrySet().iterator();
+        Iterator iter = queryClone.getNodes().entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             PathNode node = (PathNode) entry.getValue();
@@ -122,8 +129,10 @@ public class TemplateQuery
                 }
             }
         }
-        constraints.clear();
-        nodes.clear();
+        clone.constraints.clear();
+        clone.nodes.clear();
+
+        return clone;
     }
 
 
@@ -174,14 +183,14 @@ public class TemplateQuery
     public String getName() {
         return name;
     }
-    
+
     /**
      * @return true if template is important
      */
     public boolean isImportant() {
         return important;
     }
-    
+
     /**
      * Find out whether the template is valid against the current model.
      * @return true if template is valid, false if not
@@ -189,7 +198,7 @@ public class TemplateQuery
     public boolean isValid() {
         return query.isValid();
     }
-    
+
     /**
      * Get the exceptions generated while deserialising this template query.
      * @return exceptions relating to this template query
@@ -205,7 +214,7 @@ public class TemplateQuery
     public String getKeywords() {
         return keywords;
     }
-    
+
     /**
      * Convert a template query to XML.
      * @return this template query as XML.
@@ -213,14 +222,15 @@ public class TemplateQuery
     public String toXml() {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        
+
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             TemplateQueryBinding.marshal(this, writer);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-        
+
         return sw.toString();
     }
+
 }

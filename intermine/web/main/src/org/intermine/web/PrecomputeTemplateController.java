@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.util.Map;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +28,9 @@ import org.intermine.objectstore.query.Query;
 
 /**
  * Controller for the precomputeTemplate.tile
- * 
+ *
  * @author Xavier Watkins
- * 
+ *
  */
 public class PrecomputeTemplateController extends TilesAction
 {
@@ -45,7 +46,11 @@ public class PrecomputeTemplateController extends TilesAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map templates = profile.getSavedTemplates();
         TemplateQuery template = (TemplateQuery) templates.get(templateName);
-        Query query = MainHelper.makeQuery(template.getQuery(), profile.getSavedBags());
+
+        // we need to precompute without editable constraints - call method that
+        // returns an ObjectStore query with them removed
+        // TODO: can't currently create a template usind a saved bag
+        Query query = TemplateHelper.getPrecomputeQuery(template, new ArrayList());
 
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                 .getAttribute(Constants.OBJECTSTORE);

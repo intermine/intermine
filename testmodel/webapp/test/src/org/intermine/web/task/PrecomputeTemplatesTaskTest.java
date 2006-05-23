@@ -13,6 +13,10 @@ package org.intermine.web.task;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -32,6 +36,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.web.MainHelper;
 import org.intermine.web.TemplateQuery;
+import org.intermine.web.TemplateHelper;
 
 import java.io.InputStream;
 
@@ -72,12 +77,12 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         Properties properties = new Properties();
         properties.load(webProps);
         String user = properties.getProperty("superuser.account");
-        
+
         PrecomputeTemplatesTask task = new PrecomputeTemplatesTask();
         task.setAlias("os.unittest");
         task.setUserProfileAlias("osw.userprofile-test");
         task.setUsername(user);
-        
+
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Map templates = task.getPrecomputeTemplateQueries();
         TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
@@ -105,15 +110,13 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
 
         System.out.println("query: " + q);
 
-        PrecomputeTemplatesTask.QueryAndIndexes expected = task.new QueryAndIndexes();
-        expected.setQuery(q);
-        expected.addIndex(qfAge);
-        PrecomputeTemplatesTask.QueryAndIndexes qai = task.processTemplate(template);
-        System.out.println("generate: " + qai.getQuery());
-        assertEquals(expected.toString(), qai.toString());
-        System.out.println("generate: " + qai.getQuery());
+        List indexes = new ArrayList();
+        Query actualQ = TemplateHelper.getPrecomputeQuery(template, indexes);
+        assertEquals(q, actualQ);
+        List expIndexes = new ArrayList(Collections.singleton(qfAge));
+        assertEquals(expIndexes.toString(), indexes.toString());
 
-        task.precompute(os, qai.getQuery(), qai.getIndexes());
+        task.precompute(os, actualQ, indexes, "template");
     }
 
     public void testQueries() {
