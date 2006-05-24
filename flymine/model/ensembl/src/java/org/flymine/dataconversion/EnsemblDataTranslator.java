@@ -458,7 +458,13 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
 
-   
+    /**
+     * @param srcItem = ensembl:gene
+     * @param tgtItem = flymine:gene
+     * @param srcNs srcItem namespace
+     * @return a set of gene synonyms
+     * @throws ObjectStoreException if anything goes wrong
+     */
     private Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs)
             throws ObjectStoreException {
 
@@ -486,7 +492,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
             //look for the reference to an xref database - the external_db
             if (xref.hasReference("external_db")) {
-                Item extDb = ItemHelper.convert(srcItemReader.getItemById(xref.getReference("external_db").getRefId()));
+                Item extDb = ItemHelper.convert(srcItemReader.getItemById(
+                             xref.getReference("external_db").getRefId()));
                 if (extDb.hasAttribute("db_name")) {
                     dbname = extDb.getAttribute("db_name").getValue();
                 }
@@ -499,7 +506,7 @@ public class EnsemblDataTranslator extends DataTranslator
             if (xref.hasAttribute("display_label")) {
                 symbol = xref.getAttribute("display_label").getValue();
             } 
-            LOG.error("db " + dbname + " acc "+ accession + " sym " + symbol);
+
             //check to see if we have a valid accession & dbname.
             if (accession != null && !accession.equals(EMPTY_STRING)
                 && dbname != null && !dbname.equals(EMPTY_STRING)) {
@@ -510,7 +517,6 @@ public class EnsemblDataTranslator extends DataTranslator
                 if (config.useXrefDbsForGeneIdentifier() 
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
                     tgtItem.addAttribute(new Attribute("identifier", accession));
-                    LOG.info("HUGO: "+ accession + " db " + dbname); 
                     Item synonym = createProductSynonym(tgtItem, "accession",
                                    accession, config.getEnsemblDataSrcRef());
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
@@ -518,23 +524,19 @@ public class EnsemblDataTranslator extends DataTranslator
                 
                 } else {
                     tgtItem.addAttribute(new Attribute("identifier", stableId));
-                    LOG.info("tgtIdentifier " + stableId);
                 }
 
                 if (config.containsXrefDataSourceNamed(dbname)) {
                     Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                    LOG.debug("Creating Synonym for dbname:" + dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession", accession, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
                     tgtItem.addAttribute(new Attribute("accession", accession));   
-                    LOG.info("refseq: "+ accession +" Symbol: " + symbol + " db " + dbname); 
                 } else {
                     LOG.debug("Skipped! Can't create a Synonym for db:" + dbname);
                 }
             } else {
                 tgtItem.addAttribute(new Attribute("identifier", stableId));
-                LOG.info("tgtIdentifier " + stableId);
                 LOG.debug("Skipped! Bad dbprimary_acc:" + accession + " or dbname:" + dbname);
             }
 
@@ -546,7 +548,6 @@ public class EnsemblDataTranslator extends DataTranslator
                 if (config.containsXrefSymbolDataSourceNamed(dbname)) {
                     Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     LOG.debug("Creating Symbol Synonym for dbname:" + dbname);
-                    LOG.info("Symbol " + symbol+ "for dbname:" + dbname);
                     Item synonym = createProductSynonym(tgtItem, "symbol", symbol, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
@@ -560,7 +561,6 @@ public class EnsemblDataTranslator extends DataTranslator
 
         } else {
             tgtItem.addAttribute(new Attribute("identifier", stableId));
-            LOG.info("tgtIdentifier " + stableId);
             LOG.debug("Skipped! As no display_xref was found for srcItem:" + srcItem.getClassName()
                     + " id:" + srcItem.getIdentifier());
         }
@@ -568,9 +568,6 @@ public class EnsemblDataTranslator extends DataTranslator
         return synonyms;
        
     }
-
-
-
 
 
     private Item createSimpleRelation(String objectId, String subjectId) {
