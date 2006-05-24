@@ -144,10 +144,10 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if ("exon".equals(srcItemClassName)) {
 
                     //Skip this exon if it points to invalid transcripts!
-                    if (!isExonToBeKept(srcItem, true)) {
-                        LOG.debug("isExonToBeKept false for Exon:" + srcItem.getIdentifier());
-                        return result;
-                    }
+                    // if (!isExonToBeKept(srcItem, true)) {
+//                         LOG.debug("isExonToBeKept false for Exon:" + srcItem.getIdentifier());
+//                         return result;
+//                     }
 
                     tgtItem.addReference(config.getOrganismRef());
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
@@ -179,12 +179,8 @@ public class EnsemblDataTranslator extends DataTranslator
                     //i.e. for anoph they are the same, but for human they are differant
                     //note: the organismDbId is effecivly what we choose as a primary accession
                     // and thus may differ from what we want to assign as the identifier...
-                    if (config.useXrefDbsForGeneIdentifier()) {
-                        result.addAll(doXrefGeneHandling(srcItem, tgtItem, srcNs));
-                    } else {
-                        result.addAll(doDefaultGeneHandling(srcItem, tgtItem, srcNs));
-                    }
-
+                    result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
+                    
                 } else if ("transcript".equals(srcItemClassName)) {
 
                     translateTranscript(srcItem, tgtItem, result, srcNs);
@@ -208,12 +204,12 @@ public class EnsemblDataTranslator extends DataTranslator
                 } else if (srcItemClassName.endsWith("_stable_id")) {
 
                     //check to see if the exons point to valid transcripts before making a synonym.
-                    if (srcItemClassName.startsWith("exon")) {
-                        //Skip this exon if it points to invalid transcripts!
-                        if (!isExonToBeKept(srcItem, false)) {
-                            return result;
-                        }
-                    }
+                   //  if (srcItemClassName.startsWith("exon")) {
+//                         //Skip this exon if it points to invalid transcripts!
+//                         if (!isExonToBeKept(srcItem, false)) {
+//                             return result;
+//                         }
+//                     }
 
                     tgtItem.addToCollection("evidence", config.getEnsemblDataSet());
                     tgtItem.addReference(config.getEnsemblDataSrcRef());
@@ -222,6 +218,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
                     translateRepeatFeature(srcItem, tgtItem, result);
                     // repeat_consensus
+
                 } else if ("marker".equals(srcItemClassName)) {
                     tgtItem.addReference(config.getOrganismRef());
 
@@ -329,7 +326,7 @@ public class EnsemblDataTranslator extends DataTranslator
             // create CDS and reference from MRNA
             Item cds = createItem(tgtNs + "CDS", "");
             Item stableId = getStableId("translation",
-                    translation.getIdentifier(), srcNs);
+                                        translation.getIdentifier(), srcNs); 
             cds.setAttribute(IDENTIFIER,
                     stableId.getAttribute("stable_id").getValue() + "_CDS");
             cds.addToCollection("polypeptides", translation.getIdentifier());
@@ -428,9 +425,9 @@ public class EnsemblDataTranslator extends DataTranslator
 
             Item etNext = (Item) etIt.next();
             Item tscrpt = ItemHelper.convert(srcItemReader.getItemById(
-                    etNext.getReference("transcript").getRefId()));
+                          etNext.getReference("transcript").getRefId()));
 
-                        //We only allow protein_coding types in...
+            //We only allow protein_coding types in...
             String bioType = tscrpt.getAttribute("biotype").getValue();
 
             if (!bioType.equalsIgnoreCase("bacterial_contaminant")) {
@@ -461,61 +458,12 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
 
-    private Collection doXrefGeneHandling(Item srcItem, Item tgtItem, String srcNs)
+   
+    private Set setGeneSynonyms(Item srcItem, Item tgtItem, String srcNs)
             throws ObjectStoreException {
 
-        Collection results = new HashSet();
-
-        if (srcItem.hasReference("display_xref") && srcItem.getReference("display_xref") != null) {
-
-            Item xref = ItemHelper.convert(
-                    srcItemReader.getItemById(srcItem.getReference("display_xref").getRefId()));
-
-            Item extDb = ItemHelper.convert(
-                    srcItemReader.getItemById(xref.getReference("external_db").getRefId()));
-
-            //If the db xref is ok for setting as the identifier attribute
-            if (config.getGeneXrefDbName().equalsIgnoreCase(
-                    extDb.getAttribute("db_name").getValue())) {
-
-                String xrefDbAc = xref.getAttribute("dbprimary_acc").getValue();
-                tgtItem.addAttribute(new Attribute("organismDbId", xrefDbAc));
-
-                //create the synonym on this xref db id.
-                //NOTE: we treat it as an identifier not as a db 'accesion' for this purpose.
-                results.add(createProductSynonym(tgtItem, IDENTIFIER,
-                        xrefDbAc, config.getEnsemblDataSrcRef()));
-            } else {
-                //if not - just use the default handling...
-                doDefaultGeneHandling(srcItem, tgtItem, srcNs);
-            }
-
-            //If this is ever null then there's a problem with the ensembl data!!!
-            Item stableIdItem = getStableId("gene", srcItem.getIdentifier(), srcNs);
-            // <- gene_stable_id.gene
-            String stableId = stableIdItem.getAttribute("stable_id").getValue();
-            tgtItem.addAttribute(new Attribute(IDENTIFIER, stableId));
-            //create a synonym based on the enseml stable gene id.
-            results.add(createProductSynonym(tgtItem, IDENTIFIER,
-                    stableId, config.getEnsemblDataSrcRef()));
-
-            //Set up all the optional xref synonyms - if the gene is KNOWN it should
-            // have an ensembl xref to another db's accesssion for the same gene.
-            results.addAll(setXrefGeneSynonyms(srcItem, tgtItem));
-
-        } else {
-            LOG.debug("A GENE WITH NO XREF FOUND - RESORTING TO DEFAULT HANDLING FOR THIS ITEM!");
-            return doDefaultGeneHandling(srcItem, tgtItem, srcNs);
-        }
-
-        return results;
-    }
-
-    private Collection doDefaultGeneHandling(Item srcItem, Item tgtItem, String srcNs)
-            throws ObjectStoreException {
-
-        Collection results = new HashSet();
-
+        Set synonyms = new HashSet();
+        
         //If this is ever null then there's a problem with the ensembl data!!!
         Item stableIdItem = getStableId("gene", srcItem.getIdentifier(), srcNs);
         // <- gene_stable_id.gene
@@ -524,13 +472,101 @@ public class EnsemblDataTranslator extends DataTranslator
         //Use the default approach of setting both the organismDbId & identifier to
         // be the same value - the ensembl stable id.
         tgtItem.addAttribute(new Attribute("organismDbId", stableId));
-        tgtItem.addAttribute(new Attribute(IDENTIFIER, stableId));
-
+        
         //Set up all the optional xref synonyms - if the gene is KNOWN it should
         // have an ensembl xref to another db's accesssion for the same gene.
-        results.addAll(setXrefGeneSynonyms(srcItem, tgtItem));
 
-        return results;
+        if (srcItem.hasReference("display_xref")) {
+            Item xref = ItemHelper.convert(srcItemReader.getItemById(
+                    srcItem.getReference("display_xref").getRefId()));
+
+            String dbname = null;
+            String accession = null;
+            String symbol = null;
+
+            //look for the reference to an xref database - the external_db
+            if (xref.hasReference("external_db")) {
+                Item extDb = ItemHelper.convert(srcItemReader.getItemById(xref.getReference("external_db").getRefId()));
+                if (extDb.hasAttribute("db_name")) {
+                    dbname = extDb.getAttribute("db_name").getValue();
+                }
+            }
+            //look for a primary accession - if we have one we may be able to create a synonym
+            if (xref.hasAttribute("dbprimary_acc")) {
+                accession = xref.getAttribute("dbprimary_acc").getValue();
+            }
+            //look for the display label - since we might be able to use it as a symbol synonym.
+            if (xref.hasAttribute("display_label")) {
+                symbol = xref.getAttribute("display_label").getValue();
+            } 
+            LOG.error("db " + dbname + " acc "+ accession + " sym " + symbol);
+            //check to see if we have a valid accession & dbname.
+            if (accession != null && !accession.equals(EMPTY_STRING)
+                && dbname != null && !dbname.equals(EMPTY_STRING)) {
+                //If we have a valid xref for this dsname then we can create the synonym for the
+                // external database accession.
+                //NOTE: if the xref is being used as an alternative identifier it will already have
+                // a synonym with type 'identifier'.
+                if (config.useXrefDbsForGeneIdentifier() 
+                    && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
+                    tgtItem.addAttribute(new Attribute("identifier", accession));
+                    LOG.info("HUGO: "+ accession + " db " + dbname); 
+                    Item synonym = createProductSynonym(tgtItem, "accession",
+                                   accession, config.getEnsemblDataSrcRef());
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonyms.add(synonym);
+                
+                } else {
+                    tgtItem.addAttribute(new Attribute("identifier", stableId));
+                    LOG.info("tgtIdentifier " + stableId);
+                }
+
+                if (config.containsXrefDataSourceNamed(dbname)) {
+                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
+                    LOG.debug("Creating Synonym for dbname:" + dbname);
+                    Item synonym = createProductSynonym(tgtItem, "accession", accession, extDbRef);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonyms.add(synonym);
+                    tgtItem.addAttribute(new Attribute("accession", accession));   
+                    LOG.info("refseq: "+ accession +" Symbol: " + symbol + " db " + dbname); 
+                } else {
+                    LOG.debug("Skipped! Can't create a Synonym for db:" + dbname);
+                }
+            } else {
+                tgtItem.addAttribute(new Attribute("identifier", stableId));
+                LOG.info("tgtIdentifier " + stableId);
+                LOG.debug("Skipped! Bad dbprimary_acc:" + accession + " or dbname:" + dbname);
+            }
+
+           
+            //check to see if we have a valid display_lable (synonym) & dbname.
+            if (symbol != null && !symbol.equals(EMPTY_STRING)
+                && dbname != null && !dbname.equals(EMPTY_STRING)) {
+                //Now check to see if we can create a synonym that represents a symbol as well.
+                if (config.containsXrefSymbolDataSourceNamed(dbname)) {
+                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
+                    LOG.debug("Creating Symbol Synonym for dbname:" + dbname);
+                    LOG.info("Symbol " + symbol+ "for dbname:" + dbname);
+                    Item synonym = createProductSynonym(tgtItem, "symbol", symbol, extDbRef);
+                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                    synonyms.add(synonym);
+                    tgtItem.addAttribute(new Attribute("symbol", symbol));              
+                } else {
+                    LOG.debug("Skipped creating a Symbol Synonym for db:" + dbname);
+                }
+            } else {
+                LOG.debug("Skipped! Bad display_label:" + accession + " or dbname:" + dbname);
+            }
+
+        } else {
+            tgtItem.addAttribute(new Attribute("identifier", stableId));
+            LOG.info("tgtIdentifier " + stableId);
+            LOG.debug("Skipped! As no display_xref was found for srcItem:" + srcItem.getClassName()
+                    + " id:" + srcItem.getIdentifier());
+        }
+
+        return synonyms;
+       
     }
 
 
@@ -644,7 +680,6 @@ public class EnsemblDataTranslator extends DataTranslator
             String markerSynRefId = srcItem.getReference("display_marker_synonym").getRefId();
 
             org.intermine.model.fulldata.Item markerSyn = srcItemReader.getItemById(markerSynRefId);
-            //prefetch
 
             if (markerSyn != null) {
 
@@ -681,8 +716,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
         contigId = srcItem.getReference("cmp_seq_region").getRefId();
         bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
-        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
-        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
+        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId)); /**prefetch*/
+        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));/**prefetch*/
 
         contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
         bioEntityLength = Integer.parseInt(bioEntity.getAttribute("length").getValue());
@@ -743,7 +778,7 @@ public class EnsemblDataTranslator extends DataTranslator
             String property = null;
             if (seqRegion.hasReference("coord_system")) {
                 Item coord = ItemHelper.convert(srcItemReader.getItemById(
-                        seqRegion.getReference("coord_system").getRefId()));
+                        seqRegion.getReference("coord_system").getRefId())); 
 
                 if (coord.hasAttribute("name")) {
                     property = coord.getAttribute("name").getValue();
@@ -865,28 +900,38 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     protected Item createSimpleFeature(Item srcItem) throws ObjectStoreException {
         Item simpleFeature = new Item();
+        boolean createSynonym = true;
+        String name = null;
+        String idPrefix = null;
         if (srcItem.hasReference("analysis")) {
 
             Item analysis = ItemHelper.convert(
-                    srcItemReader.getItemById(srcItem.getReference("analysis").getRefId()));
+                 srcItemReader.getItemById(srcItem.getReference("analysis").getRefId())); 
             if (analysis.hasAttribute("logic_name")) {
 
-                String name = analysis.getAttribute("logic_name").getValue();
+                name = analysis.getAttribute("logic_name").getValue();
                 if (name.equals("tRNAscan")) {
                     simpleFeature = createItem(tgtNs + "TRNA", "");
+                    idPrefix = "TRNA";
                 } else if (name.equals("CpG")) {
                     simpleFeature = createItem(tgtNs + "CpGIsland", "");
+                    idPrefix = "CpGIsland";
                 } else if (name.equals("Eponine")) {
                     simpleFeature = createItem(tgtNs + "TranscriptionStartSite", "");
-                    //} else if (name.equals("FirstEF")) {
+                    idPrefix = "TranscriptionStartSite";
+                } else if (name.equals("FirstEF")) {
                     //5 primer exon and promoter including coding and noncoding
+                    createSynonym = false;
                 }
-
+            }
+        }
+        
+        if (createSynonym) {
                 StringBuffer newIdBuff = new StringBuffer();
-                newIdBuff.append(name).append("_");
+                newIdBuff.append(idPrefix).append("_");
 
                 Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
-                        srcItem.getReference("seq_region").getRefId()));
+                     srcItem.getReference("seq_region").getRefId())); 
 
                 newIdBuff.append(seqRegItem.getAttribute("name").getValue()).append(":");
                 newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue()).append("..");
@@ -904,104 +949,10 @@ public class EnsemblDataTranslator extends DataTranslator
                             config.getEnsemblDataSrcRef());
 
                 itemId2SynMap.put(simpleFeature.getIdentifier(), sfSyn);
-            }
         }
         return simpleFeature;
+                
     }
-
-    /**
-     * Finds external database accession numbers & labels in ensembl to set as Synonyms!
-     *
-     * Note: that only a small proportion of the genes in Anoph for example have these external
-     * references - it is usually only for KNOWN genes. Human on the other hand has >30k genes,
-     * most of which are known, and of them most have a valid Hugo reference.
-     *
-     * @param srcItem - it in source format ensembl:gene
-     * @param tgtItem - translate item flymine:Gene
-     *
-     * @return a set of Synonyms
-     * @throws org.intermine.objectstore.ObjectStoreException if problem retrieving any items
-     */
-    protected Set setXrefGeneSynonyms(Item srcItem, Item tgtItem)
-            throws ObjectStoreException {
-
-        Set synonyms = new HashSet();
-
-        if (srcItem.hasReference("display_xref")) {
-            Item xref = ItemHelper.convert(srcItemReader.getItemById(
-                    srcItem.getReference("display_xref").getRefId()));
-
-            //DBNAME
-            String dbname;
-            //look for the reference to an xref database - the external_db
-            if (xref.hasReference("external_db")) {
-                Reference extDbRef = xref.getReference("external_db");
-                Item extDb = ItemHelper.convert(srcItemReader.getItemById(extDbRef.getRefId()));
-                dbname = extDb.getAttribute("db_name").getValue();
-            } else {
-                LOG.debug("No external_db ref found for srcItem:" + srcItem.getIdentifier());
-                //return as we can't create a synonym without a source db xref
-                return synonyms;
-            }
-
-            //ACCESSION
-            String accession = null;
-            //look for a primary accession - if we have one we may be able to create a synonym
-            if (xref.hasAttribute("dbprimary_acc")) {
-                accession = xref.getAttribute("dbprimary_acc").getValue();
-            } else {
-                LOG.debug("No dbprimary_acc attr found for srcItem:" + srcItem.getIdentifier());
-            }
-            //check to see if we have a valid accession & dbname.
-            if (accession != null && !accession.equals(EMPTY_STRING)
-                    && dbname != null && !dbname.equals(EMPTY_STRING)) {
-                //If we have a valid xref for this dsname then we can create the synonym for the
-                // external database accession.
-                //NOTE: if the xref is being used as an alternative identifier it will already have
-                // a synonym with type 'identifier'.
-                if (config.containsXrefDataSourceNamed(dbname)) {
-                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                    LOG.debug("Creating Synonym for dbname:" + dbname);
-                    synonyms.add(createProductSynonym(tgtItem, "accession", accession, extDbRef));
-                } else {
-                    LOG.debug("Skipped! Can't create a Synonym for db:" + dbname);
-                }
-            } else {
-                LOG.debug("Skipped! Bad dbprimary_acc:" + accession + " or dbname:" + dbname);
-            }
-
-            //SYMBOL
-            String symbol = null;
-            //look for the display label - since we might be able to use it as a symbol synonym.
-            if (xref.hasAttribute("display_label")) {
-                symbol = xref.getAttribute("display_label").getValue();
-            } else {
-                LOG.debug("No display_label attr found for srcItem:" + srcItem.getIdentifier());
-            }
-            //check to see if we have a valid display_lable (synonym) & dbname.
-            if (symbol != null && !symbol.equals(EMPTY_STRING)
-                    && dbname != null && !dbname.equals(EMPTY_STRING)) {
-                //Now check to see if we can create a synonym that represents a synbol as well.
-                if (config.containsXrefSymbolDataSourceNamed(dbname)) {
-                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                    LOG.debug("Creating Symbol Synonym for dbname:" + dbname);
-                    synonyms.add(createProductSynonym(tgtItem, "symbol", symbol, extDbRef));
-                } else {
-                    LOG.debug("Skipped creating a Symbol Synonym for db:" + dbname);
-                }
-            } else {
-                LOG.debug("Skipped! Bad display_label:" + accession + " or dbname:" + dbname);
-            }
-
-        } else {
-            LOG.debug("Skipped! As no display_xref was found for srcItem:" + srcItem.getClassName()
-                    + " id:" + srcItem.getIdentifier());
-        }
-
-        return synonyms;
-    }
-
-
     /**
      * Creates a synonym for a gene/protein product.
      * <p/>
@@ -1183,6 +1134,17 @@ public class EnsemblDataTranslator extends DataTranslator
         descSet.add(desc);
         paths.put("http://www.flymine.org/model/ensembl#exon", descSet);
 
+        //exon_transcript
+        descSet = new HashSet();
+        desc = new ItemPrefetchDescriptor("exon_transcript.exon");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("exon", identifier));
+        descSet.add(desc);
+        desc = new ItemPrefetchDescriptor("exon_transcript.transcript");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("transcript", identifier));
+        descSet.add(desc);
+        paths.put("http://www.flymine.org/model/ensembl#exon_transcript",
+                descSet);
+
         //exon_stable_id
         desc = new ItemPrefetchDescriptor("exon_stable_id.exon");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("exon", identifier));
@@ -1224,6 +1186,11 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "transcript"));
         desc.addConstraint(new FieldNameAndValue(classname,
                 "http://www.flymine.org/model/ensembl#translation", false));
+        desc1 = new ItemPrefetchDescriptor("(transcript <- translation.transcript) <- translation_stable_id");
+        desc1.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "translation"));
+        desc1.addConstraint(new FieldNameAndValue(classname,
+                "http://www.flymine.org/model/ensembl#translation_stable_id", false));
+        desc.addPath(desc1);
         descSet.add(desc);
 
         desc = new ItemPrefetchDescriptor("transcript <- transcript_stable_id.transcript");
@@ -1453,7 +1420,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
             //Load up all the data source names that we will allow xref synonyms to be set for.
             xrefSymbolDataSourceNames = new HashSet(propsUtil.getPropertiesStartingWith(
-                    orgAbbrev + ".datasource.xref.synonym.symbol").values());
+                    orgAbbrev + ".datasource.xref.symbol.synonym").values());
             //Better check there's a matching data source for each of these!
             for (Iterator symbolIt = xrefSymbolDataSourceNames.iterator(); symbolIt.hasNext(); ) {
 
@@ -1465,6 +1432,7 @@ public class EnsemblDataTranslator extends DataTranslator
                             + nextSymbol.toString() + " has no matching common.datasource");
                 }
             }
+            
         }
 
 
