@@ -79,7 +79,7 @@ where seq_region_id in (select seq_region_id from seq_region);
 create index idx_sf_id on simple_feature(simple_feature_id);
 
 create table repeat_feature as select * from homo_sapiens_core_37_35j.repeat_feature
-where seq_region_id in (select seq_region_id from seq_region) and analysis_id = 14;
+where seq_region_id in (select seq_region_id from seq_region where analysis_id = 14);
 create index idx_rf_id on repeat_feature(repeat_feature_id);
 create index idx_rf_sr_id on repeat_feature(seq_region_id);
 create index idx_rf_rc_id on repeat_feature(repeat_consensus_id);
