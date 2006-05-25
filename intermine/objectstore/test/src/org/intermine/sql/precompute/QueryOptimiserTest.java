@@ -660,7 +660,7 @@ public class QueryOptimiserTest extends TestCase
 
         assertEquals(eSet, newSet);
     }
-   /* 
+   /*
     public void testMergeClashingAliases() throws Exception {
         Query q1 = new Query("SELECT P42.a AS t1_a, P42.b AS t1_b, table1.a AS t2_a from tab as P42, table as table1 WHERE table1.c = 'five'");
         Query pq1 = new Query("SELECT table2.a AS kjfd, table2.b AS ddfw FROM table as table2 WHERE table2.c = 'five'");
@@ -689,7 +689,7 @@ public class QueryOptimiserTest extends TestCase
         precomps.add(pt1);
         precomps.add(pt2);
         precomps.add(pt3);
-        
+
         Query eq1 = new Query("SELECT P42.fhjs AS t1_a, P42.sjhf AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM precomp1 AS P42, table2 WHERE table2.c = 'six'");
         Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five'");
         Map eMap = new HashMap();
@@ -714,7 +714,7 @@ public class QueryOptimiserTest extends TestCase
         precomps.add(pt1);
         precomps.add(pt2);
         precomps.add(pt3);
-        
+
         Query eq1 = new Query("SELECT P42.fhjs AS t1_a, P42.sjhf AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM precomp1 AS P42, table2 WHERE table2.c = 'six'");
         Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five'");
         Query eq3 = new Query("SELECT P44.fhjs AS t1_a, P44.sjhf AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM precomp1 AS P44, precomp2 AS P43");
@@ -736,7 +736,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         Set precomps = new HashSet();
         precomps.add(pt1);
-        
+
         Query eq1 = new Query("SELECT P51.fhjs AS t1_a, P51.sjhf AS t1_b, P50.a AS t2_a, P50.b AS t2_b FROM precomp1 AS P51, table AS P50 WHERE P50.c = 'five'");
         Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P49.fhjs AS t2_a, P49.sjhf AS t2_b FROM table AS table1, precomp1 AS P49 WHERE table1.c = 'five'");
         Query eq3 = new Query("SELECT P47.fhjs AS t1_a, P47.sjhf AS t1_b, P45.fhjs AS t2_a, P45.sjhf AS t2_b FROM precomp1 AS P47, precomp1 AS P45");
@@ -764,7 +764,7 @@ public class QueryOptimiserTest extends TestCase
         precomps.add(pt1);
         precomps.add(pt2);
         precomps.add(pt3);
-        
+
         Query eq1 = new Query("SELECT P42.fhjs AS t1_a, P42.sjhf AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM precomp1 AS P42, table2 WHERE table2.c = 'six' AND P42.kjhds = table2.d");
         Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM table1, precomp2 AS P43 WHERE table1.c = 'five' AND table1.d = P43.kjhsd");
         Query eq3 = new Query("SELECT P44.fhjs AS t1_a, P44.sjhf AS t1_b, P43.kjsd AS t2_a, P43.hjas AS t2_b FROM precomp1 AS P44, precomp2 AS P43 WHERE P44.kjhds = P43.kjhsd");
@@ -837,7 +837,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT DISTINCT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
-        eq = new Query("SELECT DISTINCT P42.a AS a, P42.b AS b, P42.c AS c, P42.orderby_field FROM precomp1 AS P42 ORDER BY P42.orderby_field");
+        eq = new Query("SELECT DISTINCT P42.a AS a, P42.b AS b, P42.c AS c, P42.orderby_field AS orderby_field_from_pt FROM precomp1 AS P42 ORDER BY P42.orderby_field");
         eSet = new ConsistentSet();
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
@@ -866,7 +866,7 @@ public class QueryOptimiserTest extends TestCase
         Set precomps = new HashSet();
         precomps.add(pt1);
         precomps.add(pt2);
-        
+
         Query eq1 = new Query("SELECT P42.a2_, P42.a3_, P42.a3_id, P42.a4_, P42.a4_id FROM precomp1 AS P42 ORDER BY P42.a2_, P42.a3_id, P42.a4_id");
         Set eSet = new ConsistentSet();
         eSet.add(eq1);
@@ -912,7 +912,7 @@ public class QueryOptimiserTest extends TestCase
         Set precomps = new HashSet();
         precomps.add(pt1);
         precomps.add(pt2);
-        
+
         Query eq1 = new Query("SELECT P42.a2_ FROM precomp1 AS P42 ORDER BY P42.a2_");
         Set eSet = new ConsistentSet();
         eSet.add(eq1);

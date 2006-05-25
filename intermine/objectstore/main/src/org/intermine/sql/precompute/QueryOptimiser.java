@@ -529,7 +529,7 @@ public class QueryOptimiser
                             newOrderBy.add(orderByIter.next());
                         }
                         if ((orderByField != null) && currentQuery.isDistinct()) {
-                            newQuery.addSelect(new SelectValue(orderByField, "orderby_field"));
+                            newQuery.addSelect(new SelectValue(orderByField, "orderby_field_from_pt"));
                         }
                     }
 
