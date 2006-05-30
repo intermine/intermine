@@ -131,11 +131,8 @@ public class EnsemblDataTranslator extends DataTranslator
                         if (srcItem.hasAttribute("sequence")) {
                             int seqLen = srcItem.getAttribute("sequence").getValue().length();
                             tgtItem.setAttribute("length", Integer.toString(seqLen));
-                        } else {
-                            LOG.warn("A DNA item has no sequence! " + srcItem.getIdentifier());
-                        }
+                        } 
                     } else {
-                        LOG.debug("Skipping a DNA item! " + srcItem.getIdentifier());
                         storeTgtItem = false;
                     }
                 } else if ("karyotype".equals(srcItemClassName)) {
@@ -349,9 +346,6 @@ public class EnsemblDataTranslator extends DataTranslator
             result.add(createSimpleRelation(
                     tgtItem.getIdentifier(), cds.getIdentifier()));
             result.add(cds);
-        } else {
-
-            LOG.debug("No Translation found for Transcript:" + tgtItem.getIdentifier());
         }
 
     }
@@ -469,7 +463,7 @@ public class EnsemblDataTranslator extends DataTranslator
             throws ObjectStoreException {
 
         Set synonyms = new HashSet();
-        
+        Reference extDbRef = new Reference();
         //If this is ever null then there's a problem with the ensembl data!!!
         Item stableIdItem = getStableId("gene", srcItem.getIdentifier(), srcNs);
         // <- gene_stable_id.gene
@@ -517,8 +511,9 @@ public class EnsemblDataTranslator extends DataTranslator
                 if (config.useXrefDbsForGeneIdentifier() 
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
                     tgtItem.addAttribute(new Attribute("identifier", accession));
+                    extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession",
-                                   accession, config.getEnsemblDataSrcRef());
+                                   accession, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
                 
@@ -526,18 +521,15 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addAttribute(new Attribute("identifier", stableId));
                 }
 
-                if (config.containsXrefDataSourceNamed(dbname)) {
-                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
+                if (config.containsXrefDataSourceNamed(dbname)) {                    
                     Item synonym = createProductSynonym(tgtItem, "accession", accession, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
                     tgtItem.addAttribute(new Attribute("accession", accession));   
-                } else {
-                    LOG.debug("Skipped! Can't create a Synonym for db:" + dbname);
+
                 }
             } else {
                 tgtItem.addAttribute(new Attribute("identifier", stableId));
-                LOG.debug("Skipped! Bad dbprimary_acc:" + accession + " or dbname:" + dbname);
             }
 
            
@@ -546,23 +538,17 @@ public class EnsemblDataTranslator extends DataTranslator
                 && dbname != null && !dbname.equals(EMPTY_STRING)) {
                 //Now check to see if we can create a synonym that represents a symbol as well.
                 if (config.containsXrefSymbolDataSourceNamed(dbname)) {
-                    Reference extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                    LOG.debug("Creating Symbol Synonym for dbname:" + dbname);
+                    extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "symbol", symbol, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
                     tgtItem.addAttribute(new Attribute("symbol", symbol));              
-                } else {
-                    LOG.debug("Skipped creating a Symbol Synonym for db:" + dbname);
+
                 }
-            } else {
-                LOG.debug("Skipped! Bad display_label:" + accession + " or dbname:" + dbname);
             }
 
         } else {
             tgtItem.addAttribute(new Attribute("identifier", stableId));
-            LOG.debug("Skipped! As no display_xref was found for srcItem:" + srcItem.getClassName()
-                    + " id:" + srcItem.getIdentifier());
         }
 
         return synonyms;
@@ -614,9 +600,6 @@ public class EnsemblDataTranslator extends DataTranslator
             moveField(srcItem, location, "ori", "strand");
         }
         if (srcItem.hasReference("seq_region")) {
-
-            LOG.debug("A seq_region was found for:" + srcItem.getClassName()
-                      + " id:" + srcItem.getIdentifier());
 
             String refId = srcItem.getReference("seq_region").getRefId();
             Item seq = getSeqItem(refId, true);
@@ -802,11 +785,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item dna = getItemViaItemPath(seqRegion, SEQ_REGION_VIA_DNA, srcItemReader);
                     if (dna != null) {
                         seq.setReference("sequence", dna);
-                    } else {
-                        LOG.debug("NO DNA ITEM FOUND FOR THIS SEQ ITEM:" + seq.getIdentifier());
                     }
-                } else {
-                    LOG.debug("SKIPPING doStoreDna for this org abbrev:" + config.getOrgAbbrev());
                 }
             }
         }
@@ -827,11 +806,6 @@ public class EnsemblDataTranslator extends DataTranslator
 
                 itemId2SynMap.put(seq.getIdentifier(), seqSyn);
 
-            } else {
-
-                LOG.debug("Skipped creating a synonym for a seq item with no identifier:"
-                        +  (seq != null ? seq.getClassName() + " id:"
-                        +  seq.getIdentifier() : "seq is null"));
             }
         }
 
@@ -1003,7 +977,6 @@ public class EnsemblDataTranslator extends DataTranslator
             bob.append("__");
             bob.append(srcNs);
 
-            LOG.debug(bob.toString());
             return null;
         }
     }
