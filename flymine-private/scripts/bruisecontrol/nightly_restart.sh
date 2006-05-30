@@ -1,4 +1,4 @@
 #!/bin/sh
-~/Applications/jakarta-tomcat-5.5.9/bin/shutdown.sh
+/home/bruiser/apache-tomcat-5.5.16/bin/shutdown.sh
 sleep 15
-~/Applications/jakarta-tomcat-5.5.9/bin/startup.sh
+/home/bruiser/apache-tomcat-5.5.16/bin/startup.sh
