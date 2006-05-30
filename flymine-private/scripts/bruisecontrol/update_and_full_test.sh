@@ -18,6 +18,7 @@ URL_PREFIX='http://bc.flymine.org'
 # -------------------------------------------------------------------------- #
 
 if [ -f "$RUNNING_FILE" ]; then
+  echo Not starting tests because $RUNNING_FILE exists
   exit
 fi
 
