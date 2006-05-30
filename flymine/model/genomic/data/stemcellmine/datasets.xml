@@ -10,7 +10,7 @@
     <attribute name="title" value="Ensembl Homo sapiens"/>
     <attribute name="description"
                value="The Ensembl eukaryotic genome annotation database"/>
-    <attribute name="version" value="36.35i"/>
+    <attribute name="version" value="37.35j"/>
     <attribute name="url" value="http://www.ensembl.org/Homo_sapiens"/>
     <reference name="dataSource" ref_id="0"/>
   </item>
@@ -23,21 +23,21 @@
   <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="Swiss-Prot data set"/>
     <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
-    <attribute name="version" value="47.7"/>
+    <attribute name="version" value="49.7"/>
     <attribute name="url" value="http://ca.expasy.org/sprot"/>
     <reference name="dataSource" ref_id="10"/>
   </item>
   <item id="12" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="TrEMBL data set"/>
     <attribute name="description" value="Translated CDSs from the EMBL database"/>
-    <attribute name="version" value="30.7"/>
+    <attribute name="version" value="32.7"/>
     <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
     <reference name="dataSource" ref_id="10"/>
   </item>
   <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="UniProt data set"/>
     <attribute name="description" value="UniProt Knowledgebase"/>
-    <attribute name="version" value="6.8"/>
+    <attribute name="version" value="7.7"/>
     <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
     <reference name="dataSource" ref_id="10"/>
   </item>
@@ -47,15 +47,7 @@
     <attribute name="description" value="Department of Genetics, University of Cambridge"/>
     <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
   </item>
-  <item id="111" class="" implements="http://www.flymine.org/model/genomic#DataSet">a
-    <attribute name="title" value="Department of Genetics tiling path"/>
-    <attribute name="description" 
-               value="Primers and amplimers tiling the Drosophila melanogaster genome"/>
-    <attribute name="version" value="4.0"/>
-    <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
-    <reference name="dataSource" ref_id="110"/>
-  </item>
-
+  
   <item id="120" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="ArrayExpress"/>
         <attribute name="description"
@@ -183,14 +175,14 @@
   <item id="261" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="HSCL transcription factor binding site clusters"/>
     <attribute name="description" value="Transcription factor binding site clusters data set from HSCL"/>
-    <attribute name="version" value="January 2006"/>
+    <attribute name="version" value="May 2006"/>
     <attribute name="url" value="http://hscl.cimr.cam.ac.uk/"/>
     <reference name="dataSource" ref_id="260"/>
   </item>
   <item id="262" class="" implements="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="HSCL conserved non-coding sites"/>
     <attribute name="description" value="Conserved non-coding sites data set from HSCL"/>
-    <attribute name="version" value="January 2006"/>
+    <attribute name="version" value="May 2006"/>
     <attribute name="url" value="http://hscl.cimr.cam.ac.uk/"/>
     <reference name="dataSource" ref_id="260"/>
   </item>
