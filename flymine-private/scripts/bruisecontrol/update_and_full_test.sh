@@ -45,6 +45,7 @@ if [ $DIFF -lt $((60*10)) ]; then
   fi
 else
   echo "10 minutes have pasted since last update - lets do it..."
+  date
 fi
 
 touch "$RUNNING_FILE"
