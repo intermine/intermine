@@ -81,6 +81,8 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
                 + makeLogStringFromItemSet(compareItemSets(tgtItemSet2, actualItemSet));
 
         if (expectedNotActual.length() > 25) {
+            System.out.println(expectedNotActual);
+            System.out.println(actualNotExpected);
             LOG.debug(expectedNotActual);
             LOG.debug(actualNotExpected);
         }
