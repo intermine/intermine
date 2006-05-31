@@ -929,12 +929,7 @@ public class EnsemblHumanDataTranslator extends DataTranslator
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("coord_system", identifier));
         desc.addPath(desc1);
         descSet.add(desc);
-        //not suitable for homo_sapiens_core_31_35d
-        //desc = new ItemPrefetchDescriptor("gene <- gene_description.gene");
-        //desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "gene"));
-        //desc.addConstraint(new FieldNameAndValue(classname,
-        //              "http://www.flymine.org/model/ensembl-human#gene_description", false));
-        //descSet.add(desc);
+      
         desc = new ItemPrefetchDescriptor("gene.display_xref");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("display_xref", identifier));
         desc1 = new ItemPrefetchDescriptor("gene.display_xref.external_db");
