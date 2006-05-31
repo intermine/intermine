@@ -24,7 +24,7 @@ import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 
 /**
- * DataConverter to parse an RNAi data file into Items
+ * DataConverter to parse a gene synonym data file into Items
  * @author Wenyan Ji
  */
 public class RetrieveGeneSynonym extends FileConverter
@@ -56,7 +56,7 @@ public class RetrieveGeneSynonym extends FileConverter
         super(writer);
 
         db = createItem("DataSource");
-        db.addAttribute(new Attribute("title", "ensembl"));
+        db.addAttribute(new Attribute("name", "ensembl"));
         writer.store(ItemHelper.convert(db));
 
     }
