@@ -1,10 +1,14 @@
 <items>
 <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="Affymetrix GeneChip"/>
+<attribute name="name" value="Proceedings of the National Academy of Sciences USA"/>
+<attribute name="url" value="http://www.pnas.org/"/>
 </item>
 
 <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
-<attribute name="title" value="Affymetrix Mouse Genome 430 2.0 Array"/>
+<attribute name="description" value="Rossi et al, 2005: Compare blood stem cells from young vs old mice"/>
+  <attribute name="title" value="E-SMDB-3450"/>
+  <attribute name="url" value="http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls"/>
+  <reference name="dataSource" ref_id="-1_1"/>
 </item>
 
 <item id="-1_3" class="http://www.flymine.org/model/genomic#Organism">
