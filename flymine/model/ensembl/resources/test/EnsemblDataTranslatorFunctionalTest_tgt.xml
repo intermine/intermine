@@ -160,47 +160,47 @@
   </item>
 
   <item id="-1_7" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
+    <attribute name="description" value="UniProt Universal Protein Resource"/>
     <attribute name="name" value="uniprot"/>
     <attribute name="url" value="http://www.uniprot.org"/>
   </item>
   <item id="-1_4" class="http://www.flymine.org/model/genomic#DataSource">
-     <attribute name="description" value="put something usefull here"/>
+     <attribute name="description" value="The Human Genome Organisation"/>
      <attribute name="name" value="hugo"/>
      <attribute name="url" value="http://www.hugo-international.org"/>
    </item>
   <item id="-1_10" class="http://www.flymine.org/model/genomic#DataSource">
-     <attribute name="description" value="put something usefull here"/>
+     <attribute name="description" value="A comprehensive database of sequence tagged sites (STSs)"/>
      <attribute name="name" value="unists"/>
      <attribute name="url" value="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=unists"/>
    </item>
   <item id="-1_9" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
+    <attribute name="description" value="The Ensembl eukaryotic genome annotation database"/>
     <attribute name="name" value="ensembl"/>
     <attribute name="url" value="http://www.ensembl.org"/>
   </item>
   <item id="-1_5" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
-    <attribute name="name" value="refseq_dna"/>
+    <attribute name="description" value="NCBI Reference Sequences for genomic DNA"/>
+    <attribute name="name" value="refseq_dna_predicted"/>
     <attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq"/>
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
+    <attribute name="description" value="NIH genetic sequence database"/>
     <attribute name="name" value="genbank"/>
     <attribute name="url" value="http://www.ncbi.nlm.nih.gov/genbank"/>
   </item>
   <item id="-1_6" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
-    <attribute name="name" value="refseq"/>
+    <attribute name="description" value="NCBI Reference Sequences for genomic DNA"/>
+    <attribute name="name" value="refseq_dna"/>
     <attribute name="url" value="http://www.ncbi.nlm.nih.gov/RefSeq"/>
   </item>
   <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
+    <attribute name="description" value="The GDB Human Genome Database"/>
     <attribute name="name" value="gdb"/>
     <attribute name="url" value="http://gdbwww.gdb.org"/>
   </item>
   <item id="-1_8" class="http://www.flymine.org/model/genomic#DataSource">
-    <attribute name="description" value="put something usefull here"/>
+    <attribute name="description" value="The Ensembl eukaryotic genome annotation database"/>
     <attribute name="name" value="anopheles_symbol"/>
     <attribute name="url" value="http://www.ensembl.org"/>
   </item>
@@ -584,7 +584,7 @@
   </item>
   <item id="-1_57" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
-    <attribute name="value" value="tRNAscan_AL133238.3.1.185132:24304..24376"/>
+    <attribute name="value" value="TRNA_AL133238.3.1.185132:24304..24376"/>
     <reference name="source" ref_id="-1_9"/>
     <reference name="subject" ref_id="-1_56"/>
   </item>
@@ -634,7 +634,7 @@
   </item>
 
   <item id="-1_56" class="http://www.flymine.org/model/genomic#TRNA">
-    <attribute name="identifier" value="tRNAscan_AL133238.3.1.185132:24304..24376"/>
+    <attribute name="identifier" value="TRNA_AL133238.3.1.185132:24304..24376"/>
     <reference name="organism" ref_id="-1_1"/>
     <collection name="evidence">
       <reference ref_id="-1_59"/>
