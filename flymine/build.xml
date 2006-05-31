@@ -3978,7 +3978,7 @@
   </path>
 
   <target name="retrieve-gene-synonyms-for-entrezgene"
-          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4011,7 +4011,7 @@
     </ant>
   </target>
 
-  <target name="load-gene-synonyms-for-entrezgene" depends="copy-t1dmine-config">
+  <target name="load-gene-synonyms-for-entrezgene" depends="copy-stemcell-config">
     <taskdef name="load-gene-synonyms" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4019,7 +4019,7 @@
     <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
-               ignoreDuplicates="false"/>
+               ignoreDuplicates="true"/>
   </target>
 
   <target name="build-gene-synonyms-for-entrezgene-production"
@@ -4028,7 +4028,7 @@
 
   <!--Retrieve gene synonyms for CCDS, file is tab separated format -->
   <target name="retrieve-gene-synonyms-for-ccds"
-          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4061,7 +4061,7 @@
     </ant>
   </target>
 
-  <target name="load-gene-synonyms-for-ccds" depends="copy-t1dmine-config">
+  <target name="load-gene-synonyms-for-ccds" depends="copy-stemcell-config">
     <taskdef name="load-gene-synonyms" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4078,7 +4078,7 @@
 
 <!--Retrieve gene synonyms for embl, file is tab separated format -->
   <target name="retrieve-gene-synonyms-for-embl"
-          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-t1dmine">
+          depends="convert-ensembl-human, compile-ensembl-human-java, compile-genomic-java-stemcell">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -4119,7 +4119,7 @@
     <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
-               ignoreDuplicates="false"/>
+               ignoreDuplicates="true"/>
   </target>
 
   <target name="build-gene-synonyms-for-embl-production"
