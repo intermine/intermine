@@ -521,7 +521,8 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addAttribute(new Attribute("identifier", stableId));
                 }
 
-                if (config.containsXrefDataSourceNamed(dbname)) {                    
+                if (config.containsXrefDataSourceNamed(dbname)) {  
+                    extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession", accession, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
