@@ -4019,7 +4019,7 @@
     <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
-               ignoreDuplicates="true"/>
+               ignoreDuplicates="false"/>
   </target>
 
   <target name="build-gene-synonyms-for-entrezgene-production"
@@ -4069,12 +4069,11 @@
     <load-gene-synonyms integrationWriter="integration.production"
                source="os.gene-synonym-translated"
                sourceName="gene-synonym"
-               ignoreDuplicates="false"/>
+               ignoreDuplicates="true"/>
   </target>
 
   <target name="build-gene-synonyms-for-ccds-production"
           depends="retrieve-gene-synonyms-for-ccds, load-gene-synonyms-for-ccds"/>
-
 
 <!--Retrieve gene synonyms for embl, file is tab separated format -->
   <target name="retrieve-gene-synonyms-for-embl"
@@ -4111,7 +4110,7 @@
     </ant>
   </target>
 
-  <target name="load-gene-synonyms-for-embl" depends="copy-t1dmine-config">
+  <target name="load-gene-synonyms-for-embl" depends="copy-stemcell-config">
     <taskdef name="load-gene-synonyms" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
     </taskdef>
@@ -4125,6 +4124,8 @@
   <target name="build-gene-synonyms-for-embl-production"
           depends="retrieve-gene-synonyms-for-embl, load-gene-synonyms-for-embl"/>
 
+  <target name="build-gene-synonyms-production"
+          depends="build-gene-synonyms-for-ccds-production, build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-embl-production"/>
 
  <!-- BUILD PRODUCTION DATABASE -->
 
@@ -4149,8 +4150,7 @@
                    build-tfbs-production,
                    build-firstef-production,build-mousechain-production, build-opposumchain-production,
                    build-regions-production, build-disease-regions-production, build-ensembl-disease-production,
-                   build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
-                   build-gene-synonyms-for-embl-production,
+                   build-gene-synonyms-production,
                    build-tfbscluster-production, build-cns-production,
                    build-mage-stemcell-production, build-cdnaclone-image-production,
                    analyse-db-production, grant-db-production"/>
