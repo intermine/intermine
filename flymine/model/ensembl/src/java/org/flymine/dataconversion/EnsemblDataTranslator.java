@@ -256,7 +256,7 @@ public class EnsemblDataTranslator extends DataTranslator
             result.add(location);
             // seq_region map to null, become Chromosome, Supercontig, Clone and Contig respectively
         } else if ("seq_region".equals(srcItemClassName)) {
-            Item seq = getSeqItem(srcItem.getIdentifier(), true);
+            Item seq = getSeqItem(srcItem.getIdentifier(), true, srcItem);
             seq.addReference(config.getOrganismRef());
             result.add(seq);
             //simple_feature map to null, become TRNA/CpGIsland depending on analysis_id(logic_name)
@@ -283,7 +283,7 @@ public class EnsemblDataTranslator extends DataTranslator
         result.add(location);
 
         if (srcItem.hasReference("seq_region")) {
-            Item seq = getSeqItem(srcItem.getReference("seq_region").getRefId(), true);
+            Item seq = getSeqItem(srcItem.getReference("seq_region").getRefId(), false, srcItem);
 
             tgtItem.addReference(new Reference("chromosome", seq.getIdentifier()));
         }
@@ -603,7 +603,7 @@ public class EnsemblDataTranslator extends DataTranslator
         if (srcItem.hasReference("seq_region")) {
 
             String refId = srcItem.getReference("seq_region").getRefId();
-            Item seq = getSeqItem(refId, true);
+            Item seq = getSeqItem(refId, false, srcItem);
 
             if (srcItemIsChild) {
                 addReferencedItem(tgtItem, location, "objects", true, "subject", false);
@@ -736,23 +736,32 @@ public class EnsemblDataTranslator extends DataTranslator
         location.addAttribute(new Attribute("endIsPartial", "false"));
         location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
         location.addReference(new Reference("subject",
-                (getSeqItem(contigId, true)).getIdentifier()));
+                (getSeqItem(contigId, false, srcItem)).getIdentifier()));
         location.addReference(new Reference("object",
-                (getSeqItem(bioEntityId, true)).getIdentifier()));
+                (getSeqItem(bioEntityId, false, srcItem)).getIdentifier()));
         return location;
     }
 
     /**
      * @param refId = refId for the seq_region
-     * @param createSynonym = indicates that we should create a synonym for this item if we can.
+     * @param findSeq: true indicates that we already have seqregion item, same as srcItem
+     * otherwise find it from refid
+     * @param srcItem item.
      *
      * @return seq item it could be  chromosome, supercontig, clone or contig
      * @throws org.intermine.objectstore.ObjectStoreException
      *          when anything goes wrong.
      */
-    protected Item getSeqItem(String refId, boolean createSynonym) throws ObjectStoreException {
+    protected Item getSeqItem(String refId, boolean findSeq, Item srcItem) throws ObjectStoreException {
         Item seq = null;
-        Item seqRegion = ItemHelper.convert(srcItemReader.getItemById(refId));
+        Item seqRegion = null;
+        
+        if (findSeq) {
+            seqRegion = srcItem;
+        } else {
+            seqRegion = ItemHelper.convert(srcItemReader.getItemById(refId));
+        }
+
         if (seqIdMap.containsKey(refId)) {
             seq = (Item) seqIdMap.get(refId);
         } else {
@@ -794,7 +803,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         //If we need to create a Synonym and one hasn't been made for the seq item yet...
 
-        if (createSynonym && !itemId2SynMap.containsKey(
+        if (!itemId2SynMap.containsKey(
                 seq != null ? seq.getIdentifier() : "NO_ID_HERE!")) {
 
             if (seq != null && seq.hasAttribute(IDENTIFIER)) {
