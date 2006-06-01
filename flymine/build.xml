@@ -3413,17 +3413,16 @@
                               userProfileAlias="osw.userprofile-production"/>
   </target>
 
-  <!-- load default global template queries -->
+  <!-- dump default global template queries -->
   <target name="dump-default-templates" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${resources}/webapp/default.intermine.properties"
           overwrite="true"
           verbose="true"/>
-    <!-- insert default template queries. this will also create the superuser account. -->
     <taskdef name="dump-default-templates" classname="org.intermine.web.task.DumpDefaultTemplatesTask">
       <classpath refid="webapp.class.path"/>
     </taskdef>
-    <dump-default-templates fileName="model/genomic/resources/web/template-queries.xml"
+    <dump-default-templates fileName="${build.tmp}/template-queries.xml"
                             username="${superuser.account}"
                             osAlias="os.production"
                             userProfileAlias="osw.userprofile-production"/>
