@@ -697,8 +697,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
         contigId = srcItem.getReference("cmp_seq_region").getRefId();
         bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
-        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId)); /**prefetch*/
-        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));/**prefetch*/
+        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId)); 
+        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
 
         contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
         bioEntityLength = Integer.parseInt(bioEntity.getAttribute("length").getValue());
@@ -744,15 +744,15 @@ public class EnsemblDataTranslator extends DataTranslator
 
     /**
      * @param refId = refId for the seq_region
-     * @param findSeq: true indicates that we already have seqregion item, same as srcItem
-     * otherwise find it from refid
+     * @param findSeq true indicates that seqregion item is srcItem otherwise find it from refid
      * @param srcItem item.
      *
      * @return seq item it could be  chromosome, supercontig, clone or contig
      * @throws org.intermine.objectstore.ObjectStoreException
      *          when anything goes wrong.
      */
-    protected Item getSeqItem(String refId, boolean findSeq, Item srcItem) throws ObjectStoreException {
+    protected Item getSeqItem(String refId, boolean findSeq, Item srcItem) 
+        throws ObjectStoreException {
         Item seq = null;
         Item seqRegion = null;
         
@@ -1166,7 +1166,8 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "transcript"));
         desc.addConstraint(new FieldNameAndValue(classname,
                 "http://www.flymine.org/model/ensembl#translation", false));
-        desc1 = new ItemPrefetchDescriptor("(transcript <- translation.transcript) <- translation_stable_id");
+        desc1 = new ItemPrefetchDescriptor("(transcript <- translation.transcript)"
+                 + " <- translation_stable_id");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic(identifier, "translation"));
         desc1.addConstraint(new FieldNameAndValue(classname,
                 "http://www.flymine.org/model/ensembl#translation_stable_id", false));
