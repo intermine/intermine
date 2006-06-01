@@ -98,7 +98,7 @@ public class PsiDataTranslator extends DataTranslator
         iter = exptsToStore.iterator();
         while (iter.hasNext()) {
             tgtItemWriter.storeAll(ItemHelper
-                                .convertToFullDataItems((List) exptMap.get(iter.next())));
+                         .convertToFullDataItems((List) exptMap.get(iter.next())));
         }
     }
 
@@ -254,7 +254,7 @@ public class PsiDataTranslator extends DataTranslator
                             result.add(synonym);
                         } else {
                             //Since there's no usable Uniprot id, just use the Intact internal id.
-                            if(xref.hasCollection("secondaryRefs")) {
+                            if (xref.hasCollection("secondaryRefs")) {
                                 Iterator secondaryDbXrefIt = getCollection(xref, "secondaryRefs");
 
                                 boolean foundIntact = false;
@@ -272,12 +272,15 @@ public class PsiDataTranslator extends DataTranslator
                                 }
 
                                 if (foundIntact && intactId != null) {
-                                    tgtItem.addAttribute(
-                                            new Attribute("primaryAccession", "IntAct:" + intactId));
+                                    tgtItem.addAttribute(new Attribute("primaryAccession", 
+                                            "IntAct:" + intactId));
                                     Item synonym = createItem("Synonym");
-                                    addReferencedItem(synonym, dataSource, "source", false, "", false);
-                                    synonym.addAttribute(new Attribute("value", "IntAct:" + intactId));
-                                    synonym.addAttribute(new Attribute("type", "identifier"));
+                                    addReferencedItem(synonym, dataSource, "source", 
+                                                      false, "", false);
+                                    synonym.addAttribute(new Attribute("value", 
+                                                         "IntAct:" + intactId));
+                                    synonym.addAttribute(new Attribute("type", 
+                                                         "identifier"));
                                     addReferencedItem(tgtItem, synonym, "synonyms",
                                                       true, "subject", false);
                                     result.add(synonym);
@@ -291,8 +294,8 @@ public class PsiDataTranslator extends DataTranslator
                                     result.add(idSynonym);
                                 
                                 } else {
-                                    throw new RuntimeException(
-                                              "Can't set a suitable primaryAccession for this ProteinInteractor");
+                                    throw new RuntimeException("Can't set a suitable " 
+                                       + "primaryAccession for this ProteinInteractor");
                                 }
                             }
                         }
@@ -313,8 +316,7 @@ public class PsiDataTranslator extends DataTranslator
                     Item primaryRef = getReference(xref, "primaryRef");
                     if (primaryRef.getAttribute("db").getValue().equalsIgnoreCase("psi-mi")) {
                         tgtItem.addAttribute(new Attribute("identifier",
-                                                           primaryRef.getAttribute("id")
-                                                           .getValue()));
+                                primaryRef.getAttribute("id").getValue()));
                     }
                 } else if ("Organism_ProteinInteractorType".equals(className)) {
                     String taxonId = srcItem.getAttribute("ncbiTaxId").getValue();
@@ -397,9 +399,8 @@ public class PsiDataTranslator extends DataTranslator
             String taxonId = organism.getAttribute("ncbiTaxId").getValue();
             if (organisms.contains(taxonId)) {
                 interactionOrganisms.add(taxonId);
-                Reference proteinRef =
-                    new Reference("protein",
-                                  participant.getReference("proteinInteractorRef").getRefId());
+                Reference proteinRef = new Reference("protein",
+                          participant.getReference("proteinInteractorRef").getRefId());
                 interactor.setReference("protein", proteinRef.getRefId());
                 interactor.setReference("interaction", interaction.getIdentifier());
                 interaction.addToCollection("interactors", interactor);
@@ -412,7 +413,7 @@ public class PsiDataTranslator extends DataTranslator
         // more than protein from accepted organisms -> keep
         if (interactionOrganisms.size() > 1) {
             result.addAll(interactors);
-            String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");////prefetch
+            String iShortName = findNameInNamesList(srcInteractionElementItem, "shortLabel");
             if (iShortName != null) {
                 interaction.setAttribute("shortName", iShortName);
                 LOG.debug("INTERACTION.SHORTNAME WAS SET AS:" + iShortName);
@@ -422,7 +423,7 @@ public class PsiDataTranslator extends DataTranslator
             }
 
             //<confidence unit="author-confidence" value="D"/>
-            Item conf = getReference(srcInteractionElementItem, "confidence");//prefetch
+            Item conf = getReference(srcInteractionElementItem, "confidence");
 
             if (conf != null) {
                 LOG.debug("CONFIDENCE TAG FOUND IN INTERACTION:"
@@ -486,7 +487,7 @@ public class PsiDataTranslator extends DataTranslator
         }
 
         org.intermine.model.fulldata.Item namesItem =
-                this.srcItemReader.getItemById(namesRef.getRefId());//prefetch
+                this.srcItemReader.getItemById(namesRef.getRefId());
 
         boolean shortLabelFound = false;
         String iShortName = null;
@@ -651,10 +652,12 @@ public class PsiDataTranslator extends DataTranslator
         desc = new ItemPrefetchDescriptor("ExperimentType.hostOrganism");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("hostOrganism",
                     identifier));
-        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor("ExperimentType.hostOrganism.fullName");
+        ItemPrefetchDescriptor desc1 = new ItemPrefetchDescriptor(
+                    "ExperimentType.hostOrganism.fullName");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("fullName",
                     identifier));
-        desc2 = new ItemPrefetchDescriptor("ExperimentType.hostOrganism.fullName.names");
+        desc2 = new ItemPrefetchDescriptor(
+                    "ExperimentType.hostOrganism.fullName.names");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     identifier));
         desc1.addPath(desc2);
@@ -667,10 +670,12 @@ public class PsiDataTranslator extends DataTranslator
         desc = new ItemPrefetchDescriptor("InteractionElementType.experimentList");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("experimentList",
                     identifier));
-        desc2 = new ItemPrefetchDescriptor("InteractionElementType.experimentList.experimentRefs");
+        desc2 = new ItemPrefetchDescriptor(
+                    "InteractionElementType.experimentList.experimentRefs");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("experimentRefs",
                     identifier));
-        desc3 = new ItemPrefetchDescriptor("InteractionElementType.experimentList.experimentRefs.names");
+        desc3 = new ItemPrefetchDescriptor(
+                    "InteractionElementType.experimentList.experimentRefs.names");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     identifier));
         desc2.addPath(desc3);
@@ -680,7 +685,8 @@ public class PsiDataTranslator extends DataTranslator
         desc = new ItemPrefetchDescriptor("InteractionElementType.attributeList");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("attributeList",
                     identifier));
-        desc2 = new ItemPrefetchDescriptor("InteractionElementType.attributeList.attributes");
+        desc2 = new ItemPrefetchDescriptor(
+                    "InteractionElementType.attributeList.attributes");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("attributes",
                     identifier));
         desc.addPath(desc2);
@@ -689,15 +695,17 @@ public class PsiDataTranslator extends DataTranslator
         desc = new ItemPrefetchDescriptor("InteractionElementType.participantList");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("participantList",
                     identifier));        
-        desc1 = 
-            new ItemPrefetchDescriptor("InteractionElementType.participantList.proteinParticipants");
+        desc1 = new ItemPrefetchDescriptor(
+                    "InteractionElementType.participantList.proteinParticipants");
         desc1.addConstraint(new ItemPrefetchConstraintDynamic("proteinParticipants",
                     identifier));        
-        desc3 = new ItemPrefetchDescriptor("InteractionElementType.participantList.proteinParticipants.proteinInteractorRef");
+        desc3 = new ItemPrefetchDescriptor("InteractionElementType.participantList" 
+                     + ".proteinParticipants.proteinInteractorRef");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("proteinInteractorRef",
                     identifier));
-        ItemPrefetchDescriptor desc4 = 
-            new ItemPrefetchDescriptor("InteractionElementType.participantList.proteinParticipants.proteinInteractorRef.organism");
+        ItemPrefetchDescriptor desc4 = new ItemPrefetchDescriptor(
+                    "InteractionElementType.participantList.proteinParticipants" 
+                     + ".proteinInteractorRef.organism");
         desc4.addConstraint(new ItemPrefetchConstraintDynamic("organism",
                     identifier));
         desc3.addPath(desc4);
@@ -705,7 +713,7 @@ public class PsiDataTranslator extends DataTranslator
         desc.addPath(desc1);
         
         desc2 = new ItemPrefetchDescriptor(
-                "InteractionElementType.participantList.proteinParticipants.featureList");
+                    "InteractionElementType.participantList.proteinParticipants.featureList");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("featureList",
                     identifier));
         desc4 = new ItemPrefetchDescriptor(
@@ -728,15 +736,15 @@ public class PsiDataTranslator extends DataTranslator
                 + ".featureDescription.xref.primaryRef");
         desc7.addConstraint(new ItemPrefetchConstraintDynamic("primaryRef",
                     identifier));
-        desc6.addPath(desc7);//InteractionElementType.participantList.proteinParticipants.featureList.features.featureDescription.xref.primaryRef
-        desc5.addPath(desc6);//InteractionElementType.participantList.proteinParticipants.featureList.features.featureDescription.xref
+        desc6.addPath(desc7);
+        desc5.addPath(desc6);
         desc4.addPath(desc5);
         desc6 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".featureDescription.names");
         desc6.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     identifier));
-        desc5.addPath(desc6);//InteractionElementType.participantList.proteinParticipants.featureList.features.featureDescription.names
+        desc5.addPath(desc6);
         desc5 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.featureList.features"
                 + ".location");
@@ -752,18 +760,17 @@ public class PsiDataTranslator extends DataTranslator
                 + ".location.end");
         desc7.addConstraint(new ItemPrefetchConstraintDynamic("end",
                     identifier));
-        desc5.addPath(desc7);//InteractionElementType.participantList.proteinParticipants.featureList.features.location.end
-        desc5.addPath(desc6);//InteractionElementType.participantList.proteinParticipants.featureList.features.location.begin
-        desc4.addPath(desc5);//InteractionElementType.participantList.proteinParticipants.featureList.features.location
-
-        desc2.addPath(desc4);//InteractionElementType.participantList.proteinParticipants.featureList.features
+        desc5.addPath(desc7);
+        desc5.addPath(desc6);
+        desc4.addPath(desc5);
+        desc2.addPath(desc4);
         desc1.addPath(desc2);
         desc.addPath(desc1);
                 
         desc3 = new ItemPrefetchDescriptor(
                 "InteractionElementType.participantList.proteinParticipants.proteinInteractorRef");
         desc3.addConstraint(new ItemPrefetchConstraintDynamic("proteinInteractorRef",
-                    identifier));
+                identifier));
         desc2.addPath(desc3);
         desc.addPath(desc2);
         descSet.add(desc);
