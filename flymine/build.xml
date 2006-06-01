@@ -2164,7 +2164,7 @@
     </taskdef>
 
   <filter-uniprot tgtDir="${build.tmp}" organisms="6239 7165 180454 7460 4932">
-      <fileset dir="${shared.data}/uniprot/7.5">
+      <fileset dir="${shared.data}/uniprot/7.7">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -2265,7 +2265,7 @@
     </taskdef>
 
     <filter-uniprot tgtDir="${build.tmp}" organisms="7227 7237">
-      <fileset dir="${shared.data}/uniprot/7.5">
+      <fileset dir="${shared.data}/uniprot/7.7">
         <include name="uniprot_sprot*"/>
         <include name="uniprot_trembl*"/>
       </fileset>
@@ -3958,7 +3958,8 @@
 
     <load-human integrationWriter="integration.production"
                 source="os.ensembl-human-translated"
-                sourceName="ensembl-human" />
+                sourceName="ensembl-human" 
+                ignoreDuplicates="false"/>
                <!--queryClass="org.flymine.model.genomic.Synonym"/-->
   </target>
 
@@ -4857,7 +4858,7 @@
     </ant>
   </target>
 
-  <!--load TFBSCluster GFF3 data from UCSC-->
+  <!--load TFBSCluster GFF3 data from HSCL-->
   <target name="retrieve-tfbscluster" depends="prepare-build-model, compile-tfbscluster-java">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -4928,9 +4929,9 @@
                    dataSourceName="HSCL"
                    dataSetTitle="HSCL conserved non-coding sites"
                    model="genomic"
-                   handlerClassName="org.flymine.dataconversion.CnsGFF3RecordHandler">
-      <fileset dir ="${shared.data}/human/cns/current/">
-        <include name ="*"/>
+                   handlerClassName="org.flymine.dataconversion.TfbsClusterGFF3RecordHandler">
+      <fileset dir ="${shared.data}/human/cns/2006-05-11/">
+        <include name ="*.gff"/>
       </fileset>
     </retrieve-file>
 
@@ -5095,13 +5096,13 @@
   </target>
    <target name="retrieve-mage-stemcell2"
          depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-src-items">
-    <!-- MAGEstk toolkit wants write access to source files (?) -->
+    <!-- MAGEstk toolkit wants write access to source files (?) >
     <delete dir="${build}/tmp/mage"/>
     <copy todir="${build.tmp}/mage">
       <fileset dir="${shared.data}/human/mage/E-EMBL-1"/>
       <fileset dir="${shared.data}/human/mage/E-MEXP-70"/>
     </copy>
-    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/>
+    <copy file="${model}/mage/resources/MAGE-ML.dtd" todir="${build.tmp}/mage"/-->
 
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
@@ -5178,7 +5179,6 @@
                sourceName="mage"/>
   </target>
 
-  <!-- load mage smdb data into production -->
   <target name="build-mage-smdb-production" depends="retrieve-mage-smdb, load-mage-smdb"/>
 
 <!-- CDNACLONE/image PIPELINE -->
@@ -5221,7 +5221,7 @@
                   model="cdnaclone">
 
       <fileset dir="${shared.data}/human/probeSet/"
-               includes="HG_U95Av2_annot.csv"/>
+               includes="*.csv"/>
 
     </convert-file>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
@@ -5276,8 +5276,7 @@
       <property name="db.name" value="db.common-src-items"/>
     </ant>
   </target>
-
-  <target name="translate-psi-stemcell" depends="compile-psi-java, compile-genomic-java-from-db">
+<target name="translate-psi-intact-stemcell" depends="compile-psi-java, compile-genomic-java-from-db">
     <ant antfile="${build}/build-model.xml" target="build-db" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -5293,7 +5292,7 @@
                     target="osw.psi-tgt-items"
                     srcModel="psi"
                     tgtModel="genomic"
-                    organisms="9606 10090"/>
+                    organisms="9606 10090 13616 9615"/>
     <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
       <property name="model.name" value="fulldata"/>
       <reference torefid="class.path" refid="models.class.path"/>
@@ -5304,6 +5303,7 @@
       <property name="db.name" value="db.common-tgt-items"/>
     </ant>
   </target>
+  
   <target name="load-psi-intact-stemcell" depends="copy-stemcell-config">
     <taskdef name="load-psi" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
       <classpath refid="genomic.class.path"/>
@@ -5316,8 +5316,7 @@
   </target>
 
   <target name="build-psi-intact-production-stemcell"
-          depends="retrieve-psi-intact-stemcell, translate-psi-stemcell, load-psi-intact-stemcell"/>
-
+          depends="retrieve-psi-intact-stemcell, translate-psi-intact-stemcell, load-psi-intact-stemcell"/>
 
  <target name="filter-uniprot-hs" depends="prepare-build-model, compile-uniprot-java">
     <taskdef name="filter-uniprot"
