@@ -190,6 +190,7 @@
       <forward name="history" path="/history.do" redirect="true"/>
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
       <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
+      <forward name="template" path="/template.do" redirect="true"/>
     </action>
     
     <action path="/loadQuery"
