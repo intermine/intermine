@@ -59,6 +59,21 @@ public class PathQuery
     }
 
     /**
+     * Construct a new instance of PathQuery from an existing
+     * instance.
+     * @param query the existing query
+     */
+    public PathQuery(PathQuery query) {
+        this.model = query.model;
+        this.nodes = query.nodes;
+        this.view = query.view;
+        this.info = query.info;
+        this.problems = query.problems;
+        this.constraintLogic = query.constraintLogic;
+        this.alternativeViews = query.alternativeViews;
+    }
+
+    /**
      * Get the constraint logic expression.
      * @return the constraint logic expression
      */

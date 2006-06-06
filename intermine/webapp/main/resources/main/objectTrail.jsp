@@ -8,7 +8,10 @@
 <html:xhtml/>
 <c:if test="${!empty trailElements}">
   <div class="body objectTrail">
-    Trail: <c:forEach items="${trailElements}" var="item" varStatus="status">
+    Trail: <html:link action="/query.do?showTemplate=true"
+                 styleClass="objectTrailLinkResults">Query</html:link>
+    &gt;
+    <c:forEach items="${trailElements}" var="item" varStatus="status">
       <c:choose>
         <c:when test="${item.table}">
           <fmt:message key="objectTrail.results" var="resultsLabel"/>

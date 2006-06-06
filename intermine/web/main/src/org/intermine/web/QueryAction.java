@@ -44,14 +44,20 @@ public class QueryAction extends InterMineAction
        throws Exception {
        HttpSession session = request.getSession();
        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-       
+       boolean showTemplate = (request.getParameter("showTemplate") != null);
+
        if (query == null) {
            SessionMethods.setHasQueryCookie(session, response, false);
            return new ForwardParameters(getWebProperties(request)
                    .getProperty("project.sitePrefix"), true).forward();
        }
-       
-       return mapping.findForward("query");
-   }
+
+        if (query instanceof TemplateQuery && showTemplate) {
+            return new ForwardParameters(mapping.findForward("template")).addParameter("name",
+                    ((TemplateQuery) session.getAttribute(Constants.QUERY)).getName()).forward();
+        } else {
+            return mapping.findForward("query");
+        }
+    }
 
 }

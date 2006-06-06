@@ -263,7 +263,7 @@ public class TemplateForm extends ActionForm
             locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         }
         int j = 0;
-        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();

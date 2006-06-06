@@ -29,16 +29,14 @@ import javax.xml.stream.XMLStreamWriter;
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
-public class TemplateQuery
+public class TemplateQuery extends PathQuery
 {
     /** Template query name. */
     protected String name;
     /** Template query description. */
     protected String description;
-    /** Entire query */
-    protected PathQuery query;
     /** Nodes with templated constraints */
-    protected List nodes = new ArrayList();
+    protected List editableNodes = new ArrayList();
     /** Map from node to editable constraint list */
     protected Map constraints = new HashMap();
     /** True if template is considered 'important' for a related class. */
@@ -57,6 +55,7 @@ public class TemplateQuery
      */
     public TemplateQuery(String name, String description, PathQuery query,
                          boolean important, String keywords) {
+        super((PathQuery) query.clone());
         if (description != null) {
             this.description = description;
         }
@@ -66,7 +65,6 @@ public class TemplateQuery
         if (keywords != null) {
             this.keywords = keywords;
         }
-        this.query = query;
         this.important = important;
         // Find the editable constraints in the query.
         Iterator iter = query.getNodes().entrySet().iterator();
@@ -80,7 +78,7 @@ public class TemplateQuery
                     List ecs = (List) constraints.get(node);
                     if (ecs == null) {
                         ecs = new ArrayList();
-                        nodes.add(node);
+                        editableNodes.add(node);
                         constraints.put(node, ecs);
                     }
                     ecs.add(c);
@@ -112,12 +110,10 @@ public class TemplateQuery
      * @return a clone of the original tempate without editable constraints.
      */
     public TemplateQuery cloneWithoutEditableConstraints() {
-        TemplateQuery clone = TemplateHelper.cloneTemplate(this);
-
-        PathQuery queryClone = clone.getQuery();
+        TemplateQuery clone = (TemplateQuery) this.clone();
 
         // Find the editable constraints in the query.
-        Iterator iter = queryClone.getNodes().entrySet().iterator();
+        Iterator iter = clone.getNodes().entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             PathNode node = (PathNode) entry.getValue();
@@ -130,8 +126,8 @@ public class TemplateQuery
             }
         }
         clone.constraints.clear();
-        clone.nodes.clear();
-
+        clone.editableNodes.clear();
+        
         return clone;
     }
 
@@ -140,7 +136,7 @@ public class TemplateQuery
      * Return a List of all the Constraints of fields in this template query.
      * @return a List of all the Constraints of fields in this template query
      */
-    public List getAllConstraints() {
+    public List getAllEditableConstraints() {
         List returnList = new ArrayList();
 
         Iterator iter = constraints.values().iterator();
@@ -161,19 +157,11 @@ public class TemplateQuery
     }
 
     /**
-     * Get the query (eg. select c from Company as c where c.name = 'CompanyA')
-     * @return the query
-     */
-    public PathQuery getQuery() {
-        return query;
-    }
-
-    /**
      * Get the nodes from the description, in order (eg. {Company.name})
      * @return the nodes
      */
-    public List getNodes() {
-        return nodes;
+    public List getEditableNodes() {
+        return editableNodes;
     }
 
     /**
@@ -189,22 +177,6 @@ public class TemplateQuery
      */
     public boolean isImportant() {
         return important;
-    }
-
-    /**
-     * Find out whether the template is valid against the current model.
-     * @return true if template is valid, false if not
-     */
-    public boolean isValid() {
-        return query.isValid();
-    }
-
-    /**
-     * Get the exceptions generated while deserialising this template query.
-     * @return exceptions relating to this template query
-     */
-    public Exception[] getProblems() {
-        return query.getProblems();
     }
 
     /**
@@ -231,6 +203,25 @@ public class TemplateQuery
         }
 
         return sw.toString();
+    }
+
+    /**
+     * Clone this TemplateQuery
+     * @return a TemplateQuery
+     */
+    public Object clone() {
+        TemplateQuery templateQuery = new TemplateQuery(name, description,
+                                                        (PathQuery) super.clone(), important,
+                                                        keywords);
+        return templateQuery;
+    }
+
+    /**
+     * Return the PathQuery part of the TemplateQuery
+     * @return a PathQuery
+     */
+    public PathQuery getPathQuery() {
+        return (PathQuery) super.clone();
     }
 
 }

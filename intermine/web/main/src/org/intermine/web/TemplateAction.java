@@ -66,26 +66,33 @@ public class TemplateAction extends InterMineAction
         String templateType = tf.getTemplateType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
         boolean skipBuilder = (request.getParameter("skipBuilder") != null);
-        
+        boolean editTemplate = (request.getParameter("editTemplate") != null);
+
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName, 
-                                                             templateName, templateType);
-        PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
-        SessionMethods.loadQuery(queryCopy, request.getSession(), response);
-        form.reset (mapping, request);
-        
-        if (!skipBuilder) {
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
+                templateName, templateType);
+        SessionMethods.loadQuery(template, request.getSession(), response);
+        // We're editing the query
+        if (!skipBuilder && !editTemplate) {
+            SessionMethods.loadQuery(((TemplateQuery) session.getAttribute(Constants.QUERY))
+                    .getPathQuery(), request.getSession(), response);
+            session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        }
+        form.reset(mapping, request);
+
+        // We're going to the query page
+        if (!skipBuilder || editTemplate) {
             return mapping.findForward("query");
         }
-        
-        QueryMonitorTimeout clientState
-                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(
+                Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages, saveQuery);
         Thread.sleep(200);
-        return new ForwardParameters(mapping.findForward("waiting"))
-                            .addParameter("qid", qid).forward();
+        return new ForwardParameters(mapping.findForward("waiting")).addParameter("qid", qid)
+                .forward();
     }
 }
