@@ -221,20 +221,29 @@ public class SessionMethods
      * @param session the session
      * @param response the response
      */
-    public static void loadQuery(PathQuery query, HttpSession session,
+    public static void loadQuery(PathQuery query, HttpSession session, 
             HttpServletResponse response) {
-        session.setAttribute(Constants.QUERY, query.clone());
-        //at the moment we can only load queries that have saved using the webapp
-        //this is because the webapp satisfies our (dumb) assumption that the view list is not empty
+        // Depending on the class, load PathQuery or TemplateQuery
+        if (query instanceof TemplateQuery) {
+            TemplateQuery template = (TemplateQuery) query;
+            session.setAttribute(Constants.QUERY, (TemplateQuery) template.clone());
+            session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
+        } else {
+            // at the moment we can only load queries that have saved using the
+            // webapp
+            // this is because the webapp satisfies our (dumb) assumption that
+            // the view list is not empty
+            session.setAttribute(Constants.QUERY, query.clone());
+            session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        }
         String path = (String) query.getView().iterator().next();
         if (path.indexOf(".") != -1) {
             path = path.substring(0, path.indexOf("."));
         }
         session.setAttribute("path", path);
         session.removeAttribute("prefix");
-        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         session.removeAttribute(Constants.EDITING_VIEW);
-        
+
         setHasQueryCookie(session, response, true);
     }
     

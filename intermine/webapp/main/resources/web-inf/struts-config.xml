@@ -207,6 +207,7 @@
     <action path="/query"
             type="org.intermine.web.QueryAction">
       <forward name="query" path="query.page"/>
+      <forward name="template" path="/template.do"/>
     </action>
     
     <action path="/logout"

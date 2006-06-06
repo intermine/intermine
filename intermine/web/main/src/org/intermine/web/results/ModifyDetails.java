@@ -72,9 +72,9 @@ public class ModifyDetails extends DispatchAction
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
                                                              name, type);
-        PathQuery query = (PathQuery) template.getQuery().clone();
-        
-        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+        PathQuery query = (PathQuery) template.clone();
+
+        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPath());
             for (int ci = 0; ci < node.getConstraints().size(); ci++) {

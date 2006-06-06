@@ -116,12 +116,12 @@ public class TemplateHelper
      * @return          a new PathQuery matching template with user supplied constraints
      */
     public static PathQuery templateFormToQuery(TemplateForm tf, TemplateQuery template) {
-        PathQuery queryCopy = (PathQuery) template.getQuery().clone();
+        PathQuery queryCopy = (PathQuery) template.clone();
 
         // Step over nodes and their constraints in order, ammending our
         // PathQuery copy as we go
         int j = 0;
-        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
@@ -153,7 +153,7 @@ public class TemplateHelper
 
         // Set the desired view list
         if (!StringUtils.isEmpty(tf.getView())) {
-            queryCopy.setView(template.getQuery().getAlternativeView(tf.getView()));
+            queryCopy.setView(template.getAlternativeView(tf.getView()));
         }
 
         return queryCopy;
@@ -421,17 +421,18 @@ public class TemplateHelper
      * @param template the query to clone
      * @return a clone of the original template
      */
-    public static TemplateQuery cloneTemplate(TemplateQuery template) {
-        PathQuery queryClone = (PathQuery) template.getQuery().clone();
-
-        TemplateQuery clone = new TemplateQuery(template.getName(), template.getDescription(),
-                                                queryClone, template.isImportant(),
-                                                template.getKeywords());
-        return clone;
-    }
-
-
-
+    // public static TemplateQuery cloneTemplate(TemplateQuery template) {
+    // PathQuery queryClone = (PathQuery) template.clone();
+    //
+    // TemplateQuery clone = new TemplateQuery(template.getName(),
+    // template.getDescription(),
+    // queryClone, template.isImportant(),
+    // template.getKeywords());
+    // return clone;
+    // }
+    
+    
+    
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
@@ -449,7 +450,7 @@ public class TemplateHelper
         // dummy call to makeQuery() to fill in pathToQueryNode map
         List indexPaths = new ArrayList();
         // find nodes with editable constraints to index and possibly add to select list
-        Iterator niter = template.getNodes().iterator();
+        Iterator niter = template.getEditableNodes().iterator();
         while (niter.hasNext()) {
             PathNode node = (PathNode) niter.next();
             // look for editable constraints
@@ -458,17 +459,17 @@ public class TemplateHelper
                 // NOTE: at one point this exhibited a bug where aliases were repeated
                 // in the generated query, seems to be fixed now though.
                 String path = node.getPath();
-                Set view = new HashSet(templateClone.getQuery().getView());
+                Set view = new HashSet(templateClone.getView());
                 if (!view.contains(path)) {
-                    templateClone.getQuery().getView().add(path);
+                    templateClone.getView().add(path);
                 }
                 indexPaths.add(path);
             }
         }
 
         HashMap pathToQueryNode = new HashMap();
-        Query query = MainHelper.makeQuery(templateClone.getQuery(), new HashMap(),
-                                           pathToQueryNode);
+        Query query =
+                MainHelper.makeQuery((PathQuery) templateClone, new HashMap(), pathToQueryNode);
 
         // create additional indexes on fields added to select list
         Iterator indexIter = indexPaths.iterator();

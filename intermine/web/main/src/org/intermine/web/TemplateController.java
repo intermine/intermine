@@ -113,14 +113,14 @@ public class TemplateController extends TilesAction
         // For each node with an editable constraint, create a DisplayConstraint bean
         // and the human-readable "name" for each node (Department.company.name -> "Company namae")
         
-        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
                 displayConstraints.put(c, new DisplayConstraint(node, os.getModel(), oss));
                 
-                PathNode parent = (PathNode) template.getQuery().getNodes().
+                PathNode parent = (PathNode) template.getNodes().
                     get(node.getPath().substring(0, node.getPath().lastIndexOf(".")));
                 names.put(c, parent.getType() + " "
                           + node.getPath().substring(node.getPath().lastIndexOf(".") + 1));
@@ -148,7 +148,7 @@ public class TemplateController extends TilesAction
     private static void populateTemplateForm(TemplateQuery template, TemplateForm tf,
             HttpServletRequest request) {
         int j = 0;
-        for (Iterator i = template.getNodes().iterator(); i.hasNext();) {
+        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             
             for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {

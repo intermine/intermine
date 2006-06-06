@@ -25,7 +25,7 @@
   <span class="menu-item">
     <c:choose>
       <c:when test="${!empty QUERY}">
-        <html:link action="/query.do">
+        <html:link action="/query.do?showTemplate=true">
           <fmt:message key="menu.currentquery"/>
         </html:link>
       </c:when>
