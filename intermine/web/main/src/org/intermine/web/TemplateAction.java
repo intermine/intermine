@@ -73,19 +73,23 @@ public class TemplateAction extends InterMineAction
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
                 templateName, templateType);
-        SessionMethods.loadQuery(template, request.getSession(), response);
-        // We're editing the query
+
+        // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
             SessionMethods.loadQuery(((TemplateQuery) session.getAttribute(Constants.QUERY))
                     .getPathQuery(), request.getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
-        }
-        form.reset(mapping, request);
-
-        // We're going to the query page
-        if (!skipBuilder || editTemplate) {
+            return mapping.findForward("query");
+        } else if (editTemplate){
+            // We want to edit the template: Load the query as a TemplateQuery
+            SessionMethods.loadQuery(template, request.getSession(), response);
             return mapping.findForward("query");
         }
+
+        // Otherwise show the results: load the modified query from the template
+        PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
+        SessionMethods.loadQuery(queryCopy, request.getSession(), response);
+        form.reset(mapping, request);
 
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(
                 Constants.QUERY_TIMEOUT_SECONDS * 1000);
