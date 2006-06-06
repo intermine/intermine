@@ -15,6 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineDispatchAction;
@@ -24,14 +30,7 @@ import org.intermine.web.QueryMonitorTimeout;
 import org.intermine.web.SaveQueryHelper;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
-
-import org.apache.log4j.Logger;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
+import org.intermine.web.TemplateQuery;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a saved query or bag.
@@ -73,6 +72,15 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         }
         
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
+        
+        if (sq.getPathQuery() instanceof TemplateQuery) {
+            return new ForwardParameters(mapping.findForward("template"))
+                        .addParameter("name",
+                                      ((TemplateQuery) session.getAttribute(Constants.QUERY))
+                                      .getName())
+                                      .forward();
+        }
+        
         return mapping.findForward("query");
     }
     
