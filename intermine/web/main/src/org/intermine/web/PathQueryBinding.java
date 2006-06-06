@@ -93,15 +93,21 @@ public class PathQueryBinding
                     writer.writeAttribute("value", "" + c.getValue());
                     if (c.getDescription() != null) {
                         writer.writeAttribute("description", "" + c.getDescription());
+                    } else {
+                        writer.writeAttribute("description", "");
                     }
                     if (c.getIdentifier() != null) {
                         writer.writeAttribute("identifier", "" + c.getIdentifier());
+                    } else {
+                        writer.writeAttribute("identifier", "");                        
                     }
                     if (c.isEditable()) {
                         writer.writeAttribute("editable", "true");
                     }
                     if (c.getCode() != null) {
                         writer.writeAttribute("code", c.getCode());
+                    } else {
+                        writer.writeAttribute("code", "");                        
                     }
                     writer.writeEndElement();
                 }
