@@ -44,11 +44,14 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
+import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 import org.intermine.web.tagging.TagTypes;
 
 import java.io.StringReader;
@@ -188,22 +191,38 @@ public class ProfileManager
         }
 
         Map savedBags = new HashMap();
-        for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
-            SavedBag bag = (SavedBag) i.next();
-            try {
-                savedBags.putAll(InterMineBagBinding.unmarshal(
-                    new StringReader(bag.getBag()), os, new IdUpgrader() {
-                        public Set getNewIds(InterMineObject oldObject,
-                                             ObjectStore objectStore) {
-                            throw new RuntimeException("Shouldn't call getNewIds() in a"
-                                                       + " running webapp");
-                        }
-                    }));
-            } catch (Exception err) {
-                // Ignore rows that don't unmarshal (they probably reference
-                // another model.
-                LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
-            }
+        Query q = new Query();
+        QueryClass qc = new QueryClass(SavedBag.class);
+        q.addFrom(qc);
+        q.addToSelect(new QueryField(qc, "name"));
+        q.addToSelect(new QueryField(qc, "size"));
+        q.addToSelect(new QueryField(qc, "objects"));
+        q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "userProfile"),
+                    ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
+                        UserProfile.class)));
+        Results bags;
+        try {
+            bags = osw.execute(q);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+        for (Iterator i = bags.iterator(); i.hasNext();) {
+            List row = (List) i.next();
+            String bagName = (String) row.get(0);
+            int bagSize = ((Integer) row.get(1)).intValue();
+            boolean bagIsObjects = ((Boolean) row.get(2)).booleanValue();
+            //try {
+            //    savedBags.putAll(InterMineBagBinding.unmarshal(new StringReader(bag.getBag()), os,
+            //                IdUpgrader.ERROR_UPGRADER, userProfile.getId()));
+            //} catch (Exception err) {
+            //    // Ignore rows that don't unmarshal (they probably reference
+            //    // another model.
+            //    LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
+            //}
+            savedBags.put(bagName, bagIsObjects
+                    ? (InterMineBag) new InterMineIdBag(userProfile.getId(), bagName, bagSize, osw)
+                    : (InterMineBag) new InterMinePrimitiveBag(userProfile.getId(), bagName,
+                        bagSize, osw));
         }
         Map savedQueries = new HashMap();
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
@@ -241,8 +260,8 @@ public class ProfileManager
             }
         }
         convertTemplateKeywordsToTags(savedTemplates, username);
-        profile = new Profile(this, username, userProfile.getPassword(), savedQueries, savedBags,
-                           savedTemplates);
+        profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
+                savedQueries, savedBags, savedTemplates);
         profileCache.put(username, profile);
         return profile;
     }
@@ -275,79 +294,85 @@ public class ProfileManager
      * @param profile the Profile
      */
     public void saveProfile(Profile profile) {
-        String username = profile.getUsername();
-        if (username != null) {
-            try {
-                UserProfile userProfile = null;
-                if (hasProfile(username)) {
-                    userProfile = getUserProfile(username);
-                    for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
-                        osw.delete((InterMineObject) i.next());
+        Integer userId = profile.getUserId();
+        try {
+            UserProfile userProfile = getUserProfile(userId);
+            if (userProfile != null) {
+                for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
+                    SavedBag bag = (SavedBag) i.next();
+                    if (!profile.getSavedBags().containsKey(bag.getName())) {
+                        osw.delete(bag);
                     }
-
-                    for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
-                        osw.delete((InterMineObject) i.next());
-                    }
-
-                    for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); 
-                         i.hasNext();) {
-                        osw.delete((InterMineObject) i.next());
-                    }
-                } else {
-                    userProfile = new UserProfile();
-                    userProfile.setUsername(username);
-                    userProfile.setPassword(profile.getPassword());
                 }
 
-                for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                    InterMineBag bag = null;
-                    try {
-                        Map.Entry entry = (Map.Entry) i.next();
-                        String bagName = (String) entry.getKey();
-                        bag = (InterMineBag) entry.getValue();
+                for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
+                    osw.delete((InterMineObject) i.next());
+                }
+
+                for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); 
+                     i.hasNext();) {
+                    osw.delete((InterMineObject) i.next());
+                }
+            } else {
+                userProfile = new UserProfile();
+                userProfile.setUsername(profile.getUsername());
+                userProfile.setPassword(profile.getPassword());
+                userProfile.setId(userId);
+            }
+
+            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+                InterMineBag bag = null;
+                try {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    String bagName = (String) entry.getKey();
+                    bag = (InterMineBag) entry.getValue();
+                    if (bag.needsWrite()) {
                         SavedBag savedBag = new SavedBag();
                         savedBag.setBag(bagBinding.marshal(bag, bagName));
                         savedBag.setUserProfile(userProfile);
+                        savedBag.setName(bagName);
+                        savedBag.setSize(bag.size());
+                        savedBag.setObjects(bag instanceof InterMineIdBag);
                         osw.store(savedBag);
-                    } catch (Exception e) {
-                        LOG.error("Failed to marshal and save bag: " + bag, e);
+                        bag.resetToDatabase();
                     }
+                } catch (Exception e) {
+                    LOG.error("Failed to marshal and save bag: " + bag, e);
                 }
-
-                for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                    org.intermine.web.SavedQuery query = null;
-                    try {
-                        Map.Entry entry = (Map.Entry) i.next();
-                        query = (org.intermine.web.SavedQuery) entry.getValue();
-                        SavedQuery savedQuery = new SavedQuery();
-                        savedQuery.setQuery(SavedQueryBinding.marshal(query));
-                        savedQuery.setUserProfile(userProfile);
-                        osw.store(savedQuery);
-                    } catch (Exception e) {
-                        LOG.error("Failed to marshal and save query: " + query, e);
-                    }
-                }
-
-                for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
-                    TemplateQuery template = null;
-                    try {
-                        Map.Entry entry = (Map.Entry) i.next();
-                        template = (TemplateQuery) entry.getValue();
-                        SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
-                        savedTemplate.setTemplateQuery(templateBinding.marshal(template));
-                        savedTemplate.setUserProfile(userProfile);
-                        osw.store(savedTemplate);
-                    } catch (Exception e) {
-                        LOG.error("Failed to marshal and save template: " + template, e);
-                    }
-                }
-
-                osw.store(userProfile);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
             }
 
-            setPassword(username, profile.getPassword());
+            for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
+                org.intermine.web.SavedQuery query = null;
+                try {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    query = (org.intermine.web.SavedQuery) entry.getValue();
+                    SavedQuery savedQuery = new SavedQuery();
+                    savedQuery.setQuery(SavedQueryBinding.marshal(query));
+                    savedQuery.setUserProfile(userProfile);
+                    osw.store(savedQuery);
+                } catch (Exception e) {
+                    LOG.error("Failed to marshal and save query: " + query, e);
+                }
+            }
+
+            for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
+                TemplateQuery template = null;
+                try {
+                    Map.Entry entry = (Map.Entry) i.next();
+                    template = (TemplateQuery) entry.getValue();
+                    SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
+                    savedTemplate.setTemplateQuery(templateBinding.marshal(template));
+                    savedTemplate.setUserProfile(userProfile);
+                    osw.store(savedTemplate);
+                } catch (Exception e) {
+                    LOG.error("Failed to marshal and save template: " + template, e);
+                }
+            }
+
+            osw.store(userProfile);
+            profile.setUserId(userProfile.getId());
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -367,6 +392,23 @@ public class ProfileManager
             throw new RuntimeException("Unable to load user profile", e);
         }
         return profile;
+    }
+
+    /**
+     * Perform a query to retrieve a user's backing UserProfile
+     *
+     * @param userId the id of the user
+     * @return the relevant UserProfile
+     */
+    public UserProfile getUserProfile(Integer userId) {
+        if (userId == null) {
+            return null;
+        }
+        try {
+            return (UserProfile) osw.getObjectById(userId, UserProfile.class);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
     }
 
     /**

@@ -11,6 +11,7 @@ package org.intermine.web.results;
  */
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,11 +28,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
@@ -101,6 +104,9 @@ public class SaveBagAction extends InterMineAction
         //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm crf = (SaveBagForm) form;
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore userProfileOs = ((ProfileManager) servletContext.getAttribute(Constants
+                    .PROFILE_MANAGER)).getUserProfileObjectStore();
 
         InterMineBag bag = null;
         boolean storingIds = false;
@@ -113,11 +119,20 @@ public class SaveBagAction extends InterMineAction
         int col = Integer.parseInt(index == -1 ? selected : selected.substring(0, index));
         Object type = ((Column) pt.getColumns().get(col)).getType();
 
+        String bagName;
+        if (request.getParameter("saveNewBag") != null) {
+            bagName = crf.getNewBagName();
+        } else {
+            bagName = crf.getExistingBagName();
+        }
+
         if (type instanceof ClassDescriptor) {
-            bag = new InterMineIdBag();
+            bag = new InterMineIdBag(profile.getUserId(), bagName, userProfileOs,
+                    Collections.EMPTY_SET);
             storingIds = true;
         } else {
-            bag = new InterMinePrimitiveBag();
+            bag = new InterMinePrimitiveBag(profile.getUserId(), bagName, userProfileOs,
+                    Collections.EMPTY_SET);
         }
 
         // set to true if there is a complete column to save as a bag
@@ -239,12 +254,6 @@ public class SaveBagAction extends InterMineAction
             }
         }
 
-        String bagName;
-        if (request.getParameter("saveNewBag") != null) {
-            bagName = crf.getNewBagName();
-        } else {
-            bagName = crf.getExistingBagName();
-        }
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
             if (!existingBag.getClass().equals(bag.getClass())) {

@@ -10,6 +10,7 @@ package org.intermine.web.bag;
  *
  */
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -36,6 +37,8 @@ public class InterMineBagHandler extends DefaultHandler
 
     private Map bags;
 
+    private Integer userId;
+
     private String bagName;
 
     private InterMineBag bag;
@@ -55,17 +58,18 @@ public class InterMineBagHandler extends DefaultHandler
      *            Map from bag name to InterMineBag - results are added to this
      *            Map
      * @param idUpgrader bag object id upgrader
-     * @param idToObjectMap
-     *            a Map from id to InterMineObject. This is used to create
-     *            template objects to pass to createPKQuery() so that old bags
-     *            can be used with new ObjectStores.
+     * @param idToObjectMap a Map from id to InterMineObject. This is used to create template
+     * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
+     * @param userId the id of the user
      */
-    public InterMineBagHandler(ObjectStore os, Map bags, Map idToObjectMap, IdUpgrader idUpgrader) {
+    public InterMineBagHandler(ObjectStore os, Map bags, Map idToObjectMap, IdUpgrader idUpgrader,
+            Integer userId) {
         this.os = os;
         this.bags = bags;
         this.idUpgrader = idUpgrader;
         this.model = os.getModel();
         this.idToObjectMap = idToObjectMap;
+        this.userId = userId;
     }
 
     /**
@@ -82,7 +86,7 @@ public class InterMineBagHandler extends DefaultHandler
                 String value = attrs.getValue("value");
                 if (type.equals(InterMineObject.class.getName())) {
                     if (bag == null) {
-                        bag = new InterMineIdBag();
+                        bag = new InterMineIdBag(userId, bagName, os, Collections.EMPTY_SET);
                     } else if (bag instanceof InterMinePrimitiveBag) {
                         LOG.error("InterMineObject id " + value
                                 + " in bag of primitives");
@@ -99,7 +103,7 @@ public class InterMineBagHandler extends DefaultHandler
                     }
                 } else {
                     if (bag == null) {
-                        bag = new InterMinePrimitiveBag();
+                        bag = new InterMinePrimitiveBag(userId, bagName, os, Collections.EMPTY_SET);
                     } else if (bag instanceof InterMineIdBag) {
                         LOG.error("primitive " + value
                                 + " in bag of InterMineObjects");

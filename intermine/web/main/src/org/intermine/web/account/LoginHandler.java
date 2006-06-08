@@ -72,7 +72,7 @@ public abstract class LoginHandler extends InterMineAction
         if (pm.hasProfile(username)) {
             profile = pm.getProfile(username, password);
         } else {
-            profile = new Profile(pm, username, password, new HashMap(), new HashMap(),
+            profile = new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                     new HashMap());
             pm.saveProfile(profile);
         }

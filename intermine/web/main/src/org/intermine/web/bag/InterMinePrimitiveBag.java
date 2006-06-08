@@ -21,25 +21,34 @@ import org.intermine.objectstore.ObjectStore;
  */
 public class InterMinePrimitiveBag extends InterMineBag
 {
-    /**
-     * Construct an instance of InterMinePrimitiveBag.
-     * @param bag bag to copy
+    /** 
+     * Constructs a new InterMinePrimitiveBag to be lazily-loaded from the userprofile database.
+     *
+     * @param userId the id of the user, matching the userprofile database
+     * @param name the name of the bag, matching the userprofile database
+     * @param size the size of the bag
+     * @param os the ObjectStore to use to retrieve the contents of the bag
      */
-    public InterMinePrimitiveBag(InterMinePrimitiveBag bag) {
-        super(bag);
+    public InterMinePrimitiveBag(Integer userId, String name, int size, ObjectStore os) {
+        super(userId, name, size, os);
     }
-    
-    /**
-     * Construct an instance of InterMinePrimitiveBag.
+
+    /** 
+     * Constructs a new InterMinePrimitiveBag with certain contents.
+     *
+     * @param userId the id of the user, to be saved in the userprofile database
+     * @param name the name of the bag, to be saved in the userprofile database
+     * @param os the ObjectStore to use to store the contents of the bag
+     * @param c the new bag contents
      */
-    public InterMinePrimitiveBag() {
-        super();
+    public InterMinePrimitiveBag(Integer userId, String name, ObjectStore os, Collection c) {
+        super(userId, name, os, c);
     }
 
     /**
      * @see InterMineBag#toObjectCollection
      */
-    public Collection toObjectCollection(ObjectStore os) {
+    public Collection toObjectCollection() {
         return this;
     }
 }

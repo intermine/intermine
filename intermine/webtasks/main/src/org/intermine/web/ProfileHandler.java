@@ -90,7 +90,7 @@ class ProfileHandler extends DefaultHandler
      * @return the new Profile
      */
     public Profile getProfile() {
-        return new Profile(profileManager, username, password, savedQueries, savedBags,
+        return new Profile(profileManager, username, null, password, savedQueries, savedBags,
                            savedTemplates);
     }
 
@@ -113,7 +113,7 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getObjectStore(),
-                                                 savedBags, idObjectMap, idUpgrader);
+                    savedBags, idObjectMap, idUpgrader, null);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();

@@ -96,13 +96,15 @@ public class InterMineBagBinding
      * @param reader the saved bags
      * @param os ObjectStore used to resolve object ids
      * @param idUpgrader bag object id upgrader
+     * @param userId an Integer
      * @return a Map from bag name to InterMineBag
      */
-    public static Map unmarshal(final Reader reader, final ObjectStore os, IdUpgrader idUpgrader) {
+    public static Map unmarshal(final Reader reader, final ObjectStore os, IdUpgrader idUpgrader,
+            Integer userId) {
         final Map bags = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader),
-                            new InterMineBagHandler(os, bags, new HashMap(), idUpgrader));
+                    new InterMineBagHandler(os, bags, new HashMap(), idUpgrader, userId));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
