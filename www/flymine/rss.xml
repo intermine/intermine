@@ -9,6 +9,7 @@
     <webMaster>info@flymine.org</webMaster>
 
     <!-- Add new news at the top here -->
+    <!--
     <item>
       <title>Possible disruption to FlyMine</title>
       <link>http://www.flymine.org/</link>
@@ -20,7 +21,7 @@
       </description>
       <pubDate>Fri, 5 May 2006 12:04 GMT</pubDate>
     </item>
-    
+    -->
     <item>
       <title>FlyBase links to FlyMine</title>
       <link>http://www.flymine.org/</link>
