@@ -102,7 +102,7 @@ public class LoadDefaultTemplatesTask extends Task
             if (!pm.hasProfile(username)) {
                 LOG.info("Creating profile for " + username);
                 String password = RequestPasswordAction.generatePassword();
-                profileDest = new Profile(pm, username, password,
+                profileDest = new Profile(pm, username, null, password,
                                       new HashMap(), new HashMap(), new HashMap());
                 pm.saveProfile(profileDest);
             } else {

@@ -10,11 +10,10 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,10 +25,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.io.InputStreamReader;
-
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMessage;
@@ -39,6 +34,10 @@ import org.apache.struts.upload.FormFile;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
@@ -118,10 +117,14 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BuildBagForm buildBagForm = (BuildBagForm) form;
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        String newBagName = buildBagForm.getBagName();
+        ObjectStore userProfileOs = ((ProfileManager) servletContext.getAttribute(Constants
+                    .PROFILE_MANAGER)).getUserProfileObjectStore();
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
-        InterMineBag identifierBag = new InterMinePrimitiveBag();
+        InterMineBag identifierBag = new InterMinePrimitiveBag(profile.getUserId(), newBagName,
+                userProfileOs, Collections.EMPTY_SET);
         String trimmedText = buildBagForm.getText().trim();
         FormFile formFile = buildBagForm.getFormFile();
 
@@ -162,8 +165,6 @@ public class BuildBagAction extends InterMineLookupDispatchAction
             }
         }        
 
-        String newBagName = buildBagForm.getBagName();
-
         InterMineBag bagToSave = null;
         
         if (converterTemplateName != null) {
@@ -178,7 +179,8 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                                                 + converterTemplateName + "\"");
             }
 
-            InterMineIdBag idBag = new InterMineIdBag();
+            InterMineIdBag idBag = new InterMineIdBag(profile.getUserId(), newBagName,
+                    userProfileOs, Collections.EMPTY_SET);
 
             String queryBagName = "id_bag_name";
 

@@ -34,6 +34,7 @@ public class Profile
 {
     protected ProfileManager manager;
     protected String username;
+    protected Integer userId;
     protected String password;
     protected Map savedQueries = new TreeMap();
     protected Map savedBags = new TreeMap();
@@ -46,19 +47,17 @@ public class Profile
      * Construct a Profile
      * @param manager the manager for this profile
      * @param username the username for this profile
+     * @param userId the id of this user
      * @param password the password for this profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
      */
-    public Profile(ProfileManager manager,
-                   String username,
-                   String password,
-                   Map savedQueries,
-                   Map savedBags,
-                   Map savedTemplates) {
+    public Profile(ProfileManager manager, String username, Integer userId, String password,
+            Map savedQueries, Map savedBags, Map savedTemplates) {
         this.manager = manager;
         this.username = username;
+        this.userId = userId;
         this.password = password;
         this.savedQueries.putAll(savedQueries);
         this.savedBags.putAll(savedBags);
@@ -81,6 +80,23 @@ public class Profile
      */
     public String getUsername() {
         return username;
+    }
+    
+    /**
+     * Get the value of userId
+     * @return an Integer
+     */
+    public Integer getUserId() {
+        return userId;
+    }
+
+    /**
+     * Set the userId
+     *
+     * @param userId an Integer
+     */
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
     
     /**

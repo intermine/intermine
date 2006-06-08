@@ -11,6 +11,7 @@ package org.intermine.web.results;
  */
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -63,11 +64,11 @@ public class BagDetailsAction extends Action
         Object type = Object.class; 
         
         if (bag == null) {
-            bag = new InterMinePrimitiveBag();
+            bag = new InterMinePrimitiveBag(profile.getUserId(), null, os, Collections.EMPTY_SET);
         }
         
         if (bag instanceof InterMineIdBag) {
-            bag = ((InterMineIdBag) bag).toObjectCollection(os);
+            bag = ((InterMineIdBag) bag).toObjectCollection();
             type = os.getModel().getClassDescriptorByName("org.intermine.model.InterMineObject");
         }
         

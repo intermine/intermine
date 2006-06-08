@@ -27,7 +27,32 @@ import org.intermine.objectstore.ObjectStoreException;
 public class InterMineIdBag extends InterMineBag
 {
     protected static final Logger LOG = Logger.getLogger(InterMineIdBag.class);
-    
+
+    /** 
+     * Constructs a new InterMineIdBag to be lazily-loaded from the userprofile database.
+     *
+     * @param userId the id of the user, matching the userprofile database
+     * @param name the name of the bag, matching the userprofile database
+     * @param size the size of the bag
+     * @param os the ObjectStore to use to retrieve the contents of the bag
+     */
+    public InterMineIdBag(Integer userId, String name, int size, ObjectStore os) {
+        super(userId, name, size, os);
+    }
+
+    /** 
+     * Constructs a new InterMineIdBag with certain contents.
+     *
+     * @param userId the Id of the user, to be saved in the userprofile database
+     * @param name the name of the bag, to be saved in the userprofile database
+     * @param os the ObjectStore to use to store the contents of the bag
+     * @param c the new bag contents
+     */
+    public InterMineIdBag(Integer userId, String name, ObjectStore os, Collection c) {
+        super(userId, name, os, c);
+    }
+
+   
     /**
      * Add an id.
      * @param id intermine id
@@ -46,10 +71,10 @@ public class InterMineIdBag extends InterMineBag
 
     /**
      * Return a collection of InterMineObjects corresponding to the ids in the bag.
-     * @param os object store to load objects from
+     *
      * @return collection of InterMineObjects
      */
-    public Collection toObjectCollection(ObjectStore os) {
+    public Collection toObjectCollection() {
         List list = new ArrayList();
         for (Iterator iter = iterator(); iter.hasNext(); ) {
             Integer id = (Integer) iter.next();

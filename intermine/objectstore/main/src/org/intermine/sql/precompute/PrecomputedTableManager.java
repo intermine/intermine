@@ -400,7 +400,7 @@ public class PrecomputedTableManager
         }
         long start = System.currentTimeMillis();
         Statement stmt = con.createStatement();
-        ResultSet res = stmt.executeQuery("SELECT * FROM " + TABLE_INDEX);
+        ResultSet res = stmt.executeQuery("SELECT name, statement, category FROM " + TABLE_INDEX);
 
         int failedCount = 0;
         while (res.next()) {
@@ -408,7 +408,7 @@ public class PrecomputedTableManager
             String queryString = res.getString(2);
             String category = res.getString(3);
             try {
-                PrecomputedTable pt = new PrecomputedTable(new Query(queryString, false),
+                PrecomputedTable pt = new PrecomputedTable(new Query(queryString, true),
                             queryString, tableName, category, con);
                 precomputedTables.add(pt);
                 Map queryStrings = (Map) types.get(category);

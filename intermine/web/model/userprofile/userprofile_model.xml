@@ -9,6 +9,9 @@
   </class>
   <class name="org.intermine.model.userprofile.SavedBag" is-interface="false">
     <attribute name="bag" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="size" type="int"/>
+    <attribute name="objects" type="boolean"/>
     <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedBags"/>
   </class>
   <class name="org.intermine.model.userprofile.SavedQuery" is-interface="false">

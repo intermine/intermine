@@ -54,7 +54,7 @@ public class CreateAccountAction extends LoginHandler
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         String username = ((CreateAccountForm) form).getUsername();
         String password = ((CreateAccountForm) form).getPassword();
-        pm.saveProfile(new Profile(pm, username, password, new HashMap(), new HashMap(),
+        pm.saveProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                 new HashMap()));
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         RequestPasswordAction.email(username, password, webProperties);

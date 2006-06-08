@@ -30,4 +30,10 @@ public interface IdUpgrader
      * @return the set of new InterMineObjects
      */
     public Set getNewIds(InterMineObject oldObject, ObjectStore os);
+
+    public static final IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
+        public Set getNewIds(InterMineObject oldObject, ObjectStore objectStore) {
+            throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
+        }
+    };
 }
