@@ -827,6 +827,18 @@
          src="${build.resources}/make_small_ensembl_hs.sql"/>
   </target>
 
+  <target name="build-ensembl-mm-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_ensembl_mm.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_mm"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_ensembl_mm.sql"/>
+  </target>
+
   <!-- retrieve ensembl anopheles data -->
   <target name="retrieve-ensembl-hs" depends="convert-ensembl, build-db-ensembl-human-src-items">
     <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
