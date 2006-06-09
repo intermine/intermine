@@ -74,6 +74,7 @@ public class TemplateController extends TilesAction
         TemplateQuery template = null;
         String queryName = request.getParameter("name");
         String type = request.getParameter("type");
+        String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         boolean populate = true;
         
         if (queryName == null) {
@@ -82,6 +83,13 @@ public class TemplateController extends TilesAction
         
         // look for request attribute "previewTemplate" which is set while building a template
         template = (TemplateQuery) request.getAttribute("previewTemplate");
+        
+        // load the temporary template from the query history
+        if (loadModifiedTemplate != null) {
+            SavedQuery savedQuery = (SavedQuery) profile.getHistory().get(queryName);
+            template = (TemplateQuery) savedQuery.getPathQuery();
+            type = TemplateHelper.TEMP_TEMPLATE;
+        }
         
         if (context.getAttribute("builder") != null) {
             PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);

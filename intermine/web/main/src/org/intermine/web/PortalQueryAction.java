@@ -96,7 +96,7 @@ public class PortalQueryAction extends InterMineAction
         tf.parseAttributeValues(template, session, new ActionErrors(), false);
 
         // Convert form to path query
-        PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
+        PathQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template);
         // Convert path query to intermine query
         SessionMethods.loadQuery(queryCopy, request.getSession(), response);
         // Add a message to welcome the user

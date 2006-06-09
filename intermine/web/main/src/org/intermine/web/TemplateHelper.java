@@ -64,6 +64,8 @@ public class TemplateHelper
     public static final String USER_TEMPLATE = "user";
     /** Type parameter indicating ALL templates */
     public static final String ALL_TEMPLATE = "all";
+    /** Type parameter indicating temporary templates **/
+    public static final String TEMP_TEMPLATE = "temp";
 
     /**
      * Locate TemplateQuery by identifier. The type parameter
@@ -102,21 +104,25 @@ public class TemplateHelper
             } else {
                 return tq;
             }
+        } else if (TEMP_TEMPLATE.equals(type)) {
+            SavedQuery savedQuery = (SavedQuery) profile.getHistory().get(templateName);
+            return (TemplateQuery) savedQuery.getPathQuery();
         } else {
             throw new IllegalArgumentException("type: " + type);
         }
     }
 
     /**
-     * Create a new PathQuery with input submitted by user contained within
+     * Create a new TemplateQuery with input submitted by user contained within
      * a TemplateForm bean.
      *
      * @param tf        the template form bean
      * @param template  the template query involved
-     * @return          a new PathQuery matching template with user supplied constraints
+     * @return          a new TemplateQuery matching template with user supplied constraints
      */
-    public static PathQuery templateFormToQuery(TemplateForm tf, TemplateQuery template) {
-        PathQuery queryCopy = (PathQuery) template.clone();
+    public static TemplateQuery templateFormToTemplateQuery(TemplateForm tf, 
+                                                            TemplateQuery template) {
+        TemplateQuery queryCopy = (TemplateQuery) template.clone();
 
         // Step over nodes and their constraints in order, ammending our
         // PathQuery copy as we go
@@ -134,7 +140,7 @@ public class TemplateHelper
                     getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
                     Object constraintValue = tf.getBag(key);
                     nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                            new Constraint(constraintOp, constraintValue, false,
+                            new Constraint(constraintOp, constraintValue, true,
                                     c.getDescription(), c.getCode(), c.getIdentifier()));
                 } else {
                     // Parse user input
@@ -144,7 +150,7 @@ public class TemplateHelper
 
                     // In query copy, replace old constraint with new one
                     nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                            new Constraint(constraintOp, constraintValue, false,
+                            new Constraint(constraintOp, constraintValue, true,
                                     c.getDescription(), c.getCode(), c.getIdentifier()));
                 }
                 j++;
@@ -155,7 +161,8 @@ public class TemplateHelper
         if (!StringUtils.isEmpty(tf.getView())) {
             queryCopy.setView(template.getAlternativeView(tf.getView()));
         }
-
+        
+        queryCopy.setEdited(true);
         return queryCopy;
     }
 
@@ -293,7 +300,7 @@ public class TemplateHelper
 
         templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
 
-         PathQuery pathQuery = TemplateHelper.templateFormToQuery(templateForm, template);
+         PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template);
         try {
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
             Results results = os.execute(query);
