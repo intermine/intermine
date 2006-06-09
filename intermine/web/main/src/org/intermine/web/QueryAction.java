@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -53,8 +55,25 @@ public class QueryAction extends InterMineAction
        }
 
         if (query instanceof TemplateQuery && showTemplate) {
-            return new ForwardParameters(mapping.findForward("template")).addParameter("name",
-                    ((TemplateQuery) session.getAttribute(Constants.QUERY)).getName()).forward();
+            TemplateQuery template = (TemplateQuery) query;
+            if (template.isEdited()) {
+                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                SavedQuery sq = null;
+                for (Iterator iter = profile.getHistory().values().iterator(); iter.hasNext();) {
+                    sq = (SavedQuery) iter.next();
+                    if (sq.getPathQuery().equals(template)) {
+                        break;
+                    }
+                }
+                return new ForwardParameters(mapping.findForward("template"))
+                    .addParameter("loadModifiedTemplate",
+                              "true")
+                    .addParameter("name", sq.getName())
+                              .forward();
+            } else {
+                return new ForwardParameters(mapping.findForward("template"))
+                    .addParameter("name", template.getName()).forward();
+            }
         } else {
             return mapping.findForward("query");
         }

@@ -19,6 +19,7 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 
 /**
@@ -76,18 +77,27 @@ public class TemplateAction extends InterMineAction
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            SessionMethods.loadQuery(((TemplateQuery) session.getAttribute(Constants.QUERY))
-                    .getPathQuery(), request.getSession(), response);
+            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template);
+            SessionMethods.loadQuery(queryCopy.getPathQuery(), request.getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+            form.reset(mapping, request);
             return mapping.findForward("query");
-        } else if (editTemplate){
+        } else if (editTemplate) {
             // We want to edit the template: Load the query as a TemplateQuery
+            // Don't care about the form
+            // Reload the initial template
+            template = TemplateHelper.findTemplate(servletContext, userName,
+                                                   template.getName(), TemplateHelper.ALL_TEMPLATE);
+            if (template == null) {
+                recordMessage(new ActionMessage("errors.edittemplate.empty"), request);
+                return mapping.findForward("template");
+            }
             SessionMethods.loadQuery(template, request.getSession(), response);
             return mapping.findForward("query");
         }
 
         // Otherwise show the results: load the modified query from the template
-        PathQuery queryCopy = TemplateHelper.templateFormToQuery(tf, template);
+        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template);
         SessionMethods.loadQuery(queryCopy, request.getSession(), response);
         form.reset(mapping, request);
 

@@ -43,6 +43,8 @@ public class TemplateQuery extends PathQuery
     protected boolean important = false;
     /** Keywords set for this template. */
     protected String keywords = "";
+    /** Edited version of another template **/
+    protected boolean edited = false;
 
     /**
      * Construct a new instance of TemplateQuery.
@@ -213,6 +215,7 @@ public class TemplateQuery extends PathQuery
         TemplateQuery templateQuery = new TemplateQuery(name, description,
                                                         (PathQuery) super.clone(), important,
                                                         keywords);
+        templateQuery.edited = edited;
         return templateQuery;
     }
 
@@ -222,6 +225,24 @@ public class TemplateQuery extends PathQuery
      */
     public PathQuery getPathQuery() {
         return (PathQuery) super.clone();
+    }
+    
+    /**
+     * Returns true if the TemplateQuery has been edited
+     * by the user and is therefore saved only in the query
+     * history
+     * @return a boolean
+     */
+    public boolean isEdited() {
+        return edited;
+    }
+    
+    /**
+     * Set the query as beeing edited
+     * @param edited whether the TemplateQuery has been modified by the user
+     */
+    public void setEdited(boolean edited) {
+        this.edited = edited;
     }
 
 }

@@ -196,7 +196,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
             tf.setUseBagConstraint("1", true);
             tf.parseAttributeValues(template, session, new ActionErrors(), false);
 
-            PathQuery pathQuery = TemplateHelper.templateFormToQuery(tf, template);
+            PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(tf, template);
             Query query = MainHelper.makeQuery(pathQuery, bagMap);
             Results results = os.execute(query);
 
