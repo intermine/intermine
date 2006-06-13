@@ -169,8 +169,10 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item location = createLocation(srcItem, tgtItem, true); // seq_region
                     // seq_region.coord-sys
                     result.add(location);
-                    Item anaResult = createAnalysisResult(srcItem, tgtItem); // analysis
-                    result.add(anaResult);
+                    if (config.createAnalysisResult) {
+                        Item anaResult = createAnalysisResult(srcItem, tgtItem); // analysis
+                        result.add(anaResult);
+                    }
 
                     // the default gene organismDbId should be its stable id (or identifier if none)
                     //i.e. for anoph they are the same, but for human they are differant
@@ -1314,7 +1316,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         private boolean useXrefDbsForGeneIdentifier;
         private boolean storeDna;
-
+        private boolean createAnalysisResult;
 
         private EnsemblPropsUtil propsUtil;
 
@@ -1366,7 +1368,8 @@ public class EnsemblDataTranslator extends DataTranslator
             //This boolean indicates that we want to use configurable identifier fields...
             useXrefDbsForGeneIdentifier = Boolean.valueOf(
                     organismProps.getProperty("flag.useXrefDbsForGeneIdentifier")).booleanValue();
-
+            createAnalysisResult = Boolean.valueOf(
+                    organismProps.getProperty("flag.createAnalysisResult")).booleanValue();
             storeDna = Boolean.valueOf(
                     organismProps.getProperty("flag.storeDna")).booleanValue();
 
@@ -1506,7 +1509,10 @@ public class EnsemblDataTranslator extends DataTranslator
         boolean useXrefDbsForGeneIdentifier() {
             return useXrefDbsForGeneIdentifier;
         }
-
+        boolean createAnalysisResult() {
+            return createAnalysisResult;
+        }
+        
         /**
          * @return Do we want to get the DNA sequences now or later?
          * */
