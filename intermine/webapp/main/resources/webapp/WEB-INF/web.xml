@@ -24,6 +24,20 @@
     <servlet-name>action</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>dwr-invoker</servlet-name>
+	<servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+	<init-param>
+	   <param-name>debug</param-name>
+	   <param-value>true</param-value>
+	</init-param>
+  </servlet>
+
+  <servlet-mapping>
+	<servlet-name>dwr-invoker</servlet-name>
+	<url-pattern>/dwr/*</url-pattern>
+  </servlet-mapping>
 
   <session-config>
     <session-timeout>1440</session-timeout>      <!-- 1440 = 24 * 60 = 1 day -->
@@ -33,6 +47,12 @@
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
   
+  <taglib>
+    <taglib-uri>http://jakarta.apache.org/taglibs/string-1.1</taglib-uri>
+    <taglib-location>/WEB-INF/string.tld</taglib-location>
+  </taglib>
+  
+
 </web-app>
 
 

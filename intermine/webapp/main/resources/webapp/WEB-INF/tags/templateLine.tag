@@ -6,10 +6,7 @@
 <%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
 <%@ attribute name="desc" required="false" type="java.lang.String" %>
 
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ include file="/shared/taglibs.jsp" %>
 
     <c:if test="${!templateQuery.valid}">
       <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=${type}" styleClass="brokenTmplLink">
@@ -30,6 +27,9 @@
           <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
         </c:forEach>
       </c:if>
+      <tiles:insert name="starTemplate.tile">
+        <tiles:put name="templateName" value="${templateQuery.name}"/>
+      </tiles:insert>
       <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
                  title="${linkTitle}">
         <img border="0" class="arrow" src="images/right-arrow.gif" alt="-&gt;"/>
