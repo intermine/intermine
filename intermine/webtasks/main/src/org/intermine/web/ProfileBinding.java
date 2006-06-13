@@ -45,6 +45,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.xml.sax.InputSource;
 
+import org.apache.log4j.Logger;
+
 /**
  * Code for reading and writing Profile objects as XML.
  *
@@ -53,6 +55,8 @@ import org.xml.sax.InputSource;
 
 public class ProfileBinding
 {
+
+    private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
@@ -63,7 +67,7 @@ public class ProfileBinding
                                XMLStreamWriter writer) {
         marshal(profile, os, writer, true, true, true, true, true, false);
     }
-    
+
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
@@ -86,42 +90,47 @@ public class ProfileBinding
                                boolean onlyConfigTags) {
         try {
             writer.writeStartElement("userprofile");
-            
+
             if (writeUserAndPassword) {
                 writer.writeAttribute("password", profile.getPassword());
                 writer.writeAttribute("username", profile.getUsername());
             }
-            
+
             if (writeBags) {
                 ItemFactory itemFactory = new ItemFactory(os.getModel());
-    
+
                 Set idSet = new HashSet();
-    
+
                 getProfileObjectIds(profile, os, idSet);
-    
+
                 if (!idSet.isEmpty()) {
                     List objects = os.getObjectsByIds(idSet);
-    
+
                     writer.writeStartElement("items");
                     Iterator objectsIter = objects.iterator();
-    
+
                     while (objectsIter.hasNext()) {
                         ResultsRow rr = (ResultsRow) objectsIter.next();
                         InterMineObject o = (InterMineObject) rr.get(0);
                         Item item = itemFactory.makeItem(o);
                         FullRenderer.render(writer, item);
                     }
-    
+
                     writer.writeEndElement();
                 }
-    
+
                 writer.writeStartElement("bags");
                 for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     String bagName = (String) entry.getKey();
                     InterMineBag bag = (InterMineBag) entry.getValue();
-    
-                    InterMineBagBinding.marshal(bag, bagName, writer);
+
+                    if (bag != null) {
+                        InterMineBagBinding.marshal(bag, bagName, writer);
+                    } else {
+                        LOG.error("bag was null for bagName: " + bagName
+                                  + " username: " + profile.getUsername());
+                    }
                 }
                 writer.writeEndElement();
             } else {
@@ -134,7 +143,7 @@ public class ProfileBinding
                 for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     SavedQuery query = (SavedQuery) entry.getValue();
-    
+
                     SavedQueryBinding.marshal(query, writer);
                 }
             }
@@ -145,12 +154,12 @@ public class ProfileBinding
                 for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     TemplateQuery template = (TemplateQuery) entry.getValue();
-    
+
                     TemplateQueryBinding.marshal(template, writer);
                 }
             }
             writer.writeEndElement();
-            
+
             writer.writeStartElement("tags");
             if (writeTags) {
                 List tags = profile.getProfileManager().getTags(null, null, null,
@@ -179,24 +188,37 @@ public class ProfileBinding
      * @param os the ObjectStore to use when following references
      * @param idsToSerialise object ids are added to this Set
      */
-    private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
+    private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise)
+        throws ObjectStoreException {
         for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
 
             if (bag instanceof InterMineIdBag) {
-                Iterator iter = bag.iterator();
+                //Iterator iter = bag.iterator();
 
+                List objects = os.getObjectsByIds(bag);
+                Iterator iter = objects.iterator();
                 while (iter.hasNext()) {
-                    Integer id = (Integer) iter.next();
-                    InterMineObject object;
-                    try {
-                        object = os.getObjectById(id);
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException("Unable to find object for id: " + id, e);
-                    }
-                    getIdsFromObject(object, os.getModel(), idsToSerialise);
+                        ResultsRow rr = (ResultsRow) iter.next();
+                        InterMineObject o = (InterMineObject) rr.get(0);
+                        getIdsFromObject(o, os.getModel(), idsToSerialise);
                 }
+//                 while (iter.hasNext()) {
+//                     Integer id = (Integer) iter.next();
+//                     InterMineObject object;
+//                     try {
+//                         object = os.getObjectById(id);
+//                     } catch (ObjectStoreException e) {
+//                         throw new RuntimeException("Unable to find object for id: " + id, e);
+//                     }
+//                     if (object != null) {
+//                         getIdsFromObject(object, os.getModel(), idsToSerialise);
+//                     } else {
+//                         LOG.error("object was null for id: " + id.toString() + " for user: "
+//                                   + profile.getUsername());
+//                     }
+//            }
             }
         }
     }
