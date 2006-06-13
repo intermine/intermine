@@ -13,6 +13,8 @@
     <property name="model.name" value="${ant.project.name}"/>
     <property name="namespace" value="http://www.intermine.org/model"/>
     <property name="packagename" value="org.intermine.model"/>
+    <!-- Make directories -->
+    <mkdir dir="${build.model.dir}"/>
   </target>
 
   <!-- CODE GENERATION -->
@@ -42,11 +44,34 @@
     </model:modeloutofdate>
   </target>
   
-  <target name="build-model-from-xml" if="have.xml">
-    <echo>Found xml file</echo>
+  <target name="build-model-from-xmi" if="have.xmi">
+    <echo>Found xmi file</echo>
+    <model:modeloutofdate source="${model.name}.xmi">
+      <then>
+        <copy file="${model.name}.xmi" tofile="${build.task.dir}/${model.name}_.xmi"/>
+        <model:model-generation type="xmi" source="${build.task.dir}/${model.name}_.xmi"/>
+        <!--antcall target="copy-keydefs"/-->
+        <property name="regenerate.java" value="true"/>
+      </then>
+    </model:modeloutofdate>
+  </target>
+  
+  <target name="build-model-from-xml-in-project-dir" if="have.xml.in.project.dir">
+    <echo>Found xml file in project directory</echo>
     <model:modeloutofdate source="${model.name}_model.xml">
       <then>
         <copy file="${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
+        <!--antcall target="copy-keydefs"/-->
+        <property name="regenerate.java" value="true"/>
+      </then>
+    </model:modeloutofdate>
+  </target>
+  
+  <target name="build-model-from-xml-in-build-dir" if="have.xml.in.build.dir">
+    <echo>Found xml file in ${build.dir}</echo>
+    <model:modeloutofdate source="${build.model.dir}/${model.name}_model.xml">
+      <then>
+        <copy file="${build.model.dir}/${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
         <!--antcall target="copy-keydefs"/-->
         <property name="regenerate.java" value="true"/>
       </then>
@@ -67,12 +92,15 @@
   <target name="-init-generate" depends="library.-init-generate, -init-task-xml, -init-model-out-of-date, -init-macrodef-model-generation">
     <!-- Conditions -->
     <available file="${model.name}.zargo" property="have.zargo"/>
-    <available file="${model.name}_model.xml" property="have.xml"/>
+    <available file="${model.name}_model.xml" property="have.xml.in.project.dir"/>
+    <available file="${build.model.dir}/${model.name}_model.xml" property="have.xml.in.build.dir"/>
     <available file="${model.name}.xsd" property="have.xmlschema"/>
     <available file="${model.name}_additions.xml" property="have.additions"/>
   </target>
   
-  <target name="do-generate" depends="build-model-from-xml,
+  <target name="do-generate" depends="build-model-from-xml-in-build-dir,
+                                      build-model-from-xml-in-project-dir,
+                                      build-model-from-xmi,
                                       build-model-from-zargo,
                                       build-model-from-xmlschema,
                                       generate-model-java"/>

@@ -1,0 +1,11 @@
+<project name="flymine-postprocess" default="default" basedir=".">
+
+    <description>perform post processing operations</description>
+
+    <import file="../../../imbuild/library.xml"/>
+
+    <target name="-post-jar">
+      <copy file="${dist.jar}" toDir="../lib"/>
+    </target>
+
+</project>

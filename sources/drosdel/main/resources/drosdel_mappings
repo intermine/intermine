@@ -1,0 +1,9 @@
+TransposableElementInsertionSite = element
+TransposableElementInsertionSite.identifier = element.name
+TransposableElementInsertionSite.type = element.type
+TransposableElementInsertionSite.subType = element.subType
+ArtificialDeletion = deletion
+ArtificialDeletion.element1 = deletion.element1
+ArtificialDeletion.element2 = deletion.element2
+ArtificialDeletion.identifier = deletion.europeanDrosophilaNumber
+

@@ -22,6 +22,7 @@ import org.intermine.metadata.MetaDataException;
  *
  * @author Andrew Varley
  * @author Mark Woodbridge
+ * @author Peter McLaren - adding some logger related code.
  */
 public abstract class DataTranslatorTestCase extends TargetItemsTestCase
 {

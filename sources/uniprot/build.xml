@@ -1,0 +1,28 @@
+
+<project name="uniprot" default="default" basedir=".">
+  <description>build, test, package uniprot</description>
+  
+  <import file="../../imbuild/source.xml"/>
+  
+  <target name="-pre-retrieve">
+    <property name="build.data.dir" location="${build.dir}/data/${uniprot.organisms}"/>
+    <mkdir dir="${build.data.dir}"/>
+    <taskdef name="filter-uniprot"
+      classname="org.flymine.dataconversion.UniprotFilterTask"
+      classpathref="project.compile.path"/>
+    <filter-uniprot tgtDir="${build.data.dir}" organisms="${uniprot.organisms}">
+      <fileset dir="${src.data.dir}" includes="*.xml"/>
+    </filter-uniprot>
+  </target>
+  
+  <target name="-retrieve-src-from-xml-file" if="have.file.xml.src">
+    <convert-xml-file
+      schema="${source.schema.file}"
+      model="${source.model}"
+      osName="osw.${common.os.prefix}-src-items">
+      <fileset dir="${build.data.dir}" includes="*.xml"/>
+    </convert-xml-file>
+  </target>
+  
+</project>
+

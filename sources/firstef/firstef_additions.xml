@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<classes>
+
+<class name="org.flymine.model.genomic.Promoter" is-interface="true">
+  <attribute name="name" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.Exon" is-interface="true">
+  <attribute name="symbol" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.CpGIsland" extends="org.flymine.model.genomic.Region" is-interface="true">
+  <attribute name="name" type="java.lang.String"/>
+ </class>
+</classes>

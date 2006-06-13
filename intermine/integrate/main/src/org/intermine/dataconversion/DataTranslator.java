@@ -702,7 +702,7 @@ public class DataTranslator
     }
 
     /**
-     * Simple structure to represent the link between a class or property in the target model and 
+     * Simple structure to represent the link between a class or property in the target model and
      * several classes or properties in the the source model. The values in the srcURIs map will
      * usually be null, unless this equivalence represents a "restricted subclass" in which case
      * the value will be map of "restrictions" ie. a map of paths to string values.

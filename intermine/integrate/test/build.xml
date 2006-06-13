@@ -21,13 +21,11 @@
   
   <target name="build-db-fulldatatest" depends="init, -init-deps, -init-task-xml">
     <task:build-db osname="os.fulldatatest"
-                   dbname="db.fulldatatest"
                    model="fulldata"/>
   </target>
   
   <target name="build-db-unittest" depends="init, -init-deps, -init-task-xml">
     <task:build-db osname="os.unittest"
-                   dbname="db.unittest"
                    model="testmodel"/>
   </target>
 

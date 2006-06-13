@@ -1,0 +1,62 @@
+
+<project name="integrate" default="default" basedir="."
+  xmlns:integrate="http://www.intermine.org/ns/im-integrate-proj/1">
+
+  <dirname property="integrate.xml.basedir" file="${ant.file.integrate}"/>
+  
+  <import file="${integrate.xml.basedir}/library.xml"/>
+  <import file="${integrate.xml.basedir}/task.xml"/>
+  
+  <target name="-pre-init" depends="library.-pre-init">
+  </target>
+  
+  <target name="-init-deps" depends="library.-init-deps, -init-task-xml">
+    <!-- Copy intermine.properties onto the classpath -->
+    <copy file="${user.home}/${intermine.properties.file}" 
+          tofile="${build.task.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties onto the classpath -->
+    <copy file="${default.intermine.properties.file}" 
+          tofile="${build.task.dir}/default.intermine.properties"/>
+  </target>
+  
+  <target name="load-static" depends="init, -init-deps,
+                                      -pre-load-static,
+                                      -load-static,
+                                      -post-load-static"/>
+  
+  <target name="-pre-load-static"/>
+  
+  <target name="-post-load-static"/>
+  
+  <target name="-load-static">
+    <!--
+      FIXME need a task that just loads all xml in a given directory in
+      alphabetical order (see ticket #808)
+    -->
+    <insert-xml-data integrationWriter="integration.production"
+                   xmlFile="data/static/datasets.xml" sourceName="static"/>
+    <insert-xml-data integrationWriter="integration.production"
+                   xmlFile="data/static/organisms.xml" sourceName="static"/>
+    <insert-xml-data integrationWriter="integration.production"
+                   xmlFile="data/static/rnai-codes.xml" sourceName="static"/>
+    <insert-xml-data integrationWriter="integration.production"
+                   xmlFile="data/static/ontologies.xml" sourceName="static"/>
+  </target>
+  
+  <target name="-init-integrate">
+    <property name="source" value=""/>
+    <property name="action" value=""/>
+  </target>
+  
+  <!--
+    Perform an integration step. The integration source and action should
+    be provided on the command line. E.g.
+    
+    ant integrate -Dsource=uniprot-dros -Daction=retrieve
+  -->
+  
+  <target name="integrate" depends="init, -init-deps, -init-integrate">
+    <integrate projectXml="../project.xml" basedir="../.." source="${source}" action="${action}"/>
+  </target>
+  
+</project>

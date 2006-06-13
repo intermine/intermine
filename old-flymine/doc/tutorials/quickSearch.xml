@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial 1: <emphasis>Browsing FlyMine - running a quick search</emphasis></title>
+
+    <para>This tutorial will guide you through running a quick
+    search. The tutorial will show you how to run a quick search for
+    the 'bib' gene.</para>
+
+    <para>The quick search allows you to access all the information
+    that is available for a particular database entry and provides a
+    good way to browse the database.</para>
+
+    <para>The quick search box is found in the top right of the FlyMine 
+    home page.  You can use this to search for anything with an identifier or
+    symbol, for example genes, proteins, transcripts or binding sites.</para>
+
+    <para>Some example identifiers:    </para>
+      <itemizedlist>
+        <listitem><para>for the <emphasis>Drosophila</emphasis> gene zen, type
+      FBgn0004053, CG1046, zen or any of its synonyms.</para></listitem>
+        <listitem><para>for <emphasis>A. gambiae</emphasis> genes, use
+      <ulink url="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</ulink> 
+      identifiers (eg. ENSANGG00000001499).</para></listitem>
+        <listitem><para>for <emphasis>C. elegans</emphasis> genes, use the 
+      <ulink url="http://www.wormbase.org/">WormBase</ulink>
+      identifiers or symbols (eg. M117.2, WBGene00003920, par-5).</para></listitem>
+        <listitem><para>for proteins use <ulink url="http://www.uniprot.org">UniProt</ulink> identifiers or primary accessions (eg. 18C_DROME, P16909).</para></listitem>
+      </itemizedlist>
+
+
+    <para>Enter the gene symbol 'bib' into the search box and press
+    'Search':</para>
+
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="quickSearchBox.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+
+    <para>Since one item in the database matches the term 'bib', you
+    will be taken straight to the 'Object Details' page for the 'bib'
+    gene. Navigating the object details page is described in more
+    detail in <ulink url="objectDetails.xml">Tutorial 2</ulink>.</para>
+
+    <para>Wild cards (*) can be added to increase the range of a quick
+    search.  Enter 'bib*' into the search box and press 'Search'. This
+    time the search term matches several items in the database and a
+    summary list of these will be returned as your results. Each
+    summary includes a link ('details') to the object details page for
+    that item:</para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="quickSearchResults.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+
+  </section>
+</article>

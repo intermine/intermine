@@ -7,7 +7,7 @@
   <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${library.xml.basedir}/lib/ant-contrib.jar"/>
   
   <!-- Import intermine build tasks -->
-  <taskdef resource="org/intermine/task/antlib.xml" classpath="${library.xml.basedir}/lib/ant-tasks.jar"/>
+  <taskdef resource="org/intermine/task/antlib.xml" classpath="${library.xml.basedir}/lib/im-ant-tasks.jar"/>
   
   <!-- INIT -->
   
@@ -26,6 +26,7 @@
     <property name="dist.dir" location="dist"/>
     <property name="lib.dir" location="lib"/>
     <property name="build.classes.dir" location="${build.dir}/classes"/>
+    <property name="build.model.dir" location="${build.dir}/model"/>
     <property name="gen.src.dir" location="${build.dir}/gen/src"/>
     <property name="build.javadoc.dir" value="${build.dir}/javadoc"/>
     <!-- Compilation settings -->
@@ -66,12 +67,11 @@
   <target name="-pre-init-deps"/>
   
   <target name="-init-deps" depends="-pre-init-deps">
-    <echo>${ant.project.name}</echo>
     <dependencies basedir="${library.xml.basedir}/.."/>
-    <!--property name="cp" refid="project.compile.path.artifact.fileset"/>
-    <echo>${cp}</echo>
+    <!--
     <property name="cp" refid="project.compile.path"/>
-    <echo message="project.compile.path classpath is ${cp}"/-->
+    <echo message="project.compile.path classpath is ${cp}"/>
+    -->
   </target>
   
   <!-- CODE GENERATION -->

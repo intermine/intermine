@@ -1,0 +1,5 @@
+#Rzpd Library No	Plate	Row	Column	RzpdCloneID	IMAGE ID	Vector	Antibiotic Resistance	PCR Primer	Restriction Enzymes (RE5,RE3)	Gene	RefSeq	Accession No	Chromosome	Gene Description	Unigene ID Version Hs#183	Ensembl ID version 30.35c	Quality Status	Problem
+983	337	E	8	HU3_p983E08337D	1654313	pT7T3D-PacI	ampicillin	RZPD M13 forward/reverse	EcoRI,NotI		NM_130786	AI022193,BX282528	19	Alpha-1-B glycoprotein	Hs.529161 	ENSG00000121410 	++	
+983	242	H	4	HU3_p983H04242D	2331399	pT7T3D-PacI	ampicillin	RZPD M13 forward/reverse	EcoRI,NotI	A2M	NM_000014	BX114256,AI914418	12:p13.3-p12.3	Alpha-2-macroglobulin	Hs.212838 	ENSG00000175899 	++
+
+983	242	H	4	HU3_p983H04242D	2331399	pT7T3D-PacI	ampicillin	RZPD M13 forward/reverse	EcoRI,NotI	A2M	NM_000014	BX114256,AI914418	12:p13.3-p12.3	Alpha-2-macroglobulin	Hs.212838 	ENSG00000175899, ENSG00000121420 	++

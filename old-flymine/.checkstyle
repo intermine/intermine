@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?><fileset-config file-format-version="1.1.0" simple-config="false">
+<fileset name="all java" enabled="true" check-config-name="FlyMine2" type="internal" location="internal_config_1127401636482.xml" description=""><file-match-pattern match-pattern=".java$" include-pattern="true"/>
+</fileset>
+</fileset-config>

@@ -34,31 +34,26 @@
   
   <target name="build-db-unittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.unittest"
-                       dbname="db.unittest"
                        model="testmodel"/>
   </target>
   
   <target name="build-db-truncunittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.truncunittest"
-                       dbname="db.truncunittest"
                        model="testmodel"/>
   </target>
 
   <target name="build-db-notxmlunittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.notxmlunittest"
-                       dbname="db.notxmlunittest"
                        model="testmodel"/>
   </target>
 
   <target name="build-db-flatmodeunittest" depends="-init-build-db">
     <imdbproj:build-db osname="os.flatmodeunittest"
-                       dbname="db.flatmodeunittest"
                        model="testmodel"/>
   </target>
 
   <target name="build-db-logtest" depends="-init-build-db">
     <imdbproj:build-db osname="os.log"
-                       dbname="db.log"
                        model="log"/>
   </target>
 
@@ -66,7 +61,6 @@
 
   <target name="build-db-logdbtest" depends="-init-build-db">
     <imdbproj:build-db osname="os.imLogger"
-                       dbname="db.imLogger"
                        model="logmodel"/>
   </target>
 

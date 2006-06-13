@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.Chunk" extends="org.flymine.model.genomic.Assembly org.flymine.model.genomic.AssemblyComponent" is-interface="true"/>
+
+  <class name="org.flymine.model.genomic.Chromosome" is-interface="true">
+    <attribute name="length" type="java.lang.Integer"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Group" extends="org.flymine.model.genomic.Chromosome" is-interface="true"/>
+
+  <class name="org.flymine.model.genomic.ChromosomeBand" is-interface="true">
+    <attribute name="stain" type="java.lang.String"/>
+    <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Contig" is-interface="true">
+    <attribute name="length" type="java.lang.Integer"/>
+    <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Exon" is-interface="true">
+    <collection name="contigs" referenced-type="org.flymine.model.genomic.Contig" ordered="true"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+    <attribute name="accession" type="java.lang.String"/>
+    <reference name="comment" referenced-type="org.flymine.model.genomic.Comment"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Marker" extends="org.flymine.model.genomic.Region" is-interface="true">
+    <attribute name="min_primer_dist" type="java.lang.Integer"/>
+    <attribute name="left_primer" type="java.lang.String"/>
+    <attribute name="right_primer" type="java.lang.String"/>
+    <attribute name="max_primer_dist" type="java.lang.Integer"/>
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="marker_synonym" referenced-type="org.flymine.model.genomic.Synonym"/>
+    <collection name="locations" referenced-type="org.flymine.model.genomic.Location" ordered="true"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="translations" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="protein" ordered="true"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Region" is-interface="true"/>
+
+  <class name="org.flymine.model.genomic.RepeatRegion" is-interface="true">
+    <attribute name="end" type="java.lang.Integer"/>
+    <attribute name="start" type="java.lang.Integer"/>
+    <attribute name="consensus" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <reference name="contig" referenced-type="org.flymine.model.genomic.Contig"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Sequence" is-interface="true">
+    <attribute name="residues" type="java.lang.String"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Supercontig" extends="org.flymine.model.genomic.BioEntity"  is-interface="true"/>
+
+  <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <attribute name="exonCount" type="java.lang.Integer"/>
+    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
+    <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="transcript"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <attribute name="translationStart" type="java.lang.Integer"/>
+    <attribute name="translationEnd" type="java.lang.Integer"/>
+    <reference name="endExon" referenced-type="org.flymine.model.genomic.Exon"/>
+    <reference name="startExon" referenced-type="org.flymine.model.genomic.Exon"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+    <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="translation"/>
+    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="translations"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.TRNA" is-interface="true">
+    <reference name="contig" referenced-type="org.flymine.model.genomic.Contig"/>
+  </class>
+</classes>

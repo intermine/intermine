@@ -132,7 +132,7 @@ public class DataLoaderHelper
                 Properties priorities = PropertiesUtil.loadProperties(model.getName()
                                                                       + "_priorities.properties");
                 if (priorities == null) {
-                    throw new NullPointerException("Could not load priorities config file "
+                    throw new RuntimeException("Could not load priorities config file "
                             + model.getName() + "_priorities.properties");
                 }
                 for (Iterator i = priorities.entrySet().iterator(); i.hasNext();) {

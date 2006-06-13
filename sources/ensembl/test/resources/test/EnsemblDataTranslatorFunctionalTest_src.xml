@@ -1,0 +1,430 @@
+<?xml version="1.0"?>
+<items>
+  <item id="8_1" class="http://www.flymine.org/model/ensembl#exon_transcript">
+    <attribute name="rank" value="1"/>
+    <reference name="exon" ref_id="0_1"/>
+    <reference name="transcript" ref_id="3_1"/>
+  </item>
+  <item id="7_1" class="http://www.flymine.org/model/ensembl#transcript_stable_id">
+    <attribute name="stable_id" value="ENSANGT00000019935"/>
+    <attribute name="version" value="2"/>
+    <reference name="transcript" ref_id="3_1"/>
+  </item>
+  <item id="12_11167" class="http://www.flymine.org/model/ensembl#dna">
+    <attribute name="created" value="1016114183000"/>
+    <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+  </item>
+  <item id="12_11168" class="http://www.flymine.org/model/ensembl#dna">
+    <attribute name="created" value="20000000000"/>
+    <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+  </item>
+  <item id="12_11169" class="http://www.flymine.org/model/ensembl#dna">
+    <attribute name="created" value="30000000000"/>
+    <attribute name="sequence" value="AAAAAAAATCACACACCTACACACCCACAAGACACAGTAACAACCAAC"/>
+  </item>
+  <item id="5_1" class="http://www.flymine.org/model/ensembl#gene">
+    <attribute name="transcript_count" value="1"/>
+    <attribute name="type" value="ensembl"/>
+    <reference name="analysis" ref_id="11_36"/>
+    <reference name="display_xref" ref_id="6_1"/>
+  </item>
+  <item id="18_1" class="http://www.flymine.org/model/ensembl#chromosome">
+    <attribute name="length" value="22145176"/>
+    <attribute name="name" value="X"/>
+  </item>
+  <item id="11_2" class="http://www.flymine.org/model/ensembl#analysis">
+    <attribute name="created" value="1022243471000"/>
+    <attribute name="gff_feature" value="repeat"/>
+    <attribute name="gff_source" value="trf"/>
+    <attribute name="logic_name" value="TRF"/>
+    <attribute name="module" value="TRF"/>
+    <attribute name="module_version" value="1"/>
+    <attribute name="parameters" value="-lib anopheles.lib"/>
+    <attribute name="program" value="trf"/>
+    <attribute name="program_version" value="1"/>
+  </item>
+  <item id="11_3" class="http://www.flymine.org/model/ensembl#analysis">
+    <attribute name="created" value="1022243471000"/>
+    <attribute name="gff_feature" value="repeat"/>
+    <attribute name="gff_source" value="RepeatMasker"/>
+    <attribute name="logic_name" value="RepeatMask"/>
+    <attribute name="module" value="RepeatMasker"/>
+    <attribute name="module_version" value="1"/>
+    <attribute name="parameters" value="-lib anopheles.lib"/>
+    <attribute name="program" value="RepeatMask"/>
+    <attribute name="program_version" value="1"/>
+  </item>
+  <item id="10_3552" class="http://www.flymine.org/model/ensembl#protein_feature">
+    <attribute name="evalue" value="3.2E-62"/>
+    <attribute name="hit_end" value="292"/>
+    <attribute name="hit_id" value="PF04190"/>
+    <attribute name="hit_start" value="1"/>
+    <attribute name="score" value="216.8"/>
+    <attribute name="seq_end" value="289"/>
+    <attribute name="seq_start" value="52"/>
+    <reference name="analysis" ref_id="11_76"/>
+    <reference name="translation" ref_id="4_1"/>
+  </item>
+  <item id="22_1" class="http://www.flymine.org/model/ensembl#gene_stable_id">
+    <attribute name="created" value="1062457200000"/>
+    <attribute name="modified" value="1062457200000"/>
+    <attribute name="stable_id" value="ENSANGG00000017446"/>
+    <attribute name="version" value="2"/>
+    <reference name="gene" ref_id="5_1"/>
+  </item>
+  <item id="14_1" class="http://www.flymine.org/model/ensembl#simple_feature">
+    <attribute name="contig_end" value="1200"/>
+    <attribute name="contig_start" value="50"/>
+    <attribute name="contig_strand" value="0"/>
+    <attribute name="display_label" value="oe = 1.18"/>
+    <attribute name="score" value="416.0"/>
+    <reference name="analysis" ref_id="11_5"/>
+    <reference name="contig" ref_id="1_11167"/>
+  </item>
+  <item id="19_160" class="http://www.flymine.org/model/ensembl#karyotype">
+    <attribute name="band" value="1A"/>
+    <attribute name="chr_end" value="13724242"/>
+    <attribute name="chr_start" value="11946273"/>
+    <attribute name="stain" value=""/>
+    <reference name="chromosome" ref_id="18_1"/>
+  </item>
+  <item id="11_5" class="http://www.flymine.org/model/ensembl#analysis">
+    <attribute name="created" value="977164083000"/>
+    <attribute name="db" value="cpg"/>
+    <attribute name="db_version" value=""/>
+    <attribute name="gff_feature" value="cpg_island"/>
+    <attribute name="gff_source" value="cpg"/>
+    <attribute name="logic_name" value="CpG"/>
+    <attribute name="module" value="CPG"/>
+    <attribute name="module_version" value="1"/>
+    <attribute name="parameters" value=""/>
+    <attribute name="program" value="cpg"/>
+    <attribute name="program_file" value="cpg"/>
+    <attribute name="program_version" value="1"/>
+  </item>
+  <item id="24_78815" class="http://www.flymine.org/model/ensembl#repeat_feature">
+    <attribute name="contig_end" value="472"/>
+    <attribute name="contig_start" value="450"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="repeat_end" value="23"/>
+    <attribute name="repeat_start" value="1"/>
+    <attribute name="score" value="23.0"/>
+    <reference name="analysis" ref_id="11_2"/>
+    <reference name="contig" ref_id="1_11167"/>
+    <reference name="repeat_consensus" ref_id="25_259"/>
+  </item>
+  <item id="24_78816" class="http://www.flymine.org/model/ensembl#repeat_feature">
+    <attribute name="contig_end" value="1000"/>
+    <attribute name="contig_start" value="500"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="repeat_end" value="23"/>
+    <attribute name="repeat_start" value="1"/>
+    <attribute name="score" value="12.0"/>
+    <reference name="analysis" ref_id="11_3"/>
+    <reference name="contig" ref_id="1_11167"/>
+    <reference name="repeat_consensus" ref_id="25_259"/>
+  </item>
+  <item id="10_44222" class="http://www.flymine.org/model/ensembl#protein_feature">
+    <attribute name="evalue" value="0.0"/>
+    <attribute name="hit_end" value="0"/>
+    <attribute name="hit_id" value="Seg"/>
+    <attribute name="hit_start" value="0"/>
+    <attribute name="perc_ident" value="0.0"/>
+    <attribute name="score" value="0.0"/>
+    <attribute name="seq_end" value="27"/>
+    <attribute name="seq_start" value="11"/>
+    <reference name="analysis" ref_id="11_73"/>
+    <reference name="translation" ref_id="4_1"/>
+  </item>
+  <item id="6_1" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="EAA10106"/>
+    <attribute name="display_label" value="EAA10106"/>
+    <attribute name="version" value="1"/>
+    <reference name="external_db" ref_id="26_2010"/>
+  </item>
+  <item id="26_2010" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="prediction_SPTREMBL"/>
+    <attribute name="release" value="1"/>
+    <attribute name="status" value="XREF"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="contig_end" value="9159"/>
+    <attribute name="contig_start" value="8782"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="1"/>
+    <reference name="contig" ref_id="1_11167"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/ensembl#exon_stable_id">
+    <attribute name="stable_id" value="ENSANGE00000019935"/>
+    <attribute name="version" value="2"/>
+    <reference name="exon" ref_id="0_1"/>
+  </item>
+  <item id="9_1" class="http://www.flymine.org/model/ensembl#translation_stable_id">
+    <attribute name="stable_id" value="ENSANGP00000019935"/>
+    <attribute name="version" value="2"/>
+    <reference name="translation" ref_id="4_1"/>
+  </item>
+  <item id="13_8846" class="http://www.flymine.org/model/ensembl#clone">
+    <attribute name="created" value="1016114125000"/>
+    <attribute name="embl_acc" value="AAAB01008846"/>
+    <attribute name="embl_version" value="1"/>
+    <attribute name="htg_phase" value="3"/>
+    <attribute name="modified" value="1016114125000"/>
+    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="version" value="1"/>
+  </item>
+  <item id="13_8847" class="http://www.flymine.org/model/ensembl#clone">
+    <attribute name="created" value="1016114125000"/>
+    <attribute name="embl_acc" value="AAAB01008846"/>
+    <attribute name="embl_version" value="1"/>
+    <attribute name="htg_phase" value="2"/>
+    <attribute name="modified" value="1016114125000"/>
+    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="version" value="1"/>
+  </item>
+  <item id="13_8848" class="http://www.flymine.org/model/ensembl#clone">
+    <attribute name="created" value="30000000000000"/>
+    <attribute name="embl_acc" value="AAAB01008846"/>
+    <attribute name="embl_version" value="1"/>
+    <attribute name="htg_phase" value="1"/>
+    <attribute name="modified" value="1016114125000"/>
+    <attribute name="name" value="AAAB01008846"/>
+    <attribute name="version" value="1"/>
+  </item>
+  <item id="17_77" class="http://www.flymine.org/model/ensembl#assembly">
+    <attribute name="chr_end" value="1951354"/>
+    <attribute name="chr_start" value="1926335"/>
+    <attribute name="contig_end" value="25020"/>
+    <attribute name="contig_ori" value="-1"/>
+    <attribute name="contig_start" value="1"/>
+    <attribute name="superctg_end" value="9382499"/>
+    <attribute name="superctg_name" value="AAAB01008846"/>
+    <attribute name="superctg_ori" value="-1"/>
+    <attribute name="superctg_start" value="9357480"/>
+    <attribute name="type" value="MOZ2a"/>
+    <reference name="chromosome" ref_id="18_1"/>
+    <reference name="contig" ref_id="1_11167"/>
+  </item>
+  <item id="17_78" class="http://www.flymine.org/model/ensembl#assembly">
+    <attribute name="chr_end" value="1976375"/>
+    <attribute name="chr_start" value="1951355"/>
+    <attribute name="contig_end" value="25020"/>
+    <attribute name="contig_ori" value="-1"/>
+    <attribute name="contig_start" value="1"/>
+    <attribute name="superctg_end" value="9382499"/>
+    <attribute name="superctg_name" value="AAAB01008846"/>
+    <attribute name="superctg_ori" value="-1"/>
+    <attribute name="superctg_start" value="9357480"/>
+    <attribute name="type" value="MOZ2a"/>
+    <reference name="chromosome" ref_id="18_1"/>
+    <reference name="contig" ref_id="1_11168"/>
+  </item>
+  <item id="17_79" class="http://www.flymine.org/model/ensembl#assembly">
+    <attribute name="chr_end" value="2001395"/>
+    <attribute name="chr_start" value="1976376"/>
+    <attribute name="contig_end" value="25020"/>
+    <attribute name="contig_ori" value="-1"/>
+    <attribute name="contig_start" value="1"/>
+    <attribute name="superctg_end" value="9382499"/>
+    <attribute name="superctg_name" value="AAAB01008846"/>
+    <attribute name="superctg_ori" value="-1"/>
+    <attribute name="superctg_start" value="9357480"/>
+    <attribute name="type" value="MOZ2a"/>
+    <reference name="chromosome" ref_id="18_1"/>
+    <reference name="contig" ref_id="1_11169"/>
+  </item>
+  <item id="11_4" class="http://www.flymine.org/model/ensembl#analysis">
+    <attribute name="created" value="977152350000"/>
+    <attribute name="db" value="tRNA"/>
+    <attribute name="db_version" value="1"/>
+    <attribute name="gff_feature" value="tRNA"/>
+    <attribute name="gff_source" value="tRNAscan-SE"/>
+    <attribute name="logic_name" value="tRNAscan"/>
+    <attribute name="module" value="tRNAscan_SE"/>
+    <attribute name="module_version" value="1"/>
+    <attribute name="parameters" value=""/>
+    <attribute name="program" value="tRNAscan-SE"/>
+    <attribute name="program_file" value="tRNAscan-SE"/>
+    <attribute name="program_version" value="1.11"/>
+  </item>
+  <item id="11_36" class="http://www.flymine.org/model/ensembl#analysis">
+    <attribute name="created" value="1054279877000"/>
+    <attribute name="db_version" value="1"/>
+    <attribute name="gff_feature" value="gene"/>
+    <attribute name="gff_source" value="ensembl"/>
+    <attribute name="logic_name" value="ensembl"/>
+    <attribute name="module" value="Gene_Builder"/>
+    <attribute name="program" value="ensembl"/>
+    <attribute name="program_version" value="1"/>
+  </item>
+  <item id="4_1" class="http://www.flymine.org/model/ensembl#translation">
+    <attribute name="seq_end" value="489"/>
+    <attribute name="seq_start" value="1"/>
+    <reference name="end_exon" ref_id="0_2"/>
+    <reference name="start_exon" ref_id="0_1"/>
+  </item>
+  <item id="14_2077" class="http://www.flymine.org/model/ensembl#simple_feature">
+    <attribute name="contig_end" value="9253"/>
+    <attribute name="contig_start" value="9172"/>
+    <attribute name="contig_strand" value="-1"/>
+    <attribute name="display_label" value=""/>
+    <attribute name="score" value="86.41"/>
+    <reference name="analysis" ref_id="11_4"/>
+    <reference name="contig" ref_id="1_11167"/>
+  </item>
+  <item id="8_2" class="http://www.flymine.org/model/ensembl#exon_transcript">
+    <attribute name="rank" value="2"/>
+    <reference name="exon" ref_id="0_2"/>
+    <reference name="transcript" ref_id="3_1"/>
+  </item>
+  <item id="10_44223" class="http://www.flymine.org/model/ensembl#protein_feature">
+    <attribute name="evalue" value="0.0"/>
+    <attribute name="hit_end" value="0"/>
+    <attribute name="hit_id" value="Seg"/>
+    <attribute name="hit_start" value="0"/>
+    <attribute name="perc_ident" value="0.0"/>
+    <attribute name="score" value="0.0"/>
+    <attribute name="seq_end" value="248"/>
+    <attribute name="seq_start" value="238"/>
+    <reference name="analysis" ref_id="11_73"/>
+    <reference name="translation" ref_id="4_1"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/ensembl#transcript">
+    <attribute name="exon_count" value="2"/>
+    <reference name="display_xref" ref_id="6_1"/>
+    <reference name="gene" ref_id="5_1"/>
+    <reference name="translation" ref_id="4_1"/>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="contig_end" value="9746"/>
+    <attribute name="contig_start" value="9258"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="1"/>
+    <reference name="contig" ref_id="1_11167"/>
+  </item>
+  <item id="2_2" class="http://www.flymine.org/model/ensembl#exon_stable_id">
+    <attribute name="stable_id" value="ENSANGE00000019936"/>
+    <attribute name="version" value="2"/>
+    <reference name="exon" ref_id="0_2"/>
+  </item>
+  <item id="1_11167" class="http://www.flymine.org/model/ensembl#contig">
+    <attribute name="embl_offset" value="9357480"/>
+    <attribute name="length" value="25020"/>
+    <attribute name="name" value="AAAB01008846_375"/>
+    <reference name="clone" ref_id="13_8846"/>
+    <reference name="dna" ref_id="12_11167"/>
+  </item>
+  <item id="1_11168" class="http://www.flymine.org/model/ensembl#contig">
+    <attribute name="embl_offset" value="9357480"/>
+    <attribute name="length" value="25020"/>
+    <attribute name="name" value="AAAB01008846_376"/>
+    <reference name="clone" ref_id="13_8847"/>
+    <reference name="dna" ref_id="12_11168"/>
+  </item>
+  <item id="1_11169" class="http://www.flymine.org/model/ensembl#contig">
+    <attribute name="embl_offset" value="9357480"/>
+    <attribute name="length" value="25020"/>
+    <attribute name="name" value="AAAB01008846_377"/>
+    <reference name="clone" ref_id="13_8848"/>
+    <reference name="dna" ref_id="12_11169"/>
+  </item>
+  <item id="0_102" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="nonUniqueId" value="0_3"/>
+    <attribute name="contig_end" value="7000"/>
+    <attribute name="contig_start" value="1"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="2"/>
+    <reference name="contig" ref_id="1_11169"/>
+  </item>
+  <item id="0_103" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="nonUniqueId" value="0_3"/>
+    <attribute name="contig_end" value="25020"/>
+    <attribute name="contig_start" value="1"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="1"/>
+    <reference name="contig" ref_id="1_11168"/>
+  </item>
+  <item id="0_101" class="http://www.flymine.org/model/ensembl#exon">
+    <attribute name="nonUniqueId" value="0_3"/>
+    <attribute name="contig_end" value="25020"/>
+    <attribute name="contig_start" value="22021"/>
+    <attribute name="contig_strand" value="1"/>
+    <attribute name="end_phase" value="0"/>
+    <attribute name="phase" value="0"/>
+    <attribute name="sticky_rank" value="1"/>
+    <reference name="contig" ref_id="1_11168"/>
+  </item>
+  <item id="25_259" class="http://www.flymine.org/model/ensembl#repeat_consensus">
+    <attribute name="repeat_class" value="Low_complexity"/>
+    <attribute name="repeat_consensus" value="N"/>
+    <attribute name="repeat_name" value="GC_rich"/>
+  </item>
+  <item id="23_1" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
+    <reference name="xref" ref_id="6_1"/>
+  </item>
+  <item id="23_2" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
+    <reference name="xref" ref_id="6_2"/>
+  </item>
+  <item id="23_3" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
+    <reference name="xref" ref_id="6_3"/>
+  </item>
+  <item id="23_4" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
+    <reference name="xref" ref_id="6_4"/>
+  </item>
+  <item id="23_5" class="http://www.flymine.org/model/ensembl#object_xref">
+    <attribute name="ensembl_object_type" value="Translation"/>
+    <reference name="ensembl" ref_id="4_1"/>
+    <reference name="xref" ref_id="6_5"/>
+  </item>
+  <item id="6_1" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="QP1234"/>
+    <reference name="external_db" ref_id="21_1"/>
+  </item>
+  <item id="6_2" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="TP1234"/>
+    <reference name="external_db" ref_id="21_2"/>
+  </item>
+  <item id="6_3" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="EAA1234"/>
+    <reference name="external_db" ref_id="21_3"/>
+  </item>
+  <item id="6_4" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="FBgn0001"/>
+    <reference name="external_db" ref_id="21_4"/>
+  </item>
+  <item id="6_5" class="http://www.flymine.org/model/ensembl#xref">
+    <attribute name="dbprimary_acc" value="fb_symbol"/>
+    <reference name="external_db" ref_id="21_5"/>
+  </item>
+  <item id="21_1" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="SWISSPROT"/>
+  </item>
+  <item id="21_2" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="SPTREMBL"/>
+  </item>
+  <item id="21_3" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="protein_id"/>
+  </item>
+  <item id="21_4" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="flybase_gene"/>
+  </item>
+  <item id="21_5" class="http://www.flymine.org/model/ensembl#external_db">
+    <attribute name="db_name" value="flybase_symbol"/>
+  </item>
+</items>

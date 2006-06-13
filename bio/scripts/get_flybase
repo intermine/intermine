@@ -1,0 +1,110 @@
+#!/usr/bin/perl
+
+# script to download FlyBase gff and fasta files
+
+# This script takes and species abbreviation as a argument (e.g. dmel, dpse)
+# and works out the current release version at ftp.flybase.net.
+# If the version  found does not exist in ./flybase/$org_abbrev/$version
+# new files will be downloaded.  The script should be run in /shared/data
+
+use strict;
+use warnings;
+
+use Net::FTP;
+
+# make this an argument
+my $org_abbrev = $ARGV[0]
+    or die "Must supply a species abbreviation, e.g. dpse\n";
+
+
+my $flybase_server = "ftp.flybase.net";
+my $flybase_genomes_dir = "genomes";
+my $flybase_current_dir = "current";
+my $flybase_dir = "flybase";
+my $gff_dir = "gff";
+my $fasta_dir = "fasta";
+
+
+#### Access FlyBase ftp server
+my $flybase_ftp = Net::FTP->new($flybase_server, Passive => 1)
+  or die "Cannot connect to $flybase_server: $@";
+
+$flybase_ftp->login("anonymous",'-anonymous@')
+  or die "Cannot login ", $flybase_ftp->message;
+
+$flybase_ftp->cwd($flybase_genomes_dir)
+  or die "Cannot change working directory ", $flybase_ftp->message;
+
+# change to organism directory
+$flybase_ftp->cwd($org_abbrev)
+  or die "Cannot change working directory ", $flybase_ftp->message;
+
+# work out the current version
+$flybase_ftp->cwd($flybase_current_dir)
+  or die "Cannot change working directory ", $flybase_ftp->message;
+
+my @file_list = $flybase_ftp->ls();
+my $version;
+
+for my $file (@file_list) {
+    my $start = substr($file, 0, 8);
+    if ($start eq "RELEASE_") {
+        $version = lc $file;
+    }
+}
+
+if (!defined $version) {
+    die "can't find file with version number\n";
+}
+
+my $download_dir = "flybase/$org_abbrev/$version";
+
+if (-d $download_dir) {
+  die "$download_dir directory already exists - not updating\n";
+}
+
+if (!(-d $flybase_dir)) {
+print "creating $flybase_dir\n";
+    mkdir "$flybase_dir";
+}
+if (!(-d "$flybase_dir/$org_abbrev")) {
+print "creating $flybase_dir/$org_abbrev\n";
+    mkdir "$flybase_dir/$org_abbrev";
+}
+print "creating $download_dir\n";
+mkdir $download_dir;
+
+# get gff files
+$flybase_ftp->cwd($gff_dir)
+  or die "Cannot change working directory ", $flybase_ftp->message;
+
+mkdir "$download_dir/$gff_dir";
+
+my @gff_list = $flybase_ftp->ls();
+for my $gff_to_get (@gff_list) {
+    print "getting $gff_to_get\n";
+    $flybase_ftp->get($gff_to_get, "$download_dir/$gff_dir/$gff_to_get")
+        or die "can't get $gff_to_get from $flybase_server/$flybase_ftp->pwd()/$gff_to_get: $?";
+}
+
+# unzip gff files
+print"gzip -dr $download_dir/$gff_dir\n";
+
+if ((system "gzip -dr $download_dir/$gff_dir") != 0) {
+  die qq|system "gzip -dr $download_dir/$gff_dir" failed: $?\n|;
+}
+
+
+# get fasta files
+$flybase_ftp->cwd("../$fasta_dir")
+  or die "Cannot change working directory ", $flybase_ftp->message;
+
+mkdir "$download_dir/$fasta_dir";
+
+my @fasta_list = $flybase_ftp->ls();
+for my $fasta_to_get (@fasta_list) {
+    print "getting $fasta_to_get\n";
+    $flybase_ftp->get($fasta_to_get, "$download_dir/$fasta_dir/$fasta_to_get")
+        or die "can't get $fasta_to_get from $flybase_server/$flybase_ftp->pwd()/$fasta_to_get: $?";
+}
+

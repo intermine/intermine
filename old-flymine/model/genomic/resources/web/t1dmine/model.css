@@ -1,0 +1,47 @@
+html, body 
+{
+    color: #000000;
+    background-color: #ffefdd;
+}
+
+a 
+{
+    color: #00e;
+}
+
+/****************************#e4c5ab******#F2E3D6****/
+
+#header h1 a
+{
+    color: #9a0000;
+}
+
+#header p
+{
+    color: black;
+}
+
+table.results tr.even {
+  background: #ffefdd;
+}
+
+table.box th {
+  background: #E8D1B9;
+}
+
+table.templateBuilder th {
+  background: #E8D1B9;
+}
+
+table.refSummary thead tr td {
+  background: #E8D1B9;
+}
+
+.box .heading, .heading2 {
+   background-color: #ffefdd;
+  
+}
+
+.version {
+ background-color: #9a0000;
+}

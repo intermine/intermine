@@ -72,10 +72,10 @@ public class PropertiesUtil
      */
     public static Properties getPropertiesStartingWith(String str, Properties props) {
         if (str == null) {
-            throw new NullPointerException("str cannot be null");
+            throw new NullPointerException("str cannot be null, props param: " + props);
         }
         if (props == null) {
-            throw new NullPointerException("props cannot be null");
+            throw new NullPointerException("props cannot be null, str param: " + str);
         }
 
         Properties subset = new Properties();

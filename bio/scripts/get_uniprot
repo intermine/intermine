@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+
+# script to download the latest uniprot release into a directory like uniprot/5.3
+# the version number is extracted from the relnotes.txt file on the FTP server
+# the script should be run in /shared/data
+
+use strict;
+use warnings;
+
+use Net::FTP;
+
+use POSIX qw(tmpnam);
+
+my @files_to_get = qw(
+                      uniprot.xsd.gz uniprot_sprot.xml.gz uniprot_trembl.xml.gz
+                     );
+my $uniprot_address = "ftp.uniprot.org";
+my $uniprot_base_path = "pub/databases/uniprot/current_release";
+my $uniprot_full_path = "$uniprot_base_path/knowledgebase/complete";
+my $release_notes_file = "relnotes.txt";
+my $local_xsd_filename = "uniprot.xsd";
+
+
+my $ftp = Net::FTP->new($uniprot_address, Passive => 1)
+            or die "Cannot connect to $uniprot_address: $@";
+
+$ftp->login("anonymous",'-anonymous@')
+  or die "Cannot login ", $ftp->message;
+
+$ftp->cwd($uniprot_base_path)
+  or die "Cannot change working directory ", $ftp->message;
+
+my $local_release_notes_copy = tmpnam;
+
+my $release_notes;
+
+$ftp->get($release_notes_file, $local_release_notes_copy)
+ or die "get failed ", $ftp->message;
+
+open F, $local_release_notes_copy
+  or die "can't open local copy of relnotes.txt: $local_release_notes_copy\n";
+
+my $version;
+
+while (my $line = <F>) {
+  print $line;
+  if ($line =~ /UniProt.*Release (\S+)/) {
+    $version = $1;
+  }
+}
+
+if (!defined $version) {
+  die "can't find version number in release notes\n";
+}
+
+close F;
+
+my $download_dir = "uniprot/$version";
+
+if (-d $download_dir) {
+  die "$download_dir already exists - exiting\n";
+}
+
+print "creating $download_dir\n";
+
+mkdir $download_dir;
+
+$ftp->cwd("/$uniprot_full_path")
+  or die "Cannot change working directory ", $ftp->message;
+
+for my $file_to_get (@files_to_get) {
+  print "getting $file_to_get\n";
+  $ftp->get($file_to_get, "$download_dir/$file_to_get")
+    or die "can't get $file_to_get from $uniprot_address/$uniprot_full_path: $?";
+}
+
+print"gzip -dr $download_dir\n";
+
+if ((system "gzip -dr $download_dir") != 0) {
+  die qq|system "gzip -dr $download_dir" failed: $?\n|;
+}
+
+system "chmod -R a+r,g+w $download_dir";

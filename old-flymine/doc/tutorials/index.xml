@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Query Tutorials</title>
+
+    <para>The following tutorials will guide you through accessing
+    FlyMine data through the quick search and template queries. The
+    third tutorial 'Navigating object details pages' introduces
+    browsing the data available once a query has been run.</para>
+
+    <orderedlist>
+      <listitem>
+        <para><ulink url="quickSearch.xml">Tutorial 1</ulink>: Running a quick search.</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="objectDetails.xml">Tutorial 2</ulink>: Navigating object details pages: browsing the data</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="templates.xml">Tutorial 3</ulink>: Running template queries</para>
+      </listitem>
+
+    </orderedlist>
+
+
+    <para>The following tutorials will guide you through gradually
+    more complex queries using the query builder.</para>
+
+    <orderedlist>
+      <listitem>
+        <para><ulink url="query1.xml">Tutorial 4</ulink>: Show all the gene symbols and identifiers of
+        all genes in FlyMine</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="query2.xml">Tutorial 5</ulink>: Show all the genes from Drosophila melanogaster</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink url="query3.xml">Tutorial 6</ulink>: Show the
+        Orthologues between Drosophila melanogaster and Anopheles gambiae.</para>
+      </listitem>
+    </orderedlist>
+  </section>
+</article>

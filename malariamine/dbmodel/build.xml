@@ -1,0 +1,21 @@
+<project name="malariamine-dbmodel" default="default" basedir=".">
+  <description>represents the production objectstore and the model therein</description>
+  <import file="../../imbuild/objectstore.xml"/>
+  
+  <target name="-merge-models" unless="merge.not.required">
+    <merge-additions source="so"/>
+    <merge-additions source="go"/>
+    <merge-additions source="go-annotation"/>
+    <merge-additions source="uniprot"/>
+    <merge-additions source="orthologue"/>
+    <!-- merge-additions source="interpro"/ -->
+    <merge-additions source="malaria-gff"/>
+    <!-- These sources have some classes which bio/core is dependant on - perhaps we need to refactor these? -->
+        <merge-additions source="psi"/>
+        <merge-additions source="long_oligo"/>
+        <merge-additions source="mage"/>
+        <merge-additions source="phenotype"/>
+        <merge-additions source="cdnaclone"/>
+        <merge-additions source="rnai"/>
+  </target>
+</project>

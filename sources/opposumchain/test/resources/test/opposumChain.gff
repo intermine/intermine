@@ -1,0 +1,4 @@
+##gff-version 3 
+##ucsc opposum chain alignmemts 
+7	opposumChain	cross_genome_match	115076073	118529072	10330790	+	.	sourceDatabase=UCSC;ID=Opposumchain:176:scaffold_13572:5206..4578343;Target=scaffold_13572 5206 4578343 -;Chromosome=scaffold_13572;Organism=MD;
+

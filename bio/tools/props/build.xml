@@ -1,0 +1,6 @@
+
+<project name="genomic-props" default="default" basedir=".">
+  <description>build genomic props</description>
+  <import file="../../../imbuild/library.xml"/> 
+</project>
+

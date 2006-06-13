@@ -18,6 +18,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.DatabaseUtil;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Task to run ANALYSE on a table or whole database.
@@ -38,8 +39,8 @@ public class AnalyseDbTask extends Task
      * Set the database alias
      * @param database the database alias
      */
-    public void setDatabase(String database) {
-        this.database = database;
+    public void setOsName(String osName) {
+        this.database = PropertiesUtil.getProperties().getProperty(osName + ".db");
     }
 
     /**

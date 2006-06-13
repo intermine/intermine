@@ -1,0 +1,11 @@
+
+<project name="im-ant-tasks" default="default" basedir=".">
+  <description>build, test, package build tasks</description>
+  <import file="../library.xml"/>
+  
+  <target name="-post-jar">
+    <copy file="${dist.jar}" toDir="../lib"/>
+  </target>
+  
+</project>
+

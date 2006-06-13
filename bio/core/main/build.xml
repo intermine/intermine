@@ -1,0 +1,6 @@
+
+<project name="genomic-tasks" default="default" basedir=".">
+  <description>build genomic tasks</description>
+  <import file="../../../imbuild/library.xml"/> 
+</project>
+

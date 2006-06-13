@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.Chromosome" is-interface="true">
+  <collection name="features" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" ordered="true" reverse-reference="chromosome"/>
+  <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true"/>
+  <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true"/>
+  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
+  <collection name="chromosomeBands" referenced-type="org.flymine.model.genomic.ChromosomeBand" ordered="true"/>
+  <collection name="chromosomalStructuralElements" referenced-type="org.flymine.model.genomic.ChromosomalStructuralElement" ordered="true"/>
+  <collection name="crossGenomeMatches" referenced-type="org.flymine.model.genomic.CrossGenomeMatch" ordered="true"/>
+</class>
+
+<class name="org.flymine.model.genomic.Exon" is-interface="true">
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="exons"/>
+</class>
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="gene"/>
+</class>
+<class name="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
+  <reference name="chromosomeLocation" referenced-type="org.flymine.model.genomic.Location"/>
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="features"/>
+  <collection name="overlappingFeatures" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" ordered="true"/>
+  <attribute name="length" type="java.lang.Integer"/>
+</class>
+<class name="org.flymine.model.genomic.CrossGenomeMatch" is-interface="true">
+  <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
+  <reference name="chromosomeLocation" referenced-type="org.flymine.model.genomic.Location"/>
+  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="crossGenomeMatches"/>
+  <reference name="targetOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
+  <reference name="targetLocatedSequenceFeatureLocation" referenced-type="org.flymine.model.genomic.Location"/>
+  <reference name="targetLocatedSequenceFeature" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" />
+  <attribute name="identifier" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.Scaffold" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
+  <collection name="crossGenomeMatches" referenced-type="org.flymine.model.genomic.CrossGenomeMatch" ordered="true"/>
+</class>
+</classes>
