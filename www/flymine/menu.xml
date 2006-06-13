@@ -23,6 +23,7 @@
     <item url="/doc/manual/index.xml" title="User Manual"/>
     <item url="/doc/presentations/index.xml" title="Presentations"/>
     <item url="/link.xml" title="Link to FlyMine"/>
+    <item url="/cite.xml" title="Cite FlyMine"/>
   </item>
   
   <item url="/download/index.xml" title="Download software">
@@ -40,7 +41,7 @@
   
   <item title="Related Projects">
     <item url="http://www.intermine.org" title="InterMine"/>
-    <item url="/t1dmine/" title="T1DMine"/>
+    <item url="http://preview.stemcellmine.org" title="StemCellMine"/>
   </item>
   
   <item title="Internal">

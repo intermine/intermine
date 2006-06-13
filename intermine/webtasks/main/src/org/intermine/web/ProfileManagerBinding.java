@@ -26,6 +26,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.intermine.model.userprofile.Tag;
+
 /**
  * Code for reading and writing ProfileManager objects as XML
  *
@@ -63,7 +65,7 @@ public class ProfileManagerBinding
      * @param os ObjectStore used to resolve object ids
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     */    
+     */
     public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
                                  PkQueryIdUpgrader idUpgrader) {
         try {
@@ -74,7 +76,7 @@ public class ProfileManagerBinding
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        
+
     }
 }
 
@@ -87,7 +89,7 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileHandler profileHandler = null;
     private ProfileManager profileManager = null;
     private IdUpgrader idUpgrader;
-    
+
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
@@ -112,7 +114,7 @@ class ProfileManagerHandler extends DefaultHandler
             profileHandler.startElement(uri, localName, qName, attrs);
         }
     }
-    
+
     /**
      * @throws SAXException
      * @see DefaultHandler#endElement
@@ -120,7 +122,15 @@ class ProfileManagerHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
         if (qName.equals("userprofile")) {
-            profileManager.saveProfile(profileHandler.getProfile());
+            Profile profile = profileHandler.getProfile();
+            profileManager.saveProfile(profile);
+            Iterator tagIter = profileHandler.getTags().iterator();
+            while (tagIter.hasNext()) {
+                Tag tag = (Tag) tagIter.next();
+                profileManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
+                                      profile.getUsername());
+
+            }
             profileHandler = null;
         }
         if (profileHandler != null) {

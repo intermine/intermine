@@ -3,6 +3,54 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
+    <title>FlyMine version 5.0 - release notes</title>
+    
+      <para>FlyMine 5.0 adds genome annotation for <emphasis>D. pseudoobscura</emphasis> (release 2.0 from FlyBase) and <emphasis>A. mellifera</emphasis> (release 2.0 from Ensembl) with InParanoid orthologues to the other genomes in FlyMine.  Also added are InParanoid orthologues to many other species and GO annotation for some of them.  Interface improvements include the ability for users to tag favourite templates and to change their password.</para>
+
+      <itemizedlist>
+      <listitem>
+        <para>Data</para>
+        <itemizedlist>
+          <listitem><para>NEW: Genome annotation for <emphasis>D. pseudoobscura</emphasis> version 2.0 from FlyBase.</para></listitem>
+          <listitem><para>NEW: Genome annotation for <emphasis>A. Meillifera</emphasis> release 2.0 from Ensembl version 37.</para></listitem>
+          <listitem><para>NEW: InParanoid orthologues from <emphasis>D. melanogaster, D. pseudoobscura, A. gambiae, C. elegans</emphasis> and <emphasis>A. mellifera</emphasis> to many other organisms.</para></listitem>
+          <listitem><para>NEW: GO annotation (accessible via orthologues) for <emphasis>M. Musculus, R. Ratticus, S. cerevisiae</emphasis> and <emphasis>A. mellifera</emphasis>.</para></listitem>
+          <listitem><para>NEW: Protein interaction and UniProt data for S. cerevisiae.</para></listitem>
+          <listitem><para>NEW: IntergenicRegion class - objects to describe intergenic regions on chromosomes, sequence and overlapping features available. Genes now have references to upstream and downstream intergenic regions.</para></listitem>
+          <listitem><para>UPDATE: Genome annotation for <emphasis>A. gambiae</emphasis> updated to build AgamP3 from Ensembl version 37.</para></listitem>
+          <listitem><para>FIX: INDAC microarray oligos now have sequences.</para></listitem>
+          <listitem><para>FIX: OMIM disease names are no longer duplicated, new templates added to the Disease aspect.</para></listitem>
+          <listitem><para>FIX: mRNA sequences no longer include intron sequences.</para></listitem>
+          <listitem><para>FIX: Protein Interactions - some interactions referenced isoform ids so data didn't merge correctly with other protein information. Now have correct UniProt accession.</para></listitem>
+          <listitem><para>FIX: Protein interactions are now correctly assigned to Formstecher et al, 2005 - was fixed in IntAct.</para></listitem>
+      </itemizedlist> 
+      </listitem>
+      <listitem>
+        <para>User Interface</para>
+        <itemizedlist>
+          <listitem><para>NEW: Favourite templates - logged in users can see a * beside template query names to select then as favourites. They are listed in a new 'Favourites' tab on the History page.</para></listitem>
+          <listitem><para>NEW: Change password - users can now choose there own password when creating an account. Passwords can be changed when logged in by clicking on the username in the top menu bar.</para></listitem>
+          <listitem><para>FIX: Missing class descriptions completed.</para></listitem>
+          <listitem><para>NEW: Boolean fields are now constrained by a true/false dropdown.</para></listitem>
+      </itemizedlist> 
+      </listitem>
+      <listitem>
+        <para>Tools</para>
+        <itemizedlist>
+          <listitem><para>FIX: GBrowse images on object details pages are now oriented correctly for features on reverse strand. Also now show absolute coordinates.</para></listitem>
+      </itemizedlist> 
+      </listitem>
+      <listitem>
+        <para>Known Issues</para>
+        <itemizedlist>
+          <listitem><para>Due to a change in format of XML from IntAct there are no confidence scores for protein interaction experiments, we will release a fixed version as soon as possible.</para></listitem>
+          <listitem><para>Gene.goAnnotation collection not filled in for A. Gambiae genes, need to use Gene.annotations instead.</para></listitem>
+        </itemizedlist> 
+      </listitem>
+    </itemizedlist> 
+
+  </section>
+  <section>
     <title>FlyMine version 4.0 - release notes</title>
     
         <para>Major changes to layout and content of summary pages. These pages can now display the results of template queries inline to give immediate access to data. The www.flymine.org home page now shows aspect icons and query options. Many other interface improvements. Addition of Arbeitman et al, 2002 Drosophila time course microarray data and human disease gene matches from Homophila.</para>

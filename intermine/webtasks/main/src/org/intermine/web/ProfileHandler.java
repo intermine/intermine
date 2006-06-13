@@ -66,7 +66,7 @@ class ProfileHandler extends DefaultHandler
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
         this(profileManager, idUpgrader, null, null);
     }
-    
+
     /**
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
@@ -92,6 +92,14 @@ class ProfileHandler extends DefaultHandler
     public Profile getProfile() {
         return new Profile(profileManager, username, null, password, savedQueries, savedBags,
                            savedTemplates);
+    }
+
+    /**
+     * Return a set of Tag objects to add to the Profile.
+     * @return the set Tags
+     */
+    public Set getTags() {
+        return tags;
     }
 
     /**
@@ -125,7 +133,7 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("tags")) {
             tags = new HashSet();
-            subHandler = new TagBinding.TagHandler(profileManager, username);
+            subHandler = new TagBinding.TagHandler(profileManager, username, tags);
         }
         if (subHandler != null) {
             subHandler.startElement(uri, localName, qName, attrs);

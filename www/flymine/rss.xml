@@ -11,6 +11,18 @@
     <!-- Add new news at the top here -->
     <!--
     <item>
+      <title>FlyMine 5.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 5.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 5.0 adds genome annotation for D. pseudoobscura (release 2.0 from FlyBase) and A. mellifera (release 2.0 from Ensembl) with InParanoid orthologues to the other genomes in FlyMine. Also added are InParanoid orthologues to many other species and GO annotation for some of them. Interface improvements include the ability for users to tag favourite templates and to change their password.
+      </description>
+      <pubDate>Thur, 01 Jun 2006 15:00 GMT</pubDate>
+    </item>
+
+    <item>
       <title>Possible disruption to FlyMine</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -44,7 +56,7 @@
       </description>
       <pubDate>Mon, 13 Mar 2006 10:50 GMT</pubDate>
     </item>
-    
+
     <!--
     <item>
       <title>FlyMine is Recruiting</title>

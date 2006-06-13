@@ -62,12 +62,12 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 .version {
   border: 1px solid #222;
   font-size: 15px;
-  color: white;
+  color: black;
   padding-left: 5px;
   padding-right: 5px;
   padding-bottom: 2px;
   padding-top: 2px;
-  background-color: #c53;
+  background-color: #ffffa7;
   line-height: 170%;
   font-weight: bold;
   text-shadow: black 0px 0px 2px;

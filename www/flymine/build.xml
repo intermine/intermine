@@ -97,6 +97,7 @@
         <exclude name="index.xml"/>
         <exclude name="what.xml"/>
         <exclude name="link.xml"/>
+        <exclude name="cite.xml"/>
         <exclude name="news.xml"/>
         <exclude name="sources.xml"/>
       </fileset>
