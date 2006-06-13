@@ -1,3 +1,0 @@
-    <action    path="/ch"
-            forward="companiesHouse.tile">
-    </action>

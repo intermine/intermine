@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<fileset-config file-format-version="1.0.0">
-    <fileset name="All Java except tests" enabled="true" check-config-name="checkstyle-config.xml">
-        <file-match-pattern match-pattern="src/java/" include-pattern="true"/>
-    </fileset>
-</fileset-config>
