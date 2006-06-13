@@ -1,9 +1,0 @@
-?AceTestObject intValue UNIQUE Int
-               nestedStrings stringValue UNIQUE Text UNIQUE Text
-                             stringValues Text
-               onOrOff
-               dateValue UNIQUE DateType
-               reference UNIQUE ?AceTestObject
-               references ?AceTestObject
-               hashValue UNIQUE #AceTestObject
-               hashValues #AceTestObject
