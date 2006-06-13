@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -94,19 +95,16 @@ public class InterMineBagHandlerTest extends TestCase
         osw.commitTransaction();
         osw.close();
     }
-    
-    public void testNoNewObject() throws Exception {   
+
+    public void testNoNewObject() throws Exception {
         Company oldCompany =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
 
         oldCompany.setName("Old company");
 
-        try {
-            Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
-            fail("expected RuntimeException");
-        } catch (RuntimeException e) {
-            // expected
-        }
+        // no new object so expect an empt set
+        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        assertEquals(new HashSet(), newIds);
     }
 
     public void testFindCompanyByVatNumber() throws Exception {
@@ -141,12 +139,9 @@ public class InterMineBagHandlerTest extends TestCase
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         oldCompany.setName("CompanyB");
 
-        try {
-            Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
-            fail("expected RuntimeException");
-        } catch (RuntimeException e) {
-            // expected
-        }
+        // can't find a new object so expect empty set
+        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        assertEquals(new HashSet(), newIds);
     }
 
     public void testFindCompanyByNameAndVat() throws Exception {

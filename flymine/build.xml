@@ -3387,7 +3387,6 @@
       <property name="db.name" value="db.userprofile-production"/>
       <property name="objectstore.name" value="os.userprofile-production"/>
     </ant>
-    <antcall target="load-default-templates"/>
   </target>
 
   <target name="create-indexes-userprofile-production"
@@ -3457,7 +3456,8 @@
       <classpath refid="webapp.class.path"/>
     </taskdef>
     <read-userprofile-xml fileName="${build}/tmp/userprofile.xml" osAlias="os.production"
-                          userProfileAlias="osw.userprofile-production"/>
+                          userProfileAlias="osw.userprofile-production"
+                          source="userprofile_port"/>
   </target>
 
 

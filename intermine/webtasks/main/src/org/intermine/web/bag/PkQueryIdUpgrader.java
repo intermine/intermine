@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.intermine.dataloader.DataLoaderHelper;
+import org.intermine.dataloader.Source;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -22,12 +23,33 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntToIntMap;
 
+import org.apache.log4j.Logger;
+
 /**
  * Bag object id upgrader that uses the primary keys to find the objects in the new ObjectStore.
  * @author Kim Rutherford
  */
 public class PkQueryIdUpgrader implements IdUpgrader
 {
+    private static final Logger LOG = Logger
+            .getLogger(PkQueryIdUpgrader.class);
+    private Source source = null;
+
+    /**
+     * No argument constructor - will use all available keyDefs to upgrade bags.
+     */
+    public PkQueryIdUpgrader() {
+    }
+
+    /**
+     * Construct with the name of a source - will use defined keys to upgrade bags.
+     * @param sourceName name of source
+     */
+    public PkQueryIdUpgrader(String sourceName) {
+        this.source = new Source();
+        this.source.setName(sourceName);
+    }
+
     /**
      * For the given object from an old ObjectStore, find the corresponding InterMineObjects in a
      * new ObjectStore.  Primary keys are used to find the objects.
@@ -38,7 +60,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
     public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
         Query query;
         try {
-            query = DataLoaderHelper.createPKQuery(os.getModel(), oldObject, null,
+            query = DataLoaderHelper.createPKQuery(os.getModel(), oldObject, source,
                                                    new IntToIntMap(), false);
         } catch (MetaDataException e) {
             throw new RuntimeException("Unable to create query for new object", e);
@@ -52,7 +74,11 @@ public class PkQueryIdUpgrader implements IdUpgrader
 
         int size = results.size();
 
-        if (size != 1) {
+        if (size == 0) {
+            LOG.error("createPKQuery() found no results for old object: " + oldObject.getId()
+                      + " executed query: " + query);
+            return new HashSet();
+        } else if (size > 1) {
             throw new RuntimeException("createPKQuery() query didn't return 1 result for: "
                                        + oldObject.getId() + " (size was " + size + ")");
         } else {

@@ -24,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A handler for turning XML bags data into an InterMineBag.
- * 
+ *
  * @author Mark Woodbridge
  * @author Kim Rutherford
  */
@@ -51,7 +51,7 @@ public class InterMineBagHandler extends DefaultHandler
 
     /**
      * Create a new InterMineBagHandler object.
-     * 
+     *
      * @param os
      *            ObjectStore used to resolve object ids
      * @param bags
@@ -109,9 +109,8 @@ public class InterMineBagHandler extends DefaultHandler
                                 + " in bag of InterMineObjects");
                         return;
                     }
-                    bag
-                            .add(TypeUtil.stringToObject(Class.forName(type),
-                                    value));
+                    bag.add(TypeUtil.stringToObject(Class.forName(type),
+                                                    value));
                 }
             }
         } catch (Exception e) {

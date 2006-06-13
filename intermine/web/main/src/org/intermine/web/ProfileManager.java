@@ -102,7 +102,7 @@ public class ProfileManager
     public ObjectStoreWriter getUserProfileObjectStore() {
         return osw;
     }
-    
+
     /**
      * Close this ProfileManager
      *
@@ -183,7 +183,7 @@ public class ProfileManager
         if (profile != null) {
             return profile;
         }
-        
+
         UserProfile userProfile = getUserProfile(username);
 
         if (userProfile == null) {
@@ -265,7 +265,7 @@ public class ProfileManager
         profileCache.put(username, profile);
         return profile;
     }
-    
+
     /**
      * Create 'aspect:xxx' tags for each keyword of each template.
      * Public so that LoadDefaultTemplates task can call in.
@@ -309,7 +309,7 @@ public class ProfileManager
                     osw.delete((InterMineObject) i.next());
                 }
 
-                for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); 
+                for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
                      i.hasNext();) {
                     osw.delete((InterMineObject) i.next());
                 }
@@ -435,7 +435,7 @@ public class ProfileManager
 
         return usernames;
     }
-    
+
     /**
      * Delete a tag object from the database.
      * @param tag Tag object
@@ -449,7 +449,7 @@ public class ProfileManager
             LOG.error(err);
         }
     }
-    
+
     /**
      * Get Tag by object id.
      * @param id intermine object id
@@ -474,50 +474,44 @@ public class ProfileManager
                         String userName) {
         Map cache = getTagCache();
         MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
-//
-////        org.intermine.web.LogMe.log("i", "searching for: " + tagName + " " + objectIdentifier
-////                                    + " " + type + " " + userName);
-//        
+
         if (cache.containsKey(key)) {
-//            org.intermine.web.LogMe.log("i", "found in cache");
             return (List) cache.get(key);
-        } else {
-//            org.intermine.web.LogMe.log("i", "not found in cache");
         }
-        
+
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
-        
+
         q.addFrom(qc);
         q.addToSelect(qc);
-        
+
         QueryField orderByField = new QueryField(qc, "tagName");
 
         q.addToOrderBy(orderByField);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        
+
         if (tagName != null) {
             QueryValue qv = new QueryValue(tagName);
             QueryField qf = new QueryField(qc, "tagName");
             SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
         }
-        
+
         if (objectIdentifier != null) {
             QueryValue qv = new QueryValue(objectIdentifier);
             QueryField qf = new QueryField(qc, "objectIdentifier");
             SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
         }
-        
+
         if (type != null) {
             QueryValue qv = new QueryValue(type);
             QueryField qf = new QueryField(qc, "type");
             SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
             cs.addConstraint(c);
         }
-        
+
         if (userName != null) {
             QueryClass userProfileQC = new QueryClass(UserProfile.class);
             q.addFrom(userProfileQC);
@@ -533,7 +527,7 @@ public class ProfileManager
             cs.addConstraint(cc);
         }
         q.setConstraint(cs);
-        
+
         ObjectStore userprofileOS = osw.getObjectStore();
 
         SingletonResults results =
@@ -562,12 +556,9 @@ public class ProfileManager
         }
 
         Iterator resIter = results.iterator();
-        
+
         while (resIter.hasNext()) {
             Tag tag = (Tag) resIter.next();
-//            System.out.println("adding to cache: " + tag.getTagName() + " "
-//                                        + tag.getObjectIdentifier() + " "
-//                                        + tag.getType() + " " + tag.getUserProfile().getUsername());
 
             Object[] tagKeys = new Object[4];
             tagKeys[0] = tag.getTagName();
@@ -615,7 +606,7 @@ public class ProfileManager
     }
 
     private final Map tagCheckers = new HashMap();
-    
+
     /**
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
@@ -646,7 +637,7 @@ public class ProfileManager
             throw new IllegalArgumentException("unknown tag type: " + type);
         }
         UserProfile userProfile = getUserProfile(userName);
-        
+
         if (userProfile == null) {
             throw new RuntimeException("no such user " + userName);
         }
@@ -664,14 +655,14 @@ public class ProfileManager
             throw new RuntimeException("cannot set tag", e);
         }
     }
-    
+
     private void makeTagCheckers(final Model model) {
         TagChecker fieldChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
                          UserProfile userProfile) {
                 int dotIndex = objectIdentifier.indexOf('.');
                 if (dotIndex == -1) {
-                    throw new RuntimeException("tried to tag an unknown field: " 
+                    throw new RuntimeException("tried to tag an unknown field: "
                                                + objectIdentifier);
                 }
                 String className = objectIdentifier.substring(0, dotIndex);
@@ -688,9 +679,9 @@ public class ProfileManager
                     throw new RuntimeException("unknown field name \"" + fieldName
                                                + "\" in class \"" + className
                                                + "\" while tagging: " + objectIdentifier);
-                    
+
                 }
-                
+
                 if (type.equals("collection") && !fd.isCollection()) {
                     throw new RuntimeException(objectIdentifier + " is not a collection");
                 }
@@ -705,7 +696,7 @@ public class ProfileManager
         tagCheckers.put("collection", fieldChecker);
         tagCheckers.put("reference", fieldChecker);
         tagCheckers.put("attribute", fieldChecker);
-        
+
         TagChecker templateChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
                          UserProfile userProfile) {
@@ -713,7 +704,7 @@ public class ProfileManager
             }
         };
         tagCheckers.put("template", templateChecker);
-        
+
         TagChecker classChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
                          UserProfile userProfile) {
@@ -744,7 +735,7 @@ abstract class TagChecker
      * @param userProfile the UserProfile to associate this tag with
      * @throws RuntimeException if the this parameters are inconsistent
      */
-    abstract void isValid(String tagName, String type, String objectIdentifier, 
+    abstract void isValid(String tagName, String type, String objectIdentifier,
                           UserProfile userProfile);
 }
 

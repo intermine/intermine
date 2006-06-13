@@ -34,6 +34,7 @@ public class ProfileReadTask extends Task
     private String fileName;
     private String userProfileAlias;
     private String osAlias;
+    private String source;
 
     /**
      * Set the name of the file to read from.
@@ -50,7 +51,7 @@ public class ProfileReadTask extends Task
     public void setOSAlias(String osAlias) {
         this.osAlias = osAlias;
     }
-    
+
     /**
      * Set the alias of the userprofile object store.
      * @param userProfileAlias the object store alias of the userprofile database
@@ -58,7 +59,15 @@ public class ProfileReadTask extends Task
     public void setUserProfileAlias(String userProfileAlias) {
         this.userProfileAlias = userProfileAlias;
     }
-   
+
+    /**
+     * Set a source name (optional - use to find a restricted set of keys)
+     * @param source name of source
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     /**
      * Execute the task - read the profiles.
      * @throws BuildException if there is a problem while reading from the file or writing to the
@@ -79,7 +88,7 @@ public class ProfileReadTask extends Task
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         FileReader reader = null;
-        
+
         try {
             reader = new FileReader(fileName);
         } catch (IOException e) {
@@ -92,7 +101,8 @@ public class ProfileReadTask extends Task
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             ProfileManager pm = new ProfileManager(os, userProfileOS);
 
-            ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader());
+            PkQueryIdUpgrader upgrader = new PkQueryIdUpgrader(this.source);
+            ProfileManagerBinding.unmarshal(reader, pm, os, upgrader);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {

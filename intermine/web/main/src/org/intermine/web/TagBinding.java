@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.io.Reader;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -76,7 +77,21 @@ public class TagBinding
         private String tagType;
         private ProfileManager profileManager;
         private String userName;
+        private Set tags;
         private int count;
+
+        /**
+         * Constructor
+         * @param profileManager add each Tag using this ProfileManager
+         * @param userName the name of the user whose profile is being read
+         * @param tags will be populated with any tags to add to the target profile
+         */
+        public TagHandler(ProfileManager profileManager, String userName, Set tags) {
+            this.profileManager = profileManager;
+            this.userName = userName;
+            this.tags = tags;
+            reset();
+        }
 
         /**
          * Constructor
@@ -109,11 +124,17 @@ public class TagBinding
             throws SAXException {
             super.endElement(uri, localName, qName);
             if (qName.equals("tag")) {
-                if (profileManager.getTags(tagName, tagObjectIdentifier, tagType, userName)
-                        .isEmpty()) {
-                    profileManager.addTag(tagName, tagObjectIdentifier, tagType, userName);
-                    count++;
-                }
+                Tag tag = new Tag();
+                tag.setTagName(tagName);
+                tag.setObjectIdentifier(tagObjectIdentifier);
+                tag.setType(tagType);
+                tags.add(tag);
+//                 if (profileManager.getTags(tagName, tagObjectIdentifier, tagType, userName)
+//                         .isEmpty()) {
+//                     profileManager.addTag(tagName, tagObjectIdentifier, tagType, userName);
+//                     count++;
+//                 }
+
                 reset();
             }
         }
