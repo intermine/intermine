@@ -15,6 +15,7 @@ import java.util.Comparator;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.IntPresentSet;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -90,7 +91,15 @@ public class SourcePriorityComparator implements Comparator
                         + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
                         + "\" for field \"" + field.getName() + "\"");
             }
-            int retval = DataLoaderHelper.comparePriority(field, source1, source2);
+            Object value1, value2;
+            try {
+                value1 = TypeUtil.getFieldProxy(o1, field.getName());
+                value2 = TypeUtil.getFieldProxy(o2, field.getName());
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            int retval = DataLoaderHelper.comparePriority(field, source1, source2,
+                    value1, value2);
             if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
                 String errMessage = "Unequivalent objects have the same"
                     + " non-skeleton Source; o1 = \"" + o1 + "\" ("
