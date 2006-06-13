@@ -827,6 +827,19 @@
          src="${build.resources}/make_small_ensembl_hs.sql"/>
   </target>
 
+<<<<<<< .mine
+ <target name="build-ensembl-mm-database" depends="prepare-build-model">
+    <copy todir="${build.resources}"
+          file="${model}/ensembl/resources/make_ensembl_mm.sql"
+          overwrite="true"/>
+    <sql classpathref="models.class.path"
+         driver="com.mysql.jdbc.Driver"
+         url="jdbc:mysql://gollum:3306/ensembl_mm"
+         userid="rns"
+         password="rns"
+         src="${build.resources}/make_ensembl_mm.sql"/>
+  </target>
+=======
   <target name="build-ensembl-mm-database" depends="prepare-build-model">
     <copy todir="${build.resources}"
           file="${model}/ensembl/resources/make_ensembl_mm.sql"
@@ -839,6 +852,7 @@
          src="${build.resources}/make_ensembl_mm.sql"/>
   </target>
 
+>>>>>>> .r9383
   <!-- retrieve ensembl anopheles data -->
   <target name="retrieve-ensembl-hs" depends="convert-ensembl, build-db-ensembl-human-src-items">
     <taskdef name="retrieve-ensembl" classname="org.intermine.dataconversion.DBRetrieverTask">
@@ -5193,6 +5207,37 @@
 
   <target name="build-mage-smdb-production" depends="retrieve-mage-smdb, load-mage-smdb"/>
 
+  <target name="retrieve-mage-timecoursemas"
+          depends="prepare, prepare-build-model, compile-mage-java, convert-mage, build-db-mage-tgt-items">
+
+    <copy file="${model}/genomic/resources/stemcell/mage_config.properties" toDir="${build.model}/mage"/>
+    <echo message="CLASSPATH: ${models.class.path}"/>
+    <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    
+    <convert-file clsName="org.flymine.dataconversion.MageTimeCourseMasFileConverter"
+                  osName="osw.mage-tgt-items"
+                  model="mage">
+      <fileset dir="${shared.data}/human/mage/tariq/" includes="FDCP_AP_Calls.txt"/>
+    </convert-file>
+    <ant antfile="${build}/build-model.xml" target="create-indexes" inheritRefs="true">
+      <property name="model.name" value="fulldata"/>
+      <reference torefid="class.path" refid="models.class.path"/>
+      <property name="os.alias" value="os.mage-tgt-items-std"/>
+    </ant>
+  </target>
+
+  <target name="load-mage-timecoursemas" depends="copy-stemcell-config">
+    <taskdef name="load-mage" classname="org.intermine.dataloader.ObjectStoreDataLoaderTask">
+      <classpath refid="genomic.class.path"/>
+    </taskdef>
+    <load-mage integrationWriter="integration.production"
+               source="os.mage-translated"
+               sourceName="mage"/>
+  </target>
+
+  <target name="build-mage-timecoursemas-production" depends="retrieve-mage-timecoursemas, load-mage-timecoursemas"/>
 <!-- CDNACLONE/image PIPELINE -->
   <target name="retrieve-cdnaclone-image" depends="prepare, compile-cdnaclone-java, build-db-cdnaclone-tgt-items">
     <taskdef name="convert-file" classname="org.intermine.task.FileConverterTask">
@@ -5441,8 +5486,7 @@
                    build-tfbs-production,
                    build-firstef-production,build-mousechain-production, build-opposumchain-production,
                    build-regions-production, build-disease-regions-production, build-ensembl-disease-production,
-                   build-gene-synonyms-for-entrezgene-production, build-gene-synonyms-for-ccds-production,
-                   build-gene-synonyms-for-embl-production,
+                   build-gene-synonyms-production,
                    build-tfbscluster-production, build-cns-production,
                    build-mage-stemcell-production, build-cdnaclone-image-production,build-cdnaclone-probeset-production,
                    build-psi-intact-production-stemcell, build-uniprot-hs-production,                  
