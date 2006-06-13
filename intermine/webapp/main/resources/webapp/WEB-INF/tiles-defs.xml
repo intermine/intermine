@@ -118,6 +118,14 @@
   </definition>
   <definition name="waiting.page" path="/waiting.jsp"/>
   <definition name="error.page" path="/error.jsp"/>
+  <definition name="createAccount.page" extends="layout.template">
+    <put name="body" value="createAccount.jsp"/>
+    <put name="pageName" value="createAccount"/>
+  </definition>
+  <definition name="changePassword.page" extends="layout.template">
+    <put name="body" value="changePassword.jsp"/>
+    <put name="pageName" value="changePassword"/>
+  </definition>
   <!--tiles-->
   <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
@@ -154,6 +162,9 @@
   <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
     <put name="preview" value="template.tile"/>
   </definition>
+  <definition name="favourites.tile" path="/historyFavouritesView.jsp" controllerUrl="/initFavourites.do"/>
+  <definition name="starTemplate.tile" path="/shared/starTemplate.jsp" controllerUrl="/starTemplate.do" />
+  <definition name="precomputeTemplate.tile" path="precompute.jsp" controllerUrl="/precomputeTemplate.do" />
   
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
