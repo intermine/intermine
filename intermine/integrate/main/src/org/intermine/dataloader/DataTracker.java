@@ -93,7 +93,10 @@ public class DataTracker
                 clear();
             }
         } catch (SQLException e) {
-            throw new IllegalArgumentException("Could not access SQL database");
+            IllegalArgumentException e2 = new IllegalArgumentException(
+                    "Could not access SQL database");
+            e2.initCause(e);
+            throw e2;
         }
         cacheStorer = new CacheStorer();
         Thread cacheStorerThread = new Thread(cacheStorer, "DataTracker CacheStorer");

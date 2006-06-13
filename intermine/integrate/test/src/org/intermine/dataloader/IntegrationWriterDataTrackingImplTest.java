@@ -45,6 +45,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.IntToIntMap;
 
 public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 {
@@ -191,6 +192,31 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         c2.setName("CompanyA");
         Company example2 = (Company) iw.getObjectByExample(c2, Collections.singleton("name"));
         assertEquals(example.getAddress(), example2.getAddress());
+    }
+
+    public void testUpdateObjectField() throws Exception {
+        Employee e = new Employee();
+        e.setName("EmployeeA2");
+        e.setAge(32);
+        e.setEnd(2);
+        e.setFullTime(true);
+        
+        if (doIds) {
+            e.setId(new Integer(1));
+        }
+        Source source = iw.getMainSource("testsource3");
+        Source skelSource = iw.getSkeletonSource("testsource3");
+
+        //fail("" + DataLoaderHelper.createPKQuery(iw.getModel(), e, source, new IntToIntMap()));
+
+        iw.store(e, source, skelSource);
+
+        Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
+        assertNotNull("Object from db should not be null", re);
+        assertEquals(32, re.getAge());
+        assertEquals(2, re.getEnd());
+        assertTrue(re.getFullTime());
+        assertNotNull(re.getAddress());
     }
 
     public void testUpdateObjectOneToOne() throws Exception {

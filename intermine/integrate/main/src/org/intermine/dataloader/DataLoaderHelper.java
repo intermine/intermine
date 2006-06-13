@@ -70,12 +70,15 @@ public class DataLoaderHelper
      * @param fd FieldDescriptor for the field
      * @param src1 the first Source
      * @param src2 the second Source
+     * @param value1 the first field value
+     * @param value2 the second field value
      * @return a positive integer if src1 is of higher priority than src2, a negative integer if
      * src2 is of higher priority than src1 or zero if the sources are equal.
      * @throws IllegalArgumentException if the class is not in the file, or both of the sources
      * are not listed for that class
      */
-    public static int comparePriority(FieldDescriptor fd, Source src1, Source src2) {
+    public static int comparePriority(FieldDescriptor fd, Source src1, Source src2, Object value1,
+            Object value2) {
         if (src1.equals(src2)) {
             return 0;
         }
@@ -97,11 +100,20 @@ public class DataLoaderHelper
         }
         if (srcs != null && srcs.contains(src1.getName()) && srcs.contains(src2.getName())) {
             return srcs.indexOf(src2.getName()) - srcs.indexOf(src1.getName());
+        } else if ((value1 == null) && (value2 == null)) {
+            return src1.getName().compareTo(src2.getName());
+        } else if (value1 == null) {
+            return -1;
+        } else if (value2 == null) {
+            return 1;
+        } else if (value1.equals(value2)) {
+            return src1.getName().compareTo(src2.getName());
         } else {
-            throw new IllegalArgumentException("Could not determine priorities for sources "
-                    + src1.getName() + " and " + src2.getName() + " for field "
+            throw new IllegalArgumentException("Conflicting values for field "
                     + fd.getClassDescriptor().getName() + "." + fd.getName()
-                    + " - is the config file set up correctly?");
+                    + " between " + src1.getName() + " (value " + value1 + ") and " + src2.getName()
+                    + " (value " + value2 + "). This field needs configuring in "
+                    + cld.getModel().getName() + "_priorities.properties");
         }
     }
 
@@ -119,6 +131,10 @@ public class DataLoaderHelper
                 descriptorSources = new HashMap();
                 Properties priorities = PropertiesUtil.loadProperties(model.getName()
                                                                       + "_priorities.properties");
+                if (priorities == null) {
+                    throw new NullPointerException("Could not load priorities config file "
+                            + model.getName() + "_priorities.properties");
+                }
                 for (Iterator i = priorities.entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
                     String descriptorName = (String) entry.getKey();
@@ -161,18 +177,19 @@ public class DataLoaderHelper
                 for (int i = 0; i < tokens.length; i++) {
                     String token = tokens[i].trim();
                     if (map.get(token) == null) {
-                        String msg = "No keyDef found for key: " + token
-                            + " for class: " + cld.getName()
-                            + " from source: " + source.getName();
-                        throw new IllegalArgumentException(msg);
+                        throw new IllegalArgumentException("Primary key " + token 
+                                + " for class " + cld.getName() + " required by data source "
+                                + source.getName() + " in " + source.getName() + "_keys.properties"
+                                + " is not defined in " + cld.getModel().getName()
+                                + "_keyDefs.properties");
                     } else {
                         keySet.add(map.get(token));
                     }
                 }
             }
         } else {
-            throw new IllegalArgumentException("Unable to find keys for source: "
-                                               + source.getName());
+            throw new IllegalArgumentException("Unable to find keys for source "
+                    + source.getName() + " in file " + source.getName() + "_keys.properties");
         }
         return keySet;
     }
@@ -315,10 +332,6 @@ public class DataLoaderHelper
             query.addFrom(qc);
             query.addToSelect(qc);
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            if (pk.getFieldNames() == null) {
-                throw new IllegalArgumentException("no fieldnames found for primary key: "
-                                                   + pk.getName());
-            }
             Iterator pkIter = pk.getFieldNames().iterator();
             PK:
             while (pkIter.hasNext()) {
@@ -343,8 +356,10 @@ public class DataLoaderHelper
                                                               new QueryValue(value)));
                     }
                 } else if (fd instanceof CollectionDescriptor) {
-                    throw new MetaDataException("A collection cannot be part of"
-                                                + " a primary key");
+                    throw new MetaDataException("Primary key " + pk.getName() + " for class "
+                            + cld.getName() + " cannot contain collection " + fd.getName()
+                            + ": collections cannot be part of a primary key. Please edit"
+                            + model.getName() + "_keyDefs.properties");
                 } else if (fd instanceof ReferenceDescriptor) {
                     InterMineObject refObj;
                     try {
@@ -440,8 +455,10 @@ public class DataLoaderHelper
                     return false;
                 }
             } else if (fd instanceof CollectionDescriptor) {
-                throw new MetaDataException("A collection cannot be part of"
-                                            + " a primary key");
+                throw new MetaDataException("Primary key " + pk.getName() + " for class "
+                        + cld.getName() + " cannot contain collection " + fd.getName()
+                        + ": collections cannot be part of a primary key. Please edit"
+                        + model.getName() + "_keyDefs.properties");
             } else if (fd instanceof ReferenceDescriptor) {
                 InterMineObject refObj;
                 try {
