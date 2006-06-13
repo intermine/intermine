@@ -53,15 +53,12 @@ public class GoConverter extends FileConverter
     protected File ontology;
     protected Map withTypes = new LinkedHashMap();
     protected Map synonymTypes = new HashMap();
-    protected Map productWrapperMap = new LinkedHashMap();;
+    protected Map productWrapperMap = new LinkedHashMap();
     private String geneAttribute;
 
     protected ItemFactory itemFactory;
 
     private OboParser oboParser = null;
-
-    private Item dataSourceItem;
-    private Item dataSetItem;
 
 
     /*Some Debugging vars*/
@@ -89,10 +86,10 @@ public class GoConverter extends FileConverter
         synonymTypes.put("gene", "identifier");
         synonymTypes.put("Gene", "identifier");
 
-        dataSourceItem = createItem("DataSource");
+        Item dataSourceItem = createItem("DataSource");
         dataSourceItem.setAttribute("name", "Gene Ontology");
 
-        dataSetItem = createItem("DataSet");
+        Item dataSetItem = createItem("DataSet");
         Date now = new Date(System.currentTimeMillis());
 
         dataSetItem.setAttribute("description", "GO Annotation loaded on " + now.toString());
@@ -210,7 +207,6 @@ public class GoConverter extends FileConverter
 
             holderStack.push(holderIt.next());
         }
-        holderMap = null;
 
         while (!holderStack.isEmpty()) {
 
@@ -225,7 +221,7 @@ public class GoConverter extends FileConverter
             //store the new anno item...
             doStore(annoWithParents.getGoAnnotationItem(), STORE_ONE);
 
-            if (annoWithParents != null && annoWithParents.getParentItems() != null) {
+            if (annoWithParents.getParentItems() != null) {
 
                 //Store all the parent anno items for the current anno item as well
                 for (Iterator annoParentIt = annoWithParents.getParentItems().iterator();
@@ -285,8 +281,7 @@ public class GoConverter extends FileConverter
             GoAnnoWithParentsPlaceHolder placeHolder) throws ObjectStoreException {
 
         boolean isProductTypeGene = (
-                placeHolder.getGeneProductWrapper().getItem().getClassName().indexOf("Gene")
-                >= 0 ? true : false);
+                placeHolder.getGeneProductWrapper().getItem().getClassName().indexOf("Gene") >= 0);
 
         LOG.debug("isProductType was set to :" + isProductTypeGene);
 
@@ -376,7 +371,7 @@ public class GoConverter extends FileConverter
                     LOG.debug("GoConverter - parents are being set for go a term:" + goId);
 
                     String nextParentTermGoId = parentIdIter.next().toString();
-                    Item nextParentGoTermItem = null;
+                    Item nextParentGoTermItem;
 
                     //have we already seen this parent term ? if not we need to create a parent term
                     if (goTerms.containsKey(nextParentTermGoId)) {
@@ -488,6 +483,7 @@ public class GoConverter extends FileConverter
         return withProductList;
     }
 
+
     /**
      * Puts all the store calls in one spot to make debuging a bit easier...
      *
@@ -550,7 +546,7 @@ public class GoConverter extends FileConverter
                                      String organismId,
                                      String dataSourceId) throws ObjectStoreException {
 
-        if (LOG.isDebugEnabled()) {
+        //if (LOG.isDebugEnabled()) {
             StringBuffer buff = new StringBuffer();
             buff.append("GoConverter.newProduct()");
             buff.append(" accession:"); buff.append(accession);
@@ -558,7 +554,7 @@ public class GoConverter extends FileConverter
             buff.append(" organismId:"); buff.append(organismId);
             buff.append(" dataSourceId:"); buff.append(dataSourceId);
             LOG.debug(buff.toString());
-        }
+        //}
 
         String key = makeProductKey(accession, type, organismId);
 
@@ -569,12 +565,18 @@ public class GoConverter extends FileConverter
             return ((ItemWrapper) productWrapperMap.get(key));
         }
 
-        String idField = null;
-        String clsName = null;
+        String idField;
+        String clsName;
 
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
-            idField = geneAttribute;
+            if (geneAttribute != null) {
+                idField = geneAttribute;
+            } else {
+                throw new RuntimeException("GoConverter.geneAttribute is not set - check the "
+                        + "build.xml - this param should be set to identifier or organismDbId");
+            }
+
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
             idField = "primaryAccession";
@@ -658,7 +660,7 @@ public class GoConverter extends FileConverter
         Item item = (Item) datasources.get(code);
         if (item == null) {
             item = createItem("DataSource");
-            String title = null;
+            String title;
             if ("UniProt".equals(code) || "UniProtKB".equals(code)) {
                 title = "UniProt";
             } else if ("FB".equals(code)) {
@@ -922,19 +924,23 @@ public class GoConverter extends FileConverter
 
             Item item = goAnnotationItem;
 
-            tsBuff.append(" GOANNOITEM: "
-                    + item.getClassName() + " "
-                    + item.getAttribute("identifier").getValue() + " "
-                    + (item.getIdentifier() != null ? item.getIdentifier() : "no_id")
-                    + "\n");
+            tsBuff.append(" GOANNOITEM: ")
+                    .append(item.getClassName())
+                    .append(" ")
+                    .append(item.getAttribute("identifier").getValue())
+                    .append(" ")
+                    .append(item.getIdentifier() != null ? item.getIdentifier() : "no_id")
+                    .append("\n");
 
             for (Iterator piit = parentItems.iterator(); piit.hasNext();) {
                 item = (Item) piit.next();
-                tsBuff.append(" NEXTPARENT: "
-                        + item.getClassName() + " "
-                        + item.getAttribute("identifier").getValue() + " "
-                        + (item.getIdentifier() != null ? item.getIdentifier() : "no_id")
-                        + "\n");
+                tsBuff.append(" NEXTPARENT: ")
+                        .append(item.getClassName())
+                        .append(" ")
+                        .append(item.getAttribute("identifier").getValue())
+                        .append(" ")
+                        .append(item.getIdentifier() != null ? item.getIdentifier() : "no_id")
+                        .append("\n");
             }
 
             return tsBuff.toString();
