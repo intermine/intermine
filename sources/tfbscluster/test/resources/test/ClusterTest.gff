@@ -1,0 +1,5 @@
+##gff-version 3 
+##CIMR HSCL tfbsClusters
+1	HSCL	TFBS_cluster	7763596	7763630	.	.	.	ID=2ets-1gata:chr1:7763396..7763630;type=2ets-1gata;sequence=GGATAATCTGAATTCCCAAGTGCCAGGAGTAGGAT;gene1=ENSG00000171735,3',1460;gene2=ENSG00000049245,5',1964;conservedOrganism=MM,CF
+1	HSCL	TFBS_cluster	9334827	9334841	.	.	.	ID=2ets-1gata:chr1:9334827..9334841;type=2ets-1gata;sequence=GATATGGGAACGGAA;gene1=ENSG00000171621,intron,0;conservedOrganism=MM,CF
+

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.Phenotype" is-interface="true">
+  <attribute name="RNAiCode" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.RNAiExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true"/>
+</classes>

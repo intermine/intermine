@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.ProteinStructure" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
+  <attribute name="atm" type="java.lang.String"/>
+  <reference name="region" referenced-type="org.flymine.model.genomic.ProteinRegion" reverse-reference="structures"/>
+</class>
+<class name="org.flymine.model.genomic.ProteinFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+</class>
+<class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <collection name="regions" referenced-type="org.flymine.model.genomic.ProteinRegion" ordered="true" reverse-reference="protein"/>
+</class>
+<class name="org.flymine.model.genomic.ModelledProteinStructure" extends="org.flymine.model.genomic.ProteinStructure" is-interface="true">
+  <attribute name="QScore" type="java.lang.Float"/>
+  <attribute name="ZScore" type="java.lang.Float"/>
+</class>
+<class name="org.flymine.model.genomic.ProteinRegion" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="regions"/>
+  <reference name="proteinFeature" referenced-type="org.flymine.model.genomic.ProteinFeature"/>
+  <collection name="structures" referenced-type="org.flymine.model.genomic.ProteinStructure" ordered="true" reverse-reference="region"/>
+</class>
+</classes>

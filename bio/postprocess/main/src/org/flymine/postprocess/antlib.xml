@@ -1,0 +1,26 @@
+<antlib>
+    <typedef
+            name="mappings"
+            classname="org.flymine.postprocess.PostProcessTask"/>
+    <typedef
+            name="create-overlap-relations"
+            classname="org.flymine.postprocess.CreateOverlapRelationsTask"/>
+    <typedef
+            name="transfer-sequences"
+            classname="org.flymine.postprocess.PostProcessTask"/>
+    <typedef
+            name="load-xml-data"
+            classname="org.intermine.dataloader.XmlDataLoaderTask"/>
+    <typedef
+            name="link-ins"
+            classname="org.flymine.util.LinkInTask"/>
+    <typedef
+            name="homophila-post-process"
+            classname="org.flymine.postprocess.PostProcessTask"/>
+    <typedef
+            name="tsv-file-reader"
+            classname="org.flymine.task.TSVFileReaderWithSynonymTask"/>
+    <typedef
+            name="fetch-sequences"
+            classname="org.flymine.postprocess.PostProcessTask"/>
+</antlib>

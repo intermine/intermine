@@ -1,0 +1,109 @@
+#!/usr/bin/perl -w
+
+# script to create new project and add it to subversion
+
+use strict;
+
+if (@ARGV != 2) {
+  die <<"EOU";
+usage: $0 project_name type
+where type is used to set the xml file to import from imbuild ("source" for source.xml etc.)
+EOU
+}
+
+my $proj_name = shift;
+my $type = shift;
+
+$proj_name =~ s{/+$}{};
+
+sub svn_command
+{
+  my ($command) = shift;
+
+  system("svn $command") == 0 or die "execute of 'svn $command' failed: $?\n";
+}
+
+
+sub build_file_contents
+{
+  my $imbuild_file = undef;
+
+  my @im_locs = ("../imbuild", "../../imbuild", "../../../imbuild", "../../../../imbuild",
+                 "../../../../../imbuild");
+
+  for my $im_loc (@im_locs) {
+    my $test_file = "$im_loc/$type.xml";
+    if (-f $test_file) {
+      print STDERR "found $test_file\n";
+      $imbuild_file = $test_file;
+      last;
+    }
+  }
+
+  if (!defined $imbuild_file) {
+    die "can't find $type.xml\nlooked in: " . join (", ", @im_locs), "\n";
+  }
+
+  return <<"BUILD_FILE_END";
+<project name="$proj_name-tasks" default="default" basedir=".">
+  <description>build $proj_name tasks</description>
+  <import file="$imbuild_file"/>
+</project>
+BUILD_FILE_END
+}
+
+sub project_file_contents
+{
+  my $extra_deps = "";
+
+  if ($type eq "source") {
+    $extra_deps = ", sources/$proj_name/main";
+  }
+
+  return <<"PROJ_PROPS_END";
+compile.dependencies = intermine/integrate/main$extra_deps
+
+PROJ_PROPS_END
+}
+
+sub make_proj
+{
+  my $proj_name = shift;
+  my $type = shift;
+
+  svn_command("mkdir $proj_name");
+
+  chdir $proj_name or die "can't chdir() to $proj_name\n";
+
+  my @commands = ("mkdir lib", "mkdir resources", "mkdir src");
+
+  for my $command (@commands) {
+    svn_command ($command);
+  }
+
+  my $build_file = 'build.xml';
+
+  open my $build_file_handle, '>', $build_file
+    or die "can't open $build_file for writing: $?\n";
+
+  print $build_file_handle build_file_contents();
+
+  close $build_file_handle or die "can't close $build_file: $?\n";
+
+  my $proj_props = 'project.properties';
+
+  open my $proj_props_handle, '>', $proj_props
+    or die "can't open $proj_props for writing: $?\n";
+
+  print $proj_props_handle project_file_contents();
+
+  close $proj_props_handle or die "can't close $proj_props: $?\n";
+
+  my @add_commands = ("add build.xml", "add project.properties");
+
+  for my $command (@add_commands) {
+    svn_command ($command);
+  }
+}
+
+make_proj($proj_name, $type);

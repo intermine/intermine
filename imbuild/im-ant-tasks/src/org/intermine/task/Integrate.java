@@ -1,0 +1,158 @@
+package org.intermine.task;
+
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.intermine.task.project.Project;
+import org.intermine.task.project.ProjectXmlBinding;
+import org.intermine.task.project.Source;
+import org.intermine.task.project.SourceProperty;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Ant;
+import org.apache.tools.ant.taskdefs.Property;
+
+/**
+ *
+ * @author tom
+ */
+public class Integrate extends Task
+{
+    private File projectXml;
+    private Project intermineProject;
+    private String action, source;
+    private File workspaceBaseDir;
+
+    public void setProjectXml(File projectXml) {
+        this.projectXml = projectXml;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * Base directory that all projects are assumed relative to.
+     *
+     * @param basedir base directory that all projects are assumed relative to
+     */
+    public void setBasedir(File basedir) {
+        workspaceBaseDir = basedir;
+    }
+
+    public void execute() throws BuildException {
+        if (projectXml == null) {
+            throw new BuildException("no projectXml specified");
+        }
+        if (workspaceBaseDir == null) {
+            throw new BuildException("no workspaceBaseDir specified");
+        }
+
+        intermineProject = ProjectXmlBinding.unmarshall(projectXml);
+
+        System.out.println("Found " + intermineProject.getSources().size() + " sources");
+
+        if (source.equals("")) {
+            Iterator iter = intermineProject.getSources().entrySet().iterator();
+            while (iter.hasNext()) {
+                String thisSource = (String) ((Map.Entry) iter.next()).getKey();
+                if (action.equals("")) {
+                    performAction(thisSource);
+                } else {
+                    performAction(action, thisSource);
+                }
+            }
+        } else {
+            if (intermineProject.getSources().get(source) == null) {
+                throw new BuildException("can't find source in project definition file: " + source);
+            }
+
+            if (action.equals("")) {
+                performAction(source);
+            } else {
+                performAction(action, source);
+            }
+        }
+    }
+
+    private void performAction(String source) {
+        performAction("retrieve", source);
+        performAction("translate", source);
+        performAction("load", source);
+    }
+
+    private void performAction(String action, String source) {
+        Source s = (Source) intermineProject.getSources().get(source);
+        File sourceDir = new File(new File(workspaceBaseDir, "sources"), s.getType());
+
+        System.out.println("Performing integration action \"" + action + "\" for source \""
+                           + source + "\" in directory: " + sourceDir);
+
+        Ant ant = new Ant();
+        ant.setDir(sourceDir);
+        ant.setInheritAll(false);
+        ant.setTarget(action);
+        ant.setProject(getProject());
+
+        // Tell sub-invocation to execute targets on dependencies.  This is needed so that ant in
+        // the source directories correctly runs ant on it's dependencies
+        Property depProp = ant.createProperty();
+        depProp.setName("no.dep");
+        depProp.setValue("false");
+        depProp.setProject(getProject());
+        depProp.execute();
+
+        // Add global properties
+        Iterator globalPropIter = intermineProject.getProperties().iterator();
+        while (globalPropIter.hasNext()) {
+            SourceProperty sp = (SourceProperty) globalPropIter.next();
+            Property prop = ant.createProperty();
+            prop.setName(sp.getName());
+            if (sp.isLocation()) {
+                prop.setLocation(getProject().resolveFile(sp.getLocation()));
+            } else {
+                prop.setValue(sp.getValue());
+            }
+            prop.setProject(getProject());
+            prop.execute();
+        }
+
+        // Add source properties
+        Iterator propIter = s.getProperties().iterator();
+        while (propIter.hasNext()) {
+            SourceProperty sp = (SourceProperty) propIter.next();
+            Property prop = ant.createProperty();
+            prop.setName(sp.getName());
+            if (sp.isLocation()) {
+                prop.setLocation(getProject().resolveFile(sp.getLocation()));
+            } else {
+                prop.setValue(sp.getValue());
+            }
+            prop.setProject(getProject());
+            prop.execute();
+        }
+
+        // source.name
+        Property prop = ant.createProperty();
+        prop.setName("source.name");
+        prop.setValue(source);
+
+        ant.execute();
+    }
+}

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="model/ensembl/src/java"/>
+	<classpathentry kind="src" path="model/interpro/src/java"/>
+	<classpathentry kind="src" path="model/interpro/src/test"/>
+	<classpathentry kind="src" path="model/cdnaclone/src/java"/>
+	<classpathentry kind="src" path="model/cdnaclone/src/test"/>
+	<classpathentry kind="src" path="model/opposumchain/src/java"/>
+	<classpathentry kind="src" path="model/opposumchain/src/test"/>
+	<classpathentry kind="src" path="model/tfbs/src/java"/>
+	<classpathentry kind="src" path="model/tfbs/src/test"/>
+	<classpathentry kind="src" path="model/tfbscluster/src/java"/>
+	<classpathentry kind="src" path="model/tfbscluster/src/test"/>
+	<classpathentry kind="src" path="model/genomic/resources/flymine"/>
+	<classpathentry excluding="flymine/" kind="src" path="model/genomic/resources"/>
+	<classpathentry excluding="resources/|src/java/|src/test/" kind="src" path="model/mage"/>
+	<classpathentry kind="src" path="build/model/uniprot/resources"/>
+	<classpathentry kind="src" path="build/model/ensembl/resources"/>
+	<classpathentry kind="src" path="build/model/psi/resources"/>
+	<classpathentry kind="src" path="build/model/rnai/resources"/>
+	<classpathentry kind="src" path="model/protein_structure/src/java"/>
+	<classpathentry kind="src" path="model/protein_structure/src/test"/>
+	<classpathentry kind="src" path="model/flyreg/src/test"/>
+	<classpathentry kind="src" path="model/genomic/src/web/java"/>
+	<classpathentry kind="src" path="model/drosdel/src/test"/>
+	<classpathentry kind="src" path="model/drosdel/src/java"/>
+	<classpathentry kind="src" path="model/chado/src/java"/>
+	<classpathentry kind="src" path="model/chado/src/test"/>
+	<classpathentry kind="src" path="model/diseaseregion/src/java"/>
+	<classpathentry kind="src" path="model/diseaseregion/src/test"/>
+	<classpathentry kind="src" path="model/ensembl-disease/src/java"/>
+	<classpathentry kind="src" path="model/ensembl-disease/src/test"/>
+	<classpathentry kind="src" path="model/ensembl-human/src/java"/>
+	<classpathentry kind="src" path="model/ensembl-human/src/test"/>
+	<classpathentry kind="src" path="model/ensembl-variation/src/java"/>
+	<classpathentry kind="src" path="model/ensembl-variation/src/test"/>
+	<classpathentry kind="src" path="model/firstef/src/java"/>
+	<classpathentry kind="src" path="model/firstef/src/test"/>
+	<classpathentry kind="src" path="model/flyreg/src/java"/>
+	<classpathentry kind="src" path="model/go/src/java"/>
+	<classpathentry kind="src" path="model/go/src/test"/>
+	<classpathentry kind="src" path="model/long_oligo/src/java"/>
+	<classpathentry kind="src" path="model/mage/src/java"/>
+	<classpathentry kind="src" path="model/mage/src/test"/>
+	<classpathentry kind="src" path="model/orthologue/src/java"/>
+	<classpathentry kind="src" path="model/orthologue/src/test"/>
+	<classpathentry kind="src" path="model/region/src/java"/>
+	<classpathentry kind="src" path="model/region/src/test"/>
+	<classpathentry kind="src" path="model/rnai/src/java"/>
+	<classpathentry kind="src" path="model/rnai/src/test"/>
+	<classpathentry kind="src" path="model/taxonomy/src/java"/>
+	<classpathentry kind="src" path="model/taxonomy/src/test"/>
+	<classpathentry kind="src" path="model/tiling_path/src/java"/>
+	<classpathentry kind="src" path="model/uniprot/src/java"/>
+	<classpathentry kind="src" path="model/uniprot/src/test"/>
+	<classpathentry kind="src" path="build/model/drosdel"/>
+	<classpathentry kind="src" path="build/model/chado"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/ensembl"/>
+	<classpathentry kind="src" path="build/model/fulldata"/>
+	<classpathentry kind="src" path="build/model/genomic"/>
+	<classpathentry kind="src" path="build/model/go"/>
+	<classpathentry kind="src" path="build/model/mage"/>
+	<classpathentry kind="src" path="build/model/orthologue"/>
+	<classpathentry kind="src" path="build/model/protein_structure"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/psi"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/rnai"/>
+	<classpathentry kind="src" path="build/model/taxonomy"/>
+	<classpathentry excluding="resources/" kind="src" path="build/model/uniprot"/>
+	<classpathentry kind="src" path="build/java"/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="model/genomic/src/java"/>
+	<classpathentry kind="src" path="model/genomic/src/test"/>
+	<classpathentry kind="src" path="model/psi/src/java"/>
+	<classpathentry kind="src" path="model/psi/src/test"/>
+	<classpathentry kind="src" path="model/ensembl/src/test"/>
+	<classpathentry kind="lib" path="build/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fulldata"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry kind="src" path="model/homophila/src/test"/>
+	<classpathentry kind="src" path="model/homophila/src/java"/>
+	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.0/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry kind="lib" path="model/homophila/resources"/>
+	<classpathentry kind="lib" path="lib/biojava-1.4cvs.jar"/>
+	<classpathentry kind="lib" path="model/mage/lib/MAGEstk-2004-11-29-v1.0-compatible.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
+	<classpathentry kind="lib" path="resources"/>
+	<classpathentry kind="lib" path="model/mage/resources"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.0-rc1.jar"/>
+	<classpathentry kind="output" path="build-eclipse"/>
+</classpath>

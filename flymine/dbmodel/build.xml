@@ -1,0 +1,30 @@
+
+<project name="flymine-dbmodel" default="default" basedir=".">
+  
+  <description>represents the production objectstore and the model therein</description>
+  <import file="../../imbuild/objectstore.xml"/>
+
+  <target name="-merge-models" unless="merge.not.required">
+    <merge-additions source="so"/>
+    <merge-additions source="psi"/>
+    <merge-additions source="rnai"/>
+    <merge-additions source="ensembl"/>
+    <merge-additions source="phenotype"/>
+    <merge-additions source="go"/>
+    <merge-additions source="go-annotation"/>
+    <merge-additions source="uniprot"/>
+    <merge-additions source="protein_structure"/>
+    <merge-additions source="orthologue"/>
+    <merge-additions source="flyreg"/>
+    <merge-additions source="tiling_path"/>
+    <merge-additions source="long_oligo"/>
+    <merge-additions source="flybase-gff"/>
+    <merge-additions source="homophila"/>
+    <merge-additions source="interpro"/>
+    <merge-additions source="cdnaclone"/>
+    <merge-additions source="drosdel"/>
+    <merge-additions source="mage"/>
+  </target>
+
+</project>
+

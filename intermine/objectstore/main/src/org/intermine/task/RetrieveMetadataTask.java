@@ -23,6 +23,7 @@ import org.intermine.metadata.Model;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Retrieve the model metadata from a database
@@ -42,11 +43,11 @@ public class RetrieveMetadataTask extends Task
     }
     
     /**
-     * Sets the database alias
-     * @param database the database alias
+     * Sets the os alias
+     * @param osname the os alias
      */
-    public void setDatabase(String database) {
-        this.database = database;
+    public void setOsName(String osname) {
+        this.database = PropertiesUtil.getProperties().getProperty(osname + ".db");
     }
 
     /**
@@ -71,6 +72,10 @@ public class RetrieveMetadataTask extends Task
             File localModel = new File(destDir,
                     MetadataManager.getFilename(MetadataManager.MODEL, model.getName()));
             
+            if (keyDefs != null) {
+                MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
+            }
+            
             if (localModel.exists()
                 && IOUtils.contentEquals(new FileReader(localModel), new StringReader(modelXml))) {
                 System.err .println("Model in database is identical to local model.");
@@ -78,9 +83,6 @@ public class RetrieveMetadataTask extends Task
             }
             
             MetadataManager.saveModel(model, destDir);
-            if (keyDefs != null) {
-                MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
-            }
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
             System.err .println("Failed to retrieve metadata - maybe you need to run build-db?");

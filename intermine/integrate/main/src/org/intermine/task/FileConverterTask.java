@@ -14,9 +14,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -29,7 +26,6 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.DynamicAttribute;
 import org.apache.tools.ant.types.FileSet;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -41,7 +37,7 @@ import org.apache.log4j.Logger;
  * @author Matthew Wakeling
  * @author Thomas Riley
  */
-public class FileConverterTask extends ConverterTask implements DynamicAttribute
+public class FileConverterTask extends ConverterTask
 {
     protected static final Logger LOG = Logger.getLogger(FileConverterTask.class);
 
@@ -49,7 +45,6 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
     protected String clsName;
     protected String param1 = null;
     protected String param2 = null;
-    protected Map dynamicAttrs = new HashMap();
 
     /**
      * Set the source specific subclass of FileConverter to run
@@ -65,22 +60,6 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
      */
     public void addFileSet(FileSet fileSet) {
         this.fileSet = fileSet;
-    }
-
-    /**
-     * Set param1
-     * @param param1 the model name
-     */
-    public void setParam1(String param1) {
-        this.param1 = param1;
-    }
-
-    /**
-     * Set param2
-     * @param param2 the model name
-     */
-    public void setParam2(String param2) {
-        this.param2 = param2;
     }
 
     /**
@@ -159,39 +138,4 @@ public class FileConverterTask extends ConverterTask implements DynamicAttribute
         }
     }
 
-    /**
-     * Call setters on the converter bean to pass any dynamic properties
-     * passed through from ant.
-     * @param bean the converter
-     */
-    private void configureDynamicAttributes(FileConverter bean) {
-        Iterator iter = dynamicAttrs.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String propName = (String) entry.getKey();
-            Object propValue = entry.getValue();
-            try {
-                Class propType = PropertyUtils.getPropertyType(bean, propName);
-                if (propType != null) {
-                    if (propType.equals(File.class)) {
-                        propValue = getProject().resolveFile((String) propValue);
-                    }
-                    PropertyUtils.setProperty(bean, propName, propValue);
-                } else {
-
-                }
-            } catch (Exception e) {
-                throw new BuildException(e);
-            }
-        }
-    }
-
-    /**
-     * Handle an attribute that we don't have a setter for.
-     * @param name the attribute name
-     * @param value the attribute value
-     */
-    public void setDynamicAttribute(String name, String value) {
-        dynamicAttrs.put(name, value);
-    }
 }

@@ -1,0 +1,6 @@
+/** this policy give ALL permissions, therefore it works always,
+but please alter it to your needs to be more secure! */
+
+grant{
+    permission java.security.AllPermission;
+};

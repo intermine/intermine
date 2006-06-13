@@ -1,0 +1,9 @@
+<project name="bio-postprocess-core-test" default="default" basedir=".">
+
+  <description>perform core post processing tests</description>
+
+  <import file="../../../imbuild/tests.xml"/>
+
+  
+
+</project>

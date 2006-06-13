@@ -21,14 +21,12 @@ import java.sql.Statement;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
-import org.apache.tools.ant.Task;
-
 /**
  * Task superclass for invoking converters.
  *
  * @author Matthew Wakeling
  */
-public class ConverterTask extends Task
+public class ConverterTask extends DynamicAttributeTask
 {
     protected String model;
     protected String osName;

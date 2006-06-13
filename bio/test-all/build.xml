@@ -1,0 +1,61 @@
+<project name="bio-test-all" default="default" basedir="."
+  xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1"
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
+  xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
+  
+  <description>wrapper project for build/testing/cleaning everything in bio</description>
+
+  <import file="../../imbuild/task.xml"/>
+  <import file="../../imbuild/objectstore.xml"/>
+  
+  <target name="-pre-init" depends="library.-pre-init">
+    <property name="test.results.dir" location="${build.dir}/test/results"/>
+  </target>
+  
+  <target name="build-db-genomic-test" depends="init, -init-build-db, -init-deps, -init-task-xml">
+    <imdbproj:build-db osname="os.genomic-test" model="genomic"/>
+  </target>
+
+  <target name="-init-fulltest" depends="build-db-genomic-test, init">
+    <mkdir dir="${test.results.dir}"/>
+  </target>
+  
+  <target name="fulltest" depends="init, -init-fulltest, -do-fulltest, test-report"/>
+  
+  <target name="-do-fulltest">
+    <subant inheritAll="false">
+      <property name="test.results.dir" value="${test.results.dir}"/>
+      <property name="generate.report" value="false"/>
+      <property name="no.dep" value="false"/>
+      <!--<property name="test.fork" value="yes"/>-->
+      <fileset dir="../.." includes="sources/*/test/build.xml"/>
+      <fileset dir="../.." includes="bio/*/test/build.xml"/>
+      <fileset dir="../.." includes="bio/postprocess/core/test/build.xml"/>
+    </subant>
+  </target>
+  
+  <target name="test-report" depends="init">
+    <junitreport todir="${test.results.dir}">
+      <fileset dir="${test.results.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${test.results.dir}"/>
+    </junitreport>
+  </target>
+  
+  <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
+    <lib:checkstyle>
+      <customize>
+        <fileset dir="..">
+          <include name="sources/*/test/**/*.java"/>
+        </fileset>
+      </customize>
+    </lib:checkstyle>
+  </target>
+  
+  <target name="jar"/>
+  
+  <target name="compile" depends="init, -init-deps"/>
+  
+  <target name="default" depends="fulltest"/>
+</project>

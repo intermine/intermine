@@ -1,0 +1,6 @@
+
+<project name="ensembl" default="default" basedir=".">
+  <description>build ensembl model</description>
+  <import file="../../../imbuild/model.xml"/> 
+</project>
+

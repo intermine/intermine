@@ -1,0 +1,17 @@
+###############################################################################
+# This directory contains patches for library files used by FlyMine           #
+# 13.January.2006                                                             #
+###############################################################################
+
+Files:
+
+  PhoebeCanvas.java.patch - patch for flymine/model/genomic/lib/phoebe.jar
+                          - used for cytoscape
+                          - patches PhoebeCanvas.java (constructor) to work 
+                            with java headless mode
+
+  PNode.java.patch        - patch for flymine/model/genomic/lib/piccolo.jar
+                          - used for cytoscape
+                          - patches PNode.java (toImage method) to work with 
+                            java headless mode and to prevent this method from
+                            rescaling the image

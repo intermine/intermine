@@ -43,8 +43,8 @@ public class StoreMetadataTask extends Task
      * Sets the database alias
      * @param database the database alias
      */
-    public void setDatabase(String database) {
-        this.database = database;
+    public void setOsName(String osname) {
+        this.database = PropertiesUtil.getProperties().getProperty(osname + ".db");
     }
 
     /**
@@ -63,6 +63,10 @@ public class StoreMetadataTask extends Task
             Model model = MetadataManager.loadModel(modelName);
             MetadataManager.store(db, MetadataManager.MODEL, model.toString());
             Properties keys = MetadataManager.loadKeyDefinitions(modelName);
+            if (keys == null) {
+                throw new BuildException("no keys for " + modelName
+                                         + " model found to store in the ObjectStore");
+            }
             MetadataManager.store(db, MetadataManager.KEY_DEFINITIONS,
                                   PropertiesUtil.serialize(keys));
 
@@ -72,7 +76,11 @@ public class StoreMetadataTask extends Task
                                       PropertiesUtil.serialize(descriptions));
             }*/
         } catch (Exception e) {
-            throw new BuildException(e);
+            if (e instanceof BuildException) {
+                throw (BuildException) e;
+            } else {
+                throw new BuildException(e);
+            }
         }
     }
 }

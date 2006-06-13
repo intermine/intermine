@@ -1,0 +1,38 @@
+<project name="postprocess" default="default" basedir="."
+         xmlns:lib="http://www.intermine.org/ns/im-postprocess-proj/1">
+
+  <dirname property="postprocess.xml.basedir" file="${ant.file.postprocess}"/>
+
+  <import file="${postprocess.xml.basedir}/library.xml"/>
+  <import file="${postprocess.xml.basedir}/task.xml"/>
+
+    <target name="-pre-init" depends="library.-pre-init">
+    </target>
+
+    <target name="-init-deps" depends="library.-init-deps, -init-task-xml">
+      <!-- Copy intermine.properties onto the classpath -->
+      <copy file="${user.home}/${intermine.properties.file}"
+            tofile="${build.task.dir}/intermine.properties"/>
+      <!-- Copy default.intermine.properties onto the classpath -->
+      <copy file="${default.intermine.properties.file}"
+            tofile="${build.task.dir}/default.intermine.properties"/>
+    </target>
+
+    <target name="-init-postprocess">
+      <property name="action" value=""/>
+    </target>
+
+    <!--
+      Perform a post-processing step.
+      The post-processing action (a sources dir name) should be provided on the command line.
+      E.g. ant postprocess -Daction=homophila
+    -->
+  <target name="postprocess" depends="init, -init-deps, -init-postprocess">
+    <postprocess
+            projectXml="../project.xml"
+            classpathref="task.class.path" 
+            basedir="../.."
+            action="${action}"/>
+  </target>
+
+</project>

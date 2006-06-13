@@ -1,0 +1,4 @@
+<project name="malariamine-webapp" default="default" basedir=".">
+  <description>build, test, package malariamine-webapp</description>
+  <import file="../../imbuild/application.xml"/>
+</project>

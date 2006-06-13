@@ -1,0 +1,21 @@
+<antlib>
+    <!-- condition typedefs - these do not work for ant less than 1.6 -->
+    <typedef
+        name="filename"
+        classname="org.intermine.task.FileName"/>
+    <typedef
+        name="dependencies"
+        classname="org.intermine.task.Dependencies"/>
+    <typedef
+        name="xpath-select"
+        classname="org.intermine.task.XPathSelect"/>
+    <typedef
+        name="create-properties-file"
+        classname="org.intermine.task.CreatePropertiesFile"/>
+    <typedef
+        name="integrate"
+    	classname="org.intermine.task.Integrate"/>
+    <typedef
+        name="postprocess"
+    	classname="org.intermine.task.PostProcess"/>
+</antlib>

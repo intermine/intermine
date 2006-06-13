@@ -1,0 +1,202 @@
+<project>
+  <property name="target.model" value="genomic"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="flymine.properties"/>
+  <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+    <source name="flybase-gff" type="flybase-gff">
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="flybase.small" value="true"/>
+    </source>
+    <source name="flybase-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.include" value="dmel-all-chromosome-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+    </source>
+    <!--
+    <source name="ensembl-anopheles" type="ensembl">
+      <property name="organism" value="AGP"/>
+    </source>
+    <source name="uniprot-dros" type="uniprot">
+      <property name="uniprot.organisms" value="7227"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
+    </source>
+    <source name="uniprot-malaria" type="uniprot">
+      <property name="uniprot.organisms" value="5833"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
+    </source>
+    <source name="uniprot" type="uniprot">
+      <property name="uniprot.organisms" value="6239 7165 180454"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
+    </source>
+    -->
+    <source name="rnai" type="rnai">
+      <property name="src.data.dir" location="/shared/data/rnai/latest_data"/>
+    </source>
+    <source name="interpro" type="interpro">
+        <!-- property name="interpro.organisms" value="6239,7165,7227,180454"/ -->
+      <property name="interpro.organism.taxid.list" value="6239,7165,7227,180454"/>
+      <!-- property name="interpro.organism.taxid.list" value="5833"/ -->
+    </source>
+    <source name="inparanoid-orthologue" type="orthologue">
+      <!--property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current"/-->
+      <property name="src.data.dir" location="/shared/data/malaria/inparanoid/2006-04-16/"/>
+    </source>
+    <source name="drosdel" type="drosdel"/>
+    <source name="tiling_path" type="tiling_path">
+      <property name="src.data.dir" location="/shared/data/tiling"/>
+    </source>
+    <source name="long_oligo" type="long_oligo">
+      <property name="src.data.dir" location="/shared/data/long_oligo"/>
+    </source>
+    <source name="phenotype" type="phenotype">
+      <property name="src.data.file" location="/shared/data/phenotype/phenotype.ontology"/>
+    </source>
+    <source name="homophila" type="homophila">
+      <property name="src.data.dir" location="/shared/data/homophila/current"/>
+    </source>
+    <source name="flyreg" type="flyreg">
+      <property name="src.data.dir" location="/shared/data/flyreg"/>
+    </source>
+    <source name="protein_structure" type="protein_structure">
+      <!-- property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model/1557"/ -->
+      <property name="src.data.dir" location="/shared/data/kenji"/>
+      <property name="data.location" location="/shared/data/kenji/data/pfam-3d/model"/>
+    </source>
+    <source name="psi-intact" type="psi">
+      <property name="src.data.dir" location="/shared/data/malaria/psi/intact/2006-05-26"/>
+      <property name="organisms" value="4896 5833 36329"/>
+    </source>
+    <source name="go" type="go">
+      <property name="src.data.file" location="/shared/data/gene_ontology/gene_ontology.obo"/>
+    </source>
+    <source name="go-annotation-gene-identifier" type="go-annotation">
+      <property name="ontologyfile" location="/shared/data/gene_ontology/gene_ontology.obo"/>
+      <property name="geneattribute" value="identifier"/>
+      <!-- currently need to group all files that set Gene.identifier together -->
+      <property name="src.data.dir" location="/shared/data/malaria/go-annotation"/>
+    </source>
+    <source name="go-annotation-gene-organismDbId" type="go-annotation">
+      <property name="ontologyfile" location="/shared/data/gene_ontology/gene_ontology.obo"/>
+      <property name="geneattribute" value="organismDbId"/>
+      <!-- currently need to group all files that set Gene.identifier together -->
+      <property name="src.data.dir" location="/shared/data/go-annotation/gene-organismDbId"/>
+    </source>
+    <!--
+      fasta is a bit wierd - tasks depend on the production model and
+      retrieve and translate are noops
+    -->
+    <source name="flybase-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.include" value="dmel-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+    </source>
+    <source name="flybase-cds-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.idSuffix" value="_CDS"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.include" value="dmel-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+    </source>
+    <source name="entrez-organism" type="entrez-organism">
+      <!-- this source finds the taxon ids in the objectstore, retrieves
+           species name and genus from Entrez into an InterMine format XML
+           file, loads that file into a target items DB, then into the final
+           objectstore -->
+      <property name="tgt.xml.file" location="build/organisms.xml"/>
+    </source>
+  </sources>
+
+  <post-processing>
+    <create-utr-references/>
+    <calculate-locations/>
+    <create-references/>
+    <update-orthologues/>
+    <make-spanning-locations/>
+    <create-chromosome-locations-and-lengths/>
+    <create-symmetrical-relation-references/>
+    <transfer-sequences/>
+
+    <do-sources/>
+
+    <set-collection-counts/>
+    <create-flybase-to-uniprot-refs/>  
+
+    <!-- set-name-and-wildtypefunction/
+    TODO: Convert to datasource
+   <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db">
+     <taskdef name="tsv-file-reader" classname="org.flymine.task.TSVFileReaderWithSynonymTask">
+       <classpath refid="models.class.path"/>
+     </taskdef>
+     <tsv-file-reader oswAlias="osw.production" organismAbbreviation="DM"
+                      configurationFile="model/genomic/resources/flymine/drosophila_fullname_reader.properties"
+                      dataSourceName="FlyBase">
+       <fileset dir="${flybase.chado.melanogaster}">
+         <include name="flyBaseFullNameWT.txt"/>
+       </fileset>
+     </tsv-file-reader>
+   </target>
+
+    -->
+    <!-- create-overlap-relations-flymine/
+    TODO - CORE:
+  <target name="create-overlap-relations-flymine" depends="compile-genomic-java-from-db">
+    <taskdef name="create-overlap-relations"
+             classname="org.flymine.postprocess.CreateOverlapRelationsTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <create-overlap-relations objectStoreWriter="osw.production"
+                              ignoreSelfMatches="false"
+                              classesToIgnore="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, Pseudogene, RRNA, RegulatoryRegion, RepeatRegion, Supercontig, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
+  </target>
+    -->
+    <!-- create-flybase-to-uniprot-refs/
+    TODO: Convert to datasource
+  <target name="create-flybase-to-uniprot-refs" depends="compile-genomic-java-from-db">
+    <taskdef name="fb-uniprot-refs" classname="org.flymine.postprocess.FlyBaseUniProtRefsTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <fb-uniprot-refs linkFile="${flybase.uniprot.link.file}"
+                     objectStoreWriter="osw.production"/>
+  </target>
+
+    -->
+    <!-- update-publications/
+    TODO - CORE:
+  <target name="update-publications" depends="compile-genomic-java-from-db">
+    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+    <mappings operation="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
+
+    <taskdef name="load-xml-data"
+      classname="org.intermine.dataloader.XmlDataLoaderTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <load-xml-data integrationWriter="integration.production"
+                   xmlFile="${build.tmp}/publications.xml"
+                   sourceName="pubmed"
+                   ignoreDuplicates="true"/>
+  </target>
+    -->
+    <!-- grant-db-production/
+    TODO: Not really post processing but just has to be done sometime...
+  <target name="grant-db-production" depends="prepare" - ->
+    <!- - grant 'public' user select permission on production db - ->
+    <taskdef name="grant" classname="org.intermine.task.GrantTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <grant database="db.production" user="PUBLIC" perm="SELECT"/>
+
+  </target>
+    -->
+  </post-processing>
+
+</project>
+

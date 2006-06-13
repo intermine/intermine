@@ -3,6 +3,9 @@
         name="create-indexes"
         classname="org.intermine.task.CreateIndexesTask"/>
     <typedef
+        name="convert-file"
+        classname="org.intermine.task.FileConverterTask"/>
+    <typedef
         name="precompute-queries"
         classname="org.intermine.task.PrecomputeTask"/>
     <typedef
@@ -14,4 +17,25 @@
     <typedef
         name="insert-xml-data"
         classname="org.intermine.dataloader.XmlDataLoaderTask"/>
+    <typedef
+        name="model-merger"
+        classname="org.intermine.task.ModelMergerTask"/>
+    <typedef
+        name="db-retriever"
+        classname="org.intermine.dataconversion.DBRetrieverTask"/>
+    <typedef
+        name="translate-data"
+        classname="org.flymine.task.DataTranslatorTask"/>
+    <typedef
+        name="convert-xml-file"
+        classname="org.intermine.task.XmlConverterTask"/>
+    <typedef
+        name="data-load"
+        classname="org.intermine.dataloader.ObjectStoreDataLoaderTask"/>
+    <typedef
+    	name="method-call"
+    	classname="org.intermine.task.StaticMethodTask"/>
+    <typedef
+    	name="postprocessor"
+    	classname="org.intermine.task.PostProcessorTask"/>
 </antlib>

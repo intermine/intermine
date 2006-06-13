@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.Supercontig" extends="org.flymine.model.genomic.Assembly" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+</classes>

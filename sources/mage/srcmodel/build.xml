@@ -1,0 +1,6 @@
+
+<project name="mage" default="default" basedir=".">
+  <description>build mage model</description>
+  <import file="../../../imbuild/model.xml"/> 
+</project>
+

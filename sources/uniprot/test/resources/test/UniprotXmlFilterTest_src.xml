@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.uniprot.org/support/docs/uniprot.xsd">
+<entry dataset="Swiss-Prot" created="1990-04-01" updated="1992-08-01">
+  <accession>P15711</accession>
+  <organism key="1">
+    <name type="scientific">Theileria parva</name>
+    <dbReference type="NCBI Taxonomy" id="5875" key="2"/>
+    <lineage>       <taxon>Eukaryota</taxon>
+      <taxon>Alveolata</taxon>
+      <taxon>Apicomplexa</taxon>
+      <taxon>Piroplasmida</taxon>       
+      <taxon>Theileriidae</taxon>
+      <taxon>Theileria</taxon>
+    </lineage>
+  </organism>
+</entry>
+<entry dataset="Swiss-Prot" created="2001-10-16" updated="2004-07-05">
+  <accession>Q9V3T9</accession>
+  <organism key="2">
+    <name type="scientific">Drosophila melanogaster</name>
+    <name type="common">Fruit fly</name>
+    <dbReference type="NCBI Taxonomy" id="7227" key="3"/>
+    <lineage>
+      <taxon>Eukaryota</taxon>
+      <taxon>Metazoa</taxon>
+      <taxon>Arthropoda</taxon>
+      <taxon>Hexapoda</taxon>
+      <taxon>Insecta</taxon>
+      <taxon>Pterygota</taxon>
+      <taxon>Neoptera</taxon>
+      <taxon>Endopterygota</taxon>
+      <taxon>Diptera</taxon>
+      <taxon>Brachycera</taxon>
+      <taxon>Muscomorpha</taxon>
+      <taxon>Ephydroidea</taxon>
+      <taxon>Drosophilidae</taxon>
+      <taxon>Drosophila</taxon>
+    </lineage>
+  </organism>
+  <organism key="1">
+    <name type="scientific">Theileria parva</name>
+    <dbReference type="NCBI Taxonomy" id="5875" key="2"/>
+    <lineage>       
+      <taxon>Eukaryota</taxon>
+      <taxon>Alveolata</taxon>
+      <taxon>Apicomplexa</taxon>
+      <taxon>Piroplasmida</taxon>       
+      <taxon>Theileriidae</taxon>
+      <taxon>Theileria</taxon>
+    </lineage>
+  </organism>
+</entry>
+<entry dataset="Swiss-Prot" created="1990-04-01" updated="1992-08-01">
+  <accession>P15711</accession>
+  <organism key="2">
+    <name type="scientific">Drosophila melanogaster</name>
+    <name type="common">Fruit fly</name>
+    <dbReference type="NCBI Taxonomy" id="7227" key="3"/>
+    <lineage>
+      <taxon>Eukaryota</taxon>
+      <taxon>Metazoa</taxon>
+      <taxon>Arthropoda</taxon>
+      <taxon>Hexapoda</taxon>
+      <taxon>Insecta</taxon>
+      <taxon>Pterygota</taxon>
+      <taxon>Neoptera</taxon>
+      <taxon>Endopterygota</taxon>
+      <taxon>Diptera</taxon>
+      <taxon>Brachycera</taxon>
+      <taxon>Muscomorpha</taxon>
+      <taxon>Ephydroidea</taxon>
+      <taxon>Drosophilidae</taxon>
+      <taxon>Drosophila</taxon>
+    </lineage>
+  </organism>
+</entry>
+<entry dataset="Swiss-Prot" created="1990-04-01" updated="1992-08-01">
+  <accession>P12345</accession>
+  <organism key="2">
+    <name type="scientific">Papio hamadryas</name>
+    <name type="common">hamadryas baboon</name>
+    <lineage>
+      <taxon>big monkey</taxon>
+    </lineage>
+  </organism>
+  <organism key="2">
+    <name type="scientific">Pongo pygmaeus</name>
+    <name type="common">Orang utan</name>
+    <dbReference type="NCBI Taxonomy" id="9600" key="3"/>
+    <lineage>
+      <taxon>orange monkey</taxon>
+    </lineage>
+  </organism>
+</entry>
+</uniprot>

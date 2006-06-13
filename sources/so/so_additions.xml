@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.MethylatedA" extends="org.flymine.model.genomic.MethylatedBaseFeature" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Deletion" extends="org.flymine.model.genomic.SequenceVariant org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ReadPair" extends="org.flymine.model.genomic.AssemblyComponent" is-interface="true">
+    <collection name="contigs" referenced-type="org.flymine.model.genomic.Contig" ordered="true" reverse-reference="readPairs"/>
+  </class>
+  <class name="org.flymine.model.genomic.SequenceDifference" extends="org.flymine.model.genomic.Remark" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Operon" extends="org.flymine.model.genomic.GeneGroup" is-interface="true"/>
+  <class name="org.flymine.model.genomic.VirtualSequence" extends="org.flymine.model.genomic.Assembly" is-interface="true"/>
+  <class name="org.flymine.model.genomic.OriginOfReplication" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SnoRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.MiRNA" extends="org.flymine.model.genomic.SmallRegulatoryNcRNA" is-interface="true">
+    <collection name="precursorMiRNAs" referenced-type="org.flymine.model.genomic.PrecursorMiRNA" ordered="true" reverse-reference="miRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.CrossGenomeMatch" extends="org.flymine.model.genomic.NucleotideMatch" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Ribozyme" extends="org.flymine.model.genomic.EnzymaticRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.U6atacSnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PrecursorSiRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true">
+    <collection name="siRNAs" referenced-type="org.flymine.model.genomic.SiRNA" ordered="true" reverse-reference="precursorSiRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.GenePart" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RNAiReagent" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RestrictionEnzymeCutSite" extends="org.flymine.model.genomic.NucleaseSensitiveSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Promoter" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Telomere" extends="org.flymine.model.genomic.ChromosomalStructuralElement" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Cap" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="processedTranscripts" referenced-type="org.flymine.model.genomic.ProcessedTranscript" ordered="true" reverse-reference="caps"/>
+    <collection name="fivePrimeUTRs" referenced-type="org.flymine.model.genomic.FivePrimeUTR" ordered="true" reverse-reference="caps"/>
+  </class>
+  <class name="org.flymine.model.genomic.Silencer" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.CDS" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" ordered="true" reverse-reference="CDSs"/>
+    <collection name="polypeptides" referenced-type="org.flymine.model.genomic.Polypeptide" ordered="true" reverse-reference="CDSs"/>
+  </class>
+  <class name="org.flymine.model.genomic.TandemRepeat" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.U12SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SpliceosomalIntron" extends="org.flymine.model.genomic.Intron" is-interface="true">
+    <collection name="branchSites" referenced-type="org.flymine.model.genomic.BranchSite" ordered="true" reverse-reference="spliceosomalIntrons"/>
+    <collection name="polypyrimidineTracts" referenced-type="org.flymine.model.genomic.PolypyrimidineTract" ordered="true" reverse-reference="spliceosomalIntrons"/>
+  </class>
+  <class name="org.flymine.model.genomic.NucleotideMotif" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SRPRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PolypyrimidineTract" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="spliceosomalIntrons" referenced-type="org.flymine.model.genomic.SpliceosomalIntron" ordered="true" reverse-reference="polypyrimidineTracts"/>
+  </class>
+  <class name="org.flymine.model.genomic.VaultRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Terminator" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.MatchSet" extends="org.flymine.model.genomic.Match" is-interface="true">
+    <collection name="matchParts" referenced-type="org.flymine.model.genomic.MatchPart" ordered="true" reverse-reference="matchSets"/>
+  </class>
+  <class name="org.flymine.model.genomic.RRNA58S" extends="org.flymine.model.genomic.RRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PseudogenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.ProcessedTranscript" is-interface="true">
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" ordered="true" reverse-reference="MRNAs"/>
+    <collection name="codons" referenced-type="org.flymine.model.genomic.Codon" ordered="true" reverse-reference="MRNAs"/>
+    <collection name="ESTs" referenced-type="org.flymine.model.genomic.EST" ordered="true" reverse-reference="MRNAs"/>
+    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" ordered="true" reverse-reference="MRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.TRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.GroupIIntron" extends="org.flymine.model.genomic.Intron" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Assembly" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.AutocatalyticallySplicedIntron" extends="org.flymine.model.genomic.Ribozyme org.flymine.model.genomic.Intron" is-interface="true"/>
+  <class name="org.flymine.model.genomic.GoldenPathFragment" extends="org.flymine.model.genomic.AssemblyComponent" is-interface="true">
+    <collection name="goldenPaths" referenced-type="org.flymine.model.genomic.GoldenPath" ordered="true" reverse-reference="goldenPathFragments"/>
+  </class>
+  <class name="org.flymine.model.genomic.Intron" extends="org.flymine.model.genomic.GenePart" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TransposableElementGene" extends="org.flymine.model.genomic.Gene" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TranscriptionEndSite" extends="org.flymine.model.genomic.Junction" is-interface="true">
+    <collection name="primaryTranscripts" referenced-type="org.flymine.model.genomic.PrimaryTranscript" ordered="true" reverse-reference="transcriptionEndSites"/>
+  </class>
+  <class name="org.flymine.model.genomic.ModifiedBaseSite" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ARS" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SignalPeptide" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="polypeptides" referenced-type="org.flymine.model.genomic.Polypeptide" ordered="true" reverse-reference="signalPeptides"/>
+  </class>
+  <class name="org.flymine.model.genomic.Microsatellite" extends="org.flymine.model.genomic.TandemRepeat" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ExonJunction" extends="org.flymine.model.genomic.Junction" is-interface="true">
+    <collection name="processedTranscripts" referenced-type="org.flymine.model.genomic.ProcessedTranscript" ordered="true" reverse-reference="exonJunctions"/>
+  </class>
+  <class name="org.flymine.model.genomic.CDNAMatch" extends="org.flymine.model.genomic.ExpressedSequenceMatch" is-interface="true"/>
+  <class name="org.flymine.model.genomic.DatabankEntry" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Region" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SNP" extends="org.flymine.model.genomic.PointMutation" is-interface="true"/>
+  <class name="org.flymine.model.genomic.FivePrimeUTR" extends="org.flymine.model.genomic.UTR" is-interface="true">
+    <collection name="caps" referenced-type="org.flymine.model.genomic.Cap" ordered="true" reverse-reference="fivePrimeUTRs"/>
+  </class>
+  <class name="org.flymine.model.genomic.MaturePeptide" extends="org.flymine.model.genomic.Polypeptide" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Supercontig" extends="org.flymine.model.genomic.Assembly" is-interface="true">
+    <collection name="contigs" referenced-type="org.flymine.model.genomic.Contig" ordered="true" reverse-reference="supercontigs"/>
+  </class>
+  <class name="org.flymine.model.genomic.ComplexSubstitution" extends="org.flymine.model.genomic.Substitution" is-interface="true"/>
+  <class name="org.flymine.model.genomic.NucleaseSensitiveSite" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.STS" extends="org.flymine.model.genomic.Tag" is-interface="true"/>
+  <class name="org.flymine.model.genomic.U11SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RRNA28S" extends="org.flymine.model.genomic.RRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RasiRNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="precursorRasiRNAs" referenced-type="org.flymine.model.genomic.PrecursorRasiRNA" ordered="true" reverse-reference="rasiRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.Junction org.flymine.model.genomic.SequenceVariant" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PointMutation" extends="org.flymine.model.genomic.Substitution" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Oligo" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Remark" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Reagent" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.CpGIsland" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PrimaryTranscript" extends="org.flymine.model.genomic.Transcript" is-interface="true">
+    <collection name="clips" referenced-type="org.flymine.model.genomic.Clip" ordered="true" reverse-reference="primaryTranscripts"/>
+    <collection name="transcriptionStartSites" referenced-type="org.flymine.model.genomic.TranscriptionStartSite" ordered="true" reverse-reference="primaryTranscripts"/>
+    <collection name="transcriptionEndSites" referenced-type="org.flymine.model.genomic.TranscriptionEndSite" ordered="true" reverse-reference="primaryTranscripts"/>
+    <collection name="processedTranscripts" referenced-type="org.flymine.model.genomic.ProcessedTranscript" ordered="true" reverse-reference="primaryTranscripts"/>
+    <collection name="spliceSites" referenced-type="org.flymine.model.genomic.SpliceSite" ordered="true" reverse-reference="primaryTranscripts"/>
+  </class>
+  <class name="org.flymine.model.genomic.PolypeptideDomain" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="polypeptides" referenced-type="org.flymine.model.genomic.Polypeptide" ordered="true" reverse-reference="polypeptideDomains"/>
+  </class>
+  <class name="org.flymine.model.genomic.SAGETag" extends="org.flymine.model.genomic.Tag" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PolyASite" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="processedTranscripts" referenced-type="org.flymine.model.genomic.ProcessedTranscript" ordered="true" reverse-reference="polyASites"/>
+  </class>
+  <class name="org.flymine.model.genomic.GroupIIIntron" extends="org.flymine.model.genomic.Intron" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Match" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PossibleBaseCallError" extends="org.flymine.model.genomic.SequenceDifference" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PossibleAssemblyError" extends="org.flymine.model.genomic.SequenceDifference" is-interface="true"/>
+  <class name="org.flymine.model.genomic.AssemblyComponent" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.BindingSite" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SpliceAcceptor" extends="org.flymine.model.genomic.SpliceSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TmRNA" extends="org.flymine.model.genomic.SmallRegulatoryNcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.MatchPart" extends="org.flymine.model.genomic.Match" is-interface="true">
+    <collection name="matchSets" referenced-type="org.flymine.model.genomic.MatchSet" ordered="true" reverse-reference="matchParts"/>
+  </class>
+  <class name="org.flymine.model.genomic.RegulatoryRegion" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="regulatoryRegions"/>
+  </class>
+  <class name="org.flymine.model.genomic.TFBindingSite" extends="org.flymine.model.genomic.RegulatoryRegion org.flymine.model.genomic.BindingSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.MethylatedBaseFeature" extends="org.flymine.model.genomic.ModifiedBaseSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.FlankingRegion" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.BranchSite" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="spliceosomalIntrons" referenced-type="org.flymine.model.genomic.SpliceosomalIntron" ordered="true" reverse-reference="branchSites"/>
+  </class>
+  <class name="org.flymine.model.genomic.TelomeraseRNA" extends="org.flymine.model.genomic.EnzymaticRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.IntergenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="transcripts"/>
+    <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts"/>
+  </class>
+  <class name="org.flymine.model.genomic.PCRProduct" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.EST" extends="org.flymine.model.genomic.Reagent" is-interface="true">
+    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" ordered="true" reverse-reference="ESTs"/>
+  </class>
+  <class name="org.flymine.model.genomic.Codon" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" ordered="true" reverse-reference="codons"/>
+  </class>
+  <class name="org.flymine.model.genomic.Clone" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Tag" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ProteinMatch" extends="org.flymine.model.genomic.Match" is-interface="true"/>
+  <class name="org.flymine.model.genomic.StRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.U1SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RepeatFamily" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.CloneStart" extends="org.flymine.model.genomic.Junction org.flymine.model.genomic.Clone" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Chromosome" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Insertion" extends="org.flymine.model.genomic.SequenceVariant org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Primer" extends="org.flymine.model.genomic.Oligo" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Inversion" extends="org.flymine.model.genomic.Region org.flymine.model.genomic.SequenceVariant" is-interface="true"/>
+  <class name="org.flymine.model.genomic.DispersedRepeat" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SpliceDonor" extends="org.flymine.model.genomic.SpliceSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ORF" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.InvertedRepeat" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.DeletionJunction" extends="org.flymine.model.genomic.Junction org.flymine.model.genomic.SequenceVariant" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ChromosomalStructuralElement" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.GeneGroup" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PolyASignalSequence" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.Region" is-interface="true">
+    <collection name="regulatoryRegions" referenced-type="org.flymine.model.genomic.RegulatoryRegion" ordered="true" reverse-reference="gene"/>
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="gene"/>
+    <reference name="upstreamIntergenicRegion" referenced-type="org.flymine.model.genomic.IntergenicRegion" reverse-reference="downstreamGene"/>
+    <reference name="downstreamIntergenicRegion" referenced-type="org.flymine.model.genomic.IntergenicRegion" reverse-reference="upstreamGene"/>
+  </class>
+  <class name="org.flymine.model.genomic.MethylatedC" extends="org.flymine.model.genomic.MethylatedBaseFeature" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Contig" extends="org.flymine.model.genomic.Assembly org.flymine.model.genomic.AssemblyComponent" is-interface="true">
+    <collection name="reads" referenced-type="org.flymine.model.genomic.Read" ordered="true" reverse-reference="contigs"/>
+    <collection name="supercontigs" referenced-type="org.flymine.model.genomic.Supercontig" ordered="true" reverse-reference="contigs"/>
+    <collection name="readPairs" referenced-type="org.flymine.model.genomic.ReadPair" ordered="true" reverse-reference="contigs"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransSpliceAcceptorSite" extends="org.flymine.model.genomic.SpliceAcceptor" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TranscriptionStartSite" extends="org.flymine.model.genomic.Junction" is-interface="true">
+    <collection name="primaryTranscripts" referenced-type="org.flymine.model.genomic.PrimaryTranscript" ordered="true" reverse-reference="transcriptionStartSites"/>
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomeBand" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Read" extends="org.flymine.model.genomic.AssemblyComponent" is-interface="true">
+    <collection name="contigs" referenced-type="org.flymine.model.genomic.Contig" ordered="true" reverse-reference="reads"/>
+  </class>
+  <class name="org.flymine.model.genomic.NucleotideMatch" extends="org.flymine.model.genomic.Match" is-interface="true"/>
+  <class name="org.flymine.model.genomic.LocatedSequenceFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
+  </class>
+  <class name="org.flymine.model.genomic.TranslatedNucleotideMatch" extends="org.flymine.model.genomic.NucleotideMatch" is-interface="true"/>
+  <class name="org.flymine.model.genomic.HammerheadRibozyme" extends="org.flymine.model.genomic.Ribozyme" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SnRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TransposableElement" extends="org.flymine.model.genomic.RepeatFamily" is-interface="true"/>
+  <class name="org.flymine.model.genomic.AntisenseRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.GuideRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RepeatRegion" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ExperimentalResultRegion" extends="org.flymine.model.genomic.Remark" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TilingPathFragment" extends="org.flymine.model.genomic.AssemblyComponent" is-interface="true">
+    <collection name="tilingPaths" referenced-type="org.flymine.model.genomic.TilingPath" ordered="true" reverse-reference="tilingPathFragments"/>
+  </class>
+  <class name="org.flymine.model.genomic.RRNA5S" extends="org.flymine.model.genomic.RRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RRNA18S" extends="org.flymine.model.genomic.RRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Substitution" extends="org.flymine.model.genomic.Region org.flymine.model.genomic.SequenceVariant" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ThreePrimeUTR" extends="org.flymine.model.genomic.UTR" is-interface="true">
+    <collection name="polyASequences" referenced-type="org.flymine.model.genomic.PolyASequence" ordered="true" reverse-reference="threePrimeUTRs"/>
+  </class>
+  <class name="org.flymine.model.genomic.SmallRegulatoryNcRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.DirectRepeat" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.DecayedExon" extends="org.flymine.model.genomic.PseudogenicRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RNaseMRPRNA" extends="org.flymine.model.genomic.EnzymaticRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.CloneEnd" extends="org.flymine.model.genomic.Clone org.flymine.model.genomic.Junction" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Minisatellite" extends="org.flymine.model.genomic.TandemRepeat" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SpliceSite" extends="org.flymine.model.genomic.Junction" is-interface="true">
+    <collection name="primaryTranscripts" referenced-type="org.flymine.model.genomic.PrimaryTranscript" ordered="true" reverse-reference="spliceSites"/>
+  </class>
+  <class name="org.flymine.model.genomic.ExpressedSequenceMatch" extends="org.flymine.model.genomic.NucleotideMatch" is-interface="true"/>
+  <class name="org.flymine.model.genomic.YRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SpliceEnhancer" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Enhancer" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.PseudogenicRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ESTMatch" extends="org.flymine.model.genomic.ExpressedSequenceMatch" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RFLPFragment" extends="org.flymine.model.genomic.RestrictionEnzymeCutSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Polypeptide" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="polypeptideDomains" referenced-type="org.flymine.model.genomic.PolypeptideDomain" ordered="true" reverse-reference="polypeptides"/>
+    <collection name="signalPeptides" referenced-type="org.flymine.model.genomic.SignalPeptide" ordered="true" reverse-reference="polypeptides"/>
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" ordered="true" reverse-reference="polypeptides"/>
+  </class>
+  <class name="org.flymine.model.genomic.U5SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.NcRNA" extends="org.flymine.model.genomic.ProcessedTranscript" is-interface="true"/>
+  <class name="org.flymine.model.genomic.SiRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true">
+    <collection name="precursorSiRNAs" referenced-type="org.flymine.model.genomic.PrecursorSiRNA" ordered="true" reverse-reference="siRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.Centromere" extends="org.flymine.model.genomic.ChromosomalStructuralElement" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PrecursorMiRNA" extends="org.flymine.model.genomic.SmallRegulatoryNcRNA" is-interface="true">
+    <collection name="miRNAs" referenced-type="org.flymine.model.genomic.MiRNA" ordered="true" reverse-reference="precursorMiRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.SequenceVariant" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RestrictionFragment" extends="org.flymine.model.genomic.Reagent" is-interface="true"/>
+  <class name="org.flymine.model.genomic.NcPrimaryTranscript" extends="org.flymine.model.genomic.PrimaryTranscript" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ProcessedTranscript" extends="org.flymine.model.genomic.Transcript" is-interface="true">
+    <collection name="polyASites" referenced-type="org.flymine.model.genomic.PolyASite" ordered="true" reverse-reference="processedTranscripts"/>
+    <collection name="primaryTranscripts" referenced-type="org.flymine.model.genomic.PrimaryTranscript" ordered="true" reverse-reference="processedTranscripts"/>
+    <collection name="caps" referenced-type="org.flymine.model.genomic.Cap" ordered="true" reverse-reference="processedTranscripts"/>
+    <collection name="exonJunctions" referenced-type="org.flymine.model.genomic.ExonJunction" ordered="true" reverse-reference="processedTranscripts"/>
+  </class>
+  <class name="org.flymine.model.genomic.PolyASequence" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="threePrimeUTRs" referenced-type="org.flymine.model.genomic.ThreePrimeUTR" ordered="true" reverse-reference="polyASequences"/>
+  </class>
+  <class name="org.flymine.model.genomic.Junction" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TilingPath" extends="org.flymine.model.genomic.Assembly" is-interface="true">
+    <collection name="tilingPathFragments" referenced-type="org.flymine.model.genomic.TilingPathFragment" ordered="true" reverse-reference="tilingPaths"/>
+  </class>
+  <class name="org.flymine.model.genomic.RibosomeEntrySite" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" ordered="true" reverse-reference="ribosomeEntrySites"/>
+  </class>
+  <class name="org.flymine.model.genomic.U14SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Clip" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="primaryTranscripts" referenced-type="org.flymine.model.genomic.PrimaryTranscript" ordered="true" reverse-reference="clips"/>
+  </class>
+  <class name="org.flymine.model.genomic.U6SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.RNasePRNA" extends="org.flymine.model.genomic.Ribozyme" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ProteinCodingPrimaryTranscript" extends="org.flymine.model.genomic.PrimaryTranscript" is-interface="true"/>
+  <class name="org.flymine.model.genomic.ScRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.UTR" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="ribosomeEntrySites" referenced-type="org.flymine.model.genomic.RibosomeEntrySite" ordered="true" reverse-reference="UTRs"/>
+    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" ordered="true" reverse-reference="UTRs"/>
+  </class>
+  <class name="org.flymine.model.genomic.U4SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Regulon" extends="org.flymine.model.genomic.GeneGroup" is-interface="true"/>
+  <class name="org.flymine.model.genomic.GoldenPath" extends="org.flymine.model.genomic.Assembly" is-interface="true">
+    <collection name="goldenPathFragments" referenced-type="org.flymine.model.genomic.GoldenPathFragment" ordered="true" reverse-reference="goldenPaths"/>
+  </class>
+  <class name="org.flymine.model.genomic.U4atacSnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.AntisensePrimaryTranscript" extends="org.flymine.model.genomic.PrimaryTranscript" is-interface="true"/>
+  <class name="org.flymine.model.genomic.PrecursorRasiRNA" extends="org.flymine.model.genomic.PrecursorSiRNA" is-interface="true">
+    <collection name="rasiRNAs" referenced-type="org.flymine.model.genomic.RasiRNA" ordered="true" reverse-reference="precursorRasiRNAs"/>
+  </class>
+  <class name="org.flymine.model.genomic.U2SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.IntegratedVirus" extends="org.flymine.model.genomic.Region" is-interface="true"/>
+  <class name="org.flymine.model.genomic.Exon" extends="org.flymine.model.genomic.GenePart" is-interface="true">
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" ordered="true" reverse-reference="exons"/>
+  </class>
+  <class name="org.flymine.model.genomic.Attenuator" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
+  <class name="org.flymine.model.genomic.EnzymaticRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" extends="org.flymine.model.genomic.InsertionSite" is-interface="true"/>
+  <class name="org.flymine.model.genomic.IntergenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true">
+    <reference name="upstreamGene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="downstreamIntergenicRegion"/>
+    <reference name="downstreamGene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="upstreamIntergenicRegion"/>
+  </class>
+</classes>

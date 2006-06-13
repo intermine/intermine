@@ -1,0 +1,352 @@
+<!--
+
+  This is the project type for data sources.
+  A data source contains model additions, mappings, and code to perform
+  retrieving/translation/loading.
+
+  Each data source project could be used multiple times for a single
+  production build, e.g. loading different data with slightly different settings.
+  So this project type is a little unusual in that most targets (with the
+  exception of the default target which simple builds the java) require
+  several properties to be defined when invoked (with with -D on the command
+  line or passed with <property ...> via an ant 'ant' task).
+
+  Automatically set properties:
+
+  source.name  - the name of the current source
+
+  Properties to pass in:
+
+  intermine.properties.file           - the name of the file in the home directory
+  default.intermine.properties.file   - relative path to default intermine properties
+  path.to.production.model.jar        - core model java jar
+                                        (not quire sure how to handle this yet)
+  common.tgt.os.prefix                - used to construct other property names
+                                        for objectstores e.g.
+                                        os.${common.os.prefix}-src-items-std
+
+  Properties likely to be defined in project.properties:
+
+  source.model       - source model name
+  target.model       - target model name
+  convertor.class    - if retrieving from file, file convertor class
+  translator.class   - data translator class
+  organism           - organism passed to translator
+
+-->
+
+<project name="source" default="default" basedir="."
+  xmlns:source="http://www.intermine.org/ns/im-source-proj/1"
+  xmlns:task="http://www.intermine.org/ns/im-task-proj/1">
+
+  <dirname property="source.xml.basedir" file="${ant.file.source}"/>
+
+  <import file="${source.xml.basedir}/library.xml"/>
+  <import file="${source.xml.basedir}/task.xml"/>
+
+  <!--
+    Add the production model jar to the task classpath
+  -->
+  <target name="-define-task-classpath">
+    <path id="task.class.path">
+      <pathelement location="${build.task.dir}"/>
+      <path refid="project.execute.path"/>
+      <!-- Will need to add path to genomic model jar here -->
+      <pathelement location="${path.to.production.model.jar}"/>
+      <!-- And add anything in this project -->
+      <!-- FIXED just don't allow tasks in this project - mst be in subproject -->
+      <!--<pathelement location="${dist.jar}"/>-->
+    </path>
+  </target>
+
+
+  <target name="-init-deps" depends="library.-init-deps, -init-task-xml">
+    <!-- Copy intermine.properties onto the classpath -->
+    <copy file="${user.home}/${intermine.properties.file}"
+          tofile="${build.task.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties onto the classpath -->
+    <copy file="${default.intermine.properties.file}"
+          tofile="${build.task.dir}/default.intermine.properties"/>
+    <!-- Copy resources into build/task -->
+    <copy todir="${build.task.dir}">
+      <fileset dir="${resources.dir}"/>
+    </copy>
+  </target>
+
+  <!--
+    Flags that control the integration process:
+      have.db.src - the DB is put into a src items objectstore, translation needed
+      have.file.xml.src - source is XML that is read into a src items objectstore, translate needed
+      have.file.gff - source is read from a GFF file into a tgt items objectstore, no translation
+      have.file.custom.src - read from a custom file into a tgt items objectstore, translate needed
+      have.file.custom.tgt - read from a custom file into a src items objectstore, no translation
+      have.file.dag - this source in read from a DAG file into a tgt items objectstore, no translate
+      have.file.xml.tgt - source is XML that is read into a tgt items objectstore, no translation
+
+    For the future:
+      have.db.tgt
+        - the DB is put into a tgt items objectstore, no translate
+        - eg. when the the source pulls things directly from a foreign DB into
+          a tgt items DB without using a translator
+    -->
+  <target name="-init-flags">
+    <condition property="do.translate">
+      <or>
+        <istrue value="${have.db.src}"/>
+        <istrue value="${have.file.xml.src}"/>
+        <istrue value="${have.file.custom.src}"/>
+      </or>
+    </condition>
+    <condition property="do.build.src.db">
+      <istrue value="${do.translate}"/>
+    </condition>
+    <condition property="do.src.retrieve">
+      <istrue value="${do.translate}"/>
+    </condition>
+    <condition property="do.analyse.db.src.items">
+      <istrue value="${do.translate}"/>
+    </condition>
+    <condition property="do.tgt.retrieve">
+      <isfalse value="${do.translate}"/>
+    </condition>
+    <!-- always build the target items DB -->
+    <property name="do.build.tgt.db" value="true"/>
+    <property name="do.analyse.db.tgt.items" value="true"/>
+  </target>
+
+  <target name="default">
+    <echo message="project doesn't need compilation"/>
+  </target>
+
+  <target name="build-db-src-items" depends="init, -init-deps, -init-flags" if="do.build.src.db">
+    <task:build-db
+      model="fulldata"
+      osname="os.${common.os.prefix}-src-items-std"/>
+  </target>
+
+  <target name="build-db-tgt-items" depends="init, -init-deps, -init-flags" if="do.build.tgt.db">
+    <task:build-db
+      model="fulldata"
+      osname="os.${common.os.prefix}-tgt-items-std"/>
+  </target>
+
+  <!--
+    Do stuff before retrieve. This might involve filtering the source data
+    (see flybase-gff and uniprot)
+  -->
+  <target name="-pre-retrieve" depends="-init-flags">
+    <!-- build src model if required -->
+    <!-- filter -->
+    <!-- alternatively, just depend on a source model project (e.g. sources/ensembl/model) -->
+  </target>
+
+  <!--
+    Do stuff before translate
+  -->
+  <target name="-pre-translate" depends="-init-flags"/>
+
+  <!--
+    Do stuff before load.
+  -->
+  <target name="-pre-load" depends="-init-flags">
+    <property name="ignore.duplicates" value="false"/>
+    <echo message="indexing: os.${common.os.prefix}-tgt-items-std"/>
+    <create-indexes alias="os.${common.os.prefix}-tgt-items-std"/>
+    <analyse-db osName="os.${common.os.prefix}-tgt-items-std"/>
+  </target>
+
+  <!--
+    Retrieve from a file in a src items db with the convertor specified via the property
+    convertor.class
+  -->
+  <target name="-retrieve-src-from-custom-file" if="have.file.custom.src">
+    <convert-file clsName="${convertor.class}"
+                  osName="osw.${common.os.prefix}-src-items"
+                  model="${target.model}"
+                  dynamicAttrs="${dynamicAttrs}">
+      <fileset dir="${src.data.dir}"/>
+    </convert-file>
+  </target>
+
+  <propertyset id="dynamic-props">
+    <propertyref prefix="source"/>
+    <mapper type="glob" from="source*" to="*"/>
+  </propertyset>
+
+
+  <!--
+    Retrieve files from a custom directory and process them with the supplied convertor class
+  - ->
+  <target name="-retrieve-src-from-custom-dir" if="custom.src.dir">
+    <convert-file clsName="${convertor.class}"
+                  osName="osw.${common.os.prefix}-src-items"
+                  model="${target.model}">
+      <fileset dir="${custom.src.data.dir}"/>
+    </convert-file>
+  </target -->
+
+  <!--
+    Retrieve from a file in a tgt items db with the convertor specified via the property
+    convertor.class
+  -->
+  <target name="-retrieve-tgt-from-custom-file" if="have.file.custom.tgt">
+    <echo message="dynamicAttrs = ${dynamic.attributes}"/>
+    <echo message="ontology: ${ontologyfile}"/>
+    <echo message="gene: ${geneattribute}"/>
+    <convert-file clsName="${convertor.class}"
+                  osName="osw.${common.os.prefix}-tgt-items"
+                  model="${target.model}">
+      <fileset dir="${src.data.dir}"/>
+    </convert-file>
+  </target>
+
+  <!--
+    Retrieve from an XML file in a src items db using an XmlConverter and a
+    XML Schema file
+  -->
+  <target name="-retrieve-src-from-xml-file" if="have.file.xml.src">
+    <convert-xml-file
+      schema="${source.schema.file}"
+      model="${source.model}"
+      osName="osw.${common.os.prefix}-src-items">
+      <fileset dir="${src.data.dir}" includes="**/*.xml"/>
+    </convert-xml-file>
+  </target>
+
+  <!--
+    Retrieve from an XML file in InterMine format into a tgt items db using
+    ObjectStoreDataLoaderTask.
+  -->
+  <target name="-retrieve-tgt-from-xml-file" if="have.file.xml.tgt">
+    <insert-xml-data
+       integrationWriter="integration.production"
+       xmlFile="${tgt.xml.file}"
+       sourceName="${source.name}"
+       ignoreDuplicates="false"/>
+  </target>
+
+  <!--
+    Convert a gff3 file(s). Note that you must have sources/genomic-core/main
+    as a project dependency to use this target (to have access to the
+    GFF3ConverterTask et al)
+  -->
+  <target name="-retrieve-from-gff3" if="have.file.gff3">
+    <taskdef name="convert-gff3-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+
+    <convert-gff3-file converter="org.flymine.dataconversion.GFF3Converter"
+                  target="osw.${common.os.prefix}-tgt-items"
+                  seqClsName="${gff3.seqClsName}"
+                  orgTaxonId="${gff3.taxonId}"
+                  dataSourceName="${gff3.dataSourceName}"
+                  dataSetTitle="${gff3.dataSetTitle}"
+                  model="${target.model}"
+                  handlerClassName="${gff3.handlerClassName}">
+      <fileset dir="${src.data.dir}">
+        <include name="*.gff3"/>
+      </fileset>
+    </convert-gff3-file>
+  </target>
+
+  <!--
+    Convert a dag/obo file - converter accepts both .dag and .obo files.
+  -->
+  <target name="-retrieve-from-dag" if="have.file.dag">
+    <taskdef name="convert-dag-file" classname="org.intermine.task.DagConverterTask">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+
+    <convert-dag-file file="${src.data.file}"
+                  osName="osw.${common.os.prefix}-tgt-items"
+                  dagName="${dag.ontology.name}"
+                  termClass="${dag.term.class}"/>
+  </target>
+
+  <!--
+    Convert a source database into a src *items* database. You must
+    have properties set up for your source database, they are expected
+    to look like db.${source.name}.xxx
+  -->
+  <target name="-retrieve-src-from-db" if="have.db.src">
+    <db-retriever
+      model="${source.model}"
+      database="db.${source.name}"
+      osName="osw.${common.os.prefix}-src-items"/>
+  </target>
+
+  <!-- retrieve from a foreign file or database into an InterMine src items objectstore -->
+  <target name="src-retrieve" depends="init,
+                                       -init-deps,
+                                       build-db-src-items,
+                                       -pre-retrieve,
+                                       -retrieve-src-from-custom-file,
+                                       -retrieve-src-from-db,
+                                       -retrieve-src-from-xml-file,
+                                       -index-analyse-src-items" if="do.src.retrieve"/>
+
+  <!-- retrieve from a foreign file or database into an InterMine tgt items objectstore -->
+  <target name="tgt-retrieve" depends="init,
+                                       -init-deps,
+                                       build-db-tgt-items,
+                                       -pre-retrieve,
+                                       -retrieve-tgt-from-custom-file,
+                                       -retrieve-from-gff3,
+                                       -retrieve-from-dag,
+                                       -retrieve-tgt-from-xml-file,
+                                       -index-analyse-tgt-items" if="do.tgt.retrieve"/>
+
+  <target name="retrieve" depends="src-retrieve, tgt-retrieve"/>
+
+  <!--
+    Called after retrieve.
+  -->
+  <target name="-index-analyse-src-items" if="do.analyse.db.src.items">
+    <create-indexes alias="os.${common.os.prefix}-src-items-std"/>
+    <analyse-db osName="os.${common.os.prefix}-src-items-std"/>
+  </target>
+
+  <!--
+    If we have a file it goes straight to target items.
+  -->
+  <target name="-index-analyse-tgt-items" if="do.analyse.db.tgt.items">
+    <create-indexes alias="os.${common.os.prefix}-tgt-items-std"/>
+    <analyse-db osName="os.${common.os.prefix}-tgt-items-std"/>
+  </target>
+
+  <!--
+    General data translation target. Runs the DataTranslatorTask that used
+    to be part of the genomic flymine source tree. I've moved it into
+    intermine/integrate/main as it is just a hacky mess that doesn't
+    literally depend on any FlyMine code. I could move it to genomic-core/main
+    but then every source project would need to depend on genomic-core/main
+    which I don't think is necessary (but it might turn out I'm wrong).
+  -->
+  <target name="translate" depends="init, -init-deps, -pre-translate" if="do.translate">
+    <translate-data translator="${translator.class}"
+                    source="os.${common.os.prefix}-src-items"
+                    target="osw.${common.os.prefix}-tgt-items"
+                    srcModel="${source.model}"
+                    tgtModel="${target.model}"
+                    organism="${organism}"
+                    dataLocation="${data.location}"/>
+    <create-indexes alias="os.${common.os.prefix}-tgt-items-std"/>
+    <analyse-db osName="os.${common.os.prefix}-tgt-items-std"/>
+  </target>
+
+  <!-- Load data from tgt items into production -->
+  <target name="load" depends="init, -init-deps, -pre-load">
+    <echo>
+      Loading ${source.name} tgt items into production DB
+    </echo>
+    <data-load integrationWriter="integration.production"
+               source="os.${common.os.prefix}-translated"
+               sourceName="${source.name}"
+               ignoreDuplicates="${ignore.duplicates}"/>
+  </target>
+
+  <target name="postprocess" depends="init, -init-deps" if="postprocessor.class">
+      <postprocessor clsName="${postprocessor.class}" osName="osw.production"/>
+  </target>
+
+</project>

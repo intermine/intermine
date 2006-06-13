@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<classes>
+
+    <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+        <collection name="proteinFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" reverse-reference="proteins"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+        <attribute name="interproId" type="java.lang.String"/>
+        <attribute name="identifier" type="java.lang.String"/>
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="shortName" type="java.lang.String"/>
+        <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="proteinFeatures"/>
+        <collection name="parentFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
+        <collection name="childFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
+        <collection name="contains" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
+        <collection name="foundIn" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
+        <collection name="equivalentFeatures" referenced-type="org.flymine.model.genomic.ProteinFeature" ordered="true"/>
+        <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinDomain" extends="org.flymine.model.genomic.ProteinFeature" is-interface="true">
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinFamily" extends="org.flymine.model.genomic.ProteinFeature" is-interface="true">
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinFeatureRelation" is-interface="true">
+        <attribute name="relationship" type="java.lang.String"/>
+        <reference name="object" referenced-type="org.flymine.model.genomic.ProteinFeature"/>
+        <reference name="subject" referenced-type="org.flymine.model.genomic.ProteinFeature"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.InterproEvidence" extends="org.flymine.model.genomic.Evidence" is-interface="true">
+        <attribute name="infotext" type="java.lang.String"/>
+    </class>
+
+</classes>

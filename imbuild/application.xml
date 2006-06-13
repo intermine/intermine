@@ -1,3 +1,12 @@
+<!--
+  Tasks and target for building a complete web application which includes a
+  model, and is deployable
+
+  properties:
+    base.webapp.project - the project the contains the base webapp that we
+                          will add to - must be in the project.dependencies too
+
+-->
 
 <project name="application" default="default" basedir="."
          xmlns:appl="http://www.intermine.org/ns/im-appl-proj/1"
@@ -17,29 +26,41 @@
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
-    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../intermine/webapp/main/dist/intermine-webapp.war"/>
+    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.project}/dist/intermine-webapp.war"/>
   </target>
+
+  <!-- this may not be the most appropriate place for these two targets, but
+       most targets defined by this file need the intermine.properties file -->
+  <target name="-init-check-for-intermine-properties" depends="-init-deps">
+    <available file="${user.home}/${intermine.properties.file}"
+               property="have.intermine.properties.file"/>
+  </target>
+
+  <target name="-check-for-intermine-properties" depends="-init-check-for-intermine-properties"
+          unless="have.intermine.properties.file">
+    <fail message="you need to set the intermine.properties.file property in your project"
+          unless="temporary.webapp.project"/>
+  </target>
+
 
   <!-- WAR INSTEAD OF JAR -->
 
-  <target name="-pre-jar" depends="webapp.-pre-jar">
-    <!-- Start with base intermine webapp war -->
-    <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
+  <target name="-final-app-pre-jar" unless="temporary.webapp.project">
     <!-- Concatenate local build.properties with web.properties -->
-    <copy tofile="${build.webinf.dir}/web.properties.tmp"
-          file="resources/web.properties"
-          overwrite="true" verbose="true"/>
-    <concat destfile="${build.webinf.dir}/web.properties">
-      <fileset file="${build.webinf.dir}/web.properties.tmp"/>
+    <concat destfile="${build.dir}/webapp/web-inf/web.properties" force="false">
+      <fileset file="resources/web.properties"/>
       <fileset file="${build.properties.local}"/>
     </concat>
-    <delete file="${build.webinf.dir}/web.properties.tmp"/>
-    <!-- Copy intermine.properties into build/classes -->
     <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.classes.dir}/intermine.properties"/>
-    <!-- Copy default.intermine.properties into build/classes -->
+          tofile="${build.dir}/webapp/classes/intermine.properties"/>
     <copy file="${default.intermine.properties.file}"
-          tofile="${build.classes.dir}/default.intermine.properties"/>
+          tofile="${build.dir}/webapp/classes/default.intermine.properties"/>
+  </target>
+
+  <target name="-pre-jar" 
+          depends="-check-for-intermine-properties, -final-app-pre-jar, webapp.-pre-jar">
+    <!-- Start with base intermine webapp war -->
+    <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
   </target>
 
   <target name="do-jar" depends="-init-presetdef-war">
@@ -128,11 +149,7 @@
     <macrodef name="war" uri="http://www.intermine.org/ns/im-appl-proj/1">
       <sequential>
         <war compress="${jar.compress}" destfile="${dist.war}" update="true">
-          <classes dir="${build.classes.dir}"/>
-          <lib dir="${web.lib.dir}"/>
-          <webinf dir="${webinf.dir}" excludes="web.xml"/>
-          <webinf dir="${build.webinf.dir}"/>
-          <fileset dir="${resources.dir}"/>
+          <fileset dir="${build.dir}/webapp"/>
         </war>
       </sequential>
     </macrodef>

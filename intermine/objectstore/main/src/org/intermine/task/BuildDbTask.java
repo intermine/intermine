@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.DatabaseUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 import org.apache.log4j.Logger;
@@ -51,13 +52,13 @@ public class BuildDbTask extends Task
     protected String schemaFile;
 
     /**
-     * Sets the database
-     * @param database String used to identify Database (usually dataSourceName)
+     * Sets the objectstore
+     * @param os String used to identify objectstore and therefore database
      */
-    public void setDatabase(String database) {
+    public void setOsName(String os) {
         try {
-            this.databaseAlias = database;
-            this.database = DatabaseFactory.getDatabase(database);
+            this.databaseAlias = PropertiesUtil.getProperties().getProperty(os + ".db");
+            this.database = DatabaseFactory.getDatabase(databaseAlias);
         } catch (Exception e) {
             e.printStackTrace();
         }

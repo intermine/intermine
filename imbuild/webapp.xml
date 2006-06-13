@@ -1,3 +1,8 @@
+<!--
+  Tasks and target for building a basic web application without a model.
+  Make a project based on application.xml to include a model and make the
+  webapp deployable.
+-->
 
 <project name="webapp" default="default" basedir="." xmlns:webapp="http://www.intermine.org/ns/im-webapp-proj/1">
 
@@ -9,13 +14,10 @@
     <property name="resources.dir" location="resources/main"/>
   </target>
   
+  <available file="${model.name}.zargo" property="have.zargo"/>
+
   <target name="-pre-init" depends="library.-pre-init">
     <property name="dist.war" location="${dist.dir}/${ant.project.name}.war"/>
-    <property name="webinf.dir" location="resources/web-inf"/>
-    <property name="web.xml" location="${webinf.dir}/web.xml"/>
-    <property name="web.lib.dir" location="${build.dir}/lib"/>
-    <!-- Any generated files WEB-INF files should be placed in this directory -->
-    <property name="build.webinf.dir" location="${build.dir}/web-inf"/>
     <!-- War settings -->
     <property name="war.update" value="false"/>
     <property name="deploy.excludes" value=""/>
@@ -27,9 +29,16 @@
     <dependencies basedir="${library.xml.basedir}/.." buildDependencies="false"
                   type="deploy" noFollow="true"/>
     <!-- copy all dependencies into build/lib -->
-    <mkdir dir="${web.lib.dir}"/>
-    <mkdir dir="${build.webinf.dir}"/>
-    <copy todir="${web.lib.dir}" flatten="true">
+    <mkdir dir="${build.dir}/webapp/lib"/>
+    <mkdir dir="${build.dir}/webapp/WEB-INF"/>
+    <mkdir dir="${build.dir}/webapp/classes"/>
+    <copy todir="${build.dir}/classes">
+      <fileset dir="${build.classes.dir}"/>
+    </copy>
+    <copy todir="${build.dir}/webapp">
+      <fileset dir="resources/webapp"/>
+    </copy>
+    <copy todir="${build.dir}/webapp/lib" flatten="true">
       <fileset refid="deploy.execute.path.fileset"/>
     </copy>
   </target>
@@ -64,12 +73,9 @@
   <target name="-init-presetdef-war">
     <macrodef name="war" uri="http://www.intermine.org/ns/im-webapp-proj/1">
       <sequential>
-        <war compress="${jar.compress}" warfile="${dist.war}" webxml="${web.xml}">
-          <classes dir="${build.classes.dir}"/>
-          <lib dir="${web.lib.dir}" excludes="${deploy.excludes}"/>
-          <webinf dir="${webinf.dir}" excludes="web.xml"/>
-          <webinf dir="${build.webinf.dir}"/>
-          <fileset dir="${resources.dir}"/>
+        <war compress="${jar.compress}" warfile="${dist.war}" 
+             webxml="${build.dir}/webapp/WEB-INF/web.xml">
+          <fileset dir="${build.dir}/webapp"/>
         </war>
       </sequential>
     </macrodef>

@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.0//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_0.dtd">
+
+<!--
+
+  a Checkstyle configuration that checks the sun coding conventions from
+
+  the Java Language Specification at
+  http://java.sun.com/docs/books/jls/second_edition/html/index.html
+
+  the Sun Code Conventions at
+  http://java.sun.com/docs/codeconv/
+
+  the Javadoc guidelines at
+  http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+
+  the JDK Api documentation
+  http://java.sun.com/j2se/docs/api/index.html
+
+  some best practices
+
+-->
+
+<module name="Checker">
+
+  <module name="TreeWalker">
+    <property name="tabWidth" value="4"/>
+
+    <module name="JavadocType">
+      <property name="scope" value="package" />
+      <property name="authorFormat" value="" />
+      <property name="tokens" value="INTERFACE_DEF,CLASS_DEF" />
+    </module>
+
+    <module name="JavadocMethod">
+      <property name="scope" value="package" />
+      <property name="allowUndeclaredRTE" value="true" />
+      <property name="tokens" value="METHOD_DEF,CTOR_DEF" />
+    </module>
+
+    <module name="JavadocVariable">
+      <property name="scope" value="public" />
+    </module>
+
+    <module name="RegexpHeader">
+      <property name="headerFile" value="${checkstyle.header.file}"/>
+    </module>
+    
+    <!--                         code conventions -->
+
+    <!-- naming conventions -->
+    <module name="ConstantName">
+      <property name="format" value="^[A-Z](_?[A-Z0-9]+)*$" />
+    </module>
+
+    <module name="LocalFinalVariableName">
+       <property name="format" value="^[a-z][a-zA-Z0-9]*$" />
+    </module>
+
+    <module name="LocalVariableName">
+       <property name="format" value="^[a-z][a-zA-Z0-9]*$" />
+    </module>
+
+    <module name="MemberName">
+       <property name="format" value="^[a-z][a-zA-Z0-9]*$" />
+    </module>
+
+    <module name="MethodName">
+       <property name="format" value="^[a-z][a-zA-Z0-9]*$" />
+    </module>
+
+    <module name="PackageName">
+       <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$" />
+    </module>
+
+    <module name="ParameterName">
+       <property name="format" value="^[a-z][a-zA-Z0-9]*$" />
+    </module>
+
+    <module name="StaticVariableName">
+       <property name="format" value="^[a-z][a-zA-Z0-9]*$" />
+    </module>
+
+    <module name="TypeName">
+       <property name="format" value="^[A-Z][a-zA-Z0-9]*$" />
+      <property name="tokens" value="INTERFACE_DEF,CLASS_DEF" />
+    </module>
+
+
+    <!-- imports -->
+
+    <!--
+    <module name="AvoidStarImport"/>
+    -->
+
+    <module name="IllegalImport">
+      <property name="illegalPkgs" value="sun"/>
+    </module>
+
+    <module name="RedundantImport"/>
+    <module name="UnusedImports"/>
+
+    <!-- size violations -->
+
+    <module name="FileLength">
+      <property name="max" value="2000"/>
+    </module>
+
+    <module name="LineLength">
+      <property name="max" value="100"/>
+      <property name="ignorePattern" value="^$"/>
+    </module>
+
+    <module name="MethodLength">
+      <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+      <property name="max" value="181"/>
+    </module>
+
+    <module name="ParameterNumber">
+      <property name="max" value="7"/>
+      <property name="tokens" value="METHOD_DEF"/>
+    </module>
+
+    <module name="ParameterNumber">
+      <property name="max" value="9"/>
+      <property name="tokens" value="CTOR_DEF"/>
+    </module>
+
+
+    <!-- whitespace -->
+
+    <module name="NoWhitespaceAfter">
+      <property name="tokens" value="ARRAY_INIT, BNOT, DEC, DOT, INC, LNOT, UNARY_MINUS, UNARY_PLUS"/>
+      <property name="allowLineBreaks" value="true"/>
+    </module>
+
+    <module name="NoWhitespaceBefore">
+      <property name="tokens" value="SEMI, POST_DEC, POST_INC"/>
+      <property name="allowLineBreaks" value="false"/>
+    </module>
+
+    <module name="OperatorWrap">
+      <property name="tokens" value="BAND, BOR, BSR, BXOR, COLON, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR"/>
+      <property name="option" value="nl"/>
+    </module>
+
+    <module name="ParenPad">
+      <property name="tokens" value="CTOR_CALL, LPAREN, METHOD_CALL, RPAREN, SUPER_CTOR_CALL, TYPECAST"/>
+      <property name="option" value="nospace"/>
+    </module>
+
+
+    <module name="TabCharacter"/>
+
+    <module name="WhitespaceAfter">
+      <property name="tokens" value="COMMA, SEMI, TYPECAST"/>
+    </module>
+
+    <module name="WhitespaceAround"/>
+
+    <!-- modifier checks -->
+
+    <module name="ModifierOrder"/>
+
+    <!--
+    <module name="RedundantModifier"/>
+    -->
+
+    <module name="VisibilityModifier">
+      <property name="packageAllowed" value="true"/>
+      <property name="protectedAllowed" value="true"/>
+    </module>
+
+
+    <!-- block checks -->
+
+    <module name="EmptyBlock">
+      <!-- this does not parse for some reason
+      <property name="option" value="stmt"/>
+      -->
+      <property name="tokens" value="LITERAL_DO, LITERAL_FINALLY, LITERAL_FOR, LITERAL_TRY, LITERAL_WHILE, STATIC_INIT"/>
+    </module>
+
+    <module name="EmptyBlock">
+      <property name="option" value="text"/>
+      <property name="tokens" value="LITERAL_TRY"/>
+    </module>
+
+    <module name="LeftCurly">
+      <property name="option" value="eol"/>
+      <property name="tokens" value="CTOR_DEF, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, METHOD_DEF"/>
+    </module>
+
+    <module name="LeftCurly">
+      <property name="option" value="nl"/>
+      <property name="tokens" value="CLASS_DEF,INTERFACE_DEF"/>
+    </module>
+
+    <module name="NeedBraces">
+      <property name="tokens" value="LITERAL_DO, LITERAL_ELSE, LITERAL_IF, LITERAL_FOR, LITERAL_WHILE"/>
+    </module>
+
+    <module name="RightCurly">
+      <property name="option" value="same"/>
+      <property name="tokens" value="LITERAL_CATCH, LITERAL_ELSE, LITERAL_TRY"/>
+    </module>
+
+
+    <!-- misc -->
+
+    <module name="EqualsHashCode"/>
+
+    <!-- Do not allow System.out.println -->
+    <module name="GenericIllegalRegexp">
+      <property name="format" value="System\.out\.println"/>
+    </module>
+    <!-- Do not allow System.err.println -->
+    <module name="GenericIllegalRegexp">
+      <property name="format" value="System\.err\.println"/>
+    </module>
+    <!-- Do not allow System.exit() -->
+    <module name="GenericIllegalRegexp">
+      <property name="format" value="System\.exit"/>
+    </module>
+
+    <module name="IllegalInstantiation">
+      <property name="classes" value="java.lang.Boolean" />
+    </module>
+
+    <module name="InnerAssignment"/>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="TodoComment">
+      <property name="format" value="FAIL"/>
+    </module>
+    <module name="UpperEll"/>
+  </module>
+
+  <!-- enforce package documentation -->
+  <!--
+  <module name="PackageHtml"/>
+  -->
+</module>

@@ -1,0 +1,6 @@
+
+<project name="drosdel" default="default" basedir=".">
+  <description>build drosdel model</description>
+  <import file="../../../imbuild/model.xml"/> 
+</project>
+

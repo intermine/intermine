@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<items>
+  <item id="1_1" class="http://www.intermine.org/model/drosdel#element">
+    <attribute name="name" value="CB-0140-3"/>
+    <attribute name="chromosomeName" value="2R"/>
+    <attribute name="start" value="12541590"/>
+    <attribute name="end" value="12541591"/>
+    <attribute name="type" value="RS"/>
+    <attribute name="subtype" value="5"/>
+  </item>
+  <item id="1_2" class="http://www.intermine.org/model/drosdel#element">
+    <attribute name="name" value="5-HA-1118"/>
+    <attribute name="chromosomeName" value="2R"/>
+    <attribute name="start" value="12612184"/>
+    <attribute name="end" value="12612185"/>
+    <attribute name="type" value="RS"/>
+    <attribute name="subtype" value="5"/>
+  </item> 
+  <item id="1_3" class="http://www.intermine.org/model/drosdel#deletion">
+    <attribute name="chromosomeName" value="2R"/>
+    <attribute name="start" value="12541590"/>
+    <attribute name="end" value="12612185"/>
+    <attribute name="europeanDrosophilaNumber" value="Df(2R)ED1"/>
+    <attribute name="available" value="1"/>
+    <reference name="element1" ref_id="1_1"/>
+    <reference name="element2" ref_id="1_2"/>
+  </item>
+  <item id="1_4" class="http://www.intermine.org/model/drosdel#element">
+    <attribute name="name" value="5-SZ-3596"/>
+    <attribute name="chromosomeName" value="2L"/>
+    <attribute name="start" value="568095"/>
+    <attribute name="end" value="568096"/>
+    <attribute name="type" value="RS"/>
+    <attribute name="subtype" value="4"/>
+  </item>
+  <item id="1_5" class="http://www.intermine.org/model/drosdel#deletion">
+    <attribute name="chromosomeName" value=""/>
+    <attribute name="start" value="568095"/>
+    <attribute name="end" value="12612185"/>
+    <attribute name="europeanDrosophilaNumber" value="Df(2L)ED49"/>
+    <attribute name="available" value="0"/>
+    <reference name="element1" ref_id="1_4"/>
+    <reference name="element2" ref_id="1_2"/>
+  </item>
+</items>

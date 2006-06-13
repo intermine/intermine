@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
+  <entry dataset="Swiss-Prot" created="2001-10-16" modified="2005-01-25">
+    <accession>Q9W0Y1</accession>
+    <accession>Q95T30</accession>
+    <name>TINA1_DROME</name>
+    <protein>
+      <name>Troponin C-akin-1 protein</name>
+    </protein>
+    <gene>
+      <name type="primary">Tina-1</name>
+      <name type="ORF">CG2803</name>
+    </gene>
+    <organism key="1">
+      <name type="scientific">Drosophila melanogaster</name>
+      <name type="common">Fruit fly</name>
+      <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+      <lineage>
+        <taxon>Drosophilidae</taxon>
+        <taxon>Drosophila</taxon>
+      </lineage>
+    </organism>
+    <reference key="3">
+      <citation type="journal article" date="2000" name="Science" volume="287" first="2185" last="2195">
+        <title>The genome sequence of Drosophila melanogaster.</title>
+        <authorList>
+          <person name="Adams M.D."/>
+        </authorList>
+        <dbReference type="PubMed" id="10731132" key="4"/>
+        <dbReference type="MEDLINE" id="20196006" key="5"/>
+        <dbReference type="DOI" id="10.1126/science.287.5461.2185" key="6"/>
+      </citation>
+      <scope>NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA].</scope>
+      <source>
+        <strain>
+          <name>Berkeley</name>
+        </strain>
+      </source>
+    </reference>
+    <comment type="tissue specificity">
+      <text>In embryos, expression is seen in heart cells of the dorsal vessel and hindgut visceral mesoderm</text>
+    </comment>
+    <comment type="similarity">
+      <text>Belongs to the UPF0131 family</text>
+    </comment>
+    <dbReference type="EMBL" id="AE003465" key="17">
+      <property type="protein sequence ID" value="AAF47298.1"/>
+    </dbReference>
+    <dbReference type="FlyBase" id="FBgn0035083" key="22">
+      <property type="gene designation" value="Tina-1"/>
+    </dbReference>
+    <sequence length="167" mass="19056" checksum="8FCDE6E575950F5F" modified="2001-10-16">
+MGQAKKVSSALSKLFVYGALKYGQPSNSILASSGNGFAKFWCKATTTQKL
+PLVIATRYNIPFLLNKPGVGYYVTGEIYEVDDRMLNSLDNLEDCEEIYTR
+EMHDMNIGVGEGTVPCWVYLLQKYPENLLSLRYLSSYENSTTHPYIMRHR
+RTHKHPAQDDLTYEAQN
+</sequence>
+  </entry>
+  <entry dataset="Swiss-Prot" created="1995-11-01" modified="2005-01-25">
+    <accession>P41932</accession>
+    <accession>Q21537</accession>
+    <name>14331_CAEEL</name>
+    <protein>
+      <name>14-3-3-like protein 1</name>
+    </protein>
+    <gene>
+      <name type="primary">par-5</name>
+      <name type="synonym">ftt-1</name>
+      <name type="ORF">M117.2</name>
+    </gene>
+    <organism key="1">
+      <name type="scientific">Caenorhabditis elegans</name>
+      <dbReference type="NCBI Taxonomy" id="6239" key="2"/>
+      <lineage>
+        <taxon>Peloderinae</taxon>
+        <taxon>Caenorhabditis</taxon>
+      </lineage>
+    </organism>
+    <reference key="3">
+      <citation type="journal article" date="1994" name="Gene" volume="147" first="215" last="218">
+        <title>Isolation and sequence analysis of a Caenorhabditis elegans cDNA which encodes a 14-3-3 homologue.</title>
+        <authorList>
+          <person name="Wang W."/>
+          <person name="Shakes D.C."/>
+        </authorList>
+        <dbReference type="PubMed" id="7926802" key="4"/>
+        <dbReference type="MEDLINE" id="95011616" key="5"/>
+        <dbReference type="DOI" id="10.1016/0378-1119(94)90068-X" key="6"/>
+      </citation>
+      <scope>NUCLEOTIDE SEQUENCE.</scope>
+      <source>
+        <strain>
+          <name>Bristol N2</name>
+        </strain>
+      </source>
+    </reference>
+    <comment type="similarity">
+      <text>Belongs to the 14-3-3 family</text>
+    </comment>
+    <dbReference type="EMBL" id="U05038" key="10">
+      <property type="protein sequence ID" value="AAA61872.1"/>
+    </dbReference>
+    <dbReference type="WormBase" id="WBGene00003920" key="16">
+      <property type="gene designation" value="par-5"/>
+    </dbReference>
+    <sequence length="248" mass="28163" checksum="B9350039628341AF" modified="1995-11-01">
+MSDTVEELVQRAKLAEQAERYDDMAAAMKKVTEQGQELSNEERNLLSVAY
+KNVVGARRSSWRVISSIEQKTEGSEKKQQLAKEYRVKVEQELNDICQDVL
+KLLDEFLIVKAGAAESKAFYLKMKGDYYRYLAEVASEDRAAVVEKSQKAY
+QEALDIAKDKMQPTHPIRLGLALNFSVFYYEILNTPEHACQLAKQAFDDA
+IAELDTLNEDSYKDSTLIMQLLRDNLTLWTSDVGAEDQEQEGNQEAGN
+</sequence>
+  </entry>
+<entry dataset="TrEMBL" created="2005-02-01" modified="2005-02-01">
+  <accession>Q5TME6</accession>
+  <name>Q5TME6_ANOGA</name>
+  <protein evidence="EI1">
+    <name>ENSANGP00000011199</name>
+  </protein>
+  <gene>
+    <name type="ORF" evidence="EI1">ENSANGG00000008710</name>
+  </gene>
+  <organism key="1">
+    <name type="scientific">Anopheles gambiae str. PEST</name>
+    <dbReference type="NCBI Taxonomy" id="180454" evidence="EI1" key="2"/>
+  </organism>
+  <reference evidence="EI1" key="3">
+    <citation type="submission" date="2003-04" db="EMBL/GenBank/DDBJ databases">
+      <authorList>
+        <person name="Anopheles Genome Sequencing Consortium"/>
+      </authorList>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE.</scope>
+    <source>
+      <strain evidence="EI1">
+        <name>PEST</name>
+      </strain>
+    </source>
+  </reference>
+  <sequence length="838" mass="96122" checksum="7088375B365BE04A" modified="2005-02-01">
+MEEAGPSSEIPAGLDEAKEVHRPIDKNQCIRKHFLNKLQRIEEALSGTSL
+GDTTFLKGCANRLTSLASEYEKWHQTVLETADMENFEDGEEEYARFEKRH
+</sequence>
+</entry>
+</uniprot>

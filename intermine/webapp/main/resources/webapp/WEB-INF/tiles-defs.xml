@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+"http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+  <!--templates-->
+  <definition name="layout.template" path="/layout.jsp">
+    <put name="pageName" value=""/>
+    <put name="title" value="/title.jsp" />
+    <put name="header" value="/header.jsp"/>
+    <put name="menu" value="/menu.jsp"/>
+    <put name="errorMessages" value="/errorMessages.jsp"/>
+    <put name="footer" value="/footer.jsp"/>
+    <put name="body" value=""/>
+    <put name="feedbackForm" value="feedbackForm.jsp"/>
+  </definition>
+  <!--pages-->
+  <definition name="standalone.page" path="/standalone.jsp"/>
+  <definition name="login.page" extends="layout.template">
+    <put name="body" value="login.jsp"/>
+    <put name="pageName" value="login"/>
+  </definition>
+  <definition name="query.page" extends="layout.template">
+    <put name="body" value="query.tile"/>
+    <put name="pageName" value="query"/>
+  </definition>
+  <definition name="iqlQuery.page" extends="layout.template">
+    <put name="body" value="iqlQuery.tile"/>
+    <put name="pageName" value="iqlquery"/>
+  </definition>
+  <definition name="history.page" extends="layout.template">
+    <put name="body" value="history.tile"/>
+    <put name="pageName" value="history"/>
+  </definition>
+  <definition name="begin.page" extends="layout.template">
+    <put name="body" value="begin.tile"/>
+    <put name="pageName" value="begin"/>
+  </definition>
+  <definition name="template.page" extends="layout.template">
+    <put name="body" value="template.tile"/>
+    <put name="pageName" value="template"/>
+  </definition>
+  <definition name="templates.page" extends="layout.template">
+    <put name="body" value="templates.jsp"/>
+    <put name="pageName" value="templates"/>
+  </definition>
+  <definition name="templateBuilder.page" extends="layout.template">
+    <put name="body" value="templateBuilder.tile"/>
+    <put name="pageName" value="templateBuilder"/>
+  </definition>
+  <definition name="examples.page" extends="layout.template">
+    <put name="body" value="examples.jsp"/>
+    <put name="pageName" value="examples"/>
+  </definition>
+  <definition name="bagBuild.page" extends="layout.template">
+    <put name="body" value="bagBuild.tile"/>
+    <put name="pageName" value="bagBuild"/>
+  </definition>
+  <definition name="help.page" extends="layout.template">
+    <put name="body" value="help.jsp"/>
+    <put name="pageName" value="help"/>
+  </definition>
+  <definition name="feedback.page" extends="layout.template">
+    <put name="body" value="feedback.jsp"/>
+    <put name="pageName" value="feedback"/>
+  </definition>
+  <definition name="confirm.page" extends="layout.template">
+    <put name="body" value="confirm.jsp"/>
+    <put name="pageName" value="confirm"/>
+  </definition>
+  <definition name="classChooser.page" extends="layout.template">
+    <put name="body" value="queryClassSelect.jsp"/>
+    <put name="pageName" value="classChooser"/>
+  </definition>
+  <definition name="results.page" extends="layout.template">
+    <put name="body" value="table.tile"/>
+    <put name="pageName" value="results"/>
+    <put name="title" value="/resultsTitle.jsp"/>
+  </definition>
+  <definition name="objectDetails.page" extends="layout.template">
+    <put name="body" value="objectDetailsPage.tile"/>
+    <put name="pageName" value="objectDetails"/>
+  </definition>
+  <definition name="importTemplates.page" extends="layout.template">
+    <put name="body" value="importTemplates.jsp"/>
+    <put name="pageName" value="importTemplates"/>
+  </definition>
+  <definition name="importTags.page" extends="layout.template">
+    <put name="body" value="importTags.jsp"/>
+    <put name="pageName" value="importTags"/>
+  </definition>
+  <definition name="importQuery.page" extends="layout.template">
+    <put name="body" value="importQuery.jsp"/>
+    <put name="pageName" value="importQuery"/>
+  </definition>
+  <definition name="tree.page" extends="layout.template">
+    <put name="body" value="tree.tile"/>
+    <put name="pageName" value="tree"/>
+  </definition>
+  <definition name="contextHelp.page" extends="layout.template">
+    <put name="body" value="empty.jsp"/>
+    <put name="pageName" value="contextHelp"/>
+  </definition>
+  <definition name="templateProblems.page" extends="layout.template">
+    <put name="body" value="templateProblems.jsp"/>
+    <put name="pageName" value="templateProblems"/>
+  </definition>
+  <definition name="templateSearch.page" extends="layout.template">
+    <put name="body" value="templateSearch.jsp"/>
+    <put name="pageName" value="templateSearch"/>
+  </definition>
+  <definition name="aspect.page" extends="layout.template">
+    <put name="title" value="/aspectTitle.jsp" />
+    <put name="body" value="aspect.tile"/>
+    <put name="pageName" value="aspect"/>
+  </definition>
+  <definition name="waiting.page" path="/waiting.jsp"/>
+  <definition name="error.page" path="/error.jsp"/>
+  <!--tiles-->
+  <definition name="begin.tile" path="/begin.jsp"/>
+  <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
+  <definition name="query.tile" path="/query.jsp">
+    <put name="main" value="main.tile"/>
+    <put name="view" value="view.tile"/>
+  </definition>
+  <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
+  <definition name="objectDetailsTemplateTable.tile" path="/objectDetailsTemplateTable.jsp" 
+              controllerUrl="/initObjectDetailsTemplateTable.do"/>
+  <definition name="main.tile" path="/main.jsp" controllerUrl="/initMain.do"/>
+  <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
+  <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
+  <definition name="inlineTagEditor.tile" path="/inlineTagEditor.jsp" controllerUrl="/initInlineTagEditor.do"/>
+  <definition name="browse.tile" path="/browse.jsp" controllerUrl="/initBrowse.do">
+    <put name="prompt" value="Query text"/>
+    <put name="templateName" value=""/>
+  </definition>
+  <definition name="view.tile" path="/view.jsp">
+    <put name="saveQuery" value="/saveQuery.jsp"/>
+    <put name="createTemplate" value="/createTemplate.jsp"/>
+  </definition> 
+  <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
+  <definition name="history.tile" path="/history.jsp" controllerUrl="/initHistory.do"/>
+  <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
+  <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
+  <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
+  <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
+  <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
+  <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
+  <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
+  <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
+  <definition name="objectDetailsAspect.tile" path="/objectDetailsAspect.jsp" controllerUrl="/initObjectDetailsAspect.do"/>
+  <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
+    <put name="preview" value="template.tile"/>
+  </definition>
+  
+  <!-- don't (re)move this - it's used for importing any model-specific actions -->
+  <!--@MODEL_INCLUDE@-->
+  
+</tiles-definitions>
+
+
