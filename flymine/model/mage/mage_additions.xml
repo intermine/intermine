@@ -78,6 +78,14 @@
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="microArrayResults"/>
   <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" ordered="true"/>
 </class>
+<class name="org.flymine.model.genomic.MasCall" extends="org.flymine.model.genomic.MicroArrayResult" is-interface="true">
+  <attribute name="flag" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.DifferentialExpression" extends="org.flymine.model.genomic.MicroArrayResult" is-interface="true">
+  <attribute name="flag" type="java.lang.String"/>
+  <reference name="referenceAssay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
+  <reference name="targetAssay" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
+</class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="microArrayResults" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="genes"/>
 </class>

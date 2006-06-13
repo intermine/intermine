@@ -58,7 +58,7 @@ public class AddDerivedDataTask extends Task
     }
 
     /**
-     * @param filename supplyment filename to provide derivedBioAssayData
+     * @param fileName supplyment filename to provide derivedBioAssayData
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
