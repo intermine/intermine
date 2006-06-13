@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<items>
-   <item id="0_1" class="http://www.flymine.org/model/genomic#Ontology">
-    <attribute name="title" value="GO"/>
-    <attribute name="url" value="http://geneontology.org"/>
-  </item> 
-</items>
