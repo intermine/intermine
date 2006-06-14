@@ -29,10 +29,10 @@
       <property name="src.data.dir" location="/shared/data/malaria/go-annotation"/>
     </source>
     <source name="malaria-chromosome-fasta" type="fasta">
+      <property name="source.name" value="fasta"/>
+      <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="fasta.taxonId" value="5833"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
-      <property name="fasta.include" value="dmel-all-chromosome-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+      <property name="src.data.dir" location="/shared/data/malaria/malaria-genome/fasta"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves

@@ -14,11 +14,11 @@
   
   <target name="load" depends="init, -init-deps">
     <taskdef name="read-fasta"
-      classname="org.flymine.task.FastaReadTask"
+      classname="org.flymine.dataConversion.FastaLoaderTask"
       classpathref="task.class.path"/>
-    <read-fasta className="${fasta.className}" keyFieldName="${fasta.keyFieldName}"
-                idSuffix="${fasta.idSuffix}" organismAbbreviation="${fasta.orgAbbrev}"
-                oswAlias="osw.production">
+    <read-fasta integrationWriterAlias="integration.production"
+                sourceName="${source.name}"
+                fastaTaxonId="${fasta.taxonId}">
       <fileset dir="${src.data.dir}" includes="${fasta.includes}"/>
     </read-fasta>
   </target>
