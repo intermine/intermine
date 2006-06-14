@@ -38,10 +38,10 @@ import org.apache.log4j.Logger;
  * @author Richard Smith
  */
 
-public class ChadoGFF3RecordHandler extends GFF3RecordHandler
+public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 {
     Map references;
-    private static final Logger LOG = Logger.getLogger(ChadoGFF3RecordHandler.class);
+    private static final Logger LOG = Logger.getLogger(FlyBaseGFF3RecordHandler.class);
     private String tgtNs;
     private Set pseudogeneIds = new HashSet();
     private Map otherOrganismItems = new HashMap();
@@ -54,7 +54,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
      * Create a new FlyBaseGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
      */
-    public ChadoGFF3RecordHandler(Model tgtModel) {
+    public FlyBaseGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
         tgtNs = tgtModel.getNameSpace().toString();
 
@@ -257,7 +257,7 @@ public class ChadoGFF3RecordHandler extends GFF3RecordHandler
 
     /**
      * Return items that need extra processing that can only be done after all other GFF features
-     * have been read.  For ChadoGFF3RecordHandler, the Gene, Pseudogene and targetOrganisms from
+     * have been read.  For FlyBaseGFF3RecordHandler, the Gene, Pseudogene and targetOrganisms from
      * SyntenicRegion objects are returned.
      * @return the final Items
      */

@@ -31,11 +31,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-public class ChadoGFF3RecordHandlerTest extends TestCase
+public class FlyBaseGFF3RecordHandlerTest extends TestCase
 {
 
     Model tgtModel;
-    ChadoGFF3RecordHandler handler;
+    FlyBaseGFF3RecordHandler handler;
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
     String orgAbbrev = "DM";
@@ -47,7 +47,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
 
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
-        handler = new ChadoGFF3RecordHandler(tgtModel);
+        handler = new FlyBaseGFF3RecordHandler(tgtModel);
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dateSetTitle,
                                       tgtModel, handler);
         tgtNs = tgtModel.getNameSpace().toString();
@@ -192,7 +192,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
 
         converter.parse(srcReader);
         converter.store();
-        
+
         Item expectedGene1 = null;
         Item expectedGene2 = null;
 
@@ -319,7 +319,7 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item feature = itemFactory.makeItem(null, tgtNs + "CDS", "");
         feature.setAttribute("identifier", "CG11023-PA");
         handler.setFeature(feature);
-      
+
         Item dataSet = itemFactory.makeItem(null, tgtNs + "DataSet", "");
         dataSet.setAttribute("title", "FlyBase Drosophila melanogaster data set");
         handler.setDataSet(dataSet);
@@ -373,22 +373,22 @@ public class ChadoGFF3RecordHandlerTest extends TestCase
         Item feature = itemFactory.makeItem(null, tgtNs + "SequenceVariant", "");
         feature.setAttribute("identifier", "l(2)gl[275]");
         handler.setFeature(feature);
-     
+
         Item gene = itemFactory.makeItem(null, tgtNs + "Gene", "");
-        
-       
+
+
         Item simpleRelation = itemFactory.makeItem(null, tgtModel.getNameSpace() + "SimpleRelation", "");
         simpleRelation.setReference("object", gene.getIdentifier());
         simpleRelation.setReference("subject", feature.getIdentifier());
         handler.addParentRelation(simpleRelation);
-        
-        
+
+
         Item dataSet = itemFactory.makeItem(null, tgtNs + "DataSet", "");
         dataSet.setAttribute("title", "FlyBase Drosophila melanogaster data set");
         handler.setDataSet(dataSet);
 
         handler.process(record);
-        
+
         handler.setReferences(handler.references);
 
         Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
