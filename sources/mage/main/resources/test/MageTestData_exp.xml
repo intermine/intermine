@@ -1,0 +1,3239 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!--<!DOCTYPE MAGE-ML SYSTEM "file://localhost//Z:/MAGE-ML.dtd">-->
+<MAGE-ML identifier="MAGE:EBI:MIAMExpress:rana:P10005:3">
+  <AuditAndSecurity_package>
+    <Contact_assnlist>
+      <Person lastName="Whitfield"
+	      firstName="William"
+	      identifier="PERS:William Whitfield:1">
+	<Roles_assnlist>
+	  <OntologyEntry category="Roles" value="submitter">
+	  </OntologyEntry>
+	</Roles_assnlist>
+        <Affiliation_assnref>
+          <Organization_ref identifier="ORG:University of Dundee, UK:1"/>
+        </Affiliation_assnref>
+      </Person>
+      <Organization identifier="ORG:University of Dundee, UK:1" name="University of Dundee, UK">
+      </Organization>
+      <Person lastName="Rana"
+	      firstName="Debashis"
+	      address="Downing Site"
+	      identifier="PERS:Debashis_Rana:rana"
+	      email="rana@flymine.org"
+	      phone="01223 760527">
+        <Roles_assnlist>
+          <OntologyEntry category="Roles" value="curator">
+          </OntologyEntry>
+        </Roles_assnlist>
+        <Affiliation_assnref>
+          <Organization_ref identifier="ORG:University of Cambridge:Genetics"/>
+        </Affiliation_assnref>
+      </Person>
+      <Organization identifier="ORG:University of Cambridge:Genetics" name="Genetics">
+        <Parent_assnref>
+          <Organization_ref identifier="ORG:University of Cambridge"/>
+        </Parent_assnref>
+      </Organization>
+      <Organization address="Downing Site, Cambridge, Cambridge, CB2 3EH, United Kingdom" identifier="ORG:University of Cambridge" name="University of Cambridge">
+      </Organization>
+      <Organization identifier="ORG:FlyChip Facility" name="FlyChip Facility">
+	<Roles_assnlist>
+	  <OntologyEntry category="Roles" value="submitter">
+	  </OntologyEntry>
+	</Roles_assnlist>
+	<Parent_assnref>
+	  <Organization_ref identifier="ORG:University of Cambridge:Genetics"/>
+	</Parent_assnref>
+      </Organization>
+    </Contact_assnlist>
+  </AuditAndSecurity_package>
+  <Description_package>
+    <Database_assnlist>
+      <Database identifier="ebi.ac.uk:Database:flybase_dv" name="FlyBase: Developmental Stage" URI="">
+	<Descriptions_assnlist>
+	  <Description text="FlyBase controlled vocabularies for developmental stages.">
+	  </Description>
+	</Descriptions_assnlist>
+      </Database>
+    </Database_assnlist>
+  </Description_package>
+  <Protocol_package>
+    <Hardware_assnlist>
+      <Hardware identifier="HW:FLYC:97" name="Scanning hardware" model="arrayWoRx" make="Applied Precision LLC">
+        <Type_assn>
+          <OntologyEntry category="HardwareType" value="array_scanner">
+          </OntologyEntry>
+        </Type_assn>
+      </Hardware>
+    </Hardware_assnlist>
+    <Software_assnlist>
+      <Software identifier="SW:FLYC:98" name="Default scanner software">
+        <Type_assn>
+          <OntologyEntry category="SoftwareType" value="image_acquisition_software">
+          </OntologyEntry>
+        </Type_assn>
+      </Software>
+    </Software_assnlist>
+    <Protocol_assnlist>
+      <Protocol identifier="P-FLYC-44" name="FC_SCAN_02" URI="http://www.flychip.org.uk/Project/Protocols/scanning.php" text="Operating instructions">
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="scanning">
+          </OntologyEntry>
+        </Type_assn>
+        <Hardwares_assnreflist>
+          <Hardware_ref identifier="HW:FLYC:97"/>
+        </Hardwares_assnreflist>
+        <Softwares_assnreflist>
+          <Software_ref identifier="SW:FLYC:98"/>
+        </Softwares_assnreflist>
+      </Protocol>
+      <Protocol text="Groups of 100 prepupae were collected from bottles every 30 min and frozen directly in liquid N2. Frozen samples were pooled and ground to a powder in liquid N2 before resuspension in TRIZOL." identifier="P-FLYC-30" name="P10005_sample">
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="specified_biomaterial_action">
+          </OntologyEntry>
+        </Type_assn>
+      </Protocol>
+      <Protocol text="Drosophila were grown in an incubator at a temperature of 25C and 50% humidity." identifier="P-FLYC-5" name="DROSOPHILA_GROWTH">
+        <ParameterTypes_assnlist>
+          <Parameter identifier="PARAM:FLYC:Time min:3" name="start Time">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Time max:4" name="stop Time">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Temperature min:6" name="min temperature">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Temperature max:7" name="max temperature">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Media:9" name="media">
+          </Parameter>
+        </ParameterTypes_assnlist>
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="grow">
+          </OntologyEntry>
+        </Type_assn>
+      </Protocol>
+      <Protocol identifier="P-FLYC-41" name="FC_EXTRACTION_02" URI="http://www.flychip.org.uk/Project/Protocols/extraction.php" text="Small Scale Extraction of Total RNA">
+        <ParameterTypes_assnlist>
+          <Parameter identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87" name="Extracted product">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88" name="Amplification">
+          </Parameter>
+        </ParameterTypes_assnlist>
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="nucleic_acid_extraction">
+          </OntologyEntry>
+        </Type_assn>
+      </Protocol>
+      <Protocol identifier="P-FLYC-43" name="FC_LABEL_CY5_02" URI="http://www.flychip.org.uk/Project/Protocols/labelling.php" text="Direct Labelling of Total RNA">
+        <ParameterTypes_assnlist>
+          <Parameter identifier="PARAM:FLYC:amount:93" name="Amount of nucleic acid labeled">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:LABEL_USED:95" name="Label used">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96" name="Amplification">
+          </Parameter>
+        </ParameterTypes_assnlist>
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="labeling">
+          </OntologyEntry>
+        </Type_assn>
+      </Protocol>
+      <Protocol identifier="P-FLYC-42" name="FC_LABEL_CY3_02" URI="http://www.flychip.org.uk/Project/Protocols/labelling.php" text="Direct Labelling of Total RNA">
+        <ParameterTypes_assnlist>
+          <Parameter identifier="PARAM:FLYC:amount:89" name="Amount of nucleic acid labeled">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:LABEL_USED:91" name="Label used">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92" name="Amplification">
+          </Parameter>
+        </ParameterTypes_assnlist>
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="labeling">
+          </OntologyEntry>
+        </Type_assn>
+      </Protocol>
+      <Protocol identifier="P-FLYC-45" name="FC_HYB_02" URI="http://www.flychip.org.uk/Project/Protocols/hybridisation.php" text="Hybridisation Protocol">
+        <ParameterTypes_assnlist>
+          <Parameter identifier="PARAM:FLYC:CHAMBER_TYPE:99" name="Chamber type">
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Quantity of labeled target used:100" name="Quantity of label target used">
+            <DefaultValue_assn>
+              <Measurement>
+                <Unit_assn>
+                  <MassUnit unitNameCV="ug">
+                  </MassUnit>
+                </Unit_assn>
+              </Measurement>
+            </DefaultValue_assn>
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Time:102" name="Time">
+            <DefaultValue_assn>
+              <Measurement>
+                <Unit_assn>
+                  <TimeUnit unitNameCV="h">
+                  </TimeUnit>
+                </Unit_assn>
+              </Measurement>
+            </DefaultValue_assn>
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Volume:104" name="Volume">
+            <DefaultValue_assn>
+              <Measurement>
+                <Unit_assn>
+                  <VolumeUnit unitNameCV="uL">
+                  </VolumeUnit>
+                </Unit_assn>
+              </Measurement>
+            </DefaultValue_assn>
+          </Parameter>
+          <Parameter identifier="PARAM:FLYC:Temperature:106" name="Temperature">
+            <DefaultValue_assn>
+              <Measurement>
+                <Unit_assn>
+                  <TemperatureUnit unitNameCV="degree_C">
+                  </TemperatureUnit>
+                </Unit_assn>
+              </Measurement>
+            </DefaultValue_assn>
+          </Parameter>
+        </ParameterTypes_assnlist>
+        <Type_assn>
+          <OntologyEntry category="ProtocolType" value="hybridization">
+          </OntologyEntry>
+        </Type_assn>
+      </Protocol>
+    <Protocol identifier="P-FLYC-46" name="FC_Transformation_01" text="The data was analysed using ArrayPro Analyzer">
+	<Type_assn>
+	  <OntologyEntry category="ProtocolType" value="bioassay_data_transformation"/>
+	</Type_assn>
+      </Protocol>
+    </Protocol_assnlist>
+  </Protocol_package>
+  <BioMaterial_package>
+    <Compound_assnlist>
+      <Compound identifier="ebi.ac.uk:LabelCompound:Cy5" name="Cy5">
+      </Compound>
+      <Compound identifier="ebi.ac.uk:LabelCompound:Cy3" name="Cy3">
+      </Compound>
+    </Compound_assnlist>
+    <BioMaterial_assnlist>
+      <LabeledExtract identifier="S:Label:FLYC:8" name="L100037">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:8">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:56:29">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:93"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy5">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:95"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-43"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:108"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy5"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:108" name="100041_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:108">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:177"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:177" name="100041">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:177">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:177"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:177">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:177"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:177">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:177"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:177" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="GeneticModification" value="induced_mutation">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="EMS induced mutation CP190[1]">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:1" name="L100031">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:1">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:50:55">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:89"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy3">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:91"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-42"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:102"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy3"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:102" name="100035_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:102">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:171"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:171" name="100035">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:171">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:171"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:171">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:171"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:171">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:171"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:171" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="paraffin_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="Wild Type (red e)">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:3" name="L100032">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:3">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:50:55">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:89"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy3">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:91"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-42"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:103"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy3"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:103" name="100036_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:103">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:172"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:172" name="100036">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:172">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:172"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:172">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:172"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:172">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:172"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:172" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="Wild Type (red e)">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:9" name="L100038">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:9">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:56:29">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:93"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy5">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:95"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-43"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:109"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy5"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:109" name="100042_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:109">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:178"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:178" name="100042">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:178">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:178"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:178">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:178"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:178">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:178"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:178" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="GeneticModification" value="induced_mutation">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="EMS induced mutation CP190[1]">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:4" name="L100033">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:4">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:56:29">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:93"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy5">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:95"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-43"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:104"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy5"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:104" name="100037_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:104">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:173"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:173" name="100037">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:173">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:173"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:173">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:173"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:173">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:173"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:173" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="Wild Type (red e)">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:10" name="L100039">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:10">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:50:55">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:89"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy3">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:91"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-42"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:110"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy3"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:110" name="100043_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:110">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:179"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:179" name="100043">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:179">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:179"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:179">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:179"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:179">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:179"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:179" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="GeneticModification" value="induced_mutation">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="EMS induced mutation CP190[1]">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:5" name="L100034">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:5">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:50:55">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:89"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy3">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:91"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-42"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:105"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy3"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:105" name="100038_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:105">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:174"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:174" name="100038">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:174">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:174"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:174">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:174"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:174">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:174"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:174" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="Wild Type (red e)">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:11" name="L100040">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:11">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:56:29">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:93"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy5">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:95"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-43"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:111"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy5"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:111" name="100044_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:111">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:180"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:180" name="100044">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:180">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:180"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:180">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:180"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:180">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:180"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:180" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="GeneticModification" value="induced_mutation">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="EMS induced mutation CP190[2]">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:6" name="L100035">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:6">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:50:55">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:89"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy3">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:91"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-42"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:106"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy3"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:106" name="100039_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:106">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:175"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:175" name="100039">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:175">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:175"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:175">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:175"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:175">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:175"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:175" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="Wild Type (red e)">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:12" name="L100041">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:12">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:56:29">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:93"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy5">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:95"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-43"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:112"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy5"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:112" name="100045_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:112">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:181"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:181" name="100045">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:181">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:181"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:181">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:181"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:181">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:181"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:181" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="GeneticModification" value="induced_mutation">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="EMS induced mutation CP190[2]">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:7" name="L100036">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:7">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:56:29">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:93"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy5">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:95"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:96"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-43"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:107"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy5"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:107" name="100040_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:107">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:176"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:176" name="100040">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:176">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:176"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:176">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:176"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:176">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:176"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:176" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="Wild Type (red e)">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+      <LabeledExtract identifier="S:Label:FLYC:13" name="L100042">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Labeling:FLYC:13">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:50:55">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:amount:89"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="cy3">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:LABEL_USED:91"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_LABEL:92"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-42"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="labeling">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Extraction:FLYC:113"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Labels_assnreflist>
+          <Compound_ref identifier="ebi.ac.uk:LabelCompound:Cy3"/>
+        </Labels_assnreflist>
+      </LabeledExtract>
+      <BioSample identifier="S:Extraction:FLYC:113" name="100046_Extract">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="RNA">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment identifier="T:Extraction:FLYC:113">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:47:13">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="total RNA">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:EXTRACTED_PRODUCT:87"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="none">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:AMPLIFICATION_EXTRACT:88"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-41"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="nucleic_acid_extraction">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSample_ref identifier="S:Sample:FLYC:182"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSample identifier="S:Sample:FLYC:182" name="100046">
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+        <Treatments_assnlist>
+          <Treatment order="1" identifier="T:Sample:FLYC:182">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-22 09:56:47">
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-30"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="specified_biomaterial_action">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:182"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="4" identifier="T:Growth:FLYC:182">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2003-10-14 10:06:36">
+                <ParameterValues_assnlist>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time min:3"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time max:4"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature min:6"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature max:7"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue>
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Media:9"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-5"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Action_assn>
+              <OntologyEntry category="Action" value="grow">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:182"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+          <Treatment order="3" identifier="T:Separation Technique:FLYC:182">
+            <Action_assn>
+              <OntologyEntry category="Action" value="not applicable">
+              </OntologyEntry>
+            </Action_assn>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <BioSource_ref identifier="S:BioSource:FLYC:182"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+          </Treatment>
+        </Treatments_assnlist>
+        <Type_assn>
+          <OntologyEntry category="BioSampleType" value="not_extract">
+          </OntologyEntry>
+        </Type_assn>
+      </BioSample>
+      <BioSource identifier="S:BioSource:FLYC:182" name="Drosophila melanogaster">
+        <Characteristics_assnlist>
+          <OntologyEntry category="Organism" value="Drosophila melanogaster">
+          </OntologyEntry>
+          <OntologyEntry category="BioSourceType" value="frozen_sample">
+          </OntologyEntry>
+          <OntologyEntry category="DevelopmentalStage" value="prepupal stage P1">
+          <OntologyReference_assn><DatabaseEntry accession="FBdv:00005343"><Database_assnref><Database_ref identifier="ebi.ac.uk:Database:flybase_dv"/></Database_assnref></DatabaseEntry></OntologyReference_assn></OntologyEntry>
+          <OntologyEntry category="Age" value="0">
+          </OntologyEntry>
+          <OntologyEntry category="TimeUnit" value="hours">
+          </OntologyEntry>
+          <OntologyEntry category="GeneticModification" value="induced_mutation">
+          </OntologyEntry>
+          <OntologyEntry category="IndividualGeneticCharacteristics" value="EMS induced mutation CP190[2]">
+          </OntologyEntry>
+        </Characteristics_assnlist>
+        <MaterialType_assn>
+          <OntologyEntry category="MaterialType" value="whole_organism">
+          </OntologyEntry>
+        </MaterialType_assn>
+      </BioSource>
+    </BioMaterial_assnlist>
+  </BioMaterial_package>
+  <Array_package>
+    <Array_assnlist>
+      <Array arrayIdentifier="1" identifier="AR:FLYC:FLYC:31" name="1 ">
+        <ArrayDesign_assnref>
+          <PhysicalArrayDesign_ref identifier="A-FLYC-1"/>
+        </ArrayDesign_assnref>
+        <Information_assnref>
+          <ArrayManufacture_ref identifier="ARMANUF:FLYC:A-FLYC-1::"/>
+        </Information_assnref>
+      </Array>
+      <Array arrayIdentifier="1" identifier="AR:FLYC:FLYC:32" name="1 ">
+        <ArrayDesign_assnref>
+          <PhysicalArrayDesign_ref identifier="A-FLYC-1"/>
+        </ArrayDesign_assnref>
+        <Information_assnref>
+          <ArrayManufacture_ref identifier="ARMANUF:FLYC:A-FLYC-1::"/>
+        </Information_assnref>
+      </Array>
+      <Array arrayIdentifier="1" identifier="AR:FLYC:FLYC:33" name="1 ">
+        <ArrayDesign_assnref>
+          <PhysicalArrayDesign_ref identifier="A-FLYC-1"/>
+        </ArrayDesign_assnref>
+        <Information_assnref>
+          <ArrayManufacture_ref identifier="ARMANUF:FLYC:A-FLYC-1::"/>
+        </Information_assnref>
+      </Array>
+      <Array arrayIdentifier="1" identifier="AR:FLYC:FLYC:34" name="1 ">
+        <ArrayDesign_assnref>
+          <PhysicalArrayDesign_ref identifier="A-FLYC-1"/>
+        </ArrayDesign_assnref>
+        <Information_assnref>
+          <ArrayManufacture_ref identifier="ARMANUF:FLYC:A-FLYC-1::"/>
+        </Information_assnref>
+      </Array>
+      <Array arrayIdentifier="1" identifier="AR:FLYC:FLYC:35" name="1 ">
+        <ArrayDesign_assnref>
+          <PhysicalArrayDesign_ref identifier="A-FLYC-1"/>
+        </ArrayDesign_assnref>
+        <Information_assnref>
+          <ArrayManufacture_ref identifier="ARMANUF:FLYC:A-FLYC-1::"/>
+        </Information_assnref>
+      </Array>
+      <Array arrayIdentifier="1" identifier="AR:FLYC:FLYC:36" name="1 ">
+        <ArrayDesign_assnref>
+          <PhysicalArrayDesign_ref identifier="A-FLYC-1"/>
+        </ArrayDesign_assnref>
+        <Information_assnref>
+          <ArrayManufacture_ref identifier="ARMANUF:FLYC:A-FLYC-1::"/>
+        </Information_assnref>
+      </Array>
+    </Array_assnlist>
+    <ArrayManufacture_assnlist>
+      <ArrayManufacture identifier="ARMANUF:FLYC:A-FLYC-1::" name="A-FLYC-1:">
+        <Arrays_assnreflist>
+          <Array_ref identifier="AR:FLYC:FLYC:31"/>
+          <Array_ref identifier="AR:FLYC:FLYC:32"/>
+          <Array_ref identifier="AR:FLYC:FLYC:33"/>
+          <Array_ref identifier="AR:FLYC:FLYC:34"/>
+          <Array_ref identifier="AR:FLYC:FLYC:35"/>
+          <Array_ref identifier="AR:FLYC:FLYC:36"/>
+        </Arrays_assnreflist>
+      </ArrayManufacture>
+    </ArrayManufacture_assnlist>
+  </Array_package>
+  <BioAssay_package>
+    <BioAssay_assnlist>
+      <MeasuredBioAssay identifier="MBA:FLYC:1">
+        <FeatureExtraction_assn>
+          <FeatureExtraction identifier="FEXT:FLYC::1">
+            <PhysicalBioAssaySource_assnref>
+              <PhysicalBioAssay_ref identifier="PBA:FLYC:1"/>
+            </PhysicalBioAssaySource_assnref>
+          </FeatureExtraction>
+        </FeatureExtraction_assn>
+        <MeasuredBioAssayData_assnreflist>
+          <MeasuredBioAssayData_ref identifier="MeasuredBioAssayData:FLYC:1"/>
+        </MeasuredBioAssayData_assnreflist>
+      </MeasuredBioAssay>
+      <PhysicalBioAssay identifier="PBA:FLYC:1">
+	<PhysicalBioAssayData_assnlist>
+	  <Image identifier="S100036_595" name="S100036_595.tif" URI="http://images.flychip.org.uk/P10005/S100036_595.tif">
+	    <Channels_assnreflist>
+	      <Channel_ref identifier="ebi.ac.uk:Channel:Cy3"/>
+	    </Channels_assnreflist>
+	    <Format_assn>
+	      <OntologyEntry category="ImageFormat" value="TIFF"/>
+	    </Format_assn>
+	  </Image>
+	  <Image identifier="S100036_685" name="S100036_685.tif" URI="http://images.flychip.org.uk/P10005/S100036_685.tif">
+	    <Channels_assnreflist>
+	      <Channel_ref identifier="ebi.ac.uk:Channel:Cy5"/>
+	    </Channels_assnreflist>
+	    <Format_assn>
+	      <OntologyEntry category="ImageFormat" value="TIFF"/>
+	    </Format_assn>
+	  </Image>
+	</PhysicalBioAssayData_assnlist>
+        <BioAssayCreation_assn>
+          <Hybridization identifier="HYB:FLYC:1" name="S100036">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-26 13:54:02">
+                <ParameterValues_assnlist>
+                  <ParameterValue value="Genomic Solutions- GeneTAC HybStation">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:CHAMBER_TYPE:99"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="25">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Quantity of labeled target used:100"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="16">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Time:102"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="140">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Volume:104"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                  <ParameterValue value="65">
+                    <ParameterType_assnref>
+                      <Parameter_ref identifier="PARAM:FLYC:Temperature:106"/>
+                    </ParameterType_assnref>
+                  </ParameterValue>
+                </ParameterValues_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-45"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <SourceBioMaterialMeasurements_assnlist>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <LabeledExtract_ref identifier="S:Label:FLYC:8"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+              <BioMaterialMeasurement>
+                <BioMaterial_assnref>
+                  <LabeledExtract_ref identifier="S:Label:FLYC:1"/>
+                </BioMaterial_assnref>
+              </BioMaterialMeasurement>
+            </SourceBioMaterialMeasurements_assnlist>
+            <Array_assnref>
+              <Array_ref identifier="AR:FLYC:FLYC:31"/>
+            </Array_assnref>
+          </Hybridization>
+        </BioAssayCreation_assn>
+        <BioAssayTreatments_assnlist>
+          <ImageAcquisition identifier="PBASCAN:FLYC:1">
+            <ProtocolApplications_assnlist>
+              <ProtocolApplication activityDate="2004-01-06 14:44:34">
+                <HardwareApplications_assnlist>
+                  <HardwareApplication>
+                    <Hardware_assnref>
+                      <Hardware_ref identifier="HW:FLYC:97"/>
+                    </Hardware_assnref>
+                  </HardwareApplication>
+                </HardwareApplications_assnlist>
+                <SoftwareApplications_assnlist>
+                  <SoftwareApplication>
+                    <Software_assnref>
+                      <Software_ref identifier="SW:FLYC:98"/>
+                    </Software_assnref>
+                  </SoftwareApplication>
+                </SoftwareApplications_assnlist>
+                <Protocol_assnref>
+                  <Protocol_ref identifier="P-FLYC-44"/>
+                </Protocol_assnref>
+              </ProtocolApplication>
+            </ProtocolApplications_assnlist>
+            <Target_assnref>
+              <PhysicalBioAssay_ref identifier="PBA:FLYC:1"/>
+            </Target_assnref>
+          </ImageAcquisition>
+        </BioAssayTreatments_assnlist>
+      </PhysicalBioAssay>
+      <DerivedBioAssay identifier="DBA:FLYC:1">
+        <DerivedBioAssayData_assnreflist>
+          <DerivedBioAssayData_ref identifier="DATA:FLYC:Transformed:1"/>
+        </DerivedBioAssayData_assnreflist>
+        <DerivedBioAssayMap_assnreflist>
+          <BioAssayMap_ref identifier="BAM:FLYC:Normalized:1"/>
+        </DerivedBioAssayMap_assnreflist>
+      </DerivedBioAssay>
+    </BioAssay_assnlist>
+  </BioAssay_package>
+  <QuantitationType_package>
+    <QuantitationType_assnlist>
+      <MeasuredSignal isBackground="0" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy3" name="Signal med Cy3">
+	<Descriptions_assnlist>
+	  <Description text="Median of Cy3 signal intensity.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy3"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+      </MeasuredSignal>
+      <MeasuredSignal isBackground="0" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy5" name="Signal med Cy5">
+	<Descriptions_assnlist>
+	  <Description text="Median of Cy5 signal intensity.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy5"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+      </MeasuredSignal>
+      <Error isBackground="0" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal st dev Cy3" name="Signal st dev Cy3">
+	<Descriptions_assnlist>
+	  <Description text="Standard deviation of Cy3 signal intensity.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy3"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+	<TargetQuantitationType_assnref>
+	  <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy3"/>
+	</TargetQuantitationType_assnref>
+      </Error>
+      <Error isBackground="0" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal st dev Cy5" name="Signal st dev Cy5">
+	<Descriptions_assnlist>
+	  <Description text="Standard deviation of Cy5 signal intensity.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy5"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+	<TargetQuantitationType_assnref>
+	  <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy5"/>
+	</TargetQuantitationType_assnref>
+      </Error>
+      <Ratio isBackground="0" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med ratio" name="Signal med ratio">
+	<Descriptions_assnlist>
+	  <Description text="Ratio of median signal.">
+	  </Description>
+	</Descriptions_assnlist>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+      </Ratio>
+      <MeasuredSignal isBackground="1" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med Cy3" name="Background med Cy3">
+	<Descriptions_assnlist>
+	  <Description text="Median of background intensity for Cy3.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy3"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+      </MeasuredSignal>
+      <MeasuredSignal isBackground="1" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med Cy5" name="Background med Cy5">
+	<Descriptions_assnlist>
+	  <Description text="Median of background intensity for Cy5.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy5"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+      </MeasuredSignal>
+      <Error isBackground="1" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background st dev Cy3" name="Background st dev Cy3">
+	<Descriptions_assnlist>
+	  <Description text="Standard deviation of background intensity for Cy3.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy3"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+	<TargetQuantitationType_assnref>
+	  <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med Cy3"/>
+	</TargetQuantitationType_assnref>
+      </Error>
+      <Error isBackground="1" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background st dev Cy5" name="Background st dev Cy5">
+	<Descriptions_assnlist>
+	  <Description text="Standard deviation of background intensity for Cy5.">
+	  </Description>
+	</Descriptions_assnlist>
+	<Channel_assnref>
+	  <Channel_ref identifier="ebi.ac.uk:Channel:Cy5"/>
+	</Channel_assnref>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+	<TargetQuantitationType_assnref>
+	  <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med Cy5"/>
+	</TargetQuantitationType_assnref>
+      </Error>
+      <Ratio isBackground="1" identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med ratio" name="Background med ratio">
+	<Descriptions_assnlist>
+	  <Description text="Ratio of median background.">
+	  </Description>
+	</Descriptions_assnlist>
+        <Scale_assn>
+          <OntologyEntry category="Scale" value="linear_scale">
+          </OntologyEntry>
+        </Scale_assn>
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="float">
+          </OntologyEntry>
+        </DataType_assn>
+      </Ratio>
+    </QuantitationType_assnlist>
+  </QuantitationType_package>
+  <BioAssayData_package>
+    <BioAssayDimension_assnlist>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:31" name="BAD:FLYC:FLYC:31">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:1"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:32" name="BAD:FLYC:FLYC:32">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:2"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:33" name="BAD:FLYC:FLYC:33">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:3"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:34" name="BAD:FLYC:FLYC:34">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:4"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:35" name="BAD:FLYC:FLYC:35">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:5"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:36" name="BAD:FLYC:FLYC:36">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:6"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+    </BioAssayDimension_assnlist>
+    <DesignElementDimension_assnlist>
+      <FeatureDimension identifier="DED:FLYC:1" name="DED:FLYC:1">
+        <ContainedFeatures_assnreflist>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.1"/>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.2"/>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.3"/>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.13"/>
+        </ContainedFeatures_assnreflist>
+      </FeatureDimension>
+    </DesignElementDimension_assnlist>
+    <QuantitationTypeDimension_assnlist>
+      <QuantitationTypeDimension identifier="QTD:FLYC:Hyb:1" name="QTD:FLYC:Hyb:1">
+        <QuantitationTypes_assnreflist>
+          <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy3"/>
+          <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy5"/>
+          <Error_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal st dev Cy3"/>
+          <Error_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal st dev Cy5"/>
+          <Ratio_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med ratio"/>
+        </QuantitationTypes_assnreflist>
+      </QuantitationTypeDimension>
+      <QuantitationTypeDimension identifier="QTD:FLYC:Normalized:1" name="QTD:FLYC:Normalized:1">
+        <QuantitationTypes_assnreflist>
+          <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy3"/>
+          <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med Cy5"/>
+          <Error_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal st dev Cy3"/>
+          <Error_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal st dev Cy5"/>
+          <Ratio_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Signal med ratio"/>
+          <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med Cy3"/>
+          <MeasuredSignal_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med Cy5"/>
+          <Error_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background st dev Cy3"/>
+          <Error_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background st dev Cy5"/>
+          <Ratio_ref identifier="GenomicSolutions:GeneTAC LSIV 3.01_QuantitationType:Background med ratio"/>
+        </QuantitationTypes_assnreflist>
+      </QuantitationTypeDimension>
+    </QuantitationTypeDimension_assnlist>
+    <BioAssayMap_assnlist>
+      <BioAssayMap identifier="BAM:FLYC:Normalized:1">
+        <BioAssayMapTarget_assnref>
+          <DerivedBioAssay_ref identifier="DBA:FLYC:1"/>
+        </BioAssayMapTarget_assnref>
+        <SourceBioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:1"/>
+        </SourceBioAssays_assnreflist>
+      </BioAssayMap>
+    </BioAssayMap_assnlist>
+    <BioAssayData_assnlist>
+      <MeasuredBioAssayData identifier="MeasuredBioAssayData:FLYC:1">
+        <BioAssayDimension_assnref>
+          <BioAssayDimension_ref identifier="BAD:FLYC:FLYC:31"/>
+        </BioAssayDimension_assnref>
+        <DesignElementDimension_assnref>
+          <FeatureDimension_ref identifier="DED:FLYC:1"/>
+        </DesignElementDimension_assnref>
+        <QuantitationTypeDimension_assnref>
+          <QuantitationTypeDimension_ref identifier="QTD:FLYC:Hyb:1"/>
+        </QuantitationTypeDimension_assnref>
+        <BioDataValues_assn>
+          <BioDataCube>
+            <DataExternal_assn>
+              <DataExternal filenameURI="test/MageTestData_rawdata" dataFormat="tab delimited"/>
+            </DataExternal_assn>
+          </BioDataCube>
+        </BioDataValues_assn>
+      </MeasuredBioAssayData>
+      <DerivedBioAssayData identifier="DATA:FLYC:Transformed:1">
+        <BioAssayDimension_assnref>
+          <BioAssayDimension_ref identifier="BAD:FLYC:FLYC:31"/>
+        </BioAssayDimension_assnref>
+        <DesignElementDimension_assnref>
+          <FeatureDimension_ref identifier="DED:FLYC:1"/>
+        </DesignElementDimension_assnref>
+        <QuantitationTypeDimension_assnref>
+          <QuantitationTypeDimension_ref identifier="QTD:FLYC:Normalized:1"/>
+        </QuantitationTypeDimension_assnref>
+        <BioDataValues_assn>
+          <BioDataCube order="DBQ">
+            <DataExternal_assn>
+              <DataExternal filenameURI="test/MageTestData_processed" dataFormat="tab delimited"/>
+            </DataExternal_assn>
+          </BioDataCube>
+        </BioDataValues_assn>
+        <ProducerTransformation_assn>
+          <Transformation identifier="TFM:FLYC:1">
+	    <ProtocolApplications_assnlist>
+	      <ProtocolApplication activityDate="n/a">
+		<Protocol_assnref>
+		  <Protocol_ref identifier="P-FLYC-46"/>
+		</Protocol_assnref>
+	      </ProtocolApplication>
+	    </ProtocolApplications_assnlist>
+            <BioAssayDataSources_assnreflist>
+              <MeasuredBioAssayData_ref identifier="MeasuredBioAssayData:FLYC:1"/>
+            </BioAssayDataSources_assnreflist>
+            <BioAssayMapping_assn>
+              <BioAssayMapping>
+                <BioAssayMaps_assnreflist>
+                  <BioAssayMap_ref identifier="BAM:FLYC:Normalized:1"/>
+                </BioAssayMaps_assnreflist>
+              </BioAssayMapping>
+            </BioAssayMapping_assn>
+          </Transformation>
+        </ProducerTransformation_assn>
+      </DerivedBioAssayData>
+    </BioAssayData_assnlist>
+  </BioAssayData_package>
+  <Experiment_package>
+    <Experiment_assnlist>
+      <Experiment identifier="E-FLYC-1" name="P10005">
+        <Descriptions_assnlist>
+          <Description text="Experiment description">
+          </Description>
+          <Description>
+            <BibliographicReferences_assnlist>
+              <BibliographicReference authors=" William Whitfield; FlyChip Facility" publication="-- select journal --" pages="-" volume="" URI="" title="">
+                <Parameters_assnlist>
+                  <OntologyEntry category="PublicationType" value="journal_article">
+                  </OntologyEntry>
+                </Parameters_assnlist>
+              </BibliographicReference>
+            </BibliographicReferences_assnlist>
+          </Description>
+        </Descriptions_assnlist>
+        <Providers_assnreflist>
+          <Person_ref identifier="PERS:William Whitfield:1"/>
+	  <Organization_ref identifier="ORG:FlyChip Facility"/>
+          <Person_ref identifier="PERS:Debashis_Rana:rana"/>
+        </Providers_assnreflist>
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:1"/>
+          <DerivedBioAssay_ref identifier="DBA:FLYC:1"/>
+          <PhysicalBioAssay_ref identifier="PBA:FLYC:1"/>
+        </BioAssays_assnreflist>
+        <ExperimentDesign_assn>
+          <ExperimentDesign>
+            <Types_assnlist>
+              <OntologyEntry category="ExperimentDesignType" value="individual_genetic_characteristics_design">
+              </OntologyEntry>
+            </Types_assnlist>
+            <ExperimentalFactors_assnlist>
+              <ExperimentalFactor identifier="EF:FLYC:3:434">
+                <Category_assn>
+                  <OntologyEntry category="ExperimentalFactorCategory" value="genotype">
+                  </OntologyEntry>
+                </Category_assn>
+              </ExperimentalFactor>
+            </ExperimentalFactors_assnlist>
+            <QualityControlDescription_assn>
+              <Description>
+              </Description>
+            </QualityControlDescription_assn>
+          </ExperimentDesign>
+        </ExperimentDesign_assn>
+      </Experiment>
+    </Experiment_assnlist>
+  </Experiment_package>
+</MAGE-ML>

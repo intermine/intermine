@@ -41,12 +41,12 @@ import org.intermine.dataconversion.ItemWriter;
 
 public class MageFlatFileConverterTest extends TestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
-    private String srcNs = "http://www.flymine.org/model/mage#";
+    private String srcNs = "http://www.intermine.org/model/mage#";
     private ItemFactory srcItemFactory;
     private ItemFactory tgtItemFactory;
     private File file;
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-    
+
     public void setUp() throws Exception {
         super.setUp();
         srcItemFactory = new ItemFactory(Model.getInstanceByName("mage"));
@@ -73,7 +73,7 @@ public class MageFlatFileConverterTest extends TestCase {
     public void testProcess() throws Exception {
 
         BufferedReader srcReader = new BufferedReader(new
-            InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/mageFlat.txt")));
+            InputStreamReader(getClass().getClassLoader().getResourceAsStream("mageFlat.txt")));
 
         MageFlatFileConverter converter = new MageFlatFileConverter(writer);
 
@@ -84,7 +84,7 @@ public class MageFlatFileConverterTest extends TestCase {
         writerSrc.write(FullRenderer.render(writer.getItems()));
         writerSrc.close();
 
-        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/mageFlatTgt.xml")));
+        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("mageFlatTgt.xml")));
 
         String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, writer.getItems());
         String actualNotExpected = "in actual, not expected: " + compareItemSets(writer.getItems(), expected);

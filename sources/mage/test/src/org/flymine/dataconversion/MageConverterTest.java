@@ -60,7 +60,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 public class MageConverterTest extends TestCase
 {
     MageConverter converter;
-    String ns = "http://www.flymine.org/model/mage#";
+    String ns = "http://www.intermine.org/model/mage#";
     File f = null;
 
     public void setUp() throws Exception {
@@ -82,20 +82,20 @@ public class MageConverterTest extends TestCase
         mc.refMap = new LinkedHashMap();
 
         Reader reader = new InputStreamReader(getClass().getClassLoader().
-                 getResourceAsStream("test/mage_ml_example.xml"));
+                 getResourceAsStream("mage_ml_example.xml"));
 
         mc.process(reader);
         System.err.println("seenMap " + mc.seenMap);
         System.err.println("refMap " + mc.refMap);
         reader = new InputStreamReader(getClass().getClassLoader().
-                 getResourceAsStream("test/mage_ml_example1.xml"));
+                 getResourceAsStream("mage_ml_example1.xml"));
         mc.process(reader);
         System.err.println("seenMap " + mc.seenMap);
         System.err.println("refMap " + mc.refMap);
         mc.close();
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().
-                 getResourceAsStream("test/MAGEConverterTest.xml")));
+                 getResourceAsStream("MAGEConverterTest.xml")));
         String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, itemWriter.getItems());
         String actualNotExpected = "in actual, not expected: " + compareItemSets(itemWriter.getItems(), expected);
 
@@ -228,7 +228,7 @@ public class MageConverterTest extends TestCase
         s += "<BioAssayData_package>";
 
         s += "<BioAssayData_assnlist><DerivedBioAssayData identifier = \"dbad1\">" ;
-        s += "<BioDataValues_assn><BioDataCube order=\"DBQ\"><DataExternal_assn><DataExternal  filenameURI=\"test/mage_example_data\"/></DataExternal_assn></BioDataCube></BioDataValues_assn>" ;
+        s += "<BioDataValues_assn><BioDataCube order=\"DBQ\"><DataExternal_assn><DataExternal  filenameURI=\"mage_example_data\"/></DataExternal_assn></BioDataCube></BioDataValues_assn>" ;
         s += "<BioAssayDimension_assnref><BioAssayDimension_ref identifier =\"bad1\"/></BioAssayDimension_assnref>";
 
         s += "<QuantitationTypeDimension_assn><QuantitationTypeDimension identifier =\"qtd\">" +
@@ -356,7 +356,7 @@ public class MageConverterTest extends TestCase
     // TODO: No proper test created for this yet
 //     public void testAddDerivedBioAssays() throws Exception {
 //         Reader reader = new InputStreamReader(getClass().getClassLoader().
-//                                               getResourceAsStream("test/MageConverterDerivedBioAssays_src.xml"));
+//                                               getResourceAsStream("MageConverterDerivedBioAssays_src.xml"));
 
 //         MageConverter.processDerivedBioAssays(reader, new File("mage_tmp.xml"), "_normalised");
 //     }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE MAGE-ML SYSTEM "MAGE-ML.dtd">
+<MAGE-ML identifier="MAGE:EBI:MIAMExpress:rana:P10005:3">
+  <BioAssay_package>
+    <BioAssay_assnlist>
+      <MeasuredBioAssay identifier="MBA:FLYC:1">
+        <MeasuredBioAssayData_assnreflist>
+          <MeasuredBioAssayData_ref identifier="MeasuredBioAssayData:FLYC:1"/>
+        </MeasuredBioAssayData_assnreflist>
+      </MeasuredBioAssay>
+    </BioAssay_assnlist>
+  </BioAssay_package>
+
+  <BioAssayData_package>
+
+    <BioAssayDimension_assnlist>
+      <BioAssayDimension identifier="BAD:FLYC:FLYC:31" name="BAD:FLYC:FLYC:31">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:1"/>
+        </BioAssays_assnreflist>
+      </BioAssayDimension>
+    </BioAssayDimension_assnlist>
+
+    <BioAssayData_assnlist>
+      <MeasuredBioAssayData identifier="MeasuredBioAssayData:FLYC:1">
+        <BioAssayDimension_assnref>
+          <BioAssayDimension_ref identifier="BAD:FLYC:FLYC:31"/>
+        </BioAssayDimension_assnref>
+        <DesignElementDimension_assnref>
+          <FeatureDimension_ref identifier="DED:FLYC:1"/>
+        </DesignElementDimension_assnref>
+        <QuantitationTypeDimension_assnref>
+          <QuantitationTypeDimension_ref identifier="QTD:FLYC:Hyb:1"/>
+        </QuantitationTypeDimension_assnref>
+        <BioDataValues_assn>
+          <BioDataCube>
+            <DataExternal_assn>
+              <DataExternal filenameURI="measured_data_1.txt" dataFormat="tab delimited"/>
+            </DataExternal_assn>
+          </BioDataCube>
+        </BioDataValues_assn>
+      </MeasuredBioAssayData>
+    </BioAssayData_assnlist>
+
+    <DesignElementDimension_assnlist>
+      <FeatureDimension identifier="DED:FLYC:1" name="DED:FLYC:1">
+        <ContainedFeatures_assnreflist>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.1"/>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.2"/>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.3"/>
+          <Feature_ref identifier="F:A-FLYC-1:1.1.1.4"/>
+        </ContainedFeatures_assnreflist>
+      </FeatureDimension>
+    </DesignElementDimension_assnlist>
+
+  </BioAssayData_package>
+
+  <QuantitationType_package>
+    <QuantitationType_assnlist>
+    </QuantitationType_assnlist>
+  </QuantitationType_package>
+
+
+  <Experiment_package>
+    <Experiment_assnlist>
+      <Experiment identifier="E-FLYC-1" name="P10005">
+        <BioAssays_assnreflist>
+          <MeasuredBioAssay_ref identifier="MBA:FLYC:1"/>
+        </BioAssays_assnreflist>
+      </Experiment>
+    </Experiment_assnlist>
+  </Experiment_package>
+</MAGE-ML>

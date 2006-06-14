@@ -232,27 +232,27 @@ public class MageDataTranslator extends DataTranslator
 
 
 //     public Iterator getItemIterator() throws ObjectStoreException {
-//       return srcItemReader.itemIterator("http://www.flymine.org/model/mage#BioAssayDatum",
+//       return srcItemReader.itemIterator("http://www.intermine.org/model/mage#BioAssayDatum",
 //                                         true);
 //     }
 
     /**
-     * @see DataTranslator#translate 
+     * @see DataTranslator#translate
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
 
         super.translate(tgtItemWriter);
-        //LOG.info(measuredBANameMap); 
-        //LOG.info(derivedBANameMap); 
+        //LOG.info(measuredBANameMap);
+        //LOG.info(derivedBANameMap);
         Iterator i;
 
-        i = derivedBANameMap.keySet().iterator(); 
+        i = derivedBANameMap.keySet().iterator();
         while (i.hasNext()) {
             String dbaId = (String) i.next();
             dba2MbaMap.put(dbaId, processDBA2MBA(dbaId));
         }
-            
+
         i = processOrganism().iterator();
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
@@ -316,8 +316,6 @@ public class MageDataTranslator extends DataTranslator
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
-
-
         // TODO MageConverter could create BioDataTuples instead?  Seems to link
         // DesignElement with BioAssay and data
 
@@ -503,7 +501,7 @@ public class MageDataTranslator extends DataTranslator
              measuredBANameMap.put(name, tgtItem.getIdentifier());
          }
 
-         if (!tgtItem.hasAttribute("name") 
+         if (!tgtItem.hasAttribute("name")
              && srcItem.hasAttribute("identifier")) {
              String identifier = srcItem.getAttribute("identifier").getValue();
              tgtItem.setAttribute("name", identifier);
@@ -607,13 +605,13 @@ public class MageDataTranslator extends DataTranslator
                     }
                 }
             }
-        } 
-        
+        }
+
         if (srcItem.hasAttribute("name")) {
             String name = srcItem.getAttribute("name").getValue();
             derivedBANameMap.put(srcItem.getIdentifier(), name);
         }
-            
+
 
         return baList;
     }
@@ -1420,8 +1418,8 @@ public class MageDataTranslator extends DataTranslator
             }
         } else if (holder.compositeSeqId > 0) {
             String materialId = compositeSeqNs + holder.compositeSeqId;
-            maResult.setReference("material", materialId);            
-            reporterIds = (List) compositeSeqToReporter.get(materialId);            
+            maResult.setReference("material", materialId);
+            reporterIds = (List) compositeSeqToReporter.get(materialId);
         }
         if (reporterIds != null && reporterIds.size() > 0) {
             maResult.addCollection(new ReferenceList("reporters", reporterIds));
@@ -1472,14 +1470,14 @@ public class MageDataTranslator extends DataTranslator
     }
 
     /**
-     * for E-MEXP-70, the only relation between derived and measued bioassay 
+     * for E-MEXP-70, the only relation between derived and measued bioassay
      * via their names
      * @param dbaId identifier for DerivedBioAssay
      * @return list of measuredBioAssay
      */
     protected List processDBA2MBA(String dbaId) {
         List mbaList = new ArrayList();
-        
+
         String name = (String) derivedBANameMap.get(dbaId);
         String name1 = null;
         String name2 = null;
@@ -1490,14 +1488,14 @@ public class MageDataTranslator extends DataTranslator
                 mbaList.add(measuredBANameMap.get(name1));
                 mbaList.add(measuredBANameMap.get(name2));
             } else {
-                mbaList.add(measuredBANameMap.get(name.trim())); 
+                mbaList.add(measuredBANameMap.get(name.trim()));
             }
         }
-                
-        return mbaList;            
-        
+
+        return mbaList;
+
     }
-    
+
 
     /**
      * set Sample.assay
@@ -1728,7 +1726,7 @@ public class MageDataTranslator extends DataTranslator
         Map paths = new HashMap();
         Set descSet;
         ItemPath path;
-        String srcNs = "http://www.flymine.org/model/mage#";
+        String srcNs = "http://www.intermine.org/model/mage#";
 
         descSet = new HashSet();
         path = new ItemPath("Experiment.descriptions", srcNs);
@@ -1813,10 +1811,10 @@ public class MageDataTranslator extends DataTranslator
         path = new ItemPath("Reporter.failTypes", srcNs);
         descSet.add(path.getItemPrefetchDescriptor());
 
-        path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs); 
+        path = new ItemPath("Reporter.immobilizedCharacteristics.type", srcNs);
         //prefetch
         descSet.add(path.getItemPrefetchDescriptor());
-        path = new ItemPath("Reporter.immobilizedCharacteristics.sequenceDatabases.database", 
+        path = new ItemPath("Reporter.immobilizedCharacteristics.sequenceDatabases.database",
                             srcNs); //line764 760 739
         descSet.add(path.getItemPrefetchDescriptor());
 

@@ -89,7 +89,7 @@ public class MageConverter extends FileConverter
 
     private static final Logger LOG = Logger.getLogger(MageConverter.class);
 
-    protected static final String MAGE_NS = "http://www.flymine.org/model/mage#";
+    protected static final String MAGE_NS = "http://www.intermine.org/model/mage#";
 
     protected HashMap seenMap = new LinkedHashMap();
     protected HashMap refMap = new LinkedHashMap();
@@ -119,7 +119,7 @@ public class MageConverter extends FileConverter
         LOG.info("seenMap.size: " + seenMap.size());
         System.out.println("refMap.size: " + refMap.size());
         System.out.println("seenMap.size: " + seenMap.size());
-       
+
     }
 
     /**
@@ -177,12 +177,12 @@ public class MageConverter extends FileConverter
     /**
      * @see FileConverter#process
      */
-    public void close() throws Exception { 
+    public void close() throws Exception {
         Iterator i = refMap.keySet().iterator();
         while (i.hasNext()) {
             String mageObjId = (String) i.next();
             String itemIdentifier = (String) refMap.get(mageObjId);
-            String className = (String) classmap.get(itemIdentifier.substring(0, 
+            String className = (String) classmap.get(itemIdentifier.substring(0,
                                itemIdentifier.indexOf("_")));
             Item item = new Item();
             item.setClassName(MAGE_NS + className);
@@ -332,15 +332,15 @@ public class MageConverter extends FileConverter
 
 
         if (className.equals("DerivedBioAssayData")) {
-            BioAssayData bad = (BioAssayData) obj;            
+            BioAssayData bad = (BioAssayData) obj;
 
-            DesignElementDimension ddimension = 
+            DesignElementDimension ddimension =
                 (DesignElementDimension) bad.getDesignElementDimension(); //D
             QuantitationTypeDimension qdimension =
                 (QuantitationTypeDimension) bad.getQuantitationTypeDimension(); //Q
             BioAssayDimension bdimension = (BioAssayDimension) bad.getBioAssayDimension(); //B
-            
-            List cubeD = null; //D    
+
+            List cubeD = null; //D
             if (ddimension instanceof FeatureDimension) {
                 cubeD = ((FeatureDimension) ddimension).getContainedFeatures();
             } else if (ddimension instanceof ReporterDimension) {
@@ -348,11 +348,11 @@ public class MageConverter extends FileConverter
             } else if (ddimension instanceof CompositeSequenceDimension) {
                 cubeD = ((CompositeSequenceDimension) ddimension).getCompositeSequences();
             }
-          
+
             List cubeQ = qdimension.getQuantitationTypes();
-          
+
             HasBioAssays.BioAssays_list cubeB = bdimension.getBioAssays();
-          
+
 
             // if all three dimensions are greater than 1 then this code will not work,
             // need to look into re-writing with better access to contents of BioDataCube.
@@ -361,9 +361,9 @@ public class MageConverter extends FileConverter
                                                    + "it is unlikely that the current code will "
                                                    + "work.");
             }
-            
+
             BioDataCube bdc = (BioDataCube)  bad.getBioDataValues();
-            //bioDataCube.order give 3 dimensions and tell which dimensions are which 
+            //bioDataCube.order give 3 dimensions and tell which dimensions are which
             BioDataCube.Order order = bdc.getOrder(); //DBQ
             if (order == null) {
                 throw new IllegalArgumentException("No order has been set for "
@@ -378,72 +378,72 @@ public class MageConverter extends FileConverter
                 emptyFile = true;
                 LOG.warn("Ignoring empty data file: " + fileName);
             }
-                                        
+
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             int cubeOrder = order.getValue();
-            
+
             switch (cubeOrder) {
-                   case 0: //BDQ                        
-                        if (cubeB.size() == 1) {                        
-                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
-                        } else if (cubeD.size() == 1) {                        
-                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
-                        } else if  (cubeQ.size() == 1) {                        
-                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item); 
-                        }                                    
+                   case 0: //BDQ
+                        if (cubeB.size() == 1) {
+                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item);
+                        } else if (cubeD.size() == 1) {
+                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item);
+                        } else if  (cubeQ.size() == 1) {
+                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item);
+                        }
                         break;
-                    
+
                     case 1: //BQD
-                        if (cubeB.size() == 1) {                        
-                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item); 
-                        } else if (cubeD.size() == 1) {                        
-                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
-                        } else if  (cubeQ.size() == 1) {                        
-                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item); 
-                        }                                    
+                        if (cubeB.size() == 1) {
+                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item);
+                        } else if (cubeD.size() == 1) {
+                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item);
+                        } else if  (cubeQ.size() == 1) {
+                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item);
+                        }
                         break;
 
                     case 2: //DBQ
                         if (cubeD.size() == 1) {
-                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processBQ(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeB.size() == 1) {
-                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeQ.size() == 1) {
-                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item);
                         }
                     case 3: //DQB
                         if (cubeD.size() == 1) {
-                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeB.size() == 1) {
-                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processDQ(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeQ.size() == 1) {
-                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item);
                         }
                     case 4: //QBD
                         if (cubeD.size() == 1) {
-                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeB.size() == 1) {
-                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeQ.size() == 1) {
-                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processBD(br, qTypes, cubeB, cubeD, cubeQ, item);
                         }
-                        
-                    case 5: //QDB 
+
+                    case 5: //QDB
                         if (cubeD.size() == 1) {
-                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processQB(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeB.size() == 1) {
-                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processQD(br, qTypes, cubeB, cubeD, cubeQ, item);
                         } else if (cubeQ.size() == 1) {
-                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item); 
+                            processDB(br, qTypes, cubeB, cubeD, cubeQ, item);
                         }
-                        
-                    default: 
-                        break;                        
-            }   
-                                        
+
+                    default:
+                        break;
+            }
+
         }
 
-        
+
         if (seenMap.containsKey(obj) || seenMap.containsKey(objId)) {
             storeItem = true;
         } else {
@@ -461,7 +461,7 @@ public class MageConverter extends FileConverter
         return itemId;
     }
 
-       
+
     /**
      * Create bioAssayDatum from found quantitationType
      * @param value reading from fileExternal
@@ -471,13 +471,13 @@ public class MageConverter extends FileConverter
      * @return the created item
      * @throws Exception if problems occur
      */
-    private Item makeBioAssayDatum(String value, DesignElement de, BioAssay ba, 
-            QuantitationType qt) 
+    private Item makeBioAssayDatum(String value, DesignElement de, BioAssay ba,
+            QuantitationType qt)
         throws Exception {
         Item datum = makeItem("BioAssayDatum");
-        
+
         datum.setAttribute("value", value);
-                            
+
         if (de instanceof Feature) {
             datum.setReference("feature", findItemIdentifier(de, true));
         } else if (de instanceof Reporter) {
@@ -485,10 +485,10 @@ public class MageConverter extends FileConverter
         } else if (de instanceof CompositeSequence) {
             datum.setReference("compositeSequence", findItemIdentifier(de, true));
         }
-        
+
         datum.setReference("bioAssay", findItemIdentifier(ba, true));
         datum.setReference("quantitationType", findItemIdentifier(qt, true));
-        
+
         return datum;
     }
 
@@ -501,15 +501,15 @@ public class MageConverter extends FileConverter
      * @param cubeQ: quantitationType list
      * @param item: derivedBioAssayData
      * @throws Exception if problems occur
-     */    
-    private void processBD(BufferedReader br, Set qTypes, 
-                           HasBioAssays.BioAssays_list cubeB, 
+     */
+    private void processBD(BufferedReader br, Set qTypes,
+                           HasBioAssays.BioAssays_list cubeB,
                            List cubeD, List cubeQ, Item item)
         throws Exception {
         boolean storeTuple = false;
-        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        QuantitationType qt = (QuantitationType) cubeQ.get(0); 
-        if (qt.getName() != null 
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData");
+        QuantitationType qt = (QuantitationType) cubeQ.get(0);
+        if (qt.getName() != null
             && qTypes.contains(qt.getName().toLowerCase())) {
             for (Iterator i = cubeB.iterator(); i.hasNext();) {
                 BioAssay ba = (BioAssay) i.next();
@@ -518,19 +518,19 @@ public class MageConverter extends FileConverter
                     StringTokenizer st = new StringTokenizer(s, "\t");
                     for (Iterator j = cubeD.iterator(); j.hasNext(); ) {
                         DesignElement de = (DesignElement) j.next();
-                        String value = st.nextToken();                                    
-                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
-                        storeItem(datum);   
-                        storeTuple = true;   
+                        String value = st.nextToken();
+                        Item datum = makeBioAssayDatum(value, de, ba, qt);
+                        storeItem(datum);
+                        storeTuple = true;
                         tupleList.addRefId(datum.getIdentifier());
-                     
+
                     }
                 }
             }
-        }        
+        }
         processTuples(storeTuple, tupleList, item);
     }
-    
+
     /**
      * @param br: bufferedReader read one line every time
      * @param qTypes: all the quantitationTypes from build file
@@ -539,27 +539,27 @@ public class MageConverter extends FileConverter
      * @param cubeQ: quantitationType list
      * @param item: derivedBioAssayData
      * @throws Exception if problems occur
-     */    
-    private void processDB(BufferedReader br, Set qTypes, 
-                           HasBioAssays.BioAssays_list cubeB, 
-                           List cubeD, List cubeQ, Item item) 
+     */
+    private void processDB(BufferedReader br, Set qTypes,
+                           HasBioAssays.BioAssays_list cubeB,
+                           List cubeD, List cubeQ, Item item)
         throws Exception {
         boolean storeTuple = false;
-        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData");
         QuantitationType qt = (QuantitationType) cubeQ.get(0);
-        if (qt.getName() != null 
+        if (qt.getName() != null
             && qTypes.contains(qt.getName().toLowerCase())) {
             for (Iterator i = cubeD.iterator(); i.hasNext();) {
-                DesignElement de = (DesignElement) i.next();    
+                DesignElement de = (DesignElement) i.next();
                 String s = br.readLine();
                 if (s != null) {
                     StringTokenizer st = new StringTokenizer(s, "\t");
-                    for (Iterator j = cubeB.iterator(); j.hasNext(); ) {                    
-                        BioAssay ba = (BioAssay) j.next();                                
-                        String value = st.nextToken();   
-                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
-                        storeItem(datum);   
-                        storeTuple = true;   
+                    for (Iterator j = cubeB.iterator(); j.hasNext(); ) {
+                        BioAssay ba = (BioAssay) j.next();
+                        String value = st.nextToken();
+                        Item datum = makeBioAssayDatum(value, de, ba, qt);
+                        storeItem(datum);
+                        storeTuple = true;
                         tupleList.addRefId(datum.getIdentifier());
                     }
                 }
@@ -576,14 +576,14 @@ public class MageConverter extends FileConverter
      * @param cubeQ: quantitationType list
      * @param item: derivedBioAssayData
      * @throws Exception if problems occur
-     */    
-    private void processBQ(BufferedReader br, Set qTypes, 
-                           HasBioAssays.BioAssays_list cubeB, 
-                           List cubeD, List cubeQ, Item item) 
+     */
+    private void processBQ(BufferedReader br, Set qTypes,
+                           HasBioAssays.BioAssays_list cubeB,
+                           List cubeD, List cubeQ, Item item)
         throws Exception {
         boolean storeTuple = false;
-        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        DesignElement de = (DesignElement) cubeD.get(0);                            
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData");
+        DesignElement de = (DesignElement) cubeD.get(0);
         for (Iterator i = cubeB.iterator(); i.hasNext();) {
             BioAssay ba = (BioAssay) i.next();
             String s = br.readLine();
@@ -591,12 +591,12 @@ public class MageConverter extends FileConverter
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
                     QuantitationType qt = (QuantitationType) j.next();
-                    String value = st.nextToken();  
-                    if (qt.getName() != null 
+                    String value = st.nextToken();
+                    if (qt.getName() != null
                         && qTypes.contains(qt.getName().toLowerCase())) {
-                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
-                        storeItem(datum);   
-                        storeTuple = true;   
+                        Item datum = makeBioAssayDatum(value, de, ba, qt);
+                        storeItem(datum);
+                        storeTuple = true;
                         tupleList.addRefId(datum.getIdentifier());
                     }
                 }
@@ -604,7 +604,7 @@ public class MageConverter extends FileConverter
         }
         processTuples(storeTuple, tupleList, item);
     }
- 
+
 
     /**
      * @param br: bufferedReader read one line every time
@@ -614,27 +614,27 @@ public class MageConverter extends FileConverter
      * @param cubeQ: quantitationType list
      * @param item: derivedBioAssayData
      * @throws Exception if problems occur
-     */     
-    private void processQB(BufferedReader br, Set qTypes, 
-                           HasBioAssays.BioAssays_list cubeB, 
-                           List cubeD, List cubeQ, Item item) 
+     */
+    private void processQB(BufferedReader br, Set qTypes,
+                           HasBioAssays.BioAssays_list cubeB,
+                           List cubeD, List cubeQ, Item item)
         throws Exception {
         boolean storeTuple = false;
-        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        DesignElement de = (DesignElement) cubeD.get(0);                            
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData");
+        DesignElement de = (DesignElement) cubeD.get(0);
         for (Iterator i = cubeQ.iterator(); i.hasNext();) {
-            QuantitationType qt = (QuantitationType) i.next();               
+            QuantitationType qt = (QuantitationType) i.next();
             String s = br.readLine();
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, "\t");
-                if (qt.getName() != null 
+                if (qt.getName() != null
                     && qTypes.contains(qt.getName().toLowerCase())) {
                     for (Iterator j = cubeB.iterator(); j.hasNext(); ) {
                         BioAssay ba = (BioAssay) j.next();
-                        String value = st.nextToken();  
-                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
-                        storeItem(datum);   
-                        storeTuple = true;   
+                        String value = st.nextToken();
+                        Item datum = makeBioAssayDatum(value, de, ba, qt);
+                        storeItem(datum);
+                        storeTuple = true;
                         tupleList.addRefId(datum.getIdentifier());
                     }
                 }
@@ -642,7 +642,7 @@ public class MageConverter extends FileConverter
         }
         processTuples(storeTuple, tupleList, item);
     }
-    
+
     /**
      * @param br: bufferedReader read one line every time
      * @param qTypes: all the quantitationTypes from build file
@@ -651,35 +651,35 @@ public class MageConverter extends FileConverter
      * @param cubeQ: quantitationType list
      * @param item: derivedBioAssayData
      * @throws Exception if problems occur
-     */    
-    private void processDQ(BufferedReader br, Set qTypes, 
-                           HasBioAssays.BioAssays_list cubeB, 
-                           List cubeD, List cubeQ, Item item) 
+     */
+    private void processDQ(BufferedReader br, Set qTypes,
+                           HasBioAssays.BioAssays_list cubeB,
+                           List cubeD, List cubeQ, Item item)
         throws Exception {
         boolean storeTuple = false;
-        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        BioAssay ba = (BioAssay) cubeB.get(0);                            
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData");
+        BioAssay ba = (BioAssay) cubeB.get(0);
         for (Iterator i = cubeD.iterator(); i.hasNext();) {
             DesignElement de = (DesignElement) i.next();
             String s = br.readLine();
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, "\t");
                 for (Iterator j = cubeQ.iterator(); j.hasNext(); ) {
-                    QuantitationType qt = (QuantitationType) j.next();  
-                    String value = st.nextToken();  
-                    if (qt.getName() != null 
+                    QuantitationType qt = (QuantitationType) j.next();
+                    String value = st.nextToken();
+                    if (qt.getName() != null
                         && qTypes.contains(qt.getName().toLowerCase())) {
-                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
-                        storeItem(datum);   
-                        storeTuple = true;   
-                        tupleList.addRefId(datum.getIdentifier());                        
+                        Item datum = makeBioAssayDatum(value, de, ba, qt);
+                        storeItem(datum);
+                        storeTuple = true;
+                        tupleList.addRefId(datum.getIdentifier());
                     }
                 }
-            } 
+            }
         }
         processTuples(storeTuple, tupleList, item);
     }
- 
+
     /**
      * @param br: bufferedReader read one line every time
      * @param qTypes: all the quantitationTypes from build file
@@ -688,55 +688,55 @@ public class MageConverter extends FileConverter
      * @param cubeQ: quantitationType list
      * @param item: derivedBioAssayData
      * @throws Exception if problems occur
-     */  
-    private void processQD(BufferedReader br, Set qTypes, 
-                         HasBioAssays.BioAssays_list cubeB, 
-                         List cubeD, List cubeQ, Item item) 
+     */
+    private void processQD(BufferedReader br, Set qTypes,
+                         HasBioAssays.BioAssays_list cubeB,
+                         List cubeD, List cubeQ, Item item)
         throws Exception {
         boolean storeTuple = false;
-        ReferenceList tupleList = new ReferenceList("bioAssayTupleData"); 
-        BioAssay ba = (BioAssay) cubeB.get(0);                            
+        ReferenceList tupleList = new ReferenceList("bioAssayTupleData");
+        BioAssay ba = (BioAssay) cubeB.get(0);
         for (Iterator i = cubeQ.iterator(); i.hasNext();) {
-            QuantitationType qt = (QuantitationType) i.next();     
+            QuantitationType qt = (QuantitationType) i.next();
             String s = br.readLine();
-            if (s != null) {            
+            if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, "\t");
-                if (qt.getName() != null 
+                if (qt.getName() != null
                     && qTypes.contains(qt.getName().toLowerCase())) {
                     for (Iterator j = cubeD.iterator(); j.hasNext(); ) {
                         DesignElement de = (DesignElement) j.next();
-                        String value = st.nextToken();      
-                        Item datum = makeBioAssayDatum(value, de, ba, qt); 
-                        storeItem(datum);   
-                        storeTuple = true;   
-                        tupleList.addRefId(datum.getIdentifier());                               
+                        String value = st.nextToken();
+                        Item datum = makeBioAssayDatum(value, de, ba, qt);
+                        storeItem(datum);
+                        storeTuple = true;
+                        tupleList.addRefId(datum.getIdentifier());
                     }
                 }
             }
-        } 
-        processTuples(storeTuple, tupleList, item); 
+        }
+        processTuples(storeTuple, tupleList, item);
     }
 
-    
+
     /**
      * create BioDataTuples
      * @param storeTuple: boolean
      * @param tupleList: referenceList created during procesDBQ
      * @param item: derivedBioAssayData adding reference pointing to BioDataTuples
      * @throws Exception if problems occur
-     */      
-    private void processTuples (boolean storeTuple, ReferenceList tupleList, 
-                                Item item) 
-        throws Exception {     
+     */
+    private void processTuples (boolean storeTuple, ReferenceList tupleList,
+                                Item item)
+        throws Exception {
         if (storeTuple) {
             Item bdt = makeItem("BioDataTuples");
             bdt.addCollection(tupleList);
             storeItem(bdt); // store BioDataTuple item
             item.setReference("bioDataValues", bdt.getIdentifier());
-        }   
+        }
     }
 
-    private String checkNameValueType(Object obj, HashMap map, String key) 
+    private String checkNameValueType(Object obj, HashMap map, String key)
         throws Exception  {
 
         TypeUtil.FieldInfo info = (TypeUtil.FieldInfo) map.get(key);
@@ -779,7 +779,7 @@ public class MageConverter extends FileConverter
      * @param fileName added to the end of normalised filenames
      * @throws Exception of anything goes wrong
      */
-    public static void processDerivedBioAssaysFromSup(Reader reader, File newMageFile, 
+    public static void processDerivedBioAssaysFromSup(Reader reader, File newMageFile,
         String fileName) throws Exception {
         MAGEJava mage = MageConverter.readMage(reader);
         MageConverter.addDerivedBioAssaysFromSup(mage, fileName);
@@ -889,11 +889,11 @@ public class MageConverter extends FileConverter
      * @param supFileName supplymentary filename
      */
     private static void addDerivedBioAssaysFromSup(MAGEJava mage, String supFileName) {
-        
+
         Map mageIds = new HashMap();
         Set dbas = new HashSet();
         BioAssayData_package badPkg = mage.getBioAssayData_package();
-        
+
         SpecializedQuantitationType sqt = new SpecializedQuantitationType();
         sqt.setIdentifier(nextMageIdentifier(mageIds, "QuantitationType"));
         sqt.setName("Fold Change");
@@ -917,9 +917,9 @@ public class MageConverter extends FileConverter
         dba.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssay"));
         BioAssayMap bam = new BioAssayMap();
         bam.setIdentifier(nextMageIdentifier(mageIds, "BioAssayMap"));
-        
+
         DerivedBioAssayData dbad = new DerivedBioAssayData();
-        dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));   
+        dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));
         BioDataCube bdc = new BioDataCube();
         bdc.setValueOrder(2);
         DataExternal data = new DataExternal();
@@ -927,32 +927,32 @@ public class MageConverter extends FileConverter
         bdc.setDataExternal(data);
         dbad.setBioDataValues(bdc);
 
-        
+
         Iterator bioAssayIter = baPkg.getBioAssay_list().iterator();
         //HasSourceBioAssays.SourceBioAssays_list sbaList ;//= new HasSourceBioAssays();
         while (bioAssayIter.hasNext()) {
             BioAssay bioAssay = (BioAssay) bioAssayIter.next();
-            
+
             if (bioAssay instanceof MeasuredBioAssay) {
                 Iterator dataIter = ((MeasuredBioAssay) bioAssay)
                     .getMeasuredBioAssayData().iterator();
                 bam.addToSourceBioAssays(bioAssay);
                 //sbaList.addToSourceBioAssay(bioAssay);
-                
+
                 while (dataIter.hasNext()) {
                     MeasuredBioAssayData mbad = (MeasuredBioAssayData) dataIter.next();
 
                     // dbad.DesignElementDimension
                     DesignElementDimension ded = mbad.getDesignElementDimension();
                     dbad.setDesignElementDimension(mbad.getDesignElementDimension());
-                    
+
                     // TODO BioAssayDimension.bioAssays
                     // only seems to reference MeasuredBioAssay?
 
                     //DerivedBioAssayData dbad = new DerivedBioAssayData();
                     //dbad.setIdentifier(nextMageIdentifier(mageIds, "DerivedBioAssayData"));
 
-                   
+
                     // dbad.QuantitationTypeDimension
                     // TODO look at what is done with this in Translator
                     dbad.setQuantitationTypeDimension(qtDimension);
