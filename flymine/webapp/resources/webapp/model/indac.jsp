@@ -15,7 +15,7 @@
           available and uniform set of array reagents so that microarray data collected
           from different studies may be more easily compared. On behalf of INDAC, the
           <A href="http://www.flychip.org.uk">FlyChip group</A> has designed a set
-          of 70mer long oligonucleotides to release 4.1 of the <I>D. melanogaster</I>
+          of 65-69mer long oligonucleotides to release 4.1 of the <I>D. melanogaster</I>
           genome. Oligos were designed using a modified version of 
           <A href="http://berry.engin.umich.edu/oligoarray2">OligoArray2</A> and other
           post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).
@@ -33,7 +33,7 @@
     </td>
     <td valign="top" width="40%">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
       <div class="body">
         <ul>
@@ -43,10 +43,15 @@
               <query name="" model="genomic" view="MicroarrayOligo MicroarrayOligo.transcript"/>
             </im:querylink>
           </li>
+           <li>
+            <im:querylink text="All INDAC microarray oligo sequences with their identifier, length and tm (for export in FASTA)" skipBuilder="true">
+             <query name="" model="genomic" view="MicroarrayOligo MicroarrayOligo.identifier MicroarrayOligo.length MicroarrayOligo.tm"/>
+            </im:querylink>
+          </li>         
           <li>
             <im:querylink text="All INDAC microarray oligo identifiers and the identifier
                                 of the associated transcript (for export/download)" skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.distance3Prime MicroarrayOligo.tm MicroarrayOligo.transcript.identifier"/>
+              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.transcript.identifier"/>
             </im:querylink>
           </li>
         </ul>
@@ -55,7 +60,7 @@
             <im:querylink text="All INDAC microarray oligos identifiers and
                                 their locations on the associated transcript
                                 (for export/download)" skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.distance3Prime MicroarrayOligo.tm MicroarrayOligo.objects.start MicroarrayOligo.objects.end MicroarrayOligo.objects.subject.identifier">
+              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.objects.start MicroarrayOligo.objects.end MicroarrayOligo.objects.subject.identifier">
                 <node path="MicroarrayOligo" type="MicroarrayOligo">
                 </node>
                 <node path="MicroarrayOligo.objects" type="Location">

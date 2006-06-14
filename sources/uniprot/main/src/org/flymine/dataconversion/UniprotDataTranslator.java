@@ -69,7 +69,7 @@ public class UniprotDataTranslator extends DataTranslator
     private boolean outputIdentifiers = false;
     private Map identifierToOrganismDbId = new HashMap();
     //geneIdentifier is hugo id from ensembl-human, don't create
-    private boolean createGeneIdentifier = true; 
+    private boolean createGeneIdentifier = true;
     private Item uniprotDataSet;
     private Reference uniprotDataSetRef;
 
@@ -398,8 +398,9 @@ public class UniprotDataTranslator extends DataTranslator
                         dbId = getDataSourceId("WormBase");
                     }
                 } else if (taxonId == 180454) { // A. gambiae str. PEST
-                    // no organismDbId and no specific dbxref to enembl - assume that geneIdentifier
-                    // is always ensembl gene stable id and set organismDbId to be identifier
+                    // no organismDbId and no specific dbxref to ensembl - assume that
+                    // geneIdentifier is always ensembl gene stable id and set organismDbId
+                    // to be identifier
                     if (geneIdentifier != null) {
                         createGene = true;
                         geneOrganismDbId = geneIdentifier;
@@ -409,8 +410,16 @@ public class UniprotDataTranslator extends DataTranslator
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
                     createGeneIdentifier = false;
                     if (geneOrganismDbId != null) {
-                        createGene = true;                      
-                        dbId = getDataSourceId("Ensembl");              
+                        createGene = true;
+                        dbId = getDataSourceId("Ensembl");
+                    }
+                } else if (taxonId == 4932) { // S. cerevisiae
+                    // need to set SGD identifier to be SGD accession, also set organismDbId
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "SGD", geneNames);
+                    geneOrganismDbId = geneIdentifier;
+                    if (geneIdentifier != null) {
+                        createGene = true;
+                        dbId = getDataSourceId("SGD");
                     }
                 }
 
@@ -587,7 +596,8 @@ public class UniprotDataTranslator extends DataTranslator
                 while (srcPropertyIter.hasNext()) {
                     Item srcProperty = (Item) srcPropertyIter.next();
                     String srcPropertyValue = getAttributeValue(srcProperty, "value");
-                    if ("gene designation".equals(getAttributeValue(srcProperty, "type"))
+                    String srcPropType = getAttributeValue(srcProperty, "type");
+                    if (srcPropType.equals("gene designation")
                         && (geneNames.contains(srcPropertyValue)
                             || geneNames.contains(srcPropertyValue
                                                   .substring(srcPropertyValue

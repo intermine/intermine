@@ -50,11 +50,6 @@
     <c:set var="label" value="${label}-Genes"/>
   </c:if>
   
-  <c:if test="${type != 'Pseudogenes+Genes'}">
-    <c:set var="type" value="${type}+Pseudogenes"/>
-    <c:set var="label" value="${label}-Pseudogenes"/>
-  </c:if>
-
   <c:set var="name" value="FlyMineInternalID_${object.id}"/>
 
   <c:if test="${cld.unqualifiedName == 'MRNA' || cld.unqualifiedName == 'Transcript'}">
@@ -71,7 +66,7 @@
     </div>
     <c:if test="${cld.unqualifiedName != 'Chromosome'}">
       <div>
-        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=400"/>
+        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};type=${type};name=${name};width=400;b=1"/>
       </div>
     </c:if>
   </html:link>

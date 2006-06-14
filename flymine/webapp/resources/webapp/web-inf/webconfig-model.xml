@@ -134,6 +134,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
+      <fieldconfig fieldExpr="length"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -395,6 +396,8 @@
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="protein.primaryAccession"/>
+      <fieldconfig fieldExpr="protein.organism.shortName"/>
     </fields>
   </class>
 
@@ -406,8 +409,19 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.ProteinRegion">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="protein.identifier"/>
+     </fields>
+  </class>
+
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
                      className="org.flymine.web.GFF3Exporter"/>
+  <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
+                     className="org.flymine.web.ProteinInteractionExporter"/>
+  <tableExportConfig id="proteinInteractionViewExporter" actionPath="/exportAction?type=proteinInteractionViewExporter"
+                     className="org.flymine.web.ProteinInteractionViewExporter"/>
 </webconfig>

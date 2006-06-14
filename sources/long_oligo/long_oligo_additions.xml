@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.MicroarrayOligo" extends="org.flymine.model.genomic.Oligo" is-interface="true">
-  <attribute name="distance3Prime" type="java.lang.Integer"/>
   <attribute name="tm" type="java.lang.Float"/>
   <attribute name="length" type="java.lang.Integer"/>
   <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="microarrayOligos"/>

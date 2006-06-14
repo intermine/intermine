@@ -26,6 +26,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.task.PrecomputeTask;
 
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
@@ -136,7 +137,7 @@ public abstract class OverlapUtil
             cs.addConstraint(chromosomeConstraint);
         }
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
 
         Results results = os.execute(q);
 
@@ -206,7 +207,7 @@ public abstract class OverlapUtil
          * Create a new OverlappingFeaturesIterator.
          * @param locationsByLengthMap A Map from LocatedSequenceFeature lengths to Location
          * @param locationsByStartPos A Map from Location start position to Location
-         * @param locationSubjectMap 
+         * @param locationSubjectMap
          * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of
          * the same class.
          */
@@ -225,11 +226,11 @@ public abstract class OverlapUtil
          */
         public boolean hasNext() {
             nextReturnValue = getNextReturnValue();
-            
+
             return nextReturnValue != null;
         }
 
-        
+
         /**
          * Return next pair of overlapping Locations, or null when we run out.
          * @return the next pair
@@ -237,7 +238,7 @@ public abstract class OverlapUtil
         private Location[] getNextReturnValue() {
             while (otherLocationIter != null && otherLocationIter.hasNext()) {
                 Location nextOtherLocation = (Location) otherLocationIter.next();
-             
+
                 Location[] returnArray = new Location[2];
                 returnArray[0] = currentLocation;
                 returnArray[1] = nextOtherLocation;
@@ -321,10 +322,10 @@ public abstract class OverlapUtil
 
             while (subRangeIter.hasNext()) {
                 Location otherLocation = (Location) subRangeIter.next();
-                LocatedSequenceFeature otherLsf = 
+                LocatedSequenceFeature otherLsf =
                     (LocatedSequenceFeature) locationSubjectMap.get(thisLocation.getId());
                 Class thisLocationClass = otherLsf.getClass();
-                LocatedSequenceFeature thisLsf = 
+                LocatedSequenceFeature thisLsf =
                     (LocatedSequenceFeature) locationSubjectMap.get(otherLocation.getId());
                 Class otherLocationClass = thisLsf.getClass();
                 if (thisLocation != otherLocation
@@ -412,7 +413,7 @@ public abstract class OverlapUtil
     {
         /**
          * Return -1 if the length of the first Location (o1) is less than the length of the second
-         * (o2) or if the lengths are the same, but o1.id is less than o2.id, return 0 if the 
+         * (o2) or if the lengths are the same, but o1.id is less than o2.id, return 0 if the
          * lengths and ids are the same, and 1 otherwise.
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
@@ -443,7 +444,7 @@ public abstract class OverlapUtil
             }
         }
     }
-    
+
     /**
      * Return the length of the given Location (ie. end - start + 1).
      * @param location the Location

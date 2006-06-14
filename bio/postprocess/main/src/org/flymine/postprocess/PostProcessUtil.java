@@ -108,7 +108,7 @@ public class PostProcessUtil
         cs.addConstraint(cc1);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
         return res.iterator();
@@ -138,7 +138,7 @@ public class PostProcessUtil
      */
     public static Iterator findConnectingClasses(ObjectStore os,
                                                  Class sourceClass, String sourceClassFieldName,
-                                                 Class connectingClass, 
+                                                 Class connectingClass,
                                                  String connectingClassFieldName,
                                                  Class destinationClass, boolean orderBySource)
         throws ObjectStoreException, IllegalAccessException {
@@ -186,7 +186,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
 
@@ -229,7 +229,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
         return res.iterator();
@@ -269,7 +269,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(500);
         return res.iterator();
@@ -291,7 +291,7 @@ public class PostProcessUtil
         res.setBatchSize(500);
         return res.iterator();
     }
-    
+
     /**
      * Query ObjectStore for all Location object between given object (eg. Chromosome) and
      * subject (eg. Gene) classes.  Return an iterator over the results ordered by subject if
@@ -340,7 +340,8 @@ public class PostProcessUtil
         indexesToCreate.add(qfObj);
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
-        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate);
+        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
+                                                   PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;
@@ -381,7 +382,7 @@ public class PostProcessUtil
         cs.addConstraint(cc2);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;
@@ -407,7 +408,7 @@ public class PostProcessUtil
         QueryClass qcFirst = new QueryClass(firstClass);
         q.addFrom(qcFirst);
         q.addToSelect(qcFirst);
-        
+
         QueryClass qcFirstLoc = new QueryClass(Location.class);
         q.addFrom(qcFirstLoc);
         q.addToSelect(qcFirstLoc);
@@ -443,7 +444,7 @@ public class PostProcessUtil
         cs.addConstraint(cc4);
 
         q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;
