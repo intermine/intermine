@@ -1,4 +1,0 @@
-# columns are fields from the Gene class: name identifier (dummy) organismDbId
-name1	identifier1	dummy field 1	organismDbId1
-name2	identifier2		organismDbId2
-	identifier3	dummy field 3	organismDbId3
