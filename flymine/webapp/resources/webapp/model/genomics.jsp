@@ -12,7 +12,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
     </td>
   </tr>
@@ -33,12 +33,29 @@
           </dd>
           <dt>
             <i>Anopheles gambiae</i> str. PEST
-           
           </dt> 
           <dd>
-            Release 2b genome annotations from 
+            Release 37.3 genome annotations from
              <a href="http://www.ensembl.org/Anopheles_gambiae">
               <html:img src="model/ensembl_logo_mini.png"/>
+            </a>.
+          </dd>
+          <dt>
+            <i>Apis mellifera</i>
+          </dt>
+          <dd>
+            Release 37.2d genome annotations from
+             <a href="http://www.ensembl.org/Apis_mellifera">
+              <html:img src="model/ensembl_logo_mini.png"/>
+            </a>.
+          </dd>
+          <dt>
+            <i>Drosophila pseudoobscura</i>
+          </dt>
+          <dd>
+            Release 2.0 genome annotations from
+             <a href="http://www.flybase.org">
+              <html:img src="model/FlyBase_logo_mini.png"/>
             </a>.
           </dd>
         </dl>
@@ -103,6 +120,62 @@
               </query>
             </im:querylink>
           </li>
+          <li>
+            <im:querylink text="All <i>Apis</i> genes (browse)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+          <li>
+            <im:querylink text="All <i>Apis</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+          <li>
+            <im:querylink text="All <i> Dros pseudoobscura</i> genes (browse)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+          <li>
+            <im:querylink text="All <i> Dros pseudoobscura</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
         </ul>
       </div>
     </td>
@@ -115,7 +188,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Explore data sets
+        Bulk download
       </div>
     </td>
   </tr>

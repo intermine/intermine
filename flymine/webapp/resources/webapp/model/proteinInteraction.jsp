@@ -3,6 +3,9 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<p style="color:#e00;">
+    Note: Due to recent format changes in the PSI data format confidence scores may be missing, this will be corrected shortly (12/5/06)
+</p>
 <TABLE width="100%">
   <TR>
     <TD valign="top">
@@ -36,7 +39,20 @@
 High-throughput yeast two-hybrid dataset.<BR>
 More than 2300 protein-protein interactions were identified, of which 710 are of high confidence.<BR>
          </DD>
-         <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.</DT>
+         <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.
+             <im:querylink text=" D. melanogaster experiment list" skipBuilder="true">
+                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                         <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A"></constraint>
+                     </node>
+                 </query>
+             </im:querylink>
+         </DT>
        </DL>
        <P><B><I>C. elegans</I></B></P>
        <DL>
@@ -46,7 +62,20 @@ More than 2300 protein-protein interactions were identified, of which 710 are of
          <DD>
            Total of 4049 interactions identified.
          </DD>
-         <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.</DT>
+            <DT>In addition a number of protein interactions and complexes from smaller scale experiments are available.
+                <im:querylink text=" C. elegans experiment list" skipBuilder="true">
+                    <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                        <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                        <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                        <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                        <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                        <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                        <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                            <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A"></constraint>
+                        </node>
+                    </query>
+                </im:querylink>
+            </DT>
          </DL>
        <P><B><I>S. cerevisiae</I></B></P>
        <DL>
@@ -87,14 +116,25 @@ More than 2300 protein-protein interactions were identified, of which 710 are of
          </DD>
          <DT>
            In addition a number of protein interactions and complexes from smaller scale experiments are available.
+             <im:querylink text=" S. cerevisiae experiment list" skipBuilder="true">
+                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                         <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A"></constraint>
+                     </node>
+                 </query>
+             </im:querylink>
          </DT>
-
        </DL>
      </div>
     </TD>
     <TD width="40%" valign="top">
       <div class="heading2">
-       Explore data sets
+       Bulk download
       </div>
       <div class="body">
         
