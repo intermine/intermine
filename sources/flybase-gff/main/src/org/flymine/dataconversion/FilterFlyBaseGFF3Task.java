@@ -35,7 +35,7 @@ import org.apache.tools.ant.types.FileSet;
  *
  * @author Richard Smith
  */
-public class FilterFlyBaseGFFTask extends Task
+public class FilterFlyBaseGFF3Task extends Task
 {
     private FileSet fileSet;
     private File tgtDir;
