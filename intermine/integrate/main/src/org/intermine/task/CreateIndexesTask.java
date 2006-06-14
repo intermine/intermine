@@ -257,7 +257,9 @@ public class CreateIndexesTask extends Task
                         indexNameBase = tableName + "__" + keyName;
 
                     } else {
-                        indexNameBase = tableName + "__" + cldTableName + "__" + keyName;
+                        indexNameBase = tableName + "__" + cldTableName.subSequence(0,
+                                (cldTableName.length() > 16 ? 15 : cldTableName.length())) + 
+                                "__" + keyName;
                     }
                     addStatement(statements, indexNameBase, tableName,
                                  StringUtil.join(fieldNames, ", ") + ", id", nextCld, tableMaster);
