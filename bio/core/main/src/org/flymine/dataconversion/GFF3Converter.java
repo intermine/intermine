@@ -10,29 +10,31 @@ package org.flymine.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.util.TypeUtil;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 import org.flymine.io.gff3.GFF3Parser;
 import org.flymine.io.gff3.GFF3Record;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
@@ -62,8 +64,8 @@ public class GFF3Converter
     private Map identifierMap = new HashMap();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
-    
-    
+
+
 
     /**
      * Constructor
@@ -78,7 +80,7 @@ public class GFF3Converter
      */
 
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
-                         String dataSourceName, String dataSetTitle, Model tgtModel, 
+                         String dataSourceName, String dataSetTitle, Model tgtModel,
                          GFF3RecordHandler handler) {
 
         this.writer = writer;
@@ -89,10 +91,10 @@ public class GFF3Converter
         this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         this.organism = getOrganism();
-        
+
         this.dataSet = createItem("DataSet");
         dataSet.addAttribute(new Attribute("title", dataSetTitle));
-        
+
         this.dataSource = createItem("DataSource");
         dataSource.addAttribute(new Attribute("name", dataSourceName));
 
@@ -187,12 +189,12 @@ public class GFF3Converter
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
             feature.addAttribute(new Attribute("identifier", record.getId()));
-         } else {
+        } else {
             feature = createItem(className);
-         }
+        }
 
         if (names != null) {
-            if (cd.getFieldDescriptorByName("symbol") == null) {                
+            if (cd.getFieldDescriptorByName("symbol") == null) {
                 feature.addAttribute(new Attribute("name", (String) names.get(0)));
                 for (Iterator i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
@@ -216,40 +218,51 @@ public class GFF3Converter
                 }
             }
         }
-        
+
         feature.addReference(getOrgRef());
 
         // if parents -> create a SimpleRelation
         if (record.getParents() != null) {
+            Set seenParents = new HashSet();
             for (Iterator i = parents.iterator(); i.hasNext();) {
                 String parentName = (String) i.next();
-                Item simpleRelation = createItem("SimpleRelation");
-                simpleRelation.setReference("object", getIdentifier(parentName));
-                simpleRelation.setReference("subject", feature.getIdentifier());
-                handler.addParentRelation(simpleRelation);
+                // add check for duplicate parent IDs to cope with pseudoobscura GFF
+                if (!seenParents.contains(parentName)) {
+                    Item simpleRelation = createItem("SimpleRelation");
+                    simpleRelation.setReference("object", getIdentifier(parentName));
+                    simpleRelation.setReference("subject", feature.getIdentifier());
+                    handler.addParentRelation(simpleRelation);
+                    seenParents.add(parentName);
+                }
             }
         }
 
-        
-        Item location = createItem("Location");
-        location.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
-        location.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
-        if (record.getStrand() != null && record.getStrand().equals("+")) {
-            location.addAttribute(new Attribute("strand", "1"));
-        } else if (record.getStrand() != null && record.getStrand().equals("-")) {
-            location.addAttribute(new Attribute("strand", "-1"));
+
+        Item relation;
+
+        if (record.getStart() < 1 || record.getEnd() < 1) {
+            relation = createItem("SimpleRelation");
         } else {
-            location.addAttribute(new Attribute("strand", "0"));
+            relation = createItem("Location");
+            relation.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
+            relation.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
+            if (record.getStrand() != null && record.getStrand().equals("+")) {
+                relation.addAttribute(new Attribute("strand", "1"));
+            } else if (record.getStrand() != null && record.getStrand().equals("-")) {
+                relation.addAttribute(new Attribute("strand", "-1"));
+            } else {
+                relation.addAttribute(new Attribute("strand", "0"));
+            }
+
+            if (record.getPhase() != null) {
+                relation.addAttribute(new Attribute("phase", record.getPhase()));
+            }
         }
-        
-        if (record.getPhase() != null) {
-            location.addAttribute(new Attribute("phase", record.getPhase()));
-        }
-        location.addReference(new Reference("object", seq.getIdentifier()));
-        location.addReference(new Reference("subject", feature.getIdentifier()));
-        location.addCollection(new ReferenceList("evidence",
+        relation.addReference(new Reference("object", seq.getIdentifier()));
+        relation.addReference(new Reference("subject", feature.getIdentifier()));
+        relation.addCollection(new ReferenceList("evidence",
                                Arrays.asList(new Object[] {dataSet.getIdentifier()})));
-        handler.setLocation(location);
+        handler.setLocation(relation);
 
         ReferenceList evidence = new ReferenceList("evidence");
         evidence.addRefId(dataSet.getIdentifier());
@@ -272,11 +285,26 @@ public class GFF3Converter
 
             handler.setResult(computationalResult);
             evidence.addRefId(computationalResult.getIdentifier());
+        } else {
+            if (record.getSource() != null) {
+                // this special case added to cope with pseudoobscura data
+                Item computationalResult = createItem("ComputationalResult");
+
+                Item computationalAnalysis = getComputationalAnalysis(record.getSource());
+                computationalResult.addReference(new Reference("analysis",
+                                                 computationalAnalysis.getIdentifier()));
+                handler.setAnalysis(computationalAnalysis);
+
+                handler.setResult(computationalResult);
+                evidence.addRefId(computationalResult.getIdentifier());
+
+                feature.addAttribute(new Attribute("curated", "false"));
+            }
         }
 
         feature.addCollection(evidence);
         handler.setFeature(feature);
-        
+
         String orgAbb = null;
         String tgtSeqIdentifier = null;
         if (record.getAttributes().get("Organism") != null) {
@@ -301,8 +329,8 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
-        
-           
+
+
         try {
             Iterator iter = handler.getItems().iterator();
             while (iter.hasNext()) {
@@ -313,9 +341,9 @@ public class GFF3Converter
             LOG.error("Problem writing item to the itemwriter");
             throw e;
         }
-        
+
     }
-                      
+
 
     private String getIdentifier(String id) {
         String identifier = (String) identifierMap.get(id);
@@ -406,10 +434,10 @@ public class GFF3Converter
 
     /**
      * Create an item with given className
-     * @param className
+     * @param className the new class name
      * @return the created item
      */
-    private Item createItem(String className) {
+    protected Item createItem(String className) {
         return createItem(className, createIdentifier());
     }
 
@@ -427,6 +455,6 @@ public class GFF3Converter
         return "0_" + itemid++;
     }
 
-   
+
 }
 

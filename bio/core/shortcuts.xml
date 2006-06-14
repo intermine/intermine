@@ -31,6 +31,11 @@
   <reference name="targetLocatedSequenceFeature" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" />
   <attribute name="identifier" type="java.lang.String"/>
 </class>
+<class name="org.flymine.model.genomic.SyntenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true">
+  <reference name="targetOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
+  <reference name="targetSyntenicRegionLocation" referenced-type="org.flymine.model.genomic.Location"/>
+  <reference name="targetSyntenicRegion" referenced-type="org.flymine.model.genomic.SyntenicRegion" />
+</class>
 <class name="org.flymine.model.genomic.Scaffold" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   <collection name="crossGenomeMatches" referenced-type="org.flymine.model.genomic.CrossGenomeMatch" ordered="true"/>
 </class>

@@ -45,7 +45,7 @@ import org.intermine.postprocess.PostProcessor;
 /**
  * Annotate drosophila genes with diseases related via homophila. The evidence of the annotations
  * are the Homophila database and the two homophila publications.
- * 
+ *
  * @author Thomas Riley
  */
 public class HomophilaPostProcess extends PostProcessor
@@ -56,7 +56,7 @@ public class HomophilaPostProcess extends PostProcessor
 
     /**
      * Create a new instance of HomophilaPostProcess.
-     * 
+     *
      * @param osw object store writer
      */
     public HomophilaPostProcess(ObjectStoreWriter osw) {
@@ -69,7 +69,7 @@ public class HomophilaPostProcess extends PostProcessor
      * Main post-processing routine. Fill in the omimDiseases collection on drosophila genes
      * with diseases related via homophila blast matches. An Annotation object is created for
      * each reference.
-     * 
+     *
      * @throws ObjectStoreException if the objectstore throws an exception
      */
     public void postProcess()
@@ -191,7 +191,7 @@ public class HomophilaPostProcess extends PostProcessor
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         return res;

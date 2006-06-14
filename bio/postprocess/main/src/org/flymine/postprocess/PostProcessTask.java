@@ -38,6 +38,11 @@ public class PostProcessTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
 
+    /**
+     * The category to pass to ObjectStoreInterMineImpl.precomute().
+     */
+    public static final String PRECOMPUTE_CATEGORY = "precompute";
+
     protected String operation, objectStore, objectStoreWriter, ensemblDb;
     protected File outputFile;
     protected ObjectStoreWriter osw;
@@ -139,16 +144,25 @@ public class PostProcessTask extends Task
                 StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
                 LOG.info("Starting StoreSequences.storeContigSequences()");
                 ss.storeContigSequences();
+            } else if ("fetch-contig-sequences-ensembl".equals(operation)) {
+                if (ensemblDb == null) {
+                    throw new BuildException("ensemblDb attribute is not set");
+                }
+                Database db = DatabaseFactory.getDatabase(ensemblDb);
+                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
+                LOG.info("Starting StoreSequences.storeContigSequences() for ensemblDb:"
+                        + ensemblDb);
+                ss.storeContigSequences();
             } else if ("transfer-sequences-chromosome".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToChromosome()");
                 ts.transferToChromosome();
-            } else if ("transfer-sequences".equals(operation)) {
+            } else if ("transfer-sequences-located-sequence-feature".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOG.info("Starting TransferSequences.transferToChromosome()");
-                ts.transferToChromosome();
                 LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
+            } else if ("transfer-sequences-transcripts".equals(operation)) {
+                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
             } else if ("make-spanning-locations".equals(operation)) {

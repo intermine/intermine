@@ -56,6 +56,52 @@ public class TransferSequencesTest extends TestCase
     private RepeatRegion [] storedRepeatRegions;
     private Model model;
 
+    private String expectedExonSequence0 =
+        "tatgactgtaacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatct" +
+        "cttttccgagtaagacgttttccagtc";
+
+    private String expectedExonSequence4 =
+        "caagtagtaagaaagacggatataaaaaaatagcctacagcaccccggattcccatgttg" +
+        "tctccaaccatagtactaacgaggccctcagacgcttaactgcagtgatcggacgggaac" +
+        "tggtgttttcgcctaggtatggccgtagacat";
+
+    private String expectedExonSequence1 =
+        "caaaaatcttctagtttttttttagaaaggatacaccaagta";
+
+    private String expectedExonSequence2 =
+        "gacgattgtttactttacacgccggaaatgaaaaccgcaatggtgctcaaggcaaaagac" +
+        "gttatccgccgtggctgtctggaatacgacgtcagcgccaccgacatcaccagctcgttt" +
+        "atggctatccgcaagaccatgaccagcagcggacgcagcgccacctatgaggccagccgc" +
+        "agcgaggaagccagccacgccgacctcgcctgggcgaccatgcacgccctgttaaatgag" +
+        "ccactcaccgccggtatcagcaccccgctgacatccaccattctggagttttac";
+
+    private String expectedExonSequence5 =
+        "cagggcgtgcatggtcgcccaggcgaggtcggcgtggctggcttcctcgctgcggctggc" +
+        "ctcataggtggcgctgcgtccgctgctggtcatggtcttgcggatagccataaacgagct" +
+        "ggtgatgtcggtggcgctgacgtcgtattccagacagccacggcggataacgtcttttgc" +
+        "cttgagcaccattgcggttttcatttccggcgtgtaaag";
+
+    private String expectedExonSequence3 =
+        "accgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgac" +
+        "cgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccg" +
+        "gtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctcgccgatt" +
+        "tacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttcccagcag" +
+        "gatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctggaaaagcgt" +
+        "tacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatacccgccgt" +
+        "ggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagccttcgcg" +
+        "cccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccg" +
+        "gaatatctcagcgcccttaactctgcctggc";
+
+    private String expectedExonSequence6 =
+        "aaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttgatattaaaaaaa" +
+        "tcgtccttcgtcgccacttcactgagggggataattttaatgccgtcggctttcccctgt" +
+        "ggggca";
+
+    private String expectedExonSequence7 =
+        "cggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctcagcgcg" +
+        "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
+        "tggtgagcgtg";
+    
     private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
 
     public void setUp() throws Exception {
@@ -113,6 +159,9 @@ public class TransferSequencesTest extends TestCase
         CalculateLocations cl = new CalculateLocations(osw);
         cl.fixPartials();
         cl.createLocations();
+        CreateReferences cr = new CreateReferences(osw);
+        cr.insertReferences();
+        cl.setChromosomeLocationsAndLengths();
         TransferSequences ts = new TransferSequences(osw);
         ts.transferToChromosome();
         ts.transferToLocatedSequenceFeatures();
@@ -204,58 +253,27 @@ public class TransferSequencesTest extends TestCase
 
         ObjectStore os = osw.getObjectStore();
 
-        String expectedExonSequence0 =
-            "tatgactgtaacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatct" +
-            "cttttccgagtaagacgttttccagtc";
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
         Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues());
-        String expectedExonSequence4 =
-            "caagtagtaagaaagacggatataaaaaaatagcctacagcaccccggattcccatgttg" +
-            "tctccaaccatagtactaacgaggccctcagacgcttaactgcagtgatcggacgggaac" +
-            "tggtgttttcgcctaggtatggccgtagacat";
+
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
         Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues());
-        String expectedExonSequence1 =
-            "caaaaatcttctagtttttttttagaaaggatacaccaagta";
+
         Exon resExon1 = (Exon) os.getObjectById(storedExons[1].getId());
         Assert.assertEquals(expectedExonSequence1, resExon1.getSequence().getResidues());
-        String expectedExonSequence2 =
-            "gacgattgtttactttacacgccggaaatgaaaaccgcaatggtgctcaaggcaaaagac" +
-            "gttatccgccgtggctgtctggaatacgacgtcagcgccaccgacatcaccagctcgttt" +
-            "atggctatccgcaagaccatgaccagcagcggacgcagcgccacctatgaggccagccgc" +
-            "agcgaggaagccagccacgccgacctcgcctgggcgaccatgcacgccctgttaaatgag" +
-            "ccactcaccgccggtatcagcaccccgctgacatccaccattctggagttttac";
+
         Exon resExon2 = (Exon) os.getObjectById(storedExons[2].getId());
         Assert.assertEquals(expectedExonSequence2, resExon2.getSequence().getResidues());
-        String expectedExonSequence5 =
-            "cagggcgtgcatggtcgcccaggcgaggtcggcgtggctggcttcctcgctgcggctggc" +
-            "ctcataggtggcgctgcgtccgctgctggtcatggtcttgcggatagccataaacgagct" +
-            "ggtgatgtcggtggcgctgacgtcgtattccagacagccacggcggataacgtcttttgc" +
-            "cttgagcaccattgcggttttcatttccggcgtgtaaag";
+
         Exon resExon5 = (Exon) os.getObjectById(storedExons[5].getId());
         Assert.assertEquals(expectedExonSequence5, resExon5.getSequence().getResidues());
-        String expectedExonSequence3 =
-            "accgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggtactcgac" +
-            "cgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatgagccaccg" +
-            "gtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctcgccgatt" +
-            "tacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttcccagcag" +
-            "gatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctggaaaagcgt" +
-            "tacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatacccgccgt" +
-            "ggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagccttcgcg" +
-            "cccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacggcctgccg" +
-            "gaatatctcagcgcccttaactctgcctggc";
+
         Exon resExon3 = (Exon) os.getObjectById(storedExons[3].getId());
         Assert.assertEquals(expectedExonSequence3, resExon3.getSequence().getResidues());
-        String expectedExonSequence6 =
-            "aaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttgatattaaaaaaa" +
-            "tcgtccttcgtcgccacttcactgagggggataattttaatgccgtcggctttcccctgt" +
-            "ggggca";
+
         Exon resExon6 = (Exon) os.getObjectById(storedExons[6].getId());
         Assert.assertEquals(expectedExonSequence6, resExon6.getSequence().getResidues());
-        String expectedExonSequence7 =
-            "cggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctcagcgcg" +
-            "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
-            "tggtgagcgtg";
+
         Exon resExon7 = (Exon) os.getObjectById(storedExons[7].getId());
         Assert.assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues());
 
@@ -286,30 +304,14 @@ public class TransferSequencesTest extends TestCase
 
         Transcript resTranscript0 =
             (Transcript) os.getObjectById(storedTranscripts[0].getId());
-        Assert.assertEquals("caaaaatcttctagtttttttttagaaaggatacaccaagtagacgattgtttactttac" +
-                     "acgccggaaatgaaaaccgcaatggtgctcaaggcaaaagacgttatccgccgtggctgt" +
-                     "ctggaatacgacgtcagcgccaccgacatcaccagctcgtttatggctatccgcaagacc" +
-                     "atgaccagcagcggacgcagcgccacctatgaggccagccgcagcgaggaagccagccac" +
-                     "gccgacctcgcctgggcgaccatgcacgccctgttaaatgagccactcaccgccggtatc" +
-                     "agcaccccgctgacatccaccattctggagttttacaccgccagcggcccgaaaatggag" +
-                     "gcattcacctttggtgagccggtgccggtactcgaccgccgtgacattctggattacgtc" +
-                     "gagtgcatcagtaacggcagatggtatgagccaccggtcagctttaccggtctggcaaaa" +
-                     "agcctgcgggctgccgtgcatcacagctcgccgatttacgtcaaacgcaatattctggcc" +
-                     "tcgacatttatcccgcatccatggctttcccagcaggatttcagccgctttgtgctggat" +
-                     "tttctggtgttcggtaatgcgtttctggaaaagcgttacagcaccaccggtaaggtcatc" +
-                     "agactggaaacctcaccggcaaaatatacccgccgtggcgtggaagaggatgtttactgg" +
-                     "tgggtgccgtccttcaacgagccgacagccttcgcgcccggctccgtgtttcacctgctg" +
-                     "gagccggatattaatcaggagctgtacggcctgccggaatatctcagcgcccttaactct" +
-                     "gcctggc",
-                     resTranscript0.getSequence().getResidues());
+        String expectedResidues0 = expectedExonSequence1
+            + expectedExonSequence2 + expectedExonSequence3;
+        assertEquals(expectedResidues0, resTranscript0.getSequence().getResidues());
 
         Transcript resTranscript1 =
             (Transcript) os.getObjectById(storedTranscripts[1].getId());
-        Assert.assertEquals("cggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtctcagcgcg" +
-                     "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
-                     "tggtgagcgtgaaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttga" +
-                     "tattaaaaaaatcgtccttcgtcgccacttcactgagggggataattttaatgccgtcgg" +
-                     "ctttcccctgtggggca",
+        String expectedResidues1 = expectedExonSequence7 + expectedExonSequence6;
+        assertEquals(expectedResidues1,
                      resTranscript1.getSequence().getResidues());
     }
 
@@ -320,6 +322,7 @@ public class TransferSequencesTest extends TestCase
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
+        storedChromosome.setIdentifier("store_chromosome");
 
         storedSupercontig =
             (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));

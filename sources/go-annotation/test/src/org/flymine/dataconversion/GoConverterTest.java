@@ -61,25 +61,25 @@ public class GoConverterTest extends TestCase
     }
 
     public void testTranslate() throws Exception {
-        translateCommon(goFile, "GoConverterTest_src.txt",
-                "GoConverterTest_tgt.xml", true, false);
+        translateCommon(goFile, "/resources/test/GoConverterTest_src.txt",
+                "/resources/test/GoConverterTest_tgt.xml", true, false, "organismDbId");
     }
 
     public void testOboTranslate() throws Exception {
-
-        translateCommon(goOboFile, "GoConverterOboTest_src.txt",
-                "GoConverterOboTest_tgt.xml", true, false);
-
+        translateCommon(goOboFile, "/resources/test/GoConverterOboTest_src.txt",
+                "/resources/test/GoConverterOboTest_tgt.xml", true, false, "organismDbId");
     }
 
     private void translateCommon(File onotologyFile, String srcFile, String tgtFile,
-                                 boolean verbose, boolean writeItemFile) throws Exception{
+                                 boolean verbose, boolean writeItemFile,
+                                 String geneAttribute) throws Exception{
 
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream(srcFile));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
-        converter.setOntologyfile(onotologyFile);
+        converter.setGeneattribute(geneAttribute);
+        converter.setOntology(onotologyFile);
         converter.setGeneattribute("organismDbId");
         converter.process(reader);
         converter.close();

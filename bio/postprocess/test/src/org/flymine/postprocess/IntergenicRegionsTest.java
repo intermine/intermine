@@ -12,6 +12,7 @@ package org.flymine.postprocess;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.dataloader.IntegrationWriter;
@@ -35,16 +36,19 @@ import org.flymine.model.genomic.Synonym;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections.collection.CompositeCollection;
 
 import junit.framework.TestCase;
-import junit.framework.Assert;
 
 /**
  * Tests for the IntergenicRegionUtil class.
@@ -93,75 +97,143 @@ public class IntergenicRegionsTest extends TestCase
         osw.close();
     }
 
-
     public void testCreateIntergenicRegionFeatures() throws Exception {
         IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
 
         List chrXgeneLocList =  new ArrayList();
-        Integer chrXId = createChrX(chrXgeneLocList);
-        Iterator irIter = iru.createIntergenicRegionFeatures(new HashSet(chrXgeneLocList), chrXId);
+        Map chrXlocMap = new HashMap();
+        Integer chrXId = createChrX(chrXgeneLocList, chrXlocMap, 1000);
+        Iterator irIter = iru.createIntergenicRegionFeatures(new HashSet(chrXgeneLocList),
+                                                             chrXlocMap, chrXId);
 
         {
             Set intergenicRegions = new HashSet(IteratorUtils.toList(irIter));
 
-            Assert.assertEquals(5, intergenicRegions.size());
+            assertEquals(5, intergenicRegions.size());
         }
 
         List chr1geneLocList =  new ArrayList();
-        Integer chr1Id = createChr1(chr1geneLocList);
-        irIter = iru.createIntergenicRegionFeatures(new HashSet(chr1geneLocList), chr1Id);
+        Map chr1locMap = new HashMap();
+        Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 2000);
+        irIter = iru.createIntergenicRegionFeatures(new HashSet(chr1geneLocList), chr1locMap,
+                                                    chr1Id);
 
         {
             Set intergenicRegions = new HashSet(IteratorUtils.toList(irIter));
 
-            Assert.assertEquals(3, intergenicRegions.size());
+            assertEquals(3, intergenicRegions.size());
         }
+    }
+ 
+    public void testCreateIntergenicRegionFeaturesRefs() throws Exception {
+        IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
 
+        List chrXgeneLocList =  new ArrayList();
+        Map chrXlocMap = new HashMap();
+        Integer chrXId = createChrX(chrXgeneLocList, chrXlocMap, 3000);
+        List chr1geneLocList =  new ArrayList();
+        Map chr1locMap = new HashMap();
+        Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 4000);
 
         iru.createIntergenicRegionFeatures();
-
+        
+        ObjectStore os = osw.getObjectStore();
+        os.flushObjectById();
+        
         Query q = new Query();
 
         QueryClass qc = new QueryClass(IntergenicRegion.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         Iterator resIter = res.iterator();
 
         {
             Set intergenicRegions = new HashSet(IteratorUtils.toList(resIter));
 
-            Assert.assertEquals(8, intergenicRegions.size());
-
-            irIter = intergenicRegions.iterator();
+            Iterator irIter = intergenicRegions.iterator();
 
             Set actualIdentifiers = new HashSet();
 
             while(irIter.hasNext()) {
                 IntergenicRegion ir = (IntergenicRegion) irIter.next();
-
-                Assert.assertNotNull(ir.getChromosome());
-                Assert.assertNotNull(ir.getOrganism());
-                Assert.assertNotNull(ir.getLength());
-                Assert.assertTrue(ir.getLength().intValue() > 0);
-                Assert.assertEquals(1, ir.getEvidence().size());
+                
+                assertNotNull(ir.getChromosome());
+                assertNotNull(ir.getOrganism());
+                assertNotNull(ir.getLength());
+                assertTrue(ir.getLength().intValue() > 0);
+                assertEquals(1, ir.getEvidence().size());
 
                 Location loc = ir.getChromosomeLocation();
-                Assert.assertNotNull(loc);
-                Assert.assertNotNull(loc.getStart());
-                Assert.assertNotNull(loc.getEnd());
-                Assert.assertNotNull(loc.getStrand());
-                Assert.assertNotNull(loc.getPhase());
-                Assert.assertNotNull(loc.getStartIsPartial());
-                Assert.assertNotNull(loc.getEndIsPartial());
-                Assert.assertEquals(1, loc.getEvidence().size());
+                assertNotNull(loc);
+                assertNotNull(loc.getStart());
+                assertNotNull(loc.getEnd());
+                assertNotNull(loc.getStrand());
+                assertNotNull(loc.getPhase());
+                assertNotNull(loc.getStartIsPartial());
+                assertNotNull(loc.getEndIsPartial());
+                assertEquals(1, loc.getEvidence().size());
 
-                Assert.assertEquals(1, ir.getSynonyms().size());
+                int locStart = loc.getStart().intValue();
+                if (locStart > 0) {
+                    Integer newLoc = new Integer(locStart - 1);
+                    Collection prevGeneIds;
+                    if (ir.getChromosome().getId().equals(chr1Id)) {
+                        prevGeneIds = getByLoc(newLoc, chr1locMap);
+                    } else {
+                        prevGeneIds = getByLoc(newLoc, chrXlocMap);
+                    }
+                    Iterator prevGeneIdsIter = prevGeneIds.iterator();
+                    
+                    while (prevGeneIdsIter.hasNext()) {
+                        Gene prevGene = (Gene) os.getObjectById((Integer) prevGeneIdsIter.next());
+
+                        assertTrue(prevGene.getUpstreamIntergenicRegion() != null
+                               || prevGene.getDownstreamIntergenicRegion() != null);
+                        
+                        Set adjacentGenes = new HashSet(ir.getAdjacentGenes());
+                        assertTrue(adjacentGenes.contains(prevGene));
+                        if (loc.getStrand().intValue() == 1) {
+                            IntergenicRegion nextIntergenicRegion =
+                                prevGene.getDownstreamIntergenicRegion();
+                            Integer id = nextIntergenicRegion.getId();
+                            assertEquals(id, ir.getId());
+                        } else {
+                            assertEquals(prevGene.getUpstreamIntergenicRegion().getId(), ir.getId());
+                        }
+                    }
+                }
+
+                int locEnd = loc.getEnd().intValue();
+                if (locEnd < ir.getChromosome().getLength().intValue()) {
+                    Integer newLoc = new Integer(locEnd + 1);
+                    Collection nextGeneIds;
+                   if (ir.getChromosome().getId().equals(chr1Id)) {
+                     nextGeneIds = getByLoc(newLoc, chr1locMap);
+                   } else {
+                        nextGeneIds = getByLoc(newLoc, chrXlocMap);
+                   }
+                    assertTrue(nextGeneIds.size() > 0);
+                    Iterator nextGeneIdsIter = nextGeneIds.iterator();
+                    
+                    while (nextGeneIdsIter.hasNext()) {
+                        Gene nextGene = (Gene) os.getObjectById((Integer) nextGeneIdsIter.next());
+
+                        if (loc.getStrand().intValue() == 1) {
+                            assertTrue(ir.getAdjacentGenes().contains(nextGene));
+                            assertEquals(nextGene.getUpstreamIntergenicRegion().getId(), ir.getId());
+                        } else {
+                            assertTrue(ir.getAdjacentGenes().contains(nextGene));
+                            assertEquals(nextGene.getDownstreamIntergenicRegion().getId(), ir.getId());
+                        }
+                    }
+                }
+
+                assertEquals(1, ir.getSynonyms().size());
                 Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
-                Assert.assertEquals(ir.getIdentifier(), synonym.getValue());
-                Assert.assertEquals("identifier", synonym.getType());
-                Assert.assertEquals("FlyMine", synonym.getSource().getName());
+                assertEquals(ir.getIdentifier(), synonym.getValue());
+                assertEquals("identifier", synonym.getType());
+                assertEquals("FlyMine", synonym.getSource().getName());
 
                 actualIdentifiers.add(ir.getIdentifier());
             }
@@ -178,11 +250,26 @@ public class IntergenicRegionsTest extends TestCase
                     "integenic_region_chrI_901..1800",
                 }));
 
-            Assert.assertEquals(expectedIdentifiers, actualIdentifiers);
+            assertEquals(expectedIdentifiers, actualIdentifiers);
         }
     }
 
-    private Integer createChrX(List geneLocList) throws ObjectStoreException {
+    private Collection getByLoc(Integer newLoc, Map chrlocMap) {
+        List chrGeneList = (List) chrlocMap.get(newLoc);
+        if (chrGeneList == null) {
+            chrGeneList = Collections.EMPTY_LIST;
+        }
+        List retList = new ArrayList();
+        Iterator iter = chrGeneList.iterator();
+        while (iter.hasNext()) {
+            retList.add(((Gene) iter.next()).getId());
+        }
+        // return IDs that will be looked up in the on disk objectstore rather than using the 
+        // Genes created by createChrX() and createChr1(), which have null IDs
+        return retList;
+    }
+
+    private Integer createChrX(List geneLocList, Map chrXlocMap, int idStart) throws ObjectStoreException {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setIdentifier("X");
@@ -195,11 +282,11 @@ public class IntergenicRegionsTest extends TestCase
         toStore.add(chr);
 
         int [][] geneInfo = {
-            { 1000, 101, 200 },
-            { 1001, 301, 400 },
-            { 1002, 501, 600 },
-            { 1003, 701, 900 },
-            { 1004, 801, 950 },
+            { 0, 101, 200 },
+            { 1, 301, 400 },
+            { 2, 501, 600 },
+            { 3, 701, 900 },
+            { 4, 801, 950 },
         };
 
         Gene[] genes = new Gene[geneInfo.length];
@@ -207,15 +294,17 @@ public class IntergenicRegionsTest extends TestCase
 
         for (int i = 0; i < genes.length; i++) {
             genes[i] = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-            int geneId = geneInfo[i][0];
+            int geneId = geneInfo[i][0] + idStart;
             int start = geneInfo[i][1];
             int end = geneInfo[i][2];
             genes[i].setId(new Integer(geneId));
             genes[i].setLength(new Integer(end - start + 1));
             genes[i].setChromosome(chr);
             geneLocs[i] = createLocation(chr, genes[i], 1, start, end, Location.class);
-            geneLocs[i].setId(new Integer(1000 + geneId));
+            geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
+            IntergenicRegionUtil.addToListMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
+            IntergenicRegionUtil.addToListMap(chrXlocMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
@@ -231,7 +320,7 @@ public class IntergenicRegionsTest extends TestCase
         return chr.getId();
     }
 
-    private Integer createChr1(List geneLocList) throws ObjectStoreException {
+    private Integer createChr1(List geneLocList, Map chr1locMap, int idStart) throws ObjectStoreException {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setIdentifier("I");
@@ -245,12 +334,14 @@ public class IntergenicRegionsTest extends TestCase
 
         int [][] geneInfo = {
             // test special case - gene starts at first base of chromosome
-            { 5000, 1, 100 },
-            { 5001, 301, 400 },
-            { 5002, 501, 800 },
-            { 5003, 701, 900 },
+            { 0, 1, 100 },
+            // test creating two genes with the same start and/or end base
+            { 1, 301, 400 },
+            { 2, 301, 400 },
+            { 3, 501, 800 },
+            { 4, 701, 900 },
             // test special case - gene ends at last base of chromosome
-            { 5004, 1801, 2000 },
+            { 5, 1801, 2000 },
         };
 
         Gene[] genes = new Gene[geneInfo.length];
@@ -258,15 +349,17 @@ public class IntergenicRegionsTest extends TestCase
 
         for (int i = 0; i < genes.length; i++) {
             genes[i] = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-            int geneId = geneInfo[i][0];
+            int geneId = geneInfo[i][0] + idStart;
             int start = geneInfo[i][1];
             int end = geneInfo[i][2];
             genes[i].setId(new Integer(geneId));
             genes[i].setLength(new Integer(end - start + 1));
             genes[i].setChromosome(chr);
             geneLocs[i] = createLocation(chr, genes[i], 1, start, end, Location.class);
-            geneLocs[i].setId(new Integer(1000 + geneId));
+            geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
+            IntergenicRegionUtil.addToListMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
+            IntergenicRegionUtil.addToListMap(chr1locMap, geneLocs[i].getEnd(), genes[i]);
         }
 
         toStore.addAll(Arrays.asList(genes));
