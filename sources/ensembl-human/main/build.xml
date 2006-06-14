@@ -1,4 +1,0 @@
-<project name="ensembl-human-tasks" default="default" basedir=".">
-  <description>build ensembl-human tasks</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>
