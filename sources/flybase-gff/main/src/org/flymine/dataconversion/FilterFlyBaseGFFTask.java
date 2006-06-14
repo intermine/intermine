@@ -30,12 +30,12 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
 /**
- * Read Chado GFF3 files are write out only those lines whose types are supported by the FlyMine
+ * Read FlyBase GFF3 files are write out only those lines whose types are supported by the FlyMine
  * genomic model.
  *
  * @author Richard Smith
  */
-public class FilterChadoTask extends Task
+public class FilterFlyBaseGFFTask extends Task
 {
     private FileSet fileSet;
     private File tgtDir;
