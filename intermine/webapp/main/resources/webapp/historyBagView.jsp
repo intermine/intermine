@@ -42,20 +42,34 @@
             <tr>
               <td>
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
-                  <c:out value="${savedBag.key}"/>
+                  <c:out value="${savedBag.key}" escapeXml="false"/>
                 </html:multibox>
               </td>
               
-                <tiles:insert name="historyElementName.jsp">
-                  <tiles:put name="name" value="${savedBag.key}"/>
-                  <tiles:put name="type" value="bag"/>
-                </tiles:insert>
+              <tiles:insert name="historyElementName.jsp">
+                <tiles:put name="name" value="${savedBag.key}"/>
+                <tiles:put name="type" value="bag"/>
+              </tiles:insert>
               
               <td align="right">
                 <c:out value="${savedBag.value.size}"/>
                 <c:choose>
-                  <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
-                  <c:otherwise>values</c:otherwise>
+                  <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">
+                    <c:if test="${savedBag.value.size == 1}">
+                      object
+                    </c:if>
+                    <c:if test="${savedBag.value.size != 1}">
+                      objects
+                    </c:if>
+                  </c:when>
+                  <c:otherwise>
+                    <c:if test="${savedBag.value.size == 1}">
+                      value
+                    </c:if>
+                    <c:if test="${savedBag.value.size != 1}">
+                      values
+                    </c:if>
+                  </c:otherwise>
                 </c:choose>
               </td>
             </tr>

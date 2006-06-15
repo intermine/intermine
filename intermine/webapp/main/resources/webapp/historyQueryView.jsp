@@ -67,8 +67,9 @@
           <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
             <tr>
               <td>
-                <html:multibox property="selectedQueries" styleId="selected_${type}_${status.index}">
-                  <c:out value="${savedQuery.key}"/>
+                <html:multibox property="selectedQueries" 
+                               styleId="selected_${type}_${status.index}">
+                  <c:out value="${savedQuery.key}" escapeXml="false"/>
                 </html:multibox>
               </td>
               <c:choose>

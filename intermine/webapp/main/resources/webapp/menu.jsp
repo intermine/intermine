@@ -7,7 +7,7 @@
 <div class="links">
   <c:if test="${!empty PROFILE.username}">
     <span class="menu-logged-in-item">
-      ${PROFILE.username}
+      <html:link action="/changePassword.do" title="Change Password">${PROFILE.username}</html:link>
     </span>
   </c:if>
   <span class="menu-item">
@@ -25,7 +25,7 @@
   <span class="menu-item">
     <c:choose>
       <c:when test="${!empty QUERY}">
-        <html:link action="/query.do">
+        <html:link action="/query.do?showTemplate=true">
           <fmt:message key="menu.currentquery"/>
         </html:link>
       </c:when>

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <style>
 
@@ -22,17 +23,19 @@ div.error_body {
 <!-- error.jsp -->
 <html:xhtml/>
 
-<tiles:insert page="/errorMessages.jsp"/>
+<tiles:insert page="/errorMessages.jsp"/></br>
+<a href="javascript:history.go(-1)" >Go back</a>
 
-<div class="error_body">
-<div class="body"><b><fmt:message key="error.stacktrace"/></b></div>
+<c:if test="${!empty stacktrace}">
+	<div class="error_body">
+	<div class="body"><b><fmt:message key="error.stacktrace"/></b></div>
 
-<div class="body">
-<pre class="stacktrace">
-  <c:out value="${stacktrace}"/>
- </pre>
-</div>
-
-</div>
+	<div class="body">
+	<pre class="stacktrace">
+	  <c:out value="${stacktrace}"/>
+	 </pre>
+	</div>
+	</div>
+</c:if>
 
 <!-- /error.jsp =-->
