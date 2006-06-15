@@ -75,7 +75,7 @@
     <p><c:out value="${templateQuery.description}"/></p>
     <table border="0" class="templateForm">
       <c:set var="index" value="${0}"/>
-      <c:forEach items="${templateQuery.nodes}" var="node">
+      <c:forEach items="${templateQuery.editableNodes}" var="node">
         <c:forEach items="${constraints[node]}" var="con">
           <c:set var="index" value="${index+1}"/>
           <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
@@ -203,7 +203,7 @@
       </c:forEach>
     </table>
     
-    <c:if test="${!empty templateQuery.query.alternativeViews}">
+    <c:if test="${!empty templateQuery.alternativeViews}">
       <p>
         Select an output table format:
       </p>
@@ -216,13 +216,13 @@
             <fmt:message key="view.defaultOutput"/>
           </td>
           <td>
-            <c:forEach items="${templateQuery.query.view}" var="item">
+            <c:forEach items="${templateQuery.view}" var="item">
               <im:unqualify className="${item}" var="text"/>
               <span class="templateOutputSummaryItem">${text}</span>
             </c:forEach>
           </td>
         </tr>
-        <c:forEach var="entry" items="${templateQuery.query.alternativeViews}">
+        <c:forEach var="entry" items="${templateQuery.alternativeViews}">
           <tr>    
             <td>
               <html:radio property="view" value="${entry.key}"/>
@@ -247,6 +247,9 @@
       <html:hidden property="templateType"/>
       <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
       <html:submit><fmt:message key="template.submitToQuery"/></html:submit>
+      <c:if test="${IS_SUPERUSER}">
+	      <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+      </c:if>
     </c:if>
   </html:form>
 </div>

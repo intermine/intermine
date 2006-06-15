@@ -22,6 +22,11 @@
     <script type="text/javascript" src="js/prototype.js"></script>
     <script type="text/javascript" src="js/scriptaculous.js"></script>
     
+	<script type='text/javascript' src='dwr/interface/AjaxServices.js'></script>
+	<script type='text/javascript' src='dwr/engine.js'></script>
+	<script type='text/javascript' src='dwr/util.js'></script>
+    <script type="text/javascript" src="js/imdwr.js"></script>
+    
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>

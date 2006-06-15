@@ -122,6 +122,7 @@
                     <input type="hidden" name="attributeOp" value="0"/>
                     <input type="radio" name="attributeValue" value="true" checked /><fmt:message key="query.constraint.true"/>
                     <input type="radio" name="attributeValue" value="false"/><fmt:message key="query.constraint.false"/>
+                    <input type="radio" name="attributeValue" value="NULL"/><fmt:message key="query.constraint.null"/>
                   </td>
                 </c:when>
                 <c:otherwise>
@@ -245,7 +246,7 @@
         </p>
       </c:if>
       <c:if test="${!editingNode.collection && !editingNode.reference &&
-                    !empty editingNode.parent}">
+                    !empty editingNode.parent && editingNode.type != 'boolean'}">
         <p style="text-align: left;">
           <html:radio property="nullConstraint" value="NULL"/><fmt:message key="query.constraint.null"/>
           <html:radio property="nullConstraint" value="NotNULL"/><fmt:message key="query.constraint.notnull"/>
