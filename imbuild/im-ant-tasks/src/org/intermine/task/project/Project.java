@@ -10,6 +10,9 @@ import java.util.Map;
 
 import org.intermine.task.Integrate;
 
+/**
+ * A class representing the contents of a project.xml file.
+ */
 public class Project
 {
     Map sources = new LinkedHashMap();
