@@ -13,6 +13,9 @@ package org.intermine.task;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 import org.intermine.task.project.Project;
 import org.intermine.task.project.ProjectXmlBinding;
@@ -30,6 +33,14 @@ import org.apache.tools.ant.taskdefs.Property;
  */
 public class Integrate extends Task
 {
+    private String [] possibleActionsArray = {
+        "retrieve",
+        "translate",
+        "load",
+    };
+
+    private Set possibleActions = new HashSet(Arrays.asList(possibleActionsArray));
+
     private File projectXml;
     private Project intermineProject;
     private String action, source;
@@ -62,6 +73,18 @@ public class Integrate extends Task
         }
         if (workspaceBaseDir == null) {
             throw new BuildException("no workspaceBaseDir specified");
+        }
+
+        System.err.println ("action: " + action);
+
+        if (action != null && !action.equals("") && !possibleActions.contains(action)) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("Unknown action: ").append(action).append("  possible actions: ");
+            for (int i = 0; i < possibleActionsArray.length - 1; i++) {
+                sb.append(possibleActionsArray[i]).append(", ");
+            }
+            sb.append(possibleActionsArray[2]);
+            throw new BuildException(sb.toString());
         }
 
         intermineProject = ProjectXmlBinding.unmarshall(projectXml);
