@@ -5,7 +5,10 @@
   <!-- special case to create a ${tgt.xml.file} (in InterMine XML format) by
        finding the taxon ids in the objectstore, then retrieving the species name
        and genus from Entrez into the file -->
-  <target name="-pre-load" depends="source.-pre-load">
+  <target name="-pre-retrieve" depends="source.-pre-retrieve">
+    <property name="cp" refid="task.class.path"/>
+    <echo>cp: ${cp}</echo>
+
     <taskdef name="retrieve-organisms" classname="org.flymine.postprocess.EntrezOrganismRetriever">
       <classpath refid="task.class.path"/>
     </taskdef>
