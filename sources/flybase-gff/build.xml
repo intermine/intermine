@@ -9,7 +9,7 @@
     <mkdir dir="${build.data.dir}"/>
   </target>
   
-  <target name="-pre-retrieve" depends="-prepare-filter, -filter-flybase"/>
+  <target name="-pre-retrieve" depends="-prepare-filter, -filter-flybase, -filter-flybase-small"/>
   
   <target name="-retrieve-from-xml-file" if="have.src.xml">
     <convert-xml-file
@@ -62,6 +62,10 @@
 
   <!-- for testing, filter only chromosome 4 of FlyBase for creating small databases -->
   <target name="-filter-flybase-small" if="flybase.small">
+    <delete>
+      <fileset dir="${build.data.dir}" includes="**/*"/>
+    </delete>
+
     <taskdef
       name="filter-flybase-gff"
       classname="org.flymine.dataconversion.FilterFlyBaseGFF3Task">
@@ -71,6 +75,7 @@
     <filter-flybase-gff tgtDir="${build.data.dir}">
       <fileset dir="${src.data.dir}">
         <include name="*-4-*.gff"/>
+        <include name="*-4_*.gff"/>
       </fileset>
     </filter-flybase-gff>
   </target>
