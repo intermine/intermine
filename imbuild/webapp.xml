@@ -33,7 +33,7 @@
     <copy todir="${build.dir}/webapp">
       <fileset dir="resources/webapp"/>
     </copy>
-  	<property name="jarFiles" refid="deploy.execute.path.fileset.text"/>
+    <property name="jarFiles" refid="deploy.execute.path.fileset.text"/>
     <copy todir="${build.dir}/webapp/WEB-INF/lib" flatten="true" >
       <fileset dir="${webapp.xml.basedir}/.." includes="${jarFiles}" excludes="${deploy.excludes}" />
     </copy>
