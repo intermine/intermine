@@ -1,0 +1,4 @@
+<project name="mousemine-webapp" default="default" basedir=".">
+  <description>build, test, package mousemine-webapp</description>
+  <import file="../../imbuild/application.xml"/>
+</project>
