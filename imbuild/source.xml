@@ -51,8 +51,6 @@
     <path id="task.class.path">
       <pathelement location="${build.task.dir}"/>
       <path refid="project.execute.path"/>
-      <!-- Will need to add path to genomic model jar here -->
-      <pathelement location="${path.to.production.model.jar}"/>
       <!-- And add anything in this project -->
       <!-- FIXED just don't allow tasks in this project - mst be in subproject -->
       <!--<pathelement location="${dist.jar}"/>-->

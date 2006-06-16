@@ -2,7 +2,6 @@
   <property name="target.model" value="genomic"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="flymine.properties"/>
-  <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
     <source name="flybase-dmel-gff" type="flybase-gff">
