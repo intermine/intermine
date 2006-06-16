@@ -5,16 +5,27 @@
   <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="flybase-gff" type="flybase-gff">
+    <source name="flybase-dmel-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
       <property name="gff3.taxonId" value="7227"/>
       <property name="flybase.small" value="true"/>
     </source>
-    <source name="flybase-chromosome-fasta" type="fasta">
+    <source name="flybase-dpse-gff" type="flybase-gff">
+      <property name="src.data.dir" location="/shared/data/flybase/Drosophila_pseudoobscura/dpse_r20_20051018/gff"/>
+      <property name="gff3.taxonId" value="7237"/>
+      <property name="flybase.small" value="true"/>
+    </source>
+    <source name="flybase-dmel-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.include" value="dmel-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+    </source>
+    <source name="flybase-dmel-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.include" value="dpse-all-chromosome-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/fasta"/>
     </source>
     <!--
     <source name="ensembl-anopheles" type="ensembl">
