@@ -2,9 +2,8 @@
   <property name="target.model" value="genomic"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="malariamine.properties"/>
-  <property name="path.to.production.model.jar" location="../production/dist/malaria.jar"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
-    
+
   <sources>
     <source name="malaria-gff" type="malaria-gff">
       <property name="gff3.taxonId" value="5833"/>
@@ -56,7 +55,7 @@
     <do-sources/>
 
     <set-collection-counts/>
-    <create-flybase-to-uniprot-refs/>  
+    <create-flybase-to-uniprot-refs/>
 
   </post-processing>
 
