@@ -3,8 +3,7 @@
   model, and is deployable
 
   properties:
-    base.webapp.project - the project the contains the base webapp that we
-                          will add to - must be in the project.dependencies too
+    base.webapp.path - the path to the base war file that we will add to
 
 -->
 
