@@ -29,7 +29,6 @@
   
   <target name="-pre-init" depends="model.-pre-init">
     <property name="build.model.dir" location="${build.dir}/model"/>
-    <property name="objectstore.summary.properties" location="${build.classes.dir}/objectstoresummary.properties"/>
   </target>
   
   <!-- BUILD DB -->
@@ -88,7 +87,7 @@
     <!-- Summarise objectstore -->
     <echo message="Summarising object store ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
-                           outputFile="${objectstore.summary.properties}"
+                           outputFile="${dist.dir}/objectstore.summary.properties"
                            inputFile="objectstoresummary.config.properties"/>
   </target>
     
