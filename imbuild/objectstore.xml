@@ -76,26 +76,20 @@
     <!-- Retrieve model from database -->
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
     <!-- Copy retrieved files so that model generation and packaging tasks will find them -->
-    <copy file="${build.model.dir}/${model.name}_model.xml"
-          tofile="${model.name}_model.xml"
-          preservelastmodified="true"/>
     <mkdir dir="${build.classes.dir}"/>
     <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
           todir="${build.classes.dir}"/>
   </target>
   
-  <target name="-post-generate" unless="have.model.to.merge">
-    <!-- Summarise objectstore -->
-    <!--
-        don't summarise for now - we need to decide when this should be
-        called
+  <target name="-init-summarise-objectstore" depends="init, -init-deps, -init-task-xml"/>
 
+  <target name="summarise-objectstore" depends="-init-summarise-objectstore"
+          unless="have.model.to.merge">
+    <!-- Summarise objectstore -->
     <echo message="Summarising object store ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
                            outputFile="${objectstore.summary.properties}"
                            inputFile="objectstoresummary.config.properties"/>
-    <delete file="${model.name}_model.xml"/>
-    -->
   </target>
     
   <!--
