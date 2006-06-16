@@ -26,7 +26,7 @@
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
-    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.project}/dist/intermine-webapp.war"/>
+    <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.path}"/>
   </target>
 
   <!-- this may not be the most appropriate place for these two targets, but
@@ -47,14 +47,14 @@
 
   <target name="-final-app-pre-jar" unless="temporary.webapp.project">
     <!-- Concatenate local build.properties with web.properties -->
-    <concat destfile="${build.dir}/webapp/web-inf/web.properties" force="false">
+    <concat destfile="${build.dir}/webapp/WEB-INF/web.properties" force="false">
       <fileset file="resources/web.properties"/>
       <fileset file="${build.properties.local}"/>
     </concat>
     <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.dir}/webapp/classes/intermine.properties"/>
+          tofile="${build.dir}/webapp/WEB-INF/classes/intermine.properties"/>
     <copy file="${default.intermine.properties.file}"
-          tofile="${build.dir}/webapp/classes/default.intermine.properties"/>
+          tofile="${build.dir}/webapp/WEB-INF/classes/default.intermine.properties"/>
   </target>
 
   <target name="-pre-jar" 

@@ -295,6 +295,7 @@ public class Dependencies extends Task
         if (executeIncludes.length() > 0) {
             executeFileSet.setIncludes(executeIncludes);
             getProject().addReference(executePathId + ".fileset", executeFileSet);
+            getProject().addReference(executePathId + ".fileset.text", executeIncludes);
         }
 
         if (artifactIncludes.length() > 0) {
