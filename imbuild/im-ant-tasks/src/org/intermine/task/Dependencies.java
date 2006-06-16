@@ -262,7 +262,7 @@ public class Dependencies extends Task
             // Add dist/*.jar, dist/*.war
             fileset = new FileSet();
             fileset.setDir(projDir);
-            fileset.setIncludes("dist/*.jar, dist/*.war");
+            fileset.setIncludes("dist/*");
             fileset.setProject(getProject());
             executePath.addFileset(fileset);
 
@@ -271,8 +271,8 @@ public class Dependencies extends Task
             dirset.setIncludes("build/classes");
             compilePath.addDirset(dirset);
 
-            executeIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
-            artifactIncludes += depName + "/dist/*.jar " + depName + "/dist/*.war ";
+            executeIncludes += depName + "/dist/* ";
+            artifactIncludes += depName + "/dist/* ";
             compileIncludes += depName + "/build/classes/ ";
 
             // Add lib/*.jar
