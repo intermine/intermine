@@ -75,7 +75,7 @@ public class UniprotDataTranslator extends DataTranslator
 
     private Set geneIdentifiers = new HashSet();
 
-    //TODO: This should come from props files!!!! 
+    //TODO: This should come from props files!!!!
     private static final String SRC_NS = "http://www.intermine.org/model/uniprot#";
 
     /**
@@ -421,6 +421,13 @@ public class UniprotDataTranslator extends DataTranslator
                         createGene = true;
                         dbId = getDataSourceId("SGD");
                     }
+                } else if (taxonId == 10090) { // Mus musculus
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
+                    //geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", null);
+                    if (geneOrganismDbId != null) {
+                        createGene = true;
+                        dbId = getDataSourceId("Ensembl");
+                    }
                 }
 
                 // output gene identifier details
@@ -607,10 +614,10 @@ public class UniprotDataTranslator extends DataTranslator
                     } else if (geneNames == null && srcDbRefs.size() == 1) {
                         geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
                     }
-                }
-                if (geneIdentifier == null) {
-                    LOG.info("Found dbRefs (" + srcDbRefs.size()
-                              + ") but unable to match gene designation");
+                    if (geneIdentifier == null) {
+                        LOG.info("Found dbRefs (" + srcDbRefs.size()
+                                 + ") but unable to match gene designation");
+                    }
                 }
             }
         }
