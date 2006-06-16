@@ -1,5 +1,5 @@
 
-<project name="flymine" default="default" basedir=".">
+<project name="bio-webapp" default="default" basedir=".">
   
   <description>build, test, package flymine-webapp</description>
   <import file="../../imbuild/application.xml"/>

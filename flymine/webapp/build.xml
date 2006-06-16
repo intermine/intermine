@@ -1,9 +1,38 @@
 
-<project name="flymine" default="default" basedir=".">
-  
+<project name="flymine-webapp" default="default" basedir=".">
+
+	
   <description>build, test, package flymine-webapp</description>
   <import file="../../imbuild/application.xml"/>
   
-</project>
+  <target name="-pre-jar" 
+          depends="application.-pre-jar, -add-struts-config">
+    <!-- Start with base intermine webapp war -->
+  </target>
+	
+  <target name="-add-struts-config" description="Append the struts config modifications to the webapp" 
+  			depends="-pre-init">
+  	
+  	<unwar src="${dist.war}" dest="${build.dir}/webapp/">
+  	    <patternset>
+  	        <include name="WEB-INF/struts-config.xml"/>
+  	    </patternset>
+  	</unwar>
 
-        
+    <loadfile property="model.struts.config" srcFile="./resources/struts-config-model.xml"/>
+  	
+    <replace file="${build.dir}/webapp/WEB-INF/struts-config.xml" value="${model.struts.config}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+  	
+  	<war destfile="${dist.war}" update="true" >
+  		<webinf dir="${build.dir}/webapp/WEB-INF/">
+  			<filename name="struts-config.xml" />
+  		</webinf>
+  	</war>
+  	
+   </target>
+
+
+</project>

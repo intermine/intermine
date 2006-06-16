@@ -1,8 +1,3 @@
-<!--
-  Tasks and target for building a basic web application without a model.
-  Make a project based on application.xml to include a model and make the
-  webapp deployable.
--->
 
 <project name="webapp" default="default" basedir="." xmlns:webapp="http://www.intermine.org/ns/im-webapp-proj/1">
 
@@ -29,17 +24,18 @@
     <dependencies basedir="${library.xml.basedir}/.." buildDependencies="false"
                   type="deploy" noFollow="true"/>
     <!-- copy all dependencies into build/lib -->
-    <mkdir dir="${build.dir}/webapp/lib"/>
     <mkdir dir="${build.dir}/webapp/WEB-INF"/>
-    <mkdir dir="${build.dir}/webapp/classes"/>
-    <copy todir="${build.dir}/classes">
+    <mkdir dir="${build.dir}/webapp/WEB-INF/lib"/>
+    <mkdir dir="${build.dir}/webapp/WEB-INF/classes"/>
+    <copy todir="${build.dir}/webapp/WEB-INF/classes">
       <fileset dir="${build.classes.dir}"/>
     </copy>
     <copy todir="${build.dir}/webapp">
       <fileset dir="resources/webapp"/>
     </copy>
-    <copy todir="${build.dir}/webapp/lib" flatten="true">
-      <fileset refid="deploy.execute.path.fileset"/>
+  	<property name="jarFiles" refid="deploy.execute.path.fileset.text"/>
+    <copy todir="${build.dir}/webapp/WEB-INF/lib" flatten="true" >
+      <fileset dir="${webapp.xml.basedir}/.." includes="${jarFiles}" excludes="${deploy.excludes}" />
     </copy>
   </target>
   
@@ -75,7 +71,7 @@
       <sequential>
         <war compress="${jar.compress}" warfile="${dist.war}" 
              webxml="${build.dir}/webapp/WEB-INF/web.xml">
-          <fileset dir="${build.dir}/webapp"/>
+          <fileset dir="${build.dir}/webapp" />
         </war>
       </sequential>
     </macrodef>
