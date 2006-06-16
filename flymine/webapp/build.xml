@@ -7,7 +7,7 @@
   
   <target name="-pre-jar" 
           depends="application.-pre-jar, -add-struts-config">
-    <!-- Start with base intermine webapp war -->
+    <ant antfile="build.xml" dir="../../dbmodel" target="summarise-objectstore"/>
   </target>
 	
   <target name="-add-struts-config" description="Append the struts config modifications to the webapp" 
@@ -33,6 +33,5 @@
   	</war>
   	
    </target>
-
 
 </project>
