@@ -10,7 +10,16 @@
                property="have.intermine.properties.file"/>
   </target>
 
-  <target name="-check-for-intermine-properties" depends="-init-check-for-intermine-properties"
+  <target name="-check-for-intermine-properties-file" depends="-init-project" 
+          unless="intermine.properties.file">
+    <fail unless="temporary.webapp.project">
+You need to set the intermine.properties.file property in your
+project.properties.
+    </fail>
+  </target>
+
+  <target name="-check-for-intermine-properties" 
+          depends="-check-for-intermine-properties-file, -init-check-for-intermine-properties"
           unless="have.intermine.properties.file">
     <fail unless="temporary.webapp.project">
 Couldn't find ${user.home}/${intermine.properties.file}.
@@ -19,7 +28,8 @@ project.properties.
     </fail>
   </target>
 
-  <target name="-init-properties" depends="-check-for-intermine-properties">
+  <target name="-init-properties" depends="-check-for-intermine-properties"
+          unless="temporary.webapp.project">
     <!-- depends on -pre-define-task-classpath so that build.task.dir is set
          and the directory is created -->
 
