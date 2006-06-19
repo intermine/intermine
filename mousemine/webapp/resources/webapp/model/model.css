@@ -1,0 +1,23 @@
+html, body 
+{
+    color: #000000;
+    background-color: #f0F0Ff;
+}
+
+a 
+{
+    color: #00e;
+}
+
+/**************************************/
+
+#header h1 a
+{
+    color: #5C0075;
+}
+
+#header p
+{
+    color: black;
+}
+
