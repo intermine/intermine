@@ -58,13 +58,7 @@
   </target>
 
 
-  <target name="-init-deps" depends="library.-init-deps, -init-task-xml">
-    <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.task.dir}/intermine.properties"/>
-    <!-- Copy default.intermine.properties onto the classpath -->
-    <copy file="${default.intermine.properties.file}"
-          tofile="${build.task.dir}/default.intermine.properties"/>
+  <target name="-init-deps" depends="-init-properties, library.-init-deps, -init-task-xml">
     <!-- Copy resources into build/task -->
     <copy todir="${build.task.dir}">
       <fileset dir="${resources.dir}"/>

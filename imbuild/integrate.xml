@@ -6,18 +6,13 @@
   
   <import file="${integrate.xml.basedir}/library.xml"/>
   <import file="${integrate.xml.basedir}/task.xml"/>
+  <import file="${integrate.xml.basedir}/properties.xml"/>
   
-  <target name="-pre-init" depends="library.-pre-init">
-  </target>
+  <target name="-pre-init" depends="-init-properties, library.-pre-init"/>
+
+<!-  <target name="-post-jar" depends="integrate"/>-->
   
-  <target name="-init-deps" depends="library.-init-deps, -init-task-xml">
-    <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/${intermine.properties.file}" 
-          tofile="${build.task.dir}/intermine.properties"/>
-    <!-- Copy default.intermine.properties onto the classpath -->
-    <copy file="${default.intermine.properties.file}" 
-          tofile="${build.task.dir}/default.intermine.properties"/>
-  </target>
+  <target name="-init-deps" depends="-init-properties, library.-init-deps, -init-task-xml"/>
   
   <target name="load-static" depends="init, -init-deps,
                                       -pre-load-static,

@@ -53,7 +53,8 @@
     <taskdef resource="org/intermine/web/task/antlib-web.xml" classpathref="task.class.path"/>
   </target>
   
-  <target name="-pre-define-task-classpath">
+  <target name="-pre-define-task-classpath" depends="library.-pre-init">
+    <!-- depend on -pre-init to set build.dir -->
      <property name="build.task.dir" location="${build.dir}/main"/>
      <property name="build.tmp.dir" location="${build.dir}/tmp"/>
      <mkdir dir="${build.task.dir}"/>

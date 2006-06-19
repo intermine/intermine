@@ -1,0 +1,34 @@
+<!--
+  Tasks for properties.  task.xml needs to be imported first.
+-->
+
+<project name="properties" default="default" basedir=".">
+
+  <target name="-init-check-for-intermine-properties"
+          depends="-init-deps, -pre-define-task-classpath, -init-project">
+    <available file="${user.home}/${intermine.properties.file}"
+               property="have.intermine.properties.file"/>
+  </target>
+
+  <target name="-check-for-intermine-properties" depends="-init-check-for-intermine-properties"
+          unless="have.intermine.properties.file">
+    <fail unless="temporary.webapp.project">
+Couldn't find ${user.home}/${intermine.properties.file}.
+You need to set the intermine.properties.file property in your
+project.properties.
+    </fail>
+  </target>
+
+  <target name="-init-properties" depends="-check-for-intermine-properties">
+    <!-- depends on -pre-define-task-classpath so that build.task.dir is set
+         and the directory is created -->
+
+    <!-- Copy intermine.properties onto the classpath -->
+    <copy file="${user.home}/${intermine.properties.file}" 
+          tofile="${build.task.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties onto the classpath -->
+    <copy file="${default.intermine.properties.file}" 
+          tofile="${build.task.dir}/default.intermine.properties"/>
+  </target>
+
+</project>

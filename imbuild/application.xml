@@ -12,8 +12,10 @@
          xmlns:task="http://www.intermine.org/ns/im-task-proj/1">
 
   <dirname property="application.xml.basedir" file="${ant.file.application}"/>
+
   <import file="${application.xml.basedir}/webapp.xml"/>
   <import file="${application.xml.basedir}/task.xml"/>
+  <import file="${application.xml.basedir}/properties.xml"/>
 
   <!-- Local webapp build/deploy properties -->
   <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
@@ -21,24 +23,11 @@
 
   <!-- INIT -->
 
-  <target name="-pre-init" depends="webapp.-pre-init">
+  <target name="-pre-init" depends="-init-properties, webapp.-pre-init">
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
     <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.path}"/>
-  </target>
-
-  <!-- this may not be the most appropriate place for these two targets, but
-       most targets defined by this file need the intermine.properties file -->
-  <target name="-init-check-for-intermine-properties" depends="-init-deps">
-    <available file="${user.home}/${intermine.properties.file}"
-               property="have.intermine.properties.file"/>
-  </target>
-
-  <target name="-check-for-intermine-properties" depends="-init-check-for-intermine-properties"
-          unless="have.intermine.properties.file">
-    <fail message="you need to set the intermine.properties.file property in your project"
-          unless="temporary.webapp.project"/>
   </target>
 
 
@@ -56,8 +45,7 @@
           tofile="${build.dir}/webapp/WEB-INF/classes/default.intermine.properties"/>
   </target>
 
-  <target name="-pre-jar" 
-          depends="-check-for-intermine-properties, -final-app-pre-jar, webapp.-pre-jar">
+  <target name="-pre-jar" depends="-final-app-pre-jar, webapp.-pre-jar">
     <!-- Start with base intermine webapp war -->
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
   </target>
@@ -68,14 +56,7 @@
 
   <!-- USER PROFILE -->
 
-  <target name="-init-build-db" depends="init, -init-deps, -init-task-xml">
-    <!-- Copy intermine.properties onto the task classpath -->
-    <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.task.dir}/intermine.properties"/>
-    <!-- Copy default.intermine.properties into build/classes -->
-    <copy file="${default.intermine.properties.file}"
-          tofile="${build.task.dir}/default.intermine.properties"/>
-  </target>
+  <target name="-init-build-db" depends="init, -init-deps, -init-task-xml"/>
   
   <target name="build-db-userprofile" depends="-do-build-db-userprofile, load-default-templates"/>
   

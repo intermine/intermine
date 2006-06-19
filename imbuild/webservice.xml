@@ -6,6 +6,7 @@
   <dirname property="webservice.xml.basedir" file="${ant.file.webservice}"/>
   <import file="${webservice.xml.basedir}/webapp.xml"/>
   <import file="${webservice.xml.basedir}/task.xml"/>
+  <import file="${webservice.xml.basedir}/properties.xml"/>
 
   <!-- Local webservice build/deploy properties -->
   <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
@@ -13,7 +14,7 @@
 
   <!-- INIT -->
 
-  <target name="-pre-init" depends="webapp.-pre-init">
+  <target name="-pre-init" depends="-init-properties, webapp.-pre-init">
     <!-- Files -->
     <!-- Location of model-less intermine-webservice.war -->
     <property name="source.intermine.webservice.war" location="${webservice.xml.basedir}/../intermine/webservice/server/dist/intermine-webservice.war"/>
