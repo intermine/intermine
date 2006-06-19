@@ -64,6 +64,14 @@ public class DataLoaderHelperTest extends QueryTestCase
         Source source = new Source();
         source.setName("testsource");
         assertEquals(Collections.singleton(new PrimaryKey("key1", "name, address")), DataLoaderHelper.getPrimaryKeys(cld, source));
+
+        source = new Source();
+        source.setName("testsource5");
+        try {
+            DataLoaderHelper.getPrimaryKeys(cld, source);
+            fail("Was expecting an exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     public void testGetPrimaryKeysCldSource2() throws Exception {
