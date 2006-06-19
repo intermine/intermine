@@ -202,7 +202,7 @@ public class InitialiserPlugin implements PlugIn
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =
-            getClass().getClassLoader().getResourceAsStream("objectstoresummary.properties");
+            servletContext.getResourceAsStream("/WEB-INF/objectstoresummary.properties");
         if (objectStoreSummaryPropertiesStream == null) {
             // there are no model specific properties
             throw new ServletException("Unable to find objectstoresummary.properties");
