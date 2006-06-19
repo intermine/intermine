@@ -63,6 +63,7 @@ public class DataLoaderHelper
 
     protected static Map sourceKeys = new HashMap();
     protected static Map modelDescriptors = new HashMap();
+    protected static Set verifiedSources = new HashSet();
 
     /**
      * Compare the priorities of two sources over a field.
@@ -169,6 +170,33 @@ public class DataLoaderHelper
         Set keySet = new HashSet();
         Properties keys = getKeyProperties(source);
         if (keys != null) {
+            if (!verifiedSources.contains(source)) {
+                String packageNameWithDot = cld.getName().substring(0, cld.getName()
+                        .lastIndexOf('.') + 1);
+                LOG.info("Verifying primary key config for source " + source + ", packageName = "
+                        + packageNameWithDot);
+                Iterator iter = keys.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iter.next();
+                    String cldName = (String) entry.getKey();
+                    String keyList = (String) entry.getValue();
+                    ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
+                            packageNameWithDot + cldName);
+                    Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
+                    String[] tokens = keyList.split(",");
+                    for (int i = 0; i < tokens.length; i++) {
+                        String token = tokens[i].trim();
+                        if (map.get(token) == null) {
+                            throw new IllegalArgumentException("Primary key " + token 
+                                    + " for class " + cld.getName() + " required by data source "
+                                    + source.getName() + " in " + source.getName()
+                                    + "_keys.properties is not defined in "
+                                    + cld.getModel().getName() + "_keyDefs.properties");
+                        }
+                    }
+                }
+                verifiedSources.add(source);
+            }
             Map map = PrimaryKeyUtil.getPrimaryKeys(cld);
             String cldName = TypeUtil.unqualifiedName(cld.getName());
             String keyList = (String) keys.get(cldName);

@@ -976,8 +976,12 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         } catch (ObjectStoreException e) {
         } finally {
             iw2 = (IntegrationWriterDataTrackingImpl) IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
-            writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
-            removeDataFromStore(writer2);
+            try {
+                writer2 = (ObjectStoreWriterInterMineImpl) iw2.getObjectStoreWriter();
+                removeDataFromStore(writer2);
+            } finally {
+                iw2.close();
+            }
         }
     }
 
