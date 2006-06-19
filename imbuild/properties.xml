@@ -5,7 +5,7 @@
 <project name="properties" default="default" basedir=".">
 
   <target name="-init-check-for-intermine-properties"
-          depends="-init-deps, -pre-define-task-classpath, -init-project">
+          depends="-pre-define-task-classpath, -init-project">
     <available file="${user.home}/${intermine.properties.file}"
                property="have.intermine.properties.file"/>
   </target>
