@@ -98,10 +98,10 @@ public class DrosdelDataTranslator extends DataTranslator
                     tgtItem.addReference(organismRef);
                     addReferencedItem(tgtItem, drosdelDb, "evidence", true, "", false);
                     String available = srcItem.getAttribute("available").getValue();
-                    if (available.equals("0")) {
+                    if (available.equals("0") || available.equals("false")) {
                         tgtItem.setAttribute("available", "false");
                     } else {
-                        if (available.equals("1")) {
+                        if (available.equals("1") || available.equals("true")) {
                             tgtItem.setAttribute("available", "true");
                         } else {
                             throw new RuntimeException("unknown value for deletion.available: "
