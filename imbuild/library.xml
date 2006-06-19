@@ -197,7 +197,7 @@
   
   <!-- CLEAN -->
   
-  <target name="clean" depends="init">
+  <target name="clean" depends="-pre-init">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete>
@@ -205,7 +205,8 @@
     </delete>
   </target>
   
-  <target name="clean-all" depends="init, clean">
+  <target name="clean-all" depends="clean">
+    <property name="no.dep" value="false"/>
     <dependencies basedir="${library.xml.basedir}/.." target="clean"/>
   </target>
   
