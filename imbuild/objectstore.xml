@@ -81,7 +81,7 @@
     <!-- Summarise objectstore -->
     <echo message="Summarising object store ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
-                           outputFile="${dist.dir}/objectstore.summary.properties"
+                           outputFile="${dist.dir}/objectstoresummary.properties"
                            inputFile="objectstoresummary.config.properties"/>
   </target>
     
