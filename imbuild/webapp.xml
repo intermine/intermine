@@ -37,6 +37,9 @@
     <copy todir="${build.dir}/webapp/WEB-INF/lib" flatten="true" >
       <fileset dir="${webapp.xml.basedir}/.." includes="${jarFiles}" excludes="${deploy.excludes}" />
     </copy>
+    <move todir="${build.dir}/webapp/WEB-INF/" >
+      <fileset dir="${build.dir}/webapp/WEB-INF/lib" includes="**/*.properties" />
+    </move>
   </target>
   
   <target name="do-jar" depends="-init-presetdef-war">
