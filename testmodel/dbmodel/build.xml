@@ -6,7 +6,7 @@
   
   <target name="insert-data-unittest" depends="build-db">
     <!-- Invalidate (delete) summary properties -->
-    <delete file="${objectstore.summary.properties}"/>
+    <delete file="${objectstoresummary.properties}"/>
     <insert-xml-data integrationWriter="integration.unittestsingle"
                      xmlResource="testmodel_data.xml"
                      sourceName="testsource"/>
