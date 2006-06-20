@@ -50,6 +50,8 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
 import org.intermine.objectstore.query.Results;
 import org.intermine.sql.Database;
@@ -612,6 +614,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
+        Constraint where = q.getConstraint();
+        if (where instanceof ConstraintSet) {
+            ConstraintSet where2 = (ConstraintSet) where;
+            if (where2.getConstraints().isEmpty()
+                    && (ConstraintOp.NAND.equals(where2.getOp())
+                        || ConstraintOp.OR.equals(where2.getOp()))) {
+                return Collections.EMPTY_LIST;
+            }
+        }
         Connection c = null;
         try {
             c = getConnection();
