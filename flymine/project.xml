@@ -57,9 +57,11 @@
     </source>
     <source name="drosdel" type="drosdel"/>
     <source name="tiling_path" type="tiling_path">
+      <property name="gff3.taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/tiling"/>
     </source>
     <source name="long_oligo" type="long_oligo">
+      <property name="gff3.taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
     <source name="phenotype" type="phenotype">
@@ -69,6 +71,7 @@
       <property name="src.data.dir" location="/shared/data/homophila/current"/>
     </source>
     <source name="flyreg" type="flyreg">
+      <property name="gff3.taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/flyreg"/>
     </source>
     <source name="protein_structure" type="protein_structure">
