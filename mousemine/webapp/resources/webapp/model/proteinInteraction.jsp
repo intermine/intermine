@@ -16,6 +16,19 @@
         <P><B>High-throughput 2-hybrid protein interaction datasets.</B></P>
         <P>
           These datasets were downloaded in <A href="http://psidev.sourceforge.net/mi/xml/doc/user">PSI-MI format</A> from the <A href="http://www.ebi.ac.uk/intact/index.html">intAct</A> database:
+
+             <im:querylink text="M. musculus experiment list" skipBuilder="true">
+                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                         <constraint op="=" value="10090" description="" taxonId="" code="A"></constraint>
+                     </node>
+                 </query>
+             </im:querylink>
        </P>
       </div>
     </TD>
