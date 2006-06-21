@@ -54,7 +54,7 @@
     
   <target name="init" depends="-pre-init"/>
 
-  <target name="default" depends="compile, jar"/>
+  <target name="default" depends="compile, jar, action"/>
   
   <target name="-init-deps-no-build" depends="skip-deps">
     <dependencies basedir="${library.xml.basedir}/.."/>
@@ -134,6 +134,22 @@
   
   <target name="jar" depends="compile, -init-jar, -pre-jar, do-jar, -post-jar"/>
   
+
+  <!-- ACTION -->
+  
+  <target name="-pre-action"/>
+  
+  <target name="-post-action"/>
+  
+  <target name="-init-action" depends="init, -init-deps"/>
+  
+  <!-- a generic action target that can be overridden by projects that need to
+       do something after compile and jar - an example is integrate -->
+  <target name="do-action"/>
+  
+  <target name="action" depends="compile, jar, -init-action, -pre-action, do-action, -post-action"/>
+  
+
   <!-- JAVADOC -->
   
   <target name="-init-javadoc" depends="init, -init-deps">
