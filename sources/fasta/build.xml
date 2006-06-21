@@ -8,7 +8,7 @@
   
   <import file="../../imbuild/source.xml"/>
   
-  <!-- no retrieve of translate -->
+  <!-- no retrieve or translate -->
   <target name="retrieve"/>
   <target name="translate"/>
   
