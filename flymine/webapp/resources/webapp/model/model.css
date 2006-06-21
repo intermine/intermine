@@ -21,3 +21,13 @@ a
     color: black;
 }
 
+.box .title {
+  padding: 5px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  font-weight: bold;
+  background: #eee;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
+}
