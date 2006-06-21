@@ -15,7 +15,6 @@
 
   <import file="${application.xml.basedir}/webapp.xml"/>
   <import file="${application.xml.basedir}/task.xml"/>
-  <import file="${application.xml.basedir}/properties.xml"/>
 
   <!-- Local webapp build/deploy properties -->
   <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />

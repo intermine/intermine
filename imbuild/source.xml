@@ -59,7 +59,7 @@
 
 
   <target name="-init-deps" depends="-init-properties, library.-init-deps, -init-task-xml">
-    <!-- Copy resources into build/task -->
+    <!-- Copy resources into classpath -->
     <copy todir="${build.task.dir}">
       <fileset dir="${resources.dir}"/>
     </copy>

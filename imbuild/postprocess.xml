@@ -5,7 +5,6 @@
 
   <import file="${postprocess.xml.basedir}/library.xml"/>
   <import file="${postprocess.xml.basedir}/task.xml"/>
-  <import file="${postprocess.xml.basedir}/properties.xml"/>
 
     <target name="-pre-init" depends="-init-properties, library.-pre-init">
     </target>
