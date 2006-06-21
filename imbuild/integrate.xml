@@ -6,13 +6,10 @@
   
   <import file="${integrate.xml.basedir}/library.xml"/>
   <import file="${integrate.xml.basedir}/task.xml"/>
-  <import file="${integrate.xml.basedir}/properties.xml"/>
   
-  <target name="-pre-init" depends="-init-properties, library.-pre-init"/>
+  <target name="-pre-init" depends="library.-pre-init"/>
 
-<!-  <target name="-post-jar" depends="integrate"/>-->
-  
-  <target name="-init-deps" depends="-init-properties, library.-init-deps, -init-task-xml"/>
+  <target name="-init-deps" depends="library.-init-deps, -init-task-xml"/>
   
   <target name="load-static" depends="init, -init-deps,
                                       -pre-load-static,
@@ -50,7 +47,7 @@
     ant integrate -Dsource=uniprot-dros -Daction=retrieve
   -->
   
-  <target name="integrate" depends="init, -init-deps, -init-integrate">
+  <target name="integrate" depends="-init-properties, init, -init-deps, -init-integrate">
     <integrate projectXml="../project.xml" basedir="../.." source="${source}" action="${action}"/>
   </target>
   

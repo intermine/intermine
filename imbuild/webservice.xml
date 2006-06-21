@@ -6,7 +6,6 @@
   <dirname property="webservice.xml.basedir" file="${ant.file.webservice}"/>
   <import file="${webservice.xml.basedir}/webapp.xml"/>
   <import file="${webservice.xml.basedir}/task.xml"/>
-  <import file="${webservice.xml.basedir}/properties.xml"/>
 
   <!-- Local webservice build/deploy properties -->
   <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />

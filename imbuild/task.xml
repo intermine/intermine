@@ -33,6 +33,43 @@
     <available property="antlib-web-available" resource="org/intermine/web/task/antlib-web.xml" classpathref="task.class.path"/>
   </target>
   
+  <target name="-init-check-for-intermine-properties"
+          depends="-pre-define-task-classpath, -init-project">
+    <available file="${user.home}/${intermine.properties.file}"
+               property="have.intermine.properties.file"/>
+  </target>
+
+  <target name="-check-for-intermine-properties-file" depends="-init-project" 
+          unless="intermine.properties.file">
+    <fail unless="temporary.webapp.project">
+You need to set the intermine.properties.file property in your
+project.properties.
+    </fail>
+  </target>
+
+  <target name="-check-for-intermine-properties" 
+          depends="-check-for-intermine-properties-file, -init-check-for-intermine-properties"
+          unless="have.intermine.properties.file">
+    <fail unless="temporary.webapp.project">
+Couldn't find ${user.home}/${intermine.properties.file}.
+You need to set the intermine.properties.file property in your
+project.properties.
+    </fail>
+  </target>
+
+  <target name="-init-properties" depends="-check-for-intermine-properties"
+          unless="temporary.webapp.project">
+    <!-- depends on -pre-define-task-classpath so that build.task.dir is set
+         and the directory is created -->
+
+    <!-- Copy intermine.properties onto the classpath -->
+    <copy file="${user.home}/${intermine.properties.file}" 
+          tofile="${build.task.dir}/intermine.properties"/>
+    <!-- Copy default.intermine.properties onto the classpath -->
+    <copy file="${default.intermine.properties.file}" 
+          tofile="${build.task.dir}/default.intermine.properties"/>
+  </target>
+
   <target name="-load-task-taskdefs" depends="-check-task-availability,
                                               -load-os-tasks,
                                               -load-int-tasks,
@@ -53,7 +90,7 @@
     <taskdef resource="org/intermine/web/task/antlib-web.xml" classpathref="task.class.path"/>
   </target>
   
-  <target name="-pre-define-task-classpath" depends="library.-pre-init">
+  <target name="-pre-define-task-classpath" depends="-pre-init">
     <!-- depend on -pre-init to set build.dir -->
      <property name="build.task.dir" location="${build.dir}/main"/>
      <property name="build.tmp.dir" location="${build.dir}/tmp"/>

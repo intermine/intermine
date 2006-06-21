@@ -11,7 +11,7 @@
   <dirname property="objectstore.xml.basedir" file="${ant.file.objectstore}"/>
   
   <import file="${objectstore.xml.basedir}/model.xml"/>
-  <import file="${objectstore.xml.basedir}/properties.xml"/>
+  <import file="${objectstore.xml.basedir}/task.xml"/>
   
   <!-- Our generate phase involves fetching the model from the database. -->
   <property name="generating.code" value="true"/>
