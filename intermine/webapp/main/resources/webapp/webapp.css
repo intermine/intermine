@@ -96,17 +96,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   float: right;
 }
 
-.box .title {
-  padding: 5px;
-  text-align: left;
-  font-weight: normal;
-  font-size: 14px;
-  font-weight: bold;
-  background: #eee;
-  border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
-}
-
 .body {
   font-size: 12px;
   margin-top: 10px;
@@ -243,7 +232,7 @@ table td {
   line-height: 1.4em;
 }
 .heading2, .heading {
-  background: url(images/heading-bg.gif) top center repeat;
+  background: url(model/heading-bg.gif) top center repeat;
 }
 .heading sub, .heading sup {
   line-height: 0;
