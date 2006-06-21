@@ -51,4 +51,6 @@
     <integrate projectXml="../project.xml" basedir="../.." source="${source}" action="${action}"/>
   </target>
   
+  <target name="do-action" depends="integrate"/>
+
 </project>
