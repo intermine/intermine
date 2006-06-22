@@ -76,7 +76,6 @@ public class PostProcess extends Task
         }
 
         project = ProjectXmlBinding.unmarshall(projectXml);
-        System.out.println("project " + project);
         System.out.println("Found " + project.getPostProcesses().size() + " post-processes");
 
         if ("${source}".equalsIgnoreCase(action)) { action = ""; }
