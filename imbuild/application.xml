@@ -22,7 +22,7 @@
 
   <!-- INIT -->
 
-  <target name="-pre-init" depends="-init-properties, webapp.-pre-init">
+  <target name="-pre-init" depends="webapp.-pre-init">
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
@@ -86,6 +86,27 @@
                           userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
+  <!-- RELEASE / REMOVE FROM TOMCAT -->
+  
+  <target name="release-webapp" depends="-init-properties, init">
+    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask"
+             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
+    <tomcat-deploy url="${webapp.deploy.url}/manager"
+                   username="${webapp.manager}" 
+                   password="${webapp.password}"
+                   path="/${webapp.path}" 
+                   war="file://${dist.war}"/>
+  </target>
+
+  <target name="remove-webapp" depends="-init-properties, init">
+    <taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask"
+             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
+    <tomcat-undeploy url="${webapp.deploy.url}/manager"
+                     username="${webapp.manager}" 
+                     password="${webapp.password}"
+                     path="/${webapp.path}"/>
+  </target>
+  
   <!-- PRECOMPUTING -->
 
   <target name="drop-precomputed-tables" depends="-init-build-db">
