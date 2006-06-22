@@ -421,6 +421,12 @@ public class UniprotDataTranslator extends DataTranslator
                         createGene = true;
                         dbId = getDataSourceId("SGD");
                     }
+                } else if (taxonId == 36329) { // Malaria
+                    geneOrganismDbId = geneIdentifier;
+                    if (geneIdentifier != null) {
+                        createGene = true;
+                        dbId = getDataSourceId("GeneDB");
+                    }
                 } else if (taxonId == 10090) { // Mus musculus
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
                     //geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", null);
