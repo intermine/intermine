@@ -10,12 +10,10 @@
     <source name="flybase-dmel-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
       <property name="gff3.taxonId" value="7227"/>
-      <property name="flybase.small" value="true"/>
     </source>
     <source name="flybase-dpse-gff" type="flybase-gff">
-      <property name="src.data.dir" location="/shared/data/flybase/Drosophila_pseudoobscura/dpse_r20_20051018/gff"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/gff"/>
       <property name="gff3.taxonId" value="7237"/>
-      <property name="flybase.small" value="true"/>
     </source>
     <source name="flybase-dmel-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -29,7 +27,6 @@
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/fasta"/>
     </source>
-    <!--
     <source name="ensembl-anopheles" type="ensembl">
       <property name="organism" value="AGP"/>
     </source>
@@ -45,12 +42,11 @@
       <property name="uniprot.organisms" value="6239 7165 180454"/>
       <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
     </source>
-    -->
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/latest_data"/>
     </source>
     <source name="interpro" type="interpro">
-        <!-- property name="interpro.organisms" value="6239,7165,7227,180454"/ -->
+      <!-- property name="interpro.organisms" value="6239,7165,7227,180454"/ -->
       <property name="interpro.organism.taxid.list" value="6239,7165,7227,180454"/>
       <!-- property name="interpro.organism.taxid.list" value="5833"/ -->
     </source>
