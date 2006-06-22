@@ -6,7 +6,7 @@
   <import file="${postprocess.xml.basedir}/library.xml"/>
   <import file="${postprocess.xml.basedir}/task.xml"/>
 
-    <target name="-pre-init" depends="-init-properties, library.-pre-init">
+    <target name="-pre-init" depends="library.-pre-init">
     </target>
 
     <target name="-init-deps" depends="library.-init-deps, -init-task-xml">
@@ -27,12 +27,14 @@
       The post-processing action (a sources dir name) should be provided on the command line.
       E.g. ant postprocess -Daction=homophila
     -->
-  <target name="postprocess" depends="init, -init-deps, -init-postprocess">
+  <target name="postprocess" depends="-init-properties, init, -init-deps, -init-postprocess">
     <postprocess
             projectXml="../project.xml"
             classpathref="task.class.path" 
             basedir="../.."
             action="${action}"/>
   </target>
+
+  <target name="do-action" depends="postprocess"/>
 
 </project>
