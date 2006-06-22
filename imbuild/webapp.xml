@@ -46,27 +46,6 @@
     <webapp:war/>
   </target>
   
-  <!-- RELEASE / REMOVE FROM TOMCAT -->
-  
-  <target name="release-webapp" depends="init">
-    <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask"
-             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
-    <tomcat-deploy url="${webapp.deploy.url}/manager"
-                   username="${webapp.manager}" 
-                   password="${webapp.password}"
-                   path="/${webapp.path}" 
-                   war="file://${dist.war}"/>
-  </target>
-
-  <target name="remove-webapp" depends="init">
-    <taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask"
-             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
-    <tomcat-undeploy url="${webapp.deploy.url}/manager"
-                     username="${webapp.manager}" 
-                     password="${webapp.password}"
-                     path="/${webapp.path}"/>
-  </target>
-  
   <!-- MACRO DEFINITIONS -->
   
   <target name="-init-presetdef-war">
