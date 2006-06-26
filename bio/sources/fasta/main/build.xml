@@ -1,0 +1,6 @@
+
+<project name="fasta-tasks" default="default" basedir=".">
+  <description>build fasta tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
+

@@ -1,4 +1,0 @@
-<project name="tfbscluster-tasks" default="default" basedir=".">
-  <description>build tfbscluster tasks</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>

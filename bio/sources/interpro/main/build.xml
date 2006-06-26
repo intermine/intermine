@@ -1,0 +1,4 @@
+<project name="interpro-tasks" default="default" basedir=".">
+  <description>build interpro tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

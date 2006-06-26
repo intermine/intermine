@@ -1,0 +1,8 @@
+
+<project name="mage" default="default" basedir=".">
+  <description>build, test, package mage</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+</project>
+

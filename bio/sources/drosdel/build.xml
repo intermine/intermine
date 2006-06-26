@@ -1,0 +1,8 @@
+<project name="drosdel" default="default" basedir=".">
+
+  <description>build, test, package drosdel</description>
+
+  <import file="../../../imbuild/source.xml"/>
+
+</project>
+

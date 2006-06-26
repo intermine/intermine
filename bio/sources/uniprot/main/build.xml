@@ -1,0 +1,5 @@
+<project name="uniprot-tasks" default="default" basedir=".">
+  <description>build uniprot tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
+

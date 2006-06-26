@@ -1,0 +1,4 @@
+<project name="so-tasks" default="default" basedir=".">
+  <description>build so tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

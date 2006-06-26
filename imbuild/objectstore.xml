@@ -115,7 +115,7 @@
       <sequential>
         <echo>Merging @{source}...</echo>
         <model-merger inputModelFile="${build.model.dir}/${model.name}_model.xml"
-                      additionsFile="${objectstore.xml.basedir}/../sources/@{source}/@{source}_additions.xml"
+                      additionsFile="${objectstore.xml.basedir}/../@{source}"
                       outputFile="${build.model.dir}/${model.name}_model.xml"/>
       </sequential>
     </macrodef>

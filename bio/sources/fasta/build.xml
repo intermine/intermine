@@ -1,0 +1,27 @@
+<!--
+  a bit of an odd source as it writes straight to the production database
+  and deals with model objects (and therefore the task sub-project depends on
+  the production model).
+-->
+<project name="fasta" default="default" basedir=".">
+  <description>build, test, package fasta</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+  <!-- no retrieve or translate -->
+  <target name="retrieve"/>
+  <target name="translate"/>
+  
+  <target name="load" depends="init, -init-deps">
+    <taskdef name="read-fasta"
+      classname="org.flymine.dataConversion.FastaLoaderTask"
+      classpathref="task.class.path"/>
+    <read-fasta integrationWriterAlias="integration.production"
+                sourceName="${source.name}"
+                fastaTaxonId="${fasta.taxonId}">
+      <fileset dir="${src.data.dir}" includes="${fasta.includes}"/>
+    </read-fasta>
+  </target>
+  
+</project>
+
