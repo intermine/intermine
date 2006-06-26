@@ -48,14 +48,9 @@ public class InparanoidConverter extends FileConverter
     protected Map ids = new HashMap();
     protected Map organisms = new LinkedHashMap();
     protected ItemFactory itemFactory;
-<<<<<<< .working
     protected Map sources = new LinkedHashMap();
     protected Map orgSources = new HashMap();
     protected Map taxonIds = new HashMap();
-=======
-    protected Map sources = new LinkedHashMap();
-    protected Map orgSources = new HashMap();
->>>>>>> .merge-right.r9409
 
     /**
      * Constructor
@@ -103,7 +98,7 @@ public class InparanoidConverter extends FileConverter
     }
 
     /**
-     * @see DataConverter#process
+     * @see FileConverter#process
      */
     public void process(Reader reader) throws Exception {
         int lineNum = 0;
