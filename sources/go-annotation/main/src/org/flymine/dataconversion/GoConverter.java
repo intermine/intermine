@@ -55,7 +55,6 @@ public class GoConverter extends FileConverter
     protected Map synonymTypes = new HashMap();
     protected Map productWrapperMap = new LinkedHashMap();
     private String geneAttribute;
-    private String geneAttribute;
 
     protected ItemFactory itemFactory;
 
