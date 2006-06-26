@@ -182,17 +182,23 @@ public class DataLoaderHelper
                     String keyList = (String) entry.getValue();
                     ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
                             packageNameWithDot + cldName);
-                    Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
-                    String[] tokens = keyList.split(",");
-                    for (int i = 0; i < tokens.length; i++) {
-                        String token = tokens[i].trim();
-                        if (map.get(token) == null) {
-                            throw new IllegalArgumentException("Primary key " + token 
-                                    + " for class " + cld.getName() + " required by data source "
-                                    + source.getName() + " in " + source.getName()
-                                    + "_keys.properties is not defined in "
-                                    + cld.getModel().getName() + "_keyDefs.properties");
+                    if  (iCld != null) {
+                        Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
+
+                        String[] tokens = keyList.split(",");
+                        for (int i = 0; i < tokens.length; i++) {
+                            String token = tokens[i].trim();
+                            if (map.get(token) == null) {
+                                throw new IllegalArgumentException("Primary key " + token
+                                        + " for class " + cld.getName() + " required by datasource "
+                                        + source.getName() + " in " + source.getName()
+                                        + "_keys.properties is not defined in "
+                                        + cld.getModel().getName() + "_keyDefs.properties");
+                            }
                         }
+                    } else {
+                        LOG.warn("Ignoring entry for " + cldName + " in file "
+                                + cld.getModel().getName() + "_keyDefs.properties - not in model!");
                     }
                 }
                 verifiedSources.add(source);
