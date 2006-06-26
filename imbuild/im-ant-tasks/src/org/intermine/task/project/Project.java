@@ -15,6 +15,7 @@ import org.intermine.task.Integrate;
  */
 public class Project
 {
+    String type = null;
     Map sources = new LinkedHashMap();
     List properties = new ArrayList();
     List postprocesses = new ArrayList();
@@ -42,4 +43,20 @@ public class Project
     public List getPostProcesses() {
         return postprocesses;
     }
+
+    /**
+     * Set the type of this project.
+     * @param type the new type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * Return the type of this project
+     */
+    public String getType() {
+        return type;
+    }
+
 }

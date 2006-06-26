@@ -1,4 +1,0 @@
-<project name="firstef-tasks" default="default" basedir=".">
-  <description>build firstef tasks</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>

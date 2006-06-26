@@ -1,4 +1,0 @@
-<project name="mage-tasks" default="default" basedir=".">
-  <description>build mage tasks</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>

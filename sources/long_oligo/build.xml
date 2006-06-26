@@ -1,8 +1,0 @@
-<project name="long_oligo" default="default" basedir=".">
-
-  <description>build, test, package long_oligo</description>
-
-  <import file="../../imbuild/source.xml"/>
-
-</project>
-

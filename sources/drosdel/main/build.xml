@@ -1,4 +1,0 @@
-<project name="drosdel-tasks" default="default" basedir=".">
-  <description>build drosdel tasks</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>

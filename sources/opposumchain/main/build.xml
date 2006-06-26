@@ -1,4 +1,0 @@
-<project name="opposumchain-tasks" default="default" basedir=".">
-  <description>build opposumchain tasks</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>

@@ -34,13 +34,13 @@ public class ProjectXmlBinding
             throw new RuntimeException(e);
         }
     }
-    
+
     private static class ProjectXmlHandler extends DefaultHandler
     {
         Project project;
         Source source;
         boolean postProcesses = false;
-        
+
         /**
          * @see DefaultHandler#startElement
          */
@@ -48,6 +48,11 @@ public class ProjectXmlBinding
             throws SAXException {
             if (qName.equals("project")) {
                 project = new Project();
+                if (attrs.getValue("type") == null) {
+                    throw new IllegalArgumentException("project type must be set in project.xml");
+                } else {
+                    project.setType(attrs.getValue("type"));
+                }
             } else if (qName.equals("source")) {
                 source = new Source();
                 source.setType(attrs.getValue("type"));
@@ -68,7 +73,7 @@ public class ProjectXmlBinding
                 project.addPostProcess(qName);
             }
         }
-        
+
         /**
          * @see DefaultHandler#endElement
          */

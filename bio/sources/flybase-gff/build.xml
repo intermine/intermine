@@ -1,0 +1,84 @@
+
+<project name="flybase-gff" default="default" basedir=".">
+  <description>build, test, package flybase gff</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+  <target name="-prepare-filter">
+    <property name="build.data.dir" location="${build.dir}/data"/>
+    <mkdir dir="${build.data.dir}"/>
+  </target>
+  
+  <target name="-pre-retrieve" depends="-prepare-filter, -filter-flybase, -filter-flybase-small"/>
+  
+  <target name="-retrieve-from-xml-file" if="have.src.xml">
+    <convert-xml-file
+      schema="${source.schema.file}"
+      model="${source.model}"
+      osName="osw.${common.os.prefix}-src-items">
+      <fileset dir="${build.data.dir}" includes="*.xml"/>
+    </convert-xml-file>
+  </target>
+  
+  <!--
+    Overriden to use build/data as source data directory, otherwise
+    it's the same target. Might be able to improve this in the future
+    but I couldn't see a particularly neat way to do it (you need to
+    know where the data to filter is, after all), might be neatest
+    to hide the filtering complications in just this file.
+  -->
+  <target name="-retrieve-from-gff3" depends="build-db-tgt-items" if="have.file.gff3">
+    <taskdef name="convert-gff3-file" classname="org.flymine.task.GFF3ConverterTask">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+
+    <convert-gff3-file converter="org.flymine.dataconversion.GFF3Converter"
+                  target="osw.${common.os.prefix}-tgt-items"
+                  seqClsName="${gff3.seqClsName}"
+                  orgTaxonId="${gff3.taxonId}"
+                  dataSourceName="${gff3.dataSourceName}"
+                  dataSetTitle="${gff3.dataSetTitle}"
+                  model="${target.model}"
+                  handlerClassName="${gff3.handlerClassName}">
+      <fileset dir="${build.data.dir}">
+        <include name="*.gff"/>
+      </fileset>
+    </convert-gff3-file>
+  </target>
+  
+  <target name="-filter-flybase" unless="flybase.small">
+    <taskdef
+      name="filter-flybase-gff"
+      classname="org.flymine.dataconversion.FilterFlyBaseGFF3Task">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+
+    <filter-flybase-gff tgtDir="${build.data.dir}">
+      <fileset dir="${src.data.dir}">
+        <include name="*.gff"/>
+      </fileset>
+    </filter-flybase-gff>
+  </target>
+
+  <!-- for testing, filter only chromosome 4 of FlyBase for creating small databases -->
+  <target name="-filter-flybase-small" if="flybase.small">
+    <delete>
+      <fileset dir="${build.data.dir}" includes="**/*"/>
+    </delete>
+
+    <taskdef
+      name="filter-flybase-gff"
+      classname="org.flymine.dataconversion.FilterFlyBaseGFF3Task">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+
+    <filter-flybase-gff tgtDir="${build.data.dir}">
+      <fileset dir="${src.data.dir}">
+        <include name="*-4-*.gff"/>
+        <include name="*-4_*.gff"/>
+      </fileset>
+    </filter-flybase-gff>
+  </target>
+
+</project>
+

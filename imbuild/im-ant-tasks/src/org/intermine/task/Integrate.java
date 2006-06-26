@@ -122,7 +122,9 @@ public class Integrate extends Task
 
     private void performAction(String action, String source) {
         Source s = (Source) intermineProject.getSources().get(source);
-        File sourceDir = new File(new File(workspaceBaseDir, "sources"), s.getType());
+        File baseDir = new File(workspaceBaseDir,
+                                intermineProject.getType() + File.separatorChar + "sources"); 
+        File sourceDir = new File(baseDir, s.getType());
 
         System.out.println("Performing integration action \"" + action + "\" for source \""
                            + source + "\" in directory: " + sourceDir);
