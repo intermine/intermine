@@ -6,7 +6,7 @@
   
   <import file="${tests.xml.basedir}/library.xml"/>
   
-  <target name="-pre-init" depends="-init-properties, library.-pre-init">
+  <target name="-pre-init" depends="library.-pre-init">
     <!-- emma properties -->
     <property name="emma.enabled" value="false"/>
     <property name="build.coverage.dir" location="${build.dir}/coverage"/>
@@ -94,7 +94,7 @@
     <runtarget target="test"/>
   </target>
   
-  <target name="default" depends="test"/>
+  <target name="default" depends="-init-properties, test"/>
   
   <!-- CLEAN -->
   
