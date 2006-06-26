@@ -116,7 +116,6 @@
       </c:otherwise>
     </c:choose>
   
-    <c:if test="${IS_SUPERUSER}">
       <span class="smallnote">
         <c:if test="${!empty PROFILE.savedTemplates}">
           <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
@@ -127,7 +126,6 @@
           <fmt:message key="begin.importTemplates"/>
         </html:link>
       </span>
-    </c:if>
   </im:body>
 
 <!-- /historyTemplates.jsp -->
