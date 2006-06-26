@@ -15,10 +15,12 @@
       <td align="right" valign="top"><fmt:message key="importTemplates.xml"/></td>
       <td><html:textarea property="xml" cols="60" rows="20"/></td>
     </tr>
-    <tr>
-      <td align="right" valign="top"><fmt:message key="importTemplates.overwriting"/></td>
-      <td><html:checkbox property="overwriting"/>
-    </tr>
+    <c:if test="${IS_SUPERUSER}">
+      <tr>
+        <td align="right" valign="top"><fmt:message key="importTemplates.overwriting"/></td>
+        <td><html:checkbox property="overwriting"/>
+      </tr>
+    </c:if>
     <tr>
       <td>&nbsp;</td>
       <td align="center">
