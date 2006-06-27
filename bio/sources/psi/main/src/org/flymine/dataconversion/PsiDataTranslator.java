@@ -617,7 +617,7 @@ public class PsiDataTranslator extends DataTranslator
     }
 
     /**
-     * @see org.flymine.task.DataTranslatorTask#execute
+     * @see org.intermine.bio.task.DataTranslatorTask#execute
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
