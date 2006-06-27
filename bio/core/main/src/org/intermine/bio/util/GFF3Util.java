@@ -10,13 +10,13 @@ package org.intermine.bio.util;
  * 
  */
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
-import org.flymine.io.gff3.GFF3Record;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

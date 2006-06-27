@@ -11,11 +11,11 @@ package org.flymine.dataconversion;
  */
 
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.util.XmlUtil;
 
-import org.flymine.io.gff3.GFF3Record;
 
 /**
  * A converter/retriever for DiseaseRegion GFF3 files (T1DBase).

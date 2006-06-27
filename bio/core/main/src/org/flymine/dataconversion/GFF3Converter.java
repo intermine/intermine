@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.bio.io.gff3.GFF3Parser;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -30,8 +32,6 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
-import org.flymine.io.gff3.GFF3Parser;
-import org.flymine.io.gff3.GFF3Record;
 
 import java.io.BufferedReader;
 import java.io.IOException;

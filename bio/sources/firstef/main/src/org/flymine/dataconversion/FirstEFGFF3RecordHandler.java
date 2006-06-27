@@ -11,9 +11,9 @@ package org.flymine.dataconversion;
  */
 
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 
-import org.flymine.io.gff3.GFF3Record;
 
 /**
  * A converter/retriever for FirstEF GFF3 files (from UCSC).
