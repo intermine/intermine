@@ -10,14 +10,14 @@ package org.flymine.dataconversion;
  *
  */
 
+import org.intermine.bio.io.gff3.GFF3Parser;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
-import org.flymine.io.gff3.GFF3Parser;
-import org.flymine.io.gff3.GFF3Record;
 
 import java.io.BufferedReader;
 import java.io.StringReader;

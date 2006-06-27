@@ -24,10 +24,10 @@ import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.Attribute;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 
-import org.flymine.io.gff3.GFF3Record;
 
 /**
  * Permits specific operations to be performed when processing an line of GFF3.

@@ -16,11 +16,11 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
-import org.flymine.io.gff3.GFF3Record;
 
 import org.apache.tools.ant.BuildException;
 /**
