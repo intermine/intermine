@@ -14,7 +14,7 @@
     <verbatim><h3>Quick Search</h3></verbatim>
     <para>
       Enter any identifier or symbol in the search box on the FlyMine
-      home page to access summary pages and integrated tools.  <ulink url="doc/tutorials/quickSearch.xml">Tutorial 1</ulink> <ulink url="doc/tutorials/objectDetails.xml">Tutorial 2</ulink>.  </para>
+      home page to access summary pages and integrated tools.  <ulink url="doc/tutorials/tutorial1-QuickSearch.xml">Tutorial 1</ulink> <ulink url="doc/tutorials/tutorial2-ObjectDetailsPage.xml">Tutorial 2</ulink>.  </para>
 
     <para>Some examples:
       <itemizedlist>
@@ -49,7 +49,7 @@
       as FlyMine develops and we welcome <ulink url="/feedback.do">suggestions</ulink>. Find lists of predefined template 
       queries on each aspect page or use the Template Search box on the FlyMine home page 
       and in the top menu on every page. 
-      <ulink url="doc/tutorials/templates.xml">Tutorial 3</ulink>
+      <ulink url="doc/tutorials/tutorial3-Templates.xml">Tutorial 3</ulink>
     </para>
 
     <verbatim><h3>FlyMine QueryBuilder</h3></verbatim>
@@ -60,6 +60,7 @@
       your own template queries. Access the FlyMine QueryBuilder via
       the FlyMine home page or choose a query starting point on an
       aspect page.
+      <ulink url="doc/tutorials/tutorial6-QB.xml">Tutorial 6</ulink>
     </para>
 
     <verbatim><h3>Operate on Lists</h3></verbatim>
@@ -72,6 +73,7 @@
       underneath the query results. Saved bags of data can be used to
       constrain new queries, perform logical operations and can be
       exported.
+      <ulink url="doc/tutorials/tutorial4-BagsHistory.xml">Tutorial 4</ulink>
     </para>
 
     <verbatim><h3>Save Queries</h3></verbatim>
@@ -79,6 +81,7 @@
       You can save your bags, queries and templates between sessions by
       <ulink url="/login.do">creating an account</ulink> using the 'Log in' box
       in the top menu on every page.
+      <ulink url="doc/tutorials/tutorial4-BagsHistory.xml">Tutorial 4</ulink>
     </para>
 
     <verbatim><br/></verbatim>

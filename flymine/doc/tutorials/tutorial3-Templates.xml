@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial 3: Running template queries</title>
+
+    <para>FlyMine presents data as 'Aspects', with each aspect
+    providing a 'view' of a particular type of data (for example Gene
+    Expression or Protein Interactions). To enable you to quickly and
+    easily carry out a range of queries across the data, FlyMine
+    includes a library of predefined Template Queries. A template
+    consists of a query form in which certain variables can be
+    changed. The variables are constraints (filters) on certain types
+    of data, so that a subset of that type of data is defined.</para>
+
+    <para>Template queries can be accessed in three ways.</para>
+    <itemizedlist> 
+      <listitem><para>Through the 'Search templates' feature on the 
+      home page and in the top menu bar on every page.</para></listitem>
+      <listitem><para>Templates also appear on object details pages.</para></listitem>
+     <listitem><para>Each 'Aspect' page has a set of template queries
+      related to that data type.</para></listitem>
+    </itemizedlist>
+
+    <para>This tutorial will guide you through running a template
+    query. The template query 'Search for GO annotations for a
+    particular gene' will be used as an example. Here, this template
+    query will be accessed through the Gene Ontology aspect. Click on
+    the 'Gene Ontology' aspect to go to the Gene Ontology aspect
+    page.</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO-homepage.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+    <para>Find the 'Related template queries' section and scroll down
+    to find the template 'Search for GO annotations for a particular
+    gene'.</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO-aspect.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+    
+    <para>Clicking on the blue arrow next to a template query takes
+    you to the template page.</para>
+
+    <para>This template query has two variables which can be changed
+    (or left as the default, all template queries have default values
+    for variables).</para> 
+
+    <itemizedlist> 
+
+      <listitem><para>The first variable has a label 'Synonym value =
+      '.  This means that you can enter any type of gene identifier
+      supported by FlyMine (rather than being limited to a specific
+      type of identifier). For <emphasis>D. melanogaster</emphasis>
+      genes, therefore, you could enter an FBgn identifier, CG
+      identifier or a gene symbol. Change the default value for this
+      variable to 'zen'.</para></listitem>
+
+     <listitem><para>The second variable asks for an organism. The organism is
+     specified for this template because a gene symbol or name may be
+     used for genes in more than one organism. Notice that the
+     organism can be selected from a drop-down list. Leave the
+     organism name set to 'Drosophila melanogaster'.</para></listitem>
+
+    </itemizedlist> 
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO-template.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+     <para>At the bottom of each template form are two options: 
+     'View Query' and 'View Results'.</para>    
+ 
+    <itemizedlist>
+       <listitem><para>Pressing the 'View Results' button will take
+       you directly to the results page. Depending on the template,
+       your results will be either a table of simple objects, a table
+       of object details pages or a combination of both. The example
+       query shows a table of objects as result:</para></listitem>
+    </itemizedlist>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO-template-results.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+ 
+    <itemizedlist> <listitem><para>The 'View Query' option allows you
+      to display the template in the FlyMine Query Builder. This
+      option enables you to use a template query as a starting point
+      for building a modified or more complex query, or to see how a
+      certain query may be constructed using the query builder (see
+      <ulink url="tutorial6-QB.xml">Tutorial 6</ulink> for more
+      information).</para></listitem>
+    </itemizedlist>
+
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO-template-QB.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+     <para>Other examples:</para>
+     <itemizedlist>
+
+       <listitem><para>'Show the predicted orthologues between two
+       organisms'. (Comparative Genomics aspect) This template will
+       give you a table of object summaries and allow you to browse
+       the result.</para></listitem>
+
+       <listitem><para>'For a particular protein from Drosophila
+       melanogaster, show the proteins it has been shown to interact
+       with and that have an orthologue in C. elegans with an
+       associated RNAi phenotype'. (Protein Interactions, Comparative
+       Genomics, RNAi aspect). This template demonstrates how it is
+       possible to query different types of data at once in
+       FlyMine. Take a look at the results and try viewing the
+       structure. The results of this template provide an example of
+       how simple attributes and object summaries can be
+       combined.</para></listitem>
+
+       <listitem><para>Use the 'Search templates' option (top menu
+       bar) with a keyword (e.g. GO term, protein). You will notice
+       the search results are graded according to their level of match
+       to your query.</para></listitem>
+
+    </itemizedlist>
+
+  </section>
+</article>
+
