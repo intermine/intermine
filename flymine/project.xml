@@ -101,14 +101,27 @@
       fasta is a bit wierd - tasks depend on the production model and
       retrieve and translate are noops
     -->
-    <source name="flybase-gene-fasta" type="fasta">
+    <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.include" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
     </source>
-    <source name="flybase-cds-fasta" type="fasta">
+    <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.idSuffix" value="_CDS"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.include" value="dmel-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+    </source>
+    <source name="flybase-dpse-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.include" value="dmel-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+    </source>
+    <source name="flybase-dpse-cds-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.idSuffix" value="_CDS"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.include" value="dmel-all-CDS-*.fasta"/>
