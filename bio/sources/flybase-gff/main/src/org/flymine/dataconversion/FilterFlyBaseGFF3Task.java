@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.flymine.io.gff3.GFF3Parser;
-import org.flymine.io.gff3.GFF3Record;
+import org.intermine.bio.gff3.GFF3Parser;
+import org.intermine.bio.io.gff3.GFF3Record;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
