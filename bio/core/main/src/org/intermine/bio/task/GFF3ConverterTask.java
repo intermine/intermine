@@ -16,13 +16,13 @@ import java.io.File;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.bio.dataconversion.GFF3Converter;
+import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.metadata.Model;
 
-import org.flymine.dataconversion.GFF3Converter;
-import org.flymine.dataconversion.GFF3RecordHandler;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;

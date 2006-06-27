@@ -10,6 +10,7 @@ package org.flymine.dataconversion;
  *
  */
 
+import org.intermine.bio.dataconversion.GFF3Converter;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.MockItemWriter;

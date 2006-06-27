@@ -62,7 +62,7 @@ public class ArbeitmanAssayHandlerTest extends TestCase
 
         // set config to use ArbeitmanAssayHandler
         translator.addToMap(translator.config, "E-FLYC-1", "assayHandlerClass",
-                            "org.flymine.dataconversion.ArbeitmanAssayHandler");
+                            "org.intermine.bio.dataconversion.ArbeitmanAssayHandler");
         translator.processMicroArrayAssays();
 
         Item expAssay1 = createItem("MicroArrayAssay", "0_1", "");
