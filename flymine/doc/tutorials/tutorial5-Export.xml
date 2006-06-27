@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial 5: Exporting Data</title>
+
+    <para>Data can be exported from the result pages in various
+    formats - excel (or open office) format, comma separated values,
+    tab separated values, or for items with sequences, FASTA format
+    (see below).</para> 
+
+    <para>This tutorial will illustrate how to export data from a
+    results table and from a bag. As an example, run the template
+    'Search for GO annotations for a particular gene' (Gene Ontology
+    aspect) for the default value 'CG11348'. Currently, either the
+    entire results table or specific columns can be exported. If
+    nothing is selected, the entire data set will be exported. If you
+    do not wish to export certain columns, then hide these columns
+    using the 'hide' option in the column header.</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="export-results.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+   <para>To export a FASTA file of sequences you must create a query
+   which returns the object details for each object you want to export
+   (e.g. a set of Gene or Protein objects details, as opposed to
+   simple attributes such as the gene symbol or identifier).</para>
+
+   <para>Some template queries will return results suitable for
+   exporting FASTA files. Find the template 'Output genes from a
+   particular organism in a format suitable for creating a FASTA
+   database' (Genomics aspect).</para>
+
+   <para>The first column of the results table contains the object
+   details of the genes, including a link to the FASTA sequences. To
+   export the sequences, hide the columns which do not have any FASTA
+   links and click on 'Export in FASTA format' at the bottom of the
+   page. Only the sequences will be retrieved and downloaded.</para>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="export-fasta.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+    <para>Values stored in bags can also be exported. To export the
+    contents of a bag, click on the bag name on the 'history'
+    page. This will display the contents of the bag as a results page
+    - with the export options available at the bottom of the
+    page. Currently, it is not possible to export single items from
+    the bag. Therefore, it is not necessary to tick any check-boxes in
+    the bag as the whole bag will always be exported.</para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="export-bag.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+       </mediaobject>
+
+  </section>
+</article>

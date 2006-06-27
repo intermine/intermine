@@ -5,44 +5,41 @@
   <section>
     <title>Query Tutorials</title>
 
-    <para>The following tutorials will guide you through accessing
-    FlyMine data through the quick search and template queries. The
-    third tutorial 'Navigating object details pages' introduces
-    browsing the data available once a query has been run.</para>
+    <para>The following tutorials will explain you the basic
+    operations in FlyMine, like acccessing and handling FlyMine data,
+    and give you a basic introduction to the FlyMine QueryBuilder
+    (tutorial 6). More detailed explanation on all these topics, can
+    be found in the User Manual.</para>
 
     <orderedlist>
       <listitem>
-        <para><ulink url="quickSearch.xml">Tutorial 1</ulink>: Running a quick search.</para>
+        <para><ulink url="tutorial1-QuickSearch.xml">Tutorial 1</ulink>: Browsing FlyMine - Running a Quick Search</para>
       </listitem>
 
       <listitem>
-        <para><ulink url="objectDetails.xml">Tutorial 2</ulink>: Navigating object details pages: browsing the data</para>
+        <para><ulink url="tutorial2-ObjectDetailPage.xml">Tutorial 2</ulink>: Navigating object details pages</para>
       </listitem>
 
       <listitem>
-        <para><ulink url="templates.xml">Tutorial 3</ulink>: Running template queries</para>
-      </listitem>
-
-    </orderedlist>
-
-
-    <para>The following tutorials will guide you through gradually
-    more complex queries using the query builder.</para>
-
-    <orderedlist>
-      <listitem>
-        <para><ulink url="query1.xml">Tutorial 4</ulink>: Show all the gene symbols and identifiers of
-        all genes in FlyMine</para>
+        <para><ulink url="tutorial3-Templates.xml">Tutorial 3</ulink>: Running template queries</para>
       </listitem>
 
       <listitem>
-        <para><ulink url="query2.xml">Tutorial 5</ulink>: Show all the genes from Drosophila melanogaster</para>
+        <para><ulink url="tutorial4-BagsHistory.xml">Tutorial 4</ulink>: Bags and History</para>
       </listitem>
 
       <listitem>
-        <para><ulink url="query3.xml">Tutorial 6</ulink>: Show the
-        Orthologues between Drosophila melanogaster and Anopheles gambiae.</para>
+        <para><ulink url="tutorial5-Export.xml">Tutorial 5</ulink>: Exporting Data</para>
       </listitem>
+
+      <listitem>
+        <para><ulink url="tutorial6-QB.xml">Tutorial 6</ulink>: The FlyMine QueryBuilder</para>
+      </listitem>
+
+     <listitem>
+        <para><ulink url="tutorial7-buildtemplate.xml">Tutorial 7</ulink>: Building a template</para>
+      </listitem>
+
     </orderedlist>
   </section>
 </article>

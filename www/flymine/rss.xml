@@ -11,6 +11,15 @@
     <!-- Add new news at the top here -->
     <!--
     <item>
+      <title>New FlyMine Tutorials</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        The FlyMine &lt;a href="http://www.flymine.org/doc/tutorials/"&gt;tutorials&lt;/a&gt; have now been updated.  Tutorials on using the QueryBuilder, working with bags and building your own templates have been added.
+      </description>
+      <pubDate>Thur, 27 Jun 2006 13:30 GMT</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine 5.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
