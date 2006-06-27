@@ -1,4 +1,4 @@
-package org.flymine.io.gff3;
+package org.flymine.io.gff;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
