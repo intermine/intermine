@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="dist/genomic-tasks.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/flymine-dbmodel"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
