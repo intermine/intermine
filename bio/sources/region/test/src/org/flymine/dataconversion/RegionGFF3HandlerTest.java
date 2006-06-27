@@ -23,6 +23,7 @@ import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.FullParser;
+import org.intermine.bio.dataconversion.GFF3Converter;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.MockItemWriter;
 

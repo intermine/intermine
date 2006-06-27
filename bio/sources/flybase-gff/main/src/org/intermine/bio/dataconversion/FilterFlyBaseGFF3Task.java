@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.bio.gff3.GFF3Parser;
+import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 
 import java.io.BufferedReader;
