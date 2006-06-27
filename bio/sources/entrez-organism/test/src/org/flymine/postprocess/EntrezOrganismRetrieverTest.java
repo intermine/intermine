@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.flymine.postprocess;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
