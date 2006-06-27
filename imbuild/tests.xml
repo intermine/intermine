@@ -132,6 +132,7 @@
         <classpath>
           <pathelement location="${front.of.classpath}"/>
           <path refid="project.execute.path"/>
+          <pathelement location="${build.task.dir}"/>
           <pathelement location="${build.classes.dir}"/>
           <pathelement location="${resources.dir}"/>
           <pathelement location="${build.test.resources.dir}"/>
