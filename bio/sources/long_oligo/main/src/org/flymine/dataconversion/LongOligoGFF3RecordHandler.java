@@ -16,7 +16,7 @@ import java.util.List;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 
-import org.flymine.io.gff3.GFF3Record;
+import org.intermine.bio.io.gff3.GFF3Record;
 
 /**
  * A converter/retriever for the long oligo dataset.

@@ -28,7 +28,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.intermine.util.XmlUtil;
 
-import org.flymine.io.gff3.GFF3Record;
+import org.intermine.bio.io.gff3.GFF3Record;
 
 import org.apache.log4j.Logger;
 
