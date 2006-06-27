@@ -79,7 +79,7 @@ public class GoConverterTest extends TestCase
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
         converter.setGeneattribute(geneAttribute);
-        converter.setOntology(onotologyFile);
+        converter.setOntologyfile(onotologyFile);
         converter.setGeneattribute("organismDbId");
         converter.process(reader);
         converter.close();
