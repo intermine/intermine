@@ -61,7 +61,7 @@ public class ModelMergerTask extends Task
     /**
      * Merge additions into input model and write resulting model to output file.
      * 
-     * @see Task#execute
+     * @see Task#execute()
      */
     public void execute() throws BuildException {
         try {

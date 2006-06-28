@@ -170,8 +170,6 @@ public class XmlSchemaParser implements ModelParser
 
         LOG.info("ModelName = " + modelName + ", nameSpace = " + nameSpace + ", classes = "
                 + classes);
-        System.err.println("ModelName = " + modelName + ", nameSpace = " + nameSpace + ", classes = "
-                + classes);
         Model m = new Model(modelName, nameSpace, classes);
         return m;
     }

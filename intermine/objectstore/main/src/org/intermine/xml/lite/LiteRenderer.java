@@ -38,6 +38,7 @@ public class LiteRenderer
      * Don't allow construction
      */
     private LiteRenderer() {
+        // empty
     }
 
     /**
@@ -224,8 +225,11 @@ public class LiteRenderer
                     Method m = value.getClass().getMethod("getId", new Class[] {});
                     id = m.invoke(value, null);
                 } catch (InvocationTargetException e) {
+                    // empty
                 } catch (IllegalAccessException e) {
+                    // empty
                 } catch (NoSuchMethodException e) {
+                    // empty
                 }
                 if (id != null) {
                     value = id;

@@ -1,20 +1,19 @@
 package org.intermine.task;
 
 /*
-* Copyright (C) 2002-2005 FlyMine
-*
-* This code may be freely distributed and modified under the
-* terms of the GNU Lesser General Public Licence.  This should
-* be distributed with the code.  See the LICENSE file for more
-* information or http://www.gnu.org/copyleft/lesser.html.
-*
-*/
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import org.apache.tools.ant.BuildException;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.dataconversion.ObjectStoreItemWriter;
 
 import java.lang.reflect.Constructor;
 
@@ -23,15 +22,24 @@ import java.lang.reflect.Constructor;
  * @author Peter Mclaren
  * @author Richard Smith
  * */
-public class PostProcessorTask extends DynamicAttributeTask {
+public class PostProcessorTask extends DynamicAttributeTask
+{
 
     protected String clsName;
     protected String osName;
 
+    /**
+     * Set the name of the PostProcessor sub-class to load to do the postprocessing.
+     * @param clsName the class name
+     */
     public void setClsName(String clsName) {
         this.clsName = clsName;
     }
 
+    /**
+     * Set the ObjectStore alias.
+     * @param osName the ObjectStore alias
+     */
     public void setOsName(String osName) {
         this.osName = osName;
     }

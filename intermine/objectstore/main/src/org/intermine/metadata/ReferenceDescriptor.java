@@ -125,7 +125,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see FieldDescriptor#relationType
+     * @see FieldDescriptor#relationType()
      */
     public int relationType() {
         ReferenceDescriptor rd = getReverseReferenceDescriptor();
@@ -137,7 +137,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see Object#equals
+     * @see Object#equals(Object)
      */
     public boolean equals(Object obj) {
         if (obj instanceof ReferenceDescriptor) {
@@ -150,7 +150,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see Object#hashCode
+     * @see Object#hashCode()
      */
     public int hashCode() {
         return 3 * name.hashCode()
@@ -159,7 +159,7 @@ public class ReferenceDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see Object#toString
+     * @see Object#toString()
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

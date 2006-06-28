@@ -1,14 +1,14 @@
 package org.intermine.task;
 
 /*
-* Copyright (C) 2002-2005 FlyMine
-*
-* This code may be freely distributed and modified under the
-* terms of the GNU Lesser General Public Licence.  This should
-* be distributed with the code.  See the LICENSE file for more
-* information or http://www.gnu.org/copyleft/lesser.html.
-*
-*/
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Project;
@@ -39,8 +39,8 @@ public class DynamicAttributeTask extends Task
      * @param bean an object to search for setter methods
      */
     protected void configureDynamicAttributes(Object bean) {
-        Project project = getProject();
-        Hashtable projectProps = project.getProperties();
+        Project antProject = getProject();
+        Hashtable projectProps = antProject.getProperties();
 
         PropertyDescriptor[] props =  PropertyUtils.getPropertyDescriptors(bean);
         for (int i = 0; i < props.length; i++) {
@@ -50,7 +50,6 @@ public class DynamicAttributeTask extends Task
                 Class propType = desc.getPropertyType();
                 String propName = setter.getName().substring(3).toLowerCase();
                 Object propValue = projectProps.get(propName);
-                System.out.println("propType: " + propType + ", propName: " + propName);
                 if (propValue != null) {
                     try {
                         if (propType.equals(File.class)) {

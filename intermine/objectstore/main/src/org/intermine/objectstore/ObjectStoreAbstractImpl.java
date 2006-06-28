@@ -193,7 +193,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#prefetchObjectById
+     * @see ObjectStore#prefetchObjectById(Integer)
      */
     public void prefetchObjectById(Integer id) {
         getObjectPrefetches++;
@@ -205,7 +205,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#invalidateObjectById
+     * @see ObjectStore#invalidateObjectById(Integer)
      */
     public void invalidateObjectById(Integer id) {
         synchronized (cache) {
@@ -215,7 +215,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#cacheObjectById
+     * @see ObjectStore#cacheObjectById(Integer, InterMineObject)
      */
     public Object cacheObjectById(Integer id, InterMineObject obj) {
         synchronized (cache) {
@@ -225,7 +225,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#flushObjectById
+     * @see ObjectStore#flushObjectById()
      */
     public void flushObjectById() {
         synchronized (cache) {
@@ -235,7 +235,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#pilferObjectById
+     * @see ObjectStore#pilferObjectById(Integer)
      */
     public InterMineObject pilferObjectById(Integer id) {
         synchronized (cache) {
@@ -269,14 +269,14 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getModel
+     * @see ObjectStore#getModel()
      */
     public Model getModel() {
         return model;
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * @see ObjectStore#getObjectByExample(InterMineObject, Set)
      */
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {

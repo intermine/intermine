@@ -47,7 +47,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.bag.IdUpgrader;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.bag.InterMineIdBag;

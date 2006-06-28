@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemReader;

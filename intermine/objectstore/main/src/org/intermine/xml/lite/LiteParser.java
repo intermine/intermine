@@ -97,11 +97,10 @@ public class LiteParser
      * @param objStr the string to parse
      * @param os the ObjectStore with which to associate any new lazy objects
      * @return an object
-     * @throws IOException if there is an error reading the XML file
      * @throws ClassNotFoundException if a class cannot be found
      */
     public static InterMineObject parse(String objStr, ObjectStore os)
-        throws IOException, ClassNotFoundException {
+        throws ClassNotFoundException {
         String a[] = objStr.split(DELIM);
 
         Item item = new Item();

@@ -145,7 +145,8 @@ public abstract class InterMineBag extends AbstractSet
             cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"),
                         ConstraintOp.EQUALS, new QueryValue(name)));
             cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "userProfile"),
-                        ConstraintOp.CONTAINS, new ProxyReference(null, userId, UserProfile.class)));
+                        ConstraintOp.CONTAINS, new ProxyReference(null, userId,
+                                                                  UserProfile.class)));
             q.setConstraint(cs);
             Results res = os.execute(q);
             String bagText = (String) ((List) res.get(0)).get(0);

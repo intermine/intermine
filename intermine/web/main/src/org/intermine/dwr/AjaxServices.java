@@ -83,8 +83,6 @@ public class AjaxServices
                 os.precompute(query, indexes, "template");
                 session.removeAttribute("precomputing_" + templateName);
             }
-        } catch (SQLException e) {
-            LOG.error(e);
         } catch (ObjectStoreException e) {
             LOG.error(e);
         }

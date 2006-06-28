@@ -81,7 +81,7 @@ public class PrecomputeTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * @see Task#execute()
      */
     public void execute() throws BuildException {
         if (alias == null) {
@@ -276,13 +276,13 @@ public class PrecomputeTask extends Task
      * Create queries for given path.  If path has a '+' next to any class then
      * expand to include all subclasses.
      * @param path the path to construct a query for
-     * @param createAllOrders if true then create a query for all possible orders of QueryClass
+     * @param createAllOrdersFlag if true then create a query for all possible orders of QueryClass
      * objects on the from list of the query
      * @return a list of queries
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
      */
-    protected List constructQueries(String path, boolean createAllOrders)
+    protected List constructQueries(String path, boolean createAllOrdersFlag)
         throws ClassNotFoundException, IllegalArgumentException {
 
         List queries = new ArrayList();
@@ -293,7 +293,7 @@ public class PrecomputeTask extends Task
         while (pathIter.hasNext()) {
             String nextPath = (String) pathIter.next();
             Query q = PathQueryUtil.constructQuery(os.getModel(), nextPath);
-            if (createAllOrders) {
+            if (createAllOrdersFlag) {
                 queries.addAll(getOrderedQueries(q));
             } else {
                 queries.add(q);
