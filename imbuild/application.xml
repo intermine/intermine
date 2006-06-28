@@ -59,7 +59,7 @@
   
   <target name="build-db-userprofile" depends="-do-build-db-userprofile, load-default-templates"/>
   
-  <target name="-do-build-db-userprofile" depends="-init-build-db">
+  <target name="-do-build-db-userprofile" depends="-init-properties, -init-build-db">
     <task:build-db osname="${userprofile.objectstore.name}"
                    model="${userprofile.model.name}"/>
   </target>
