@@ -1,6 +1,6 @@
 <!--
   Expects these properties to be defined in project.properties when calling build-db:
-  
+
   core.model.path   - project of core.xml model file (name of a directory in relative to the root)
 -->
 
@@ -9,13 +9,13 @@
     xmlns:task="http://www.intermine.org/ns/im-task-proj/1">
 
   <dirname property="objectstore.xml.basedir" file="${ant.file.objectstore}"/>
-  
+
   <import file="${objectstore.xml.basedir}/model.xml"/>
   <import file="${objectstore.xml.basedir}/task.xml"/>
-  
+
   <!-- Our generate phase involves fetching the model from the database. -->
   <property name="generating.code" value="true"/>
-  
+
   <target name="-define-task-classpath">
     <path id="task.class.path">
       <!-- prepend directory containing fetched model -->
@@ -25,27 +25,27 @@
       <pathelement location="${build.dir}/classes"/>
     </path>
   </target>
-  
+
   <!-- INIT TASKS -->
-  
+
   <target name="-pre-init" depends="model.-pre-init">
     <property name="build.model.dir" location="${build.dir}/model"/>
   </target>
-  
+
   <!-- BUILD DB -->
-  
+
   <target name="-init-build-db" depends="-init-properties, init, -init-deps, -init-task-xml"/>
-  
+
   <target name="-pre-build-db"/>
-  
+
   <target name="-post-build-db"/>
-  
+
   <target name="-do-build-db">
     <task:build-db osname="${objectstore.name}" model="${model.name}"/>
     <create-indexes alias="${objectstore.name}" />
     <analyse-db osName="${objectstore.name}"/>
   </target>
-  
+
   <target name="build-db" depends="-init-build-db,
                                    -define-macrodef-merge-additions,
                                    -init-merge,
@@ -55,16 +55,16 @@
                                    -pre-build-db,
                                    -do-build-db,
                                    -post-build-db"/>
-  
+
   <!-- GENERATE (FETCH) -->
-  
+
   <target name="-init-generate" depends="model.-init-generate">
     <!-- We actually get the model xml quite late (from the database) so we set this now -->
     <condition property="have.xml">
       <and><istrue value="true"/></and>
     </condition>
   </target>
-  
+
   <target name="-pre-generate" depends="-init-build-db" unless="have.model.to.merge">
     <!-- Retrieve model from database -->
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
@@ -73,7 +73,7 @@
     <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
           todir="${build.classes.dir}"/>
   </target>
-  
+
   <target name="-init-summarise-objectstore" depends="init, -init-deps, -init-task-xml"/>
 
   <target name="summarise-objectstore" depends="-init-summarise-objectstore"
@@ -84,7 +84,7 @@
                            outputFile="${dist.dir}/objectstoresummary.properties"
                            inputFile="objectstoresummary.config.properties"/>
   </target>
-    
+
   <!--
     Merge models before generating model java code if merging is needed
   -->
@@ -92,7 +92,7 @@
     <fileset dir="${build.dir}/model" includes="*"/>
     <property name="have.model.to.merge" value="true"/>
     <!-- Copy the core model to the build directory -->
-    <copy file="${objectstore.xml.basedir}/../${core.model.path}/core.xml" 
+    <copy file="${objectstore.xml.basedir}/../${core.model.path}/core.xml"
           tofile="${build.model.dir}/${model.name}_model.xml"/>
     <!-- Copy keys and properties to the classpath -->
     <copy file="${model.name}_keyDefs.properties" todir="${build.classes.dir}"/>
@@ -100,7 +100,7 @@
 
   <!-- Override to perform merge. Note: keep the 'unless' -->
   <target name="-merge-models" if="have.model.to.merge"/>
-  
+
   <!-- Merge shortcuts of the core model -->
   <target name="-merge-shortcuts" if="have.model.to.merge">
     <echo>Merging shortcuts...</echo>
@@ -108,14 +108,14 @@
                   additionsFile="${objectstore.xml.basedir}/../${core.model.path}/shortcuts.xml"
                   outputFile="${build.model.dir}/${model.name}_model.xml"/>
   </target>
-  
-  <target name="-define-macrodef-merge-additions">                         
+
+  <target name="-define-macrodef-merge-additions">
     <macrodef name="merge-additions">
-      <attribute name="source"/>
+      <attribute name="file"/>
       <sequential>
-        <echo>Merging @{source}...</echo>
+        <echo>Merging @{file}...</echo>
         <model-merger inputModelFile="${build.model.dir}/${model.name}_model.xml"
-                      additionsFile="${objectstore.xml.basedir}/../@{source}"
+                      additionsFile="${objectstore.xml.basedir}/../@{file}"
                       outputFile="${build.model.dir}/${model.name}_model.xml"/>
       </sequential>
     </macrodef>
