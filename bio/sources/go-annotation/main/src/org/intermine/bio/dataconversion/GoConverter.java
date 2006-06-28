@@ -10,29 +10,37 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.ontology.DagParser;
-import org.intermine.ontology.OboParser;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.ontology.DagParser;
+import org.intermine.ontology.OboParser;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ReferenceList;
 
-import org.apache.tools.ant.BuildException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 
 /**
  * DataConverter to parse a go annotation file into Items
@@ -250,7 +258,7 @@ public class GoConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#close
+     * @see FileConverter#close()
      */
     public void close() throws ObjectStoreException {
         store(goTerms.values());
@@ -269,13 +277,13 @@ public class GoConverter extends FileConverter
      * @return a GoAnnotation item with its parent items in a Set.
      * @throws ObjectStoreException if problems...
      * >--------------------------------------------------------------------------------------------
-     * @ param qualifier   qualifier (eg NOT) or null
-     * @ param datasource    the datasource
-     * @ param publication the publication
-     * @ param goEvidence  the goEvidence
-     * @ param geneProduct     the geneProduct - typically a protein or a gene item
-     * @ param goTerm      the goTerm
-     * @ param withText    String from the 'with' column of gene_associationfile
+     *  param qualifier   qualifier (eg NOT) or null
+     *  param datasource    the datasource
+     *  param publication the publication
+     *  param goEvidence  the goEvidence
+     *  param geneProduct     the geneProduct - typically a protein or a gene item
+     *  param goTerm      the goTerm
+     *  param withText    String from the 'with' column of gene_associationfile
      */
     protected GoAnnotationItemWithParentSet newGoAnnotationWithParentTerms(
             GoAnnoWithParentsPlaceHolder placeHolder) throws ObjectStoreException {
@@ -1015,7 +1023,7 @@ public class GoConverter extends FileConverter
         }
 
         /**
-         * @see Object#equals
+         * @see Object#equals(Object)
          */
         public boolean equals(Object o) {
             if (o instanceof GoTermProduct) {
@@ -1029,7 +1037,7 @@ public class GoConverter extends FileConverter
         }
 
         /**
-         * @see Object#hashCode
+         * @see Object#hashCode()
          */
         public int hashCode() {
             return (3 * productId.hashCode())

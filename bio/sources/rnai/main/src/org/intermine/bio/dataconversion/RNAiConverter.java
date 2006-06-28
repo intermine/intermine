@@ -51,14 +51,13 @@ public class RNAiConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
-     * @throws ObjectStoreException if an error occurs in storing
      */
-    public RNAiConverter(ItemWriter writer) throws ObjectStoreException {
+    public RNAiConverter(ItemWriter writer) {
         super(writer);
     }
 
     /**
-     * @see DataConverter#process
+     * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
         BufferedReader br = new BufferedReader(reader);
@@ -104,7 +103,7 @@ public class RNAiConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#close
+     * @see FileConverter#close()
      */
     public void close() throws ObjectStoreException {
         store(genes.values());
