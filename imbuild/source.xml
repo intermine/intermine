@@ -223,11 +223,11 @@
     GFF3ConverterTask et al)
   -->
   <target name="-retrieve-from-gff3" if="have.file.gff3">
-    <taskdef name="convert-gff3-file" classname="org.flymine.task.GFF3ConverterTask">
+    <taskdef name="convert-gff3-file" classname="org.intermine.bio.task.GFF3ConverterTask">
       <classpath refid="task.class.path"/>
     </taskdef>
 
-    <convert-gff3-file converter="org.flymine.dataconversion.GFF3Converter"
+    <convert-gff3-file converter="org.intermine.bio.dataconversion.GFF3Converter"
                   target="osw.${common.os.prefix}-tgt-items"
                   seqClsName="${gff3.seqClsName}"
                   orgTaxonId="${gff3.taxonId}"

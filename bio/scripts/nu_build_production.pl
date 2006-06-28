@@ -9,20 +9,26 @@ use warnings;
 
 use Expect;
 use Getopt::Std;
+use Cwd;
 
 my @ant_command = ("ant");
 
+# All mines should have a project xml in their root directory in addition to the conf file.
+my $proj_file_name = "project.xml";
+# Gets appened to the end of the supplied mine name so the script can look for
+# the right configuration file.
+my $conf_file_name = "build.conf";
+
 my $dump_file_prefix;
 my $dump_host;
-my $config_arg;
 
 sub usage
 {
   die <<'EOF';
 usage:
-  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix conf_file
+  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix 
 or
-  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix configuration_name
+  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix 
 
 flags:
  -v is passed to ant
@@ -61,29 +67,72 @@ if ($opts{V}) {
   push @ant_command, "-Drelease=$release"
 }
 
-if (@ARGV == 3) {
+if (@ARGV == 2) {
   $dump_host = $ARGV[0];
   $dump_file_prefix = $ARGV[1];
-  $config_arg = $ARGV[2];
 } else {
   usage;
 }
 
-my $config_file;
+my $mine_properties = getMinePropsFile();
+print STDOUT "$mine_properties\n";
 
-if (-e $config_arg) {
-  if (-r $config_arg) {
-    # user put a config file name on the command line
-    $config_file = $config_arg;
+#
+#
+# Look for the config file for the build process
+# TODO: perhaps the functionality of the conf file should be merged into the project.xml file for each mine.
+print STDOUT "\$conf_file_name = $conf_file_name\n";
+my $conf_file = findFile($conf_file_name);
+#
+# Look for the project file
+print STDOUT "\$proj_file_name = $proj_file_name\n";
+my $proj_file = findFile($proj_file_name);
+
+sub findFile {
+  
+  my $file_name = shift;
+  
+  if ($file_name eq undef) {
+    die "Subroutine findFile() requires a file name in order to work!";  
+  }
+  
+  if (-e $file_name) {
+    if (-r $file_name) {
+      return $file_name;
+    } else {
+      die "Cannot read from file: $file_name\n";
+    }
   } else {
-    die "cannot read configuration file: $config_arg\n";
-  }
-} else {
-  $config_file = "conf/$config_arg.build_conf";
-  if (!-r $config_file) {
-    die "cannot read configuration file: $config_file\n";
-  }
+    die "Cannot find file named: $file_name\n";
+  }  
 }
+
+sub getMinePropsFile {
+  
+  #perl -e '$a="/sfwuierf/wefjiweofj/wefjiweuof"; if ($a =~ m:.*/(.*):) { print "$1\n";}'
+  
+  my $mine_prps = $ENV{HOME};
+  
+    if (getcwd() =~ m:.*/(.*): ) {
+      
+      $mine_prps .= "/$1.properties";
+    
+      if (! -e $mine_prps) {
+        die "Unable to find file $mine_prps";
+     }
+      if (! -r $mine_prps) {
+        die "Unable to read file $mine_prps";
+     }
+      return $mine_prps;
+    }
+    else {
+      die "Can't resolve the current mine dir\n";
+    }
+}
+
+
+
+
 
 my $log_file = "pbuild.log";
 
@@ -92,10 +141,8 @@ my $old_handle = select(LOG);
 $| = 1; # autoflush
 select $old_handle;
 
-
-my $flymine_properties = "$ENV{HOME}/flymine.properties";
 if (defined $release) {
-  $flymine_properties .= ".$release";
+  $mine_properties .= ".$release";
 }
 my @dump_command = qw[pg_dump -c];
 my @psql_command = qw[psql -q];
@@ -245,8 +292,8 @@ sub get_actions
 {
   my @actions = ();
 
-  open CONF_FILE, "$config_file"
-    or die "cannot open $config_file: $!\n";
+  open CONF_FILE, "$conf_file"
+    or die "cannot open $conf_file: $!\n";
 
   while (defined (my $line = <CONF_FILE>)) {
     if ($line =~ m{
@@ -301,10 +348,10 @@ sub get_restart_dump_suffix
   return $restart_dump_suffix;
 }
 
-my $prod_host = get_prop_val "db.production.datasource.serverName", $flymine_properties;
-my $prod_db = get_prop_val "db.production.datasource.databaseName", $flymine_properties;
-my $prod_user = get_prop_val "db.production.datasource.user", $flymine_properties;
-my $prod_pass = get_prop_val "db.production.datasource.password", $flymine_properties;
+my $prod_host = get_prop_val "db.production.datasource.serverName", $mine_properties;
+my $prod_db = get_prop_val "db.production.datasource.databaseName", $mine_properties;
+my $prod_user = get_prop_val "db.production.datasource.user", $mine_properties;
+my $prod_pass = get_prop_val "db.production.datasource.password", $mine_properties;
 my $prod_port;
 
 if ($prod_host =~ /(.+):(\d+)/) {
