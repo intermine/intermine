@@ -61,7 +61,7 @@ public class PsiDataTranslator extends DataTranslator
     protected static final Logger LOG = Logger.getLogger(PsiDataTranslator.class);
 
     /**
-     * @see DataTranslator#DataTranslator
+     * @see DataTranslator#DataTranslator(ItemReader, Properties, Model, Model)
      */
     public PsiDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
                              Model tgtModel) {
@@ -78,7 +78,7 @@ public class PsiDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translate
+     * @see DataTranslator#translate(ItemWriter)
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
@@ -108,7 +108,7 @@ public class PsiDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translateItem
+     * @see DataTranslator#translateItem(Item srcItem)
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {

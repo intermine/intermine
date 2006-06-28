@@ -45,7 +45,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     protected Item organism;
 
     /**
-     * @see DataTranslator#DataTranslator
+     * @see DataTranslator#DataTranslator(ItemReader, Properties, Model, Model)
      */
     public ProteinStructureDataTranslator(
             ItemReader srcItemReader, Properties mapping, Model srcModel, Model tgtModel,
@@ -58,7 +58,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translate
+     * @see DataTranslator#translate(ItemWriter)
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
@@ -73,7 +73,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translateItem
+     * @see DataTranslator#translateItem(Item)
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {

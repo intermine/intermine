@@ -102,7 +102,7 @@ public class InparanoidConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process
+     * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
         int lineNum = 0;
@@ -211,7 +211,7 @@ public class InparanoidConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#close
+     * @see FileConverter#close()
      */
     public void close() throws ObjectStoreException {
         store(organisms.values());
