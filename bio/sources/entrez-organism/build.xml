@@ -9,7 +9,8 @@
     <property name="cp" refid="task.class.path"/>
     <echo>cp: ${cp}</echo>
 
-    <taskdef name="retrieve-organisms" classname="org.flymine.postprocess.EntrezOrganismRetriever">
+    <taskdef name="retrieve-organisms" 
+             classname="org.intermine.bio.postprocess.EntrezOrganismRetriever">
       <classpath refid="task.class.path"/>
     </taskdef>
     

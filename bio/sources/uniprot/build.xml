@@ -8,7 +8,7 @@
     <property name="build.data.dir" location="${build.dir}/data/${uniprot.organisms}"/>
     <mkdir dir="${build.data.dir}"/>
     <taskdef name="filter-uniprot"
-      classname="org.flymine.dataconversion.UniprotFilterTask"
+      classname="org.intermine.bio.dataconversion.UniprotFilterTask"
       classpathref="project.compile.path"/>
     <filter-uniprot tgtDir="${build.data.dir}" organisms="${uniprot.organisms}">
       <fileset dir="${src.data.dir}" includes="*.xml"/>

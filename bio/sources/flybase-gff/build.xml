@@ -28,11 +28,11 @@
     to hide the filtering complications in just this file.
   -->
   <target name="-retrieve-from-gff3" depends="build-db-tgt-items" if="have.file.gff3">
-    <taskdef name="convert-gff3-file" classname="org.flymine.task.GFF3ConverterTask">
+    <taskdef name="convert-gff3-file" classname="org.intermine.bio.task.GFF3ConverterTask">
       <classpath refid="task.class.path"/>
     </taskdef>
 
-    <convert-gff3-file converter="org.flymine.dataconversion.GFF3Converter"
+    <convert-gff3-file converter="org.intermine.bio.dataconversion.GFF3Converter"
                   target="osw.${common.os.prefix}-tgt-items"
                   seqClsName="${gff3.seqClsName}"
                   orgTaxonId="${gff3.taxonId}"
@@ -49,7 +49,7 @@
   <target name="-filter-flybase" unless="flybase.small">
     <taskdef
       name="filter-flybase-gff"
-      classname="org.flymine.dataconversion.FilterFlyBaseGFF3Task">
+      classname="org.intermine.bio.dataconversion.FilterFlyBaseGFF3Task">
       <classpath refid="task.class.path"/>
     </taskdef>
 
@@ -68,7 +68,7 @@
 
     <taskdef
       name="filter-flybase-gff"
-      classname="org.flymine.dataconversion.FilterFlyBaseGFF3Task">
+      classname="org.intermine.bio.dataconversion.FilterFlyBaseGFF3Task">
       <classpath refid="task.class.path"/>
     </taskdef>
 

@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -18,6 +18,8 @@ import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
+
+import org.flymine.dataconversion.FlyRegGFF3RecordHandler;
 
 
 import java.io.BufferedReader;
