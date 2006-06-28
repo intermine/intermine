@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="dist/bio-tools.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/colt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/coltginy.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/com-nerius-math-xform.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-cruft-obo.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-graph-dynamic.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-graph-fixed.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-graph-layout.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-graph-legacy.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-task.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape-util-intr.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cytoscape.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/fing.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-base.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphics2d.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphicsio-gif.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphicsio-pdf.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphicsio-ps.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphicsio-svg.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphicsio-swf.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/freehep-graphicsio.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/getopt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/giny.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/glf.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jhall.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jnlp.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/looks-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/phoebe.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tclib.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/violinstrings-1.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wizard.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/flymine-dbmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
