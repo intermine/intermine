@@ -56,7 +56,7 @@ import org.flymine.model.genomic.PCRProduct;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
-import org.flymine.postprocess.PostProcessUtil;
+import org.intermine.bio.postprocess.PostProcessUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;

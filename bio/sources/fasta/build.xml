@@ -14,7 +14,7 @@
   
   <target name="load" depends="init, -init-deps">
     <taskdef name="read-fasta"
-      classname="org.flymine.dataConversion.FastaLoaderTask"
+      classname="org.intermine.bio.dataConversion.FastaLoaderTask"
       classpathref="task.class.path"/>
     <read-fasta integrationWriterAlias="integration.production"
                 sourceName="${source.name}"
