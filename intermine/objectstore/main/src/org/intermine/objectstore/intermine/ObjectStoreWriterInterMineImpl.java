@@ -143,14 +143,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#getLogEverything
+     * @see ObjectStoreInterMineImpl#getLogEverything()
      */
     public boolean getLogEverything() {
         return os.getLogEverything();
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#dbLog
+     * @see ObjectStoreInterMineImpl#dbLog(long, long, long, long, long, Query, String)
      */
     protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
             Query q, String sql) {
@@ -197,7 +197,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#getConnection
+     * @see ObjectStoreInterMineImpl#getConnection()
      */
     public synchronized Connection getConnection() throws SQLException {
         int loops = 0;
@@ -243,7 +243,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#releaseConnection
+     * @see ObjectStoreInterMineImpl#releaseConnection(Connection)
      */
     public synchronized void releaseConnection(Connection c) {
         if ((conn == null) && (c != null)) {
@@ -298,7 +298,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#close
+     * @see ObjectStoreWriter#close()
      */
     public synchronized void close() throws ObjectStoreException {
         if (conn == null) {
@@ -348,14 +348,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#getObjectStore
+     * @see ObjectStoreWriter#getObjectStore()
      */
     public ObjectStore getObjectStore() {
         return os;
     }
 
     /**
-     * @see ObjectStoreWriter#store
+     * @see ObjectStoreWriter#store(InterMineObject)
      */
     public void store(InterMineObject o) throws ObjectStoreException {
         Connection c = null;
@@ -747,7 +747,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#delete
+     * @see ObjectStoreWriter#delete(InterMineObject)
      */
     public void delete(InterMineObject o) throws ObjectStoreException {
         Connection c = null;
@@ -804,7 +804,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#isInTransaction
+     * @see ObjectStoreWriter#isInTransaction()
      */
     public boolean isInTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -834,7 +834,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#beginTransaction
+     * @see ObjectStoreWriter#beginTransaction()
      */
     public void beginTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -867,7 +867,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#commitTransaction
+     * @see ObjectStoreWriter#commitTransaction()
      */
     public void commitTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -902,7 +902,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#abortTransaction
+     * @see ObjectStoreWriter#abortTransaction()
      */
     public void abortTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -957,7 +957,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#generateSql
+     * @see ObjectStoreInterMineImpl#generateSql(Connection, Query, int, int)
      *
      * Delegates to the parent ObjectStore
      */
@@ -967,7 +967,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#count
+     * @see ObjectStoreInterMineImpl#count(Query, int)
      *
      * This method is overridden in order to flush batches properly before the read.
      */
@@ -986,7 +986,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#internalGetObjectById
+     * @see ObjectStoreInterMineImpl#internalGetObjectById(Integer, Class)
      *
      * This method is overridden in order to flush matches properly before the read.
      */
@@ -1026,7 +1026,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStore#isMultiConnection
+     * @see ObjectStore#isMultiConnection()
      */
     public boolean isMultiConnection() {
         return false;

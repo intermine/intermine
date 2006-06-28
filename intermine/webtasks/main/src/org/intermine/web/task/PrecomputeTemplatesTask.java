@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -30,12 +29,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.web.MainHelper;
-import org.intermine.web.PathNode;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.TemplateQuery;
@@ -51,6 +45,10 @@ import org.intermine.web.TemplateHelper;
 public class PrecomputeTemplatesTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PrecomputeTemplatesTask.class);
+    
+    /**
+     * The precomputede category to use for templates.
+     */
     public static final String PRECOMPUTE_CATEGORY_TEMPLATE = "template";
 
     protected String alias;
@@ -171,6 +169,8 @@ public class PrecomputeTemplatesTask extends Task
      * @param os the ObjectStore to call precompute() on
      * @param query the query to precompute
      * @param indexes the index QueryNodes
+     * @param name the name of the query we are precomputing (used for documentation is an exception
+     * is thrown 
      * @throws BuildException if the query cannot be precomputed.
      */
     protected void precompute(ObjectStore os, Query query, Collection indexes,

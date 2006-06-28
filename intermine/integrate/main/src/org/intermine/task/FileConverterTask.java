@@ -23,7 +23,6 @@ import org.intermine.dataconversion.FileConverter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.DynamicAttribute;
 import org.apache.tools.ant.types.FileSet;
 
 import org.apache.log4j.Logger;

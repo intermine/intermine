@@ -199,7 +199,7 @@ public class Model
      * @return Collection of fully qualified class names
      */
     public Collection getClassNames() {
-        return (Collection) cldMap.keySet();
+        return cldMap.keySet();
     }
 
     /**
@@ -219,7 +219,7 @@ public class Model
     }
 
     /**
-     * @see Object#equals
+     * @see Object#equals(Object)
      */
     public boolean equals(Object obj) {
         if (obj instanceof Model) {
@@ -232,7 +232,7 @@ public class Model
     }
 
     /**
-     * @see Object#hashCode
+     * @see Object#hashCode()
      */
     public int hashCode() {
         return 3 * modelName.hashCode()
@@ -240,7 +240,7 @@ public class Model
     }
 
     /**
-     * @see Object#toString
+     * @see Object#toString()
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

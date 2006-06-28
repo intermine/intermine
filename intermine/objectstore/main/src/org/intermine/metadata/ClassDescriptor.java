@@ -523,7 +523,7 @@ public class ClassDescriptor
     }
 
     /**
-     * @see Object#equals
+     * @see Object#equals(Object)
      */
     public boolean equals(Object obj) {
         if (obj instanceof ClassDescriptor) {
@@ -537,7 +537,7 @@ public class ClassDescriptor
     }
 
     /**
-     * @see Object#hashCode
+     * @see Object#hashCode()
      */
     public int hashCode() {
         return 3 * className.hashCode()
@@ -547,7 +547,7 @@ public class ClassDescriptor
     }
 
     /**
-     * @see Object#toString
+     * @see Object#toString()
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

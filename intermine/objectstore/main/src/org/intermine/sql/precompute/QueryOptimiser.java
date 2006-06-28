@@ -153,7 +153,8 @@ public class QueryOptimiser
         }
         Set precomputedTables = ptm.getPrecomputedTables();
         OptimiserCache cache = OptimiserCache.getInstance(database);
-        return optimiseWith(query, originalQuery, database, explainConnection, context, precomputedTables, cache);
+        return optimiseWith(query, originalQuery, database, explainConnection, context, 
+                            precomputedTables, cache);
     }
 
     public static BestQuery optimiseWith(String query, Query originalQuery, Database database,
@@ -529,7 +530,8 @@ public class QueryOptimiser
                             newOrderBy.add(orderByIter.next());
                         }
                         if ((orderByField != null) && currentQuery.isDistinct()) {
-                            newQuery.addSelect(new SelectValue(orderByField, "orderby_field_from_pt"));
+                            newQuery.addSelect(new SelectValue(orderByField,
+                                                               "orderby_field_from_pt"));
                         }
                     }
 

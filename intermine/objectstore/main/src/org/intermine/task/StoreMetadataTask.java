@@ -12,14 +12,14 @@ package org.intermine.task;
 
 import java.util.Properties;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-
+import org.intermine.metadata.MetadataManager;
+import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetadataManager;
 import org.intermine.util.PropertiesUtil;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 /**
  * Store model metadata to a database
@@ -41,14 +41,14 @@ public class StoreMetadataTask extends Task
 
     /**
      * Sets the database alias
-     * @param database the database alias
+     * @param osname the database alias
      */
     public void setOsName(String osname) {
         this.database = PropertiesUtil.getProperties().getProperty(osname + ".db");
     }
 
     /**
-     * @see Task#execute
+     * @see Task#execute()
      */
     public void execute() throws BuildException {
         if (modelName == null) {

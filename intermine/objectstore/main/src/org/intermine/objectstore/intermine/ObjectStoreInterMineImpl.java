@@ -53,7 +53,6 @@ import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
-import org.intermine.objectstore.query.Results;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.BestQuery;
@@ -983,7 +982,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#estimate
+     * @see org.intermine.objectstore.ObjectStore#estimate(Query)
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         Connection c = null;
@@ -1028,7 +1027,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#count
+     * @see org.intermine.objectstore.ObjectStore#count(Query, int)
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         Connection c = null;
@@ -1104,7 +1103,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStoreAbstractImpl#internalGetObjectById
+     * @see ObjectStoreAbstractImpl#internalGetObjectById(Integer, Class)
      *
      * This method is overridden in order to improve the performance of the operation - this
      * implementation does not bother with the EXPLAIN call to the underlying SQL database.
@@ -1180,7 +1179,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#isMultiConnection
+     * @see org.intermine.objectstore.ObjectStore#isMultiConnection()
      */
     public boolean isMultiConnection() {
         return true;
@@ -1322,12 +1321,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      *
      * @param query the query
      * @param type the type
-     * @return
-     * @throws ObjectStoreException
-     * @throws SQLException
+     * @return true if and only if the given query is (already) precomputed
+     * @throws ObjectStoreException if the is a database problem
      */
-    public boolean isPrecomputed(Query query, String type) throws ObjectStoreException,
-            SQLException {
+    public boolean isPrecomputed(Query query, String type) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
@@ -1345,9 +1342,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param c the connection
      * @param query the query
      * @param type the type
-     * @return
-     * @throws ObjectStoreException
-     * @throws SQLException
+     * @return true if and only if the given query is (already) precomputed
+     * @throws ObjectStoreException if the is a database problem
+     * @throws SQLException if the is a database problem
      */
     public boolean isPrecomputedWithConnection(Connection c, Query query, String type)
             throws ObjectStoreException, SQLException {

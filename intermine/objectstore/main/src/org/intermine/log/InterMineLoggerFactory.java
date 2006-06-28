@@ -68,7 +68,7 @@ public class InterMineLoggerFactory
         Class cls = null;
 
         String oswAlias = props.getProperty("osw");
-        if (clsName == null) {
+        if (oswAlias == null) {
             throw new ObjectStoreException(loggerAlias
                     + " does not have an InterMineLogger osw specified (check properties file)");
         }

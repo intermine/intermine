@@ -37,7 +37,7 @@ public class AnalyseDbTask extends Task
 
     /**
      * Set the database alias
-     * @param database the database alias
+     * @param osName the database alias
      */
     public void setOsName(String osName) {
         this.database = PropertiesUtil.getProperties().getProperty(osName + ".db");
@@ -68,7 +68,7 @@ public class AnalyseDbTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * @see Task#execute()
      */
     public void execute() throws BuildException {
         if (database == null) {

@@ -63,7 +63,7 @@ public class PrimaryKey
     }
 
     /**
-     * @see Object#equals
+     * @see Object#equals(Object)
      */
     public boolean equals(Object o) {
         if (o instanceof PrimaryKey) {
@@ -73,14 +73,14 @@ public class PrimaryKey
     }
 
     /**
-     * @see Object#hashCode
+     * @see Object#hashCode()
      */
     public int hashCode() {
         return fieldNames.hashCode();
     }
 
     /**
-     * @see Object#toString
+     * @see Object#toString()
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

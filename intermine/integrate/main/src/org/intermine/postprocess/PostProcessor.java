@@ -19,8 +19,8 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Richard Smith
  * */
 
-public abstract class PostProcessor {
-
+public abstract class PostProcessor 
+{
     protected ObjectStoreWriter osw;
 
     /**

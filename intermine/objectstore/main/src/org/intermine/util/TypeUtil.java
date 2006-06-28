@@ -404,10 +404,11 @@ public class TypeUtil
             return Integer.valueOf(value);
         }
         if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
-            if(value.equals("NULL"))
+            if (value.equals("NULL")) {
                 return "NULL";
-            else
+            } else {
                 return Boolean.valueOf(value);
+            }
         }
         if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
             return Double.valueOf(value);

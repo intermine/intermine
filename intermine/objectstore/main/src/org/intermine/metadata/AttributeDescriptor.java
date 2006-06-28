@@ -46,14 +46,14 @@ public class AttributeDescriptor extends FieldDescriptor
     }
     
     /**
-     * @see FieldDescriptor#relationType
+     * @see FieldDescriptor#relationType()
      */
     public int relationType() {
         return NOT_RELATION;
     }
 
     /**
-     * @see Object#equals
+     * @see Object#equals(Object)
      */
     public boolean equals(Object obj) {
         if (obj instanceof AttributeDescriptor) {
@@ -65,7 +65,7 @@ public class AttributeDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see Object#hashCode
+     * @see Object#hashCode()
      */
     public int hashCode() {
         return 3 * name.hashCode()
@@ -73,7 +73,7 @@ public class AttributeDescriptor extends FieldDescriptor
     }
 
     /**
-     * @see Object#toString
+     * @see Object#toString()
      */
     public String toString() {
         return "<attribute name=\"" + name + "\" type=\"" + type + "\"/>";
