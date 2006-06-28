@@ -19,6 +19,7 @@ import java.io.*;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.metadata.Model;
+import org.intermine.bio.dataconversion.InterproDataTranslator;
 import org.intermine.dataconversion.*;
 
 public class InterproDataTranslatorTest extends DataTranslatorTestCase {

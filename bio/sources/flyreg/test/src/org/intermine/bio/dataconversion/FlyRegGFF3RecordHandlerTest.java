@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import org.intermine.bio.dataconversion.FlyRegGFF3RecordHandler;
 import org.intermine.bio.dataconversion.GFF3Converter;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -19,7 +20,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
-import org.flymine.dataconversion.FlyRegGFF3RecordHandler;
 
 
 import java.io.BufferedReader;
