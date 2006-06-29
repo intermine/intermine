@@ -38,9 +38,9 @@ public class FirstEFGFF3RecordHandler extends GFF3RecordHandler
 
 
     /**
-     * @see GFF3RecordHandler#process()
+     * @see GFF3RecordHandler#process(GFF3Record)
      */
     public void process(GFF3Record record) {
-
+        // empty
     }
 }

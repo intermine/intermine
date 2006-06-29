@@ -247,6 +247,7 @@ public class UpdateEquivalentInterproFeatures extends PostProcessor
         private ProteinFeature proteinFeatureTwo = null;
 
         private ProteinFeaturePair() {
+            // empty
         }
 
         public ProteinFeaturePair(

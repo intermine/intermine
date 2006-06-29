@@ -10,13 +10,11 @@ package org.intermine.bio.io.gff3;
  *
  */
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 
 /**
  * A parser for GFF3 files.  This code was taken from Matthew Pocock's GFF3 parser in BioJava.
@@ -33,9 +31,6 @@ public class GFF3Parser
      * @throws IOException if there is an error during reading or parsing
      */
     public static Iterator parse(final BufferedReader reader) throws IOException {
-        int lineNum = 0;
-        List list = new ArrayList();
-
         String line = null;
 
         while ((line = reader.readLine()) != null) {

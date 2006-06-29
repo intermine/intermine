@@ -10,35 +10,23 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.io.Writer;
-import java.io.Reader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.SAXParser;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
@@ -46,7 +34,18 @@ import org.intermine.xml.full.ItemFactory;
 
 import org.flymine.model.genomic.Publication;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
+
 import org.apache.log4j.Logger;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class to fill in all publication information from pubmed
@@ -112,9 +111,8 @@ public class UpdatePublications
     /**
      * Retrieve the publications to be updated
      * @return a List of publications
-     * @throws ObjectStoreException if an error occurs
      */
-    protected List getPublications() throws ObjectStoreException {
+    protected List getPublications() {
         Query q = new Query();
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
@@ -155,10 +153,9 @@ public class UpdatePublications
         }
 
         /**
-         * @see DefaultHandler#startElement
+         * @see DefaultHandler#startElement(String, String, String, Attributes)
          */
-        public void startElement(String uri, String localName, String qName, Attributes attrs)
-            throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if ("ERROR".equals(qName)) {
                 name = qName;
             } else if ("Id".equals(qName)) {
@@ -170,16 +167,16 @@ public class UpdatePublications
         }
 
         /**
-         * @see DefaultHandler#characters
+         * @see DefaultHandler#characters(char[], int, int)
          */
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             characters.append(new String(ch, start, length));
         }
 
         /**
-         * @see DefaultHandler#endElement
+         * @see DefaultHandler#endElement(String, String, String)
          */
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, String localName, String qName) {
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {

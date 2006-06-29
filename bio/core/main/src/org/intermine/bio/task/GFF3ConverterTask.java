@@ -49,10 +49,10 @@ public class GFF3ConverterTask extends Task
 
      /**
      * Set the data fileset
-     * @param fileSet the fileset
+     * @param fs the fileset
      */
-    public void addFileSet(FileSet fileSet) {
-        this.fileSet = fileSet;
+    public void addFileSet(FileSet fs) {
+        this.fileSet = fs;
     }
 
     /**
@@ -124,7 +124,7 @@ public class GFF3ConverterTask extends Task
 
 
     /**
-     * @see Task#execute
+     * @see Task#execute()
      */
     public void execute() throws BuildException {
         if (fileSet == null) {

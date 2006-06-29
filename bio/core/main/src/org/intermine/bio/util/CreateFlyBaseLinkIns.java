@@ -12,17 +12,27 @@ package org.intermine.bio.util;
 
 
 import java.util.Iterator;
-import java.io.File;
-import java.io.Writer;
-import java.io.FileWriter;
-import java.io.IOException;
 
-import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Create file to send to FlyBase to link in to each FBGN... identifier
@@ -69,8 +79,7 @@ public class CreateFlyBaseLinkIns
         return sb.toString();
     }
 
-    private static void writeFile(ObjectStore os, Writer writer) throws ObjectStoreException,
-                                                                        IOException {
+    private static void writeFile(ObjectStore os, Writer writer) throws IOException {
         writer.write(createHeader());
         writer.write("#FlybaseID" + "\t" + "DbName" + "\t" + "DbID" + "\t"
                       + "DbUrl (relative to base DBurl)" + ENDL);
@@ -84,7 +93,7 @@ public class CreateFlyBaseLinkIns
         }
     }
 
-    private static Iterator getFlyBaseIds(ObjectStore os) throws ObjectStoreException {
+    private static Iterator getFlyBaseIds(ObjectStore os) {
         Query q = new Query();
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryField qf = new QueryField(qcGene, "organismDbId");
