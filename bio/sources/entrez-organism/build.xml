@@ -10,7 +10,7 @@
     <echo>cp: ${cp}</echo>
 
     <taskdef name="retrieve-organisms" 
-             classname="org.intermine.bio.postprocess.EntrezOrganismRetriever">
+             classname="org.intermine.bio.dataconversion.EntrezOrganismRetriever">
       <classpath refid="task.class.path"/>
     </taskdef>
     
