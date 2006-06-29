@@ -69,7 +69,7 @@ public class GFF3RecordHandler
      * @param record the GFF line being processed
      */
     public void process(GFF3Record record) {
-
+        // empty
     }
 
     /**
@@ -79,7 +79,8 @@ public class GFF3RecordHandler
      * @param identifierMap map from GFF ID to item identifier for all features
      */
     public void setIdentifierMap(Map identifierMap) {
-    }
+        // empty
+     }
 
     /**
      * Return the Model that was passed to the constructor.
@@ -381,7 +382,6 @@ public class GFF3RecordHandler
 
                 Item targetSeq = getTargetSeq(seqIdentifier, seqClsName, orgAbb);
 
-                String locChr = locString.split(" ")[0];
                 String locStart = locString.split(" ")[1];
                 String locEnd = locString.split(" ")[2];
                 String locStrand = locString.split(" ")[3];

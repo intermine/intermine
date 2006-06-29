@@ -150,7 +150,7 @@ public class IntronUtil
         if (locationSet.size() == 1) {
             return null;
         }
-        Chromosome chr = (Chromosome) transcript.getChromosome();
+        Chromosome chr = transcript.getChromosome();
         
         Iterator locationIter = locationSet.iterator();
 
@@ -233,7 +233,7 @@ public class IntronUtil
         
         Set intronSet = new HashSet();
         for (Iterator i = intronMap.keySet().iterator(); i.hasNext(); ) {
-            intronSet.add(intronMap.get((String) i.next()));
+            intronSet.add(intronMap.get(i.next()));
         }
         return intronSet;
     }
@@ -242,11 +242,8 @@ public class IntronUtil
      * @param os objectStore
      * @param transcriptId Integer
      * @return all the exons locationSet for the particular transcriptId
-     * @throws ObjectStoreException if there is an ObjectStore problem
-     * @throws IllegalAccessException if there is an ObjectStore problem
      */
-    private Set getLocationSet(ObjectStore os, Integer transcriptId) 
-        throws ObjectStoreException, IllegalAccessException {
+    private Set getLocationSet(ObjectStore os, Integer transcriptId) {
         Set locationSet = new HashSet();
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);

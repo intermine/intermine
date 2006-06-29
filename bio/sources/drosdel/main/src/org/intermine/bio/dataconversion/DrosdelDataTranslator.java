@@ -49,7 +49,7 @@ public class DrosdelDataTranslator extends DataTranslator
     protected static final Logger LOG = Logger.getLogger(DrosdelDataTranslator.class);
 
     /**
-     * @see DataTranslator#DataTranslator
+     * @see DataTranslator#DataTranslator(ItemReader, Properties, Model, Model)
      */
     public DrosdelDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
                                  Model tgtModel) {
@@ -68,7 +68,7 @@ public class DrosdelDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translate
+     * @see DataTranslator#translate(ItemWriter)
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
@@ -83,7 +83,7 @@ public class DrosdelDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translateItem
+     * @see DataTranslator#translateItem(Item)
      */
     protected Collection translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {

@@ -92,9 +92,8 @@ public class AddLicences
     /**
      * Retrieve the publications to be updated
      * @return a List of publications
-     * @throws ObjectStoreException if an error occurs
      */
-    protected List getHybrigenicsProteinInteractions() throws ObjectStoreException {
+    protected List getHybrigenicsProteinInteractions() {
         // proteininteractions where evidence contains an
         // experimentalresult with source.title = 'Hybrigenics'
         Query q = new Query();

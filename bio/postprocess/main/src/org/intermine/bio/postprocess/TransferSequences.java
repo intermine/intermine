@@ -40,7 +40,6 @@ import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.RankedRelation;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
