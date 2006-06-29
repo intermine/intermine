@@ -13,7 +13,7 @@
 
   <!-- INIT -->
 
-  <target name="-pre-init" depends="-init-properties, webapp.-pre-init">
+  <target name="-pre-init" depends="webapp.-pre-init">
     <!-- Files -->
     <!-- Location of model-less intermine-webservice.war -->
     <property name="source.intermine.webservice.war" location="${webservice.xml.basedir}/../intermine/webservice/server/dist/intermine-webservice.war"/>
@@ -21,7 +21,7 @@
 
   <!-- WAR INSTEAD OF JAR -->
 
-  <target name="-pre-jar" depends="webapp.-pre-jar">
+  <target name="-pre-jar" depends="-init-properties, webapp.-pre-jar">
     <!-- Start with base intermine webservice war -->
     <copy file="${source.intermine.webservice.war}" tofile="${dist.war}"/>
     <!-- Copy intermine.properties into build/classes -->
