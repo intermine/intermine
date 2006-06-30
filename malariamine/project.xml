@@ -30,6 +30,10 @@
       <property name="fasta.taxonId" value="36329"/>
       <property name="src.data.dir" location="/shared/data/malaria/malaria-genome/fasta"/>
     </source>
+    <source name="psi-intact" type="psi">
+      <property name="src.data.dir" location="/shared/data/malaria/psi/intact/2006-05-26"/>
+      <property name="organisms" value="36329"/>
+    </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML

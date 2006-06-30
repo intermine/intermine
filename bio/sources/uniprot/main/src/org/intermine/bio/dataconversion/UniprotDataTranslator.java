@@ -429,7 +429,7 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 } else if (taxonId == 10090) { // Mus musculus
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
-                    //geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", null);
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", null);
                     if (geneOrganismDbId != null) {
                         createGene = true;
                         dbId = getDataSourceId("Ensembl");
