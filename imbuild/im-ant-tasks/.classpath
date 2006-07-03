@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/ant.jar"/>
+	<classpathentry sourcepath="/home/kmr/extern/sources/apache-ant-1.6.5/src/main" kind="lib" path="lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/xalan.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
