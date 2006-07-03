@@ -1,0 +1,66 @@
+<project name="gbrowse" default="default" basedir="."
+         xmlns:lib="http://www.intermine.org/ns/im-gbrowse-proj/1">
+
+  <dirname property="gbrowse.xml.basedir" file="${ant.file.gbrowse}"/>
+
+  <import file="${gbrowse.xml.basedir}/library.xml"/>
+  <import file="${gbrowse.xml.basedir}/task.xml"/>
+
+  <!--
+      Write GFF3 files suitable for reading into GBrowse.
+    -->
+  <target name="write-gff" depends="-init-properties, init, -init-deps">
+    <taskdef name="write-gff" classname="org.intermine.bio.gbrowse.WriteGFFTask">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+
+    <write-gff alias="os.production" dest="${build.gbrowse.data}"/>
+  </target>
+
+  <!--
+      Load data from GFF3 files into a PostgreSQL based GBrowse.
+    -->
+  <target name="load-gbrowse-data" depends="-init-properties"
+          description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse">
+    <exec dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
+      <arg value="--adaptor"/>
+      <arg value="dbi::Pg"/>
+      <arg value="--create"/>
+      <arg value="--dsn"/>
+      <arg value="dbi:Pg:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
+      <arg value="--user"/>
+      <arg value="${gbrowse.database.write.user}"/>
+      <arg value="--password"/>
+      <arg value="${gbrowse.database.write.password}"/>
+    </exec>
+    <apply dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
+      <arg value="--adaptor"/>
+      <arg value="dbi::Pg"/>
+      <arg value="--dsn"/>
+      <arg value="dbi:Pg:dbname=${gbrowse.database};host=${gbrowse.database.host}"/>
+      <arg value="--user"/>
+      <arg value="${gbrowse.database.write.user}"/>
+      <arg value="--password"/>
+      <arg value="${gbrowse.database.write.password}"/>
+      <fileset dir="${build.gbrowse.data}">
+        <patternset>
+          <include name="*.fa"/>
+          <include name="*.gff"/>
+        </patternset>
+      </fileset>
+    </apply>
+  </target>
+
+  <!--
+      Load data from GFF3 files into a MySQL based GBrowse.
+    -->
+  <target name="load-gbrowse-data-mysql" depends="-init-properties"
+          description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into GBrowse">
+    <exec executable="/bin/sh">
+      <arg line="-c 'bp_bulk_load_gff.pl --maxfeature 1000000000 --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
+    </exec>
+  </target>
+
+  <target name="do-action" depends="write-gff, load-gbrowse-data-mysql"/>
+
+</project>
