@@ -12,12 +12,18 @@
   <target name="retrieve"/>
   <target name="translate"/>
   
-  <target name="load" depends="init, -init-deps">
+  <target name="-init-suffix" unless="fasta.idSuffix">
+    <!-- set the default -->
+    <property name="fasta.idSuffix" value=""/>
+  </target>
+
+  <target name="load" depends="-init-suffix, init, -init-deps">
     <taskdef name="read-fasta"
       classname="org.intermine.bio.dataconversion.FastaLoaderTask"
       classpathref="task.class.path"/>
     <read-fasta integrationWriterAlias="integration.production"
                 sourceName="${source.name}"
+                idSuffix="${fasta.idSuffix}"
                 fastaTaxonId="${fasta.taxonId}">
       <fileset dir="${src.data.dir}" includes="${fasta.includes}"/>
     </read-fasta>

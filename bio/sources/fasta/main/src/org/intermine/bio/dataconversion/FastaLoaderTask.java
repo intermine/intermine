@@ -39,16 +39,20 @@ import org.flymine.model.genomic.Organism;
  * ObjectStore.
  *
  * @author Kim Rutherford
- * @author Peter Mclaren - modifications to use an IntegrationWriter - so we can run it as a source.
+ * @author Peter Mclaren
  */
 
-public class FastaLoaderTask extends Task {
-
+public class FastaLoaderTask extends Task
+{
     protected String integrationWriterAlias;
     protected String sourceName;
     protected Integer fastaTaxonId;
     protected boolean ignoreDuplicates = false;
     protected List fileSets = new ArrayList();
+    /**
+     * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
+     */
+    private String idSuffix = null;
 
     /**
      * Set the IntegrationWriter.
@@ -84,6 +88,15 @@ public class FastaLoaderTask extends Task {
      */
     public void setFastaTaxonId(Integer fastaTaxonId) {
         this.fastaTaxonId = fastaTaxonId;
+    }
+
+    /**
+     * Set the suffix to add to identifiers from the FASTA file when creating
+     * LocatedSequenceFeatures.
+     * @param idSuffix the suffix
+     */
+    public void setIdSuffix(String idSuffix) {
+        this.idSuffix = idSuffix;
     }
 
     /**
@@ -179,7 +192,7 @@ public class FastaLoaderTask extends Task {
     }
 
     /**
-     * Create a FlyMine Sequence object for the InterMineObject of the given ID.
+     * Create a FlyMine Sequence object given BioJava Sequence object.
      */
     private void setSequence(Organism org, Sequence bioJavaSequence, IntegrationWriter iw,
                              Source source, Source skelSource) {
@@ -198,7 +211,7 @@ public class FastaLoaderTask extends Task {
                 (InterMineObject) DynamicUtil.createObject(Collections.singleton(lsfClass));
         org.flymine.model.genomic.LocatedSequenceFeature flymineLSF =
                 (org.flymine.model.genomic.LocatedSequenceFeature) newLSFObject;
-        flymineLSF.setIdentifier(bioJavaSequence.getName());
+        flymineLSF.setIdentifier(bioJavaSequence.getName() + idSuffix);
         flymineLSF.setSequence(flymineSequence);
         flymineLSF.setOrganism(org);
         flymineLSF.setId(getUniqueInternalId());
