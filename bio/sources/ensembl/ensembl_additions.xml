@@ -37,10 +37,6 @@
     <collection name="locations" referenced-type="org.flymine.model.genomic.Location" ordered="true"/>
   </class>
 
-  <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <collection name="translations" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="protein" ordered="true"/>
-  </class>
-
   <class name="org.flymine.model.genomic.Region" is-interface="true"/>
 
   <class name="org.flymine.model.genomic.RepeatRegion" is-interface="true">
@@ -59,7 +55,6 @@
 
   <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="exonCount" type="java.lang.Integer"/>
-    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
     <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="transcript"/>
   </class>
 
@@ -68,9 +63,7 @@
     <attribute name="translationEnd" type="java.lang.Integer"/>
     <reference name="endExon" referenced-type="org.flymine.model.genomic.Exon"/>
     <reference name="startExon" referenced-type="org.flymine.model.genomic.Exon"/>
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="translation"/>
-    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="translations"/>
   </class>
 
   <class name="org.flymine.model.genomic.TRNA" is-interface="true">
