@@ -18,7 +18,7 @@ import org.intermine.objectstore.ObjectStore;
 /**
  * Bag object id upgrader - find old objects in a new ObjectStore.
  * 
- * @author kim
+ * @author Kim Rutherford
  */
 public interface IdUpgrader
 {
@@ -31,6 +31,9 @@ public interface IdUpgrader
      */
     public Set getNewIds(InterMineObject oldObject, ObjectStore os);
 
+    /**
+     * An upgrader that always fails.  For use when upgrding shouldn't be happening.
+     */
     public static final IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
         public Set getNewIds(InterMineObject oldObject, ObjectStore objectStore) {
             throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
