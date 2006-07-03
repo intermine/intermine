@@ -1349,8 +1349,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public boolean isPrecomputedWithConnection(Connection c, Query query, String type)
             throws ObjectStoreException, SQLException {
         PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-        String SQLquery = generateSql(c, query, 0, Integer.MAX_VALUE);
-        return (ptm.lookupSql(type, SQLquery) != null);
+        String sqlQuery = generateSql(c, query, 0, Integer.MAX_VALUE);
+        return (ptm.lookupSql(type, sqlQuery) != null);
     }
 
     /**
