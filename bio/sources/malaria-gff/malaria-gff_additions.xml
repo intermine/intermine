@@ -3,4 +3,31 @@
   <class name="org.flymine.model.genomic.Supercontig" extends="org.flymine.model.genomic.Assembly" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
   </class>
+  <class name="org.flymine.model.genomic.CDS" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.MRNA" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.NcRNA" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.Exon" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.Intron" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.UTR" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.Translation" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
 </classes>

@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-  <class name="org.flymine.model.genomic.Transcript" is-interface="true">
-    <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" ordered="true" reverse-reference="transcripts"/>
-  </class>
-  <class name="org.flymine.model.genomic.Intron" is-interface="true">
-    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="introns" ordered="true"/>
-  </class>
-</classes>
