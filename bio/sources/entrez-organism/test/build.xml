@@ -3,6 +3,6 @@
          xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
   <description>build test tasks for entrez-organism</description>
 
-  <import file="../../../imbuild/tests.xml"/>
+  <import file="../../../../imbuild/tests.xml"/>
 
 </project>

@@ -5,8 +5,8 @@
   
   <description>build and test sources-ensembl-test</description>
   
-  <import file="../../../imbuild/tests.xml"/>
-  <import file="../../../imbuild/task.xml"/>
+  <import file="../../../../imbuild/tests.xml"/>
+  <import file="../../../../imbuild/task.xml"/>
   
   <target name="-pre-test" depends="build-db-genomic-fulldata-test"/>
   
