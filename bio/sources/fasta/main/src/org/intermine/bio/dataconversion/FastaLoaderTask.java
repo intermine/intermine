@@ -54,6 +54,9 @@ public class FastaLoaderTask extends Task
      */
     private String idSuffix = null;
 
+    //Set this if we want to do some testing...
+    private File[] files = null;
+
     /**
      * Set the IntegrationWriter.
      *
@@ -108,6 +111,11 @@ public class FastaLoaderTask extends Task
         fileSets.add(fileSet);
     }
 
+    //Use this for testing with junit.
+    protected void setFileArray(File[] files) {
+        this.files = files;
+    }
+
     /**
      * @throws BuildException if an ObjectStore method fails
      */
@@ -125,8 +133,8 @@ public class FastaLoaderTask extends Task
             throw new BuildException("FastaLoaderTask - fastaTaxonId property not set");
         }
 
-        if (fileSets.isEmpty()) {
-            System.out.println("FastaLoaderTask - fileSets list is empty");
+        if (fileSets.isEmpty() && files == null) {
+            System.out.println("FastaLoaderTask - file(Set)s list is empty");
             return;
         }
 
@@ -155,31 +163,23 @@ public class FastaLoaderTask extends Task
             throw new BuildException(e);
         }
 
-        for (Iterator fileSetIter = fileSets.iterator(); fileSetIter.hasNext();) {
-            FileSet fileSet = (FileSet) fileSetIter.next();
+        //If we have set the files to include directly - usually for testing.
+        if (files != null) {
 
-            DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
-            String[] files = ds.getIncludedFiles();
             for (int i = 0; i < files.length; i++) {
-                File file = new File(ds.getBasedir(), files[i]);
-                System.err .println("Processing file: " + file.getName());
+                processFile(files[i], org, iw, source, skelSource);
+            }
+        } else {
 
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader(file));
+            for (Iterator fileSetIter = fileSets.iterator(); fileSetIter.hasNext();) {
+                FileSet fileSet = (FileSet) fileSetIter.next();
 
-                    SequenceIterator iter =
-                            (SequenceIterator) SeqIOTools.fileToBiojava("fasta", "dna", reader);
+                DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
+                String[] files = ds.getIncludedFiles();
 
-                    while (iter.hasNext()) {
-                        setSequence(org, iter.nextSequence(), iw, source, skelSource);
-                    }
-                } catch (BioException e) {
-                    throw new BuildException("sequence not in fasta format or wrong alphabet for: "
-                            + file, e);
-                } catch (NoSuchElementException e) {
-                    throw new BuildException("no fasta sequences in: " + file, e);
-                } catch (FileNotFoundException e) {
-                    throw new BuildException("problem reading file - file not found: " + file, e);
+                for (int i = 0; i < files.length; i++) {
+                    File file = new File(ds.getBasedir(), files[i]);
+                    processFile(file, org, iw, source, skelSource);
                 }
             }
         }
@@ -189,10 +189,36 @@ public class FastaLoaderTask extends Task
         } catch (ObjectStoreException e) {
             throw new BuildException(e);
         }
+
     }
 
     /**
-     * Create a FlyMine Sequence object given BioJava Sequence object.
+     * Handles each fasta file. Factored out so we can supply files for testing.
+     * */
+    private void processFile(
+            File file, Organism org, IntegrationWriter iw, Source source, Source skelSource)
+            throws BuildException {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            SequenceIterator iter =
+                    (SequenceIterator) SeqIOTools.fileToBiojava("fasta", "dna", reader);
+
+            while (iter.hasNext()) {
+                setSequence(org, iter.nextSequence(), iw, source, skelSource);
+            }
+        } catch (BioException e) {
+            throw new BuildException("sequence not in fasta format or wrong alphabet for: "
+                    + file, e);
+        } catch (NoSuchElementException e) {
+            throw new BuildException("no fasta sequences in: " + file, e);
+        } catch (FileNotFoundException e) {
+            throw new BuildException("problem reading file - file not found: " + file, e);
+        }
+    }
+
+    /**
+     * Create a FlyMine Sequence object for the InterMineObject of the given ID.
      */
     private void setSequence(Organism org, Sequence bioJavaSequence, IntegrationWriter iw,
                              Source source, Source skelSource) {
