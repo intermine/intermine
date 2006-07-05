@@ -26,7 +26,7 @@ import org.intermine.web.bag.BagHelper;
  * @author Kim Rutherford
  */
 
-public class BuildBagController extends TilesAction
+public class BagController extends TilesAction
 {
     /**
      * Set up environment for the buildBag page.
