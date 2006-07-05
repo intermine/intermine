@@ -84,7 +84,7 @@ public abstract class InterMineBag extends AbstractSet
                     + os.getModel().getName());
         }
     }
-
+    
     /** 
      * Constructs a new InterMineBag with certain contents.
      *
@@ -135,6 +135,9 @@ public abstract class InterMineBag extends AbstractSet
             if (retval != null) {
                 return retval;
             }
+        }
+        if(size==0){
+            return new LinkedHashSet();
         }
         try {
             Query q = new Query();

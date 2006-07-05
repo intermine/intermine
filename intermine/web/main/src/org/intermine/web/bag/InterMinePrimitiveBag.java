@@ -29,8 +29,8 @@ public class InterMinePrimitiveBag extends InterMineBag
      * @param size the size of the bag
      * @param os the ObjectStore to use to retrieve the contents of the bag
      */
-    public InterMinePrimitiveBag(Integer userId, String name, int size, ObjectStore os) {
-        super(userId, name, size, os);
+    public InterMinePrimitiveBag(Integer userId, String name, Integer size, ObjectStore os) {
+        super(userId, name, size.intValue(), os);
     }
 
     /** 

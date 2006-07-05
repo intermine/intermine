@@ -221,7 +221,7 @@ public class ProfileManager
             savedBags.put(bagName, bagIsObjects
                     ? (InterMineBag) new InterMineIdBag(userProfile.getId(), bagName, bagSize, osw)
                     : (InterMineBag) new InterMinePrimitiveBag(userProfile.getId(), bagName,
-                        bagSize, osw));
+                        new Integer(bagSize), osw));
         }
         Map savedQueries = new HashMap();
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {

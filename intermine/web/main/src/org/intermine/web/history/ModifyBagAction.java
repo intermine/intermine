@@ -10,6 +10,7 @@ package org.intermine.web.history;
  *
  */
 
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
@@ -17,11 +18,16 @@ import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.BagHelper;
 import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +74,7 @@ public class ModifyBagAction extends ModifyHistoryAction
             delete(mapping, form, request, response);
         }
         
-        return mapping.findForward("history");
+        return mapping.findForward("bag");
     }
 
     /**
@@ -99,14 +105,17 @@ public class ModifyBagAction extends ModifyHistoryAction
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("history");
         }
-        
-        // Now combine
-        Class type = savedBags.get(selectedBags[0]).getClass();
-        InterMineBag combined = (InterMineBag) type.newInstance();
-        for (int i = 0; i < mbf.getSelectedBags().length; i++) {
-            combined.addAll((Collection) savedBags.get(selectedBags[i]));
-        }
 
+        // Now combine
+        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+        ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
+        Collection union = new ArrayList();
+        union.addAll((Collection) savedBags.get(selectedBags[0]));
+        for (int i = 1; i < selectedBags.length; i++) {
+            union.addAll((Collection) savedBags.get(selectedBags[i]));
+        }
+        InterMineBag combined = new InterMinePrimitiveBag(profile.getUserId(),name,profileOs,union);
+        
         int defaultMax = 10000;
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
@@ -116,13 +125,12 @@ public class ModifyBagAction extends ModifyHistoryAction
                 new ActionMessage("bag.tooBig", new Integer(maxBagSize));
             recordError(actionMessage, request);
 
-            return mapping.findForward("history");
+            return mapping.findForward("bag");
         }
 
-        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         profile.saveBag(name, combined);
         
-        return mapping.findForward("history");
+        return mapping.findForward("bag");
     }
     
     /**
@@ -169,19 +177,22 @@ public class ModifyBagAction extends ModifyHistoryAction
         
         if (!typesMatch(savedBags, selectedBags)) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
-            return mapping.findForward("history");
+            return mapping.findForward("bag");
         }
         
-        Class type = savedBags.get(selectedBags[0]).getClass();
-        InterMineBag combined = (InterMineBag) type.newInstance();
-        combined.addAll((Collection) savedBags.get(selectedBags[0]));
+        Collection intersect = new ArrayList();
+        intersect.addAll((Collection) savedBags.get(selectedBags[0]));
         for (int i = 1; i < selectedBags.length; i++) {
-            combined.retainAll((Collection) savedBags.get(selectedBags[i]));
+            intersect.retainAll((Collection) savedBags.get(selectedBags[i]));
         }
+
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+        ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
+        InterMineBag combined = new InterMinePrimitiveBag(profile.getUserId(),name,profileOs,intersect);
+
         profile.saveBag(name, combined);
         
-        return mapping.findForward("history");
+        return mapping.findForward("bag");
     }
 
     /**
@@ -207,14 +218,13 @@ public class ModifyBagAction extends ModifyHistoryAction
 
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
+        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         
         if (!typesMatch(savedBags, selectedBags)) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
-            return mapping.findForward("history");
+            return mapping.findForward("bag");
         }
         
-        Class type = savedBags.get(selectedBags[0]).getClass();
-
         // A map from objects to the number of occurrences of that object
         Map countMap = new HashMap();
 
@@ -230,22 +240,21 @@ public class ModifyBagAction extends ModifyHistoryAction
                 }
             }
         }
-        
-        InterMineBag resultBag = (InterMineBag) type.newInstance();
-        
-        Iterator iter = countMap.keySet().iterator();
 
+        Collection subtract = new ArrayList();
+        Iterator iter = countMap.keySet().iterator();
         while (iter.hasNext()) {
             Object thisObj = iter.next();
             if (countMap.get(thisObj).equals(new Integer(1))) {
-                resultBag.add(thisObj);
+                subtract.add(thisObj);
             }
         }
-
-        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
-        profile.saveBag(name, resultBag);
         
-        return mapping.findForward("history");
+        ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
+        InterMineBag resultBag = new InterMinePrimitiveBag(profile.getUserId(),name,profileOs,subtract);
+        profile.saveBag(name, resultBag);
+
+        return mapping.findForward("bag");
     }
 
     /**
@@ -273,6 +282,6 @@ public class ModifyBagAction extends ModifyHistoryAction
             profile.deleteBag(mbf.getSelectedBags()[i]);
         }
 
-        return mapping.findForward("history");
+        return mapping.findForward("bag");
     }
 }
