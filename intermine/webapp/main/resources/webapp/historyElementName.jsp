@@ -31,9 +31,7 @@ window.onload = function() {
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
        
     <td align="left" class="noRightBorder">
-      <html:link action="/modifyQueryChange?method=load&amp;name=${nameForURL}&type=${type}">
         <c:out value="${name}"/>
-      </html:link>
     </td>
     <td align="right" valign="middle" width="1">
       <html:link action="/history?action=rename&amp;name=${nameForURL}&type=${type}">

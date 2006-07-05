@@ -63,9 +63,7 @@
                     <fmt:message var="linkTitle" key="templateList.run">
 					  <fmt:param value="${savedTemplate.value.name}"/>
     			    </fmt:message>
-				    <html:link action="/template?name=${savedTemplate.value.name}&amp;type=user" title="${linkTitle}">
 					  ${savedTemplate.value.name}
-				    </html:link>
                     <tiles:insert name="starTemplate.tile">
                       <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
                     </tiles:insert>
@@ -92,11 +90,17 @@
                 </c:choose>
               </td>
               <td align="center" nowrap>
-                <html:link action="/editTemplate?name=${savedTemplate.value.name}">
-                  Edit
+               <html:link action="/template?name=${savedTemplate.value.name}&amp;type=user" 
+               					titleKey="history.action.execute.hover">
+                  <fmt:message key="history.action.execute"/>
+               </html:link> |
+                <html:link action="/editTemplate?name=${savedTemplate.value.name}"
+                				titleKey="history.action.edit.hover">
+                  <fmt:message key="history.action.edit"/>
                 </html:link> |
-                <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}">
-                  Export
+                <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}"
+                				titleKey="history.action.execute.hover">
+                  <fmt:message key="history.action.export"/>
                 </html:link>
                 <c:if test="${IS_SUPERUSER && savedTemplate.value.valid}">
 	                <tiles:insert name="precomputeTemplate.tile">

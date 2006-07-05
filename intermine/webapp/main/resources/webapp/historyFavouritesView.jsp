@@ -45,10 +45,7 @@
                     <fmt:message var="linkTitle" key="templateList.run">
                       <fmt:param value="${favouriteTemplate.name}"/>
                     </fmt:message>
-                    <html:link action="/template?name=${favouriteTemplate.name}&amp;type=user" 
-                           title="${linkTitle}">
                       ${favouriteTemplate.name}
-                    </html:link>
 			        <c:if test="${IS_SUPERUSER}">
                       <c:set var="taggable" value="${favouriteTemplate}"/>
                       <tiles:insert name="inlineTagEditor.tile">
@@ -72,11 +69,17 @@
                 </c:choose>
               </td>
               <td align="center" nowrap>
-                <html:link action="/editTemplate?name=${favouriteTemplate.name}">
-                  Edit
+                <html:link action="/template?name=${favouriteTemplate.name}&amp;type=user" 
+                				titleKey="history.action.execute.hover">
+                  <fmt:message key="history.action.execute"/>
                 </html:link> |
-                <html:link action="/exportTemplates?type=user&amp;name=${favouriteTemplate.name}">
-                  Export
+                <html:link action="/editTemplate?name=${favouriteTemplate.name}" 
+                				titleKey="history.action.edit.hover">
+                  <fmt:message key="history.action.edit"/>
+                </html:link> |
+                <html:link action="/exportTemplates?type=user&amp;name=${favouriteTemplate.name}"
+                				titleKey="history.action.export.hover">
+                  <fmt:message key="history.action.export"/>
                 </html:link> |
                 <html:link action="/removeFavourite?name=${favouriteTemplate.name}">
                 <img class="arrow" src="images/cross.gif" title="Remove from favourites"/>

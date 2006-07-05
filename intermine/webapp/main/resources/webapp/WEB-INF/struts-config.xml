@@ -104,8 +104,8 @@
     <action path="/iqlQuery"
             forward="iqlQuery.page"/>
 
-    <action path="/bagBuild"
-            forward="bagBuild.page"/>
+    <action path="/bag"
+            forward="bag.page"/>
     
     <action path="/tree"
             forward="tree.page"/>
@@ -439,8 +439,8 @@
             name="modifyBagForm"
             parameter="action"
             scope="request"
-            input="history">
-      <forward name="history" path="/history.do" redirect="true"/>
+            input="bag">
+      <forward name="bag" path="/bag.do" redirect="true"/>
     </action>
 
     <action path="/modifyTemplate"
@@ -471,7 +471,7 @@
             name="buildBagForm"
             parameter="action"
             input="buildBag">
-      <forward name="buildBag" path="bagBuild.page"/>
+      <forward name="buildBag" path="bag.page"/>
     </action>
 
     <action path="/templateSearch"
@@ -626,8 +626,8 @@
     <action path="/initAspect"
             type="org.intermine.web.AspectController"/>
 
-    <action path="/initBagBuild"
-            type="org.intermine.web.BuildBagController"
+    <action path="/initBag"
+            type="org.intermine.web.BagController"
             name="buildBagForm"/>
 
     <action path="/initTemplate"

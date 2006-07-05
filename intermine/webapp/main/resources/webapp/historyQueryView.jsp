@@ -133,6 +133,11 @@
                   <fmt:message key="history.action.execute"/>
                 </html:link>
                 |
+      			<html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}&type=${type}"
+                           titleKey="history.action.edit.hover">
+                  <fmt:message key="history.action.edit"/>
+                </html:link>
+                |                
                 <c:if test="${type == 'history'}">
                   <c:if test="${!empty PROFILE.username}">
                     <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"

@@ -799,3 +799,13 @@ img.objectDetailsAspectIcon {
   float: left;
   margin-bottom: 1px;
 }
+
+#bagTable{
+    padding:5px;
+}
+
+#bagTable td{
+    vertical-align: top;
+	padding-right: 10px;
+	padding-left: 10px;
+}

@@ -4,15 +4,15 @@
 
 <!-- bagBuild.jsp -->
 <html:xhtml/>
-
-<div class="body bagBuild">
+<h2>Create a new bag</h2>
+<div class="bagBuild">
   <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
     <p>
       <fmt:message key="bagBuild.bagFromText1"/>
       <br/>
       <fmt:message key="bagBuild.bagFromText2"/>
       <br/>
-      <html:textarea property="text" rows="20" cols="80"/>
+      <html:textarea property="text" rows="10" cols="40"/>
       <br/>
       <html:reset>
         <fmt:message key="bagBuild.reset"/>

@@ -54,9 +54,9 @@
     <put name="body" value="examples.jsp"/>
     <put name="pageName" value="examples"/>
   </definition>
-  <definition name="bagBuild.page" extends="layout.template">
-    <put name="body" value="bagBuild.tile"/>
-    <put name="pageName" value="bagBuild"/>
+  <definition name="bag.page" extends="layout.template">
+    <put name="body" value="bag.tile"/>
+    <put name="pageName" value="bag"/>
   </definition>
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.jsp"/>
@@ -154,7 +154,7 @@
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
-  <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
+  <definition name="bag.tile" path="/bag.jsp" controllerUrl="/initBag.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
