@@ -9,8 +9,12 @@
 <tiles:importAttribute name="browseOperator" ignore="false"/>
 --%>
 
+<tiles:importAttribute name="menuItem" ignore="true"/>
+
+<c:choose>
+  <c:when test="${empty menuItem}">
 <html:form action="/browseAction" styleClass="browseForm">
-  ${WEB_PROPERTIES['begin.browse.prompt']}:&nbsp;
+    ${WEB_PROPERTIES['begin.browse.prompt']}:&nbsp;
   <html:hidden property="attributeOps(1)" value="6"/>
   <html:text property="attributeValues(1)"/>
   <input type="hidden" name="templateType" value="global"/>
@@ -19,5 +23,18 @@
   <input type="hidden" name="noSaveQuery" value="1"/>
   <html:submit><fmt:message key="begin.input.submit"/></html:submit>
 </html:form>
+</c:when>
+  <c:otherwise>
+<html:form action="/browseAction" style="display:inline;">
+  <html:hidden property="attributeOps(1)" value="6"/>
+  <html:text property="attributeValues(1)"/>
+  <input type="hidden" name="templateType" value="global"/>
+  <input type="hidden" name="templateName" value="${WEB_PROPERTIES['begin.browse.template']}"/>
+  <input type="hidden" name="skipBuilder" value="1"/>
+  <input type="hidden" name="noSaveQuery" value="1"/>
+  <html:submit><fmt:message key="begin.heading.browse"/></html:submit>
+</html:form>
+  </c:otherwise>	 
+</c:choose>
 
 <!-- /browse.jsp -->

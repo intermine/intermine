@@ -6,12 +6,27 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- historyBagView.jsp -->
+<script type="text/javascript">
+<!--//<![CDATA[
+  function selectColumnCheckbox(form, type) {
+    var columnCheckBox = 'selected_' + type;
+    var checked = document.getElementById(columnCheckBox).checked;
+    with(form) {
+      for(i=0;i < elements.length;i++) {
+        thiselm = elements[i];
+        var testString = columnCheckBox + '_';
+        if(thiselm.id.indexOf(testString) != -1)
+          thiselm.checked = checked;
+      }
+    }
+  }
+//]]>-->
+</script>
+
 <html:xhtml/>
 
-
-<im:body id="bagHistory">
-
-	<p>
+<h2>Your bags</h2>
+  <p>
     <fmt:message key="history.savedbags.help"/>
   </p>
 
@@ -78,7 +93,7 @@
         <br/>
         <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
           New bag name:
-          <html:text property="newBagName" size="12"/>
+          <html:text property="newBagName" size="12"/><br/>
           <html:submit property="union">
             <fmt:message key="history.union"/>
           </html:submit>
@@ -98,6 +113,5 @@
     </c:otherwise>
   </c:choose>
 
-</im:body>
   
 <!-- /historyBagView.jsp -->

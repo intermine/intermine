@@ -35,24 +35,11 @@
         nowrap>
         <c:choose>
           <c:when test="${HISTORY_PAGE=='history'||HISTORY_PAGE == null}">
-            History
+            Query History
           </c:when>
           <c:otherwise>
             <html:link action="/history?page=history">
-              History
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-      </td>
-      <td width="1%" class="tab ${HISTORY_PAGE=='bags'?'selected':'not-selected'}"
-        nowrap>
-        <c:choose>
-          <c:when test="${HISTORY_PAGE=='bags'}">
-            Saved Bags
-          </c:when>
-          <c:otherwise>
-            <html:link action="/history?page=bags">
-              Saved Bags
+              Query History
             </html:link>
           </c:otherwise>
         </c:choose>
@@ -74,11 +61,11 @@
         nowrap>
         <c:choose>
           <c:when test="${HISTORY_PAGE=='templates'}">
-            Saved Template Queries
+            Saved Templates
           </c:when>
           <c:otherwise>
             <html:link action="/history?page=templates">
-              Saved Template Queries
+              Saved Templates
             </html:link>
           </c:otherwise>
         </c:choose>
@@ -87,11 +74,11 @@
         nowrap>
         <c:choose>
           <c:when test="${HISTORY_PAGE=='favourites'}">
-            Favourites&nbsp;<img src="images/star_active.gif" title="Favourites">
+            Favourite Templates&nbsp;<img src="images/star_active.gif" title="Favourites">
           </c:when>
           <c:otherwise>
             <html:link action="/history?page=favourites">
-              Favourites&nbsp;<img src="images/star_active.gif" title="Favourites">
+              Favourite Templates&nbsp;<img src="images/star_active.gif" title="Favourites">
             </html:link>
           </c:otherwise>
         </c:choose>
@@ -103,9 +90,6 @@
   </table>
 
   <c:choose>
-    <c:when test="${HISTORY_PAGE=='bags'}">
-      <tiles:get name="historyBagView.jsp"/>
-    </c:when>
     <c:when test="${HISTORY_PAGE=='saved'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
