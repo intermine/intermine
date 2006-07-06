@@ -51,6 +51,7 @@ import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.NcRNA;
 import org.flymine.model.genomic.PCRProduct;
 import org.flymine.model.genomic.Sequence;
@@ -321,6 +322,20 @@ public class WriteGFFTask extends Task
             geneNameAttributeMap.put("Gene", geneNameList);
 
             List synonymList = (List) synonymMap.get(transcript.getId());
+
+            if (synonymList == null) {
+                synonymList = new ArrayList();
+            }
+
+            if (transcript instanceof MRNA) {
+                // special case for CDS objects - display them as MRNA as GBrowse uses the CDS class
+                // for displaying MRNAs
+                Iterator cdsIter = ((MRNA) transcript).getCDSs().iterator();
+                while (cdsIter.hasNext()) {
+                    CDS cds = (CDS) cdsIter.next();
+                    synonymList.add(makeIdString(cds.getId()));
+                }
+            }
             List evidenceList = (List) evidenceMap.get(transcript.getId());
 
             writeFeature(gffWriter, chr, transcript, transcriptLocation, transcript.getIdentifier(),
@@ -477,7 +492,7 @@ public class WriteGFFTask extends Task
         attributes.put(idType, identifiers);
 
         ArrayList flyMineIDs = new ArrayList();
-        flyMineIDs.add("FlyMineInternalID_" + flyMineId);
+        flyMineIDs.add(makeIdString(flyMineId));
 
         attributes.put("FlyMineInternalID", flyMineIDs.clone());
         List allIds = (List) flyMineIDs.clone();
@@ -520,6 +535,10 @@ public class WriteGFFTask extends Task
 
         lineBuffer.append(stringifyAttributes(attributes));
         gffWriter.println(lineBuffer.toString());
+    }
+
+    private String makeIdString(Integer id) {
+        return "FlyMineInternalID_" + id;
     }
 
     /**
