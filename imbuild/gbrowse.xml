@@ -3,10 +3,13 @@
 
   <dirname property="gbrowse.xml.basedir" file="${ant.file.gbrowse}"/>
 
+  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+  <property file="${build.properties.local}"/>
+
   <import file="${gbrowse.xml.basedir}/library.xml"/>
   <import file="${gbrowse.xml.basedir}/task.xml"/>
 
-  <target name="-init-write-gff" depends="init">
+  <target name="-init-gff" depends="init">
     <property name="build.gbrowse.data" value="${build.dir}/gbrowse/data"/>
 
     <mkdir dir="${build.gbrowse.data}"/>
@@ -15,7 +18,7 @@
   <!--
       Write GFF3 files suitable for reading into GBrowse.
     -->
-  <target name="write-gff" depends="-init-write-gff, -init-properties, init, -init-deps">
+  <target name="write-gff" depends="-init-gff, -init-properties, init, -init-deps">
     <taskdef name="write-gff" classname="org.intermine.bio.gbrowse.WriteGFFTask">
       <classpath refid="task.class.path"/>
     </taskdef>
@@ -26,7 +29,7 @@
   <!--
       Load data from GFF3 files into a PostgreSQL based GBrowse.
     -->
-  <target name="load-gbrowse-data" depends="-init-properties"
+  <target name="load-gbrowse-data" depends="-init-gff, -init-properties, init, -init-deps"
           description="call bp_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec dir="${build.gbrowse.data}" executable="bp_load_gff.pl">
       <arg value="--adaptor"/>
@@ -60,7 +63,8 @@
   <!--
       Load data from GFF3 files into a MySQL based GBrowse.
     -->
-  <target name="load-gbrowse-data-mysql" depends="-init-properties"
+  <target name="load-gbrowse-data-mysql" 
+          depends="-init-gff, -init-properties, init, -init-deps"
           description="call bp_bulk_load_gff.pl to load the FlyMine GFF dump into GBrowse">
     <exec executable="/bin/sh">
       <arg line="-c 'bp_bulk_load_gff.pl --maxfeature 1000000000 --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
