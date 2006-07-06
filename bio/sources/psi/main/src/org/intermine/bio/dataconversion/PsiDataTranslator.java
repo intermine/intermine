@@ -188,7 +188,8 @@ public class PsiDataTranslator extends DataTranslator
                     Item dataSet = getDataSetFromNamesType(namesType);
                     tgtItem.setReference("source", dataSet);
                     // set confidence from attributeList
-                    if (srcItem.getReference("attributeList") != null) {
+                    //TODO: This is a deprecated representation of the Confidence data.
+                    if (srcItem.hasReference("attributeList")) {
                         for (Iterator j = getCollection(getReference(srcItem, "attributeList"),
                                                         "attributes"); j.hasNext();) {
                             Item attrItem = (Item) j.next();
@@ -209,6 +210,31 @@ public class PsiDataTranslator extends DataTranslator
                             }
                         }
                     }
+                    //NEW WAY OF REPRESENTING CONFIDENCE SCORES.
+                    if (srcItem.hasReference("confidence")) {
+                        Item confItem = getReference(srcItem, "confidence");
+                        if (confItem.hasAttribute("unit") && confItem.hasAttribute("value")) {
+
+                            Attribute unit  = confItem.getAttribute("unit");
+                            Attribute value = confItem.getAttribute("value");
+
+                            if (Character.isDigit(value.getValue().charAt(0))
+                                && unit.getValue().equals("author-confidence")) {
+                                tgtItem.addAttribute(
+                                        new Attribute("confidence", value.getValue()));
+
+                            } else if (unit.getValue().equals("author-confidence")) {
+                                //If we have some text instead of a numerical value...
+                                tgtItem.addAttribute(
+                                        new Attribute("confidenceDesc", value.getValue()));
+                            }
+                        } else {
+                            LOG.debug("Found a new confidence item without both a unit & a value!");
+                        }
+                    }
+
+
+
                     // if createProteinInteraction returns null it means it has been rejected
                     Item interaction = createProteinInteraction(srcItem, tgtItem, result, dataSet);
                     if (interaction != null) {
