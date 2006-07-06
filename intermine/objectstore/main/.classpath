@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="build/gen/src"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
+	<classpathentry kind="lib" path="lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/axis.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/castor-0.9.5.3-xml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/cglib-full-2.0.1-patched.jar"/>
@@ -32,5 +32,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/nsuml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.1-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6-caching.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/im-ant-tasks"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
