@@ -60,6 +60,14 @@
     <c:set var="name" value="${object.organism.genus}_${object.organism.species}_chr_${object.identifier}"/>
   </c:if>
 
+  <c:if test="${cld.unqualifiedName == 'CDS'}">
+    <%-- special case CDS FlyMineInternalIDs aren't in the GBrowse database,
+         so use gene ID instead, but add the CDS track --%>
+    <c:set var="name" value="FlyMineInternalID_${object.gene.id}"/>
+    <c:set var="type" value="${type}+CDSs"/>
+    <c:set var="label" value="${label}-CDSs"/>
+  </c:if>
+
   <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
     <div>
       <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
