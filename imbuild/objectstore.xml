@@ -124,5 +124,10 @@
     </macrodef>
   </target>
 
-
+  <target name="merge-models-manually"
+          depends="-init-build-db,
+                   -define-macrodef-merge-additions,
+                   -init-merge,
+                   -merge-models,
+                   -merge-shortcuts"/>
 </project>
