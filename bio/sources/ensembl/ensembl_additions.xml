@@ -55,7 +55,6 @@
 
   <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="exonCount" type="java.lang.Integer"/>
-    <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="transcript"/>
   </class>
 
   <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
@@ -63,7 +62,6 @@
     <attribute name="translationEnd" type="java.lang.Integer"/>
     <reference name="endExon" referenced-type="org.flymine.model.genomic.Exon"/>
     <reference name="startExon" referenced-type="org.flymine.model.genomic.Exon"/>
-    <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="translation"/>
   </class>
 
   <class name="org.flymine.model.genomic.TRNA" is-interface="true">
