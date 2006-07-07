@@ -25,7 +25,7 @@
 
 <html:xhtml/>
 
-<h2>Your bags</h2>
+<h2>My bags</h2>
   <p>
     <fmt:message key="history.savedbags.help"/>
   </p>

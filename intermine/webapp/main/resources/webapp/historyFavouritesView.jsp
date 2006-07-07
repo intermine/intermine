@@ -81,8 +81,9 @@
                 				titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link> |
-                <html:link action="/removeFavourite?name=${favouriteTemplate.name}">
-                <img class="arrow" src="images/cross.gif" title="Remove from favourites"/>
+                <html:link action="/removeFavourite?name=${favouriteTemplate.name}"
+                				titleKey="history.action.removeFav.hover">
+                  <fmt:message key="history.action.removeFav"/>
                 </html:link>
               </td>
             </tr>
