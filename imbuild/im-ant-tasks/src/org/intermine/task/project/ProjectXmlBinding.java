@@ -39,7 +39,8 @@ public class ProjectXmlBinding
     {
         Project project;
         Source source;
-        boolean postProcesses = false;
+        PostProcess postProcess;
+        //boolean postProcesses = false;
 
         /**
          * @see DefaultHandler#startElement
@@ -67,10 +68,9 @@ public class ProjectXmlBinding
                 } else {
                     source.addProperty(property);
                 }
-            } else if (qName.equals("post-processing")) {
-                postProcesses = true;
-            } else if (postProcesses) {
-                project.addPostProcess(qName);
+            } else if (qName.equals("post-process")) {
+                postProcess = new PostProcess();
+                project.addPostProcess(attrs.getValue("name"), postProcess);
             }
         }
 
@@ -80,8 +80,8 @@ public class ProjectXmlBinding
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("source")) {
                 source = null;
-            } else if (qName.equals("post-processing")) {
-                postProcesses = false;
+            } else if (qName.equals("post-process")) {
+                postProcess = null;
             }
         }
     }

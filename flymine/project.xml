@@ -137,19 +137,19 @@
   </sources>
 
   <post-processing>
-    <create-utr-references/>
-    <calculate-locations/>
-    <create-references/>
-    <update-orthologues/>
-    <make-spanning-locations/>
-    <create-chromosome-locations-and-lengths/>
-    <create-symmetrical-relation-references/>
-    <transfer-sequences/>
+    <post-process name="create-utr-references"/>
+    <post-process name="calculate-locations"/>
+    <post-process name="create-references"/>
+    <post-process name="update-orthologues"/>
+    <post-process name="make-spanning-locations"/>
+    <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="create-symmetrical-relation-references"/>
+    <post-process name="transfer-sequences"/>
 
-    <do-sources/>
+    <post-process name="do-sources"/>
 
-    <set-collection-counts/>
-    <create-flybase-to-uniprot-refs/>  
+    <post-process name="set-collection-counts"/>
+    <post-process name="create-flybase-to-uniprot-refs"/>
 
     <!-- set-name-and-wildtypefunction/
     TODO: Convert to datasource
