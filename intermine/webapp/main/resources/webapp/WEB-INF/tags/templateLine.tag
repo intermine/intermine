@@ -11,7 +11,7 @@
     <c:if test="${!templateQuery.valid}">
       <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=${type}" styleClass="brokenTmplLink">
       <strike><span class="templateDesc"><c:out value="${templateQuery.description}"/></span></strike>
-      <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+      <img border="0" class="arrow" src="images/template_t.gif" alt="->"/>
       </html:link>
     </c:if>
     <c:if test="${templateQuery.valid}">
@@ -32,7 +32,7 @@
       </tiles:insert>
       <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
                  title="${linkTitle}">
-        <img border="0" class="arrow" src="images/right-arrow.gif" alt="-&gt;"/>
+        <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
       </html:link>
     </c:if>
     <c:if test="${type == 'user'}">

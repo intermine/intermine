@@ -151,7 +151,7 @@
         $('img_'+id).parentNode.href='#';
         $('img_'+id).parentNode.onclick = function(){return false;};
       } else {
-        $('count_'+id).innerHTML='${table.resultsSize} results';
+        $('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;type=global${extra}\" title=\"View in table\">${table.resultsSize} results</a>';
       }
     </script>
   </c:otherwise>
