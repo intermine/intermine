@@ -84,8 +84,12 @@ public class PostProcess extends Task
 
         //Default - do it all
         if ("".equals(action)) {
-            for (Iterator iter = project.getPostProcesses().iterator(); iter.hasNext(); ) {
-                String name = (String) iter.next();
+            Map postProcessMap = project.getPostProcesses();
+            for (Iterator iter = postProcessMap.keySet().iterator(); iter.hasNext(); ) {
+                String name = iter.next().toString();
+
+                System.out.println(" executing post process:" + name);
+
                 if (DO_SOURCES.equals(name)) {
                     doAllSourcePostProcessing();
                 } else {
@@ -94,7 +98,7 @@ public class PostProcess extends Task
             }
         // ok - do a specific task only
         } else {
-            if (project.getPostProcesses().contains(action)) {
+            if (project.getPostProcesses().containsKey(action)) {
                 doCorePostProcess(action);
             } else if (project.getSources().containsKey(action)) {
                 doSourcePostProcess(action);
@@ -127,7 +131,7 @@ public class PostProcess extends Task
 
     private void doSourcePostProcess(String source) {
         Source s = (Source) project.getSources().get(source);
-        File sourceDir = new File(new File(workspaceBaseDir, "sources"), s.getType());
+        File sourceDir = new File(new File(workspaceBaseDir, "/bio/sources"), s.getType());
 
         System.out.println("Performing postprocess on source:" + source + ", in dir: " + sourceDir);
 
@@ -178,7 +182,7 @@ public class PostProcess extends Task
     private Object newPostProcessTask() {
 
         ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
-        Object pp = ClasspathUtils.newInstance("org.flymine.postprocess.PostProcessTask", cl);
+        Object pp = ClasspathUtils.newInstance("org.intermine.bio.postprocess.PostProcessTask", cl);
 
         try {
             setProperty(pp, "objectStore", "os.production");

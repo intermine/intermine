@@ -153,6 +153,18 @@ public class PostProcessTask extends Task
                 LOG.info("Starting StoreSequences.storeContigSequences() for ensemblDb:"
                         + ensemblDb);
                 ss.storeContigSequences();
+            } else if ("transfer-sequences".equals(operation)) {
+                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
+                LOG.info("Starting TransferSequences.transferToChromosome()");
+                ts.transferToChromosome();
+
+                ts = new TransferSequences(getObjectStoreWriter());
+                LOG.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
+                ts.transferToLocatedSequenceFeatures();
+
+                ts = new TransferSequences(getObjectStoreWriter());
+                LOG.info("Starting TransferSequences.transferToTranscripts()");
+                ts.transferToTranscripts();
             } else if ("transfer-sequences-chromosome".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOG.info("Starting TransferSequences.transferToChromosome()");

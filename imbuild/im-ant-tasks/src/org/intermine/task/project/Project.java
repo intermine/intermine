@@ -8,8 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.task.Integrate;
-
 /**
  * A class representing the contents of a project.xml file.
  */
@@ -18,7 +16,7 @@ public class Project
     String type = null;
     Map sources = new LinkedHashMap();
     List properties = new ArrayList();
-    List postprocesses = new ArrayList();
+    Map postProcesses = new LinkedHashMap();
     
     public void addSource(String name, Source source) {
         sources.put(name, source);
@@ -28,10 +26,10 @@ public class Project
         properties.add(property);
     }
     
-    public void addPostProcess(String name) {
-        postprocesses.add(name);
+    public void addPostProcess(String name, PostProcess postProcess) {
+        postProcesses.put(name, postProcess);
     }
-    
+
     public Map getSources() {
         return sources;
     }
@@ -40,8 +38,8 @@ public class Project
         return properties;
     }
 
-    public List getPostProcesses() {
-        return postprocesses;
+    public Map getPostProcesses() {
+        return postProcesses;
     }
 
     /**
