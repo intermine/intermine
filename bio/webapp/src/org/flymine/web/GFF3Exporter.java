@@ -83,8 +83,6 @@ public class GFF3Exporter implements TableExporter
         response.setHeader("Content-Disposition ",
                            "inline; filename=table" + StringUtil.uniqueString() + ".gff3");
 
-        Map soClassNames = getSoClassNames(session.getServletContext());
-        
         OutputStream outputStream = null;
         PrintWriter printWriter = null;
         
@@ -242,7 +240,7 @@ public class GFF3Exporter implements TableExporter
     }
 
     /**
-     * @see org.intermine.web.TableExporter#canExport
+     * @see org.intermine.web.TableExporter#canExport(PagedTable)
      */
     public boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();
