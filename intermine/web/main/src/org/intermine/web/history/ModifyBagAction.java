@@ -10,7 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
@@ -20,14 +19,11 @@ import org.intermine.web.bag.BagHelper;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -114,7 +110,8 @@ public class ModifyBagAction extends ModifyHistoryAction
         for (int i = 1; i < selectedBags.length; i++) {
             union.addAll((Collection) savedBags.get(selectedBags[i]));
         }
-        InterMineBag combined = new InterMinePrimitiveBag(profile.getUserId(),name,profileOs,union);
+        InterMineBag combined =
+            new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, union);
         
         int defaultMax = 10000;
 
@@ -188,7 +185,8 @@ public class ModifyBagAction extends ModifyHistoryAction
 
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag combined = new InterMinePrimitiveBag(profile.getUserId(),name,profileOs,intersect);
+        InterMineBag combined =
+            new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, intersect);
 
         profile.saveBag(name, combined);
         
@@ -251,7 +249,8 @@ public class ModifyBagAction extends ModifyHistoryAction
         }
         
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag resultBag = new InterMinePrimitiveBag(profile.getUserId(),name,profileOs,subtract);
+        InterMineBag resultBag =
+            new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, subtract);
         profile.saveBag(name, resultBag);
 
         return mapping.findForward("bag");
