@@ -10,15 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.WebUtil;
-import org.intermine.web.bag.BagHelper;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +25,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
+import org.intermine.web.bag.BagHelper;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags

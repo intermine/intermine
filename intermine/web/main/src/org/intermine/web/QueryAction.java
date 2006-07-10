@@ -65,11 +65,16 @@ public class QueryAction extends InterMineAction
                         break;
                     }
                 }
+                if (sq != null) {
                 return new ForwardParameters(mapping.findForward("template"))
                     .addParameter("loadModifiedTemplate",
                               "true")
                     .addParameter("name", sq.getName())
                               .forward();
+                } else { // The template is quick search
+                   return new ForwardParameters(mapping.findForward("template"))
+                    .addParameter("name", template.getName()).forward();
+                }
             } else {
                 return new ForwardParameters(mapping.findForward("template"))
                     .addParameter("name", template.getName()).forward();

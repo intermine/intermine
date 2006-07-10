@@ -72,7 +72,7 @@ public class TemplateAction extends InterMineAction
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                 templateName, templateType);
 
         // We're editing the query: load as a PathQuery
@@ -86,7 +86,7 @@ public class TemplateAction extends InterMineAction
             // We want to edit the template: Load the query as a TemplateQuery
             // Don't care about the form
             // Reload the initial template
-            template = TemplateHelper.findTemplate(servletContext, userName,
+            template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                    template.getName(), TemplateHelper.ALL_TEMPLATE);
             if (template == null) {
                 recordMessage(new ActionMessage("errors.edittemplate.empty"), request);
