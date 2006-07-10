@@ -39,6 +39,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -70,6 +71,7 @@ public class TemplateHelper
     /**
      * Locate TemplateQuery by identifier. The type parameter
      * @param servletContext the ServletContext
+     * @param session the HttpSession
      * @param userName the user name (for finding user templates)
      * @param templateName  template query identifier/name
      * @param type        type of tempate, either GLOBAL_TEMPLATE, SHARED_TEMPLATE or USER_TEMPLATE,
@@ -77,6 +79,7 @@ public class TemplateHelper
      * @return            the located template query with matching identifier
      */
     public static TemplateQuery findTemplate(ServletContext servletContext,
+                                             HttpSession session,
                                              String userName,
                                              String templateName,
                                              String type) {
@@ -86,6 +89,9 @@ public class TemplateHelper
         Profile profile = null;
         if (userName != null) {
             profile = pm.getProfile(userName);
+        }
+        if (profile == null) {
+            profile = (Profile) session.getAttribute(Constants.PROFILE);
         }
         if (USER_TEMPLATE.equals(type)) {
             return (TemplateQuery) profile.getSavedTemplates().get(templateName);
@@ -97,16 +103,16 @@ public class TemplateHelper
                 SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
             return (TemplateQuery) templates.get(templateName);
         } else if (ALL_TEMPLATE.equals(type)) {
-            TemplateQuery tq = findTemplate(servletContext, userName,
+            TemplateQuery tq = findTemplate(servletContext, session, userName,
                                             templateName, GLOBAL_TEMPLATE);
             if (tq == null) {
-                return findTemplate(servletContext, userName, templateName, USER_TEMPLATE);
+                return findTemplate(servletContext, session, userName, templateName, USER_TEMPLATE);
             } else {
                 return tq;
             }
         } else if (TEMP_TEMPLATE.equals(type)) {
-            SavedQuery savedQuery = (SavedQuery) profile.getHistory().get(templateName);
-            return (TemplateQuery) savedQuery.getPathQuery();
+           SavedQuery savedQuery = (SavedQuery) profile.getHistory().get(templateName);
+           return (TemplateQuery) savedQuery.getPathQuery();
         } else {
             throw new IllegalArgumentException("type: " + type);
         }
@@ -376,7 +382,7 @@ public class TemplateHelper
                     userName = null;
                 }
                 TemplateQuery template =
-                    TemplateHelper.findTemplate(servletContext, userName,
+                    TemplateHelper.findTemplate(servletContext, null, userName,
                                                 templateName, TemplateHelper.ALL_TEMPLATE);
 
                     if (template == null) {

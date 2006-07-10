@@ -82,7 +82,7 @@ public class PortalQueryAction extends InterMineAction
         String templateName = properties.getProperty("begin.browse.template");
         Integer op = ConstraintOp.EQUALS.getIndex();
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, "global");
 
         if (template == null) {

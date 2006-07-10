@@ -70,7 +70,7 @@ public class ModifyDetails extends DispatchAction
         String name = request.getParameter("name");
         String type = request.getParameter("type");
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, userName,
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, type);
         PathQuery query = (PathQuery) template.clone();
 
@@ -214,7 +214,7 @@ public class ModifyDetails extends DispatchAction
         ObjectStore os = (ObjectStore) sc.getAttribute(Constants.OBJECTSTORE);
         
         InterMineObject o = os.getObjectById(new Integer(id));
-        TemplateQuery tq = TemplateHelper.findTemplate(sc, userName, templateName, type);
+        TemplateQuery tq = TemplateHelper.findTemplate(sc, session, userName, templateName, type);
         Map displayObjects = (Map) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
         DisplayObject obj = (DisplayObject) displayObjects.get(o);
         

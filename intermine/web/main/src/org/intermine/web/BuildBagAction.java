@@ -171,7 +171,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
             String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
             Integer inOp = ConstraintOp.IN.getIndex();
             TemplateQuery template =
-                TemplateHelper.findTemplate(servletContext, userName, 
+                TemplateHelper.findTemplate(servletContext, session, userName, 
                                             converterTemplateName, "global");
 
             if (template == null) {

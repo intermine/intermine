@@ -235,7 +235,8 @@ public class TemplateForm extends ActionForm
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         
         TemplateQuery template =
-            TemplateHelper.findTemplate(servletContext, userName, queryName, getTemplateType());
+            TemplateHelper.findTemplate(servletContext, session, userName, 
+                                        queryName, getTemplateType());
         ActionErrors errors = new ActionErrors();
         
         boolean appendWildcard = (request.getParameter("appendWildcard") != null 
