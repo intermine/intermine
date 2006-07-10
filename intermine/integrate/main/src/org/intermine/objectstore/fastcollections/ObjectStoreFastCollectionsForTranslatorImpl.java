@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -28,6 +29,8 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
+
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
@@ -39,8 +42,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Provides an implementation of an objectstore that explicitly materialises all the collections
@@ -54,8 +55,6 @@ import org.apache.log4j.Logger;
  */
 public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePassthruImpl
 {
-    private static final Logger LOG = Logger.getLogger(
-            ObjectStoreFastCollectionsForTranslatorImpl.class);
     private IntPresentSet doneAlready = new IntPresentSet();
 
     /**
@@ -112,7 +111,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     /**
      * @see ObjectStore#execute(Query)
      */
-    public Results execute(Query q) throws ObjectStoreException {
+    public Results execute(Query q) {
         return new Results(q, this, getSequence());
     }
 
@@ -274,13 +273,20 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                 objToAdd = new ProxyReference(os, idToAdd,
                                                         InterMineObject.class);
                                             } else {
-                                                throw new ObjectStoreException("Couldn't find"
-                                                        + " object with id " + idToAdd
-                                                        + " but we don't want to proxy it"
-                                                        + "(populating object id:"
-                                                        + objToPopulate.getId()
-                                                        + ", collection name: " + collectionName
-                                                        + ", contents: " + contents + ")");
+                                                ObjectStoreTranslatingImpl osti =
+                                                    (ObjectStoreTranslatingImpl) os;
+                                                ItemToObjectTranslator itot =
+                                                    (ItemToObjectTranslator) osti.getTranslator();
+                                                String itemIdentifer =
+                                                    itot.idToIdentifier(objToPopulate.getId());
+                                                String idToAddIdentifer =
+                                                    itot.idToIdentifier(idToAdd);
+                                                String message = 
+                                                    "Collection " + collectionName + " in object "
+                                                    + objToPopulate.getId() + " ("  + itemIdentifer
+                                                    + ") refers to object with id " + idToAdd + " ("
+                                                    + idToAddIdentifer + ") which doesn't exist";
+                                                throw new ObjectStoreException(message);
                                             }
                                         }
                                         substituteCollection.add(objToAdd);
