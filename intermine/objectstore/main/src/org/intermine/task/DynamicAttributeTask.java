@@ -23,7 +23,13 @@ import java.beans.PropertyDescriptor;
 import org.apache.log4j.Logger;
 
 /**
- * An ant task that
+ * An ant task that provides a method for setting attributes dynamically within a class.
+ *
+ * Typically a sub class of this task will have a handle to a class that does some work for it, but
+ * in order to make the class reusable, it's properties are factored out into either a config or a
+ * build file. The task subclass can use the configureDynamicAttributes method, along with some
+ * properties that have been set at runtime to initialize the helper/worker class.
+ *  
  * @author Peter Mclaren
  * @author Richard Smith
  * */
