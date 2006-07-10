@@ -136,7 +136,7 @@ public abstract class InterMineBag extends AbstractSet
                 return retval;
             }
         }
-        if(size==0){
+        if (size == 0) {
             return new LinkedHashSet();
         }
         try {
