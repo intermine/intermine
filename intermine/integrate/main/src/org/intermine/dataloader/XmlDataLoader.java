@@ -30,7 +30,7 @@ import org.intermine.util.XmlBinding;
 public class XmlDataLoader extends DataLoader
 {
     /**
-     * @see DataLoader#DataLoader
+     * @see DataLoader#DataLoader(IntegrationWriter)
      */
     public XmlDataLoader(IntegrationWriter iw) {
         super(iw);
@@ -48,17 +48,17 @@ public class XmlDataLoader extends DataLoader
     public void processXml(InputStream is, Source source, Source skelSource)
         throws InterMineException {
         try {
-            XmlBinding binding = new XmlBinding(iw.getObjectStore().getModel());
+            XmlBinding binding = new XmlBinding(getIntegrationWriter().getObjectStore().getModel());
 
             List objects = (List) binding.unmarshal(is);
 
-            iw.beginTransaction();
+            getIntegrationWriter().beginTransaction();
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                iw.store((InterMineObject) iter.next(), source, skelSource);
+                getIntegrationWriter().store((InterMineObject) iter.next(), source, skelSource);
             }
-            iw.commitTransaction();
-            iw.close();
+            getIntegrationWriter().commitTransaction();
+            getIntegrationWriter().close();
         } catch (ObjectStoreException e) {
             throw new InterMineException("Problem with store method", e);
         }

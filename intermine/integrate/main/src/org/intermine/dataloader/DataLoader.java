@@ -20,12 +20,13 @@ package org.intermine.dataloader;
  */
 public class DataLoader
 {
-    protected IntegrationWriter iw;
+    private IntegrationWriter iw;
     
     /**
      * No-arg constructor for testing purposes
      */
-    protected DataLoader() {
+    private DataLoader() {
+        // empty
     }
 
     /**
@@ -35,5 +36,13 @@ public class DataLoader
      */
     public DataLoader(IntegrationWriter iw) {
         this.iw = iw;
+    }
+
+    /**
+     * Return the IntegrationWriter that was passed to the constructor.
+     * @return the IntegrationWriter
+     */
+    public IntegrationWriter getIntegrationWriter() {
+        return iw;
     }
 }
