@@ -190,7 +190,7 @@ public class DataLoaderHelper
                             String token = tokens[i].trim();
                             if (map.get(token) == null) {
                                 throw new IllegalArgumentException("Primary key " + token
-                                        + " for class " + cldName+ " required by datasource "
+                                        + " for class " + cldName + " required by datasource "
                                         + source.getName() + " in " + source.getName()
                                         + "_keys.properties is not defined in "
                                         + cld.getModel().getName() + "_keyDefs.properties");
