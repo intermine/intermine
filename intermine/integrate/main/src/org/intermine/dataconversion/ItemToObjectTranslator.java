@@ -116,7 +116,12 @@ public class ItemToObjectTranslator extends Translator
         }
     }
 
-    private String idToIdentifier(Integer id) {
+    /**
+     * Turn an object id into an item identifier.
+     * @param id an InterMineObject id
+     * @return the corresponding item identifier
+     */
+    public String idToIdentifier(Integer id) {
         if (id == null) {
             return null;
         }
@@ -131,7 +136,12 @@ public class ItemToObjectTranslator extends Translator
         }
     }
 
-    private Integer identifierToId(String identifier) {
+    /**
+     * Turn an item identifier into an object id.
+     * @param identifier an item identifier
+     * @return the corresponding InterMineObject id
+     */
+    public Integer identifierToId(String identifier) {
         if (identifier == null) {
             return null;
         }

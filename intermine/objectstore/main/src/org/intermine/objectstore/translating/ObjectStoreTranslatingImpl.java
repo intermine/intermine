@@ -115,6 +115,14 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
 
     /**
+     * Return the Translator that was passed to the constructor.
+     * @return the Translator
+     */
+    public Translator getTranslator() {
+        return translator;
+    }
+    
+    /**
      * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
