@@ -39,7 +39,7 @@ public class ObjectStoreDataLoader extends DataLoader
      * @param iw an IntegrationWriter to which to write
      */
     public ObjectStoreDataLoader(IntegrationWriter iw) {
-        this.iw = iw;
+        super(iw);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ObjectStoreDataLoader extends DataLoader
             long opCount = 0;
             long time = (new Date()).getTime();
             long startTime = time;
-            iw.beginTransaction();
+            getIntegrationWriter().beginTransaction();
             SingletonResults res = new SingletonResults(q, os, os.getSequence());
             res.setNoOptimise();
             res.setNoExplain();
@@ -97,7 +97,7 @@ public class ObjectStoreDataLoader extends DataLoader
                 //    System//.out.println("Storing " + objText.substring(0, (objTextLen > 60 ? 60
                 //                    : objTextLen)));
                 //}
-                iw.store(obj, source, skelSource);
+                getIntegrationWriter().store(obj, source, skelSource);
                 opCount++;
                 if (opCount % 1000 == 0) {
                     long now = (new Date()).getTime();
@@ -117,14 +117,14 @@ public class ObjectStoreDataLoader extends DataLoader
                     }
                     time = now;
                     times[(int) ((opCount / 1000) % 20)] = now;
-                    iw.commitTransaction();
-                    iw.beginTransaction();
+                    getIntegrationWriter().commitTransaction();
+                    getIntegrationWriter().beginTransaction();
                 }
             }
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
                         / ((new Date()).getTime() - startTime)) + " object per minute");
-            iw.commitTransaction();
-            iw.close();
+            getIntegrationWriter().commitTransaction();
+            getIntegrationWriter().close();
         } catch (RuntimeException e) {
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 LOG.error("Exception while dataloading - doneAlreadyMap = "
