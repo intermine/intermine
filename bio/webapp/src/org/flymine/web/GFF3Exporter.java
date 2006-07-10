@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.flymine.io.gff3.GFF3Record;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.util.GFF3Util;
+import org.intermine.bio.util.GFF3Util;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
