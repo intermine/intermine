@@ -10,29 +10,24 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.DynamicUtil;
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.dataloader.IntegrationWriterFactory;
-import org.intermine.dataloader.Source;
+import java.util.NoSuchElementException;
 
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.task.FileDirectDataLoaderTask;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Organism;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.*;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SeqIOTools;
-import org.flymine.model.genomic.Organism;
 
 /**
  * A task that can read a set of FASTA files and create the corresponding Sequence objects in an
@@ -42,13 +37,12 @@ import org.flymine.model.genomic.Organism;
  * @author Peter Mclaren
  */
 
-public class FastaLoaderTask extends Task
+public class FastaLoaderTask extends FileDirectDataLoaderTask
 {
-    protected String integrationWriterAlias;
-    protected String sourceName;
-    protected Integer fastaTaxonId;
-    protected boolean ignoreDuplicates = false;
-    protected List fileSets = new ArrayList();
+    private Integer fastaTaxonId;
+
+    private Organism org;
+
     /**
      * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
      */
@@ -56,33 +50,6 @@ public class FastaLoaderTask extends Task
 
     //Set this if we want to do some testing...
     private File[] files = null;
-
-    /**
-     * Set the IntegrationWriter.
-     *
-     * @param integrationWriterAlias the name of the IntegrationWriter
-     */
-    public void setIntegrationWriterAlias(String integrationWriterAlias) {
-        this.integrationWriterAlias = integrationWriterAlias;
-    }
-
-    /**
-     * Set the source name, as used by primary key priority config.
-     *
-     * @param sourceName the name of the data source
-     */
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
-    }
-
-    /**
-     * Set the value of ignoreDuplicates for the IntegrationWriter
-     *
-     * @param ignoreDuplicates the value of ignoreDuplicates
-     */
-    public void setIgnoreDuplicates(boolean ignoreDuplicates) {
-        this.ignoreDuplicates = ignoreDuplicates;
-    }
 
     /**
      * Set the Taxon Id of the Organism we are loading.
@@ -102,102 +69,43 @@ public class FastaLoaderTask extends Task
         this.idSuffix = idSuffix;
     }
 
-    /**
-     * Add a FileSet to read from
-     *
-     * @param fileSet the FileSet
-     */
-    public void addFileSet(FileSet fileSet) {
-        fileSets.add(fileSet);
-    }
-
     //Use this for testing with junit.
     protected void setFileArray(File[] files) {
         this.files = files;
     }
 
+    public void process() {
+        try {
+            Class orgClass = Organism.class;
+            org = (Organism) getDirectDataLoader().createObject(orgClass);
+            org.setTaxonId(fastaTaxonId);
+            getDirectDataLoader().store(org);
+        } catch (ObjectStoreException e) {
+            throw new BuildException("failed to store Organism object", e);
+        }
+        super.process();
+    }
+    
     /**
      * @throws BuildException if an ObjectStore method fails
      */
     public void execute() throws BuildException {
-
-        if (integrationWriterAlias == null) {
-            throw new BuildException("FastaLoaderTask - integrationWriterAlias property not set");
-        }
-
-        if (sourceName == null) {
-            throw new BuildException("FastaLoaderTask - sourceName property not set");
-        }
-
-        if (fastaTaxonId == null) {
-            throw new BuildException("FastaLoaderTask - fastaTaxonId property not set");
-        }
-
-        if (fileSets.isEmpty() && files == null) {
-            System.out.println("FastaLoaderTask - file(Set)s list is empty");
-            return;
-        }
-
-        IntegrationWriter iw;
-        Source source;
-        Source skelSource;
-        org.flymine.model.genomic.Organism org;
-
-        try {
-            iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriterAlias);
-            iw.beginTransaction();
-            iw.setIgnoreDuplicates(ignoreDuplicates);
-
-            source = iw.getMainSource(sourceName);
-            skelSource = iw.getSkeletonSource(sourceName);
-
-            Class orgClass = org.flymine.model.genomic.Organism.class;
-            InterMineObject newOrgObj = (InterMineObject)
-                    DynamicUtil.createObject(Collections.singleton(orgClass));
-            org = (org.flymine.model.genomic.Organism) newOrgObj;
-            org.setTaxonId(fastaTaxonId);
-            org.setId(getUniqueInternalId());
-            iw.store(org, source, skelSource);
-
-        } catch (ObjectStoreException e) {
-            throw new BuildException(e);
-        }
-
-        //If we have set the files to include directly - usually for testing.
         if (files != null) {
-
+            // setFiles() is used only for testing
             for (int i = 0; i < files.length; i++) {
-                processFile(files[i], org, iw, source, skelSource);
+                processFile(files[i]);
             }
         } else {
-
-            for (Iterator fileSetIter = fileSets.iterator(); fileSetIter.hasNext();) {
-                FileSet fileSet = (FileSet) fileSetIter.next();
-
-                DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
-                String[] files = ds.getIncludedFiles();
-
-                for (int i = 0; i < files.length; i++) {
-                    File file = new File(ds.getBasedir(), files[i]);
-                    processFile(file, org, iw, source, skelSource);
-                }
-            }
+            // this will call processFile() for each file
+            super.execute();
         }
-        try {
-            iw.commitTransaction();
-            iw.close();
-        } catch (ObjectStoreException e) {
-            throw new BuildException(e);
-        }
-
     }
+
 
     /**
      * Handles each fasta file. Factored out so we can supply files for testing.
      * */
-    private void processFile(
-            File file, Organism org, IntegrationWriter iw, Source source, Source skelSource)
-            throws BuildException {
+    public void processFile(File file) throws BuildException {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
@@ -205,7 +113,7 @@ public class FastaLoaderTask extends Task
                     (SequenceIterator) SeqIOTools.fileToBiojava("fasta", "dna", reader);
 
             while (iter.hasNext()) {
-                setSequence(org, iter.nextSequence(), iw, source, skelSource);
+                setSequence(org, iter.nextSequence());
             }
         } catch (BioException e) {
             throw new BuildException("sequence not in fasta format or wrong alphabet for: "
@@ -220,41 +128,30 @@ public class FastaLoaderTask extends Task
     /**
      * Create a FlyMine Sequence object for the InterMineObject of the given ID.
      */
-    private void setSequence(Organism org, Sequence bioJavaSequence, IntegrationWriter iw,
-                             Source source, Source skelSource) {
+    private void setSequence(Organism org, Sequence bioJavaSequence) {
         Class sequenceClass = org.flymine.model.genomic.Sequence.class;
-        InterMineObject newObject =
-                (InterMineObject) DynamicUtil.createObject(Collections.singleton(sequenceClass));
         org.flymine.model.genomic.Sequence flymineSequence =
-                (org.flymine.model.genomic.Sequence) newObject;
+            (org.flymine.model.genomic.Sequence) getDirectDataLoader().createObject(sequenceClass);
+
         flymineSequence.setResidues(bioJavaSequence.seqString());
         flymineSequence.setLength(bioJavaSequence.length());
-        flymineSequence.setId(getUniqueInternalId());
+
 
         Class lsfClass = org.flymine.model.genomic.LocatedSequenceFeature.class;
+        LocatedSequenceFeature flymineLSF = 
+            (LocatedSequenceFeature) getDirectDataLoader().createObject(lsfClass);
 
-        InterMineObject newLSFObject =
-                (InterMineObject) DynamicUtil.createObject(Collections.singleton(lsfClass));
-        org.flymine.model.genomic.LocatedSequenceFeature flymineLSF =
-                (org.flymine.model.genomic.LocatedSequenceFeature) newLSFObject;
         flymineLSF.setIdentifier(bioJavaSequence.getName() + idSuffix);
         flymineLSF.setSequence(flymineSequence);
         flymineLSF.setOrganism(org);
-        flymineLSF.setId(getUniqueInternalId());
 
         try {
-            iw.store(flymineSequence, source, skelSource);
-            iw.store(flymineLSF, source, skelSource);
+            getDirectDataLoader().store(flymineSequence);
+            getDirectDataLoader().store(flymineLSF);
 
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }
     }
-
-    private synchronized Integer getUniqueInternalId() {
-        return new Integer(id++);
-    }
-
-    private int id = 0;
 }
 
