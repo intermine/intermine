@@ -21,7 +21,7 @@
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
     </source>
-    <source name="flybase-dmel-chromosome-fasta" type="fasta">
+    <source name="flybase-dpse-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
