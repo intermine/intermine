@@ -434,6 +434,18 @@ public class UniprotDataTranslator extends DataTranslator
                         createGene = true;
                         dbId = getDataSourceId("Ensembl");
                     }
+
+                } else if (taxonId == 10116) { // Rattus norvegicus
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "RGD", null);
+                    // HACK in other places the RGD identifers start with 'RGD:'
+                    if (geneIdentifier != null && !geneIdentifier.startsWith("RGD:")) {
+                        geneIdentifier = "RGD:" + geneIdentifier;
+                    }
+                    if (geneOrganismDbId != null) {
+                        createGene = true;
+                        dbId = getDataSourceId("Ensembl");
+                    }
                 }
 
                 // output gene identifier details
