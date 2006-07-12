@@ -429,7 +429,7 @@ public class UniprotDataTranslator extends DataTranslator
                     }
                 } else if (taxonId == 10090) { // Mus musculus
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
-                    geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", null);
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", geneNames);
                     if (geneOrganismDbId != null) {
                         createGene = true;
                         dbId = getDataSourceId("Ensembl");
@@ -437,7 +437,7 @@ public class UniprotDataTranslator extends DataTranslator
 
                 } else if (taxonId == 10116) { // Rattus norvegicus
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
-                    geneIdentifier = getDataSourceReferenceValue(srcItem, "RGD", null);
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "RGD", geneNames);
                     // HACK in other places the RGD identifers start with 'RGD:'
                     if (geneIdentifier != null && !geneIdentifier.startsWith("RGD:")) {
                         geneIdentifier = "RGD:" + geneIdentifier;
@@ -612,29 +612,30 @@ public class UniprotDataTranslator extends DataTranslator
             String type = getAttributeValue(srcDbReference, "type");
             if (dbName.equals(type)) {
                 // uncomment to set geneIdentifier if there is no propertys collection present (?)
-                //if ((srcDbRefs.size() == 1) && (srcGenes.size() == 1)) {
-                //    geneIdentifier = new String(getAttributeValue(srcDbReference,"id"));
-                //} else {
-                List srcProperties = getItemsInCollection(srcDbReference
-                                                          .getCollection("propertys"));
-                Iterator srcPropertyIter = srcProperties.iterator();
-                while (srcPropertyIter.hasNext()) {
-                    Item srcProperty = (Item) srcPropertyIter.next();
-                    String srcPropertyValue = getAttributeValue(srcProperty, "value");
-                    String srcPropType = getAttributeValue(srcProperty, "type");
-                    if (geneNames != null && srcPropType.equals("gene designation")
-                        && (geneNames.contains(srcPropertyValue)
-                            || geneNames.contains(srcPropertyValue
-                                                  .substring(srcPropertyValue
-                                                             .lastIndexOf("\\") + 1)))) {
-                        geneIdentifier = new String(getAttributeValue(
-                                                                      srcDbReference, "id"));
-                    } else if (geneNames == null && srcDbRefs.size() == 1) {
-                        geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
-                    }
-                    if (geneIdentifier == null) {
-                        LOG.info("Found dbRefs (" + srcDbRefs.size()
-                                 + ") but unable to match gene designation");
+                if (srcDbRefs.size() == 1) {
+                    geneIdentifier = new String(getAttributeValue(srcDbReference,"id"));
+                } else {
+                    List srcProperties = getItemsInCollection(srcDbReference
+                                                              .getCollection("propertys"));
+                    Iterator srcPropertyIter = srcProperties.iterator();
+                    while (srcPropertyIter.hasNext()) {
+                        Item srcProperty = (Item) srcPropertyIter.next();
+                        String srcPropertyValue = getAttributeValue(srcProperty, "value");
+                        String srcPropType = getAttributeValue(srcProperty, "type");
+                        if (geneNames != null && srcPropType.equals("gene designation")
+                            && (geneNames.contains(srcPropertyValue)
+                                || geneNames.contains(srcPropertyValue
+                                                      .substring(srcPropertyValue
+                                                                 .lastIndexOf("\\") + 1)))) {
+                            geneIdentifier = new String(getAttributeValue(
+                                                                          srcDbReference, "id"));
+                        } else if (geneNames == null && srcDbRefs.size() == 1) {
+                            geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
+                        }
+                        if (geneIdentifier == null) {
+                            LOG.info("Found dbRefs (" + srcDbRefs.size()
+                                     + ") but unable to match gene designation");
+                        }
                     }
                 }
             }
