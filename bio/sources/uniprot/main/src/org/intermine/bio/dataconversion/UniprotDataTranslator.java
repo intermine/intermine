@@ -622,7 +622,7 @@ public class UniprotDataTranslator extends DataTranslator
                     Item srcProperty = (Item) srcPropertyIter.next();
                     String srcPropertyValue = getAttributeValue(srcProperty, "value");
                     String srcPropType = getAttributeValue(srcProperty, "type");
-                    if (srcPropType.equals("gene designation")
+                    if (geneNames != null && srcPropType.equals("gene designation")
                         && (geneNames.contains(srcPropertyValue)
                             || geneNames.contains(srcPropertyValue
                                                   .substring(srcPropertyValue
