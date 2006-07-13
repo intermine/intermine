@@ -43,7 +43,7 @@ public class DBConverterTest extends TestCase {
     private Map map;
     private DBReader reader;
     private ItemFactory itemFactory = new ItemFactory();
-    private String excludeList = null;
+    private String excludeList = "class1 Class2";
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
@@ -57,6 +57,14 @@ public class DBConverterTest extends TestCase {
 
     public void tearDown() throws Exception {
         reader.close();
+    }
+
+    public void testExcludeList() throws Exception {
+        Set expected = new HashSet(Arrays.asList(new Object[] {"class1", "class2"}));
+        assertEquals(expected, converter.excluded);
+        assertTrue(converter.isClassExcluded("Class1"));
+        assertFalse(converter.isClassExcluded("Class3"));
+
     }
 
     public void testAttribute() throws Exception {
