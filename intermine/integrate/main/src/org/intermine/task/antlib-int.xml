@@ -25,7 +25,7 @@
         classname="org.intermine.dataconversion.DBRetrieverTask"/>
     <typedef
         name="translate-data"
-        classname="org.flymine.task.DataTranslatorTask"/>
+        classname="org.intermine.task.DataTranslatorTask"/>
     <typedef
         name="convert-xml-file"
         classname="org.intermine.task.XmlConverterTask"/>
