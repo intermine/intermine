@@ -54,7 +54,7 @@ public class DBConverter extends DataConverter
     protected long count = 0;
     protected long start, time, times[];
 
-    protected String excludeList;
+    protected Set excluded;
 
     /**
      * Constructor
@@ -71,7 +71,9 @@ public class DBConverter extends DataConverter
         this.model = model;
         this.db = db;
         this.reader = reader;
-        this.excludeList = excludeList;
+        if (excludeList != null) {
+            this.excluded.addAll(Arrays.asList(excludeList.toLowerCase().split("\\s")));
+        }
     }
 
     /**
@@ -441,8 +443,8 @@ public class DBConverter extends DataConverter
      * */
     protected boolean isClassExcluded(String className) {
 
-        if (excludeList != null && className != null
-                && className.equalsIgnoreCase(this.excludeList)) {
+        if (excluded != null && className != null
+                && excluded.contains(className.toLowerCase())) {
             return true;
         }
         return false;
