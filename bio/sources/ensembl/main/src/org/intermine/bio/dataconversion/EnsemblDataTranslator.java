@@ -20,6 +20,10 @@ import org.intermine.util.XmlUtil;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Convert Ensembl data in fulldata Item format conforming to a source OWL definition
@@ -73,15 +77,44 @@ public class EnsemblDataTranslator extends DataTranslator
      * @param mergeSpec The contents of our mapping spec.
      * @param srcModel The data model we are translating items from.
      * @param tgtModel The data model we are translating items into.
-     * @param ensemblProps Properties that are organism specific.
+     * @param propsFileName File with set of Properties that are organism specific.
      * @param orgAbbrev A suitably short acronym to identify which ogransim to process; 'HS' = Human
+     * @deprecated Have to get the translator to look for its props file now...
      */
     public EnsemblDataTranslator(ItemReader srcItemReader,
-                                    Properties mergeSpec,
-                                    Model srcModel,
-                                    Model tgtModel,
-                                    Properties ensemblProps,
-                                    String orgAbbrev) {
+                                 Properties mergeSpec,
+                                 Model srcModel,
+                                 Model tgtModel,
+                                 String propsFileName,
+                                 String orgAbbrev) throws RuntimeException {
+
+        super(srcItemReader, mergeSpec, srcModel, tgtModel);
+
+        Properties ensemblProps;
+        try {
+            ensemblProps = getEnsemblProperties(propsFileName);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+
+        config = new EnsemblConfig(ensemblProps, orgAbbrev);
+    }
+
+    /**
+     * @param srcItemReader Our source item provider.
+     * @param mergeSpec The contents of our mapping spec.
+     * @param srcModel The data model we are translating items from.
+     * @param tgtModel The data model we are translating items into.
+     * @param ensemblProps Properties that are organism specific.
+     * @param orgAbbrev A suitably short acronym to identify which ogransim to process; 'HS' = Human
+     * @deprecated Have to get the translator to look for its props file now...
+     */
+    public EnsemblDataTranslator(ItemReader srcItemReader,
+                                 Properties mergeSpec,
+                                 Model srcModel,
+                                 Model tgtModel,
+                                 Properties ensemblProps,
+                                 String orgAbbrev) {
         super(srcItemReader, mergeSpec, srcModel, tgtModel);
 
         config = new EnsemblConfig(ensemblProps, orgAbbrev);
@@ -131,7 +164,7 @@ public class EnsemblDataTranslator extends DataTranslator
                         if (srcItem.hasAttribute("sequence")) {
                             int seqLen = srcItem.getAttribute("sequence").getValue().length();
                             tgtItem.setAttribute("length", Integer.toString(seqLen));
-                        } 
+                        }
                     } else {
                         storeTgtItem = false;
                     }
@@ -179,7 +212,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     //note: the organismDbId is effecivly what we choose as a primary accession
                     // and thus may differ from what we want to assign as the identifier...
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
-                    
+
                 } else if ("transcript".equals(srcItemClassName)) {
 
                     translateTranscript(srcItem, tgtItem, result, srcNs);
@@ -325,7 +358,7 @@ public class EnsemblDataTranslator extends DataTranslator
             // create CDS and reference from MRNA
             Item cds = createItem(tgtNs + "CDS", "");
             Item stableId = getStableId("translation",
-                                        translation.getIdentifier(), srcNs); 
+                                        translation.getIdentifier(), srcNs);
             cds.setAttribute(IDENTIFIER,
                     stableId.getAttribute("stable_id").getValue() + "_CDS");
             cds.addToCollection("polypeptides", translation.getIdentifier());
@@ -474,7 +507,7 @@ public class EnsemblDataTranslator extends DataTranslator
         //Use the default approach of setting both the organismDbId & identifier to
         // be the same value - the ensembl stable id.
         tgtItem.addAttribute(new Attribute("organismDbId", stableId));
-        
+
         //Set up all the optional xref synonyms - if the gene is KNOWN it should
         // have an ensembl xref to another db's accesssion for the same gene.
 
@@ -501,7 +534,7 @@ public class EnsemblDataTranslator extends DataTranslator
             //look for the display label - since we might be able to use it as a symbol synonym.
             if (xref.hasAttribute("display_label")) {
                 symbol = xref.getAttribute("display_label").getValue();
-            } 
+            }
 
             //check to see if we have a valid accession & dbname.
             if (accession != null && !accession.equals(EMPTY_STRING)
@@ -510,7 +543,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 // external database accession.
                 //NOTE: if the xref is being used as an alternative identifier it will already have
                 // a synonym with type 'identifier'.
-                if (config.useXrefDbsForGeneIdentifier() 
+                if (config.useXrefDbsForGeneIdentifier()
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
                     tgtItem.addAttribute(new Attribute("identifier", accession));
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
@@ -518,24 +551,24 @@ public class EnsemblDataTranslator extends DataTranslator
                                    accession, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
-                
+
                 } else {
                     tgtItem.addAttribute(new Attribute("identifier", stableId));
                 }
 
-                if (config.containsXrefDataSourceNamed(dbname)) {  
+                if (config.containsXrefDataSourceNamed(dbname)) {
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession", accession, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
-                    tgtItem.addAttribute(new Attribute("accession", accession));   
+                    tgtItem.addAttribute(new Attribute("accession", accession));
 
                 }
             } else {
                 tgtItem.addAttribute(new Attribute("identifier", stableId));
             }
 
-           
+
             //check to see if we have a valid display_lable (synonym) & dbname.
             if (symbol != null && !symbol.equals(EMPTY_STRING)
                 && dbname != null && !dbname.equals(EMPTY_STRING)) {
@@ -545,7 +578,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item synonym = createProductSynonym(tgtItem, "symbol", symbol, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
-                    tgtItem.addAttribute(new Attribute("symbol", symbol));              
+                    tgtItem.addAttribute(new Attribute("symbol", symbol));
 
                 }
             }
@@ -555,7 +588,7 @@ public class EnsemblDataTranslator extends DataTranslator
         }
 
         return synonyms;
-       
+
     }
 
 
@@ -699,7 +732,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
         contigId = srcItem.getReference("cmp_seq_region").getRefId();
         bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
-        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId)); 
+        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
         Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
 
         contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
@@ -753,11 +786,11 @@ public class EnsemblDataTranslator extends DataTranslator
      * @throws org.intermine.objectstore.ObjectStoreException
      *          when anything goes wrong.
      */
-    protected Item getSeqItem(String refId, boolean findSeq, Item srcItem) 
+    protected Item getSeqItem(String refId, boolean findSeq, Item srcItem)
         throws ObjectStoreException {
         Item seq = null;
         Item seqRegion = null;
-        
+
         if (findSeq) {
             seqRegion = srcItem;
         } else {
@@ -770,7 +803,7 @@ public class EnsemblDataTranslator extends DataTranslator
             String property = null;
             if (seqRegion.hasReference("coord_system")) {
                 Item coord = ItemHelper.convert(srcItemReader.getItemById(
-                        seqRegion.getReference("coord_system").getRefId())); 
+                        seqRegion.getReference("coord_system").getRefId()));
 
                 if (coord.hasAttribute("name")) {
                     property = coord.getAttribute("name").getValue();
@@ -889,7 +922,7 @@ public class EnsemblDataTranslator extends DataTranslator
         if (srcItem.hasReference("analysis")) {
 
             Item analysis = ItemHelper.convert(
-                 srcItemReader.getItemById(srcItem.getReference("analysis").getRefId())); 
+                 srcItemReader.getItemById(srcItem.getReference("analysis").getRefId()));
             if (analysis.hasAttribute("logic_name")) {
 
                 name = analysis.getAttribute("logic_name").getValue();
@@ -908,13 +941,13 @@ public class EnsemblDataTranslator extends DataTranslator
                 }
             }
         }
-        
+
         if (createSynonym) {
                 StringBuffer newIdBuff = new StringBuffer();
                 newIdBuff.append(idPrefix).append("_");
 
                 Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
-                     srcItem.getReference("seq_region").getRefId())); 
+                     srcItem.getReference("seq_region").getRefId()));
 
                 newIdBuff.append(seqRegItem.getAttribute("name").getValue()).append(":");
                 newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue()).append("..");
@@ -934,7 +967,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 itemId2SynMap.put(simpleFeature.getIdentifier(), sfSyn);
         }
         return simpleFeature;
-                
+
     }
     /**
      * Creates a synonym for a gene/protein product.
@@ -1075,6 +1108,23 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
     /**
+     * Takes a file name to the ensembl properties file and attempts to load it...
+     * */
+    private Properties getEnsemblProperties(String propsFileName) throws ObjectStoreException {
+        try {
+            Properties ensemblProps = new Properties();
+            FileInputStream fis = new FileInputStream(propsFileName);
+            ensemblProps.load(fis);
+            return ensemblProps;
+        } catch (FileNotFoundException e) {
+            throw new ObjectStoreException("No ensembl props file located at:"
+                    + System.getProperty("user.dir") + propsFileName, e);
+        } catch (IOException e) {
+            throw new ObjectStoreException("Problem reading ensembl props:" + propsFileName, e);
+        }
+    }
+
+    /**
      * @see org.intermine.bio.task.DataTranslatorTask#execute
      */
     public static Map getPrefetchDescriptors() {
@@ -1155,7 +1205,7 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.intermine.org/model/ensembl#gene", descSet);
- 
+
         //gene_stable_id
         desc = new ItemPrefetchDescriptor("gene_stable_id.gene");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("gene", identifier));
@@ -1217,7 +1267,7 @@ public class EnsemblDataTranslator extends DataTranslator
         desc.addPath(desc1);
         descSet.add(desc);
         paths.put("http://www.intermine.org/model/ensembl#translation", descSet);
- 
+
         //translation_stable_id
         desc = new ItemPrefetchDescriptor("translation_stable_id.translation");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("translation", identifier));
@@ -1416,7 +1466,7 @@ public class EnsemblDataTranslator extends DataTranslator
                             + nextSymbol.toString() + " has no matching common.datasource");
                 }
             }
-            
+
         }
 
 
@@ -1512,7 +1562,7 @@ public class EnsemblDataTranslator extends DataTranslator
         boolean createAnalysisResult() {
             return createAnalysisResult;
         }
-        
+
         /**
          * @return Do we want to get the DNA sequences now or later?
          * */

@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -34,7 +34,7 @@ import org.intermine.task.DynamicAttributeTask;
 public class DataTranslatorTask extends DynamicAttributeTask
 {
     protected String translator, source, targetAlias, srcModel, tgtModel, organism,
-        dataLocation, mapping, organisms;
+        dataLocation, mapping, propfile, organisms;
 
     /**
      * Set the translator
@@ -74,6 +74,14 @@ public class DataTranslatorTask extends DynamicAttributeTask
      */
     public void setTgtModel(String tgtModel) {
         this.tgtModel = tgtModel;
+    }
+
+    /**
+     * Sets an extra properties file that might be needed by a translator
+     * @param propfile a file handle that has props for the translator.
+     * */
+    public void setPropfile(String propfile) {
+        this.propfile = propfile;
     }
 
     /**
@@ -120,6 +128,8 @@ public class DataTranslatorTask extends DynamicAttributeTask
             throw new BuildException("srcModel attribute not set");
         }
 
+        configureDynamicAttributes(this);
+
         try {
             Class cls = Class.forName(translator);
             ItemReader reader = null;
@@ -145,33 +155,35 @@ public class DataTranslatorTask extends DynamicAttributeTask
             Model tgt = Model.getInstanceByName(tgtModel);
 
             //TODO: Fix this hard coded bodgieness ???
-            if ("org.flymine.dataconversion.EnsemblDataTranslator".equals(translator)
-                || "org.flymine.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
+            if ("org.intermine.bio.dataconversion.EnsemblDataTranslator".equals(translator)
+                || "org.intermine.bio.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
 
-                Properties ensemblProps = new Properties();
-                InputStream epis = getClass().getClassLoader().getResourceAsStream(
-                        "ensembl_config.properties");
-
-                ensemblProps.load(epis);
+                //Properties ensemblProps = new Properties();
+                //InputStream epis = getClass().getClassLoader().getResourceAsStream(
+                //        "ensembl_config.properties");
+                //ensemblProps.load(epis);
 
                 if (organism == null) {
                     throw new BuildException("organism attribute not set");
+                }
+                if (propfile == null) {
+                    throw new BuildException("propfile attribute not set");
                 }
                 types = new Class[] {
                     ItemReader.class,
                     Properties.class,
                     Model.class,
                     Model.class,
-                    Properties.class,
+//                    Properties.class,
+                    String.class,
                     String.class
                 };
 
-                args = new Object[] {reader, mappingProps, src, tgt, ensemblProps, organism};
-
-
+                //args = new Object[] {reader, mappingProps, src, tgt, ensemblProps, organism};
+                args = new Object[] {reader, mappingProps, src, tgt, propfile, organism};
 
             //TODO: Fix this hard coded bodgieness ???
-            } else if ("org.flymine.dataconversion.ProteinStructureDataTranslator"
+            } else if ("org.intermine.bio.dataconversion.ProteinStructureDataTranslator"
                        .equals(translator)) {
                 if (dataLocation == null) {
                     throw new BuildException("dataLocation attribute not set");
@@ -179,7 +191,7 @@ public class DataTranslatorTask extends DynamicAttributeTask
                 types = new Class[]
                     {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
                 args = new Object[] {reader, mappingProps, src, tgt, dataLocation};
-            } else if ("org.flymine.dataconversion.PsiDataTranslator"
+            } else if ("org.intermine.bio.dataconversion.PsiDataTranslator"
                        .equals(translator)) {
 //                 if (organisms == null) {
 //                     throw new BuildException("organisms attribute not set");
