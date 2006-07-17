@@ -59,6 +59,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected IntPresentSet dbIdsStored = new IntPresentSet();
     protected int idMapOps = 0;
     protected boolean ignoreDuplicates = false;
+    protected EquivalentObjectHints hints;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -67,6 +68,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public IntegrationWriterAbstractImpl(ObjectStoreWriter osw) {
         this.osw = osw;
+        hints = new EquivalentObjectHints(getObjectStore());
     }
 
     /**
@@ -136,7 +138,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         throws ObjectStoreException {
         Query q = null;
         try {
-            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap);
+            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap, hints);
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
         }
