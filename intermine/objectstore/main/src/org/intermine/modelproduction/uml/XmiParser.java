@@ -338,6 +338,9 @@ public class XmiParser implements ModelParser
         if (type.equals("any")) {
             return "org.intermine.model.InterMineObject";
         }
+        if (type.equals("Char") || type.equals("char")) {
+            return "java.lang.Character";
+        }
         return type;
     }
 
