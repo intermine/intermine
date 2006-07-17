@@ -254,15 +254,14 @@ public class DataLoaderHelper
      * @param obj the Object to take as an example
      * @param source the Source database
      * @param idMap an IntToIntMap from source IDs to destination IDs
-     * nulls.  If false the Query will constrain only those keys that have a value in the template
-     * obj
+     * @param hints an EquivalentObjectHints object
      * @return a new Query (or null if all the primary keys from obj contain a null)
      * @throws MetaDataException if anything goes wrong
      */
     public static Query createPKQuery(Model model, InterMineObject obj, Source source,
-                                      IntToIntMap idMap)
+            IntToIntMap idMap, EquivalentObjectHints hints)
         throws MetaDataException {
-        return createPKQuery(model, obj, source, idMap, true);
+        return createPKQuery(model, obj, source, idMap, hints, true);
     }
 
     /**
@@ -273,14 +272,15 @@ public class DataLoaderHelper
      * @param obj the Object to take as an example
      * @param source the Source database
      * @param idMap an IntToIntMap from source IDs to destination IDs
+     * @param hints an EquivalentObjectHints object
      * @param queryNulls if true allow primary keys to contain null values if the template obj has
      * nulls.  If false the Query will constrain only those keys that have a value in the template
      * obj
      * @return a new Query (or null if all the primary keys from obj contain a null)
      * @throws MetaDataException if anything goes wrong
      */
-    public static Query createPKQuery(Model model, InterMineObject obj,
-                                      Source source, IntToIntMap idMap, boolean queryNulls)
+    public static Query createPKQuery(Model model, InterMineObject obj, Source source,
+            IntToIntMap idMap, EquivalentObjectHints hints, boolean queryNulls)
          throws MetaDataException {
 
             int subCount = 0;
@@ -297,7 +297,7 @@ public class DataLoaderHelper
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 Set classQueries =
-                    createPKQueriesForClass(model, obj, source, idMap, queryNulls, cld);
+                    createPKQueriesForClass(model, obj, source, idMap, hints, queryNulls, cld);
 
                 Iterator classQueriesIter = classQueries.iterator();
 
@@ -330,6 +330,7 @@ public class DataLoaderHelper
      * @param obj the Object to take as an example
      * @param source the Source database
      * @param idMap an IntToIntMap from source IDs to destination IDs
+     * @param hints an EquivalentObjectHints object
      * @param queryNulls if true allow primary keys to contain null values if the template obj has
      * nulls.  If false the Query will constrain only those keys that have a value in the template
      * obj
@@ -339,8 +340,7 @@ public class DataLoaderHelper
      * @throws MetaDataException if anything goes wrong
      */
     private static Set createPKQueriesForClass(Model model, InterMineObject obj, Source source,
-                                               IntToIntMap idMap, boolean queryNulls,
-                                               ClassDescriptor cld)
+            IntToIntMap idMap, EquivalentObjectHints hints, boolean queryNulls, ClassDescriptor cld)
         throws MetaDataException {
         Set primaryKeys;
         if (source == null) {
@@ -426,7 +426,7 @@ public class DataLoaderHelper
                             }
                         }
                         Query refSubQuery =
-                            createPKQuery(model, refObj, source, idMap, queryNulls);
+                            createPKQuery(model, refObj, source, idMap, hints, queryNulls);
 
                         ClassDescriptor referencedClassDescriptor =
                             ((ReferenceDescriptor) fd).getReferencedClassDescriptor();

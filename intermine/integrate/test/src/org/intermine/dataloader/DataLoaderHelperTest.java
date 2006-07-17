@@ -99,7 +99,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap()));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null));
     }
 
     public void testCreateQueryNullFields() throws Exception {
@@ -118,7 +118,7 @@ public class DataLoaderHelperTest extends QueryTestCase
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap()));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null));
     }
 
     public void testCreateQueryDisableNullFields1() throws Exception {
@@ -137,7 +137,7 @@ public class DataLoaderHelperTest extends QueryTestCase
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), false));
+        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null, false));
     }
 
     public void testCreateQueryDisableNullFields2() throws Exception {
@@ -156,7 +156,7 @@ public class DataLoaderHelperTest extends QueryTestCase
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), false));
+        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null, false));
     }
 
     public void testCreateQuery3() throws Exception {
@@ -189,7 +189,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         a.setAddress("10 Downing Street");
         c.setAddress(a);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null));
     }
 
     public void testCreateQuery4() throws Exception {
@@ -210,7 +210,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         c.setName("jkhsdfg");
         c.setAddress(null);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null));
     }
 
     public void testCreateQuery5() throws Exception {
@@ -265,7 +265,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         c.setAddress(a);
         c.setVatNumber(765213);
 
-        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap()));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null));
     }
 
     public void testObjectPrimaryKeyIsNull1() throws Exception {

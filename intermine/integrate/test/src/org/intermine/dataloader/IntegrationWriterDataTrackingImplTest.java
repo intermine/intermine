@@ -886,7 +886,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
-        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
+        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
     }
 
     // a bug existed whereby storing a skeleton then a real object retrieved and failed to materialise
