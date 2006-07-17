@@ -10,6 +10,12 @@
       <property name="organism" value="MM"/>
       <property name="ignoreclasses" value="org.intermine.model.ensembl.dna org.intermine.model.ensembl.repeat_feature org.intermine.model.ensembl.misc_attrib org.intermine.model.ensembl.misc_feature org.intermine.model.ensembl.misc_feature_misc_set"/>
     </source>
+    <source name="ensembl-chromosome-fasta" type="fasta">
+      <property name="source.name" value="fasta"/>
+      <property name="fasta.includes" value="*dna.chromosome*.fa"/>
+      <property name="fasta.taxonId" value="10090"/>
+      <property name="src.data.dir" location="/shared/data/ensembl/mus_musculus/ens39"/>
+    </source>
     <source name="uniprot-mouse" type="uniprot">
       <property name="uniprot.organisms" value="10090"/>
       <property name="src.data.dir" location="/shared/data/uniprot/7.7/"/>
