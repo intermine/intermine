@@ -61,7 +61,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
         Query query;
         try {
             query = DataLoaderHelper.createPKQuery(os.getModel(), oldObject, source,
-                                                   new IntToIntMap(), false);
+                                                   new IntToIntMap(), null, false);
         } catch (MetaDataException e) {
             throw new RuntimeException("Unable to create query for new object", e);
         }
