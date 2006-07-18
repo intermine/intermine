@@ -145,10 +145,6 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 14");
-        // Gene.phenotypes
-        insertReferences(Gene.class, Phenotype.class, "phenotypes");
-        
         LOG.info("insertReferences stage 16");
         createUtrRefs();
 
