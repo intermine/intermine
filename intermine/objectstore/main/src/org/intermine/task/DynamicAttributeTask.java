@@ -56,6 +56,14 @@ public class DynamicAttributeTask extends Task
                 Class propType = desc.getPropertyType();
                 String propName = setter.getName().substring(3).toLowerCase();
                 Object propValue = projectProps.get(propName);
+
+                if (propValue == null) {
+                    String setterName = setter.getName();
+                    String camelCasePropName =
+                        setterName.substring(3, 4).toLowerCase() + setterName.substring(4);
+                    propValue = projectProps.get(camelCasePropName);
+                }
+
                 if (propValue != null) {
                     try {
                         if (propType.equals(File.class)) {
