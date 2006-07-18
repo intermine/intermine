@@ -36,11 +36,13 @@ import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.NullFragmenter;
 import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.store.Directory;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -107,7 +109,8 @@ public class TemplateSearchAction extends InterMineAction
             Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
             Query query;
             try {
-                query = QueryParser.parse(queryString, "content", analyzer);
+                QueryParser queryParser = new QueryParser("content", analyzer);
+                query = queryParser.parse(queryString);
             } catch (ParseException err) {
                 recordError(new ActionMessage("errors.templatesearch.badinput", err.getMessage()),
                         request);
@@ -143,7 +146,7 @@ public class TemplateSearchAction extends InterMineAction
                 
                 TokenStream tokenStream
                     = analyzer.tokenStream("", new StringReader(template.getDescription()));
-                
+                highlighter.setTextFragmenter(new NullFragmenter());
                 highlightedMap.put(template,
                         highlighter.getBestFragment(tokenStream, template.getDescription()));
             }
