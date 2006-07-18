@@ -224,7 +224,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         sortedEquivalentObjects = new HashSet();
                     } else {
                         Comparator compare = new SourcePriorityComparator(dataTracker, field,
-                                (type == SOURCE ? source : skelSource), o, dbIdsStored);
+                                (type == SOURCE ? source : skelSource), o, dbIdsStored, this,
+                                source, skelSource);
                         sortedEquivalentObjects = new TreeSet(compare);
                     }
 

@@ -384,13 +384,13 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceB.setName("testsource");
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("age");
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.FALSE) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA, Boolean.TRUE, Boolean.FALSE) < 0);
-        assertEquals(0, DataLoaderHelper.comparePriority(fd, sourceA, sourceA, Boolean.TRUE, Boolean.FALSE));
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) < 0);
+        assertEquals(0, DataLoaderHelper.comparePriority(fd, sourceA, sourceA));
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null, null, null, null, false, false) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE, null, null, null, false, false) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null, null, null, null, false, false) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE, null, null, null, false, false) > 0);
     }
 
     public void testComparePriorityClass() throws Exception {
@@ -400,12 +400,12 @@ public class DataLoaderHelperTest extends QueryTestCase
         sourceB.setName("testsource");
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
         FieldDescriptor fd = cld.getFieldDescriptorByName("fullTime");
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA, Boolean.TRUE, Boolean.FALSE) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.FALSE) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null, null, null, null, false, false) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE, null, null, null, false, false) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null, null, null, null, false, false) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE, null, null, null, false, false) < 0);
     }
 
     public void testComparePriorityMissing() throws Exception {
@@ -416,13 +416,13 @@ public class DataLoaderHelperTest extends QueryTestCase
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         FieldDescriptor fd = cld.getFieldDescriptorByName("name");
         try {
-            DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.FALSE);
+            DataLoaderHelper.comparePriority(fd, sourceA, sourceB);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE) < 0);
-        assertTrue("" + DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null), DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null, null, null, null, false, false) > 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE, null, null, null, false, false) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null, null, null, null, false, false) < 0);
+        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE, null, null, null, false, false) < 0);
     }
 }
