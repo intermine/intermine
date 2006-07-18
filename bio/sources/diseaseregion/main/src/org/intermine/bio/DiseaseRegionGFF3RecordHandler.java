@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.bio;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
