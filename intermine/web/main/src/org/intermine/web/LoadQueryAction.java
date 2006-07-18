@@ -35,33 +35,7 @@ import org.apache.struts.util.MessageResources;
 public class LoadQueryAction extends DispatchAction
 {
     private static final Logger LOG = Logger.getLogger(LoadQueryAction.class);
-    
-    /**
-     * Load a query ie. take a query from the exampleQueries and make it the current one.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward example(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
-        String queryName = request.getParameter("name");
-        
-        SessionMethods.logExampleQueryUse(session, queryName);
-        SessionMethods.loadQuery((PathQuery) exampleQueries.get(queryName), session, response);
-        
-        return mapping.findForward("query");
-    }
-    
+
     /**
      * Load a query from path query XML passed as a request parameter.
      * @param mapping The ActionMapping used to select this instance
@@ -79,7 +53,7 @@ public class LoadQueryAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Map exampleQueries = (Map) servletContext.getAttribute(Constants.EXAMPLE_QUERIES);
+
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         
