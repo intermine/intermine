@@ -40,7 +40,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.Analysis;
-import org.flymine.model.genomic.ArtificialDeletion;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.ChromosomeBand;
@@ -53,7 +52,6 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.NcRNA;
-import org.flymine.model.genomic.PCRProduct;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
@@ -164,12 +162,16 @@ public class WriteGFFTask extends Task
                 continue;
             }
 
-            if (feature instanceof ArtificialDeletion) {
-                ArtificialDeletion ad = (ArtificialDeletion) feature;
-                if (!ad.getAvailable().booleanValue()) {
-                    // write only the available deletions because there are too many
-                    // ArtificialDeletions for GBrowse to work well
-                    continue;
+            final String featureClassName = feature.getClass().getName();
+            if (featureClassName.equals("org.flymine.model.genomic.ArtificialDeletion")) {
+                try {
+                    if (TypeUtil.getFieldValue(feature, "available") != Boolean.TRUE) {
+                        // write only the available deletions because there are too many
+                        // ArtificialDeletions for GBrowse to work well
+                        continue;
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("can't access 'available' field in: " + feature);
                 }
             }
 
@@ -518,17 +520,30 @@ public class WriteGFFTask extends Task
             }
         }
 
-        if (bioEntity instanceof PCRProduct) {
+        String bioEntityClassName = bioEntity.getClass().getName();
+
+        if (bioEntityClassName.equals("org.flymine.model.genomic.PCRProduct")) {
+            Boolean fieldValue;
+            try {
+                fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "promoter");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("can't access 'promoter' field in: " + bioEntity);
+            }
             ArrayList promoterFlagList = new ArrayList();
-            promoterFlagList.add(((PCRProduct) bioEntity).getPromoter().toString());
+            promoterFlagList.add(fieldValue.toString());
             attributes.put("promoter", promoterFlagList);
         }
 
-        if (bioEntity instanceof ArtificialDeletion) {
-            ArtificialDeletion deletion = (ArtificialDeletion) bioEntity;
-            if (deletion.getAvailable() != null) {
+        if (bioEntityClassName.equals("org.flymine.model.genomic.ArtificialDeletion")) {
+            Boolean fieldValue;
+            try {
+                fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "available");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("can't access 'available' field in: " + bioEntity);
+            }
+            if (fieldValue != null) {
                 ArrayList availableFlagList = new ArrayList();
-                availableFlagList.add(((ArtificialDeletion) bioEntity).getAvailable().toString());
+                availableFlagList.add(fieldValue.toString());
                 attributes.put("available", availableFlagList);
             }
         }

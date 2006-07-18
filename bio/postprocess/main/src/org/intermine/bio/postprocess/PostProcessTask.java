@@ -10,6 +10,16 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Transcript;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,16 +28,6 @@ import java.io.Writer;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Transcript;
-
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -120,10 +120,6 @@ public class PostProcessTask extends Task
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOG.info("Starting CalculateLocations.setChromosomeLocationsAndLengths()");
                 cl.setChromosomeLocationsAndLengths();
-            } else if ("create-oligo-locations".equals(operation)) {
-                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOG.info("Starting CalculateLocations.createOligoLocations()");
-                cl.createOligoLocations();
             } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.insertReferences()");

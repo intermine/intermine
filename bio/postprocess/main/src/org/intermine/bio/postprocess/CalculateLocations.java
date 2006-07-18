@@ -398,15 +398,6 @@ public class CalculateLocations
     }
 
     /**
-     * Use the MicroarrayOligo->Transcript and Transcript->Chromosome Locations to create
-     * MicroarrayOligo->Chromosome Locations.
-     * @throws Exception if anything goes wrong
-     */
-    public void createOligoLocations() throws Exception {
-        createTransformedLocations(Transcript.class, Chromosome.class, MicroarrayOligo.class);
-    }
-
-    /**
      * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
      * objects that are located on chromosomes and overlap.
      * @param classNamesToIgnore a comma separated list of the names of those classes that should be
@@ -1135,10 +1126,11 @@ public class CalculateLocations
      * @param destClass after createTransformedLocations(), extra Locations will exist between
      * moveClass objects and destClass
      * @param moveClass the class of objects to create new Locations for
+     * @throws ObjectStoreException 
      * @throws Exception if anything goes wrong
      */
     protected void createTransformedLocations(Class sourceClass, Class destClass, Class moveClass)
-        throws Exception {
+         throws ObjectStoreException {
 
         Results results =
             PostProcessUtil.findLocationsToTransform(os, moveClass, sourceClass, destClass);
