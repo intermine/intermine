@@ -128,7 +128,9 @@ public class DataTranslatorTask extends DynamicAttributeTask
             throw new BuildException("srcModel attribute not set");
         }
 
-        configureDynamicAttributes(this);
+        // TODO this was in a change to ensembl translation, is actually called later
+        // can causes translation to break if called here.  Does ensembl still work?
+        //configureDynamicAttributes(this);
 
         try {
             Class cls = Class.forName(translator);
