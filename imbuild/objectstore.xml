@@ -77,7 +77,8 @@
     <property name="regenerate.java" value="true"/>
   </target>
 
-  <target name="-init-summarise-objectstore" depends="init, -init-deps, -init-task-xml"/>
+  <target name="-init-summarise-objectstore" 
+          depends="init, -init-deps, -init-task-xml, -init-jar, -init-properties"/>
 
   <target name="summarise-objectstore" depends="-init-summarise-objectstore"
           unless="have.model.to.merge">
