@@ -17,12 +17,14 @@
     </source>
     <source name="flybase-dmel-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
+      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
     </source>
     <source name="flybase-dpse-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
+      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/fasta"/>
@@ -103,6 +105,7 @@
     -->
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
+      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
@@ -110,12 +113,14 @@
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.idSuffix" value="_CDS"/>
+      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
+      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
@@ -123,6 +128,7 @@
     <source name="flybase-dpse-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.idSuffix" value="_CDS"/>
+      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
