@@ -157,8 +157,9 @@ public class DataLoaderHelper
                 }
                 throw new IllegalArgumentException("Conflicting values for field "
                         + fd.getClassDescriptor().getName() + "." + fd.getName()
-                        + " between " + src1.getName() + " (value " + value1 + ") and " + src2.getName()
-                        + " (value " + value2 + "). This field needs configuring in "
+                        + " between " + src1.getName() + " (value " + value1 + ") and "
+                        + src2.getName() + " (value " + value2
+                        + "). This field needs configuring in "
                         + cld.getModel().getName() + "_priorities.properties");
             }
         }
