@@ -33,6 +33,14 @@ public abstract class PostProcessor
     }
 
     /**
+     * Return the ObjectStoreWriter that was passed to the constructor.
+     * @return the ObjectStoreWriter 
+     */
+    public ObjectStoreWriter getObjectStoreWriter () {
+        return osw;
+    }
+    
+    /**
      * All subclasses should override this method so they can be called in a generic fashion.
      *
      * @throws  ObjectStoreException if there is a problem with the object store.
