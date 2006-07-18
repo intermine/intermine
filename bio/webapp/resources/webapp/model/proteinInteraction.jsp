@@ -33,7 +33,7 @@
            1,814 reproducible interactions among 488 proteins.<BR>
            28 interactions in common between this screen and the Giot et al screen described above.<BR>
          </DD>
-         <DT>Formstecher E. et al (2005) Genome Research 15 (3): 376-84.   (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?\cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15710747">PubMed: 15710747</A>).
+         <DT>Formstecher E. et al (2005) Genome Research 15 (3): 376-84.   (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15710747">PubMed: 15710747</A>).
          </DT>
          <DD>
 High-throughput yeast two-hybrid dataset.<BR>
