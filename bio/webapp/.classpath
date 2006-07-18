@@ -55,5 +55,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-tools-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>
