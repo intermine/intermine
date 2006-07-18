@@ -63,7 +63,7 @@ public class DBConverter extends DataConverter
      * @param db the Database
      * @param reader the DBReader used to retrieve Items
      * @param writer the ItemWriter used to handle the resultant Items
-     * @param excludeList A Source Item Class name to skip - TODO: should be a list at some point.
+     * @param excludeList A list of Source Item Class names to skip
      */
     protected DBConverter(
             Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
@@ -72,7 +72,7 @@ public class DBConverter extends DataConverter
         this.db = db;
         this.reader = reader;
         if (excludeList != null) {
-            this.excluded.addAll(Arrays.asList(excludeList.toLowerCase().split("\\s")));
+            excluded = new HashSet(Arrays.asList(excludeList.toLowerCase().split("\\s")));
         }
     }
 
@@ -435,8 +435,6 @@ public class DBConverter extends DataConverter
     /**
      * Checks to see if the current class should be excluded from the retrieve - possibly due to
      * out of memory problem.
-     *
-     * TODO: We should make the list have some kind of format so we can exclude more than one class!
      *
      * @param className A classname to check for exclusion.
      * @return a boolean indicating true if the class is to be excluded otherwise false.
