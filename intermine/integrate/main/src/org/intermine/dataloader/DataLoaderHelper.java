@@ -31,6 +31,7 @@ import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -71,15 +72,38 @@ public class DataLoaderHelper
      * @param fd FieldDescriptor for the field
      * @param src1 the first Source
      * @param src2 the second Source
+     * @return a positive integer if src1 is of higher priority than src2, a negative integer if
+     * src2 is of higher priority than src1 or zero if the sources are equal.
+     * @throws IllegalArgumentException if the class is not in the file, or both of the sources
+     * are not listed for that class
+     */
+    public static int comparePriority(FieldDescriptor fd, Source src1, Source src2) {
+        return comparePriority(fd, src1, src2, new Integer(1), new Integer(2), null, null, null,
+                false, false);
+    }
+
+    /**
+     * Compare the priorities of two sources over a field.
+     *
+     * @param fd FieldDescriptor for the field
+     * @param src1 the first Source
+     * @param src2 the second Source
      * @param value1 the first field value
      * @param value2 the second field value
+     * @param iw an IntegrationWriterAbstractImpl
+     * @param source the iw's main source
+     * @param skelSource the iw's skeleton source
+     * @param storeValue1 a boolean meaning value1 is from the source database rather than the
+     * production database
+     * @param storeValue2 same as storeValue2
      * @return a positive integer if src1 is of higher priority than src2, a negative integer if
      * src2 is of higher priority than src1 or zero if the sources are equal.
      * @throws IllegalArgumentException if the class is not in the file, or both of the sources
      * are not listed for that class
      */
     public static int comparePriority(FieldDescriptor fd, Source src1, Source src2, Object value1,
-            Object value2) {
+            Object value2, IntegrationWriterAbstractImpl iw, Source source, Source skelSource,
+            boolean storeValue1, boolean storeValue2) {
         if (src1.equals(src2)) {
             return 0;
         }
@@ -107,14 +131,36 @@ public class DataLoaderHelper
             return -1;
         } else if (value2 == null) {
             return 1;
-        } else if (value1.equals(value2)) {
-            return src1.getName().compareTo(src2.getName());
         } else {
-            throw new IllegalArgumentException("Conflicting values for field "
-                    + fd.getClassDescriptor().getName() + "." + fd.getName()
-                    + " between " + src1.getName() + " (value " + value1 + ") and " + src2.getName()
-                    + " (value " + value2 + "). This field needs configuring in "
-                    + cld.getModel().getName() + "_priorities.properties");
+            try {
+                if (storeValue1 && (value1 instanceof InterMineObject)) {
+                    value1 = iw.store((InterMineObject) value1, source, skelSource,
+                            IntegrationWriterAbstractImpl.SKELETON);
+                }
+                if (storeValue2 && (value2 instanceof InterMineObject)) {
+                    value2 = iw.store((InterMineObject) value2, source, skelSource,
+                            IntegrationWriterAbstractImpl.SKELETON);
+                }
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
+            if (((value1 instanceof InterMineObject) && (value2 instanceof InterMineObject)
+                        && (((InterMineObject) value1).getId().equals(((InterMineObject) value2)
+                                .getId()))) || value1.equals(value2)) {
+                return src1.getName().compareTo(src2.getName());
+            } else {
+                if (value1 instanceof ProxyReference) {
+                    value1 = ((ProxyReference) value1).getObject();
+                }
+                if (value2 instanceof ProxyReference) {
+                    value2 = ((ProxyReference) value2).getObject();
+                }
+                throw new IllegalArgumentException("Conflicting values for field "
+                        + fd.getClassDescriptor().getName() + "." + fd.getName()
+                        + " between " + src1.getName() + " (value " + value1 + ") and " + src2.getName()
+                        + " (value " + value2 + "). This field needs configuring in "
+                        + cld.getModel().getName() + "_priorities.properties");
+            }
         }
     }
 

@@ -196,13 +196,20 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
     public void testUpdateObjectField() throws Exception {
         Employee e = new Employee();
+        Department d = new Department();
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         e.setName("EmployeeA2");
         e.setAge(32);
         e.setEnd(2);
         e.setFullTime(true);
+        e.setDepartment(d);
+        d.setName("DepartmentA1");
+        d.setCompany(c);
+        c.setVatNumber(1234);
         
         if (doIds) {
             e.setId(new Integer(1));
+            d.setId(new Integer(2));
         }
         Source source = iw.getMainSource("testsource3");
         Source skelSource = iw.getSkeletonSource("testsource3");
@@ -210,6 +217,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         //fail("" + DataLoaderHelper.createPKQuery(iw.getModel(), e, source, new IntToIntMap()));
 
         iw.store(e, source, skelSource);
+        iw.store(d, source, skelSource);
+        iw.store(c, source, skelSource);
 
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull("Object from db should not be null", re);
@@ -217,6 +226,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertEquals(2, re.getEnd());
         assertTrue(re.getFullTime());
         assertNotNull(re.getAddress());
+        assertNotNull(re.getDepartment());
     }
 
     public void testUpdateObjectOneToOne() throws Exception {
