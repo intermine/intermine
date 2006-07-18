@@ -10,25 +10,26 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
-import java.util.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.StringReader;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import org.intermine.metadata.Model;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.FullParser;
-import org.intermine.bio.dataconversion.GFF3Converter;
+import org.intermine.bio.DiseaseRegionGFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.Item;
 
-import org.flymine.dataconversion.DiseaseRegionGFF3RecordHandler;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 
+import junit.framework.TestCase;
 
 /**
  * Tests for the DiseaseRegionGFF3Handler class.
