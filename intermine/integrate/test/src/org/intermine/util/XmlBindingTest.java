@@ -52,8 +52,8 @@ public class XmlBindingTest extends XMLTestCase {
             originalBuffer.append((char) c);
             c = originalReader.read();
         }
-        System.out.println("Original: " + originalBuffer.toString());
-        System.out.println("Generated: " + sw.toString());
+        //System.out.println("Original: " + originalBuffer.toString());
+        //System.out.println("Generated: " + sw.toString());
         Diff diff = new Diff(originalBuffer.toString(), sw.toString());
         DetailedDiff detail = new DetailedDiff(diff);
         detail.overrideElementQualifier(new ElementNameAndAttributeQualifier());

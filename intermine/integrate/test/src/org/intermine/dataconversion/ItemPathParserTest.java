@@ -59,8 +59,8 @@ public class ItemPathParserTest extends TestCase
         ItemPathParser parser = new ItemPathParser(lexer);
         parser.expr();
         
-        DumpASTVisitor visitor = new DumpASTVisitor();
-        visitor.visit(parser.getAST());
+        //DumpASTVisitor visitor = new DumpASTVisitor();
+        //visitor.visit(parser.getAST());
     }
 }
 //((gene <- transcript.gene).translation <- object_xref.ensembl).xref.external_db
