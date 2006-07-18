@@ -80,7 +80,6 @@ public class InitialiserPlugin implements PlugIn
         System.setProperty("java.awt.headless", "true");
         
         loadWebProperties(servletContext);
-        loadExampleQueries(servletContext);
         
         ObjectStore os = null;
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
@@ -274,25 +273,6 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
     }
 
-    /**
-     * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
-     */
-    private void loadExampleQueries(ServletContext servletContext) throws ServletException {
-        InputStream exampleQueriesStream =
-            servletContext.getResourceAsStream("/WEB-INF/example-queries.xml");
-        if (exampleQueriesStream == null) {
-            return;
-        }
-        Reader exampleQueriesReader = new InputStreamReader(exampleQueriesStream);
-        Map exampleQueries = null;
-        try {
-            exampleQueries = PathQueryBinding.unmarshal(exampleQueriesReader);
-        } catch (Exception e) {
-            throw new ServletException("Unable to parse example-queries.xml", e);
-        }
-        servletContext.setAttribute(Constants.EXAMPLE_QUERIES, exampleQueries);
-    }
-    
     /**
      * Load superuser account name into servlet context attribute SUPERUSER_ACCOUNT
      *
