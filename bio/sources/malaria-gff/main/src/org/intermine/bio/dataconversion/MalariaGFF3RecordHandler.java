@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 
 
 /**
- * A converter/retriever for FlyBase GFF3 files.
+ * Handle special cases when converting malaria GFF3 files.
  *
  * @author Richard Smith
  */
@@ -52,7 +52,8 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
                 feature.setAttribute("identifier", identifier);
             }
             if (symbol != null) {
-                feature.setAttribute("symbol", symbol);
+                feature.setAttribute("organismDbId", symbol);
+                feature.removeAttribute("symbol");
             }
         }
 
