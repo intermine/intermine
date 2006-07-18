@@ -48,22 +48,22 @@
   </sources>
 
   <post-processing>
-    <fetch-ensembl-contig-sequences/>
-    <calculate-locations/>
-    <create-references/>
+    <post-process name="fetch-ensembl-contig-sequences"/>
+    <post-process name="calculate-locations"/>
+    <post-process name="create-references"/>
     <!--update-orthologues/-->
-    <make-spanning-locations/>
-    <create-chromosome-locations-and-lengths/>
-    <create-symmetrical-relation-references/>
-    <create-indexes-production-attribute/>
-    <update-publications/>
-    <transfer-sequences-chromosome/>
-    <transfer-sequences-located-sequence-feature/>
-    <transfer-sequences-transcripts/>
+    <post-process name="make-spanning-locations"/>
+    <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="create-symmetrical-relation-references"/>
+    <post-process name="create-indexes-production-attribute"/>
+    <post-process name="update-publications"/>
+    <post-process name="transfer-sequences-chromosome"/>
+    <post-process name="transfer-sequences-located-sequence-feature"/>
+    <post-process name="transfer-sequences-transcripts"/>
 
-    <do-sources/>
+    <post-process name="do-sources"/>
 
-    <set-collection-counts/>
+    <post-process name="set-collection-counts"/>
   </post-processing>
 
 </project>
