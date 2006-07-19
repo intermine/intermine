@@ -20,14 +20,17 @@
     <td>
       <div class="body">
         <p>
-          <a href="/mouse">MouseMine</a> contains <i>M. musculus</i> genome
+          <a href="/malariamine">MalariaMine</a> contains <i>Plasmodium falciparum 3D7</i> genome
           data from:
         </p>
         <ul>
           <li>
-            <a href="http://www.ensembl.org/Mus_musculus/">
-              <html:img src="model/ensembl_logo_mini.png"/>
-              Ensembl <i>M. musculus</i> Release 38.35 genome annotation</a>
+            <a href="http://www.genedb.org/">
+              Fasta sequences for <i>P. falciparum 3D7</i></a>
+          </li>
+          <li>
+            <a href="http://www.genedb.org/">
+              GFF3 for <i>P. falciparum 3D7</i> genome features</a>
           </li>
         </ul>
       </div>
@@ -36,28 +39,28 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All <i>M. musculus</i> genes (browse)" skipBuilder="true">
+            <im:querylink text="All <i>P. falciparum 3D7</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Mus musculus" description="" identifier="" code="A">
+                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All <i>M. musculus</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i>P. falciparum 3D7</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Mus musculus" description="" identifier="" code="A">
+                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>

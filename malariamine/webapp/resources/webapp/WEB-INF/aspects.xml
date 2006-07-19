@@ -4,8 +4,8 @@
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in MouseMine are provided by
-      a variety of curated source databases.  In most cases MouseMine includes
+      The gene structure and other genome annotation in MalariaMine are provided by
+      a variety of curated source databases.  In most cases MalariaMine includes
       all genome features that have chromosomal locations.
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
@@ -39,7 +39,7 @@
     <large-image>model/proteins.png</large-image>
     <intro-text>
       Protein annotation (including family and domain annotation) from UniProt
-      and InterPro.
+      .
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
@@ -54,7 +54,7 @@
     <tile-name></tile-name>
     <intro-text>
       Proteins formatted in the Proteomics Standards Initiative (PSI)
-      molecular interaction (PSI MI) format can be mapped to the MouseMine
+      molecular interaction (PSI MI) format can be mapped to the MalariaMine
       data model.
     </intro-text>
     <starting-points>
@@ -78,8 +78,8 @@
       their associated biological processes, cellular components and
       molecular functions in a species-independent manner.
 &lt;p&gt;
-      GO annotations for &lt;i&gt;Mus musculus&lt;/i&gt; have
-      been loaded into MouseMine.  The GO annotations are 'attached' to
+      GO annotations for &lt;i&gt;Plasmodium falciparum 3D7&lt;/i&gt; have
+      been loaded into MalariaMine.  The GO annotations are 'attached' to
       Genes and so each gene has a reference (link) to a list of its GO
       annotations (if available).
     </intro-text>

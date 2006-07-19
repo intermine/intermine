@@ -16,8 +16,8 @@
           calculated 16th April 2005) between the following organisms:
         </p>
         <ul>
-          <li><I>M. musculus</I></li>
-          <li><I>H. sapiens</I></li>
+          <li><I>Plasmodium falciparum 3D7</I></li>
+          <li><I>Schizosaccharomyces pombe</I></li>
         </ul>
       </div>
     </TD>
@@ -29,7 +29,7 @@
       <div class="body">
         <ul>
           <li>
-            Orthologues: <i>M. musculus</i> vs <i>H. sapiens</i>
+            Orthologues: <i>Plasmodium falciparum 3D7</i> vs <i>Schizosaccharomyces pombe</i>
             <im:querylink text="(browse)" skipBuilder="true">
 <query name="" model="genomic" view="Orthologue.object Orthologue.subject Orthologue" constraintLogic="A and B">
   <node path="Orthologue" type="Orthologue">
@@ -38,16 +38,16 @@
   </node>
   <node path="Orthologue.object.organism" type="Organism">
   </node>
-  <node path="Orthologue.object.organism.taxonId" type="String">
-    <constraint op="=" value="10090" code="A">
+  <node path="Orthologue.object.organism.taxonId" type="Integer">
+    <constraint op="=" value="36329" code="A">
     </constraint>
   </node>
   <node path="Orthologue.subject" type="Gene">
   </node>
   <node path="Orthologue.subject.organism" type="Organism">
   </node>
-  <node path="Orthologue.subject.organism.taxonId" type="String">
-    <constraint op="=" value="9606" code="B">
+  <node path="Orthologue.subject.organism.taxonId" type="Integer">
+    <constraint op="=" value="4896" code="B">
     </constraint>
   </node>
 </query>
