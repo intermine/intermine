@@ -98,8 +98,6 @@
     <!-- Copy the core model to the build directory -->
     <copy file="${objectstore.xml.basedir}/../${core.model.path}/core.xml"
           tofile="${build.model.dir}/${model.name}_model.xml"/>
-    <!-- Copy keys and properties to the classpath -->
-    <copy file="${model.name}_keyDefs.properties" todir="${build.classes.dir}"/>
   </target>
 
   <!-- Override to perform merge. Note: keep the 'unless' -->
