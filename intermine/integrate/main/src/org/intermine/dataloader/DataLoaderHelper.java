@@ -134,10 +134,16 @@ public class DataLoaderHelper
         } else {
             try {
                 if (storeValue1 && (value1 instanceof InterMineObject)) {
+                    if (value1 instanceof ProxyReference) {
+                        value1 = ((ProxyReference) value1).getObject();
+                    }
                     value1 = iw.store((InterMineObject) value1, source, skelSource,
                             IntegrationWriterAbstractImpl.SKELETON);
                 }
                 if (storeValue2 && (value2 instanceof InterMineObject)) {
+                    if (value2 instanceof ProxyReference) {
+                        value2 = ((ProxyReference) value2).getObject();
+                    }
                     value2 = iw.store((InterMineObject) value2, source, skelSource,
                             IntegrationWriterAbstractImpl.SKELETON);
                 }
