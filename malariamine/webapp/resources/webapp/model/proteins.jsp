@@ -20,7 +20,7 @@
             Knowledgebase</A> (version 7.5) for the following organisms have
             been loaded:
             <UL>
-              <LI><I>Mus musculus</I></LI>
+              <LI><I>Plasmodium falciparum (isolate 3D7)</I></LI>
             </UL>
             For each protein record in UniProt for each species the following
             information is extracted and loaded into FlyMine:
@@ -35,28 +35,17 @@
               <LI>Gene ORF name</LI>
             </UL>
           </DD>
-          <DT><A href="http://www.ebi.ac.uk/interpro">InterPro</A> protein
-          families and domains.</DT>
-          <DD>
-            Protein family and domain assignments to proteins in UniProt have
-            been loaded from <A
-            href="http://www.ebi.ac.uk/interpro">InterPro</A> (version 12.1)
-            for the following organisms:
-            <UL>
-              <LI><I>Mus musculus</I></LI>
-            </UL>
-          </DD>
         </DL>
       </div>
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download <i>M. musculus</i> data
+        Bulk download <i>P. falciparum 3d7</i> data
       </div>
       <div class="body">
         <ul>
           <li>
-            <i>M. musculus</i> proteins and corresponding genes:
+            <i>Plasmodium falciparum</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="Protein Protein.genes">
@@ -65,7 +54,7 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="M. musculus"
+                    <constraint op="=" value="Plasmodium falciparum 3D7"
                                 description="" identifier="" code="A">
                     </constraint>
                   </node>
@@ -79,162 +68,7 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Mus musculus" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-            </span>
-          </li>
-          <li>
-            <i>M. musculus</i> protein domains:
-            <im:querylink text="[browse]"
-                          skipBuilder="true">
-              <query name="" model="genomic" view="ProteinDomain">
-              p  <node path="ProteinDomain" type="ProteinDomain">
-                </node>
-                <node path="ProteinDomain.proteins" type="Protein">
-                </node>
-                <node path="ProteinDomain.proteins.organism" type="Organism">
-                </node>
-                <node path="ProteinDomain.proteins.organism.name" type="String">
-                </node>
-                <node path="ProteinDomain.proteins.organism.genus" type="String">
-                  <constraint op="=" value="Mus" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-            or
-            <im:querylink text="[export/download]"
-                          skipBuilder="true">
-              <query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
-                <node path="ProteinDomain" type="ProteinDomain">
-                </node>
-                <node path="ProteinDomain.proteins" type="Protein">
-                </node>
-                <node path="ProteinDomain.proteins.organism" type="Organism">
-                </node>
-                <node path="ProteinDomain.proteins.organism.name" type="String">
-                </node>
-                <node path="ProteinDomain.proteins.organism.genus" type="String">
-                  <constraint op="=" value="Mus" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-
-
-          <li>
-            <span style="white-space:nowrap">
-              <i>M. musculus</i> proteins with corresponding protein domains:
-              <im:querylink text="[browse]"
-                            skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins ProteinDomain" constraintLogic="A and B">
-                  <node path="ProteinDomain" type="ProteinDomain">
-                  </node>
-                  <node path="ProteinDomain.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Mus" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-              or
-              <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
-                  <node path="ProteinDomain" type="ProteinDomain">
-                  </node>
-                  <node path="ProteinDomain.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Mus" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-            </span>
-          </li>
-          <li>
-            <i>M. musculus</i> protein families:
-            <span style="white-space:nowrap">
-              <im:querylink text="[browse]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily">
-                  <node path="ProteinFamily" type="ProteinFamily">
-                  </node>
-                  <node path="ProteinFamily.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Mus" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-              or
-              <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName">
-                  <node path="ProteinFamily" type="ProteinFamily">
-                  </node>
-                  <node path="ProteinFamily.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Mus" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-            </span>
-          </li>
-          <li>
-            <i>M. musculus</i> proteins with corresponding protein families:
-            <span style="white-space:nowrap">
-              <im:querylink text="[browse]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily.proteins ProteinFamily" constraintLogic="A and B">
-                  <node path="ProteinFamily" type="ProteinFamily">
-                  </node>
-                  <node path="ProteinFamily.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Mus" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-              or
-              <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
-                  <node path="ProteinFamily" type="ProteinFamily">
-                  </node>
-                  <node path="ProteinFamily.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Mus" description="" identifier="" code="A">
+                    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
                     </constraint>
                   </node>
                 </query>

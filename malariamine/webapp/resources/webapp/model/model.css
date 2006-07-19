@@ -1,7 +1,7 @@
 html, body 
 {
     color: #000000;
-    background-color: #B5DA18;
+    background-color: #C2E31C;
 }
 
 a 
@@ -27,7 +27,7 @@ a
   font-weight: normal;
   font-size: 14px;
   font-weight: bold;
-  background: #FFFF66;
+  background: #D0EA53;
   border-top: 1px solid #888;
   border-bottom: 1px solid #888;
 }

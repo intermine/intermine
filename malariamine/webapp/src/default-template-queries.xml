@@ -11,7 +11,7 @@
         <node path="Protein.organism" type="Organism">
         </node>
         <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show all the proteins from the organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
       </query>
@@ -23,7 +23,7 @@
         <node path="Synonym" type="Synonym">
         </node>
         <node path="Synonym.value" type="String">
-          <constraint op="=" value="zen" description="Enter a name or identifier (eg a gene or protein name or identifier):"
+          <constraint op="=" value="PF11_0344" description="Enter a name or identifier (eg a gene or protein name or identifier):"
                       identifier="" editable="true" code="A"> 
           </constraint>
         </node>
@@ -38,7 +38,7 @@
         <node path="Protein.organism" type="Organism">
         </node>
         <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Output proteins from the organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Output proteins from the organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
       </query>
@@ -50,7 +50,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show all the genes from organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
       </query>
@@ -74,7 +74,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Output genes from the organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Output genes from the organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
       </query>
@@ -89,7 +89,7 @@
         <node path="Gene.synonyms" type="Synonym">
         </node>
         <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="zen" description="Show the predicted
+          <constraint op="=" value="PF11_0344" description="Show the predicted
                                                       transcripts, the number of exons and a link to the sequence
                                                       for the following gene:" identifier="" editable="true"
                       code="A"> </constraint>
@@ -97,7 +97,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="from the following organism:" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="from the following organism:" identifier="" editable="true" code="B">
           </constraint>
         </node>
       </query>
@@ -118,7 +118,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="From:" identifier="" editable="true" code="B">
           </constraint>
         </node>
       </query>
@@ -132,13 +132,13 @@
         <node path="Gene.synonyms" type="Synonym">
         </node>
         <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="zen" description="Show proteins for the gene:" identifier="" editable="true" code="A">
+          <constraint op="=" value="PF11_0344" description="Show proteins for the gene:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="From:" identifier="" editable="true" code="B">
           </constraint>
         </node>
       </query>
@@ -156,7 +156,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="from" identifier="c2" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="from" identifier="c2" editable="true" code="B">
           </constraint>
         </node>
       </query>
@@ -171,13 +171,13 @@
         <node path="Gene.synonyms" type="Synonym">
         </node>
         <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="zen" description="Show the chromosome and the chromosome location for gene:" identifier="" editable="true" code="A">
+          <constraint op="=" value="PF11_0344" description="Show the chromosome and the chromosome location for gene:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="From:" identifier="" editable="true" code="B">
           </constraint>
         </node>
         <node path="Gene.objects" type="Location">
@@ -202,7 +202,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster"
+          <constraint op="=" value="Plasmodium falciparum 3D7"
                       description="Show the chromosome location and gene sequences
                                    for all genes from organism:" identifier="" editable="true"
                       code="A"> </constraint>
@@ -229,7 +229,7 @@
         <node path="Chromosome.organism" type="Organism">
         </node>
         <node path="Chromosome.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="from:" identifier="" editable="true" code="B">
           </constraint>
         </node>
         <node path="Chromosome.exons" type="Exon">
@@ -258,13 +258,13 @@
         <node path="Gene.synonyms" type="Synonym">
         </node>
         <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="CG11348" description="Show the GO annotations for gene:" identifier="" editable="true" code="A">
+          <constraint op="=" value="PF11_0344" description="Show the GO annotations for gene:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="from:" identifier="" editable="true" code="B">
           </constraint>
         </node>
       </query>
@@ -278,7 +278,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Search for genes from:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Search for genes from:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Gene.allGoAnnotation" type="GOAnnotation">
@@ -327,7 +327,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="From" identifier="" editable="true" code="B">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="From" identifier="" editable="true" code="B">
           </constraint>
         </node>
         <node path="Gene.orthologues" type="Orthologue">
@@ -354,7 +354,7 @@
         <node path="Orthologue.object.organism" type="Organism">
         </node>
         <node path="Orthologue.object.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Orthologue.subject" type="BioEntity">
@@ -378,7 +378,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show genes from organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Gene.goAnnotation" type="GOAnnotation">
@@ -461,18 +461,6 @@
         </node>
       </query>
     </template>
-    <template name="domainsFamiliesByName" description="Search for protein domains and families by name." important="false">
-      <query name="domainsFamiliesByName" model="genomic" view="ProteinFeature ProteinFeature.identifier ProteinFeature.name ProteinFeature.interproId">
-        <node path="ProteinFeature" type="ProteinFeature">
-        </node>
-        <node path="ProteinFeature.name" type="String">
-          <constraint op="LIKE" value="%leucine%" description="Seach for
-                                                               names that contain a particular string - use '*' as a
-                                                               wildcard:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
     <template name="gene2goTermwithEvidence"
               description="Show genes from a particular organism annotated with a
                            particular GO term with a particular evidence code."
@@ -483,7 +471,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show genes from organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
         <node path="Gene.goAnnotation" type="GOAnnotation">
@@ -494,41 +482,6 @@
         </node>
         <node path="Gene.goAnnotation.evidenceCode" type="String">
           <constraint op="=" value="IPI" description="with evidence code:" identifier="" editable="true" code="C">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="geneDomain" description="Show all genes
-                                             from a particular organism that code for a certain InterPro protein
-                                             domain. (InterPro data are available for D. melanogaster,
-                                             A. gambiae, C. elegans)." important="false">
-      <query name="geneDomain" model="genomic" view="ProteinFeature.name
-                                                     ProteinFeature.interproId ProteinFeature.proteins.genes.name
-                                                     ProteinFeature.proteins.genes.identifier" constraintLogic="A and B
-                                                                                                                and C">
-        <node path="ProteinFeature" type="ProteinFeature">
-        </node>
-        <node path="ProteinFeature.proteins" type="Protein">
-        </node>
-        <node path="ProteinFeature.proteins.genes" type="Gene">
-        </node>
-        <node path="ProteinFeature.proteins.genes.organism" type="Organism">
-        </node>
-        <node path="ProteinFeature.proteins.genes.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster"
-                      description="Search for genes in the following organism:"
-                      identifier="" editable="true" code="C"> </constraint>
-        </node>
-        <node path="ProteinFeature.evidence" type="DataSet">
-        </node>
-        <node path="ProteinFeature.evidence.dataSource" type="DataSource">
-        </node>
-        <node path="ProteinFeature.evidence.dataSource.name" type="String">
-          <constraint op="=" value="InterPro" description="" identifier="" code="A">
-          </constraint>
-        </node>
-        <node path="ProteinFeature.name" type="String">
-          <constraint op="LIKE" value="%homeo%" description="that code for the following protein domain:" identifier="" editable="true" code="B">
           </constraint>
         </node>
       </query>
@@ -579,7 +532,7 @@
         <node path="Gene.organism" type="Organism">
         </node>
         <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster"
+          <constraint op="=" value="Plasmodium falciparum 3D7"
                       description="Show genes and 'with' annotations from organism:"
                       identifier="" editable="true" code="A"> </constraint>
         </node>
@@ -594,56 +547,6 @@
                                                       code: (note: for 'with' annotations the evidence code should
                                                       be IC, IEA, IGI, IPI OR ISS)" identifier="" editable="true"
                       code="C"> </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="interProDomainToInteractions"
-              description="For proteins with a particular InterPro domain, search
-                           for proteins they have been shown to interact with.  Display the
-                           confidence of the interaction and the PubMed id of the paper
-                           describing the experiment." important="false">
-      <query name="interProDomainToInteractions" model="genomic"
-             view="Protein.proteinFeatures.interproId
-                   Protein.proteinFeatures.name Protein.identifier
-                   Protein.primaryAccession
-                   Protein.interactionRoles.interaction.interactors.protein.identifier
-                   Protein.interactionRoles.interaction.interactors.protein.primaryAccession
-                   Protein.interactionRoles.interaction.evidence.confidence
-                   Protein.interactionRoles.interaction.evidence.confidenceDesc
-                   Protein.interactionRoles.interaction.evidence.analysis.publication.pubMedId"
-             constraintLogic="A and B and C and D">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.interactionRoles" type="ProteinInteractor">
-        </node>
-        <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
-        </node>
-        <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
-        </node>
-        <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
-          <constraint op="!=" value="Protein" code="A">
-          </constraint>
-        </node>
-        <node path="Protein.interactionRoles.interaction.evidence" type="ExperimentalResult">
-        </node>
-        <node path="Protein.organism" type="Organism">
-        </node>
-        <node path="Protein.organism.shortName" type="String">
-          <constraint op="=" value="D. melanogaster" description="Search for proteins from organism:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Protein.proteinFeatures" type="ProteinFeature">
-        </node>
-        <node path="Protein.proteinFeatures.evidence" type="Evidence">
-        </node>
-        <node path="Protein.proteinFeatures.identifier" type="String">
-          <constraint op="LIKE" value="IPR%" description="" identifier="" code="C">
-          </constraint>
-        </node>
-        <node path="Protein.proteinFeatures.name" type="String">
-          <constraint op="LIKE" value="%leucine%" description="Constrain
-                                                               the name of the InterPro domain, use '*' for wildcards:"
-                      identifier="" editable="true" code="D"> </constraint>
         </node>
       </query>
     </template>
@@ -682,28 +585,6 @@
         </node>
       </query>
     </template>
-    <template name="proteinFeature2proteins"
-              description="Show proteins from a particular organism that have a
-                           particular protein domain or family." important="false">
-      <query name="proteinFeature2proteins" model="genomic" view="Protein Protein.proteinFeatures" constraintLogic="A and B">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.organism" type="Organism">
-        </node>
-        <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Drosophila melanogaster" description="Show proteins from:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Protein.proteinFeatures" type="ProteinFeature">
-        </node>
-        <node path="Protein.proteinFeatures.identifier" type="String">
-          <constraint op="=" value="PF01926" description="that have
-                                                          domain/family: (identifier can be Pfam, Interpro Smart,
-                                                          prosite, Prints, ProDom TIGRFAM, PIRSF, SUPERFAMILY, PANTHER,
-                                                          Gene3D)" identifier="" editable="true" code="B"> </constraint>
-        </node>
-      </query>
-    </template>
     <template name="proteinToGeneIdentifiers"
               description="For a particular UniProt protein show the identifiers
                            and symbol of the corresponding gene." important="false">
@@ -735,7 +616,6 @@
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinStructure" type="class" />
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinRegion" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class" />
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />comment
 
@@ -774,7 +654,6 @@
     <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
     <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class" />
     <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFeature" type="class" />
     <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
     <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />

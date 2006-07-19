@@ -17,9 +17,9 @@
       their associated biological processes, cellular components and
       molecular functions in a species-independent manner.
           </P>
-          <DT><I>M. musculus</I></DT>
+          <DT><I>Plasmodium falciparum 3D7</I></DT>
           <DD>
-            GO annotations for <I>M. musculus</I> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>, updated 15th April 2006.<BR/>
+            GO annotations for <I>Plasmodium falciparum 3D7</I> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>, updated 15th April 2006.<BR/>
           </DD>
         </DL>
       </div>
@@ -31,7 +31,7 @@
       <div class="body">
         <ul>
           <li>
-            All gene/GO annotation pairs from <i>M. musculus</i>
+            All gene/GO annotation pairs from <i>Plasmodium falciparum 3D7</i>
             <im:querylink text="(browse)" skipBuilder="true">
 <query name="" model="genomic" view="Gene Gene.goAnnotation">
   <node path="Gene" type="Gene">
@@ -39,7 +39,7 @@
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Mus musculus" description="" identifier="" code="A">
+    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
@@ -51,7 +51,7 @@
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Mus musculus" description="" identifier="" code="A">
+    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
