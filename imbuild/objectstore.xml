@@ -29,6 +29,7 @@
   <!-- INIT TASKS -->
 
   <target name="-pre-init" depends="model.-pre-init">
+    <mkdir dir="${build.classes.dir}"/>
     <property name="build.model.dir" location="${build.dir}/model"/>
   </target>
 
@@ -69,7 +70,6 @@
     <!-- Retrieve model from database -->
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
     <!-- Copy retrieved files so that model generation and packaging tasks will find them -->
-    <mkdir dir="${build.classes.dir}"/>
     <copy file="${build.model.dir}/${model.name}_model.xml"
           todir="${build.classes.dir}"/>
     <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
