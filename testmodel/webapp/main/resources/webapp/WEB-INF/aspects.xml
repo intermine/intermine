@@ -14,8 +14,8 @@
       other languages have a plural word meaning "people" that has no singular.
     </intro-text>
     <starting-points>Employee Manager CEO Contractor Secretary</starting-points>
-    <aspect-source name="Database One" url="http://www.databaseone.com"/>
-    <aspect-source name="Database Two" url="http://www.databasetwo.com"/>
+    <aspect-source name="Database One" url="#"/>
+    <aspect-source name="Database Two" url="#"/>
   </aspect>
   <aspect name="Entities">
     <subtitle>Entities sub-title</subtitle>
@@ -34,7 +34,7 @@
       not refer to anything animate. The distinctive propriety of an entity rationally
       yields the existence of the relatively distinct entities.
     </intro-text>
-    <aspect-source name="Database One" url="http://www.databaseone.com"/>
-    <aspect-source name="Database Two" url="http://www.databasetwo.com"/>
+    <aspect-source name="Database One" url="#"/>
+    <aspect-source name="Database Two" url="#"/>
   </aspect>
 </aspects>
