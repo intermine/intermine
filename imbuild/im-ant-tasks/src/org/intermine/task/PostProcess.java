@@ -1,10 +1,19 @@
 package org.intermine.task;
 
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Collection;
 
 import org.intermine.task.project.Project;
 import org.intermine.task.project.ProjectXmlBinding;
@@ -18,10 +27,21 @@ import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.ClasspathUtils;
 
+/**
+ * Class that operates on the PostProcessing section of a Mines project.xml file.
+ *
+ * The class will iterate over the post processes in the project.xml in the order that they are
+ * listed in.
+ *
+ * If there is a do-source postprocess all the sources included in the project.xml will
+ * be examined to see if they have a post process step of their own, if so, it will be called.
+ *
+ * @author Peter McLaren
+ * */
 public class PostProcess extends Task
 {
     private Reference classPathRef;
-    private File projectXml, outputFile;
+    private File projectXml;
     private Project project;
     private String operation, action;
     private File workspaceBaseDir;
@@ -188,7 +208,6 @@ public class PostProcess extends Task
             setProperty(pp, "objectStore", "os.production");
             setProperty(pp, "objectStoreWriter", "osw.production");
             setProperty(pp, "project", getProject());
-            //PropertyUtils.setProperty(pp, "outputFile", outputFile);
         } catch (Exception err) {
             throw new BuildException("error setting up PostProcessTask", err);
         }

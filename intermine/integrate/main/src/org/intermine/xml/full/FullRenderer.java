@@ -85,12 +85,12 @@ public class FullRenderer
      */
     public static String render(Collection items) {
         StringBuffer sb = new StringBuffer();
-        sb.append(getHeader() + ENDL);
+        sb.append(getHeader()).append(ENDL);
         Iterator iter = items.iterator();
         while (iter.hasNext()) {
             sb.append(render((Item) iter.next()));
         }
-        sb.append(getFooter() + ENDL);
+        sb.append(getFooter()).append(ENDL);
 
         return sb.toString();
     }
@@ -113,16 +113,15 @@ public class FullRenderer
             if (item.getImplementations() != null && !item.getImplementations().equals("")) {
                 writer.writeAttribute("implements", item.getImplementations());
             }
-
+            writer.writeCharacters(ENDL);
             TreeSet attrs = new TreeSet(new RendererComparator());
             attrs.addAll(item.getAttributes());
             for (Iterator i = attrs.iterator(); i.hasNext();) {
                 Attribute attr = (Attribute) i.next();
-                String value = attr.getValue();
-
                 writer.writeEmptyElement("attribute");
                 writer.writeAttribute("name", attr.getName());
                 writer.writeAttribute("value", attr.getValue());
+                writer.writeCharacters(ENDL);
             }
 
             TreeSet refs = new TreeSet(new RendererComparator());
@@ -132,6 +131,7 @@ public class FullRenderer
                 writer.writeEmptyElement("reference");
                 writer.writeAttribute("name", ref.getName());
                 writer.writeAttribute("ref_id", ref.getRefId());
+                writer.writeCharacters(ENDL);
             }
 
             TreeSet cols = new TreeSet(new RendererComparator());
@@ -146,8 +146,10 @@ public class FullRenderer
                     writer.writeAttribute("ref_id", (String) j.next());
                 }
                 writer.writeEndElement();
+                writer.writeCharacters(ENDL);
             }
             writer.writeEndElement();
+            writer.writeCharacters(ENDL);
         } catch (XMLStreamException e) {
             throw new RuntimeException("unexpected exception while accessing a XMLStreamWriter", e);
         }
