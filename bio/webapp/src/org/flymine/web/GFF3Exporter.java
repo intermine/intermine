@@ -157,7 +157,7 @@ public class GFF3Exporter implements TableExporter
                     int lastDotPos = fieldName.lastIndexOf(".");
 
                     if (lastDotPos != -1) {
-                        fieldName = fieldName.substring(lastDotPos);
+                        fieldName = fieldName.substring(lastDotPos + 1);
                     }
 
                     extraAttributes.put(fieldName, row.get(realColumnIndex));
