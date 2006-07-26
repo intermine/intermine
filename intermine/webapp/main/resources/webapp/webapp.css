@@ -294,6 +294,13 @@ table.results {
 table.noborder, table.noborder td, table.noborder th {
   border: none;
 }
+table.toolbox, table.toolbox td, table.toolbox th {
+  border: none;
+  background: none;
+  padding:0px;
+  spacing:0px;
+  align:center;
+}
 .showing {
   background: #E7F1FB;
   border: 1px solid #bbb;
@@ -341,7 +348,9 @@ div.viewListEdit {
 table.results tr.even {
   background: #F5F0FF;
 }
-
+table.results th.checkbox,table.results td.checkbox{
+	border-right-style: dotted;
+}
 .type {
   color: #864;
 }
