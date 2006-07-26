@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.RedFlyRegulatoryRegion" 
+         extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
+    <attribute name="redflyIdentifier" type="java.lang.String"/>
+    <attribute name="elementEvidence" type="java.lang.String"/>
+    <collection name="phenotypes" referenced-type="org.flymine.model.genomic.Phenotype"/>
+  </class>
+</classes>
