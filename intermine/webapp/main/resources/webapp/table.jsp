@@ -141,18 +141,9 @@
               </c:choose>
             </c:set>
           
-            <c:choose>
-              <c:when test="${fn:length(resultsTable.columns) > 1}">
-                <c:set var="headerStyle" value="border-bottom: none"/>
-                <c:set var="headerRowspan" value="2"/>
-              </c:when>
-              <c:otherwise>
-                <c:set var="headerStyle" value=""/>
-                <c:set var="headerRowspan" value="1"/>
-              </c:otherwise>
-            </c:choose>
-
-            <th align="center" rowspan="${headerRowspan}">
+<c:choose>
+    <c:when test="${column.visible}">
+            <th align="center" class="checkbox">
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
                              onclick="selectColumnCheckbox(${status.index}, '${dataType}')"
                              disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
@@ -160,101 +151,98 @@
               </html:multibox>
             </th>
 
-            <th align="center" valign="top" style="${headerStyle}">
-              <div>
-                <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
-              </div>
-            </th>
+            <th align="center" valign="top" >
+
+			<div>              
+			  <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
+			</div>
+            <%-- put in left, right, hide and show buttons --%>
+			<table class="toolbox">
+	          <tr>
+		        <td>
+	           <%-- left --%>
+	                <c:choose>
+	                  <c:when test="${status.first}">
+	                    <%-- since this blank GIF is displayed only to balance
+	                         the right arrow at the other end of the div, it is
+	                         not needed if there is no arrow --%>
+	                    <c:if test="${not status.last}">
+	                      <img style="vertical-align:middle;" border="0" align="middle" 
+	                           src="images/blank13x13.gif" alt=" " width="13"
+	                           height="13"/>
+	                    </c:if>
+	                  </c:when>
+	                  <c:otherwise>
+	                    <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
+	                      <fmt:param value="${column.name}"/>
+	                    </fmt:message>
+	                    <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
+	                    <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
+	                               title="${moveLeftTitle}">
+	                      <img style="vertical-align:middle;" border="0" align="middle"
+	                           width="13" height="13" src="images/left-arrow-simple.gif" 
+	                           alt="${moveRightString}"/>
+	                    </html:link>
+	                  </c:otherwise>
+	                </c:choose>
+				</td>
+				<td>
+			<%-- show/hide --%>
+	           <c:if test="${fn:length(resultsTable.columns) > 1}">
+	                    <c:if test="${resultsTable.visibleColumnCount > 1}">
+	                      <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
+	                        <fmt:param value="${column.name}"/>
+	                      </fmt:message>
+	                      <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+	                                 title="${hideColumnTitle}">
+	                          <img src="images/hide-column.gif" title="${hideColumnTitle}" align="left">
+	                      </html:link>
+	                    </c:if>
+	             </c:if>
+	          </td>
+		      <td>
+           <%-- right --%>
+                <c:choose>
+	                  <c:when test="${status.last}">
+	                    <%-- since this blank GIF is displayed only to balance
+	                         the left arrow at the other end of the div, it is
+	                         not needed if there is no arrow --%>
+	                    <c:if test="${not status.last}">
+		                      <img style="vertical-align:middle;" border="0" align="middle" 
+		                           src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+	                    </c:if>
+                      </c:when>
+	                  <c:otherwise>
+	                    <fmt:message key="results.moveRightHelp" var="moveRightTitle">
+	                      <fmt:param value="${column.name}"/>
+	                    </fmt:message>
+	                    <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
+	                    <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+	                               title="${moveRightTitle}">
+	                      <img style="vertical-align:middle;" border="0" align="middle" 
+	                           width="13" height="13"
+	                           src="images/right-arrow-simple.gif" alt="${moveRightString}"/>
+	                    </html:link>
+	                  </c:otherwise>
+	             </c:choose>
+			</td>
+     	</tr>
+	</table>
+    </c:when>
+    <c:otherwise>
+       <th>
+       <%-- <fmt:message key="results.showColumnHelp" var="showColumnTitle">
+            <fmt:param value="${column.name}"/>
+            </fmt:message> --%>
+       <html:link action="/changeTable?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+             title="${showColumnTitle}">
+            <img src="images/show-column.gif" title="${fn:replace(column.name, '.', '&nbsp;> ')}">
+       </html:link>
+    </c:otherwise>
+</c:choose>    
+</th>
           </c:forEach>
         </tr>
-
-        <c:if test="${fn:length(resultsTable.columns) > 1}">
-          <%-- put in left, right, hide and show buttons --%>
-        
-          <tr>
-          <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
-            <th align="center">
-              <div style="white-space:nowrap">
-
-                <%-- left --%>
-                <c:choose>
-                  <c:when test="${status.first}">
-                    <%-- since this blank GIF is displayed only to balance
-                         the right arrow at the other end of the div, it is
-                         not needed if there is no arrow --%>
-                    <c:if test="${not status.last}">
-                      <img style="margin-right: 5px" border="0" align="middle" 
-                           src="images/blank13x13.gif" alt=" " width="13"
-                           height="13"/>
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
-                      <fmt:param value="${column.name}"/>
-                    </fmt:message>
-                    <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
-                    <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
-                               title="${moveLeftTitle}">
-                      <img style="margin-right: 5px" border="0" align="middle"
-                           width="13" height="13" src="images/left-arrow-square.gif" 
-                           alt="${moveRightString}"/>
-                    </html:link>
-                  </c:otherwise>
-                </c:choose>
-
-                <%-- show/hide --%>
-                <c:choose>
-                  <c:when test="${column.visible}">
-                    <c:if test="${resultsTable.visibleColumnCount > 1}">
-                      <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
-                        <fmt:param value="${column.name}"/>
-                      </fmt:message>
-                      <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-                                 title="${hideColumnTitle}">
-                        <fmt:message key="results.hideColumn"/>
-                      </html:link>
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <fmt:message key="results.showColumnHelp" var="showColumnTitle">
-                      <fmt:param value="${column.name}"/>
-                    </fmt:message>
-                    <html:link action="/changeTable?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-                               title="${showColumnTitle}">
-                      <fmt:message key="results.showColumn"/>
-                    </html:link>
-                  </c:otherwise>
-                </c:choose>
-
-                <%-- right --%>
-                <c:choose>
-                  <c:when test="${status.last}">
-                    <%-- since this blank GIF is displayed only to balance
-                         the left arrow at the other end of the div, it is
-                         not needed if there is no arrow --%>
-                    <c:if test="${not status.last}">
-                      <img style="margin-left: 5px" border="0" align="middle" 
-                           src="images/blank13x13.gif" alt=" " width="13" height="13"/>
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-                      <fmt:param value="${column.name}"/>
-                    </fmt:message>
-                    <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
-                    <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
-                               title="${moveRightTitle}">
-                      <img style="margin-left: 5px" border="0" align="middle" 
-                           width="13" height="13"
-                           src="images/right-arrow-square.gif" alt="${moveRightString}"/>
-                    </html:link>
-                  </c:otherwise>
-                </c:choose>
-              </div>
-            </th>
-          </c:forEach>
-          </tr>
-        </c:if>
 
         <%-- The data --%>
 
@@ -282,7 +270,7 @@
                 <c:choose>
                   <c:when test="${column.visible}">
                     <%-- the checkbox to select this object --%>
-                    <td align="center">
+                    <td align="center" class="checkbox">
                       <html:multibox property="selectedObjects"
                                      styleId="selectedObjects_${status2.index}${dataType}_${status.index}"
                                      onclick="itemChecked(${status2.index}, '${dataType}')">
@@ -304,7 +292,7 @@
                   </c:when>
                   <c:otherwise>
                     <%-- add a space so that IE renders the borders --%>
-                    <td colspan="2">&nbsp;</td>
+                    <td style="background:#eee;">&nbsp;</td>
                   </c:otherwise>
                 </c:choose>
               </c:forEach>
