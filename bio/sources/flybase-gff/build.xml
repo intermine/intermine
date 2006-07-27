@@ -5,7 +5,7 @@
   <import file="../../../imbuild/source.xml"/>
   
   <target name="-prepare-filter">
-    <property name="build.data.dir" location="${build.dir}/data"/>
+    <property name="build.data.dir" location="${build.dir}/data/${gff3.taxonId}"/>
     <mkdir dir="${build.data.dir}"/>
   </target>
   
