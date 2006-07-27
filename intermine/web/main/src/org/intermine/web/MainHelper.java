@@ -256,7 +256,14 @@ public class MainHelper
                         QueryField qf = new QueryField((QueryClass) qn, "id");
                         cs.addConstraint(new BagConstraint(qf, c.getOp(), bag));
                     } else {
-                        cs.addConstraint(new BagConstraint(qn, c.getOp(), bag));
+                        if (qn.getType().equals(String.class)) {
+                            QueryFunction qf = new QueryFunction((QueryField) qn,
+                                                                 QueryFunction.LOWER);
+                            cs.addConstraint(new BagConstraint(qf, c.getOp(), 
+                                                               lowerCaseBag(bag)));
+                        } else {
+                            cs.addConstraint(new BagConstraint(qn, c.getOp(), bag));
+                        }
                     }
                 } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL
@@ -323,6 +330,20 @@ public class MainHelper
         }
 
         return q;
+    }
+
+    private static Collection lowerCaseBag(Collection bag) {
+        List retList = new ArrayList();
+        Iterator iter = bag.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            if (obj instanceof String) {
+                retList.add(((String) obj).toLowerCase());
+            } else {
+                retList.add(obj);
+            }
+        }
+        return retList;
     }
 
     /**
