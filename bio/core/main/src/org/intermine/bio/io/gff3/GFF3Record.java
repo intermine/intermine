@@ -140,6 +140,11 @@ public class GFF3Record
 
         while (sTok.hasMoreTokens()) {
             String attVal = sTok.nextToken().trim();
+
+            if (attVal.length() == 0) {
+                continue;
+            }
+            
             String attName;
             List valList = new ArrayList();
             int spaceIndx = attVal.indexOf("=");
