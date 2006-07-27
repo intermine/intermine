@@ -236,6 +236,7 @@
                   model="${target.model}"
                   handlerClassName="${gff3.handlerClassName}">
       <fileset dir="${src.data.dir}">
+        <include name="*.gff"/>
         <include name="*.gff3"/>
       </fileset>
     </convert-gff3-file>
