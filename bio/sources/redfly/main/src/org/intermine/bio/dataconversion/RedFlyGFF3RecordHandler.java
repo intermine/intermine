@@ -33,6 +33,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     private String REDFLY_PREFIX = "REDfly:";
     private Map phenotypeMap = new HashMap();
     private Map geneMap = new HashMap();
+    private Map publications = new HashMap();
 
     /**
      * Create a new RedFlyGFF3RecordHandler for the given target model.
@@ -122,6 +123,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         feature.setReference("gene", getGene(geneName));
 
+        addEvidence(getPublication(pubmedId));
+
         createSynonym(feature, "identifier", redflyID);
         createSynonym(feature, "name", name);
 
@@ -154,6 +157,24 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         phenotypeMap.put(ontologyTermId, phenotypeItem);
         return phenotypeItem;
     }
+
+    /**
+     * Return the publication object for the given PubMed id
+     *
+     * @param pubmedId the PubMed ID
+     * @return the publication
+     */
+    protected Item getPublication(String pubmedId) {
+        if (publications.containsKey(pubmedId)) {
+            return (Item) publications.get(pubmedId);
+        }
+
+        Item publicationItem = getItemFactory().makeItem(null, tgtNs + "Publication", "");
+        publicationItem.addAttribute(new Attribute("pubMedId", pubmedId));
+        addItem(publicationItem);
+        publications.put(pubmedId, publicationItem);
+        return publicationItem;
+    } 
 
     /**
      * Create a synonym Item from the given information.
