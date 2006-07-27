@@ -28,7 +28,6 @@ import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 
-
 /**
  * Permits specific operations to be performed when processing an line of GFF3.
  * GFF3Converter sets the core items created in the handler, the handler can
@@ -44,6 +43,7 @@ public class GFF3RecordHandler
     private Model tgtModel;
     private ItemFactory itemFactory;
     private Item organism;
+    private ReferenceList evidenceReferenceList = new ReferenceList("evidence");
 
     protected Map tgtSeqs = new HashMap();
     private Item tgtOrganism;
@@ -170,6 +170,26 @@ public class GFF3RecordHandler
     }
 
     /**
+     * Add an Evidence Item to this handler, to be retrieved later with getEvidenceReferenceList().
+     * @param evidence the evidence
+     */
+    public void addEvidence(Item evidence) {
+        evidenceReferenceList.addRefId(evidence.getIdentifier());
+    }
+
+    /**
+     * Return a ReferenceList containing the evidence Items ids set by addEvidence()
+     * @return the ReferenceList
+     */
+    public ReferenceList getEvidenceReferenceList() {
+        return evidenceReferenceList;
+    }
+
+    public void clearEvidenceReferenceList() {
+        evidenceReferenceList = new ReferenceList("evidence");
+    }
+    
+    /**
      * Set the ComputationalResult item for this record.
      * @param result the ComputationalResult item
      */
@@ -229,7 +249,6 @@ public class GFF3RecordHandler
         return tgtOrganism;
     }
 
-
     /**
      * Set tgtSequence item created for this record, should not be edited in handler.
      * @param tgtSequence the sequence item
@@ -237,7 +256,6 @@ public class GFF3RecordHandler
     public void setTgtSequence(Item tgtSequence) {
         items.put("_tgtSequence", tgtSequence);
     }
-
 
     /**
      * Get the target Sequence Item set by setTgtSequence().
@@ -305,7 +323,6 @@ public class GFF3RecordHandler
         items.put(item.getIdentifier(), item);
     }
 
-
     /**
      * Return items that need extra processing that can only be done after all other GFF features
      * have been read.
@@ -321,7 +338,6 @@ public class GFF3RecordHandler
     public void clearFinalItems() {
         // do nothing
     }
-
 
     /**
      * Given a map from class name to reference name populate the reference for

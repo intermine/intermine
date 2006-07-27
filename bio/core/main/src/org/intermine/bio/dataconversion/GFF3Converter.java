@@ -264,8 +264,7 @@ public class GFF3Converter
                                Arrays.asList(new Object[] {dataSet.getIdentifier()})));
         handler.setLocation(relation);
 
-        ReferenceList evidence = new ReferenceList("evidence");
-        evidence.addRefId(dataSet.getIdentifier());
+        handler.addEvidence(dataSet);
 
         if (record.getScore() != null) {
             Item computationalResult = createItem("ComputationalResult");
@@ -284,7 +283,7 @@ public class GFF3Converter
             }
 
             handler.setResult(computationalResult);
-            evidence.addRefId(computationalResult.getIdentifier());
+            handler.addEvidence(computationalResult);
         } else {
             if (record.getSource() != null) {
                 // this special case added to cope with pseudoobscura data
@@ -296,13 +295,12 @@ public class GFF3Converter
                 handler.setAnalysis(computationalAnalysis);
 
                 handler.setResult(computationalResult);
-                evidence.addRefId(computationalResult.getIdentifier());
+                handler.addEvidence(computationalResult);
 
                 feature.addAttribute(new Attribute("curated", "false"));
             }
         }
 
-        feature.addCollection(evidence);
         handler.setFeature(feature);
 
         String orgAbb = null;
@@ -319,6 +317,9 @@ public class GFF3Converter
         }
 
         handler.process(record);
+
+        feature.addCollection(handler.getEvidenceReferenceList());
+        handler.clearEvidenceReferenceList();
 
         if (feature.hasAttribute("identifier")) {
             Item synonym = createItem("Synonym");
