@@ -59,7 +59,7 @@
     <source name="drosdel" type="drosdel"/>
     <source name="tiling_path" type="tiling_path">
       <property name="gff3.taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/tiling"/>
+      <property name="src.data.dir" location="/shared/data/tiling/current_gff"/>
     </source>
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
