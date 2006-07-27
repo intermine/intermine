@@ -3,6 +3,7 @@
   <item title="Main">
     <item url="/index.xml" title="Home"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
+    <item url="/doc/links.xml" title="Links"/>
   </item>
 
   <item title="Release info">
@@ -40,6 +41,7 @@
   
   <item title="Related Projects">
     <item url="http://www.intermine.org" title="InterMine"/>
+    <item url="http://www.flymine.org/t1dmine" title="T1DMine"/>
     <item url="http://preview.stemcellmine.org" title="StemCellMine"/>
   </item>
   
