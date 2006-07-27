@@ -25,7 +25,6 @@ import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.metadata.Model;
-import org.intermine.task.DynamicAttributeTask;
 
 /**
  * Task to translate data

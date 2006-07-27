@@ -34,7 +34,8 @@ public class DagConverterTest extends TestCase {
     }
 
     public void test1() throws Exception {
-        DagConverter converter = new DagConverter(itemWriter, "", "SO", NAMESPACE + "OntologyTerm");
+        DagConverter converter = new DagConverter(itemWriter, "", "SO", "http://www.flymine.org",
+                                                  NAMESPACE + "OntologyTerm");
         DagTerm a = new DagTerm("SO:42", "parent");
         DagTerm b = new DagTerm("SO:43", "child");
         DagTerm c = new DagTerm("SO:44", "partof");

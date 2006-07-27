@@ -10,6 +10,7 @@
     <source name="flybase-dmel-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
       <property name="gff3.taxonId" value="7227"/>
+      <!-- <property name="flybase.small" location="true"/>-->
     </source>
     <source name="flybase-dpse-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/gff"/>
@@ -65,8 +66,9 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="phenotype" type="phenotype">
-      <property name="src.data.file" location="/shared/data/phenotype/phenotype.ontology"/>
+    <source name="fly_anatomy" type="phenotype">
+      <property name="src.data.file" 
+                location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
     </source>
     <source name="homophila" type="homophila">
       <property name="src.data.dir" location="/shared/data/homophila/current"/>

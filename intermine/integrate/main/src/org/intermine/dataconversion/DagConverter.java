@@ -58,9 +58,11 @@ public class DagConverter extends DataConverter
      * @param writer an ItemWriter used to handle the resultant Items
      * @param dagFilename the name of the DAG file
      * @param dagName the title of the dag, as present in any static data
+     * @param url the URL of the source of this ontology
      * @param termClass the class of the Term
      */
-    public DagConverter(ItemWriter writer, String dagFilename, String dagName, String termClass) {
+    public DagConverter(ItemWriter writer, String dagFilename, String dagName, String url,
+                        String termClass) {
         super(writer);
         this.dagFilename = dagFilename;
         this.termClass = termClass;
@@ -69,6 +71,7 @@ public class DagConverter extends DataConverter
         ontology.setClassName(ONTOLOGY);
         ontology.setImplementations("");
         ontology.addAttribute(new Attribute("title", dagName));
+        ontology.addAttribute(new Attribute("url", url));
     }
 
     /**

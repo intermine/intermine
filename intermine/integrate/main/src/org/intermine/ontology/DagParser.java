@@ -311,7 +311,7 @@ public class DagParser
         }
     }
 
-    protected void createTermIdNameMap(Map termIdNameMap, DagTerm term) {
+    private void createTermIdNameMap(Map termIdNameMap, DagTerm term) {
         if (!termIdNameMap.containsKey(term.getId())) {
             Iterator iter = term.getChildren().iterator();
             while (iter.hasNext()) {

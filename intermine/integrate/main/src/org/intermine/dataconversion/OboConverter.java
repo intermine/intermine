@@ -34,11 +34,11 @@ public class OboConverter extends DagConverter
 {
     /**
      * Construct a new instance of OboConverter.
-     * @see DagConverter#DagConverter(ItemWriter, String, String, String)
+     * @see DagConverter#DagConverter(ItemWriter, String, String, String, String)
      */
-    public OboConverter(ItemWriter writer, String dagFilename, String dagName,
+    public OboConverter(ItemWriter writer, String dagFilename, String dagName, String url,
             String termClass) {
-        super(writer, dagFilename, dagName, termClass);
+        super(writer, dagFilename, dagName, url, termClass);
     }
 
     /**
