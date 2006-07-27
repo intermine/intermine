@@ -34,7 +34,7 @@ public class DagConverterTask extends Task
 {
     protected static final Logger LOG = Logger.getLogger(DagConverterTask.class);
 
-    protected String file, dagName, osName, termClass;
+    private String file, dagName, osName, url, termClass;
 
     /**
      * Set the input file name
@@ -58,6 +58,15 @@ public class DagConverterTask extends Task
      */
     public void setOsName(String osName) {
         this.osName = osName;
+    }
+
+    /**
+     * Set the url for the source of the ontology
+     *
+     * @param url the URL
+     */
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     /**
@@ -95,9 +104,9 @@ public class DagConverterTask extends Task
 
             DagConverter converter;
             if (file.endsWith(".ontology") || file.endsWith(".dag")) {
-                converter = new DagConverter(writer, file, dagName, termClass);
+                converter = new DagConverter(writer, file, dagName, url, termClass);
             } else if (file.endsWith(".obo")) {
-                converter = new OboConverter(writer, file, dagName, termClass);
+                converter = new OboConverter(writer, file, dagName, url, termClass);
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }

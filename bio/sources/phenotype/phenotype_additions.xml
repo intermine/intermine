@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.Phenotype" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+  <attribute name="namespace" type="java.lang.String"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="phenotypes"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">

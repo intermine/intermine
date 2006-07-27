@@ -251,9 +251,10 @@
     </taskdef>
 
     <convert-dag-file file="${src.data.file}"
-                  osName="osw.${common.os.prefix}-tgt-items"
-                  dagName="${dag.ontology.name}"
-                  termClass="${dag.term.class}"/>
+                      osName="osw.${common.os.prefix}-tgt-items"
+                      dagName="${dag.ontology.name}"
+                      url="${dag.source.url}"
+                      termClass="${dag.term.class}"/>
   </target>
 
   <!--

@@ -38,7 +38,8 @@ public class OboConverterTest extends TestCase {
     }
 
     public void test1() throws Exception {
-        DagConverter converter = new OboConverter(itemWriter, "", "SO", NAMESPACE + "OntologyTerm");
+        DagConverter converter = new OboConverter(itemWriter, "", "SO", "http://www.flymine.org",
+                                                  NAMESPACE + "OntologyTerm");
         DagTerm a = new OboTerm("SO:42", "parent");
         DagTerm b = new OboTerm("SO:43", "child");
         DagTerm c = new OboTerm("SO:44", "partof");
