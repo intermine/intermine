@@ -306,11 +306,11 @@ public class TemplateRepository
             TemplateQuery template = (TemplateQuery) iter.next();
             
             Document doc = new Document();
-            doc.add(new Field("name", template.getName(),Field.Store.YES, Field.Index.TOKENIZED));
-            doc.add(new Field   ("content",template.getDescription()
-                              + " " + template.getKeywords(), Field.Store.NO, 
-                              Field.Index.TOKENIZED));
-            doc.add(new Field("type", type,Field.Store.YES, Field.Index.NO));
+            doc.add(new Field("name", template.getName(), Field.Store.YES, Field.Index.TOKENIZED));
+            doc.add(new Field   ("content", template.getDescription()
+                                 + " " + template.getKeywords(), Field.Store.NO, 
+                                 Field.Index.TOKENIZED));
+            doc.add(new Field("type", type, Field.Store.YES, Field.Index.NO));
             
             try {
                 writer.addDocument(doc);
