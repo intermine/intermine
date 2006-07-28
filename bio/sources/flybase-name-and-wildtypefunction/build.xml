@@ -1,4 +1,0 @@
-<project name="flybase-name-and-wildtypefunction-tasks" default="default" basedir=".">
-  <description>build flybase-name-and-wildtypefunction tasks</description>
-  <import file="../../../imbuild/source.xml"/> 
-</project>
