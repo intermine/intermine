@@ -17,13 +17,14 @@ import java.util.HashSet;
 /**
  * Extension of DagTerm that adds a namespace attribute that is specific to the OBO
  * format.
- * 
+ *
  * @author Thomas Riley
  */
 public class OboTerm extends DagTerm
 {
     private String namespace = "";
     private String description = "";
+    private boolean obsolete = false;
     private Set allParentIds = null;
 
     /**
@@ -34,7 +35,7 @@ public class OboTerm extends DagTerm
     public OboTerm(String id, String name) {
         super(id, name);
     }
-    
+
     /**
      * Get the namespace attribute.
      * @return term namespace
@@ -42,7 +43,7 @@ public class OboTerm extends DagTerm
     public String getNamespace() {
         return namespace;
     }
-    
+
     /**
      * Set the namespace attribute.
      * @param namespace the term namespace
@@ -58,13 +59,28 @@ public class OboTerm extends DagTerm
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Set the term description.
      * @param description the term description
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Set the obsolete flag for this OboTerm as read from an OBO file.
+     * @param obsolete the flag
+     */
+    public void setObsolete(boolean obsolete) {
+        this.obsolete = obsolete;
+    }
+
+    /**
+     * Return the obsolete flag for this term.
+     */
+    public boolean isObsolete() {
+        return obsolete;
     }
 
     /**

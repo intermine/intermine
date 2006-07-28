@@ -219,12 +219,9 @@ public class OboParser
             Map tvs = (Map) iter.next();
             String id = (String) ((List) tvs.get("id")).get(0);
             String name = (String) ((List) tvs.get("name")).get(0);
-            if (!isObsolete(tvs)) {
-                OboTerm term = new OboTerm(id, name);
-                terms.put(term.getId(), term);
-            } else {
-                LOG.debug("Skipping obselete term " + id + " : " + name);
-            }
+            OboTerm term = new OboTerm(id, name);
+            term.setObsolete(isObsolete(tvs));
+            terms.put(term.getId(), term);
         }
 
         // Copy all terms into rootTerms map - non-root terms will be removed
