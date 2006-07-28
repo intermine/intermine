@@ -42,7 +42,7 @@ public class OboConverter extends DagConverter
     }
 
     /**
-     * Cast the DagTerm to an OboTerm and set the namespace attribute.
+     * Cast the DagTerm to an OboTerm and set the namespace, description and obsolete attributes.
      * 
      * @see DagConverter#configureItem(String, Item, DagTerm)
      */
@@ -52,6 +52,7 @@ public class OboConverter extends DagConverter
         OboTerm oboterm = (OboTerm) term;
         item.addAttribute(new Attribute("namespace", oboterm.getNamespace()));
         item.addAttribute(new Attribute("description", oboterm.getDescription()));
+        item.addAttribute(new Attribute("obsolete", "" + oboterm.isObsolete()));
     }
 
     /**
