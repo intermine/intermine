@@ -115,16 +115,6 @@ public class Dependencies extends Task
     }
 
     /**
-     * Specify an alternative path id. The default is main.class.path. The fileset id
-     * will be this value with ".fileset" appended.
-     *
-     * @param id id for class path
-     *
-    public void setPathid(String id) {
-        pathid = id;
-    }*/
-
-    /**
      * Set the dependency type. This is basically a way to alter the property read from
      * project.properties identifying project dependencies. The name of the property
      * read will by TYPE.dependencies where, by default, TYPE is "compile". Setting this
