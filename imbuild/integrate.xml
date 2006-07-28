@@ -53,4 +53,10 @@
   
   <target name="do-action" depends="integrate"/>
 
+  <target name="-pre-clean-all">
+    <antcall target="integrate">
+      <param name="action" value="clean"/>
+    </antcall>
+  </target>
+
 </project>
