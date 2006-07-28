@@ -1,6 +1,6 @@
 <!--
   a bit of an odd source as it writes straight to the production database
-  and deals with model objects (and therefore the task sub-project depends on
+  and deals with model objects (and therefore the "main" sub-project depends on
   the production model).
 -->
 <project name="fasta" default="default" basedir=".">
