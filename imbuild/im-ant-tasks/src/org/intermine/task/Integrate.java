@@ -144,6 +144,13 @@ public class Integrate extends Task
         depProp.setProject(getProject());
         depProp.execute();
 
+        // pass the integrate project's basedir to the source
+        Property integrateBasedir = ant.createProperty();
+        integrateBasedir.setName("integrate.basedir");
+        integrateBasedir.setLocation(getProject().getBaseDir());
+        integrateBasedir.setProject(getProject());
+        integrateBasedir.execute();
+        
         // Add global properties
         Iterator globalPropIter = intermineProject.getProperties().iterator();
         while (globalPropIter.hasNext()) {
