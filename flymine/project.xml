@@ -66,6 +66,10 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
+    <source name="redfly" type="redfly">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="src.data.dir" location="/shared/data/REDfly/gff"/>
+    </source>
     <source name="fly_anatomy" type="phenotype">
       <property name="src.data.file" 
                 location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
