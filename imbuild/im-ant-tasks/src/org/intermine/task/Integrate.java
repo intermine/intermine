@@ -28,7 +28,7 @@ import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 
 /**
- *
+ * A task that can read a project.xml file and run an data integration build.
  * @author tom
  */
 public class Integrate extends Task
@@ -37,6 +37,7 @@ public class Integrate extends Task
         "retrieve",
         "translate",
         "load",
+        "clean"
     };
 
     private Set possibleActions = new HashSet(Arrays.asList(possibleActionsArray));
