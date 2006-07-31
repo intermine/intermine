@@ -16,12 +16,10 @@ import org.intermine.xml.full.*;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.InterMineException;
 import org.intermine.util.XmlUtil;
-//import org.intermine.util.PropertiesUtil;
 import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -107,7 +105,6 @@ public class EnsemblDataTranslator extends DataTranslator
      * @param tgtModel The data model we are translating items into.
      * @param ensemblProps Properties that are organism specific.
      * @param orgAbbrev A suitably short acronym to identify which ogransim to process; 'HS' = Human
-     * @deprecated Have to get the translator to look for its props file now...
      */
     public EnsemblDataTranslator(ItemReader srcItemReader,
                                  Properties mergeSpec,
@@ -1125,7 +1122,7 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
     /**
-     * @see org.intermine.bio.task.DataTranslatorTask#execute
+     * @see org.intermine.task.DataTranslatorTask#execute
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();
