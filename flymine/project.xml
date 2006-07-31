@@ -105,6 +105,12 @@
       <!-- currently need to group all files that set Gene.identifier together -->
       <property name="src.data.dir" location="/shared/data/go-annotation/gene-organismDbId"/>
     </source>
+    <source name="name-and-wildtypefunction" type="tab-separated-file">
+      <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
+      <property name="tsv.includes" value="flyBaseFullNameWT.txt"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1"/>
+    </source>
+
     <!--
       fasta is a bit wierd - tasks depend on the production model and
       retrieve and translate are noops

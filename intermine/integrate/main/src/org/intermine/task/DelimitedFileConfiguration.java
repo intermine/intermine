@@ -158,8 +158,13 @@ public class DelimitedFileConfiguration
         if (columnFieldClasses == null) {
             columnFieldClasses = new ArrayList();
             for (int i = 0; i < columnFieldDescriptors.size(); i++) {
-                String className = ((AttributeDescriptor) columnFieldDescriptors.get(i)).getType();
-                columnFieldClasses.add(TypeUtil.instantiate(className));
+                AttributeDescriptor ad = (AttributeDescriptor) columnFieldDescriptors.get(i);
+                if (ad == null) {
+                    columnFieldClasses.add(null);
+                } else {
+                    String className = ad.getType();
+                    columnFieldClasses.add(TypeUtil.instantiate(className));
+                }
             }
         }
         
