@@ -122,13 +122,16 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("no fasta sequences in: " + file, e);
         } catch (FileNotFoundException e) {
             throw new BuildException("problem reading file - file not found: " + file, e);
+        } catch (ObjectStoreException e) {
+            throw new BuildException("ObjectSTore problem while processing: " + file);
         }
     }
 
     /**
      * Create a FlyMine Sequence object for the InterMineObject of the given ID.
+     * @throws ObjectStoreException 
      */
-    private void setSequence(Organism org, Sequence bioJavaSequence) {
+    private void setSequence(Organism org, Sequence bioJavaSequence) throws ObjectStoreException {
         Class sequenceClass = org.flymine.model.genomic.Sequence.class;
         org.flymine.model.genomic.Sequence flymineSequence =
             (org.flymine.model.genomic.Sequence) getDirectDataLoader().createObject(sequenceClass);
