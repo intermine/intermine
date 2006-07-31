@@ -74,6 +74,9 @@
       have.file.custom.tgt - read from a custom file into a src items objectstore, no translation
       have.file.dag - this source in read from a DAG file into a tgt items objectstore, no translate
       have.file.xml.tgt - source is XML that is read into a tgt items objectstore, no translation
+      have.file.custom - source is read from a custom file using a DirectDataLoader, no translation,
+                         no src or tgt items
+
 
     For the future:
       have.db.tgt
@@ -101,9 +104,14 @@
     <condition property="do.tgt.retrieve">
       <isfalse value="${do.translate}"/>
     </condition>
-    <!-- always build the target items DB -->
-    <property name="do.build.tgt.db" value="true"/>
-    <property name="do.analyse.db.tgt.items" value="true"/>
+
+    <!-- only initialise the tgt items database if it's needed -->
+    <condition property="do.build.tgt.db">
+      <isfalse value="${have.file.custom}"/>
+    </condition>
+    <condition property="do.analyse.db.tgt.items">
+      <isfalse value="${have.file.custom}"/>
+    </condition>
   </target>
 
   <target name="default">
