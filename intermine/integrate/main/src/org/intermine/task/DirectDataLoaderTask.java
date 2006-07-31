@@ -64,10 +64,16 @@ public abstract class DirectDataLoaderTask extends Task
     /**
      * Return the IntegrationWriter for this task.
      * @return the IntegrationWriter
+     * @throws ObjectStoreException 
      */
-    private  IntegrationWriter getIntegrationWriter() {
+    private  IntegrationWriter getIntegrationWriter() throws ObjectStoreException {
         if (iw == null) {
-            throw new RuntimeException("iw not set yet - call execute() first");
+            if (integrationWriterAlias == null) {
+                throw new RuntimeException("integrationWriterAlias property is null while "
+                                           + "getting IntegrationWriter");
+            } else {
+                iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriterAlias);
+            }
         }
         return iw;
     }
@@ -76,10 +82,11 @@ public abstract class DirectDataLoaderTask extends Task
      * Return the DirectDataLoader for this Task.  Must be called only after execute() has been 
      * called.
      * @return the DirectDataLoader
+     * @throws ObjectStoreException 
      */
-    public DirectDataLoader getDirectDataLoader() {
+    public DirectDataLoader getDirectDataLoader() throws ObjectStoreException {
         if (directDataLoader == null) {
-            throw new RuntimeException("directDataLoader not set yet - call execute() first");
+            directDataLoader = new DirectDataLoader(getIntegrationWriter(), sourceName);
         }
         return directDataLoader;
     }
@@ -104,21 +111,13 @@ public abstract class DirectDataLoaderTask extends Task
         }
 
         try {
-            iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriterAlias);
-            directDataLoader = new DirectDataLoader(getIntegrationWriter(), sourceName);
-            
-            if (iw == null) {
-                throw new BuildException("can't find IntegrationWriter with alias: "
-                                         + integrationWriterAlias);
-            }
-
-            iw.beginTransaction();
-            iw.setIgnoreDuplicates(ignoreDuplicates);
+            getIntegrationWriter().beginTransaction();
+            getIntegrationWriter().setIgnoreDuplicates(ignoreDuplicates);
             
             process();
             
-            iw.commitTransaction();
-            iw.close();
+            getIntegrationWriter().commitTransaction();
+            getIntegrationWriter().close();
         } catch (ObjectStoreException e) {
             throw new BuildException(e);
         }

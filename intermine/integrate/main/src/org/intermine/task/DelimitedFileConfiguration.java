@@ -1,4 +1,4 @@
-package org.intermine.bio.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,9 +10,11 @@ package org.intermine.bio.task;
  *
  */
 
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,10 +35,9 @@ import java.util.TreeMap;
 
 public class DelimitedFileConfiguration
 {
-    ClassDescriptor configClassDescriptor = null;
-    FieldDescriptor keyFieldDescriptor = null;
-    ArrayList columnFieldDescriptors = null;
-    int keyColumnNumber = -1;
+    private ClassDescriptor configClassDescriptor = null;
+    private List columnFieldDescriptors = null;
+    private List columnFieldClasses;
 
     /**
      * Create a new DelimitedFileConfiguration from an InputStream.
@@ -75,7 +76,7 @@ public class DelimitedFileConfiguration
                 String columnNumberString = key.substring(7);
 
                 try {
-                    keyColumnNumber = Integer.valueOf(columnNumberString).intValue();
+                    int keyColumnNumber = Integer.valueOf(columnNumberString).intValue();
 
                     String fieldName = properties.getProperty(key);
 
@@ -87,6 +88,13 @@ public class DelimitedFileConfiguration
                                                            + fieldName + " in " + className);
                     }
 
+                    if (!columnFD.isAttribute()) {
+                        String message = "field: " + fieldName + " in " 
+                                + className + " is not an attribute field so cannot be used as a "
+                                + "className in DelimitedFileConfiguration";
+                        throw new IllegalArgumentException(message);
+                    }
+                    
                     columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("column number (" + key + ") not parsable "
@@ -105,35 +113,6 @@ public class DelimitedFileConfiguration
                 (FieldDescriptor) columnFieldDescriptorMap.get(new Integer(columnNumber));
 
             columnFieldDescriptors.add(columnFD);
-        }
-
-        String keyColumnString = properties.getProperty("keyColumn");
-
-        if (keyColumnString == null) {
-            throw new IllegalArgumentException("keyColumn not set in property file for "
-                                               + "DelimitedFileConfiguration");
-        } else {
-            try {
-                keyColumnNumber = Integer.valueOf(keyColumnString).intValue();
-                if (columnFieldDescriptors.size() <= keyColumnNumber) {
-                    throw new IllegalArgumentException("keyColumn (" + keyColumnNumber
-                                                       + ") out of range "
-                                                       + "in property file for "
-                                                       + "DelimitedFileConfiguration");
-                }
-
-                keyFieldDescriptor = (FieldDescriptor) columnFieldDescriptors.get(keyColumnNumber);
-
-                if (keyFieldDescriptor == null) {
-                    throw new IllegalArgumentException("no column configuration found for "
-                                                       + "keyColumn: " + keyColumnString);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("column number (" + keyColumnString
-                                                   + ") not parsable "
-                                                   + "in property file for "
-                                                   + "DelimitedFileConfiguration");
-            }
         }
     }
 
@@ -166,29 +145,24 @@ public class DelimitedFileConfiguration
     }
 
     /**
-     * Return the column in the input file that should be used as the key for looking up objects.
-     * @return the key column - the first column is 0
-     */
-    public int getKeyColumnNumber () {
-        return keyColumnNumber;
-    }
-
-    /**
-     * Return the FieldDescriptor of the field in the configClassDescriptor that should be used as
-     * the primary key when looking up objects.
-     * @return the FieldDescriptor for the key field.
-     */
-    public FieldDescriptor getKeyFieldDescriptor() {
-        return keyFieldDescriptor;
-    }
-
-    /**
-     * Return a List of the configured FieldDescriptors.  The List is indexed by column number
-     * (starting with column 0).  If a column has no configured FieldDescriptor the List will have
+     * Return a List of the configured AttributeDescriptors.  The List is indexed by column number
+     * (starting with column 0).  If a column has no configured AttributeDescriptor the List will have
      * null at that index.
-     * @return the configured FieldDescriptors
+     * @return the configured AttributeDescriptors
      */
     public List getColumnFieldDescriptors() {
         return columnFieldDescriptors;
+    }
+
+    public List getColumnFieldClasses() {
+        if (columnFieldClasses == null) {
+            columnFieldClasses = new ArrayList();
+            for (int i = 0; i < columnFieldDescriptors.size(); i++) {
+                String className = ((AttributeDescriptor) columnFieldDescriptors.get(i)).getType();
+                columnFieldClasses.add(TypeUtil.instantiate(className));
+            }
+        }
+        
+        return columnFieldClasses;
     }
 }
