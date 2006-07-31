@@ -89,29 +89,39 @@ public class UpdatePublications
         try {
             File tmpFile = File.createTempFile("publications", "xml");
             Writer writer = new BufferedWriter(new FileWriter(tmpFile));
-            Set pubMedIds = new HashSet();
-            Set toStore = new HashSet();
-            ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
-            writer.write(FullRenderer.getHeader() + ENDL);
-            for (Iterator i = getPublications().iterator(); i.hasNext();) {
-                pubMedIds.add(((Publication) i.next()).getPubMedId());
-                if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
-                    SAXParser.parse(new InputSource(getReader(pubMedIds)),
-                                    new Handler(toStore, itemFactory));
-                    for (Iterator j = toStore.iterator(); j.hasNext();) {
-                        writer.write(FullRenderer.render((Item) j.next()));
-                    }
-                    pubMedIds.clear();
-                    toStore.clear();
-                }
-            }
-            writer.write(FullRenderer.getFooter() + ENDL);
+            executeInternal(writer);
             writer.flush();
             writer.close();
             outputFile = tmpFile;
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
+    }
+
+    
+    /**
+     * Used by execute() to do its work and used for testing.
+     * @param writer The Writer to write the publications items to
+     * @throws Exception if there is a problem reading from the ObjectStore
+     */
+    void executeInternal(Writer writer) throws Exception {
+        Set pubMedIds = new HashSet();
+        Set toStore = new HashSet();
+        ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
+        writer.write(FullRenderer.getHeader() + ENDL);
+        for (Iterator i = getPublications().iterator(); i.hasNext();) {
+            pubMedIds.add(((Publication) i.next()).getPubMedId());
+            if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
+                SAXParser.parse(new InputSource(getReader(pubMedIds)),
+                                new Handler(toStore, itemFactory));
+                for (Iterator j = toStore.iterator(); j.hasNext();) {
+                    writer.write(FullRenderer.render((Item) j.next()));
+                }
+                pubMedIds.clear();
+                toStore.clear();
+            }
+        }
+        writer.write(FullRenderer.getFooter() + ENDL);
     }
 
     /**
@@ -221,25 +231,5 @@ public class UpdatePublications
             }
             name = null;
         }
-    }
-
-    /**
-     * Main method
-     * @param args the arguments
-     * @throws Exception if an error occurs
-     */
-    public static void main(String[] args) throws Exception {
-        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.production");
-        List ids = new ArrayList();
-        ids.add("10021333");
-        ids.add("10021351");
-        for (Iterator i = ids.iterator(); i.hasNext();) {
-            Publication publication = (Publication)
-                DynamicUtil.createObject(Collections.singleton(Publication.class));
-            publication.setPubMedId((String) i.next());
-            osw.store(publication);
-        }
-        osw.close();
-        new UpdatePublications(ObjectStoreFactory.getObjectStore("os.production")).execute();
     }
 }
