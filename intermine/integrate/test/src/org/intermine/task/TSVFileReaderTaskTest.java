@@ -1,9 +1,12 @@
 package org.intermine.task;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
 
@@ -42,13 +45,10 @@ import org.apache.tools.ant.types.FileSet;
 public class TSVFileReaderTaskTest extends TestCase
 {
     private Model model;
-    private ItemFactory itemFactory;
-
     private static final Logger LOG = Logger.getLogger(TSVFileReaderTaskTest.class);
 
     public void setUp() throws Exception {
         model = Model.getInstanceByName("testmodel");
-        itemFactory = new ItemFactory(model);
     }
 
     public void testFastaLoad() throws Exception {
@@ -56,7 +56,7 @@ public class TSVFileReaderTaskTest extends TestCase
         TSVFileReaderTask tsvTask = new TSVFileReaderTask();
         tsvTask.setIgnoreDuplicates(true);
         tsvTask.setIntegrationWriterAlias("integration.unittestsingle");
-        tsvTask.setSourceName("tsv");
+        tsvTask.setSourceName("testsource");
 
         File file = new File("resources/TSVFileReaderTaskTest.tsv");
         FileSet fileSet = new FileSet();
@@ -76,13 +76,29 @@ public class TSVFileReaderTaskTest extends TestCase
 
         Query q = new Query();
         QueryClass empQueryClass = new QueryClass(Employee.class);
+        QueryField qf0 = new QueryField(empQueryClass, "age");
+        QueryField qf1 = new QueryField(empQueryClass, "name");
+        QueryField qf2 = new QueryField(empQueryClass, "fullTime");
 
-        q.addToSelect(empQueryClass);
+        q.addToSelect(qf0);
+        q.addToSelect(qf1);
+        q.addToSelect(qf2);
         q.addFrom(empQueryClass);
-
+        
+        q.addToOrderBy(qf1);
+        
         Results r = os.execute(q);
 
         assertEquals(3, r.size());
+
+        List expectedRow0 = Arrays.asList(new Object[] {new Integer(10), "EmployeeA1", Boolean.FALSE});
+        assertEquals(expectedRow0, r.get(0));
+
+        List expectedRow1 = Arrays.asList(new Object[] {new Integer(20), "EmployeeA2", Boolean.TRUE});
+        assertEquals(expectedRow1, r.get(1));
+
+        List expectedRow2 = Arrays.asList(new Object[] {new Integer(0), "EmployeeA3", Boolean.FALSE});
+        assertEquals(expectedRow2, r.get(2));
     }
 
     public void tearDown() throws Exception {
