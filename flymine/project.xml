@@ -169,22 +169,6 @@
     <post-process name="set-collection-counts"/>
     <post-process name="create-flybase-to-uniprot-refs"/>
 
-    <!-- set-name-and-wildtypefunction/
-    TODO: Convert to datasource
-   <target name="set-name-and-wildtypefunction" depends="compile-genomic-java-from-db">
-     <taskdef name="tsv-file-reader" classname="org.flymine.task.TSVFileReaderWithSynonymTask">
-       <classpath refid="models.class.path"/>
-     </taskdef>
-     <tsv-file-reader oswAlias="osw.production" organismAbbreviation="DM"
-                      configurationFile="model/genomic/resources/flymine/drosophila_fullname_reader.properties"
-                      dataSourceName="FlyBase">
-       <fileset dir="${flybase.chado.melanogaster}">
-         <include name="flyBaseFullNameWT.txt"/>
-       </fileset>
-     </tsv-file-reader>
-   </target>
-
-    -->
     <!-- create-overlap-relations-flymine/
     TODO - CORE:
   <target name="create-overlap-relations-flymine" depends="compile-genomic-java-from-db">
