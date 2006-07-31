@@ -1,4 +1,4 @@
-package org.flymine.util;
+package org.intermine.bio.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,13 +9,13 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.util.DynamicUtil;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Location;
 
-import org.flymine.io.gff3.GFF3Record;
 
 /**
  * Tests for the GFF3Util class.
@@ -26,7 +26,7 @@ public class GFF3UtilTest extends TestCase
 
 
     /*
-     * Test method for 'org.flymine.io.gff3.GFF3Util.makeGFF3Record(LocatedSequenceFeature)'
+     * Test method for 'org.intermine.bio.io.gff3.GFF3Util.makeGFF3Record(LocatedSequenceFeature)'
      */
     public void testMakeGFF3Record() {
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));

@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,14 +10,17 @@ package org.flymine.dataconversion;
  *
  */
 
-import junit.framework.*;
-
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.*;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ReferenceList;
+
+import junit.framework.TestCase;
 
 
 public class GFF3RecordHandlerTest extends TestCase

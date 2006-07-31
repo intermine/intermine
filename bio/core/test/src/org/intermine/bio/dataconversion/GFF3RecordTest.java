@@ -1,6 +1,5 @@
-package org.flymine.dataconversion;
+package org.intermine.bio.dataconversion;
 
-import org.flymine.io.gff3.GFF3Record;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -8,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.intermine.bio.io.gff3.GFF3Record;
 
 import junit.framework.TestCase;
 
