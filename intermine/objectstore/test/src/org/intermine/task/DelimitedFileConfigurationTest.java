@@ -1,4 +1,4 @@
-package org.flymine.task;
+package org.intermine.task;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -12,6 +12,7 @@ package org.flymine.task;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.task.DelimitedFileConfiguration;
 
 import junit.framework.TestCase;
 
@@ -41,7 +42,6 @@ public class DelimitedFileConfigurationTest extends TestCase
         assertEquals("org.flymine.model.genomic.Gene",
                      dfc.getConfigClassDescriptor().getName());
 
-        assertEquals("symbol", dfc.getKeyFieldDescriptor().getName());
         assertEquals("identifier",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(0)).getName());
         assertEquals("symbol",

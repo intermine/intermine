@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -22,7 +22,9 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.flymine.io.gff3.GFF3Parser;
+import org.intermine.bio.dataconversion.GFF3Converter;
+import org.intermine.bio.dataconversion.GFF3RecordHandler;
+import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullParser;
