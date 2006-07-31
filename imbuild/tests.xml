@@ -5,6 +5,7 @@
   <dirname property="tests.xml.basedir" file="${ant.file.tests}"/>
   
   <import file="${tests.xml.basedir}/library.xml"/>
+  <import file="${tests.xml.basedir}/task.xml"/>
   
   <target name="-pre-init" depends="library.-pre-init">
     <!-- emma properties -->
@@ -37,14 +38,6 @@
     <condition property="front.of.classpath" value="${build.instrumented.dir}" else="${build.classes.dir}">
       <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
     </condition>
-  </target>
-  
-  <target name="-copy-intermine-properties" depends="-check-for-intermine-properties"
-          if="has.intermine.properties.file">
-    <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.test.resources.dir}/intermine.properties"/>
-    <copy file="${default.intermine.properties.file}"
-          tofile="${build.test.resources.dir}/default.intermine.properties"/>
   </target>
   
   <target name="-init-emma" depends="init">
@@ -87,14 +80,14 @@
     </emma>
   </target>
   
-  <target name="test" depends="init-test, -copy-intermine-properties, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
+  <target name="test" depends="-init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
   
   <target name="test-all" depends="init, -init-deps, jar">
     <dependencies basedir="${tests.xml.basedir}/.." target="default"/>
     <runtarget target="test"/>
   </target>
   
-  <target name="default" depends="-init-properties, test"/>
+  <target name="default" depends="test"/>
   
   <!-- CLEAN -->
   
