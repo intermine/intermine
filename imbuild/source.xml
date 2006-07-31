@@ -323,6 +323,7 @@
                     srcModel="${source.model}"
                     tgtModel="${target.model}"
                     organism="${organism}"
+                    propfile="${propfile}"
                     dataLocation="${data.location}"/>
     <create-indexes alias="os.${common.os.prefix}-tgt-items-std"/>
     <analyse-db osName="os.${common.os.prefix}-tgt-items-std"/>

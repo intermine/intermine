@@ -108,7 +108,7 @@ public class DataTranslatorTask extends DynamicAttributeTask
     }
 
     /**
-     * @see Task#execute
+     * @see org.apache.tools.ant.Task#execute
      */
     public void execute() throws BuildException {
         if (translator == null) {
@@ -159,29 +159,29 @@ public class DataTranslatorTask extends DynamicAttributeTask
             if ("org.intermine.bio.dataconversion.EnsemblDataTranslator".equals(translator)
                 || "org.intermine.bio.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
 
-                //Properties ensemblProps = new Properties();
-                //InputStream epis = getClass().getClassLoader().getResourceAsStream(
-                //        "ensembl_config.properties");
-                //ensemblProps.load(epis);
+                Properties ensemblProps = new Properties();
+                InputStream epis = getClass().getClassLoader().getResourceAsStream(
+                        "ensembl_config.properties");
+                ensemblProps.load(epis);
 
                 if (organism == null) {
                     throw new BuildException("organism attribute not set");
                 }
-                if (propfile == null) {
-                    throw new BuildException("propfile attribute not set");
-                }
+                //if (propfile == null) {
+                  //  throw new BuildException("propfile attribute not set");
+                //}
                 types = new Class[] {
                     ItemReader.class,
                     Properties.class,
                     Model.class,
                     Model.class,
-//                    Properties.class,
-                    String.class,
+                    Properties.class,
+//                    String.class,
                     String.class
                 };
 
-                //args = new Object[] {reader, mappingProps, src, tgt, ensemblProps, organism};
-                args = new Object[] {reader, mappingProps, src, tgt, propfile, organism};
+                args = new Object[] {reader, mappingProps, src, tgt, ensemblProps, organism};
+                //args = new Object[] {reader, mappingProps, src, tgt, propfile, organism};
 
             //TODO: Fix this hard coded bodgieness ???
             } else if ("org.intermine.bio.dataconversion.ProteinStructureDataTranslator"
