@@ -24,6 +24,7 @@ import junit.framework.Assert;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.xml.full.FullParser;
 
@@ -31,7 +32,8 @@ public class UpdatePublicationsTest extends TestCase
 {
     public void testUpdatePublications() throws Exception {
         StringWriter sw = new StringWriter();
-        new TestUpdatePublications(ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test"), sw).execute();
+        ObjectStoreWriter objectStoreWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
+        new TestUpdatePublications(objectStoreWriter, sw).executeInternal(sw);
 
         List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsTest_tgt.xml"));
 
@@ -41,7 +43,7 @@ public class UpdatePublicationsTest extends TestCase
     class TestUpdatePublications extends UpdatePublications
     {
         public TestUpdatePublications(ObjectStore os, Writer writer) {
-            super(os, writer);
+            super(os);
         }
 
         protected List getPublications() {
