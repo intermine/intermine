@@ -1,4 +1,4 @@
-package org.flymine.postprocess;
+package org.intermine.bio.postprocess;
 
 import org.intermine.objectstore.query.ResultsRow;
 
