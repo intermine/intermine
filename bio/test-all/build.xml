@@ -16,7 +16,7 @@
     <imdbproj:build-db osname="os.genomic-test" model="genomic"/>
   </target>
 
-  <target name="-init-fulltest" depends="build-db-genomic-test, init">
+  <target name="-init-fulltest" depends="-init-properties, build-db-genomic-test, init">
     <mkdir dir="${test.results.dir}"/>
   </target>
   
