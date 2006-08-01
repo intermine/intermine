@@ -35,7 +35,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         addRequestParameter("name", "employeesWithOldManagers");
         //necessary to work-round struts test case not invoking our SessionListener
         getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, new HashMap(), new HashMap(), new HashMap()));
+                                  new Profile(null, null, new Integer(101), null, new HashMap(), new HashMap(), new HashMap()));
 
         setRequestPathInfo("/loadQuery");
 
@@ -48,33 +48,33 @@ public class LoadQueryActionTest extends MockStrutsTestCase
 //                      "" + getSession().getAttribute(Constants.VIEW));
 //         assertEquals("{Employee=Employee:Employee [], Employee.department=Employee.department:Department [], Employee.department.manager=Employee.department.manager:Manager [], Employee.department.manager.age=Employee.department.manager.age:int [> 10]}", "" + getSession().getAttribute(Constants.QUERY));
     }
-    
+
     public void testLoadXml() {
-        String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" + 
+        String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" +
                 "</query>";
-        
+
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "false");
-        
+
         setRequestPathInfo("/loadQuery");
-        
+
         actionPerform();
         verifyNoActionErrors();
         verifyForward("query");
         assertNotNull(getSession().getAttribute(Constants.QUERY));
     }
-    
+
     public void testLoadXmlSkipBuilder() {
-        String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" + 
+        String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" +
                 "</query>";
-        
+
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "true");
-        
+
         setRequestPathInfo("/loadQuery");
-        
+
         actionPerform();
         verifyNoActionErrors();
         assertEquals("/pollBrowseQuery.do?qid=0", getActualForward());

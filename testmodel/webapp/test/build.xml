@@ -15,6 +15,7 @@
       (so that objectstore summary reflects new database).
     -->
     <ant antfile="../../dbmodel/build.xml" target="insert-data-unittest" inheritAll="false"/>
+    <ant antfile="../../dbmodel/build.xml" target="summarise-objectstore" inheritAll="false"/>
     <ant antfile="../main/build.xml" target="build-db-userprofile" inheritAll="false"/>
   </target>
   

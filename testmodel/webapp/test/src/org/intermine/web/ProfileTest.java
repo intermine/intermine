@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -31,22 +32,31 @@ public class ProfileTest extends TestCase
     Date date = new Date();
     InterMineBag bag;
     TemplateQuery template;
-    
+    private Integer bobId = new Integer(101);
+    private ObjectStore userprofileOS;
+    ProfileManager profileManager;
+
     public ProfileTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        bag = new InterMinePrimitiveBag();
+        userprofileOS = ObjectStoreFactory.getObjectStore("os.userprofile-test");
+        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "tdesc",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");
+        profileManager = new DummyProfileManager(userprofileOS);
+    }
+
+    public void tearDown() throws Exception {
+        profileManager.close();
     }
 
     public void testModifySavedMaps() throws Exception {
-        Profile profile = new Profile(null, "bob", "pass",
+        Profile profile = new Profile(null, "bob", bobId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
         try {
@@ -63,7 +73,7 @@ public class ProfileTest extends TestCase
     }
 
     public void testSaveNoManager() throws Exception {
-        Profile profile = new Profile(null, "bob", "pass",
+        Profile profile = new Profile(null, "bob", bobId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
         profile.saveQuery("query1", sq);
         profile.saveBag("bag1", bag);
@@ -83,8 +93,8 @@ public class ProfileTest extends TestCase
         bags.put("bag1", bag);
         Map tmpls = new HashMap();
         tmpls.put("tmpl1", template);
-        
-        Profile profile = new Profile(null, "bob", "pass", queries, bags, tmpls);
+
+        Profile profile = new Profile(null, "bob", bobId, "pass", queries, bags, tmpls);
         profile.deleteQuery("query1");
         profile.deleteBag("bag1");
         profile.deleteTemplate("tmpl1");
@@ -95,9 +105,7 @@ public class ProfileTest extends TestCase
     }
 
     public void testSaveWithManager() throws Exception {
-        ProfileManager profileManager =
-            new DummyProfileManager(ObjectStoreFactory.getObjectStore("os.userprofile-test"));
-        Profile profile = new Profile(profileManager, "bob", "pass",
+        Profile profile = new Profile(profileManager, "bob", bobId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
         try {
@@ -111,7 +119,7 @@ public class ProfileTest extends TestCase
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
-        
+
         try {
             profile.saveTemplate("tmpl1", template);
             fail("Expected UnsupportedOperationException");
@@ -124,14 +132,11 @@ public class ProfileTest extends TestCase
         assertEquals(profile.getSavedBags().get("bag1"), bag);
         assertEquals(1, profile.getSavedTemplates().size());
         assertEquals(profile.getSavedTemplates().get("tmpl1"), template);
-        
-        profileManager.close();
+
     }
-    
+
     public void testDeleteWithManager() throws Exception {
-        ProfileManager profileManager =
-            new DummyProfileManager(ObjectStoreFactory.getObjectStore("os.userprofile-test"));
-        Profile profile = new Profile(profileManager, "bob", "pass",
+        Profile profile = new Profile(profileManager, "bob", bobId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
 
         try {
@@ -145,7 +150,7 @@ public class ProfileTest extends TestCase
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
-        
+
         try {
             profile.deleteTemplate("tmpl1");
             fail("Expected UnsupportedOperationException");
@@ -156,7 +161,6 @@ public class ProfileTest extends TestCase
         assertEquals(0, profile.getSavedBags().size());
         assertEquals(0, profile.getSavedTemplates().size());
 
-        profileManager.close();
     }
 
     class DummyProfileManager extends ProfileManager
@@ -164,7 +168,7 @@ public class ProfileTest extends TestCase
         public DummyProfileManager(ObjectStore os) throws ObjectStoreException {
             super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"));
         }
-        
+
         public void saveProfile(Profile profile) {
             throw new UnsupportedOperationException();
         }
