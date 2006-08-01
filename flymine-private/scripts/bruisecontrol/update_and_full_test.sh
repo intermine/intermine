@@ -96,13 +96,13 @@ createdb flatmodetest
 createdb genomictest
 
 cd ../../testmodel/dbmodel
-#ant build-db > $LOG 2>&1
+ant build-db > $LOG 2>&1
 cd $BUILD_PROJ
 
-# ant -lib /software/noarch/junit/ default >> $LOG 2>&1
-# BUILD_RESULT=$?
+ant -lib /software/noarch/junit/ default >> $LOG 2>&1
+BUILD_RESULT=$?
 
-# ant -lib /software/noarch/junit/ $TARGET >> $LOG 2>&1
+ant -lib /software/noarch/junit/ $TARGET >> $LOG 2>&1
 
 
 # flymine tests
