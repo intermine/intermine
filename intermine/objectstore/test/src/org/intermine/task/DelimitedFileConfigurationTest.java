@@ -28,25 +28,25 @@ public class DelimitedFileConfigurationTest extends TestCase
 {
     public void testConfig() throws Exception {
         String config =
-            "className: org.flymine.model.genomic.Gene\n"
+            "className: org.intermine.model.testmodel.Employee\n"
             + "keyColumn: 1\n"
-            + "column.0: identifier\n"
-            + "column.1: symbol\n"
+            + "column.0: name\n"
+            + "column.1: age\n"
             // no column 2 config
-            + "column.3: organismDbId\n";
+            + "column.3: fullTime\n";
         StringInputStream stringInputStream = new StringInputStream(config);
 
-        Model model = Model.getInstanceByName("genomic");
+        Model model = Model.getInstanceByName("testmodel");
         DelimitedFileConfiguration dfc = new DelimitedFileConfiguration(model, stringInputStream);
 
-        assertEquals("org.flymine.model.genomic.Gene",
+        assertEquals("org.intermine.model.testmodel.Employee",
                      dfc.getConfigClassDescriptor().getName());
 
-        assertEquals("identifier",
+        assertEquals("name",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(0)).getName());
-        assertEquals("symbol",
+        assertEquals("age",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(1)).getName());
-        assertEquals("organismDbId",
+        assertEquals("fullTime",
                      ((FieldDescriptor) dfc.getColumnFieldDescriptors().get(3)).getName());
         assertEquals(4, dfc.getColumnFieldDescriptors().size());
     }
