@@ -60,6 +60,7 @@ public class OboConverterTest extends TestCase {
         attribute.setName("title");
         attribute.setValue("SO");
         item.addAttribute(attribute);
+        item.setAttribute("url", "http://www.flymine.org");
         expected.add(item);
 
         item = itemFactory.makeItem();
@@ -88,8 +89,9 @@ public class OboConverterTest extends TestCase {
         item.addCollection(refs);
         item.addAttribute(new Attribute("description", ""));
         item.addAttribute(new Attribute("namespace", ""));
+        item.setAttribute("obsolete", "false");
         expected.add(item);
-        
+
         item = itemFactory.makeItem();
         item.setIdentifier("0_2");
         item.setClassName(NAMESPACE + "OntologyTerm");
@@ -120,6 +122,7 @@ public class OboConverterTest extends TestCase {
         refs.addRefId("1_0");
         refs.addRefId("1_1");
         item.addCollection(refs);
+        item.setAttribute("obsolete", "false");
         expected.add(item);
 
         item = itemFactory.makeItem();
@@ -169,6 +172,7 @@ public class OboConverterTest extends TestCase {
         refs.setName("synonyms");
         refs.addRefId("1_1");
         item.addCollection(refs);
+        item.setAttribute("obsolete", "false");
         expected.add(item);
 
         item = itemFactory.makeItem();
@@ -188,7 +192,7 @@ public class OboConverterTest extends TestCase {
         ref.setRefId("0_1");
         item.addReference(ref);
         expected.add(item);
-        
+
         item = itemFactory.makeItem();
         item.setIdentifier("1_0");
         item.setClassName(NAMESPACE + "OntologyTermSynonym");
@@ -196,7 +200,7 @@ public class OboConverterTest extends TestCase {
         item.addAttribute(new Attribute("name", "syn1"));
         item.addAttribute(new Attribute("type", "narrow_synonym"));
         expected.add(item);
-        
+
         item = itemFactory.makeItem();
         item.setIdentifier("1_1");
         item.setClassName(NAMESPACE + "OntologyTermSynonym");
@@ -208,7 +212,7 @@ public class OboConverterTest extends TestCase {
         System.out.println(printCompareItemSets(expected, itemWriter.getItems()));
         assertEquals(expected, itemWriter.getItems());
     }
-    
+
     /**
      * If given expected and actual item sets differ return a string detailing items in expected
      * and not in actual and in actual but not expected.
@@ -225,7 +229,7 @@ public class OboConverterTest extends TestCase {
         //}
         //return "";
     }
-    
+
     /**
      * Given two sets of Items (a and b) return a set of Items that are present in a
      * but not b.

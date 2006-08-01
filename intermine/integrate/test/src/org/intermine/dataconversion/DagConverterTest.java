@@ -53,6 +53,7 @@ public class DagConverterTest extends TestCase {
         attribute.setName("title");
         attribute.setValue("SO");
         item.addAttribute(attribute);
+        item.setAttribute("url", "http://www.flymine.org");
         expected.add(item);
 
         item = itemFactory.makeItem();
