@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-<class name="org.flymine.model.genomic.DefinedRegion" extends="org.flymine.model.genomic.Region" is-interface="true">
- <attribute name="type" type="java.lang.String"/>
-  </class>
-</classes>

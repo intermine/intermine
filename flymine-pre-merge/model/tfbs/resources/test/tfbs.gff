@@ -1,5 +1,0 @@
-##gff-version 3 
-##ucsc tfbsConsSites
-1	Transfac matrix database	TF_binding_site	17889	17899	936	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$OCT_Q6:chr1:17889..17899;Name=V$OCT_Q6;zscore=2.37
-1	Transfac matrix database	TF_binding_site	26173	26183	958	-	.	 sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$OCT1_04:chr1:26173..26183;Name=V$OCT1_04;zscore=3.92;accession=M00138;factors_id=P14859_hs, P31503_rn, P25425_mm;factors_name=POU2F1_hs, POU2F1_rn, POU2F1a_mm
-1	Transfac matrix database	TF_binding_site	3950	3956	1000	-	.	sourceDatabase=UCSC%20HMR%20Conserved%20Transcription%20Factor%20Binding%20Sites;ID=V$POU3F2_02:chr1:3950..3956;Name=V$POU3F2_02;zscore=2.59;accession=M00464;factors_id=P14859_hs, P20265_hs, N_rn, N_mm, P20265_hs, P20265_hs;factors_name=POU3F2_hs, POU3F2_rn, POU3F2_mm, POU3F2 (N-Oct-5a)_hs, POU3F2 (N-Oct-5b)_hs
