@@ -114,7 +114,7 @@ ant -lib /software/noarch/junit/ fulltest -Dtest.results.dir=$INTERMINE_RESULTS_
 
 
 cd $BUILD_PROJ
-grep '\[junit]' $LOG
+grep '\[junit]' $LOG | grep FAILED
 TEST_RESULT=$?
 grep 'BUILD FAILED' $LOG
 BUILD_BROKEN_STATUS=$?
@@ -175,7 +175,7 @@ else
 fi
 
 # Blame people via email
-grep '\[junit]' $LOG > "$ARCHIVE_TO/junit_failures.txt"
+grep '\[junit]' $LOG | grep FAILED > "$ARCHIVE_TO/junit_failures.txt"
 FAILED=$?
 
 touch "$JUNIT_FAIL_FILE"
@@ -189,8 +189,7 @@ printf "\n\n------------------------------------------------------------\nTest f
 cat "$ARCHIVE_TO/junit_failures.txt" >> MSG
 printf "\n\n------------------------------------------------------------\nPrevious test failures:\n\n" >> MSG
 cat "$JUNIT_FAIL_FILE" >> MSG
-printf "\n\n------------------------------------------------------------\nstderr output:\n\n" >> MSG
-cat $LOG >> MSG
+printf "\n\n------------------------------------------------------------\n" >> MSG
 
 if [ $BUILD_BROKEN -eq 1 -a $FAILED -ne 0 ]; then
   cat MSG | mail -s "[BruiseControl] Build BROKEN at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
