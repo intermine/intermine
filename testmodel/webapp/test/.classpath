@@ -9,20 +9,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
 	<classpathentry kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-tasks"/>
-	<classpathentry exported="true" kind="lib" path="/intermine-web/lib/struts.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
-	<classpathentry kind="lib" path="resources"/>
-	<classpathentry kind="lib" path="/userprofile/resources"/>
-	<classpathentry exported="true" kind="lib" path="/intermine-web/lib/struts.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
-	<classpathentry kind="lib" path="resources"/>
-	<classpathentry kind="lib" path="/userprofile/resources"/>
-	<classpathentry kind="lib" path="build/test/resources"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry kind="lib" path="lib/nekohtml-0.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/httpunit-1.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/jwebunit-1.2.jar"/>
-	<classpathentry kind="lib" path="build/test/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
