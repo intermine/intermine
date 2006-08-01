@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-<class name="org.flymine.model.genomic.BindingSite" is-interface="true">
-  <reference name="factor" referenced-type="org.flymine.model.genomic.Gene"/>
-</class>
-</classes>
