@@ -7,9 +7,9 @@ ARCHIVED_DIR=~/public_html/tests/archived
 TIME_STAMP=`date '+%y%m%d_%H%M'`
 ARCHIVE_TO=$ARCHIVED_DIR/$TIME_STAMP
 LATEST_DIR=$ARCHIVED_DIR/latest
-STD_ERR=~/public_html/tests/stderr.log
 JUNIT_FAIL_FILE=~/public_html/tests/previous_junit_failures
 URL_PREFIX='http://bc.flymine.org'
+LOG=$ARCHIVE_TO/ant_log.txt
 
 . ~/.bashrc
 
@@ -55,22 +55,19 @@ touch "$RUNNING_FILE"
 # Find out who to blame when things go wrong
 # -------------------------------------------------------------------------- #
 
-#BLAME=$(svn status -v -u | grep '^.......\*' | cut -c 28-40 | sort -u)
 NEXT=$(($(svn info | grep "Revision" | cut -c 11-)+1))
-BLAME=$(svn log -r $NEXT:HEAD | grep '^r[0-9]' | awk '{print $3;}' | sort | uniq | xargs | perl -p -e 's/\s/\@flymine.org, /g;')
+BLAME=`svn log -r $NEXT:HEAD | grep '^r[0-9]' | awk '{print $3;}' | sort | uniq`
+BLAME=`echo $BLAME | sed 's/ /,/g'`
 echo "BLAME = $BLAME"
 
 umask 0022
 mkdir -p "$ARCHIVE_TO"
 mkdir -p "$LATEST_DIR"
 
-svn update svn://svn.flymine.org/flymine/trunk $TRUNK_DIR
+UPDATE=$(svn update svn://svn.flymine.org/flymine/trunk $TRUNK_DIR)
 
 cd $BUILD_PROJ
-ant clean-all
-cd $TRUNK_DIR
-UPDATE=$(svn up)
-cd $BUILD_PROJ
+ant clean-all 
 
 if [ "$#" -eq "0" ]; then
   TARGET=fulltest
@@ -99,27 +96,35 @@ createdb flatmodetest
 createdb genomictest
 
 cd ../../testmodel/dbmodel
-ant build-db > "$ARCHIVE_TO/ant_log.txt" 2> "$STD_ERR"
+#ant build-db > $LOG 2>&1
 cd $BUILD_PROJ
 
-ant -lib /software/noarch/junit/ default > "$ARCHIVE_TO/ant_log.txt" 2> "$STD_ERR"
-BUILD_RESULT=$?
+# ant -lib /software/noarch/junit/ default >> $LOG 2>&1
+# BUILD_RESULT=$?
 
-ant -lib /software/noarch/junit/ $TARGET >> "$ARCHIVE_TO/ant_log.txt" 2>> "$STD_ERR"
-cd $BUILD_PROJ/../../flymine
-ant -lib /software/noarch/junit/ fulltest -Dresults.junit=../intermine/all/build/test/results >> "$ARCHIVE_TO/ant_log.txt" 2>> "$STD_ERR"
+# ant -lib /software/noarch/junit/ $TARGET >> $LOG 2>&1
+
+
+# flymine tests
+
+cd $BUILD_PROJ/../../bio/test-all
+INTERMINE_RESULTS_DIR=../intermine/all/build/test/results
+ant -lib /software/noarch/junit/ fulltest -Dtest.results.dir=$INTERMINE_RESULTS_DIR -Dresults.junit=$INTERMINE_RESULTS_DIR >> $LOG 2>&1
+
+
+
 cd $BUILD_PROJ
-cat "$STD_ERR" | grep '\[junit]'
+grep '\[junit]' $LOG
 TEST_RESULT=$?
-cat "$STD_ERR" | grep 'BUILD FAILED'
-BUILD_BROKEN=$?
+grep 'BUILD FAILED' $LOG
+BUILD_BROKEN_STATUS=$?
 echo "BUILD_RESULT=$BUILD_RESULT  TEST_RESULT=$TEST_RESULT"
 
 # if flymine build fails then report won't be generated so
 # we do it again here just to be safe
 ant -lib /software/noarch/junit/ test-report
 
-ant checkstyle >> "$ARCHIVE_TO/ant_log.txt"
+ant checkstyle >> $LOG 2>&1
 CHECKSTYLE_RESULT=$?
 
 if [ $BUILD_RESULT -eq 0 ]; then
@@ -128,7 +133,7 @@ else
   echo '*** build failed - see log for errors ***'
 fi
 
-if [ $BUILD_BROKEN -ne 0 ]; then
+if [ $BUILD_BROKEN_STATUS -ne 0 ]; then
   echo '*** TESTS COMPILED ***'
 else
   echo '*** tests failed to compile - see log for errors ***'
@@ -140,7 +145,7 @@ else
   echo '*** tests failed - see log for errors ***'
 fi
 
-if [ $BUILD_BROKEN -ne 0 ]; then
+if [ $BUILD_BROKEN_STATUS -ne 0 ]; then
   BUILD_BROKEN=0
 else
   BUILD_BROKEN=1
@@ -169,55 +174,36 @@ else
   echo "There don't seem to be any checkstyle results!"
 fi
 
-#if [ $BUILD_RESULT -ne 0 ]; then
-  # Email to say the build failed
-#  printf "The build failed!\n\n" > MSG
-#  echo "Full ant log file: http://bc.flymine.org/~bruiser/tests/archived/$TIME_STAMP/" >> MSG
-#  printf "\n\nLast check-in:\n\n" >> MSG
-#  echo "$UPDATE" >> MSG
-#  printf "\n\nTail of log file:\n\n" >> MSG
-#  tail -n 100 "$ARCHIVE_TO/ant_log.txt" >> MSG
-#  cat MSG | mail -s "[BruiseControl] Build failed at $TIME_STAMP" bruiser@flymine.org
-#else
-  # Email test results
-  # Blame people via email
-  cat "$STD_ERR" | grep '\[junit]' > "$ARCHIVE_TO/junit_failures.txt"
-  FAILED=$?
-  touch "$JUNIT_FAIL_FILE"
-#  DIFF=$(diff -B "$ARCHIVE_TO/junit_failures.txt" "$JUNIT_FAIL_FILE")
-#  if [ $? -eq 0 ]; then
-#    echo 'failure set is equal'
-#  else
-#    echo "failures set is not equal - should email $BLAME"
-     echo "Emailing $BLAME..."
-#  BLAME=bruiser
-    printf "JUnit results: $URL_PREFIX/$TIME_STAMP/junit/\n\n" > MSG
-    printf "Checkstyle results: $URL_PREFIX/$TIME_STAMP/checkstyle/\n\n" >> MSG
-    printf "Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt\n\n" >> MSG
-    printf "Last update:\n\n" >> 'MSG'
-    echo "$UPDATE" >> 'MSG'
-    #printf "\n\n------------------------------------------------------------\nTest failures diff:\n\n$DIFF" >> 'MSG'
-    printf "\n\n------------------------------------------------------------\nTest failures now:\n\n" >> 'MSG'
-    cat "$ARCHIVE_TO/junit_failures.txt" >> 'MSG'
-    printf "\n\n------------------------------------------------------------\nPrevious test failures:\n\n" >> 'MSG'
-    cat "$JUNIT_FAIL_FILE" >> 'MSG'
-    printf "\n\n------------------------------------------------------------\nstderr output:\n\n" >> 'MSG'
-    cat "$STD_ERR" >> 'MSG'
-    if [ $BUILD_BROKEN -eq 1 -a $FAILED -ne 0 ]; then
-      cat MSG | mail -s "[BruiseControl] Build BROKEN at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
-    elif [ $FAILED -eq 0 ]; then
-      cat MSG | mail -s "[BruiseControl] Tests FAILING at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
-    else
-      cat MSG | mail -s "[BruiseControl] SUCCESS at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
-    fi
+# Blame people via email
+grep '\[junit]' $LOG > "$ARCHIVE_TO/junit_failures.txt"
+FAILED=$?
+
+touch "$JUNIT_FAIL_FILE"
+echo "Emailing $BLAME..."
+printf "JUnit results: $URL_PREFIX/$TIME_STAMP/junit/\n\n" > MSG
+printf "Checkstyle results: $URL_PREFIX/$TIME_STAMP/checkstyle/\n\n" >> MSG
+printf "Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt\n\n" >> MSG
+printf "Last update:\n\n" >> MSG
+echo "$UPDATE" >> MSG
+printf "\n\n------------------------------------------------------------\nTest failures now:\n\n" >> MSG
+cat "$ARCHIVE_TO/junit_failures.txt" >> MSG
+printf "\n\n------------------------------------------------------------\nPrevious test failures:\n\n" >> MSG
+cat "$JUNIT_FAIL_FILE" >> MSG
+printf "\n\n------------------------------------------------------------\nstderr output:\n\n" >> MSG
+cat $LOG >> MSG
+
+if [ $BUILD_BROKEN -eq 1 -a $FAILED -ne 0 ]; then
+  cat MSG | mail -s "[BruiseControl] Build BROKEN at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
+elif [ $FAILED -eq 0 ]; then
+  cat MSG | mail -s "[BruiseControl] Tests FAILING at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
+else
+  cat MSG | mail -s "[BruiseControl] SUCCESS at $TIME_STAMP $CHECKSTYLE_STATUS" "$BLAME"
+fi
     
-    # Update previous failures file
-    cat "$ARCHIVE_TO/junit_failures.txt" > "$JUNIT_FAIL_FILE"
-#  fi
-#fi
+# Update previous failures file
+cat "$ARCHIVE_TO/junit_failures.txt" > "$JUNIT_FAIL_FILE"
 
 TIME_NOW=`date '+%y-%m-%d_%H:%M'`
 echo "*** Finished build $TIME_STAMP at $TIME_NOW ***"
 
-#rm "$STD_ERR"
 rm "$RUNNING_FILE"
