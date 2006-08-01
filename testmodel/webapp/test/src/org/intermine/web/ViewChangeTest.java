@@ -44,7 +44,7 @@ public class ViewChangeTest extends MockStrutsTestCase
 
         //necessary to work-round struts test case not invoking our SessionListener
         getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null,
+                                  new Profile(null, null, null, null,
                                               new HashMap(), new HashMap(), new HashMap()));
 
         setRequestPathInfo("/viewChange");
@@ -52,7 +52,7 @@ public class ViewChangeTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
         //verifyForward("query");
-        
+
         ArrayList expected = new ArrayList();
         expected.add("Employee.name");
         assertEquals(expected, ((PathQuery) getSession().getAttribute(Constants.QUERY)).getView());

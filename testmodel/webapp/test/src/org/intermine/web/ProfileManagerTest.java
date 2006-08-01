@@ -91,51 +91,74 @@ public class ProfileManagerTest extends XMLTestCase
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         Date date = null;
         SavedQuery sq = new SavedQuery("query1", date, query);
-        InterMineBag bag = new InterMinePrimitiveBag();
-        bag.add("foo1");
-        bag.add("foo2");
-        bag.add("foo3");
-        bag.add(new Integer(100));
-        bag.add(new Boolean(true));
-        bag.add(new Float(1.1));
+
+        // bob's details
+        Integer bobId = new Integer(101);
+        String bobName = "bob";
+        String bobPass = "pass";
+
+        Set contents = new HashSet();
+        contents.add("foo1");
+        contents.add("foo2");
+        contents.add("foo3");
+        contents.add(new Integer(100));
+        contents.add(new Boolean(true));
+        contents.add(new Float(1.1));
+        InterMineBag bag = new InterMinePrimitiveBag(bobId, "bag1",
+                                                     userProfileOSW.getObjectStore(),
+                                                     contents);
 
         TemplateQuery template =
             new TemplateQuery("template", "tdesc",
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               false, "");
-
-        bobProfile = new Profile(pm, "bob", "pass",
+        bobProfile = new Profile(pm, "bob", bobId, "pass",
                                  new HashMap(), new HashMap(), new HashMap());
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
         bobProfile.saveTemplate("template", template);
 
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        bag = new InterMinePrimitiveBag();
+        contents = new HashSet();
+        Set otherContents = new HashSet();
         sq = new SavedQuery("query1", date, query);
-        InterMineBag otherBag = new InterMinePrimitiveBag();
 
-        bag.add("some value");
-        otherBag.add(new Integer(123));
+        // sally details
+        Integer sallyId = new Integer(102);
+        String sallyName = "sally";
+        String sallyPass = "sally_pass";
 
-        InterMineIdBag objectBag = new InterMineIdBag();
+        contents.add("some value");
+        bag = new InterMinePrimitiveBag(sallyId, "bag2",
+                                        userProfileOSW.getObjectStore(),
+                                        contents);
+        otherContents.add(new Integer(123));
+        InterMineBag otherBag = new InterMinePrimitiveBag(sallyId, "bag3",
+                                                     userProfileOSW.getObjectStore(),
+                                                     otherContents);
+
+
+        Set objectContents = new HashSet();
 
         // employees and managers
-        objectBag.add(10);
-        objectBag.add(11);
-        objectBag.add(12);
+        objectContents.add(new Integer(10));
+        objectContents.add(new Integer(11));
+        objectContents.add(new Integer(12));
 
         // a department - this will cause the department with ID 6 to be add to the Item XML output
         // and will also implicitly add the Company of this department to the output because the
         // primary key of the Department includes the company reference
-        objectBag.add(6);
+        objectContents.add(new Integer(6));
+        InterMineIdBag objectBag = new InterMineIdBag(sallyId, "bag4",
+                                                     userProfileOSW.getObjectStore(),
+                                                     objectContents);
+
 
         template = new TemplateQuery("template", "some desc",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,
                                      "some_keyword");
 
-
-        sallyProfile = new Profile(pm, "sally", "sally_pass",
+        sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap());
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", bag);
@@ -223,6 +246,8 @@ public class ProfileManagerTest extends XMLTestCase
         }
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
+        System.out.println("expected: " + expectedXml);
+        System.out.println("actual: " + actualXml);
 
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
@@ -251,7 +276,7 @@ public class ProfileManagerTest extends XMLTestCase
 
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());
-        
+
         Set expectedTags = new HashSet();
         Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
 
@@ -259,36 +284,36 @@ public class ProfileManagerTest extends XMLTestCase
         tag1.setObjectIdentifier("Department.company");
         tag1.setType("reference");
         tag1.setUserProfile(pm.getUserProfile("bob"));
-            
+
         Tag tag2 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag2.setTagName("test-tag2");
         tag2.setObjectIdentifier("Department.name");
         tag2.setType("attribute");
         tag2.setUserProfile(pm.getUserProfile("bob"));
-        
+
         Tag tag3 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag3.setTagName("test-tag2");
         tag3.setObjectIdentifier("Department.company");
         tag3.setType("reference");
         tag3.setUserProfile(pm.getUserProfile("bob"));
-        
+
         Tag tag4 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag4.setTagName("test-tag2");
         tag4.setObjectIdentifier("Department.employees");
         tag4.setType("collection");
         tag4.setUserProfile(pm.getUserProfile("bob"));
-        
+
         expectedTags.add(tag1);
         expectedTags.add(tag2);
         expectedTags.add(tag3);
         expectedTags.add(tag4);
-        
+
         Set actualTags = new HashSet(pm.getTags(null, null, null, "bob"));
-        
+
         assertEquals(expectedTags.size(), actualTags.size());
-        
+
         Iterator actualTagsIter = actualTags.iterator();
-        
+
       ACTUAL:
         while (actualTagsIter.hasNext()) {
             Tag actualTag = (Tag) actualTagsIter.next();
@@ -304,9 +329,9 @@ public class ProfileManagerTest extends XMLTestCase
                     continue ACTUAL;
                 }
             }
-            
+
             fail("can't find tag " + actualTag.getTagName() + ", "
-                 + actualTag.getObjectIdentifier() + ", " 
+                 + actualTag.getObjectIdentifier() + ", "
                  + actualTag.getType());
         }
     }
@@ -421,11 +446,11 @@ public class ProfileManagerTest extends XMLTestCase
         pm.addTag("some_tag3", "Department.name", "attribute", "sally");
         pm.addTag("some_tag3", "Department.company", "reference", "sally");
         pm.addTag("some_tag3", "Department.employees", "collection", "sally");
-        
+
         pm.addTag("some_tag3.1", "org.intermine.model.testmodel.Department", "class", "sally");
-        
+
         List allTags = pm.getTags(null, null, null, null);
-        
+
         // 18 tags because ProfileManagerBindingTestNewIDs.xml has 5
         assertEquals(18, allTags.size());
 
@@ -446,7 +471,7 @@ public class ProfileManagerTest extends XMLTestCase
 
         List sallyNameTagsPattern = pm.getTags(null, null, null, "sal%");
         assertEquals(8, sallyNameTagsPattern.size());
-        
+
         // "_" is a wildcard
         List bobDeptPattern = pm.getTags("some_tag_", "Department.%", null, "bob");
         assertEquals(6, bobDeptPattern.size());

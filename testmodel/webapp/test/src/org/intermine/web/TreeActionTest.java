@@ -25,7 +25,7 @@ public class TreeActionTest extends MockStrutsTestCase
     public void tearDown() throws Exception {
         getActionServlet().destroy();
     }
-    
+
     public void testExpand() throws Exception {
         Set openClasses = new HashSet();
         openClasses.add("org.intermine.model.testmodel.Thing");
@@ -38,13 +38,13 @@ public class TreeActionTest extends MockStrutsTestCase
 
         //necessary to work-round struts test case not invoking our SessionListener
         getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null,
+                                  new Profile(null, null, null, null,
                                               new HashMap(), new HashMap(), new HashMap()));
 
         actionPerform();
         verifyNoActionErrors();
         verifyForward("renderTree");
-        
+
         Set expected = new HashSet();
         expected.add("org.intermine.model.testmodel.Thing");
         expected.add("org.intermine.model.testmodel.Department");
@@ -64,13 +64,13 @@ public class TreeActionTest extends MockStrutsTestCase
 
         //necessary to work-round struts test case not invoking our SessionListener
         getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null,
+                                  new Profile(null, null, null, null,
                                               new HashMap(), new HashMap(), new HashMap()));
 
         actionPerform();
         verifyNoActionErrors();
         verifyForward("renderTree");
-        
+
         Set expected = new HashSet();
         expected.add("org.intermine.model.testmodel.Thing");
         assertEquals(expected, getSession().getAttribute("openClasses"));

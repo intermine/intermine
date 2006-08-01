@@ -2,8 +2,11 @@ package org.intermine.web.history;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.web.Constants;
 import org.intermine.web.PathQuery;
 import org.intermine.web.Profile;
@@ -22,24 +25,27 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
     Date date = new Date();
     InterMineBag bag;
     TemplateQuery template;
-    
+    ObjectStoreDummyImpl userprofileOS = new ObjectStoreDummyImpl();
+    Integer userId;
+
     public ModifyQueryChangeActionTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        
+
+        userprofileOS.setModel(Model.getInstanceByName("userprofile"));
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         query.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
-        bag = new InterMinePrimitiveBag();
+        bag = new InterMinePrimitiveBag(userId, "bag1", userprofileOS, new HashSet());
         sq = new SavedQuery("query1", date, query);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
         template = new TemplateQuery("template", "tdesc",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");
-        
+
         SessionMethods.initSession(this.getSession());
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
         profile.saveQuery(sq.getName(), sq);
@@ -47,7 +53,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         profile.saveHistory(hist);
         profile.saveHistory(hist2);
     }
-    
+
     public void testLoadQuery() {
         addRequestParameter("type", "saved");
         addRequestParameter("name", "query1");
@@ -58,7 +64,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         verifyForward("query");
         assertEquals(query, getSession().getAttribute(Constants.QUERY));
     }
-    
+
     public void testLoadHistory() {
         addRequestParameter("type", "history");
         addRequestParameter("name", "query2");
@@ -69,7 +75,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         verifyForward("query");
         assertEquals(query, getSession().getAttribute(Constants.QUERY));
     }
-    
+
     public void testLoadBag() {
         addRequestParameter("type", "bag");
         addRequestParameter("name", "bag1");
@@ -77,37 +83,37 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         setRequestPathInfo("/modifyQueryChange");
         actionPerform();
         verifyNoActionErrors();
-        
+
         assertEquals("/bagDetails.do?bagName=bag1", getActualForward());
     }
-    
+
     public void testSave() {
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
         assertEquals(1, profile.getSavedQueries().size());
-        
+
         addRequestParameter("name", "query2");
         addRequestParameter("method", "save");
         setRequestPathInfo("/modifyQueryChange");
         actionPerform();
         verifyNoActionErrors();
         assertEquals("/history.do?action=rename&type=saved&name=query2", getActualForward());
-        
+
         assertEquals(2, profile.getSavedQueries().size());
         assertEquals(2, profile.getHistory().size());
     }
-    
+
     public void testSaveWithNameClash() {
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
         assertEquals(1, profile.getSavedQueries().size());
-        
+
         addRequestParameter("name", "query1");
         addRequestParameter("method", "save");
         setRequestPathInfo("/modifyQueryChange");
         actionPerform();
         verifyNoActionErrors();
-        
+
         assertEquals("/history.do?action=rename&type=saved&name=query_1", getActualForward());
-        
+
         assertEquals(2, profile.getSavedQueries().size());
         assertEquals(2, profile.getHistory().size());
     }

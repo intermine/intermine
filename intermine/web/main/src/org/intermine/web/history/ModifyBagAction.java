@@ -68,7 +68,7 @@ public class ModifyBagAction extends ModifyHistoryAction
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request, response);
         }
-        
+
         return mapping.findForward("bag");
     }
 
@@ -92,13 +92,13 @@ public class ModifyBagAction extends ModifyHistoryAction
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
+
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        
+
         if (!typesMatch(savedBags, selectedBags)) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
-            return mapping.findForward("history");
+            return mapping.findForward("bag");
         }
 
         // Now combine
@@ -111,7 +111,7 @@ public class ModifyBagAction extends ModifyHistoryAction
         }
         InterMineBag combined =
             new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, union);
-        
+
         int defaultMax = 10000;
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
@@ -125,13 +125,13 @@ public class ModifyBagAction extends ModifyHistoryAction
         }
 
         profile.saveBag(name, combined);
-        
+
         return mapping.findForward("bag");
     }
-    
+
     /**
      * Given a set of bag names, find out whether they are all of the same type.
-     * 
+     *
      * @param bags map from bag name to InterMineBag subclass
      * @param selectedBags names of bags to match
      * @return true if all named bags are of the same type, false if not
@@ -170,12 +170,12 @@ public class ModifyBagAction extends ModifyHistoryAction
 
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
-        
+
         if (!typesMatch(savedBags, selectedBags)) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("bag");
         }
-        
+
         Collection intersect = new ArrayList();
         intersect.addAll((Collection) savedBags.get(selectedBags[0]));
         for (int i = 1; i < selectedBags.length; i++) {
@@ -188,7 +188,7 @@ public class ModifyBagAction extends ModifyHistoryAction
             new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, intersect);
 
         profile.saveBag(name, combined);
-        
+
         return mapping.findForward("bag");
     }
 
@@ -216,12 +216,12 @@ public class ModifyBagAction extends ModifyHistoryAction
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
-        
+
         if (!typesMatch(savedBags, selectedBags)) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("bag");
         }
-        
+
         // A map from objects to the number of occurrences of that object
         Map countMap = new HashMap();
 
@@ -246,7 +246,7 @@ public class ModifyBagAction extends ModifyHistoryAction
                 subtract.add(thisObj);
             }
         }
-        
+
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag resultBag =
             new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, subtract);

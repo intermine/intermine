@@ -86,7 +86,6 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         Map templates = task.getPrecomputeTemplateQueries();
         TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
-        System.out.println(MainHelper.makeQuery(template.getQuery(), new HashMap(), new HashMap()));
 
         Query q = new Query();
         q.setDistinct(true);
