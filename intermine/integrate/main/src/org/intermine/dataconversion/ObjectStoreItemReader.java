@@ -16,6 +16,12 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.QueryValue;
+
+
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -73,6 +79,29 @@ public class ObjectStoreItemReader extends AbstractItemReader
         QueryClass qc = new QueryClass(Item.class);
         q.addFrom(qc);
         q.addToSelect(qc);
+        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        res.setBatchSize(batchSize);
+        res.setNoExplain();
+        res.setNoOptimise();
+        return res.iterator();
+    }
+
+    /**
+     * Read items of one particular class only, or exclude one particular class.
+     * @param clsName fully qualified name of class to include/exclude
+     * @param notEquals if true then exclude the given classname
+     * @return and iterator over the selected items
+     * @throws ObjectStoreException if a problem running the query
+     */
+    public Iterator itemIterator(String clsName, boolean notEquals) throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Item.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "className");
+        SimpleConstraint sc = new SimpleConstraint(qf,
+            notEquals ? ConstraintOp.NOT_EQUALS : ConstraintOp.EQUALS, new QueryValue(clsName));
+        q.setConstraint(sc);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
         res.setBatchSize(batchSize);
         res.setNoExplain();

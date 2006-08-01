@@ -48,6 +48,9 @@ public class MockItemReader extends AbstractItemReader
     public Iterator itemIterator() {
         return storedItems.values().iterator();
     }
+    public Iterator itemIterator(String s, boolean b) {
+        return storedItems.values().iterator();
+    }
 
     /**
      * @see ItemReader#getItemsByDescription
