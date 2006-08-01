@@ -4,8 +4,9 @@
   
   <description>wrapper project for build/testing/cleaning everything</description>
 
-  <import file="../../imbuild/library.xml"/>
-  
+  <import file="../../imbuild/library.xml"/> 
+  <import file="../../imbuild/task.xml"/> 
+
   <target name="-pre-init" depends="library.-pre-init">
     <property name="test.results.dir" location="${build.dir}/test/results"/>
   </target>
@@ -14,7 +15,8 @@
     <mkdir dir="${test.results.dir}"/>
   </target>
   
-  <target name="fulltest" depends="init, -init-fulltest, -do-fulltest, test-report"/>
+  <target name="fulltest" 
+          depends="init, -init-properties, -init-fulltest, -do-fulltest, test-report"/>
   
   <target name="-do-fulltest">
     <subant inheritAll="false">
