@@ -37,7 +37,7 @@ public class FastaLoaderTaskTest extends TestCase {
 
     public void setUp() throws Exception {
 
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
         model = Model.getInstanceByName("genomic");
         itemFactory = new ItemFactory(model);

@@ -75,7 +75,7 @@ public class WriteGFFTaskTest extends TestCase
     private static final Logger LOG = Logger.getLogger(WriteGFFTaskTest.class);
 
     public void setUp() throws Exception {
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
         model = Model.getInstanceByName("genomic");
         itemFactory = new ItemFactory(model);

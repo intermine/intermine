@@ -35,7 +35,7 @@ public class StoreSequencesTest extends TestCase {
     private static final Logger LOG = Logger.getLogger(StoreSequencesTest.class);
 
     public void setUp() throws Exception {
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         storeContigs();
     }
 
