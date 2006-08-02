@@ -10,15 +10,16 @@ package org.intermine.bio.io.gff3;
  *
  */
 
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-import java.io.StringReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URLDecoder;
+import java.io.StringReader;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import junit.framework.TestCase;
 
 /**
  * Tests for the GFF3Parser class.
@@ -33,7 +34,7 @@ public class GFF3ParserTest extends TestCase
     }
 
     public void testParse() throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/gff_test_data.gff3")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("gff_test_data.gff3")));
 
         List records = new ArrayList();
 

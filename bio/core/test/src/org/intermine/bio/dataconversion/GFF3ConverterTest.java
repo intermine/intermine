@@ -10,27 +10,23 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.Iterator;
 
-import junit.framework.TestCase;
-
-import org.intermine.bio.dataconversion.GFF3Converter;
-import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-
 import org.intermine.xml.full.Item;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+
+import junit.framework.TestCase;
 
 /**
  * Class to read a GFF3 source data and produce a data representation
@@ -46,13 +42,13 @@ public class GFF3ConverterTest extends TestCase {
     GFF3Parser parser = new GFF3Parser();
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
-    String orgAbbrev = "HS";
+    String orgTaxonId = "7227";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle,
+        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle,
                                       tgtModel,
                                       new GFF3RecordHandler(tgtModel));
     }
