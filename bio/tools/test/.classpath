@@ -5,7 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-tools-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/flymine-dbmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
