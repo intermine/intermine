@@ -33,9 +33,21 @@
     <available property="antlib-web-available" resource="org/intermine/web/task/antlib-web.xml" classpathref="task.class.path"/>
   </target>
   
+  <target name="-set-release-suffix-exists" if="release">
+    <property name="release-suffix" value=".${release}"/>
+  </target>
+
+  <target name="-set-release-suffix-not-exists" unless="release">
+    <!-- default to no suffix -->
+    <property name="release-suffix" value=""/>
+  </target>
+
+  <target name="-set-release-suffix" 
+          depends="-set-release-suffix-not-exists, -set-release-suffix-exists"/>
+
   <target name="-init-check-for-intermine-properties"
-          depends="-pre-define-task-classpath, -init-project">
-    <available file="${user.home}/${intermine.properties.file}"
+          depends="-set-release-suffix, -pre-define-task-classpath, -init-project">
+    <available file="${user.home}/${intermine.properties.file}${release-suffix}"
                property="have.intermine.properties.file"/>
   </target>
 
@@ -51,7 +63,7 @@ project.properties.
           depends="-check-for-intermine-properties-file, -init-check-for-intermine-properties"
           unless="have.intermine.properties.file">
     <fail unless="temporary.webapp.project">
-Couldn't find ${user.home}/${intermine.properties.file}.
+Couldn't find ${user.home}/${intermine.properties.file}${release-suffix}
 You need to set the intermine.properties.file property in your
 project.properties.
     </fail>
@@ -59,11 +71,11 @@ project.properties.
 
   <target name="-init-properties" depends="-check-for-intermine-properties"
           unless="temporary.webapp.project">
-    <!-- depends on -pre-define-task-classpath so that build.task.dir is set
+    <!-- depends (indirectly) on -pre-define-task-classpath so that build.task.dir is set
          and the directory is created -->
 
     <!-- Copy intermine.properties onto the classpath -->
-    <copy file="${user.home}/${intermine.properties.file}" 
+    <copy file="${user.home}/${intermine.properties.file}${release-suffix}" 
           tofile="${build.task.dir}/intermine.properties"/>
     <!-- Copy default.intermine.properties onto the classpath -->
     <copy file="${default.intermine.properties.file}" 
