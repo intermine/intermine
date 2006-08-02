@@ -7,7 +7,7 @@
   <import file="../../../../imbuild/tests.xml"/>
   <import file="../../../../imbuild/task.xml"/>
 
-  <target name="-pre-test" depends="build-db-genomic-fulldata-test"/>
+  <target name="-pre-test" depends="build-db.bio-fulldata-test"/>
 
   <target name="do-test" depends="-init-macrodef-junit">
     <imtestsproj:junit/>
@@ -25,14 +25,14 @@
     </path>
   </target>
 
-  <target name="build-db-genomic-fulldata-test" depends="-init-build-db">
-    <imdbproj:build-db osname="os.fulldatatest"
+  <target name="build-db.bio-fulldata-test" depends="-init-build-db">
+    <imdbproj:build-db osname="os.bio-fulldata-test"
                        model="fulldata"/>
   </target>
 
   <!-- index the fulldata test database -->
   <target name="create-indexes-genomic-fulldata-test" depends="-init-build-db">
-    <create-indexes alias="os.fulldatatest" attributeIndexes="false"/>
+    <create-indexes alias="os.bio-fulldata-test" attributeIndexes="false"/>
   </target>
 
 </project>
