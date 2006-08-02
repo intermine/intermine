@@ -17,7 +17,15 @@
   <import file="${application.xml.basedir}/task.xml"/>
 
   <!-- Local webapp build/deploy properties -->
-  <property name="build.properties.local" value="${user.home}/build.properties.${ant.project.name}" />
+  <property name="build.properties.local.base"
+            value="${user.home}/build.properties.${ant.project.name}"/>
+  <condition property="build.properties.local" value="${build.properties.local.base}.${release}"
+             else="${build.properties.local.base}">
+    <available file="${build.properties.local.base}.${release}"/>
+  </condition>
+  <available file="${build.properties.local}" property="build.properties.local.present"/>
+  <fail message="${build.properties.local} not found" unless="build.properties.local.present"/>
+
   <property file="${build.properties.local}"/>
 
   <!-- INIT -->
