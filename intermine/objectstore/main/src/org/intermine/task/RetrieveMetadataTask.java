@@ -85,7 +85,8 @@ public class RetrieveMetadataTask extends Task
             MetadataManager.saveModel(model, destDir);
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
-            System.err .println("Failed to retrieve metadata - maybe you need to run build-db?");
+            System.err .println("Failed to retrieve metadata from " + database 
+                                + " - maybe you need to run build-db?");
             throw new BuildException(e);
         }
     }
