@@ -18,7 +18,7 @@ LOG=$ARCHIVE_TO/ant_log.txt
 # -------------------------------------------------------------------------- #
 
 if [ -f "$RUNNING_FILE" ]; then
-  echo Not starting tests because $RUNNING_FILE exists
+  echo `date`: Not starting tests because $RUNNING_FILE exists
   exit
 fi
 
@@ -40,12 +40,12 @@ DIFF=$((`date +%s`-$LAST_CHANGE))
 echo "$DIFF seconds since last change"
 
 if [ $DIFF -lt $((60*10)) ]; then
-  echo "Need to wait $((60*10-$DIFF)) more seconds"
+  echo "`date`: Need to wait $((60*10-$DIFF)) more seconds"
   if [ "$#" -eq "0" ]; then
     exit
   fi
 else
-  echo "10 minutes have pasted since last update - lets do it..."
+  echo "`date`: 10 minutes have pasted since last update - lets do it..."
   date
 fi
 
