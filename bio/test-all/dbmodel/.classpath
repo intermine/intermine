@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="build/gen/src"/>
 	<classpathentry kind="lib" path="dist/genomic-test-dbmodel.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="output" path="build/classes"/>
