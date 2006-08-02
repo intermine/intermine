@@ -28,7 +28,7 @@
       <property name="generate.report" value="false"/>
       <property name="no.dep" value="false"/>
       <!--<property name="test.fork" value="yes"/>-->
-      <fileset dir="../.." includes="sources/*/test/build.xml"/>
+      <fileset dir="../.." includes="bio/sources/*/test/build.xml"/>
       <fileset dir="../.." includes="bio/*/test/build.xml"/>
       <fileset dir="../.." includes="bio/postprocess/core/test/build.xml"/>
     </subant>
