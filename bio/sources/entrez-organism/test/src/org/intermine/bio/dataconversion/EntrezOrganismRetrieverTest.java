@@ -39,7 +39,7 @@ public class EntrezOrganismRetrieverTest extends TestCase
 {
     public void testEntrezOrganismRetriever() throws Exception {
         EntrezOrganismRetriever eor = new TestEntrezOrganismRetriever();
-        eor.setOsAlias("os.genomic-test");
+        eor.setOsAlias("os.bio-test");
 
         // Create temp file.
         File temp = File.createTempFile("EntrezOrganismRetriever", ".tmp");
@@ -61,7 +61,7 @@ public class EntrezOrganismRetrieverTest extends TestCase
     {
         public TestEntrezOrganismRetriever() {
             super();
-            setOsAlias("os.genomic-test");
+            setOsAlias("os.bio-test");
             setOutputFile("/tmp/TestEntrezOrganismRetriever_dummy");
         }
 

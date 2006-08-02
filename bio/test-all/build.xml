@@ -12,11 +12,11 @@
     <property name="test.results.dir" location="${build.dir}/test/results"/>
   </target>
   
-  <target name="build-db-genomic-test" depends="init, -init-build-db, -init-deps, -init-task-xml">
-    <imdbproj:build-db osname="os.genomic-test" model="genomic"/>
+  <target name="build-db.bio-test" depends="init, -init-build-db, -init-deps, -init-task-xml">
+    <imdbproj:build-db osname="os.bio-test" model="genomic"/>
   </target>
 
-  <target name="-init-fulltest" depends="-init-properties, build-db-genomic-test, init">
+  <target name="-init-fulltest" depends="-init-properties, build-db.bio-test, init">
     <mkdir dir="${test.results.dir}"/>
   </target>
   

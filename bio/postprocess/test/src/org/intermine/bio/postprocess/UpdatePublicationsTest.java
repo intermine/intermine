@@ -32,7 +32,7 @@ public class UpdatePublicationsTest extends TestCase
 {
     public void testUpdatePublications() throws Exception {
         StringWriter sw = new StringWriter();
-        ObjectStoreWriter objectStoreWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
+        ObjectStoreWriter objectStoreWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         new TestUpdatePublications(objectStoreWriter, sw).executeInternal(sw);
 
         List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsTest_tgt.xml"));

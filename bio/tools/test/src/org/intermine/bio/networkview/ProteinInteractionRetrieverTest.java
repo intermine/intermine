@@ -27,7 +27,7 @@ public class ProteinInteractionRetrieverTest extends TestCase {
 	
 	protected void setUp() throws Exception {
 		model = Model.getInstanceByName("genomic");
-		osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.genomic-test");
+		osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
 		os = osw.getObjectStore();
 		osw.beginTransaction();
 		Collection c = getExpectedObjects();
