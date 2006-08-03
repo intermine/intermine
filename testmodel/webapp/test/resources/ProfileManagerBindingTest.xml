@@ -1,25 +1,24 @@
+<?xml version="1.0"?>
 <userprofiles>
-  <userprofile username="bob" password="pass">
+  <userprofile password="bob_pass" username="bob">
     <bags>
       <bag name="bag1">
-        <element type="java.lang.String" value="foo1"/>
+        <element type="java.lang.Integer" value="100"/>
+        <element type="java.lang.Float" value="1.1"/>
+        <element type="java.lang.Boolean" value="true"/>
         <element type="java.lang.String" value="foo2"/>
         <element type="java.lang.String" value="foo3"/>
-        <element type="java.lang.Integer" value="100"/>
-        <element type="java.lang.Boolean" value="true"/>
-        <element type="java.lang.Float" value="1.1"/>
+        <element type="java.lang.String" value="foo1"/>
       </bag>
     </bags>
     <queries>
       <saved-query name="query1">
-        <query name="query1" model="testmodel" view="">
-        </query>
+        <query name="query1" model="testmodel" view=""/>
       </saved-query>
     </queries>
     <template-queries>
       <template name="template" description="tdesc" important="false">
-        <query name="template" model="testmodel" view="">
-        </query>
+        <query name="template" model="testmodel" view=""/>
       </template>
     </template-queries>
     <tags>
@@ -29,7 +28,7 @@
       <tag name="test-tag2" objectIdentifier="Department.employees" type="collection"/>
     </tags>
   </userprofile>
-  <userprofile username="sally" password="sally_pass">
+  <userprofile password="sally_pass" username="sally">
     <items>
       <item id="2" class="" implements="http://www.intermine.org/model/testmodel#Company">
         <attribute name="name" value="CompanyB"/>
@@ -90,22 +89,20 @@
         <element type="java.lang.Integer" value="123"/>
       </bag>
       <bag name="sally_bag3">
-        <element type="org.intermine.model.InterMineObject" value="10"/>
-        <element type="org.intermine.model.InterMineObject" value="11"/>
-        <element type="org.intermine.model.InterMineObject" value="12"/>
         <element type="org.intermine.model.InterMineObject" value="6"/>
+        <element type="org.intermine.model.InterMineObject" value="11"/>
+        <element type="org.intermine.model.InterMineObject" value="10"/>
+        <element type="org.intermine.model.InterMineObject" value="12"/>
       </bag>
     </bags>
     <queries>
       <saved-query name="query1">
-        <query name="query1" model="testmodel" view="">
-        </query>
+        <query name="query1" model="testmodel" view=""/>
       </saved-query>
     </queries>
     <template-queries>
       <template name="template" description="some desc" important="true">
-        <query name="template" model="testmodel" view="">
-        </query>
+        <query name="template" model="testmodel" view=""/>
       </template>
     </template-queries>
     <tags>
@@ -113,4 +110,3 @@
     </tags>
   </userprofile>
 </userprofiles>
-

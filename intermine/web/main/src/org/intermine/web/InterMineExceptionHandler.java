@@ -20,8 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -82,7 +83,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
         request.setAttribute("stacktrace", sw.toString());
 
         LOG.error(sw.toString());
-        
+
         // Put the original exception on the request
         request.setAttribute("exception", ex);
 
@@ -92,7 +93,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
                 error = ((ModuleException) t).getError();
                 property = ((ModuleException) t).getProperty();
             } else {
-                error = new ActionMessage(ae.getKey(), t.getMessage());
+                error = new ActionError(ae.getKey(), t.getMessage());
                 property = error.getKey();
             }
 
@@ -124,21 +125,21 @@ public class InterMineExceptionHandler extends ExceptionHandler
                                   ActionForward forward,
                                   String scope) {
 
-        ActionErrors errors = null;
+        ActionMessages messages = null;
         if ("request".equals(scope)) {
-            errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+            messages = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
         } else {
             request.getSession().getAttribute(Globals.ERROR_KEY);
         }
-        if (errors == null) {
-            errors = new ActionErrors();
+        if (messages == null) {
+            messages = new ActionMessages();
         }
-        errors.add(property, message);
+        messages.add(property, message);
 
         if ("request".equals(scope)) {
-            request.setAttribute(Globals.ERROR_KEY, errors);
+            request.setAttribute(Globals.ERROR_KEY, messages);
         } else {
-            request.getSession().setAttribute(Globals.ERROR_KEY, errors);
+            request.getSession().setAttribute(Globals.ERROR_KEY, messages);
         }
     }
 

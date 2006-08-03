@@ -47,7 +47,7 @@ import org.intermine.model.userprofile.UserProfile;
 public abstract class InterMineBag extends AbstractSet
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
-    
+
     /** User id, used for storing and retrieving. */
     private Integer userId;
     /** Bag name, used for storing and retrieving. */
@@ -64,7 +64,7 @@ public abstract class InterMineBag extends AbstractSet
      * the Set is data that needs to be stored, and setReference will be null. */
     private LinkedHashSet set;
 
-    /** 
+    /**
      * Constructs a new InterMineBag to be lazily-loaded from the userprofile database.
      *
      * @param userId the id of the user, matching the userprofile database
@@ -79,13 +79,9 @@ public abstract class InterMineBag extends AbstractSet
         this.name = name;
         this.size = size;
         this.os = os;
-        if (!os.getModel().getName().equals("userprofile")) {
-            throw new RuntimeException("Wrong model in objectstore for InterMineBag: "
-                    + os.getModel().getName());
-        }
     }
-    
-    /** 
+
+    /**
      * Constructs a new InterMineBag with certain contents.
      *
      * @param userId the id of the user, to be saved in the userprofile database
@@ -100,10 +96,6 @@ public abstract class InterMineBag extends AbstractSet
         this.name = name;
         this.size = -1;
         this.os = os;
-        if (!os.getModel().getName().equals("userprofile")) {
-            throw new RuntimeException("Wrong model in objectstore for InterMineBag: "
-                    + os.getModel().getName());
-        }
     }
 
     /**
@@ -125,7 +117,7 @@ public abstract class InterMineBag extends AbstractSet
     public int getSize() {
         return size();
     }
-    
+
     protected synchronized LinkedHashSet getRealSet() {
         if (set != null) {
             return set;
@@ -173,7 +165,7 @@ public abstract class InterMineBag extends AbstractSet
     public synchronized boolean needsWrite() {
         return set != null;
     }
-        
+
     public synchronized void resetToDatabase() {
         setReference = new SoftReference(set);
         size = set.size();
@@ -215,7 +207,7 @@ public abstract class InterMineBag extends AbstractSet
     public boolean remove(Object o) {
         return getRealSetForWrite().remove(o);
     }
-    
+
     /**
      * Return a collection of actual objects represented by this bag rather than any
      * intermediate form (such as intermine object id numbers).

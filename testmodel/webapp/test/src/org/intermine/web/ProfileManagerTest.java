@@ -20,11 +20,16 @@ import java.util.Set;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -46,6 +51,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * Tests for the Profile class.
@@ -53,12 +59,14 @@ import org.custommonkey.xmlunit.XMLTestCase;
 
 public class ProfileManagerTest extends XMLTestCase
 {
-    private Profile bobProfile;
-    private Profile sallyProfile;
+    private Profile bobProfile, sallyProfile;
     private ProfileManager pm;
-    private ObjectStoreWriter osw;
-    private ObjectStore os;
-    private ObjectStoreWriter userProfileOSW;
+    private ObjectStore os, userProfileOS;
+    private ObjectStoreWriter osw, userProfileOSW;
+    private Integer bobId = new Integer(101);
+    private Integer sallyId = new Integer(102);
+    private String bobPass = "bob_pass";
+    private String sallyPass = "sally_pass";
 
     public ProfileManagerTest(String arg) {
         super(arg);
@@ -70,6 +78,7 @@ public class ProfileManagerTest extends XMLTestCase
         os = osw.getObjectStore();
 
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        userProfileOS = userProfileOSW.getObjectStore();
 
         pm = new ProfileManager(os, userProfileOSW);
 
@@ -88,14 +97,16 @@ public class ProfileManagerTest extends XMLTestCase
         }
         osw.commitTransaction();
 
+    }
+
+    private void setUpUserProfiles() throws Exception {
+
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         Date date = null;
         SavedQuery sq = new SavedQuery("query1", date, query);
 
         // bob's details
-        Integer bobId = new Integer(101);
         String bobName = "bob";
-        String bobPass = "pass";
 
         Set contents = new HashSet();
         contents.add("foo1");
@@ -105,14 +116,14 @@ public class ProfileManagerTest extends XMLTestCase
         contents.add(new Boolean(true));
         contents.add(new Float(1.1));
         InterMineBag bag = new InterMinePrimitiveBag(bobId, "bag1",
-                                                     userProfileOSW.getObjectStore(),
+                                                     os,
                                                      contents);
 
         TemplateQuery template =
             new TemplateQuery("template", "tdesc",
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               false, "");
-        bobProfile = new Profile(pm, "bob", bobId, "pass",
+        bobProfile = new Profile(pm, bobName, bobId, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
@@ -124,17 +135,15 @@ public class ProfileManagerTest extends XMLTestCase
         sq = new SavedQuery("query1", date, query);
 
         // sally details
-        Integer sallyId = new Integer(102);
         String sallyName = "sally";
-        String sallyPass = "sally_pass";
 
         contents.add("some value");
         bag = new InterMinePrimitiveBag(sallyId, "bag2",
-                                        userProfileOSW.getObjectStore(),
+                                        os,
                                         contents);
         otherContents.add(new Integer(123));
         InterMineBag otherBag = new InterMinePrimitiveBag(sallyId, "bag3",
-                                                     userProfileOSW.getObjectStore(),
+                                                     os,
                                                      otherContents);
 
 
@@ -150,7 +159,7 @@ public class ProfileManagerTest extends XMLTestCase
         // primary key of the Department includes the company reference
         objectContents.add(new Integer(6));
         InterMineIdBag objectBag = new InterMineIdBag(sallyId, "bag4",
-                                                     userProfileOSW.getObjectStore(),
+                                                     os,
                                                      objectContents);
 
 
@@ -167,6 +176,7 @@ public class ProfileManagerTest extends XMLTestCase
         sallyProfile.saveTemplate("template", template);
     }
 
+
     public void tearDown() throws Exception {
         if (osw.isInTransaction()) {
             osw.abortTransaction();
@@ -175,7 +185,6 @@ public class ProfileManagerTest extends XMLTestCase
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
                                                     .getSequence());
         Iterator resIter = res.iterator();
@@ -199,21 +208,42 @@ public class ProfileManagerTest extends XMLTestCase
         QueryClass qc = new QueryClass(Tag.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = userProfileOSW.getObjectStore();
-        SingletonResults res = new SingletonResults(q, userProfileOSW.getObjectStore(),
-                                                    userProfileOSW.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = new SingletonResults(q, userProfileOS,
+                                                    userProfileOS.getSequence());
         Iterator resIter = res.iterator();
         userProfileOSW.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             userProfileOSW.delete(o);
         }
+
+        removeUserProfile("bob");
+        removeUserProfile("sally");
+
         userProfileOSW.commitTransaction();
         userProfileOSW.close();
     }
 
+    private void removeUserProfile(String username) throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "username");
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
+        q.setConstraint(sc);
+        SingletonResults res = new SingletonResults(q, userProfileOS,
+                                                    userProfileOS.getSequence());
+        Iterator resIter = res.iterator();
+        while (resIter.hasNext()) {
+            InterMineObject o = (InterMineObject) resIter.next();
+            userProfileOSW.delete(o);
+        }
+    }
+
     public void testXMLWrite() throws Exception {
+        setUpUserProfiles();
+        XMLUnit.setIgnoreWhitespace(true);
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
@@ -246,8 +276,8 @@ public class ProfileManagerTest extends XMLTestCase
         }
         String expectedXml = sb.toString();
         String actualXml = sw.toString().trim();
-        System.out.println("expected: " + expectedXml);
-        System.out.println("actual: " + actualXml);
+        //System.out.println("expected: " + expectedXml);
+        //System.out.println("actual: " + actualXml);
 
         assertXMLEqual("XML doesn't match", expectedXml, actualXml);
     }
@@ -263,8 +293,8 @@ public class ProfileManagerTest extends XMLTestCase
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
-        Profile bobProfile = pm.getProfile("bob", "pass");
-        Profile sallyProfile = pm.getProfile("sally", "sally_pass");
+        Profile bobProfile = pm.getProfile("bob", bobPass);
+        Profile sallyProfile = pm.getProfile("sally", sallyPass);
 
         Set expectedIDs = new HashSet();
 

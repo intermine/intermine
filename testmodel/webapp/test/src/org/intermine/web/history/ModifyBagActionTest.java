@@ -53,6 +53,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
     ObjectStoreWriter userProfileOSW;
     Integer userId;
     ProfileManager profileManager;
+    ObjectStore os;
 
     public ModifyBagActionTest(String arg) {
         super(arg);
@@ -60,14 +61,8 @@ public class ModifyBagActionTest extends MockStrutsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        if (userProfileOSW == null) {
-            SessionMethods.initSession(this.getSession());
-            userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        }
-        //ObjectStoreDummyImpl userprofileDummy = new ObjectStoreDummyImpl();
-        //userprofileDummy.setModel(Model.getInstanceByName("userprofile"));
-        //userprofileOS = new ObjectStoreWriterInterMineImpl(userprofileDummy);
-        //userprofileOS.setModel(Model.getInstanceByName("userprofile"));
+        SessionMethods.initSession(this.getSession());
+        userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         profileManager = new ProfileManager(os, userProfileOSW);
@@ -125,7 +120,6 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         SingletonResults res = new SingletonResults(q, userProfileOSW,
                                                     userProfileOSW.getSequence());
 
-        System.out.println("results size: " + res.size());
         Iterator resIter = res.iterator();
         userProfileOSW.beginTransaction();
         while (resIter.hasNext()) {
@@ -180,6 +174,8 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         addRequestParameter("type", "bag"); //
         setRequestPathInfo("/modifyBag");
         actionPerform();
+        //System.out.println("actionMessages: " + getRequest().getAttribute("stacktrace"));
+        //System.out.println("error: " + getProfile().getSavedBags());
         verifyNoActionErrors();
         verifyForward("bag");
         assertEquals(2, getProfile().getSavedBags().size());
@@ -192,8 +188,9 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         addRequestParameter("type", "bag"); //
         setRequestPathInfo("/modifyBag");
         actionPerform();
+        //System.out.println("actionMessages: " + getRequest().getAttribute("stacktrace"));
         verifyActionErrors(new String[]{"errors.modifyQuery.queryExists"});
-        assertEquals("/history.do?action=rename&type=bag&name=bag1", getActualForward());
+        assertEquals("/bag.do?action=rename&type=bag&name=bag1", getActualForward());
         assertEquals(2, getProfile().getSavedBags().size());
     }
 
@@ -312,18 +309,13 @@ public class ModifyBagActionTest extends MockStrutsTestCase
     }
 
     public void testUnionObjectBags() {
-
-        System.out.println("error: " + getProfile().getSavedBags());
         InterMineIdBag bag = new InterMineIdBag(userId, "bag3", userProfileOSW, Collections.singleton(new Integer(1)));
-        System.out.println("error: " + getProfile().getSavedBags());
         getProfile().saveBag("bag3", bag);
         addRequestParameter("selectedBags", new String[]{"bag2", "bag3"});
         addRequestParameter("union", "Union");
         addRequestParameter("newBagName", "bagA");
         setRequestPathInfo("/modifyBag");
         actionPerform();
-        System.out.println("actionMessages: " + getRequest().getAttribute("stacktrace"));
-        System.out.println("error: " + getProfile().getSavedBags());
         verifyNoActionErrors();
         verifyForward("bag");
         assertEquals(4, getProfile().getSavedBags().size());

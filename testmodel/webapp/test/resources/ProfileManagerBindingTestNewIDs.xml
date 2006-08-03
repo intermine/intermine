@@ -1,5 +1,5 @@
 <userprofiles>
-  <userprofile username="bob" password="pass">
+  <userprofile username="bob" password="bob_pass">
     <bags>
       <bag name="bag1">
         <element type="java.lang.String" value="foo1"/>
