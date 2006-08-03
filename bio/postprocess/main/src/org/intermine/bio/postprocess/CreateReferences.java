@@ -579,6 +579,7 @@ public class CreateReferences
 
     }
 
+
     /**
      * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
      * @throws Exception if anything goes wrong
@@ -589,26 +590,60 @@ public class CreateReferences
 
         osw.beginTransaction();
 
-        Iterator resIter = findProteinProperties(true);
+        Iterator resIter = findProteinProperties(false);
 
         int count = 0;
+        Gene lastGene = null;
+        Set allGoCollection = new HashSet();
+        Set goCollection = new HashSet();
 
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Gene thisGene = (Gene) rr.get(0);
-            Annotation thisAnnotation = (Annotation) rr.get(1);
+            GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
 
-            Annotation tempAnnotation =
-                (Annotation) PostProcessUtil.cloneInterMineObject(thisAnnotation);
+            GOAnnotation tempAnnotation =
+                (GOAnnotation) PostProcessUtil.cloneInterMineObject(thisAnnotation);
             // generate a new ID
             tempAnnotation.setId(null);
             tempAnnotation.setSubject(thisGene);
+            Gene tempGene =
+                (Gene) PostProcessUtil.cloneInterMineObject(thisGene);
+
+            if (lastGene != null && !(lastGene.equals(thisGene))) {
+                if (lastGene != null) {
+                    TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
+                    TypeUtil.setFieldValue(lastGene, "goAnnotation", goCollection);
+                    LOG.debug("store gene " + lastGene.getIdentifier() + " with "
+                              + lastGene.getAllGoAnnotation().size() + " allGO and "
+                              + lastGene.getGoAnnotation().size() + " GO.");
+                    osw.store(lastGene);
+
+                    lastGene = thisGene;
+                    allGoCollection = new HashSet();
+                    goCollection = new HashSet();
+                }
+            }
+            allGoCollection.add(tempAnnotation);
+            if (tempAnnotation.getIsPrimaryAssignment().equals(Boolean.TRUE)) {
+                goCollection.add(tempAnnotation);
+            }
             osw.store(tempAnnotation);
 
+            lastGene = thisGene;
             count++;
         }
 
-        LOG.debug("Created " + count + " new Annotations on Genes");
+        if (lastGene != null) {
+            TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
+            TypeUtil.setFieldValue(lastGene, "goAnnotation", goCollection);
+            LOG.debug("store gene " + lastGene.getIdentifier() + " with "
+                      + lastGene.getAllGoAnnotation().size() + " allGO and "
+                      + lastGene.getGoAnnotation().size() + " GO.");
+            osw.store(lastGene);
+        }
+
+        LOG.info("Created " + count + " new Go annotation collections for Genes");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -618,7 +653,6 @@ public class CreateReferences
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
-
 
     /**
      * Read the UTRs collection of MRNA then set the fivePrimeUTR and threePrimeUTR fields with the
