@@ -13,7 +13,7 @@
   <property name="branding" value="intermine"/>
 
   <target name="prepare">
-    <property name="build.properties.local" value="${user.home}/build.properties.intermine" />
+    <property name="build.properties.local" value="${user.home}/build.properties.testmodel-webapp" />
     <property file="${build.properties.local}"/> 
     <copy todir="${build.www}">
       <fileset dir="${src.www}">
