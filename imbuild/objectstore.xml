@@ -35,7 +35,9 @@
 
   <!-- BUILD DB -->
 
-  <target name="-init-build-db" depends="-init-properties, init, -init-deps, -init-task-xml"/>
+  <target name="-init-build-db" depends="-init-properties, init, -init-deps, -init-task-xml">
+    <property name="doing.build.db" value="true"/>
+  </target>
 
   <target name="-pre-build-db"/>
 
@@ -66,7 +68,8 @@
     </condition>
   </target>
 
-  <target name="-pre-generate" depends="-init-build-db" unless="have.model.to.merge">
+  <target name="-pre-generate" 
+          depends="-init-properties, init, -init-deps, -init-task-xml" unless="doing.build.db">
     <!-- Retrieve model from database -->
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
     <!-- Copy retrieved files so that model generation and packaging tasks will find them -->
@@ -81,7 +84,7 @@
           depends="init, -init-deps, -init-task-xml, -init-jar, -init-properties"/>
 
   <target name="summarise-objectstore" depends="-init-summarise-objectstore"
-          unless="have.model.to.merge">
+          unless="doing.build.db">
     <!-- Summarise objectstore -->
     <echo message="Summarising object store ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
@@ -94,17 +97,16 @@
   -->
   <target name="-init-merge" if="core.model.path">
     <fileset dir="${build.dir}/model" includes="*"/>
-    <property name="have.model.to.merge" value="true"/>
     <!-- Copy the core model to the build directory -->
     <copy file="${objectstore.xml.basedir}/../${core.model.path}/core.xml"
           tofile="${build.model.dir}/${model.name}_model.xml"/>
   </target>
 
-  <!-- Override to perform merge. Note: keep the 'unless' -->
-  <target name="-merge-models" if="have.model.to.merge"/>
+  <!-- Override to perform merge. Note: keep the 'if' -->
+  <target name="-merge-models" if="core.model.path"/>
 
   <!-- Merge shortcuts of the core model -->
-  <target name="-merge-shortcuts" if="have.model.to.merge">
+  <target name="-merge-shortcuts" if="core.model.path">
     <echo>Merging shortcuts...</echo>
     <model-merger inputModelFile="${build.model.dir}/${model.name}_model.xml"
                   additionsFile="${objectstore.xml.basedir}/../${core.model.path}/shortcuts.xml"
@@ -129,4 +131,8 @@
                    -init-merge,
                    -merge-models,
                    -merge-shortcuts"/>
+
+  <!-- exist so that default can be overridden -->
+  <target name="default" depends="model.default"/>
+
 </project>

@@ -1,6 +1,13 @@
 
 <project name="testmodel-dbmodel" default="default" basedir=".">
   
+  <target name="-copy-model" depends="-pre-init">
+    <copy file="../../intermine/objectstore/model/testmodel/testmodel_model.xml" 
+          tofile="build/model/testmodel_model.xml"/>
+  </target>
+
+  <target name="default" depends="-copy-model, objectstore.default"/>
+
   <description>perform actions on the testmodel database</description>
   <import file="../../imbuild/objectstore.xml"/>
   
@@ -11,6 +18,6 @@
                      xmlResource="testmodel_data.xml"
                      sourceName="testsource"/>
   </target>
-  
+
 </project>
 

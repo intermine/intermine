@@ -162,4 +162,7 @@
     </macrodef>
   </target>
   
+  <!-- exist so that default can be overridden -->
+  <target name="default" depends="library.default"/>
+
 </project>
