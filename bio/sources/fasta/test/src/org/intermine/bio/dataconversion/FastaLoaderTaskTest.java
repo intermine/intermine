@@ -48,7 +48,7 @@ public class FastaLoaderTaskTest extends TestCase {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
-        flt.setIntegrationWriterAlias("integration.genomic-test");
+        flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta");
 
         File[] files = new File[2];
