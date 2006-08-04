@@ -154,6 +154,11 @@ public class DelimitedFileConfiguration
         return columnFieldDescriptors;
     }
 
+    /**
+     * Return a List of Class objects corresponding to the fields returned by 
+     * getColumnFieldDescriptors().
+     * @return the Class objects
+     */
     public List getColumnFieldClasses() {
         if (columnFieldClasses == null) {
             columnFieldClasses = new ArrayList();
