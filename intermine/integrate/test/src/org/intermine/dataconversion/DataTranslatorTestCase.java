@@ -33,8 +33,8 @@ public abstract class DataTranslatorTestCase extends TargetItemsTestCase
      * Create a new DataTranslatorTestCase object.
      * @param arg the argument to pass the to super constructor
      */
-    public DataTranslatorTestCase(String arg) {
-        super(arg);
+    public DataTranslatorTestCase(String arg, String oswAlias) {
+        super(arg, oswAlias);
     }
 
     /**
