@@ -3,7 +3,8 @@
   <description>build, test, package testmodel-webapp</description>
   <import file="../../../imbuild/application.xml"/>
   
-  <target name="action">
+  <!-- it's hacky to override do-generate, but it gets run at the right time -->
+  <target name="do-generate">
     <ant antfile="build.xml" dir="../../dbmodel" target="summarise-objectstore" inheritAll="false"/>
   </target>
 
