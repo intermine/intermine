@@ -39,7 +39,7 @@ public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
     public ProteinStructureDataTranslatorTest(String arg) {
-        super(arg);
+        super(arg, "osw.bio-fulldata-test");
     }
 
     public void setUp() throws Exception {

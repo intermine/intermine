@@ -28,7 +28,7 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
   private ItemFactory genomicItemFactory;
 
   public InterproDataTranslatorTest(String arg) throws Exception {
-    super(arg);
+    super(arg, "osw.bio-fulldata-test");
     interproItemFactory = new ItemFactory(Model.getInstanceByName("interpro"));
     genomicItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
   }

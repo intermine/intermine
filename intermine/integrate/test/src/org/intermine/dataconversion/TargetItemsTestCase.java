@@ -40,15 +40,16 @@ import org.intermine.metadata.Model;
  */
 public abstract class TargetItemsTestCase extends TestCase
 {
-    protected String oswAlias = "osw.fulldatatest";
+    protected String oswAlias = null;
     protected ObjectStoreWriter osw;
 
     /**
      * Create a new TargetItemsTestCase object.
      * @param arg the argument to pass the to super constructor
      */
-    public TargetItemsTestCase(String arg) {
+    public TargetItemsTestCase(String arg, String oswAlias) {
         super(arg);
+        this.oswAlias = oswAlias;
     }
 
     /**

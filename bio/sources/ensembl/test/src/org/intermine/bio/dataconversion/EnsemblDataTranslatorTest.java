@@ -39,7 +39,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     private Properties ensemblProperties;
 
     public EnsemblDataTranslatorTest(String arg) throws Exception {
-        super(arg);
+        super(arg, "osw.bio-fulldata-test");
         ensemblItemFactory = new ItemFactory(Model.getInstanceByName("ensembl"));
         genomicItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         //TODO: load the ensembl properties...

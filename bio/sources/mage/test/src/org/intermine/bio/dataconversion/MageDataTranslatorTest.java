@@ -52,7 +52,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     //private File file;
 
     public MageDataTranslatorTest(String arg) {
-        super(arg);
+        super(arg, "osw.bio-fulldata-test");
     }
 
     public void setUp() throws Exception {

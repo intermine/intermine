@@ -54,7 +54,7 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 public class UniprotDataTranslatorTest extends DataTranslatorTestCase
 {
     public UniprotDataTranslatorTest(String arg) {
-        super(arg);
+        super(arg, "osw.bio-fulldata-test");
     }
 
     private String tgtNs = "http://www.flymine.org/model/genomic#";

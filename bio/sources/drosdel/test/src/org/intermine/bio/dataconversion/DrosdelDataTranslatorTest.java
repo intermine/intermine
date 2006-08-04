@@ -34,7 +34,7 @@ public class DrosdelDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
 
     public DrosdelDataTranslatorTest (String arg) {
-        super(arg);
+        super(arg, "osw.bio-fulldata-test");
     }
 
     public void testTranslate() throws Exception {
