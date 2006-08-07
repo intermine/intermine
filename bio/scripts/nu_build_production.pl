@@ -160,7 +160,7 @@ sub runProduction
   #$cmdList{$postprocess} = buildCommandsForTag("post-process", "postprocess", "postprocess -Doperation=");
   push @cmdList, @{buildCommandsForTag("post-process", "postprocess", "postprocess -Doperation=")};
 
-  #print STDOUT Data::Dumper->Dump([\%cmdList]);
+  #printStdOut(Data::Dumper->Dump([\%cmdList]));
   # Do the actual work...
   executeCommands(\@cmdList);
 
@@ -304,31 +304,36 @@ sub executeCommands {
 
     my @cmdList = @{$_[0]};
 
-    #Copy the cmd list
+    #Copy the cmd list first to avoid concurrent modification issues
     my @shortList;
     foreach my $hashRefTmp (@cmdList) {
       push @shortList, $hashRefTmp;
       my %hashTmpBlah = %$hashRefTmp;
-      printStdOut("COPYING:" . $hashTmpBlah{"tag"});
+      if ($verbose) {
+        printStdOut("COPYING:" . $hashTmpBlah{"tag"});
+        }
     }
 
+    #Now loop over the commands looking for the tag we want to start from
     foreach my $hashRef (@cmdList) {
       my %hashtemp = %$hashRef;
       my $tag = $hashtemp{"tag"};
-      printStdOut("FOUND TAG:$tag");
       if ($dumpPrefix eq $tag) {
         last;
       } else {
-        #push elements off the 'shorter' list
+        #push unwanted elements off the 'shorter' list
+        if ($verbose) {
+            printStdOut("DITCHING TAG:$tag");
+        }
         shift @shortList;
       }
     }
 
-    if (scalar(@shortList) == 0) {
+    unless (scalar(@shortList) >= 0) {
       die "Restart Dump Prefix $dumpPrefix does not match any known source or postprocess!";
-    } else {
-      iterateOverCommands(\@shortList);
     }
+
+    iterateOverCommands(\@shortList);
 
   } else {
     iterateOverCommands($_[0]);
@@ -341,7 +346,6 @@ sub executeCommands {
 sub iterateOverCommands {
 
   my @cmdHashList = @{$_[0]};
-  printStdOut("--------------------------------------------------------------------------------\n");
 
   for my $hashRef (@cmdHashList) {
 
@@ -364,10 +368,6 @@ sub iterateOverCommands {
       my %cmd = %{shift @{buildDbCommand("analyse-db-production")}};
       executeCommand($cmd{"dir"},  $cmd{"cmd"}, $cmd{"dmp"});
     }
-
-    #for my $role (keys % {%$hashRef}) {
-    #  print STDOUT "$role=$hashRef->{$role}; ";
-    #}
   }
 }
 
@@ -389,11 +389,11 @@ sub executeCommand {
     {
       chdir($cmdDir);
       if ($dryRun) {
-        print STDOUT "Pretending todo: $cmd\n";
+        printStdOut("Pretending todo: $cmd");
       }
       else {
         if ($verbose) {
-          print STDOUT `date`, "\n\n";
+          printStdOut(`date`);
         }
         open F, "$cmd |" or die "can't run $cmd: $?\n";
         if ($verbose) {
@@ -402,12 +402,11 @@ sub executeCommand {
             print STDOUT "  [$cmd] $_";
           }
           print STDOUT `date`, "\n\n";
-          print STDOUT "finished\n\n";
+          printStdOut("finished\n\n");
         }
         close F;
         if ($? != 0) {
-          print STDERR "failed with exit code $?: @_\n";
-          exit $?;
+          die "failed with exit code $?: @_\n";
         }
       }
       chdir($curDir);
