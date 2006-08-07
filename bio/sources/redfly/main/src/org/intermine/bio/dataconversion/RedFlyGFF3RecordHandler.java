@@ -146,7 +146,6 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getPhenotype(String ontologyTermId) {
         if (phenotypeMap.containsKey(ontologyTermId)) {
-            System.err.println ("found: " + ontologyTermId);
             return (Item) phenotypeMap.get(ontologyTermId);
         }
 
