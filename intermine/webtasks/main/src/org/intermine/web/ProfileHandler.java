@@ -64,7 +64,7 @@ class ProfileHandler extends DefaultHandler
      * correspond to object in old bags.
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
-        this(profileManager, idUpgrader, null, null);
+        this(profileManager, idUpgrader, null, null, new HashSet());
     }
 
     /**
@@ -74,15 +74,17 @@ class ProfileHandler extends DefaultHandler
      * correspond to object in old bags.
      * @param defaultUsername default username
      * @param defaultPassword default password
+     * @param tags a set to populate with user tags
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword) {
+            String defaultUsername, String defaultPassword, Set tags) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
         items = new ArrayList();
         this.username = defaultUsername;
         this.password = defaultPassword;
+        this.tags = tags;
     }
 
     /**
@@ -132,7 +134,6 @@ class ProfileHandler extends DefaultHandler
             subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries);
         }
         if (qName.equals("tags")) {
-            tags = new HashSet();
             subHandler = new TagBinding.TagHandler(username, tags);
         }
         if (subHandler != null) {

@@ -278,10 +278,11 @@ public class ProfileBinding
      * @param os ObjectStore used to resolve object ids
      * @param username default username - used if there is no username in the XML
      * @param password default password
+     * @param tags a set to populate with user tags
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-                                    String username, String password) {
+                                    String username, String password, Set tags) {
         try {
             IdUpgrader idUpgrader = new IdUpgrader() {
                 public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
@@ -290,7 +291,7 @@ public class ProfileBinding
                 }
             };
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password);
+                new ProfileHandler(profileManager, idUpgrader, username, password, tags);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {
