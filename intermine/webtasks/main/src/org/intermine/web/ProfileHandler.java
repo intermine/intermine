@@ -133,7 +133,7 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("tags")) {
             tags = new HashSet();
-            subHandler = new TagBinding.TagHandler(profileManager, username, tags);
+            subHandler = new TagBinding.TagHandler(username, tags);
         }
         if (subHandler != null) {
             subHandler.startElement(uri, localName, qName, attrs);
