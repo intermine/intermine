@@ -6,117 +6,201 @@
 
 use strict;
 use warnings;
-
+use Cwd 'chdir';
 use Expect;
 use Getopt::Std;
 use Cwd;
+use XML::DOM;
+use Data::Dumper;
 
-my @ant_command = ("ant");
+# Directory aliases and usefull hashkeys.
+my $dbmodel = "dbmodel";
+my $integrate = "integrate";
+my $postprocess = "post-process";
 
-# All mines should have a project xml in their root directory in addition to the conf file.
-my $proj_file_name = "project.xml";
-# Gets appened to the end of the supplied mine name so the script can look for
-# the right configuration file.
-my $conf_file_name = "build.conf";
+# Dont forget to rename this.
+my $projectXmlFile= "project.xml";
 
-my $dump_file_prefix;
-my $dump_host;
+my $antCmd;
+my $targetMine;
+my $fsep = "/";
+
+
+
+# Command line vars.
+my $prodHost = undef;
+my $prodDb = undef;
+my $prodUser = undef;
+my $prodPass = undef;
+my $prodPort;
+my $dumpPrefix = undef;
+
+# Defaults to user home unless specified as a cmd line arg
+my $dumpDataDir = "$ENV{HOME}";
+
+# Command line switches.
+my $verbose = 0;
+my $dryRun = 0;
+my $carryOnRestart = 0;
+my $prevDmpRestart = 0;
+my $release;
+
+my %opts = ();
+
+getopts('vdrRV:', \%opts);
+
+if ($opts{r}) {
+  $carryOnRestart = 1;
+}
+
+if ($opts{R}) {
+  $prevDmpRestart = 1;
+}
+
+if ($carryOnRestart && $prevDmpRestart) {
+    printStdOut("Switches r and R are mutually exclusive - try using only one\n\n");
+    usage();
+    die;
+}
+
+if ($opts{v}) {
+  $verbose = 1;
+  $antCmd = "ant -v "
+} else {
+  $antCmd = "ant ";
+}
+
+if ($opts{V}) {
+  $release=$opts{V};
+  $antCmd .= "-Drelease=$release ";
+}
+
+if ($opts{d}) {
+  $dryRun = 1;
+}
+
 
 sub usage
 {
   die <<'EOF';
 usage:
-  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix 
+  $0 full_name_of_mine_to_target [restart_dump_prefix [data_dump_directory]]
+
+note: restart_dump_prefix -- restarts from a source or post-process
+note: data_dump_directory -- an alternative to the users home directory
+
+  switches/options
+
+    NOTE: -r and -R are mutually exlusive options.
+    -r restart from where we last got up to.
+    -R restart from the previous dump file.
+
+examples:
+  $0 malariamine [uniprot-malaria [data_dump_dir]]
 or
-  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix 
+  $0 malariamine [transfer-sequences [data_dump_dir]]
 
-flags:
- -v is passed to ant
- -l attempt to restart by reading the last dump file
- -r attempt to restart just after the last dump point _without_ loading a dump
- -V set the release number to pass to ant (as -Drelease=release_number)
-
-example:
-  $0 gollum /tmp/production_dump
 EOF
 }
 
-my $verbose = 0;
-my $load_last = 0;
-my $restart = 0;
-my $release;
-
-my %opts = ();
-
-getopts('vrlV:', \%opts);
-
-if ($opts{v}) {
-  $verbose = 1;
-}
-
-if ($opts{l}) {
-  $load_last = 1;
-}
-
-if ($opts{r}) {
-  $restart = 1;
-}
-
-if ($opts{V}) {
-  $release=$opts{V};
-  push @ant_command, "-Drelease=$release"
-}
-
-if (@ARGV == 2) {
-  $dump_host = $ARGV[0];
-  $dump_file_prefix = $ARGV[1];
+if (@ARGV == 1) {
+  $targetMine = $ARGV[0];
+} elsif (@ARGV == 2) {
+  $targetMine = $ARGV[0];
+  $dumpPrefix = $ARGV[1];
+} elsif (@ARGV == 3) {
+  $targetMine = $ARGV[0];
+  $dumpPrefix = $ARGV[1];
+  $dumpDataDir = $ARGV[2];
 } else {
   usage;
 }
 
-my $mine_properties = getMinePropsFile();
-print STDOUT "$mine_properties\n";
-
-#
-#
-# Look for the config file for the build process
-# TODO: perhaps the functionality of the conf file should be merged into the project.xml file for each mine.
-print STDOUT "\$conf_file_name = $conf_file_name\n";
-my $conf_file = findFile($conf_file_name);
-#
-# Look for the project file
-print STDOUT "\$proj_file_name = $proj_file_name\n";
-my $proj_file = findFile($proj_file_name);
-
-sub findFile {
-  
-  my $file_name = shift;
-  
-  if ($file_name eq undef) {
-    die "Subroutine findFile() requires a file name in order to work!";  
-  }
-  
-  if (-e $file_name) {
-    if (-r $file_name) {
-      return $file_name;
-    } else {
-      die "Cannot read from file: $file_name\n";
-    }
-  } else {
-    die "Cannot find file named: $file_name\n";
-  }  
+if (-e $projectXmlFile) {
+    print("Found $projectXmlFile\n");
+} else {
+    die "Can't find a file named $projectXmlFile check that you are in the root directory of the chosen mine.\n";
 }
 
-sub getMinePropsFile {
-  
-  #perl -e '$a="/sfwuierf/wefjiweofj/wefjiweuof"; if ($a =~ m:.*/(.*):) { print "$1\n";}'
-  
+if (($carryOnRestart or $prevDmpRestart) and (!defined $dumpPrefix)) {
+    die "Need to specify a dump file prefix (i.e. a source or postprocess name) if using -r or -R";
+} elsif( !($carryOnRestart or $prevDmpRestart) and (defined $dumpPrefix)) {
+    printStdOut("DUMP_PREFIX:" . $dumpPrefix);
+    die "Need to specify -r or -R if supplying a restart dump prefix";
+} else {
+    printStdOut("DUMP_PREFIX:" . defined $dumpPrefix ? $dumpPrefix : "NOT SET!");
+    #die"testing...";
+}
+
+my $parser = new XML::DOM::Parser;
+my $doc = $parser->parsefile ($projectXmlFile);
+my @dump_command = qw[pg_dump -c];
+my @psql_command = qw[psql -q];
+
+my $mine_properties = getMinePropsFile();
+printStdOut("$mine_properties\n");
+
+runProduction();
+
+#--------------------------------------------- Sub Routines -------------------------------------------------#
+sub runProduction
+{
+  # Initialize any required params...
+  init();
+
+  my @cmdList = ();
+
+  # Get command to rebuild the production database - by current default this stage doesn't dump...
+  push @cmdList, @{buildDbCommand("build-db")};
+
+  # Get commands for the integration pipeline on included sources.
+  push @cmdList, @{buildCommandsForTag("source", "integrate", "integrate -Dsource=")};
+
+  # Get commands for the post processing part of the pipeline.
+  #$cmdList{$postprocess} = buildCommandsForTag("post-process", "postprocess", "postprocess -Doperation=");
+  push @cmdList, @{buildCommandsForTag("post-process", "postprocess", "postprocess -Doperation=")};
+
+  #print STDOUT Data::Dumper->Dump([\%cmdList]);
+  # Do the actual work...
+  executeCommands(\@cmdList);
+
+  # Avoid memory leaks - cleanup circular references for garbage collection
+  $doc->dispose;
+}
+
+sub init
+{
+
+  $prodHost = get_prop_val ("db.production.datasource.serverName", $mine_properties);
+  $prodDb = get_prop_val ("db.production.datasource.databaseName", $mine_properties);
+  $prodUser = get_prop_val ("db.production.datasource.user", $mine_properties);
+  $prodPass = get_prop_val ("db.production.datasource.password", $mine_properties);
+
+  if ($prodHost =~ /(.+):(\d+)/) {
+    $prodHost = $1;
+    $prodPort = $2;
+  }
+
+  if ($verbose) {
+    printStdOut ("read properties:");
+    printStdOut ("  prod_host: $prodHost");
+    printStdOut ("  prod_port: " . (defined($prodPort) ? $prodPort : "default"));
+    printStdOut ("  prod_db: $prodDb");
+    printStdOut ("  prod_user: $prodUser");
+    printStdOut ("  prod_pass: $prodPass");
+  }
+}
+
+sub getMinePropsFile
+{
+    #perl -e '$a="/sfwuierf/wefjiweofj/wefjiweuof"; if ($a =~ m:.*/(.*):) { print "$1\n";}'
   my $mine_prps = $ENV{HOME};
-  
+
     if (getcwd() =~ m:.*/(.*): ) {
-      
-      $mine_prps .= "/$1.properties";
-    
+
+      #$mine_prps .= "/$1.properties";
+      $mine_prps .= "/$targetMine.properties";
+
       if (! -e $mine_prps) {
         die "Unable to find file $mine_prps";
      }
@@ -129,73 +213,8 @@ sub getMinePropsFile {
       die "Can't resolve the current mine dir\n";
     }
 }
-
-
-
-
-
-my $log_file = "pbuild.log";
-
-open LOG, ">>$log_file" or die "can't open $log_file: $!\n";
-my $old_handle = select(LOG);
-$| = 1; # autoflush
-select $old_handle;
-
-if (defined $release) {
-  $mine_properties .= ".$release";
-}
-my @dump_command = qw[pg_dump -c];
-my @psql_command = qw[psql -q];
-
-sub log_message
-{
-  my $message = shift;
-  my $verbose = shift;
-
-  if (defined $message) {
-    print LOG "$message\n";
-    if (defined $verbose && $verbose) {
-      print STDERR "$message\n";
-    }
-  } else {
-    print LOG "\n";
-  }
-}
-
-sub log_and_print
-{
-  log_message shift, 1;
-}
-
-# run a command and exit the script if it returns a non-zero
-sub run_and_check_status
-{
-  my $command_name = $_[0];
-
-  log_and_print `date`, "\n\n";
-  log_and_print "starting command: @_\n";
-
-  open F, "@_ |" or die "can't run @_: $?\n";
-
-  while (<F>) {
-    chomp;
-    log_message "  [$command_name] $_";
-  }
-
-  log_and_print `date`, "\n\n";
-  log_and_print "finished\n\n";
-
-  close F;
-
-  if ($? != 0) {
-    log_and_print "failed with exit code $?: @_\n";
-    print STDERR "check log: $log_file\n";
-    exit $?;
-  }
-}
-
-# gets a value from a properties file
-# usages: get_prop_val prop_name file_name
+# Gets a value from a properties file.
+# usage: get_prop_val prop_name file_name
 sub get_prop_val
 {
   my $key = shift;
@@ -216,211 +235,264 @@ sub get_prop_val
   return $ret_val;
 }
 
-sub dump_db
+sub getProjectElementsByTagName
 {
-  my $db = shift;
-  my $user = shift;
-  my $pass = shift;
-  my $host = shift;
-  my $port = shift;
-  my $out_file = shift;
+  my $tagName = shift;
+  return $doc->getElementsByTagName($tagName);
+}
 
-  my @params = ('-U', $user, '-h', $host, '-W', '-f', $out_file, $db);
+# NOTE: In the objectstore.xml there is a target alias 'dbmodel' which points to 'build-db'
+# NOTE: Added another target to objectstore.xml 'analyse-db-production'
+#
+sub buildDbCommand
+{
+  my $dbCmd = $_[0];
+  my $curDir = getcwd();
+  my $dbModelDir = $curDir . $fsep . $dbmodel;
 
-  if (defined $port) {
-    unshift @params, "-p", $port;
+  if (-d $dbModelDir) {
+    my @dbCmd;
+    push @dbCmd, {"dir" => "dbmodel", "cmd" => "$antCmd $dbCmd", "tag" => "build-db", "dmp" => 0, "idx" => 0};
+    return \@dbCmd;
+  }
+  else {
+    die $dbModelDir. " is not a valid directory!\n";
+  }
+}
+
+sub buildCommandsForTag {
+
+  my $tagAlias = $_[0];
+  my $stageDir = $_[1];
+  my $cmdStub = $_[2];
+
+  unless (defined $tagAlias and defined $cmdStub) {
+    die "Need to supply both a tag name and a cmd stub!";
   }
 
-  log_and_print `date`, "\n\n";
-  log_and_print "\ndumping: @dump_command @params\n";
+  my $tags = getProjectElementsByTagName("$tagAlias");
+  my @cmds;
 
-  my $exp = new Expect;
+  printStdOut("TAG: $tagAlias has this many occurances:" . $tags->getLength . "\n");
 
-  $exp->raw_pty(1);
-  $exp->spawn("ssh", $dump_host, "@dump_command @params; echo __DUMP_FINISHED__")
-    or die "Cannot spawn @dump_command @params: $!\n";
+  for (my $i = 0; $i < $tags->getLength; $i++)
+  {
+    my $tag = $tags->item ($i);
+    my $tagName = $tag->getAttributeNode ("name")->getValue;
+    my $cmd = $antCmd . "$cmdStub$tagName";
 
-  $exp->expect(10, 'Password: ');
-  $exp->send("$pass\n");
-  $exp->expect(9999999, '__DUMP_FINISHED__\n');
-  $exp->soft_close();
-  log_and_print `date`, "\n\n";
-  log_and_print "finished dump\n\n";
+    #Check to see if we have encountered a dump or index instruction.
+    my $dump = $tag->getAttributeNode("dump");
+    my $index = $tag->getAttributeNode("index");
+    push @cmds, {"dir" => $stageDir, "cmd" => $cmd, "tag" => $tagName,
+                 "dmp" => (defined $dump ? 1 : 0), "idx" => (defined $index ? 1 : 0) };
+  }
+  return \@cmds;
+}
+
+# Iterate over the command sets & execute them as appropriate.
+# usage: executeCommands (%commands)
+sub executeCommands {
+
+  if(defined $dumpPrefix) {
+
+    # Build our expected dump file name then check to see if it's valid
+    my $restartDumpFile = "$dumpDataDir$fsep$targetMine.$dumpPrefix.dmp";
+    unless(-s $restartDumpFile) {
+        die "Restart Dump File $restartDumpFile was not found or is empty!";
+    }
+
+    my @cmdList = @{$_[0]};
+
+    #Copy the cmd list
+    my @shortList;
+    foreach my $hashRefTmp (@cmdList) {
+      push @shortList, $hashRefTmp;
+      my %hashTmpBlah = %$hashRefTmp;
+      printStdOut("COPYING:" . $hashTmpBlah{"tag"});
+    }
+
+    foreach my $hashRef (@cmdList) {
+      my %hashtemp = %$hashRef;
+      my $tag = $hashtemp{"tag"};
+      printStdOut("FOUND TAG:$tag");
+      if ($dumpPrefix eq $tag) {
+        last;
+      } else {
+        #push elements off the 'shorter' list
+        shift @shortList;
+      }
+    }
+
+    if (scalar(@shortList) == 0) {
+      die "Restart Dump Prefix $dumpPrefix does not match any known source or postprocess!";
+    } else {
+      iterateOverCommands(\@shortList);
+    }
+
+  } else {
+    iterateOverCommands($_[0]);
+  }
+}
+
+# Iterates and executes the supplied set of ant commands
+# param $cmdHashRef a reference to the set of commands
+# param $cmdStage the sub stage we are at, i.e. integrate, used to locate the correct build.xml file
+sub iterateOverCommands {
+
+  my @cmdHashList = @{$_[0]};
+  printStdOut("--------------------------------------------------------------------------------\n");
+
+  for my $hashRef (@cmdHashList) {
+
+    my %hashtemp = %{$hashRef};
+
+    my $dir = $hashtemp{"dir"};
+    my $cmd = $hashtemp{"cmd"};
+    my $tag = $hashtemp{"tag"};
+    my $dmp = $hashtemp{"dmp"};
+    my $idx = $hashtemp{"idx"};
+
+    executeCommand($dir, $cmd, $dmp);
+
+    if ($dmp) {
+      my $prefix = $dir . "__" . $tag;
+      dumpDatabase($prefix);
+    }
+
+    if ($idx) {
+      my %cmd = %{shift @{buildDbCommand("analyse-db-production")}};
+      executeCommand($cmd{"dir"},  $cmd{"cmd"}, $cmd{"dmp"});
+    }
+
+    #for my $role (keys % {%$hashRef}) {
+    #  print STDOUT "$role=$hashRef->{$role}; ";
+    #}
+  }
+}
+
+# Executes a single command for each stage - either builddb, integrate or postprocess
+# usage: executeCommand ($stage_name, $stage_command);
+# note: The stage name is also used as the alias of the sub-directory that the supplied
+#          command is to be run in.
+sub executeCommand {
+  my $dir = $_[0];
+  my $cmd = $_[1];
+  my $dmp = $_[2];
+
+  if ($dir && $cmd)
+  {
+    my $curDir = getcwd();
+    my $cmdDir = $curDir . $fsep . $dir;
+
+    if (-d $cmdDir)
+    {
+      chdir($cmdDir);
+      if ($dryRun) {
+        print STDOUT "Pretending todo: $cmd\n";
+      }
+      else {
+        if ($verbose) {
+          print STDOUT `date`, "\n\n";
+        }
+        open F, "$cmd |" or die "can't run $cmd: $?\n";
+        if ($verbose) {
+          while (<F>) {
+            chomp;
+            print STDOUT "  [$cmd] $_";
+          }
+          print STDOUT `date`, "\n\n";
+          print STDOUT "finished\n\n";
+        }
+        close F;
+        if ($? != 0) {
+          print STDERR "failed with exit code $?: @_\n";
+          exit $?;
+        }
+      }
+      chdir($curDir);
+    }
+    else {
+      die $cmdDir. " is not a valid exectution directory!\n";
+    }
+  }
+  else {
+    die "Error; Sub executeCommand must have a valid stage name and command to work!";
+  }
+}
+
+# Dumps the database to disk.
+# usage: dumpDatabase ($dumpStagePrefix)
+sub dumpDatabase {
+  my $dumpStagePrefix = shift;
+  my $dumpFile = getcwd() . $fsep . $dumpStagePrefix . ".dmp";
+  my @params = ('-U', $prodUser, '-h', $prodHost, '-W', '-f', $dumpFile, $prodDb);
+
+  if (defined $prodPort) {
+    unshift @params, "-p", $prodPort;
+  }
+
+  if ($dryRun) {
+    printStdOut("Pretending todo: @dump_command @params");
+  }
+  else {
+
+    if ($verbose) {
+      printStdOut (`date`, "\n");
+      printStdOut ("\ndumping: @dump_command @params\n");
+    }
+
+    my $exp = new Expect;
+    $exp->raw_pty(1);
+    $exp->spawn("ssh", $prodHost, "@dump_command @params; echo __DUMP_FINISHED__") or die "Cannot spawn @dump_command @params: $!\n";
+    $exp->expect(10, 'Password: ');
+    $exp->send("$prodPass\n");
+    $exp->expect(9999999, '__DUMP_FINISHED__\n');
+    $exp->soft_close();
+
+    if ($verbose) {
+      printStdOut (`date`, "\n");
+      printStdOut ("finished dump\n");
+    }
+  }
 }
 
 sub load_db
 {
-  my $db = shift;
-  my $user = shift;
-  my $pass = shift;
-  my $host = shift;
-  my $port = shift;
-  my $in_file = shift;
+  my $dumpFile = shift;
 
-  my @params = ('-U', $user, '-h', $host, '-f', $in_file, $db);
+  my @params = ('-U', $prodUser, '-h', $prodHost, '-W', '-f', $dumpFile, $prodDb);
 
-  if (defined $port) {
-    unshift @params, "-p", $port;
+  if (defined $prodPort) {
+    unshift @params, "-p", $prodPort;
   }
 
-  log_and_print `date`, "\n\n";
-  log_and_print "\nloading: @psql_command @params\n";
+  printStdOut(`date`, "\n\n");
+  printStdOut("\nloading: @psql_command @params\n");
 
   my $exp = new Expect;
 
   $exp->raw_pty(1);
-  $exp->spawn("ssh", $dump_host, "@psql_command @params; echo __LOAD_FINISHED__")
+  $exp->spawn("ssh", $prodHost, "@psql_command @params; echo __LOAD_FINISHED__")
     or die "Cannot spawn @psql_command @params: $!\n";
 
   $exp->expect(10, 'Password: ');
-  $exp->send("$pass\n");
+  $exp->send("$prodPass\n");
   $exp->expect(9999999, '__LOAD_FINISHED__\n');
   $exp->soft_close();
 
-
-
-  log_and_print `date`, "\n\n";
-  log_and_print "finished load - now analysing\n\n";
-
-  run_and_check_status @ant_command, "analyse-db-production";
-
-  log_and_print `date`, "\n\n";
-  log_and_print "finished analysing\n\n";
+  printStdOut(`date`, "\n\n");
+  printStdOut("finished load - now analysing\n\n");
+  analyse_db_prod();
+  printStdOut(`date`, "\n\n");
+  printStdOut("finished analysing\n\n");
 }
 
-sub get_actions
+sub printStdOut
 {
-  my @actions = ();
+  my $message = shift;
 
-  open CONF_FILE, "$conf_file"
-    or die "cannot open $conf_file: $!\n";
-
-  while (defined (my $line = <CONF_FILE>)) {
-    if ($line =~ m{
-                   ^\s*\#
-                   |
-                   ^\s*$
-                 }x) {
-      next;
-    }
-
-    my ($action_type, @args) = split " ", $line;
-
-    $action_type =~ s/:$//;
-
-    push @actions, {type => $action_type, args => [@args]};
-  }
-
-  close CONF_FILE;
-
-  return @actions;
-}
-
-# find the last existing dump file
-sub get_restart_dump_suffix
-{
-  my ($dump_file_prefix, @actions) = @_;
-
-  my %remote_suffixes = ();
-
-  open REMOTE, qq{ssh $dump_host "ls -1 $dump_file_prefix.*"|};
-
-  while (my $line = <REMOTE>) {
-    chomp $line;
-    if ($line =~ /$dump_file_prefix.(.*)/) {
-      $remote_suffixes{$1} = 1;
-    }
-  }
-
-  my $restart_dump_suffix = undef;
-
-  for my $action (@actions) {
-    my $action_type = $action->{type};
-    my @action_args = @{$action->{args}};
-
-    if ($action_type eq 'dump') {
-      if (exists $remote_suffixes{$action_args[0]}) {
-        $restart_dump_suffix = $action_args[0];
-      }
-    }
-  }
-
-  return $restart_dump_suffix;
-}
-
-my $prod_host = get_prop_val "db.production.datasource.serverName", $mine_properties;
-my $prod_db = get_prop_val "db.production.datasource.databaseName", $mine_properties;
-my $prod_user = get_prop_val "db.production.datasource.user", $mine_properties;
-my $prod_pass = get_prop_val "db.production.datasource.password", $mine_properties;
-my $prod_port;
-
-if ($prod_host =~ /(.+):(\d+)/) {
-  $prod_host = $1;
-  $prod_port = $2;
-}
-
-log_message "read properties:";
-log_message "  prod_host: $prod_host";
-log_message "  prod_port: " . (defined($prod_port) ? $prod_port : "default");
-log_message "  prod_db: $prod_db";
-log_message "  prod_user: $prod_user";
-log_message "  prod_pass: $prod_pass";
-log_message;
-
-my @actions = get_actions();
-
-my $restart_dump_suffix = undef;
-
-if ($load_last || $restart) {
-  $restart_dump_suffix = get_restart_dump_suffix($dump_file_prefix, @actions);
-
-  if (defined $restart_dump_suffix) {
-    my $dump_file_name = "$dump_file_prefix.$restart_dump_suffix";
-
-    if ($load_last) {
-      log_and_print "\nrestarting from $dump_file_name\n";
-      load_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port, $dump_file_name;
-    } else {
-      log_and_print "\nrestarting build at stage: $restart_dump_suffix - NOT loading dump\n";
-    }
-  } else {
-    warn "no dump file found with prefix $dump_file_prefix\n";
+  if ($verbose && defined($message)) {
+    print STDOUT "$message\n";
   }
 }
-
-my $seen_start_action = 0;
-
-if ((!$load_last && !$restart) || !defined $restart_dump_suffix) {
-  # always start at the beginning of the command list if we aren't restarting
-  $seen_start_action = 1;
-}
-
-for my $action (@actions) {
-  my $action_type = $action->{type};
-  my @action_args = @{$action->{args}};
-
-  if ($seen_start_action) {
-    if ($action_type eq 'run') {
-      if ($verbose) {
-        run_and_check_status @ant_command, "-v", @action_args;
-      } else {
-        run_and_check_status @ant_command, @action_args;
-      }
-    } else {
-      if ($action_type eq 'dump') {
-        if (@action_args != 1) {
-          die "dump: needs one parameter at: $action: @action_args\n";
-        }
-        dump_db $prod_db, $prod_user, $prod_pass, $prod_host, $prod_port,
-                "$dump_file_prefix.$action_args[0]";
-      } else {
-        die qq{unknown action "$action_type"\n};
-      }
-    }
-  } else {
-    if ($action_type eq 'dump' && $action_args[0] eq $restart_dump_suffix) {
-      $seen_start_action = 1;
-    }
-  }
-}
-
