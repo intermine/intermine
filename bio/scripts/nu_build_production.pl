@@ -294,12 +294,24 @@ sub buildCommandsForTag {
 # usage: executeCommands (%commands)
 sub executeCommands {
 
-  if(defined $dumpPrefix) {
+  if (defined $dumpPrefix) {
 
-    # Build our expected dump file name then check to see if it's valid
-    my $restartDumpFile = "$dumpDataDir$fsep$targetMine.$dumpPrefix.dmp";
-    unless(-s $restartDumpFile) {
+    #Do we need to restart from a previous dump file?
+    #TODO: enable the script to use a differant dump file than just the desired restart point.
+    if ($prevDmpRestart) {
+      # Build our expected dump file name then check to see if it's valid
+      my $restartDumpFile = makeDumpFileName($dumpPrefix);
+      unless(-s $restartDumpFile) {
         die "Restart Dump File $restartDumpFile was not found or is empty!";
+      }
+      if ($verbose) {
+        printStdOut("RELOADING DUMP FILE: $restartDumpFile");
+      }
+      loadDb($restartDumpFile);
+    } elsif ($carryOnRestart) {
+      if ($verbose) {
+        printStdOut("CONTINUING FROM: $dumpPrefix");
+      }
     }
 
     my @cmdList = @{$_[0]};
@@ -360,7 +372,7 @@ sub iterateOverCommands {
     executeCommand($dir, $cmd, $dmp);
 
     if ($dmp) {
-      my $prefix = $dir . "__" . $tag;
+      my $prefix = "$dir.$tag";
       dumpDatabase($prefix);
     }
 
@@ -420,11 +432,19 @@ sub executeCommand {
   }
 }
 
+# Makes a suitable dump file name from some global params and a supplied prefix.
+# usage: makeDumpFileName ($dumpStagePrefix)
+sub makeDumpFileName {
+    my $dumpStagePrefix = shift;
+    my $dumpFileName = "$dumpDataDir$fsep$targetMine.$dumpStagePrefix.dmp";
+    return $dumpFileName;
+}
+
 # Dumps the database to disk.
 # usage: dumpDatabase ($dumpStagePrefix)
 sub dumpDatabase {
   my $dumpStagePrefix = shift;
-  my $dumpFile = "$dumpDataDir$fsep$targetMine.$dumpPrefix.dmp";
+  my $dumpFile = makeDumpFileName($dumpStagePrefix);
   my @params = ('-U', $prodUser, '-h', $prodHost, '-W', '-f', $dumpFile, $prodDb);
 
   if (defined $prodPort) {
@@ -456,7 +476,7 @@ sub dumpDatabase {
   }
 }
 
-sub load_db
+sub loadDb
 {
   my $dumpFile = shift;
 
