@@ -424,7 +424,7 @@ sub executeCommand {
 # usage: dumpDatabase ($dumpStagePrefix)
 sub dumpDatabase {
   my $dumpStagePrefix = shift;
-  my $dumpFile = getcwd() . $fsep . $dumpStagePrefix . ".dmp";
+  my $dumpFile = "$dumpDataDir$fsep$targetMine.$dumpPrefix.dmp";
   my @params = ('-U', $prodUser, '-h', $prodHost, '-W', '-f', $dumpFile, $prodDb);
 
   if (defined $prodPort) {
