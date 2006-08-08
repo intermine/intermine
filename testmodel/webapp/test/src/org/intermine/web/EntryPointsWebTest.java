@@ -63,6 +63,6 @@ public class EntryPointsWebTest extends WebTestBase
     }
     
     private void assertTitleContains(String title) {
-        assertEquals(title, getDialog().getResponsePageTitle().trim());
+        assertEquals(title, getDialog().getPageTitle().trim());
     }
 }
