@@ -321,9 +321,6 @@ sub executeCommands {
     foreach my $hashRefTmp (@cmdList) {
       push @shortList, $hashRefTmp;
       my %hashTmpBlah = %$hashRefTmp;
-      if ($verbose) {
-        printStdOut("COPYING:" . $hashTmpBlah{"tag"});
-        }
     }
 
     #Now loop over the commands looking for the tag we want to start from
