@@ -448,8 +448,12 @@ sub dumpDatabase {
     unshift @params, "-p", $prodPort;
   }
 
+  my @cmd = ();
+  push @cmd, @dump_command;
+  push @cmd, @params;
+
   if ($dryRun) {
-    printStdOut("Pretending todo: @dump_command @params");
+    printStdOut("Pretending todo: @cmd");
   }
   else {
 
@@ -457,14 +461,18 @@ sub dumpDatabase {
       printStdOut (`date`, "\n");
       printStdOut ("\ndumping: @dump_command @params\n");
     }
+    my $retVal = system(@cmd);
+    if ($retVal) {
+        die "CMD: @cmd FAILED WITH RETVAL:$retVal\n";
+    }
 
-    my $exp = new Expect;
-    $exp->raw_pty(1);
-    $exp->spawn("ssh", $prodHost, "@dump_command @params; echo __DUMP_FINISHED__") or die "Cannot spawn @dump_command @params: $!\n";
-    $exp->expect(10, 'Password: ');
-    $exp->send("$prodPass\n");
-    $exp->expect(9999999, '__DUMP_FINISHED__\n');
-    $exp->soft_close();
+    #my $exp = new Expect;
+    #$exp->raw_pty(1);
+    #$exp->spawn("ssh", $prodHost, "@dump_command @params; echo __DUMP_FINISHED__") or die "Cannot spawn @dump_command @params: $!\n";
+    #$exp->expect(10, 'Password: ');
+    #$exp->send("$prodPass\n");
+    #$exp->expect(9999999, '__DUMP_FINISHED__\n');
+    #$exp->soft_close();
 
     if ($verbose) {
       printStdOut (`date`, "\n");
@@ -486,22 +494,36 @@ sub loadDb
   printStdOut(`date`, "\n\n");
   printStdOut("\nloading: @psql_command @params\n");
 
-  my $exp = new Expect;
+  my @cmd = ();
+  push @cmd, @psql_command;
+  push @cmd, @params;
 
-  $exp->raw_pty(1);
-  $exp->spawn("ssh", $prodHost, "@psql_command @params; echo __LOAD_FINISHED__")
-    or die "Cannot spawn @psql_command @params: $!\n";
+  if ($dryRun) {
+    printStdOut("Pretending todo: @cmd");
+  }
+  else {
+    my $retVal = system(@cmd);
+    if ($retVal) {
+        die "CMD: @cmd FAILED WITH RETVAL:$retVal\n";
+    }
+    #my $exp = new Expect;
+    #$exp->raw_pty(1);
+    #$exp->spawn("ssh", $prodHost, "@psql_command @params; echo __LOAD_FINISHED__") or die "Cannot spawn @psql_command @params: $!\n";
 
-  $exp->expect(10, 'Password: ');
-  $exp->send("$prodPass\n");
-  $exp->expect(9999999, '__LOAD_FINISHED__\n');
-  $exp->soft_close();
-
-  printStdOut(`date`, "\n\n");
-  printStdOut("finished load - now analysing\n\n");
-  analyse_db_prod();
-  printStdOut(`date`, "\n\n");
-  printStdOut("finished analysing\n\n");
+    #$exp->expect(10, 'Password: ');
+    #$exp->send("$prodPass\n");
+    #$exp->expect(9999999, '__LOAD_FINISHED__\n');
+    #$exp->soft_close();
+    if ($verbose) {
+        printStdOut(`date`, "\n\n");
+        printStdOut("finished load - now analysing\n\n");
+    }
+    analyse_db_prod();
+    if ($verbose) {
+        printStdOut(`date`, "\n\n");
+        printStdOut("finished analysing\n\n");
+    }
+  }
 }
 
 sub printStdOut
