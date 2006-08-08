@@ -13,48 +13,47 @@ package org.intermine.web;
 import net.sourceforge.jwebunit.WebTestCase;
 
 /**
- * 
+ *
  * @author tom riley
  */
-public class AspectsWebTest extends WebTestCase
+public class AspectsWebTest extends WebTestBase
 {
     public AspectsWebTest(String name) {
         super(name);
     }
-    
-    public void setUp() {
-        getTestContext().setBaseUrl("http://theoden.flymine.org:8080/intermine-app2");
+
+    public void setUp() throws Exception {
+        super.setUp();       
+        //getTestContext().setBaseUrl("http://theoden.flymine.org:8080/intermine-app2");
     }
-    
+
     public void testAspectIcons() throws Exception {
         beginAt("/");
-        
+
         // begin page
         assertLinkPresentWithText("People");
         assertLinkPresentWithText("Entities");
-        
+
         // move to People aspect
         clickLinkWithText("People");
-        assertEquals("InterMine: Starting Point: People", getDialog().getResponsePageTitle().trim());
+        assertEquals("InterMine: Starting Point: People", getDialog().getPageTitle().trim());
         assertTextPresent("Query starting points"); // starting points
         assertLinkPresentWithText("Employee");
         assertLinkPresentWithText("Manager");
         assertLinkPresentWithText("CEO");
         assertLinkPresentWithText("Contractor");
         assertLinkPresentWithText("Secretary");
-        assertTextPresent("Data sources:"); // data sources
-        assertTextPresent("As a term meaning"); // intro text
         assertTextPresent("View all the employees with certain name"); // related templates
         assertFormPresent("aspectForm"); // aspect popup
-        selectOption("name", "Entities"); // select Entities from aspect popup
-        
+        selectOptionByValue("name", "Entities"); // select Entities from aspect popup
+
         // move to entities aspect
-        assertEquals("InterMine: Starting Point: Entities", getDialog().getResponsePageTitle().trim());
+        assertEquals("InterMine: Starting Point: Entities", getDialog().getPageTitle().trim());
         assertTextPresent("Custom tile body."); // custom aspect tile
         assertLinkPresentWithText("Execute employeesWithOldManagers, skipping query builder");
-        
+
         // test query link
         clickLinkWithText("Execute employeesWithOldManagers, go to builder");
-        assertEquals("InterMine: Query builder page", getDialog().getResponsePageTitle().trim());
+        assertEquals("InterMine: Query builder page", getDialog().getPageTitle().trim());
     }
 }

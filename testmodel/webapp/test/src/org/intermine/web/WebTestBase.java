@@ -15,18 +15,18 @@ import java.util.Properties;
 import net.sourceforge.jwebunit.WebTestCase;
 
 /**
- * 
+ *
  * @author tom riley
  */
 public class WebTestBase extends WebTestCase
 {
     private String baseUrl;
-    
+
     public WebTestBase(String name) {
         super(name);
-        
+
     }
-    
+
     public void setUp() throws Exception {
         super.setUp();
         Properties props = new Properties();
