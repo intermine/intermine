@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.metadata.Model;
+
 import org.apache.struts.tiles.ComponentContext;
 
 import servletunit.struts.MockStrutsTestCase;
@@ -31,16 +33,18 @@ public class TreeControllerTest extends MockStrutsTestCase
     }
 
     public void testExecute() throws Exception {
+
+        Model model = Model.getInstanceByName("testmodel");
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initTree");
 
-        String model = "org.intermine.model.testmodel.";
+        String pkg = "org.intermine.model.testmodel.";
         Set openClasses = new HashSet();
-        openClasses.add(model + "Employable");
-        openClasses.add(model + "Thing");
+        openClasses.add(pkg + "Employable");
+        openClasses.add(pkg + "Thing");
         getSession().setAttribute("openClasses", openClasses);
-        getRequest().setAttribute("rootClass", model + "Thing");
+        getRequest().setAttribute("rootClass", pkg + "Thing");
         //necessary to work-round struts test case not invoking our SessionListener
         getSession().setAttribute(Constants.PROFILE,
                                   new Profile(null, null, null, null,
@@ -50,11 +54,11 @@ public class TreeControllerTest extends MockStrutsTestCase
         verifyNoActionErrors();
 
         List expected = new ArrayList();
-        expected.add(new TreeNode(model + "Thing", "", 0, false, false, true));
-        expected.add(new TreeNode(model + "Address", "", 1, false, true, false));
-        expected.add(new TreeNode(model + "Employable", "", 1, false, false, true));
-        expected.add(new TreeNode(model + "Contractor", "", 2, false, true, false));
-        expected.add(new TreeNode(model + "Employee", "", 2, false, false, false));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Thing"), "", 0, false, false, true));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Address"), "", 1, false, true, false));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Employable"), "", 1, false, false, true));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Contractor"), "", 2, false, true, false));
+        expected.add(new TreeNode(model.getClassDescriptorByName(pkg + "Employee"), "", 2, false, false, false));
 
         assertEquals(openClasses, getSession().getAttribute("openClasses"));
         assertEquals(expected, componentContext.getAttribute("nodes"));
