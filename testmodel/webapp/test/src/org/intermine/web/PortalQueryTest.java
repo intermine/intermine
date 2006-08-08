@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import servletunit.struts.MockStrutsTestCase;
+import org.intermine.web.SessionMethods;
 
 public class PortalQueryTest extends MockStrutsTestCase
 {
@@ -18,17 +19,23 @@ public class PortalQueryTest extends MockStrutsTestCase
         super(arg1);
     }
 
+    public void setUp() throws Exception {
+        super.setUp();
+        SessionMethods.initSession(this.getSession());
+    }
+
     public void tearDown() throws Exception {
         getActionServlet().destroy();
     }
-    
+
     public void testGoodExternalId() throws Exception {
         setRequestPathInfo("/portal");
         addRequestParameter("externalid", "EmployeeA1");
-        
+
         actionPerform();
+        System.out.println("stacktrace: " + getRequest().getAttribute("stacktrace"));
         verifyNoActionErrors();
-        
+
         // would be nice to test that we forward to the correct
         // object details URL but I can't figure out how to get
         // the forward returned.

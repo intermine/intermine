@@ -33,19 +33,19 @@ public class BeginControllerTest extends MockStrutsTestCase
     public void testCategoryLoad() throws Exception {
         ComponentContext context = new ComponentContext();
         ComponentContext.setContext(context, getRequest());
-        setRequestPathInfo("/initBegin");
+        setRequestPathInfo("/begin");
 
         actionPerform();
         verifyNoActionErrors();
-        
+
         Set cats = (Set) getActionServlet().getServletContext().getAttribute(Constants.CATEGORIES);
-        
+
         assertNotNull(cats);
-        
+
         Set expecting = new HashSet();
         expecting.add("People");
         expecting.add("Entities");
-        
+
         assertEquals(2, cats.size());
         assertEquals(expecting, cats);
     }
