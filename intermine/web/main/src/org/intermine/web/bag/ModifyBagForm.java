@@ -1,4 +1,4 @@
-package org.intermine.web.history;
+package org.intermine.web.bag;
 
 /*
  * Copyright (C) 2002-2005 FlyMine

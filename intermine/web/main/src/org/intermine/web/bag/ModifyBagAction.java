@@ -1,4 +1,4 @@
-package org.intermine.web.history;
+package org.intermine.web.bag;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -27,18 +27,17 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
-import org.intermine.web.bag.BagHelper;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
+import org.intermine.web.history.ModifyHistoryAction;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
  * @author Mark Woodbridge
  */
-public class ModifyBagAction extends ModifyHistoryAction
+public class ModifyBagAction extends InterMineAction
 {
     /**
      * Forward to the correct method based on the button pressed
@@ -55,10 +54,6 @@ public class ModifyBagAction extends ModifyHistoryAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        ActionForward af = super.execute(mapping, form, request, response);
-        if (af != null) {
-            return af;
-        }
         if (request.getParameter("union") != null) {
             union(mapping, form, request, response);
         } else if (request.getParameter("intersect") != null) {
@@ -68,7 +63,6 @@ public class ModifyBagAction extends ModifyHistoryAction
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request, response);
         }
-
         return mapping.findForward("bag");
     }
 

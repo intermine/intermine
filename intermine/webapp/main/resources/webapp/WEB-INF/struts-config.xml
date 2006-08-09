@@ -23,7 +23,7 @@
                type="org.intermine.web.history.ModifyQueryForm"/>
 
     <form-bean name="modifyBagForm"
-               type="org.intermine.web.history.ModifyBagForm"/>
+               type="org.intermine.web.bag.ModifyBagForm"/>
 
     <form-bean name="modifyTemplateForm"
                type="org.intermine.web.history.ModifyTemplateForm"/>
@@ -435,7 +435,7 @@
     </action>
     
     <action path="/modifyBag"
-            type="org.intermine.web.history.ModifyBagAction"
+            type="org.intermine.web.bag.ModifyBagAction"
             name="modifyBagForm"
             parameter="action"
             scope="request"

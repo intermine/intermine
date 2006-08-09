@@ -8,7 +8,7 @@
 <div class="body">
 <table id="bagTable">
   <tr>
-    <td><c:import url="bagView.jsp"/></td>
+    <td style="border-right:1px solid #888"><c:import url="bagView.jsp"/></td>
     <td><c:import url="bagBuild.jsp"/></td>
   </tr>
 </table>

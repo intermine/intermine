@@ -16,17 +16,26 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
+import org.intermine.web.SavedQuery;
+import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateQuery;
 import org.intermine.web.TemplateHelper;
+import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
 
 import uk.ltd.getahead.dwr.WebContext;
@@ -86,5 +95,49 @@ public class AjaxServices
             LOG.error(e);
         }
         return ("precomputed");
+    }
+    
+    /**
+     * Rename a element.
+     * @param name
+     * @param the type: history, saved, bag
+     * @param newName
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public String rename(String name, String type, String newName)
+        throws Exception {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        SavedQuery sq;
+        if (name.equals(newName) || StringUtils.isEmpty(newName)) {
+            return name;
+        }
+        if (type.equals("history")) {
+            if (profile.getHistory().get(newName) != null) {
+                return "<i>"+newName+" already exists</i>";
+            }
+            profile.renameHistory(name, newName);
+        } else if (type.equals("saved")) {
+            if (profile.getSavedQueries().get(newName) != null) {
+                return "<i>"+newName+" already exists</i>";
+            }
+            sq = (SavedQuery) profile.getSavedQueries().get(name);
+            profile.deleteQuery(sq.getName());
+            sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
+            profile.saveQuery(sq.getName(), sq);
+        } else if (type.equals("bag")) {
+           if (profile.getSavedBags().get(newName) != null) {
+               return "<i>"+newName+" already exists</i>";
+           }
+           InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
+           profile.deleteBag(name);
+           SessionMethods.invalidateBagTable(session, name);
+           profile.saveBag(newName, bag);
+        } else {
+            return "Type unknown";
+        }
+        return newName;
     }
 }
