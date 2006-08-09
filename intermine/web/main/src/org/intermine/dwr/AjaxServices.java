@@ -10,21 +10,16 @@ package org.intermine.dwr;
  *
  */
 
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -33,8 +28,8 @@ import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
-import org.intermine.web.TemplateQuery;
 import org.intermine.web.TemplateHelper;
+import org.intermine.web.TemplateQuery;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
 
@@ -98,10 +93,11 @@ public class AjaxServices
     }
     
     /**
-     * Rename a element.
-     * @param name
-     * @param the type: history, saved, bag
-     * @param newName
+     * Rename a element such as history, name, bag
+     * @param name the name of the element
+     * @param type history, saved, bag
+     * @param newName the new name for the element
+     * @return the new name of the element as a String
      * @exception Exception if the application business logic throws
      *  an exception
      */
@@ -116,12 +112,12 @@ public class AjaxServices
         }
         if (type.equals("history")) {
             if (profile.getHistory().get(newName) != null) {
-                return "<i>"+newName+" already exists</i>";
+                return "<i>" + newName + " already exists</i>";
             }
             profile.renameHistory(name, newName);
         } else if (type.equals("saved")) {
             if (profile.getSavedQueries().get(newName) != null) {
-                return "<i>"+newName+" already exists</i>";
+                return "<i>" + newName + " already exists</i>";
             }
             sq = (SavedQuery) profile.getSavedQueries().get(name);
             profile.deleteQuery(sq.getName());
@@ -129,7 +125,7 @@ public class AjaxServices
             profile.saveQuery(sq.getName(), sq);
         } else if (type.equals("bag")) {
            if (profile.getSavedBags().get(newName) != null) {
-               return "<i>"+newName+" already exists</i>";
+               return "<i>" + newName + " already exists</i>";
            }
            InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
            profile.deleteBag(name);
