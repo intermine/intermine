@@ -20,8 +20,15 @@
       }
     }
   }
+  function editName(name){
+    document.getElementById('form_'+name).style.display="block";
+    document.getElementById('name_'+name).style.display="none";
+  }
+  function noenter() {
+    return !(window.event && window.event.keyCode == 13); 
+  }
 //]]>-->
-</script>
+</script>              
 
 <html:xhtml/>
 
@@ -60,10 +67,11 @@
                   <c:out value="${savedBag.key}" escapeXml="false"/>
                 </html:multibox>
               </td>
-              
-              <tiles:insert name="historyElementName.jsp">
+
+              <tiles:insert name="bagElementName.jsp">
                 <tiles:put name="name" value="${savedBag.key}"/>
                 <tiles:put name="type" value="bag"/>
+                <tiles:put name="index" value="${status.index}"/>
               </tiles:insert>
               
               <td align="right">
