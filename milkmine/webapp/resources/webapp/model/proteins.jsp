@@ -23,7 +23,7 @@
               <LI><I>Mus musculus</I></LI>
             </UL>
             For each protein record in UniProt for each species the following
-            information is extracted and loaded into FlyMine:
+            information is extracted and loaded into MilkMine:
             <UL>
               <LI>Entry name</LI>
               <LI>Primary accession number</LI>
