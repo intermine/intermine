@@ -240,14 +240,14 @@ public class IntergenicRegionsTest extends TestCase
 
             Set expectedIdentifiers =
                 new HashSet(Arrays.asList(new Object[] {
-                    "integenic_region_chrX_1..100",
-                    "integenic_region_chrX_201..300",
-                    "integenic_region_chrX_401..500",
-                    "integenic_region_chrX_601..700",
-                    "integenic_region_chrX_951..1000",
-                    "integenic_region_chrI_101..300",
-                    "integenic_region_chrI_401..500",
-                    "integenic_region_chrI_901..1800",
+                    "intergenic_region_chrX_1..100",
+                    "intergenic_region_chrX_201..300",
+                    "intergenic_region_chrX_401..500",
+                    "intergenic_region_chrX_601..700",
+                    "intergenic_region_chrX_951..1000",
+                    "intergenic_region_chrI_101..300",
+                    "intergenic_region_chrI_401..500",
+                    "intergenic_region_chrI_901..1800",
                 }));
 
             assertEquals(expectedIdentifiers, actualIdentifiers);
