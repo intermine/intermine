@@ -247,7 +247,7 @@ public class IntergenicRegionUtil
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
 
-                String identifier = "integenic_region_chr" + chr.getIdentifier()
+                String identifier = "intergenic_region_chr" + chr.getIdentifier()
                     + "_" + location.getStart() + ".." + location.getEnd();
                 intergenicRegion.setIdentifier(identifier);
 
