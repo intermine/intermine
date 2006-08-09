@@ -53,7 +53,7 @@
     <tile-name></tile-name>
     <intro-text>
       Proteins formatted in the Proteomics Standards Initiative (PSI)
-      molecular interaction (PSI MI) format can be mapped to the MouseMine
+      molecular interaction (PSI MI) format can be mapped to the MilkMine
       data model.
     </intro-text>
     <starting-points>
@@ -64,7 +64,7 @@
   </aspect>
 
   <aspect name="Gene Ontology">
-    <subtitle></subtitle>
+    <subtitle>Function, process and &lt;i&gt;localisation classification</subtitle>
     <icon-image>model/geneOntology.png</icon-image>
     <large-image>model/geneOntology.png</large-image>
     <intro-text>
@@ -86,4 +86,62 @@
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
+  <aspect name="Text-mining">
+    <subtitle>Mine the milk literature</subtitle>
+    <icon-image>model/library.png</icon-image>
+    <large-image>model/library.png</large-image>
+    <intro-text>
+      Relationships extracted from milk literature articles (PubMed, OVID, WOK).
+    </intro-text>
+    <tile-name>model/literature.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <aspect-source name="PubMed" url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi"/> 
+    <aspect-source name="OVID" url="http://gateway.uk.ovid.com/athens/"/>
+    <aspect-source name="Web of Knowledge" url="http://wok.mimas.ac.uk/"/> 
+  </aspect>
+  <aspect name="Peptides">
+    <subtitle>Bioactive milk peptides</subtitle>
+    <icon-image>model/peptide.png</icon-image>
+    <large-image>model/peptide.png</large-image>
+    <intro-text>
+      Many peptides that are derived from milk proteins have significant physiological importance, particlulary in blood pressure and immune system regulation.
+    </intro-text>
+    <tile-name>model/peptides.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+    <aspect-source name="PubMed" url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi"/>
+  </aspect>
+  <aspect name="Enzymatic reactions">
+    <subtitle>Reactions of milk enzymes</subtitle>
+    <icon-image>model/enzyme.jpg</icon-image>
+    <large-image>model/enzyme.jpg</large-image>
+    <intro-text>
+    Milk contains many enzymes, some in small concentrations but others in physiologically significant concentrations.
+    </intro-text>
+    <tile-name>model/enzymes.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+<!-- find a link to the original Fox publication    <aspect-source name="PubMed" url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi"/> -->
+  </aspect>
+  <aspect name="Binding">
+    <subtitle>Small molecule binding</subtitle>
+    <icon-image>model/binding.png</icon-image>
+    <large-image>model/binding.png</large-image>
+    <intro-text>
+    Milk proteins often act as small molecule transporters, such as the caseins, whose presence in milk facilitates the supersaturation of calcium within it. 
+    </intro-text>
+    <tile-name>model/binding.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
+<!--    <aspect-source name="PubMed" url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi"/> -->
+  </aspect>
+  <aspect name="Allergens">
+    <subtitle>Allergenic milk proteins</subtitle>
+    <icon-image>model/antibody.png</icon-image>
+    <large-image>model/antibody.png</large-image>
+    <intro-text>
+    Many people suffer from specific allergies to certain milk proteins or peptides.
+    </intro-text>
+    <tile-name>model/allergens.jsp</tile-name>
+    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points> 
+    <aspect-source name="SDAP" url="http://fermi.utmb.edu/SDAP/"/> 
+  </aspect> 
+
 </aspects>

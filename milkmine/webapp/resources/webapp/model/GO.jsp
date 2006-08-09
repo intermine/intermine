@@ -7,7 +7,7 @@
   <tr>
     <td>
       <div class="heading2">
-        GO annotation in FlyMine
+        GO annotation in MilkMine
       </div>
       <div class="body">
         <DL>
