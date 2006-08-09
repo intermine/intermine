@@ -31,7 +31,6 @@ import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.WebUtil;
-import org.intermine.web.history.ModifyHistoryAction;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
