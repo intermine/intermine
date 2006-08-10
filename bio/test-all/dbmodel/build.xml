@@ -26,6 +26,7 @@
     <merge-additions file="bio/sources/drosdel/drosdel_additions.xml"/>
     <merge-additions file="bio/sources/mage/mage_additions.xml"/>
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
+    <merge-additions file="bio/sources/diseaseregion/diseaseregion_additions.xml"/>
   </target>
 
 </project>
