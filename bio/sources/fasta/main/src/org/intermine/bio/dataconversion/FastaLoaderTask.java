@@ -123,7 +123,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         } catch (FileNotFoundException e) {
             throw new BuildException("problem reading file - file not found: " + file, e);
         } catch (ObjectStoreException e) {
-            throw new BuildException("ObjectSTore problem while processing: " + file);
+            throw new BuildException("ObjectStore problem while processing: " + file, e);
         }
     }
 
