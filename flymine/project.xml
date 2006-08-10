@@ -9,11 +9,13 @@
     </source>
     <source name="flybase-dmel-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
       <!-- <property name="flybase.small" location="true"/>-->
     </source>
     <source name="flybase-dpse-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/gff"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7237"/>
     </source>
     <source name="flybase-dmel-chromosome-fasta" type="fasta">
@@ -56,14 +58,17 @@
     <source name="drosdel" type="drosdel"/>
     <source name="tiling_path" type="tiling_path">
       <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/tiling/current_gff"/>
     </source>
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/REDfly/gff"/>
     </source>
     <source name="fly_anatomy" type="phenotype">
@@ -75,6 +80,7 @@
     </source>
     <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/flyreg"/>
     </source>
     <source name="protein_structure" type="protein_structure">
