@@ -33,6 +33,7 @@ public class RetrieveMetadataTask extends Task
 {
     protected File destDir;
     protected String database;
+    protected String osname;
 
     /**
      * Sets the destination directory
@@ -47,6 +48,7 @@ public class RetrieveMetadataTask extends Task
      * @param osname the os alias
      */
     public void setOsName(String osname) {
+        this.osname = osname;
         this.database = PropertiesUtil.getProperties().getProperty(osname + ".db");
     }
 
@@ -57,8 +59,12 @@ public class RetrieveMetadataTask extends Task
         if (destDir == null) {
             throw new BuildException("destDir attribute is not set");
         }
+        if (osname == null) {
+            throw new BuildException("osname attribute is not set");
+        }
         if (database == null) {
-            throw new BuildException("database attribute is not set");
+            throw new BuildException("couldn't find database property: " + osname + ".db - "
+                                     + "osName property is: " + osname);
         }
 
         try {
