@@ -185,18 +185,30 @@
     </convert-file>
   </target -->
 
+  <target name="-set-custom-file-includes" unless="src.data.dir.includes">
+    <!-- include everything by default --> 
+    <property name="src.data.dir.includes" value="**/*"/>
+  </target>
+
+  <target name="-set-custom-file-excludes" unless="src.data.dir.excludes">
+    <!-- exclude nothing by default --> 
+    <property name="src.data.dir.excludes" value=""/>
+  </target>
+
   <!--
     Retrieve from a file in a tgt items db with the convertor specified via the property
     convertor.class
   -->
-  <target name="-retrieve-tgt-from-custom-file" if="have.file.custom.tgt">
-    <echo message="dynamicAttrs = ${dynamic.attributes}"/>
-    <echo message="ontology: ${ontologyfile}"/>
-    <echo message="gene: ${geneattribute}"/>
+  <target name="-retrieve-tgt-from-custom-file"
+          depends="-set-custom-file-includes, -set-custom-file-excludes" 
+          if="have.file.custom.tgt">
     <convert-file clsName="${convertor.class}"
                   osName="osw.${common.os.prefix}-tgt-items"
                   model="${target.model}">
-      <fileset dir="${src.data.dir}"/>
+      <fileset dir="${src.data.dir}">
+        <include name="${src.data.dir.includes}"/>
+        <exclude name="${src.data.dir.excludes}"/>
+      </fileset>
     </convert-file>
   </target>
 
