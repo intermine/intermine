@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry exported="true" kind="lib" path="resources/webapp"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
