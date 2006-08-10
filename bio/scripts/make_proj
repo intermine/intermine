@@ -57,7 +57,7 @@ sub project_file_contents
   my $extra_deps = "";
 
   if ($type eq "source") {
-    $extra_deps = ", sources/$proj_name/main";
+    $extra_deps = ", bio/sources/$proj_name/main";
   }
 
   return <<"PROJ_PROPS_END";
