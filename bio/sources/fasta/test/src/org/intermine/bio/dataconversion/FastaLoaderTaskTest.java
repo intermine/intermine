@@ -49,11 +49,11 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
         flt.setIntegrationWriterAlias("integration.bio-test");
-        flt.setSourceName("fasta");
+        flt.setSourceName("fasta-test");
 
         File[] files = new File[2];
-        files[0] = new File("./resources/MAL1_trimed.fasta");
-        files[1] = new File("./resources/MAL2_trimed.fasta");
+        files[0] = new File("resources/MAL1_trimed.fasta");
+        files[1] = new File("resources/MAL2_trimed.fasta");
         flt.setFileArray(files);
 
         if (files[0].exists()) { LOG.info("File One Exists!"); }
