@@ -44,14 +44,14 @@ public class OcGFF3HandlerTest extends TestCase
     GFF3Parser parser = new GFF3Parser();
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
-    String orgAbbrev = "HS";
+    String orgTaxonId = "123";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC opossum chain";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new GFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle, 
+        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle, 
                                       tgtModel, handler);
     }
 
