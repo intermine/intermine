@@ -59,6 +59,13 @@
                                    -do-build-db,
                                    -post-build-db"/>
 
+
+  <!-- ANALYSE DB PRODUCTION SHORTCUT -->
+
+  <target name="analyse-db-production">
+    <analyse-db osName="os.production"/>
+  </target>
+    
   <!-- GENERATE (FETCH) -->
 
   <target name="-init-generate" depends="model.-init-generate">
