@@ -441,6 +441,24 @@
      </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.RNAiScreen">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="cellLine"/>
+      <fieldconfig fieldExpr="publication.title"/>
+     </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.ScreenHit">
+    <fields>
+      <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="strength"/>
+      <fieldconfig fieldExpr="screen.name"/>
+      <fieldconfig fieldExpr="screen.publication.title" showInInlineCollection="false"
+                   showInResults="false"/>
+     </fields>
+  </class>
+
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
