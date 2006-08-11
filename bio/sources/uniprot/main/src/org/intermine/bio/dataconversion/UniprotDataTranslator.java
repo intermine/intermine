@@ -329,11 +329,44 @@ public class UniprotDataTranslator extends DataTranslator
                 }
             }
 
-            // TODO many dbReference types are present in uniprot records - e.g. Pfam, InterPro.
-            // Specifc code could be add to create additional objects
-
-
-            // 6. now try to create reference to gene, choice of identifier is organism specific
+            // 6. Put an embl_seq_id in a protein so we can merge it with BioGrid's psi format data.
+            // <entry><dbReference>
+            List srcDbRefs = getItemsInCollection(srcItem.getCollection("dbReferences"));
+            Iterator srcDbRefIter = srcDbRefs.iterator();
+            while (srcDbRefIter.hasNext()) {
+                Item dbRefItem = (Item) srcDbRefIter.next();
+                String dbRefType = getAttributeValue(dbRefItem, "type");
+                if ("EMBL".equals(dbRefType)) {
+                    List props = getItemsInCollection(dbRefItem.getCollection("propertys"));
+                    Iterator pIter = props.iterator();
+                    String emblProteinId = null;
+                    boolean isGenomicDna = false;
+                    while (pIter.hasNext()) {
+                        Item dbProp = (Item) pIter.next();
+                        String dbPropType = getAttributeValue(dbProp, "type");
+                        //<property type="protein sequence ID" value="AAB03417.3"/>
+                        if ("protein sequence ID".equals(dbPropType)) {
+                            emblProteinId = getAttributeValue(dbProp, "value");
+                        }
+                        //<property type="molecule type" value="Genomic_DNA"/>
+                        else if ("molecule type".equals(dbPropType)) {
+                            String moleType = getAttributeValue(dbProp, "value");
+                            if ("Genomic_DNA".equals(moleType)) {
+                                isGenomicDna = true;
+                            }
+                        }
+                        //Potentially we may need to mod this if there is more than one per <entry>
+                        if (isGenomicDna && (emblProteinId != null)) {
+                            protein.setAttribute("emblProteinId",
+                                            (emblProteinId.indexOf(".") > 0
+                                            ? emblProteinId.substring(0, emblProteinId.indexOf(".")) 
+                                            : emblProteinId));
+                            break;
+                        }
+                    }
+                }
+            }
+            // 7. now try to create reference to gene, choice of identifier is organism specific
             // <entry><gene>*
             // <entry><dbReference>
 
