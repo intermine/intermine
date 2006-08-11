@@ -61,6 +61,9 @@ public class ObjectStoreItemWriter implements ItemWriter
             osw.store((InterMineObject) i.next());
             transactionCounter++;
         }
+        if (item.getClassName() == null || item.getClassName().equals("")) {
+            throw new RuntimeException("className not set for item: " + item.getIdentifier());
+        }
         osw.store(item);
         transactionCounter++;
         if (transactionCounter >= TRANSACTION_BATCH_SIZE) {
