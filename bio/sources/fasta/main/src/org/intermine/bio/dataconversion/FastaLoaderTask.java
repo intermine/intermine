@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
@@ -39,6 +40,8 @@ import org.biojava.bio.seq.io.SeqIOTools;
 
 public class FastaLoaderTask extends FileDirectDataLoaderTask
 {
+    protected static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
+
     private Integer fastaTaxonId;
 
     private Organism org;
@@ -79,7 +82,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             Class orgClass = Organism.class;
             org = (Organism) getDirectDataLoader().createObject(orgClass);
             org.setTaxonId(fastaTaxonId);
+            LOG.info("FastaLoaderTask - starting store of organism");
             getDirectDataLoader().store(org);
+            LOG.info("FastaLoaderTask - finished store of organism");
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store Organism object", e);
         }
@@ -149,8 +154,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         flymineLSF.setOrganism(org);
 
         try {
+            LOG.info("FastaLoaderTask - starting store of sequence");
             getDirectDataLoader().store(flymineSequence);
+            LOG.info("FastaLoaderTask - finished store of sequence");
+            LOG.info("FastaLoaderTask - starting store of located sequence feature");
             getDirectDataLoader().store(flymineLSF);
+            LOG.info("FastaLoaderTask - finished store of located sequence feature");
 
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
