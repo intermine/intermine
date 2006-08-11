@@ -58,9 +58,12 @@ public class DynamicAttributeTask extends Task
                 Object propValue = projectProps.get(propName);
 
                 if (propValue == null) {
+                    // there is not all-lowercase property in projectProps, so try the camelCase
+                    // version
                     String setterName = setter.getName();
                     String camelCasePropName =
                         setterName.substring(3, 4).toLowerCase() + setterName.substring(4);
+                    propName = camelCasePropName;
                     propValue = projectProps.get(camelCasePropName);
                 }
 
@@ -71,7 +74,8 @@ public class DynamicAttributeTask extends Task
                         }
                         PropertyUtils.setProperty(bean, propName, propValue);
                     } catch (Exception e) {
-                        throw new BuildException(e);
+                        throw new BuildException("failed to set value for " + propName + " to "
+                                                 + propValue + " in " + bean, e);
                     }
                 }
             }
