@@ -11,6 +11,7 @@
   </class>
   <class name="org.flymine.model.genomic.ScreenHit" 
          is-interface="true">
+    <attribute name="strength" type="java.lang.Integer"/>
     <attribute name="phenotype" type="java.lang.String"/>
     <attribute name="numOffTargets" type="java.lang.Integer"/>
     <attribute name="maxOffTargetOverlaps" type="java.lang.Integer"/>

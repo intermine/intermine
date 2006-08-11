@@ -67,7 +67,7 @@
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="flyrnai.taxonId" location="7227"/>
+      <property name="taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/DRSC/"/>
       <property name="src.data.dir.includes" value="*.dataset"/>
     </source>

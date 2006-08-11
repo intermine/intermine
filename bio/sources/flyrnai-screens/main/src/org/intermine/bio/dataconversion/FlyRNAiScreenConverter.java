@@ -16,13 +16,10 @@ import java.util.Map;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,8 +41,8 @@ public class FlyRNAiScreenConverter extends FileConverter
 
     private Map genes = new HashMap();
     private Map synonyms = new HashMap();
+    private Map publications = new HashMap();
     
-    private ItemFactory tgtItemFactory;
     private String taxonId;
 
     private static final String PMID_PREFIX = "PMID:";
@@ -62,27 +59,32 @@ public class FlyRNAiScreenConverter extends FileConverter
     private static final String PHENOTYPE_COLUMN = "Phenotype";
     private static final String DRSC_AMPLICON_COLUMN = "DRSC Amplicon";
     private static final String AMPLICON_LENGTH_COLUMN = "Amp. Length";
+    private static final String NUM_OFF_TARGET_COLUMN = "Num Potential Off-Targs";
+    private static final String MAX_OFF_TARGET_OVERLAPS_COLUMN = "Max Off-Targ Overlap";
     private static final String HIT_COLUMN = "Hit";
 
     private Item dataSet;
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      */
     public FlyRNAiScreenConverter(ItemWriter writer) {
         super(writer);
-        tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "1_");
     }
 
     /**
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
+        if (taxonId == null) {
+            throw new RuntimeException("taxonId attribute not set");
+        }
+
         BufferedReader br = new BufferedReader(reader);
 
         if (organism == null) {
-            organism = tgtItemFactory.makeItem();
+            organism = newItem("Organism");
             organism.setAttribute("taxonId", taxonId);
             writer.store(ItemHelper.convert(organism));
         }
@@ -91,10 +93,10 @@ public class FlyRNAiScreenConverter extends FileConverter
         
         Map headerFieldValues = getHeaderFields(br);
         
-        Item publication = newItem("Publication");
-        publication.setAttribute("pubMedId", (String) headerFieldValues.get(PMID_PREFIX));
-        writer.store(ItemHelper.convert(publication));
-
+        String pubmedId = (String) headerFieldValues.get(PMID_PREFIX);
+        
+        Item publication = newPublication(pubmedId);
+        
         dataSet = newItem("DataSet");
         dataSet.setAttribute("title", "DRSC RNAi data set: "
                              + headerFieldValues.get(SCREEN_NAME_PREFIX));
@@ -106,7 +108,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         dataSet.setReference("dataSource", dataSource);
         writer.store(ItemHelper.convert(dataSet));
         
-        Item rnaiScreen= newItem("RNAiScreen");
+        Item rnaiScreen = newItem("RNAiScreen");
         rnaiScreen.setAttribute("name", (String) headerFieldValues.get(SCREEN_NAME_PREFIX));
         rnaiScreen.setAttribute("phenotypeDescription", 
                                 (String) headerFieldValues.get(PHENOTYPE_DESCRIPTION_PREFIX));
@@ -141,29 +143,50 @@ public class FlyRNAiScreenConverter extends FileConverter
             String hitsColumn = getColumnValue(columnNameMap, thisRow, HIT_COLUMN);
             String [] hitStrengths = hitsColumn.split("[ \\t]*,[ \\t]*");
             
-            System.err.println(hitsColumn);
             if (hitsColumn.equals("")) {
                 continue;
             }
             
-            System.err.println(hitStrengths[0] + "  - l: " + hitStrengths.length);
+            Item amplicon = newItem("Amplicon");
+            String ampliconIdentifier =
+                getColumnValue(columnNameMap, thisRow, DRSC_AMPLICON_COLUMN);
+            String ampliconLength = 
+                getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
+
+            try {
+                new Integer(ampliconLength);
+            } catch (NumberFormatException e) {
+                // ignore hits with invalid amplicon lengths
+                continue;
+            }
+
+            String numOffTargets = 
+                getColumnValue(columnNameMap, thisRow, NUM_OFF_TARGET_COLUMN);
+            String maxOffTargetOverlaps = 
+                getColumnValue(columnNameMap, thisRow, MAX_OFF_TARGET_OVERLAPS_COLUMN);
+            amplicon.setAttribute("identifier", ampliconIdentifier);
+            amplicon.setAttribute("length", ampliconLength);
+            amplicon.setReference("organism", organism);
+            writer.store(ItemHelper.convert(amplicon));
             
-            Item amplicon = null;
-            
-            for (int hitStrengthIndex = 0; hitStrengthIndex < hitStrengths.length; hitStrengthIndex++) {
+            for (int hitStrengthIndex = 0; hitStrengthIndex < hitStrengths.length;
+                 hitStrengthIndex++) {
                 String hitStrength = hitStrengths[hitStrengthIndex];
                 
                 // get columns using the column names from the header line
                 String geneNameColumn = getColumnValue(columnNameMap, thisRow, FBGN_COLUMN);
-
                 String [] geneNames = geneNameColumn.split("[ \\t]*,[ \\t]*");
                 
                 for (int geneIndex = 0; geneIndex < geneNames.length; geneIndex++) {
                     String geneName = geneNames[geneIndex];
-                    int geneNameColonIndex = geneName.indexOf(':');
+                    int geneNameColonIndex = geneName.lastIndexOf(':');
                     if (geneNameColonIndex != -1) {
                         geneName = geneName.substring(geneNameColonIndex + 1).trim();
                     }
+                    if (geneName.equals("")) {
+                        continue;
+                    }
+
                     Item gene = newGene(geneName);
                 
                     Item screenHit = newItem("ScreenHit");
@@ -171,28 +194,36 @@ public class FlyRNAiScreenConverter extends FileConverter
                     screenHit.setReference("gene", gene);
                     String phenotype = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
                     screenHit.setAttribute("phenotype", phenotype);
+                    screenHit.setAttribute("numOffTargets", numOffTargets);
+                    screenHit.setAttribute("maxOffTargetOverlaps", maxOffTargetOverlaps);
                     if (hitStrength != null && hitStrength.trim().length() > 0) {
-                        screenHit.setAttribute("strength", hitStrength);
+                        try {
+                            new Float(hitStrength);     
+                            screenHit.setAttribute("strength", hitStrength);
+                        } catch (NumberFormatException e) {
+                            // ignore - probably a "Y"
+                        }
                     }
-    
-                    if (amplicon == null) {
-                        amplicon = newItem("Amplicon");
-                        String ampliconIdentifier =
-                            getColumnValue(columnNameMap, thisRow, DRSC_AMPLICON_COLUMN);
-                        String ampliconLength = 
-                            getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
-                        screenHit.setReference("amplicon", amplicon);
-                        amplicon.setAttribute("identifier", ampliconIdentifier);
-                        amplicon.setAttribute("length", ampliconLength);
-                        amplicon.setReference("organism", organism);
-                    }
-    
+                    screenHit.setReference("amplicon", amplicon);
+                    
                     writer.store(ItemHelper.convert(screenHit));
                 }
             }
             
-            writer.store(ItemHelper.convert(amplicon));
+
         }
+    }
+
+    private Item newPublication(String pubmedId) {
+        Item publication;
+        if (publications.containsKey(pubmedId)) {
+            publication = (Item) publications.get(pubmedId);           
+        } else {
+            publication = newItem("Publication");
+            publication.setAttribute("pubMedId", pubmedId);
+            publications.put(pubmedId, publication);
+        }
+        return publication;
     }
 
     /**
@@ -214,9 +245,6 @@ public class FlyRNAiScreenConverter extends FileConverter
                 if (line.startsWith("# " + headerFieldName)) {
                     String headerFieldValue = line.substring(headerFieldName.length() + 3);
                     headerFieldValues.put(headerFieldName, headerFieldValue);
-
-                    System.err.println ("while reading " + getCurrentFile().getName()
-                                        + " found: " + headerFieldName + " -> " + headerFieldValue);
                 }
             }
         }
@@ -253,9 +281,6 @@ public class FlyRNAiScreenConverter extends FileConverter
     /**
      * Convenience method to create a new gene Item
      * @param geneName the gene name
-     * @param taxonId the Organism taxonId
-     * @param synonym1 a synonym, or null
-     * @param synonym2 another synonym, or null
      * @return a new gene Item
      * @throws ObjectStoreException if an error occurs when storing the Item
      */
@@ -266,7 +291,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         Item item = (Item) genes.get(geneName);
         if (item == null) {
             item = newItem("Gene");
-            item.setAttribute("identifier", geneName);
+            item.setAttribute("organismDbId", geneName);
             // identifier needs to be a Synonym for quick search to work
             newSynonym(geneName, item);
             item.setReference("organism", organism);
@@ -280,9 +305,8 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @param synonymName the actual synonym
      * @param subject the synonym's subject item
      * @return a new synonym Item
-     * @throws ObjectStoreException if an error occurs in storing the Utem
      */
-    protected Item newSynonym(String synonymName, Item subject) throws ObjectStoreException {
+    protected Item newSynonym(String synonymName, Item subject) {
         if (synonymName == null) {
             throw new RuntimeException("synonymName can't be null");
         }
@@ -291,11 +315,10 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
         Item item = newItem("Synonym");
         item.setAttribute("value", synonymName);
-        item.setAttribute("type", "accession");
+        item.setAttribute("type", "identifier");
         item.setReference("subject", subject.getIdentifier());
         item.setReference("source", dataSource.getIdentifier());
         item.addToCollection("evidence", dataSet.getIdentifier());
-        writer.store(ItemHelper.convert(item));
         synonyms.put(synonymName, item);
         return item;
     }
@@ -319,6 +342,7 @@ public class FlyRNAiScreenConverter extends FileConverter
     public void close() throws ObjectStoreException {
         store(genes.values());
         store(synonyms.values());
+        store(publications.values());
     }
 }
 
