@@ -145,6 +145,10 @@ public class Dependencies extends Task
             return;
         }
 
+        if (getProject().getUserProperty("top.ant.project.name") == null) {
+            getProject().setUserProperty("top.ant.project.name", getProject().getName());
+        }
+        
         projectProperties = loadProjectProperties(getProject().getBaseDir());
 
         extraProjectDependencies = projectProperties.getProperty(EXTRA_DEPS);
