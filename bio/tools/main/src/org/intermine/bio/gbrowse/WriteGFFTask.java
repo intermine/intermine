@@ -49,6 +49,7 @@ import org.flymine.model.genomic.Evidence;
 import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.NcRNA;
@@ -128,7 +129,8 @@ public class WriteGFFTask extends Task
     void writeGFF(ObjectStore os)
         throws ObjectStoreException, IOException {
         Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class, BioEntity.class, false);
+            PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
+                                                   LocatedSequenceFeature.class, false);
 
         results.setBatchSize(2000);
 
@@ -154,7 +156,7 @@ public class WriteGFFTask extends Task
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer resultChrId = (Integer) rr.get(0);
-            BioEntity feature = (BioEntity) rr.get(1);
+            LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
             Location loc = (Location) rr.get(2);
 
             // TODO XXX FIXME - see #628
@@ -181,6 +183,11 @@ public class WriteGFFTask extends Task
                 // aggregator
                 continue;
             }
+
+            // special case for stemcellmine
+            if (feature.getChromosome() == null) {
+                continue;
+            }
             
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
@@ -199,6 +206,7 @@ public class WriteGFFTask extends Task
                     && !currentChr.getIdentifier().equals("M")
                     && !currentChr.getOrganism().getAbbreviation().equals("MM")
                     && !currentChr.getOrganism().getAbbreviation().equals("MD")
+                    && !currentChr.getOrganism().getAbbreviation().equals("CF")
                     && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
 
                     writeChromosomeFasta(currentChr);
@@ -237,6 +245,7 @@ public class WriteGFFTask extends Task
             if (!currentChr.getIdentifier().endsWith("_random")
                 && !currentChr.getIdentifier().equals("M")
                 && !currentChr.getOrganism().getAbbreviation().equals("MM")
+                && !currentChr.getOrganism().getAbbreviation().equals("CF")
                 && !currentChr.getOrganism().getAbbreviation().equals("MD")
                 && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
 
@@ -281,7 +290,7 @@ public class WriteGFFTask extends Task
         gffWriter.close();
     }
 
-    private String getFeatureName(BioEntity feature) {
+    private String getFeatureName(LocatedSequenceFeature feature) {
         Class bioEntityClass = feature.getClass();
         Set classes = DynamicUtil.decomposeClass(bioEntityClass);
 
@@ -421,7 +430,8 @@ public class WriteGFFTask extends Task
      * @param evidenceList a List of evidence objects for this feature
      */
     private void writeFeature(PrintWriter gffWriter, Chromosome chr,
-                              BioEntity bioEntity, Location chromosomeLocation, String identifier,
+                              LocatedSequenceFeature bioEntity, Location chromosomeLocation,
+                              String identifier,
                               String featureType, String idType, Map extraAttributes,
                               List synonymValues, List evidenceList, Integer flyMineId) {
 
@@ -594,16 +604,16 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * Make a Map from BioEntity ID to List of Synonym values (Strings) for BioEntity objects
-     * located on the chromosome with the given ID.
+     * Make a Map from LocatedSequenceFeature ID to List of Synonym values (Strings) for
+     * LocatedSequenceFeature objects located on the chromosome with the given ID.
      * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the BioEntity objects to examine
+     * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
      * @return a Map from id to synonym List
      */
     private Map makeSynonymMap(ObjectStore os, Integer chromosomeId) {
         Query q = new Query();
         q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(BioEntity.class);
+        QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
         QueryField qfEnt = new QueryField(qcEnt, "id");
         q.addFrom(qcEnt);
         q.addToSelect(qfEnt);
@@ -667,16 +677,16 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * Make a Map from BioEntity ID to List of Evidence objects for BioEntity objects
-     * located on the chromosome with the given ID.
+     * Make a Map from LocatedSequenceFeature ID to List of Evidence objects for
+     * LocatedSequenceFeature objects located on the chromosome with the given ID.
      * @param os the ObjectStore to read from
-     * @param chromosomeId the chromosome ID of the BioEntity objects to examine
+     * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
      * @return a Map from id to Evidence List
      */
     private Map makeEvidenceMap(ObjectStore os, Integer chromosomeId) {
         Query q = new Query();
         q.setDistinct(true);
-        QueryClass qcEnt = new QueryClass(BioEntity.class);
+        QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
         QueryField qfEnt = new QueryField(qcEnt, "id");
         q.addFrom(qcEnt);
         q.addToSelect(qfEnt);
