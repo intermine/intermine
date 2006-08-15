@@ -107,9 +107,6 @@ public class RedFlyGFF3RecordHandlerTest extends XMLTestCase
         
         XMLUnit.setIgnoreWhitespace(true);
         
-        System.err.println("exp: " + getExpectedItems());
-        System.err.println("act: " + actualXml);
-        
         assertXMLEqual(getExpectedItems(), actualXml.toString());
     }
     
