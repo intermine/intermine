@@ -33,11 +33,12 @@ Couldn't find ${user.home}/build.properties.${top.ant.project.name}${release-suf
   <!-- INIT -->
 
   <target name="-init-app-properties" 
-          depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath"/>
+          depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath">
+    <property file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
+  </target>
+
 
   <target name="-pre-init" depends="webapp.-pre-init">
-    <property file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
-
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
