@@ -69,34 +69,20 @@ project.properties.
     </fail>
   </target>
 
-  <target name="-init-check-for-build-properties"
-          depends="-set-release-suffix, -init-deps">
-    <available file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"
-               property="have.build.properties.file"/>
-  </target>
-
-  <target name="-check-for-build-properties" 
-          depends="-init-check-for-build-properties"
-          unless="have.build.properties.file">
-    <fail unless="temporary.webapp.project">
-Couldn't find ${user.home}/build.properties.${top.ant.project.name}${release-suffix}
-    </fail>
-  </target>
-
   <target name="-init-properties" 
-          depends="-check-for-intermine-properties, -check-for-build-properties"
+          depends="-check-for-intermine-properties"
           unless="temporary.webapp.project">
     <!-- depends (indirectly) on -pre-define-task-classpath so that build.task.dir is set
          and the directory is created -->
 
     <!-- Copy intermine.properties onto the classpath -->
     <copy file="${user.home}/${intermine.properties.file}${release-suffix}" 
-          tofile="${build.task.dir}/intermine.properties"/>
+          tofile="${build.task.dir}/intermine.properties"
+          overwrite="true"/>
     <!-- Copy default.intermine.properties onto the classpath -->
     <copy file="${default.intermine.properties.file}" 
-          tofile="${build.task.dir}/default.intermine.properties"/>
-
-    <property file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
+          tofile="${build.task.dir}/default.intermine.properties"
+          overwrite="true"/>
   </target>
 
   <target name="-load-task-taskdefs" depends="-check-task-availability,
