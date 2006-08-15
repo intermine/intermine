@@ -18,15 +18,16 @@
 
   <target name="-init-check-for-build-properties"
           depends="-set-release-suffix, -init-deps">
-    <available file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"
-               property="have.build.properties.file"/>
+    <property name="build.properties.file" 
+              value="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
+    <available file="${build.properties.file}" property="have.build.properties.file"/>
   </target>
 
   <target name="-check-for-build-properties" 
           depends="-init-check-for-build-properties"
           unless="have.build.properties.file">
     <fail unless="temporary.webapp.project">
-Couldn't find ${user.home}/build.properties.${top.ant.project.name}${release-suffix}
+Couldn't find ${build.properties.file}
     </fail>
   </target>
 
@@ -51,9 +52,9 @@ Couldn't find ${user.home}/build.properties.${top.ant.project.name}${release-suf
   <target name="-final-app-pre-jar" depends="-init-app-properties" 
           unless="temporary.webapp.project">
     <!-- Concatenate local build.properties with web.properties -->
-    <concat destfile="${build.dir}/webapp/WEB-INF/web.properties" force="false">
+    <concat destfile="${build.dir}/webapp/WEB-INF/web.properties" force="yes">
       <fileset file="resources/web.properties"/>
-      <fileset file="${build.properties.local}"/>
+      <fileset file="${build.properties.file}"/>
     </concat>
     <copy file="${build.task.dir}/intermine.properties"
           tofile="${build.dir}/webapp/WEB-INF/classes/intermine.properties"
