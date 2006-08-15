@@ -16,10 +16,28 @@
   <import file="${application.xml.basedir}/webapp.xml"/>
   <import file="${application.xml.basedir}/task.xml"/>
 
+  <target name="-init-check-for-build-properties"
+          depends="-set-release-suffix, -init-deps">
+    <available file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"
+               property="have.build.properties.file"/>
+  </target>
+
+  <target name="-check-for-build-properties" 
+          depends="-init-check-for-build-properties"
+          unless="have.build.properties.file">
+    <fail unless="temporary.webapp.project">
+Couldn't find ${user.home}/build.properties.${top.ant.project.name}${release-suffix}
+    </fail>
+  </target>
 
   <!-- INIT -->
 
+  <target name="-init-app-properties" 
+          depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath"/>
+
   <target name="-pre-init" depends="webapp.-pre-init">
+    <property file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
+
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
     <!-- Location of model-less intermine-webapp.war -->
@@ -29,16 +47,19 @@
 
   <!-- WAR INSTEAD OF JAR -->
 
-  <target name="-final-app-pre-jar" unless="temporary.webapp.project">
+  <target name="-final-app-pre-jar" depends="-init-app-properties" 
+          unless="temporary.webapp.project">
     <!-- Concatenate local build.properties with web.properties -->
     <concat destfile="${build.dir}/webapp/WEB-INF/web.properties" force="false">
       <fileset file="resources/web.properties"/>
       <fileset file="${build.properties.local}"/>
     </concat>
-    <copy file="${user.home}/${intermine.properties.file}"
-          tofile="${build.dir}/webapp/WEB-INF/classes/intermine.properties"/>
-    <copy file="${default.intermine.properties.file}"
-          tofile="${build.dir}/webapp/WEB-INF/classes/default.intermine.properties"/>
+    <copy file="${build.task.dir}/intermine.properties"
+          tofile="${build.dir}/webapp/WEB-INF/classes/intermine.properties"
+          overwrite="true"/>
+    <copy file="${build.task.dir}/default.intermine.properties"
+          tofile="${build.dir}/webapp/WEB-INF/classes/default.intermine.properties"
+          overwrite="true"/>
   </target>
 
   <target name="-pre-jar" depends="-final-app-pre-jar, webapp.-pre-jar">
@@ -56,7 +77,7 @@
   
   <target name="build-db-userprofile" depends="-do-build-db-userprofile, load-default-templates"/>
   
-  <target name="-do-build-db-userprofile" depends="-init-properties, -init-build-db">
+  <target name="-do-build-db-userprofile" depends="-init-app-properties, -init-build-db">
     <task:build-db osname="${userprofile.objectstore.name}"
                    model="${userprofile.model.name}"/>
   </target>
@@ -85,7 +106,7 @@
 
   <!-- RELEASE / REMOVE FROM TOMCAT -->
   
-  <target name="release-webapp" depends="-init-properties, init">
+  <target name="release-webapp" depends="-init-app-properties, init">
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask"
              classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
     <tomcat-deploy url="${webapp.deploy.url}/manager"
@@ -95,7 +116,7 @@
                    war="file://${dist.war}"/>
   </target>
 
-  <target name="remove-webapp" depends="-init-properties, init">
+  <target name="remove-webapp" depends="-init-app-properties, init">
     <taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask"
              classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
     <tomcat-undeploy url="${webapp.deploy.url}/manager"
