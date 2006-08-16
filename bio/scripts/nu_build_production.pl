@@ -94,6 +94,9 @@ note: data_dump_directory -- an alternative to the users home directory
     NOTE: -r and -R are mutually exlusive options.
     -r restart from where we last got up to.
     -R restart from the previous dump file.
+    -d iterate over the commands but don't execute any
+    -v verbose mode this is also passed on to ant
+    -V version this will be passed straight thru to ant as a -D value for build purposes.
 
 examples:
   $0 malariamine [uniprot-malaria [data_dump_dir]]
@@ -439,6 +442,7 @@ sub makeDumpFileName {
 
 # Dumps the database to disk.
 # usage: dumpDatabase ($dumpStagePrefix)
+# TODO: WORK OUT WHY THE PASSWORD DOESNT GO THRU AUTOMAGICALLY.
 sub dumpDatabase {
   my $dumpStagePrefix = shift;
   my $dumpFile = makeDumpFileName($dumpStagePrefix);
