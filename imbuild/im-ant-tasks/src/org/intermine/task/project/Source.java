@@ -3,29 +3,29 @@
  */
 package org.intermine.task.project;
 
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * A class to hold information about a source from a project.xml file.
+ * @author Kim Rutherford
+ */
 
-
-public class Source
+public class Source extends Action
 {
-    List properties = new ArrayList();
     String type;
     
-    public void addProperty(SourceProperty property) {
-        properties.add(property);
-    }
-    
+    /**
+     * Set the type of this Source.
+     * @param type the type
+     */
     public void setType(String type) {
         this.type = type;
     }
     
+    /**
+     * Get the type of this object.
+     * @return the type
+     */
     public String getType() {
         return type;
-    }
-    
-    public List getProperties() {
-        return properties;
     }
 }

@@ -10,15 +10,17 @@ package org.intermine.task;
  *
  */
 
-import java.io.File;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.task.project.PostProcess;
 import org.intermine.task.project.Project;
 import org.intermine.task.project.ProjectXmlBinding;
 import org.intermine.task.project.Source;
-import org.intermine.task.project.SourceProperty;
+import org.intermine.task.project.UserProperty;
+
+import java.io.File;
+import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -37,19 +39,27 @@ import org.apache.tools.ant.util.ClasspathUtils;
  * be examined to see if they have a post process step of their own, if so, it will be called.
  *
  * @author Peter McLaren
- * */
-public class PostProcess extends Task
+ */
+public class PostProcessTask extends Task
 {
     private Reference classPathRef;
     private File projectXml;
     private Project project;
-    private String operation, action;
+    private String action;
     private File workspaceBaseDir;
 
+    /**
+     * Set the classpath to use for post processing.
+     * @param ref the classpath reference
+     */
     public void setClassPathRef(Reference ref) {
         this.classPathRef = ref;
     }
 
+    /**
+     * Set the project.xml file to use when post-processing.
+     * @param projectXml the project xml file
+     */
     public void setProjectXml(File projectXml) {
         this.projectXml = projectXml;
     }
@@ -71,20 +81,12 @@ public class PostProcess extends Task
     }
 
     /**
+     * Set the action to perform - ie. the post-process
      * @param action representing a source directory where we want to run the postprocessor task on.
-     * */
+     */
     public void setAction(String action) {
         this.action = action;
     }
-    /**
-     * Sets the value of operation
-     *
-     * @param operation the operation to perform eg. 'Download publications'
-     */
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-    
     
     public void execute() throws BuildException {
         if (projectXml == null) {
@@ -102,13 +104,13 @@ public class PostProcess extends Task
         if ("${action}".equalsIgnoreCase(action)) { action = ""; }
         if (action == null) { action = ""; }
 
-        //Default - do it all
+        // Default - do it all
         if ("".equals(action)) {
             Map postProcessMap = project.getPostProcesses();
             for (Iterator iter = postProcessMap.keySet().iterator(); iter.hasNext(); ) {
                 String name = iter.next().toString();
 
-                System.out.println(" executing post process:" + name);
+                System.out.println(" executing post process: " + name);
 
                 if (DO_SOURCES.equals(name)) {
                     doAllSourcePostProcessing();
@@ -123,25 +125,35 @@ public class PostProcess extends Task
             } else if (project.getSources().containsKey(action)) {
                 doSourcePostProcess(action);
             } else {
-                throw new BuildException("No postprocess/source found for:" + action);
+                throw new BuildException("No postprocess/source found for: " + action);
             }
         }
     }
-
+    
     private void doCorePostProcess (String postProcessName) {
+        PostProcess p = (PostProcess) project.getPostProcesses().get(postProcessName);
         try {
-
-            Object pp = newPostProcessTask();
+            Task pp = newPostProcessTask();
             setProperty(pp, "operation", postProcessName);
+
+            Iterator iter = p.getUserProperties().iterator();
+            while (iter.hasNext()) {
+                UserProperty up = (UserProperty) iter.next();
+                if (up.isLocation()) {
+                    pp.getProject().setUserProperty(up.getName(), up.getLocation());
+                } else {
+                    pp.getProject().setUserProperty(up.getName(), up.getValue());
+                }
+            }
+
             pp.getClass().getMethod("execute", new Class[0]).invoke(pp, new Object[0]);
         } catch (Exception err) {
-            throw new BuildException("error setting operation on PostProcessTask (name:"
+            throw new BuildException("error setting operation on PostProcessTask (name: "
                     + postProcessName + ")", err);
         }
     }
 
     private void doAllSourcePostProcessing() {
-
         Iterator iter = project.getSources().entrySet().iterator();
         while (iter.hasNext()) {
             String thisSource = (String) ((Map.Entry) iter.next()).getKey();
@@ -173,8 +185,8 @@ public class PostProcess extends Task
         initAntProps(ant, project.getProperties().iterator());
 
         // Add source properties
-        initAntProps(ant, s.getProperties().iterator());
-
+        initAntProps(ant, s.getUserProperties().iterator());
+        
         // source.name
         Property prop = ant.createProperty();
         prop.setName("source.name");
@@ -184,9 +196,8 @@ public class PostProcess extends Task
     }
 
     private void initAntProps(Ant ant, Iterator propertyIter) {
-
         while (propertyIter.hasNext()) {
-            SourceProperty sp = (SourceProperty) propertyIter.next();
+            UserProperty sp = (UserProperty) propertyIter.next();
             Property prop = ant.createProperty();
             prop.setName(sp.getName());
             if (sp.isLocation()) {
@@ -199,8 +210,7 @@ public class PostProcess extends Task
         }
     }
 
-    private Object newPostProcessTask() {
-
+    private Task newPostProcessTask() {
         ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
         Object pp = ClasspathUtils.newInstance("org.intermine.bio.postprocess.PostProcessTask", cl);
 
@@ -212,7 +222,7 @@ public class PostProcess extends Task
             throw new BuildException("error setting up PostProcessTask", err);
         }
 
-        return pp;
+        return (Task) pp;
     }
 
     private void setProperty(Object obj, String property, Object value) throws Exception {
