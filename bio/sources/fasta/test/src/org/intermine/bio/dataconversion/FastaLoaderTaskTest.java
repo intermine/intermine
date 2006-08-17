@@ -56,9 +56,6 @@ public class FastaLoaderTaskTest extends TestCase {
         files[1] = new File("resources/MAL2_trimed.fasta");
         flt.setFileArray(files);
 
-        if (files[0].exists()) { LOG.info("File One Exists!"); }
-        if (files[1].exists()) { LOG.info("File Two Exists!"); }
-
         flt.execute();
 
         //Check the results to see if we have some data...
