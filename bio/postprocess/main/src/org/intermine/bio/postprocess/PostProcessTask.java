@@ -10,11 +10,15 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.util.StringUtil;
 import org.intermine.dataloader.XmlDataLoaderTask;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
@@ -177,6 +181,23 @@ public class PostProcessTask extends Task
                 IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
                 LOG.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
                 ig.createIntergenicRegionFeatures();
+            } else if ("create-overlap-relations-flymine".equals(operation)){
+                String classesToIgnore = getProject().getUserProperty("classesToIgnore");
+                if (classesToIgnore == null) {
+                    throw new BuildException("classesToIgnore property not set");
+                }
+                
+                LOG.info("Starting CalculateLocations.createOverlapRelations()");
+                List classNamesToIgnoreList = new ArrayList();
+
+                String[] classNames = StringUtil.split(classesToIgnore, ",");
+
+                for (int i = 0; i < classNames.length; i++) {
+                    classNamesToIgnoreList.add(classNames[i].trim());
+                }
+
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
+                cl.createOverlapRelations(classNamesToIgnoreList, false);
             } else if ("update-publications".equals(operation)) {
                 if (objectStore == null) {
                     throw new BuildException("objectStore attribute is not set");

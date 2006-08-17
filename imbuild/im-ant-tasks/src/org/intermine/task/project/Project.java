@@ -18,26 +18,52 @@ public class Project
     List properties = new ArrayList();
     Map postProcesses = new LinkedHashMap();
     
+    /**
+     * Add a Source object
+     * @param name the name
+     * @param source the Source
+     */
     public void addSource(String name, Source source) {
         sources.put(name, source);
     }        
     
-    public void addProperty(SourceProperty property) {
+    /**
+     * Add a project property.
+     * @param property the property
+     */
+    public void addProperty(UserProperty property) {
         properties.add(property);
     }
     
+    /**
+     * Add a post-processing step
+     * @param name the name
+     * @param postProcess the PostProcess
+     */
     public void addPostProcess(String name, PostProcess postProcess) {
         postProcesses.put(name, postProcess);
     }
 
+    /**
+     * Return a Map from source name to Source
+     * @return the Sources
+     */
     public Map getSources() {
         return sources;
     }
     
+    /**
+     * Return a list of UserProperty objects for the Project.
+     * @return the properties
+     */
     public List getProperties() {
         return properties;
     }
 
+    /**
+     * Return a Map from post-process name to PostProcess objects
+     * @return the PostProcess objects
+     */
     public Map getPostProcesses() {
         return postProcesses;
     }
@@ -52,6 +78,7 @@ public class Project
 
     /**
      * Return the type of this project
+     * @return the type
      */
     public String getType() {
         return type;

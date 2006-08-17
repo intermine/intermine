@@ -88,6 +88,14 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/flyreg"/>
     </source>
+<!--
+ not ready yet
+    <source name="tiffin" type="tiffin">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="src.data.dir" location="/shared/data/tiffin/gff3"/>
+    </source>
+-->
     <source name="protein_structure" type="protein_structure">
       <!-- property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model/1557"/ -->
       <property name="src.data.dir" location="/shared/data/kenji"/>
@@ -170,24 +178,14 @@
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-symmetrical-relation-references"/>
     <post-process name="transfer-sequences"/>
-
+    <post-process name="create-overlap-relations-flymine">
+      <property name="classesToIgnore" value="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, Pseudogene, RRNA, RepeatRegion, Supercontig, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
+    </post-process>
     <post-process name="do-sources"/>
 
     <post-process name="set-collection-counts"/>
     <post-process name="create-flybase-to-uniprot-refs"/>
 
-    <!-- create-overlap-relations-flymine/
-    TODO - CORE:
-  <target name="create-overlap-relations-flymine" depends="compile-genomic-java-from-db">
-    <taskdef name="create-overlap-relations"
-             classname="org.flymine.postprocess.CreateOverlapRelationsTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <create-overlap-relations objectStoreWriter="osw.production"
-                              ignoreSelfMatches="false"
-                              classesToIgnore="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, Pseudogene, RRNA, RegulatoryRegion, RepeatRegion, Supercontig, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
-  </target>
-    -->
     <!-- create-flybase-to-uniprot-refs/
     TODO: Convert to datasource
   <target name="create-flybase-to-uniprot-refs" depends="compile-genomic-java-from-db">

@@ -20,7 +20,7 @@ import java.util.Arrays;
 import org.intermine.task.project.Project;
 import org.intermine.task.project.ProjectXmlBinding;
 import org.intermine.task.project.Source;
-import org.intermine.task.project.SourceProperty;
+import org.intermine.task.project.UserProperty;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -47,14 +47,26 @@ public class Integrate extends Task
     private String action, source;
     private File workspaceBaseDir;
 
+    /**
+     * Set the project.xml to use for this Task.
+     * @param projectXml the File
+     */
     public void setProjectXml(File projectXml) {
         this.projectXml = projectXml;
     }
 
+    /**
+     * Set the action (retrieve, translate or load) for this task.  null means run all actions.
+     * @param action the action
+     */
     public void setAction(String action) {
         this.action = action;
     }
 
+    /**
+     * Set the source to integrate.  null means integrate all sources.
+     * @param source the source
+     */
     public void setSource(String source) {
         this.source = source;
     }
@@ -154,22 +166,30 @@ public class Integrate extends Task
         // Add global properties
         Iterator globalPropIter = intermineProject.getProperties().iterator();
         while (globalPropIter.hasNext()) {
-            SourceProperty sp = (SourceProperty) globalPropIter.next();
+            UserProperty sp = (UserProperty) globalPropIter.next();
             Property prop = ant.createProperty();
-            prop.setName(sp.getName());
+            if (sp.getName() == null) {
+                throw new BuildException("name not set for property in: " + source);
+            } else {
+                prop.setName(sp.getName());
+            }
             if (sp.isLocation()) {
                 prop.setLocation(getProject().resolveFile(sp.getLocation()));
             } else {
-                prop.setValue(sp.getValue());
+                if (sp.getValue() == null) {
+                    throw new BuildException("value null for property: " + sp.getName());
+                } else {
+                    prop.setValue(sp.getValue());
+                }
             }
             prop.setProject(getProject());
             prop.execute();
         }
 
         // Add source properties
-        Iterator propIter = s.getProperties().iterator();
+        Iterator propIter = s.getUserProperties().iterator();
         while (propIter.hasNext()) {
-            SourceProperty sp = (SourceProperty) propIter.next();
+            UserProperty sp = (UserProperty) propIter.next();
             Property prop = ant.createProperty();
             prop.setName(sp.getName());
             if (sp.isLocation()) {

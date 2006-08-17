@@ -17,5 +17,5 @@
     	classname="org.intermine.task.Integrate"/>
     <typedef
         name="postprocess"
-    	classname="org.intermine.task.PostProcess"/>
+    	classname="org.intermine.task.PostProcessTask"/>
 </antlib>
