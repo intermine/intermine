@@ -10,37 +10,40 @@ package org.intermine.task;
  *
  */
 
-import java.util.Properties;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Collection;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.TreeSet;
-import java.util.TreeMap;
 import java.util.Iterator;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.IOException;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.QueryCloner;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryOrderable;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.iql.IqlQuery;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.PathQueryUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -152,7 +155,15 @@ public class PrecomputeTask extends Task
 
                 if (resultsInfo.getRows() >= minRows) {
                     LOG.info("precomputing " + key + " - " + query);
-                    precompute(query);
+                    Collection indexes = new ArrayList();
+                    Iterator qoListIter = query.getSelect().iterator();
+                    while (qoListIter.hasNext()) {
+                        QuerySelectable qo = (QuerySelectable) qoListIter.next();
+                        if (qo instanceof QueryOrderable) {
+                            indexes.add(qo);
+                        }
+                    }
+                    precompute(query, indexes);
 
                     if (testMode) {
                         PrintStream outputStream = System.out;
@@ -201,27 +212,6 @@ public class PrecomputeTask extends Task
                  + (System.currentTimeMillis() - start) / 1000
                  + " seconds for: " + query);
     }
-
-
-    /**
-     * Call ObjectStoreInterMineImpl.precompute() with the given Query.
-     * @param query the query to precompute
-     * @throws BuildException if the query cannot be precomputed.
-     */
-    protected void precompute(Query query) throws BuildException {
-        long start = System.currentTimeMillis();
-
-        try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, true, "PrecomputeTask");
-        } catch (ObjectStoreException e) {
-            throw new BuildException("Exception while precomputing query: " + query, e);
-        }
-
-        LOG.info("precompute() of took "
-                 + (System.currentTimeMillis() - start) / 1000
-                 + " seconds for: " + query);
-    }
-
 
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
