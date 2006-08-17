@@ -135,18 +135,17 @@ Couldn't find ${build.properties.file}
 
   <target name="precompute-queries" depends="-init-build-db">
     <precompute-queries alias="${objectstore.name}"
-                        summaryPropertiesFile="objectstoresummary.properties"
                         minRows="0"/>
   </target>
 
   <target name="precompute-queries-test" depends="-init-build-db">
     <precompute-queries alias="${objectstore.name}" testMode="true"
-                        summaryPropertiesFile="objectstoresummary.properties"
                         minRows="0"/>
   </target>
 
   <target name="precompute-templates" depends="-init-build-db">
-    <precompute-templates alias="${objectstore.name}" userProfileAlias="${userprofile.objectstorewriter.name}"
+    <precompute-templates alias="${objectstore.name}" 
+                          userProfileAlias="${userprofile.objectstorewriter.name}"
                           minRows="0" username="${superuser.account}"/>
   </target>
 
