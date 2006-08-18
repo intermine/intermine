@@ -113,6 +113,12 @@ public class FilterFlyBaseGFF3Task extends Task
                 }
             }
 
+            // protein_binding_site is incorrect - all FlyBase protein_binding_sites are acutally
+            // transcription factor binding sites
+            if (record.getType().equals("protein_binding_site")) {
+                record.setType("TF_binding_site");
+            }
+            
             if (record.getSource() != null && record.getSource().startsWith("blast")) {
                 // ignore records with this source because they have no parents
                 continue RECORD;
@@ -147,10 +153,10 @@ public class FilterFlyBaseGFF3Task extends Task
     private boolean typeToKeep(String type) {
         if (type.startsWith("match") || type.equals("aberration_junction")
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
-            || type.equals("scaffold") || type.equals("chromosome_arm")
+            || type.equals("scaffold")
             || type.equals("golden_path") || type.equals("golden_path_fragment")
             || type.equals("chromosome") || type.equals("mature_peptide")
-            || type.equals("oligo") || type.equals("BAC")
+            || type.equals("oligo")
             || type.equals("orthologous_region") || type.equals("syntenic_region")) {
             return false;
         }

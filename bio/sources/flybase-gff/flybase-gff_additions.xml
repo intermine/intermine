@@ -65,5 +65,11 @@
   <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
     <attribute name="organismDbId" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
+  </class> 
+  <class name="org.flymine.model.genomic.BAC" extends="org.flymine.model.genomic.Vector"
+         is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomeArm" 
+         extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   </class>
 </classes>
