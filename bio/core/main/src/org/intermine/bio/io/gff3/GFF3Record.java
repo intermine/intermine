@@ -215,6 +215,14 @@ public class GFF3Record
     public String getType () {
         return type;
     }
+    
+    /**
+     * Set the type of this record.
+     * @param type the new type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * Return the start field of this record.
