@@ -30,14 +30,14 @@
     <aspect-source name="Array Express" url="http://www.ebi.ac.uk/arrayexpress/"/>
   </aspect>
 
-  <aspect name="Binding Sites">
-    <subtitle>Protein binding sites</subtitle>
+  <aspect name="Transcriptional Regulation">
+    <subtitle>Regulatory regions and&lt;br/&gt;transcription factor binding sites</subtitle>
     <icon-image>model/bindingSites.png</icon-image>
     <large-image>model/bindingSites.png</large-image>
     <intro-text>
-      Protein binding sites from FlyReg and FlyBase.
+      Regulatory regions from REDfly and transcription factor binding sites from FlyReg and FlyBase.
     </intro-text>
-    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite</starting-points>
+    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite RegulatoryRegions</starting-points>
     <tile-name>model/bindingSites.jsp</tile-name>
     <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
@@ -67,7 +67,7 @@
   </aspect>
 
   <aspect name="INDAC">
-    <subtitle>Long oligos</subtitle>
+    <subtitle>Long oligos from the&lt;br/&gt;International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium</subtitle>
     <icon-image>model/indac.png</icon-image>
     <large-image>model/indac.png</large-image>
     <intro-text>
@@ -104,7 +104,7 @@
   </aspect>
 
   <aspect name="Comparative Genomics">
-    <subtitle>Orthologues&lt;br/&gt;and paralogues</subtitle>
+    <subtitle>Orthologues and paralogues</subtitle>
     <icon-image>model/comparativeGenomics.png</icon-image>
     <large-image>model/comparativeGenomics.png</large-image>
     <intro-text>
@@ -120,7 +120,7 @@
   </aspect>
 
   <aspect name="Proteins">
-    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
+    <subtitle>Protein and&lt;br/&gt;proteomics data</subtitle>
     <icon-image>model/proteins.png</icon-image>
     <large-image>model/proteins.png</large-image>
     <intro-text>
@@ -151,7 +151,7 @@
   </aspect>
 
   <aspect name="Protein Structure">
-    <subtitle>3-D protein&lt;br/&gt;structures</subtitle>
+    <subtitle>3-D protein structures</subtitle>
     <icon-image>model/pstructure.gif</icon-image>
     <large-image>model/pstructure.gif</large-image>
     <intro-text>
