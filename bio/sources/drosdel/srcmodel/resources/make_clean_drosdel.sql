@@ -35,8 +35,8 @@ USE drosdel;
 
 INSERT INTO drosdel_clean.element (name, chromosomeName, start, end, orientation, type, subType)
 SELECT name, chr,
-       (CASE WHEN orient = 'forward' THEN start - 1 ELSE start END),
-       (CASE WHEN orient = 'forward' THEN start ELSE start + 1 END),
+       (CASE WHEN orient = 'forward' THEN start ELSE stop END),
+       (CASE WHEN orient = 'forward' THEN stop ELSE start END),
        (CASE WHEN orient = 'forward' THEN 1 ELSE -1 END), type, sub_type
        FROM drosdel_release4 where start is not null and end is not null;
 
@@ -45,4 +45,4 @@ INSERT INTO drosdel_clean.deletion (element1_id, element2_id, chromosomeName, st
 SELECT (SELECT elementid from drosdel_clean.element where name = name2),
        (SELECT elementid from drosdel_clean.element where name = name1),
        chr, loc2, loc1, (CASE WHEN available = 'y' THEN true ELSE false END), ED_no
-FROM drosdel_del_release4 where loc1 is not null and loc-2 is not null;
+FROM drosdel_del_release4 where loc1 is not null and loc2 is not null;
