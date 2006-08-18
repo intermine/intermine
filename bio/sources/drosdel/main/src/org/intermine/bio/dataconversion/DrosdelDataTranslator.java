@@ -74,6 +74,7 @@ public class DrosdelDataTranslator extends DataTranslator
         throws ObjectStoreException, InterMineException {
         tgtItemWriter.store(ItemHelper.convert(organism));
         tgtItemWriter.store(ItemHelper.convert(drosdelDb));
+        tgtItemWriter.store(ItemHelper.convert(drosdelDataSource));
 
         super.translate(tgtItemWriter);
 
