@@ -28,9 +28,11 @@ import org.custommonkey.xmlunit.XMLUnit;
 public class UniprotXmlFilterTest extends XMLTestCase
 {
     File tmpFile;
+    File tmpFragFile;
 
     public void setUp() throws Exception {
         tmpFile = File.createTempFile("uniprot_filter_tmp", "");
+        tmpFragFile = File.createTempFile("uniprot_frag_tmp", "");
     }
 
     public void tearDown() {
@@ -46,7 +48,8 @@ public class UniprotXmlFilterTest extends XMLTestCase
                                       .getResourceAsStream("test/UniprotXmlFilterTest_src.xml")));
 
         BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
-        filter.filter(srcReader, out);
+        BufferedWriter fragOut = new BufferedWriter(new FileWriter(tmpFragFile));
+        filter.filter(srcReader, out, fragOut);
         out.flush();
         out.close();
 
