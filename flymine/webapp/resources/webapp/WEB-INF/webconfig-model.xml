@@ -459,6 +459,20 @@
      </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.ArtificialDeletion">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation.start"/>
+      <fieldconfig fieldExpr="chromosomeLocation.end"/>
+      <fieldconfig fieldExpr="chromosome.identifier"/>
+      <fieldconfig fieldExpr="available"/>
+    </fields>
+
+    <longdisplayers>
+      <displayer src="/model/synonymDisplayer.jsp"/>
+    </longdisplayers>
+  </class>
+
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
