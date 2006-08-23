@@ -70,7 +70,17 @@ public class DynamicAttributeTask extends Task
                 if (propValue != null) {
                     try {
                         if (propType.equals(File.class)) {
-                            propValue = getProject().resolveFile((String) propValue);
+
+                            String filePropValue = (String) propValue;
+                            //First check to see if we were given a complete file path, if so then
+                            // we can use it directly instead of trying to search for it.
+                            File maybeFile = new File(filePropValue);
+                            if (maybeFile.exists()) {
+                                propValue = maybeFile;
+                                LOG.info("Configuring task to use file:" + filePropValue);
+                            } else {
+                                propValue = getProject().resolveFile(filePropValue);
+                            }
                         }
                         PropertyUtils.setProperty(bean, propName, propValue);
                     } catch (Exception e) {
