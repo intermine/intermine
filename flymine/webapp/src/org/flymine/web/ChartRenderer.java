@@ -173,7 +173,8 @@ public class ChartRenderer extends InterMineAction
         try {          
             in = new FileInputStream(oldFile).getChannel();
             out = new FileOutputStream(cacheFile).getChannel();
-            in.transferTo (0, in.size(), out);
+            // note java bug #5056395
+            out.transferFrom(in, 0, in.size()); 
         } finally {
             if (in != null) {
                 in.close();
