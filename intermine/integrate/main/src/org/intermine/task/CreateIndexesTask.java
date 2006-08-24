@@ -10,8 +10,6 @@ package org.intermine.task;
  *
  */
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,10 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -41,6 +37,13 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.StringUtil;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 /**
  * Task to create indexes on a database holding objects conforming to a given model by
@@ -66,6 +69,9 @@ public class CreateIndexesTask extends Task
     private Set indexesMade = new HashSet();
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
 
+    // incremented after each index add to the internal map and used to make index names unique
+    private int indexCount = 0;
+    
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
      * @param alias the ObjectStore alias
@@ -136,6 +142,8 @@ public class CreateIndexesTask extends Task
             throw new BuildException(message, e);
         }
 
+        compressNames(statements);
+        
         checkForIndexNameClashes(statements);
 
         IndexStatement indexStatement = null;
@@ -177,6 +185,43 @@ public class CreateIndexesTask extends Task
                 }
             }
         }
+    }
+
+    private final int MAX_ITERATIONS = 10;
+
+    /**
+     * If an index name is longer than the Postgres limit (63), try shortening it by removing
+     * the last lowercase letters in each part of the name.  eg. change 
+     * TransposableElementInsertionSite__LocatedSequenceFeature__key_indentifer_org to
+     * TranspElemenInsertSite__LocateSequenFeatur__key_indentifer_org 
+     */
+    private void compressNames(Map statements) {
+        Set statementNames = new HashSet(statements.keySet());
+
+        Iterator statementsIter = statementNames.iterator();
+
+        while (statementsIter.hasNext()) {
+            String origIndexName = (String) statementsIter.next();
+
+            if (origIndexName.length() > POSTGRESQL_INDEX_NAME_LIMIT) {
+                String indexName = origIndexName;
+            
+                // Don't compress the class names too match - start by shortening the longest parts
+                // of the class names
+                for (int i = MAX_ITERATIONS; i > 0; i--) {
+                    Pattern pattern = Pattern.compile("([A-Z][a-z]{1," + i + "})[a-z]*");
+                    Matcher matcher = pattern.matcher(indexName);
+                    String newIndexName = matcher.replaceAll("$1");
+                    
+                    if (newIndexName.length() <= POSTGRESQL_INDEX_NAME_LIMIT) {
+                        Object indexStatement = statements.get(origIndexName);
+                        statements.remove(origIndexName);
+                        statements.put(newIndexName, indexStatement);
+                        break;
+                    }
+                }
+            }
+        }        
     }
 
     private void checkForIndexNameClashes(Map statements) throws BuildException {
@@ -346,8 +391,7 @@ public class CreateIndexesTask extends Task
                         Map.Entry primaryKeyEntry = (Map.Entry) primaryKeyIter.next();
                         PrimaryKey key = (PrimaryKey) primaryKeyEntry.getValue();
 
-                        String firstKeyField = (String) key.getFieldNames().iterator()
-                            .next();
+                        String firstKeyField = (String) key.getFieldNames().iterator().next();
 
                         if (firstKeyField.equals(att.getName())) {
                             continue ATTRIBUTE;
