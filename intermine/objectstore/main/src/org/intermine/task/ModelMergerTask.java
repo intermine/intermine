@@ -75,7 +75,7 @@ public class ModelMergerTask extends Task
             writer.write(merged.toString());
             writer.close();
         } catch (Exception e) {
-            throw new BuildException(e);
+            throw new BuildException("Exception while merging " + inputModelFile, e);
         }
     }
 }
