@@ -78,6 +78,7 @@ public class OboTerm extends DagTerm
 
     /**
      * Return the obsolete flag for this term.
+     * @return the obsolete flag
      */
     public boolean isObsolete() {
         return obsolete;

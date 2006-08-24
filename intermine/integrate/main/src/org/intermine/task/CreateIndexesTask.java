@@ -187,7 +187,7 @@ public class CreateIndexesTask extends Task
         }
     }
 
-    private final int MAX_ITERATIONS = 10;
+    private static final int MAX_ITERATIONS = 10;
 
     /**
      * If an index name is longer than the Postgres limit (63), try shortening it by removing

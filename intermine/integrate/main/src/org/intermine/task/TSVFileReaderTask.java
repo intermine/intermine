@@ -52,6 +52,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
      * Query all objects of the class given by the className specified in the configurationFile that
      * have a reference to the organism given by the organismAbbreviation parameter.  Set fields in
      * the objects by using the tab separated files as input.
+     * @param file the File
      * @throws BuildException if an ObjectStore method fails
      */
     public void processFile(File file) throws BuildException {
@@ -79,11 +80,10 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
 
     /**
      * Does most of the work of execute().  This method exists to help with testing.
-     * @param ddl the DirectDataLoader 
      * @param dfc the configuration of which fields to set and which field to use as a key
      * @param file The file to read from
      * @throws BuildException if an ObjectStore method fails
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if the there is an ObjectStore problem
      */
     void executeInternal(DelimitedFileConfiguration dfc, File file)
         throws BuildException, ObjectStoreException {

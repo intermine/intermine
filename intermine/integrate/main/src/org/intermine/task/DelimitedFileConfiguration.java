@@ -146,8 +146,8 @@ public class DelimitedFileConfiguration
 
     /**
      * Return a List of the configured AttributeDescriptors.  The List is indexed by column number
-     * (starting with column 0).  If a column has no configured AttributeDescriptor the List will have
-     * null at that index.
+     * (starting with column 0).  If a column has no configured AttributeDescriptor the List will
+     * have null at that index.
      * @return the configured AttributeDescriptors
      */
     public List getColumnFieldDescriptors() {

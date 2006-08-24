@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.Iterator;
 
 import org.intermine.model.fulldata.Item;
-import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * An ItemReader backed by a Map of Items identified by id
@@ -48,14 +47,21 @@ public class MockItemReader extends AbstractItemReader
     public Iterator itemIterator() {
         return storedItems.values().iterator();
     }
-    public Iterator itemIterator(String s, boolean b) {
+
+    /**
+     * Read items of one particular class only, or exclude one particular class.
+     * @param clsName fully qualified name of class to include/exclude
+     * @param notEquals if true then exclude the given classname
+     * @return an iterator over the selected items
+     */
+    public Iterator itemIterator(String clsName, boolean notEquals) {
         return storedItems.values().iterator();
     }
 
     /**
      * @see ItemReader#getItemsByDescription
      */
-    public List getItemsByDescription(Set constraints) throws ObjectStoreException {
+    public List getItemsByDescription(Set constraints) {
         List items = new ArrayList();
 
         Iterator i = itemIterator();
