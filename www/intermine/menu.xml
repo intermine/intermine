@@ -10,11 +10,15 @@
         <item url="http://www.intermine.org/api/" title="API JavaDoc"/>
         <item url="/doc/contribute/index.xml" title="Contribute"/>
     </item>
-    <item title="Download software">
+    <item title="Download Software">
         <item url="http://download.flymine.org/releases/" title="Latest release"/>
         <item url="http://download.flymine.org/nightly/" title="Nightly build"/>
         <item url="http://subversion.flymine.org/" title="Browse source"/>
         <item url="/download/index.xml" title="SVN checkout"/>
     </item>
+    <item title="InterMine Projects">
+        <item url="http://www.flymine.org/" title="FlyMine"/>
+        <item url="http://preview.stemcellmine.org/" title="StemCellMine"/>
+        <item url="http://www.flymine.org/malaria/" title="MalariaMine"/>
 </menu>
 
