@@ -82,7 +82,7 @@ public abstract class DirectDataLoaderTask extends Task
      * Return the DirectDataLoader for this Task.  Must be called only after execute() has been 
      * called.
      * @return the DirectDataLoader
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if the given class can't be found
      */
     public DirectDataLoader getDirectDataLoader() throws ObjectStoreException {
         if (directDataLoader == null) {
