@@ -20,6 +20,7 @@ my $postprocess = "post-process";
 
 # Dont forget to rename this.
 my $projectXmlFile= "project.xml";
+my $mineProperties = undef;
 
 my $antCmd;
 my $targetMine;
@@ -47,7 +48,7 @@ my $release;
 
 my %opts = ();
 
-getopts('vdrRV:', \%opts);
+my $validOpts = getopts('vdrRV:', \%opts);
 
 if ($opts{r}) {
   $carryOnRestart = 1;
@@ -84,7 +85,7 @@ sub usage
 {
   die <<'EOF';
 usage:
-  $0 full_name_of_mine_to_target [restart_dump_prefix [data_dump_directory]]
+  $0 [restart_dump_prefix [data_dump_directory]]
 
 note: restart_dump_prefix -- restarts from a source or post-process
 note: data_dump_directory -- an alternative to the users home directory
@@ -99,23 +100,23 @@ note: data_dump_directory -- an alternative to the users home directory
     -V version this will be passed straight thru to ant as a -D value for build purposes.
 
 examples:
-  $0 malariamine [uniprot-malaria [data_dump_dir]]
+  $0 [uniprot-malaria [data_dump_dir]]
 or
-  $0 malariamine [transfer-sequences [data_dump_dir]]
+  $0 [transfer-sequences [data_dump_dir]]
 
 EOF
 }
 
+unless ($validOpts) {
+    usage();
+}
+
 if (@ARGV == 1) {
-  $targetMine = $ARGV[0];
+  $dumpPrefix = $ARGV[0];
 } elsif (@ARGV == 2) {
-  $targetMine = $ARGV[0];
-  $dumpPrefix = $ARGV[1];
-} elsif (@ARGV == 3) {
-  $targetMine = $ARGV[0];
-  $dumpPrefix = $ARGV[1];
-  $dumpDataDir = $ARGV[2];
-} else {
+  $dumpPrefix = $ARGV[0];
+  $dumpDataDir = $ARGV[1];
+} elsif (@ARGV > 2) {
   usage;
 }
 
@@ -125,11 +126,10 @@ if (-e $projectXmlFile) {
     die "Can't find a file named $projectXmlFile check that you are in the root directory of the chosen mine.\n";
 }
 
-if (($carryOnRestart or $prevDmpRestart) and (!defined $dumpPrefix)) {
-    die "Need to specify a dump file prefix (i.e. a source or postprocess name) if using -r or -R";
-} elsif( !($carryOnRestart or $prevDmpRestart) and (defined $dumpPrefix)) {
-    printStdOut("DUMP_PREFIX:" . $dumpPrefix);
-    die "Need to specify -r or -R if supplying a restart dump prefix";
+if ($prevDmpRestart and (!defined $dumpPrefix)) {
+    die "Need to specify a dump file prefix (i.e. a source or postprocess name) if using -R (or -r)";
+} elsif( !$prevDmpRestart and (defined $dumpPrefix)) {
+    die "Need to specify -R (or -r) while supplying restart dump prefix: $dumpPrefix";
 } else {
     printStdOut("DUMP_PREFIX:" . defined $dumpPrefix ? $dumpPrefix : "NOT SET!");
     #die"testing...";
@@ -139,9 +139,6 @@ my $parser = new XML::DOM::Parser;
 my $doc = $parser->parsefile ($projectXmlFile);
 my @dump_command = qw[pg_dump -c];
 my @psql_command = qw[psql -q];
-
-my $mine_properties = getMinePropsFile();
-printStdOut("$mine_properties\n");
 
 runProduction();
 
@@ -173,25 +170,22 @@ sub runProduction
 
 sub init
 {
+  my $cwdir = getcwd();
+  ($targetMine) = ($cwdir =~ m/.*\/(.*)/);
 
-  $prodHost = get_prop_val ("db.production.datasource.serverName", $mine_properties);
-  $prodDb = get_prop_val ("db.production.datasource.databaseName", $mine_properties);
-  $prodUser = get_prop_val ("db.production.datasource.user", $mine_properties);
-  $prodPass = get_prop_val ("db.production.datasource.password", $mine_properties);
+  $mineProperties = getMinePropsFile();
+
+  $prodHost = get_prop_val ("db.production.datasource.serverName", $mineProperties);
+  $prodDb = get_prop_val ("db.production.datasource.databaseName", $mineProperties);
+  $prodUser = get_prop_val ("db.production.datasource.user", $mineProperties);
+  $prodPass = get_prop_val ("db.production.datasource.password", $mineProperties);
 
   if ($prodHost =~ /(.+):(\d+)/) {
     $prodHost = $1;
     $prodPort = $2;
   }
 
-  if ($verbose) {
-    printStdOut ("read properties:");
-    printStdOut ("  prod_host: $prodHost");
-    printStdOut ("  prod_port: " . (defined($prodPort) ? $prodPort : "default"));
-    printStdOut ("  prod_db: $prodDb");
-    printStdOut ("  prod_user: $prodUser");
-    printStdOut ("  prod_pass: $prodPass");
-  }
+  $mineProperties = getMinePropsFile();
 }
 
 sub getMinePropsFile
@@ -297,7 +291,7 @@ sub buildCommandsForTag {
 # usage: executeCommands (%commands)
 sub executeCommands {
 
-  if (defined $dumpPrefix) {
+  if (($carryOnRestart or $prevDmpRestart) and (defined $dumpPrefix)) {
 
     #Do we need to restart from a previous dump file?
     #TODO: enable the script to use a differant dump file than just the desired restart point.
@@ -307,14 +301,10 @@ sub executeCommands {
       unless(-s $restartDumpFile) {
         die "Restart Dump File $restartDumpFile was not found or is empty!";
       }
-      if ($verbose) {
-        printStdOut("RELOADING DUMP FILE: $restartDumpFile");
-      }
+      printStdOut("RELOADING DUMP FILE: $restartDumpFile");
       loadDb($restartDumpFile);
     } elsif ($carryOnRestart) {
-      if ($verbose) {
-        printStdOut("CONTINUING FROM: $dumpPrefix");
-      }
+      printStdOut("CONTINUING FROM: $dumpPrefix WITHOUT A RELOAD");
     }
 
     my @cmdList = @{$_[0]};
@@ -334,9 +324,7 @@ sub executeCommands {
         last;
       } else {
         #push unwanted elements off the 'shorter' list
-        if ($verbose) {
-            printStdOut("DITCHING TAG:$tag");
-        }
+        printStdOut("DITCHING TAG:$tag");
         shift @shortList;
       }
     }
@@ -346,8 +334,52 @@ sub executeCommands {
     }
 
     iterateOverCommands(\@shortList);
+  }
+  elsif ($carryOnRestart and !(defined $dumpPrefix)) {
 
-  } else {
+    printStdOut("!AUTOMAGIC RESTART REQUESTED!");
+
+    # Holds a list of all possible dump file names gleaned from the project.xml file...
+    my @dumpListTmp;
+    # Here we'll just make the filename list before we check if any matching dump files exist
+    foreach my $hashRefTmp (@{$_[0]}) {
+      my %hashtemp = %$hashRefTmp;
+      my $dmp = $hashtemp{"dmp"};
+      my $tag = $hashtemp{"tag"};
+      if ($dmp) {
+        printStdOut("Considering the following as a restart point:$tag");
+        unshift @dumpListTmp, [$tag, makeDumpFileName($tag)];
+      } else {
+        printStdOut("Skipping over $tag")
+      }
+    }
+
+    # Now we need to check to see if the restart point exists
+    # Note: the array is in reverse order here as we want to back up to any start point...
+    my $restartPointFound = 0;
+
+    foreach my $posRestartDumpRef (@dumpListTmp) {
+        my $posRestartTag = $posRestartDumpRef->[0];
+        my $posDumpFile = $posRestartDumpRef->[1];
+        printStdOut("CHECKING FOR POSSBILE RESTART FILE: $posDumpFile");
+
+        # If we have found a dump file we can rerun the production from the last known point.
+        if (-e $posDumpFile) {
+            printStdOut("FOUND A SUITABLE RESTART POINT: $posRestartTag");
+            $dumpPrefix = $posRestartTag;
+            $restartPointFound = 1;
+            last;
+        }
+    }
+
+    if($restartPointFound) {
+        runProduction();
+    }
+    else {
+        die "Can't find a restart point (a dump file), you could restart without using the -r flag";
+    }
+  }
+  else {
     iterateOverCommands($_[0]);
   }
 }
@@ -404,9 +436,7 @@ sub executeCommand {
         printStdOut("Pretending todo: $cmd");
       }
       else {
-        if ($verbose) {
-          printStdOut(`date`);
-        }
+        printStdOut(`date`);
         open F, "$cmd |" or die "can't run $cmd: $?\n";
         if ($verbose) {
           while (<F>) {
@@ -461,10 +491,8 @@ sub dumpDatabase {
   }
   else {
 
-    if ($verbose) {
-      printStdOut (`date`, "\n");
-      printStdOut ("\ndumping: @dump_command @params\n");
-    }
+    printStdOut (`date`, "\n");
+    printStdOut ("\ndumping: @dump_command @params\n");
     my $retVal = system(@cmd);
     if ($retVal) {
         die "CMD: @cmd FAILED WITH RETVAL:$retVal\n";
@@ -478,10 +506,8 @@ sub dumpDatabase {
     #$exp->expect(9999999, '__DUMP_FINISHED__\n');
     #$exp->soft_close();
 
-    if ($verbose) {
-      printStdOut (`date`, "\n");
-      printStdOut ("finished dump\n");
-    }
+    printStdOut (`date`, "\n");
+    printStdOut ("finished dump\n");
   }
 }
 
@@ -518,15 +544,12 @@ sub loadDb
     #$exp->send("$prodPass\n");
     #$exp->expect(9999999, '__LOAD_FINISHED__\n');
     #$exp->soft_close();
-    if ($verbose) {
-        printStdOut(`date`, "\n\n");
-        printStdOut("finished load - now analysing\n\n");
-    }
-    analyse_db_prod();
-    if ($verbose) {
-        printStdOut(`date`, "\n\n");
-        printStdOut("finished analysing\n\n");
-    }
+      printStdOut(`date`, "\n\n");
+      printStdOut("finished load - now analysing\n\n");
+
+      analyse_db_prod();
+      printStdOut(`date`, "\n\n");
+      printStdOut("finished analysing\n\n");
   }
 }
 
