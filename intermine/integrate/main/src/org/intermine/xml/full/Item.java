@@ -314,6 +314,9 @@ public class Item
      * @param refId the value of the attribute
      */
     public void setReference(String name, String refId) {
+        if (refId.equals("")) {
+            throw new RuntimeException("empty string used as ref_id for: " + name);
+        }
         addReference(new Reference(name, refId));
     }
     
@@ -346,6 +349,9 @@ public class Item
      * @param identifier the item to add to the collection
      */
     public void addToCollection(String name, String identifier) {
+        if (identifier.equals("")) {
+            throw new RuntimeException("empty string added to collection for: " + name);
+        }
         ReferenceList list = getCollection(name);
         if (list == null) {
             list = new ReferenceList(name);
