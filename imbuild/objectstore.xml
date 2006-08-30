@@ -113,14 +113,14 @@
   <target name="-merge-models" if="core.model.path"/>
 
   <!-- Merge shortcuts of the core model -->
-  <target name="-merge-shortcuts" if="core.model.path">
+  <target name="-merge-shortcuts" depends="-load-task-taskdefs" if="core.model.path">
     <echo>Merging shortcuts...</echo>
     <model-merger inputModelFile="${build.model.dir}/${model.name}_model.xml"
                   additionsFile="${objectstore.xml.basedir}/../${core.model.path}/shortcuts.xml"
                   outputFile="${build.model.dir}/${model.name}_model.xml"/>
   </target>
 
-  <target name="-define-macrodef-merge-additions">
+  <target name="-define-macrodef-merge-additions" depends="-load-task-taskdefs">
     <macrodef name="merge-additions">
       <attribute name="file"/>
       <sequential>
