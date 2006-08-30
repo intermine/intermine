@@ -12,11 +12,11 @@
       </div>
       <div class="body">
         <DL>
-          <DT><A href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=10877382&query_hl=1&itool=pubmed_docsum">Clare and Swaisgood, 2000</A></DT>
+          <DT>Enzyme reactions</DT>
           <DD>
-  	    Enyzyme reactions have been extensively studied in the scientific literature and the data derived here comes from a review in Fox et al 2003, although original works are referenced.
+  	    Enyzyme reactions contained in MilkMine come from a review in Fox et al 2003, although original works are referenced.
             <UL>
-              <LI><I>Place citations here</I></LI>
+              <LI><I>Fox et al, 2003</I></LI>
             </UL>
           </DD>
         </DL>
