@@ -130,6 +130,15 @@
     </source>
 
     <!--
+  Unfinished -
+    <source name="flybase-proteinbindingsites" type="flybase-proteinbindingsites">
+      <property name="taxonId" value="7227"/>
+      <property name="src.data.dir" location="/shared/data/flybase/proteinbindingsites/"/>
+      <property name="src.data.dir.includes" value="*.xml"/>
+    </source>
+    -->
+
+    <!--
       fasta is a bit wierd - tasks depend on the production model and
       retrieve and translate are noops
     -->

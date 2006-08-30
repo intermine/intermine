@@ -107,10 +107,10 @@
 
     <!-- only initialise the tgt items database if it's needed -->
     <condition property="do.build.tgt.db">
-      <isfalse value="${have.file.custom}"/>
+      <isfalse value="${have.file.custom.direct}"/>
     </condition>
     <condition property="do.analyse.db.tgt.items">
-      <isfalse value="${have.file.custom}"/>
+      <isfalse value="${have.file.custom.direct}"/>
     </condition>
   </target>
 
