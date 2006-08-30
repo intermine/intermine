@@ -27,5 +27,6 @@
     <merge-additions file="bio/sources/mage/mage_additions.xml"/>
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
     <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
+    <merge-additions file="bio/sources/flybase-proteinbindingsites/flybase-proteinbindingsites_additions.xml"/>
   </target>
 </project>
