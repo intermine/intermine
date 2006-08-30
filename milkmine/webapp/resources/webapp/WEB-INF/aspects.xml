@@ -1,11 +1,10 @@
 <aspects>
-  <aspect name="Genomics">
+<!--  <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
     <icon-image>model/genomics.gif</icon-image>
     <large-image>model/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in MilkMine are provided by
-      a variety of curated source databases. 
+      The gene structure and other genome annotation in MilkMine are provided by the Ensembl project run by the EBI. 
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
     <starting-points>
@@ -14,9 +13,9 @@
       Pseudogene RRNA SnRNA SnoRNA UTR MRNA
     </starting-points> 
     <aspect-source name="Ensembl" url="http://www.ensembl.org/Mus_musculus"/>
-  </aspect>
+  </aspect> -->
 
-  <aspect name="Comparative Genomics">
+<!--  <aspect name="Comparative Genomics">
     <subtitle>Orthologues&lt;br/&gt;and paralogues</subtitle>
     <icon-image>model/comparativeGenomics.png</icon-image>
     <large-image>model/comparativeGenomics.png</large-image>
@@ -30,7 +29,7 @@
     <tile-name>model/inparanoid.jsp</tile-name>
     <starting-points>Gene Orthologue Paralogue</starting-points>
     <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
-  </aspect>
+  </aspect> -->
 
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
@@ -71,16 +70,6 @@
       The Gene Ontology (GO) project is a collaborative effort to
       address the need for consistent descriptions of gene products in
       different databases.
-&lt;p&gt;
-      The GO collaborators are developing three structured, controlled
-      vocabularies (ontologies) that describe gene products in terms of
-      their associated biological processes, cellular components and
-      molecular functions in a species-independent manner.
-&lt;p&gt;
-      GO annotations for &lt;i&gt;Mus musculus&lt;/i&gt; have
-      been loaded into MouseMine.  The GO annotations are 'attached' to
-      Genes and so each gene has a reference (link) to a list of its GO
-      annotations (if available).
     </intro-text>
     <starting-points>Gene GOTerm GOAnnotation</starting-points>
     <tile-name>model/GO.jsp</tile-name>
@@ -91,7 +80,7 @@
     <icon-image>model/library.png</icon-image>
     <large-image>model/library.png</large-image>
     <intro-text>
-      Relationships extracted from milk literature articles (PubMed, OVID, WOK).
+      Biological literature is expanding at an incredible rate and significant biological links are often buried under this mountain. Text-mining helps researchers uncover novel knowledge by analysing relationships between biological concepts within text. Here, relationships have been extracted from milk literature articles (PubMed, OVID, WOK).
     </intro-text>
     <tile-name>model/literature.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
@@ -104,7 +93,7 @@
     <icon-image>model/peptide.png</icon-image>
     <large-image>model/peptide.png</large-image>
     <intro-text>
-      Many peptides that are derived from milk proteins have significant physiological importance, particlulary in blood pressure and immune system regulation.
+      Many peptides derived from milk proteins exert significant physiological influence, particlulary on blood pressure and immune system regulation.
     </intro-text>
     <tile-name>model/peptides.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
@@ -115,7 +104,7 @@
     <icon-image>model/enzyme.jpg</icon-image>
     <large-image>model/enzyme.jpg</large-image>
     <intro-text>
-    Milk contains many enzymes, some in small concentrations but others in physiologically significant concentrations.
+    Milk contains many enzymes, often in physiologically significant concentrations.
     </intro-text>
     <tile-name>model/enzymes.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
@@ -126,7 +115,7 @@
     <icon-image>model/binding.png</icon-image>
     <large-image>model/binding.png</large-image>
     <intro-text>
-    Milk proteins often act as small molecule transporters, such as the caseins, whose presence in milk facilitates the supersaturation of calcium within it. 
+    Milk proteins often act as small molecule transporters, such as the caseins, whose presence facilitates the supersaturation of calcium within it. 
     </intro-text>
     <tile-name>model/binding.jsp</tile-name>
     <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>

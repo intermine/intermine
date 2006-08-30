@@ -20,6 +20,8 @@
             Knowledgebase</A> (version 7.5) for the following organisms have
             been loaded:
             <UL>
+              <LI><I>Homo sapiens</I></LI>
+              <LI><I>Bos taurus</I></LI>
               <LI><I>Mus musculus</I></LI>
             </UL>
             For each protein record in UniProt for each species the following
@@ -43,6 +45,8 @@
             href="http://www.ebi.ac.uk/interpro">InterPro</A> (version 12.1)
             for the following organisms:
             <UL>
+              <LI><I>Homo sapiens</I></LI>
+              <LI><I>Bos taurus</I></LI>
               <LI><I>Mus musculus</I></LI>
             </UL>
           </DD>
@@ -51,9 +55,399 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download <i>M. musculus</i> data
+        Bulk download MilkMine data
       </div>
       <div class="body">
+        <DL>
+          <DT>Human data</A></DT>
+          <DD>
+        <ul>
+          <li>
+            <i>H. sapiens</i> proteins and corresponding genes:
+            <span style="white-space:nowrap">
+              <im:querylink text="[browse]" skipBuilder="true">
+                <query name="" model="genomic" view="Protein Protein.genes">
+                  <node path="Protein" type="Protein">
+                  </node>
+                  <node path="Protein.organism" type="Organism">
+                  </node>
+                  <node path="Protein.organism.name" type="String">
+                    <constraint op="=" value="H. sapiens"
+                                description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
+                  <node path="Protein" type="Protein">
+                  </node>
+                  <node path="Protein.organism" type="Organism">
+                  </node>
+                  <node path="Protein.organism.name" type="String">
+                    <constraint op="=" value="Homo sapiens" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+          <li>
+            <i>H. sapiens</i> protein domains:
+            <im:querylink text="[browse]"
+                          skipBuilder="true">
+              <query name="" model="genomic" view="ProteinDomain">
+              p  <node path="ProteinDomain" type="ProteinDomain">
+                </node>
+                <node path="ProteinDomain.proteins" type="Protein">
+                </node>
+                <node path="ProteinDomain.proteins.organism" type="Organism">
+                </node>
+                <node path="ProteinDomain.proteins.organism.name" type="String">
+                </node>
+                <node path="ProteinDomain.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Homo" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+            or
+            <im:querylink text="[export/download]"
+                          skipBuilder="true">
+              <query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
+                <node path="ProteinDomain" type="ProteinDomain">
+                </node>
+                <node path="ProteinDomain.proteins" type="Protein">
+                </node>
+                <node path="ProteinDomain.proteins.organism" type="Organism">
+                </node>
+                <node path="ProteinDomain.proteins.organism.name" type="String">
+                </node>
+                <node path="ProteinDomain.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Homo" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+
+
+          <li>
+            <span style="white-space:nowrap">
+              <i>H. sapiens</i> proteins with corresponding protein domains:
+              <im:querylink text="[browse]"
+                            skipBuilder="true">
+                <query name="" model="genomic" view="ProteinDomain.proteins ProteinDomain" constraintLogic="A and B">
+                  <node path="ProteinDomain" type="ProteinDomain">
+                  </node>
+                  <node path="ProteinDomain.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Homo" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
+                  <node path="ProteinDomain" type="ProteinDomain">
+                  </node>
+                  <node path="ProteinDomain.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Homo" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+          <li>
+            <i>H. sapiens</i> protein families:
+            <span style="white-space:nowrap">
+              <im:querylink text="[browse]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Homo" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Homo" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+          <li>
+            <i>H. sapiens</i> proteins with corresponding protein families:
+            <span style="white-space:nowrap">
+              <im:querylink text="[browse]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily.proteins ProteinFamily" constraintLogic="A and B">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Homo" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Homo" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+        </ul>
+	</DD>
+
+          <DT>Cow data</A></DT>
+          <DD>
+        <ul>
+          <li>
+            <i>B. taurus</i> proteins and corresponding genes:
+            <span style="white-space:nowrap">
+              <im:querylink text="[browse]" skipBuilder="true">
+                <query name="" model="genomic" view="Protein Protein.genes">
+                  <node path="Protein" type="Protein">
+                  </node>
+                  <node path="Protein.organism" type="Organism">
+                  </node>
+                  <node path="Protein.organism.name" type="String">
+                    <constraint op="=" value="B. taurus"
+                                description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromoso
+meLocation.start Protein.genes.chromosomeLocation.end">
+                  <node path="Protein" type="Protein">
+                  </node>
+                  <node path="Protein.organism" type="Organism">
+                  </node>
+                  <node path="Protein.organism.name" type="String">
+                    <constraint op="=" value="Bos taurus" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+          <li>
+            <i>B. taurus</i> protein domains:
+            <im:querylink text="[browse]"
+                          skipBuilder="true">
+              <query name="" model="genomic" view="ProteinDomain">
+              p  <node path="ProteinDomain" type="ProteinDomain">
+                </node>
+                <node path="ProteinDomain.proteins" type="Protein">
+                </node>
+                <node path="ProteinDomain.proteins.organism" type="Organism">
+                </node>
+                <node path="ProteinDomain.proteins.organism.name" type="String">
+                </node>
+                <node path="ProteinDomain.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Bos" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+            or
+            <im:querylink text="[export/download]"
+                          skipBuilder="true">
+              <query name="" model="genomic" view="ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
+                <node path="ProteinDomain" type="ProteinDomain">
+                </node>
+                <node path="ProteinDomain.proteins" type="Protein">
+                </node>
+                <node path="ProteinDomain.proteins.organism" type="Organism">
+                </node>
+                <node path="ProteinDomain.proteins.organism.name" type="String">
+                </node>
+                <node path="ProteinDomain.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Bos" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+
+
+          <li>
+            <span style="white-space:nowrap">
+              <i>B. taurus</i> proteins with corresponding protein domains:
+              <im:querylink text="[browse]"
+                            skipBuilder="true">
+                <query name="" model="genomic" view="ProteinDomain.proteins ProteinDomain" constraintLogic="A and B">
+                  <node path="ProteinDomain" type="ProteinDomain">
+                  </node>
+                  <node path="ProteinDomain.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Bos" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier Pro
+teinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
+                  <node path="ProteinDomain" type="ProteinDomain">
+                  </node>
+                  <node path="ProteinDomain.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinDomain.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Bos" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+          <li>
+            <i>B. taurus</i> protein families:
+            <span style="white-space:nowrap">
+              <im:querylink text="[browse]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Bos" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Bos" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+          <li>
+            <i>B. taurus</i> proteins with corresponding protein families:
+            <span style="white-space:nowrap">
+              <im:querylink text="[browse]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily.proteins ProteinFamily" constraintLogic="A and B">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Bos" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+              or
+              <im:querylink text="[export/download]" skipBuilder="true">
+                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier Pro
+teinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
+                  <node path="ProteinFamily" type="ProteinFamily">
+                  </node>
+                  <node path="ProteinFamily.proteins" type="Protein">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism" type="Organism">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.name" type="String">
+                  </node>
+                  <node path="ProteinFamily.proteins.organism.genus" type="String">
+                    <constraint op="=" value="Bos" description="" identifier="" code="A">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </span>
+          </li>
+        </ul>
+        </DD>
+
+          <DT>Mouse data</A></DT>
+          <DD>
         <ul>
           <li>
             <i>M. musculus</i> proteins and corresponding genes:
@@ -73,7 +467,8 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
+                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromoso
+meLocation.start Protein.genes.chromosomeLocation.end">
                   <node path="Protein" type="Protein">
                   </node>
                   <node path="Protein.organism" type="Organism">
@@ -148,7 +543,8 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
+                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier Pro
+teinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
                   <node path="ProteinDomain" type="ProteinDomain">
                   </node>
                   <node path="ProteinDomain.proteins" type="Protein">
@@ -224,7 +620,8 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
+                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier Pro
+teinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
                   <node path="ProteinFamily" type="ProteinFamily">
                   </node>
                   <node path="ProteinFamily.proteins" type="Protein">
@@ -242,6 +639,9 @@
             </span>
           </li>
         </ul>
+        </DD>
+
+	</DL>
       </div>
     </td>
   </tr>

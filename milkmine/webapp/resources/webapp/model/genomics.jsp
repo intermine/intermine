@@ -12,7 +12,7 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download
+        Bulk download MilkMine data
       </div>
     </td>
   </tr>
@@ -20,14 +20,23 @@
     <td>
       <div class="body">
         <p>
-          <a href="/mouse">MouseMine</a> contains <i>M. musculus</i> genome
-          data from:
+          <a href="http://bifx1.bio.ed.ac.uk:8080/query/begin.do">MilkMine</a> contains several genomes, with annotation, from Ensembl:
         </p>
         <ul>
           <li>
+            <a href="http://www.ensembl.org/Homo_sapiens/">
+              <html:img src="model/ensembl_logo_mini.png"/>
+              Ensembl <i>H. sapiens</i> Release 36 genome annotation</a>
+          </li>
+          <li>
+            <a href="http://www.ensembl.org/Bos_taurus/">
+              <html:img src="model/ensembl_logo_mini.png"/>
+              Ensembl <i>B. taurus</i> Release 2.0 genome annotation</a>
+          </li>
+          <li>
             <a href="http://www.ensembl.org/Mus_musculus/">
               <html:img src="model/ensembl_logo_mini.png"/>
-              Ensembl <i>M. musculus</i> Release 38.35 genome annotation</a>
+              Ensembl <i>M. musculus</i> Release 36 genome annotation</a>
           </li>
         </ul>
       </div>
@@ -36,6 +45,62 @@
       <div class="body">
         <ul>
           <li>
+            <im:querylink text="All <i>H. sapiens</i> genes (browse)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Homo sapiens" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+          <li>
+            <im:querylink text="All <i>H. sapiens</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Homo sapiens" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+	  <li>
+            <im:querylink text="All <i>B. taurus</i> genes (browse)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Bos taurus" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+          <li>
+            <im:querylink text="All <i>B. taurus</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Bos taurus" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+	  <li>
             <im:querylink text="All <i>M. musculus</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">

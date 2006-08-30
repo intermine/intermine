@@ -14,7 +14,7 @@
         <DL>
           <DT><A href="http://fermi.utmb.edu/SDAP/">SDAP</A></DT>
           <DD>
-            All allergenic data has come from the Structural Database of Allergenic Proteins (SDAP), University of Texas Medical Branch. This interface can be searched by sequence or name.
+            All allergenic data has come from the Structural Database of Allergenic Proteins (<A href="http://fermi.utmb.edu/SDAP/">SDAP</A>), University of Texas Medical Branch. This interface can be searched by sequence or name.
           </DD>
         </DL>
       </div>
