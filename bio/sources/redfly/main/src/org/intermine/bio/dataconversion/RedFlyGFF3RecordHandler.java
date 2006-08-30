@@ -50,7 +50,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        feature.setClassName(tgtNs + "RedFlyRegulatoryRegion");
+        feature.setClassName(tgtNs + "RegulatoryRegion");
 
         String name = record.getId();
 
