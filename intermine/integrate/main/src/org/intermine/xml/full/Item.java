@@ -396,10 +396,20 @@ public class Item
             return;
         }
 
-        if (classDescriptor.getReferenceDescriptorByName(name, true) == null) {
+        if (!canReference(name)) {
             throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
                                        + name + "\" reference");
         }
+    }
+
+    /**
+     * Return true if and only if the argument names a possible reference for this Item.  ie. the
+     * ClassDescriptor for this Item contains a ReferenceDescriptor for this name.
+     * @param name the field name
+     * @return Return true if and only if this Item can have a reference of the given name
+     */
+    public boolean canReference(String name) {
+        return classDescriptor.getReferenceDescriptorByName(name, true) != null;
     }
 
     /**
