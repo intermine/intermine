@@ -46,7 +46,8 @@
                     reverse-reference="transcripts"/>
         <collection name="exons" referenced-type="org.flymine.model.genomic.Exon"
                     reverse-reference="transcripts" ordered="true"/>
-        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="transcript"/>
+        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" 
+                   reverse-reference="transcript"/>
     </class>
 
     <class name="org.flymine.model.genomic.NcRNA" is-interface="true"/>
@@ -61,7 +62,8 @@
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
         <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"
                    reverse-reference="translations"/>
-        <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript"/>
+        <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript"
+                   reverse-reference="translation"/>
         <reference name="mrna" referenced-type="org.flymine.model.genomic.MRNA"/>
         <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS"
                     reverse-reference="translation" ordered="true"/>
