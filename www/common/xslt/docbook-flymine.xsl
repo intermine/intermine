@@ -304,11 +304,14 @@
   </xsl:template>
 
   <xsl:template match="emphasis">
-    <i><xsl:apply-templates/></i>
-  </xsl:template>
-
-  <xsl:template match="highlights">
-    <b><xsl:apply-templates/></b>
+      <xsl:choose>
+          <xsl:when test="@role='bold'">
+            <strong><xsl:apply-templates/></strong>
+          </xsl:when>
+          <xsl:otherwise>
+            <i><xsl:apply-templates/></i>
+          </xsl:otherwise>
+        </xsl:choose>
   </xsl:template>
 
   <xsl:template match="subtitle">
