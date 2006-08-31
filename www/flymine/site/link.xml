@@ -1,9 +1,10 @@
-<?xml version="1.0" standalone="yes" ?> 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>How do I link to FlyMine?</title>
+    <title>Links to details pages</title>
 
-    <verbatim><h3>Links to details pages</h3></verbatim>
     <para>
 Links can be set up directly to the details pages of many types of entry in FlyMine.
 A link isn't to a specific page but runs a search for the given identifier.  This
@@ -15,17 +16,17 @@ exactly the same as running a Quick Search from the FlyMine home page.
 <para>
 The URL to use takes the form:
 
-<verbatim><B>www.flymine.org/query/portal.do?externalid=identifier&amp;origin=MySite</B></verbatim>
+<emphasis role="bold">www.flymine.org/query/portal.do?externalid=identifier&amp;origin=MySite</emphasis>
 </para>
 
 <para>
-Note that using www.flymine.org/<verbatim><B>query</B></verbatim> will always redirect
+Note that using www.flymine.org/<emphasis role="bold">query</emphasis> will always redirect
 to the latest FlyMine release, please don't create links to the URL of a particular 
 release.
 </para>
 
 <para>
-The <verbatim><B>origin</B></verbatim> in the URL is optional but will allow us to show a specific welcome/help
+The <emphasis role="bold">origin</emphasis> in the URL is optional but will allow us to show a specific welcome/help
 message to incoming users from your site.  It also helps us keep track of incoming links.
 Let us know what you want to use.
 </para>
@@ -33,41 +34,48 @@ Let us know what you want to use.
 <para>
 A typical URL to link to a gene details page:
 
-<ulink url="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase">www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase</ulink>
+<ulink url="http://www.flymine.org/query/portal.do?externalid=Fphrasegn0004053&amp;origin=flybase">www.flymine.org/query/portal.do?externalid=Fphrasegn0004053&amp;origin=flybase</ulink>
 </para>
-<para>
 
+<para>
 Some other examples:
+</para>
 <itemizedlist>
     <listitem><para>A protein: <ulink url="http://www.flymine.org/query/portal.do?externalid=ZEN1_DROME">www.flymine.org/query/portal.do?externalid=ZEN1_DROME</ulink></para></listitem>
 <listitem><para>A FlyReg binding site: <ulink url="http://www.flymine.org/query/portal.do?externalid=FPID004210">www.flymine.org/query/portal.do?externalid=FPID004210</ulink></para></listitem>
 <listitem><para>A DrosDel deletion: <ulink url="http://www.flymine.org/query/portal.do?externalid=Df(2L)ED7666">www.flymine.org/query/portal.do?externalid=Df(2L)ED7666</ulink></para></listitem>
 </itemizedlist>
-</para>
 
 <para>
 If you would like to link to a paricular type of entry and have suggstions for additional templates
 you would like to see there please <ulink url="contact">let us know</ulink>, this is easy to configure.
 </para>
 
-<verbatim><h3>Links to aspect pages</h3></verbatim>
+  </section>
+  <section>
+<title>Links to aspect pages</title>
 <para>
 Links directly to aspect pages in the latest release take the form:
 </para>
 <para>
-<verbatim><B>www.flymine.org/query/aspect.do?name=aspect+name</B></verbatim>
+<emphasis role="bold">www.flymine.org/query/aspect.do?name=aspect+name</emphasis>
 </para>
 <para>
 Where aspect+name is the name of the aspect as shown on the FlyMine home page - match case and replace any spaces with '+'.</para>
 
 <para>
 For example:
+</para>
 <itemizedlist>
     <listitem><para><ulink url="http://www.flymine.org/query/aspect.do?name=INDAC">www.flymine.org/query/aspect.do?name=INDAC</ulink></para></listitem>
     <listitem><para><ulink url="http://www.flymine.org/query/aspect.do?name=Protein+Interactions">www.flymine.org/query/aspect.do?name=Protein+Interactions</ulink></para></listitem>
 </itemizedlist>
-</para>
+
+
+  </section>
+  <section>
+  <title>Buttons and Logos</title>
+  <para>See <ulink url="logo.xml">page of available buttons</ulink></para>
 
 </section>
-
 </article>
