@@ -30,6 +30,7 @@ import org.intermine.xml.full.ItemHelper;
 import java.io.BufferedReader;
 import java.io.Reader;
 
+import org.apache.tools.ant.BuildException;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Feature;
@@ -53,15 +54,15 @@ public class BioJavaFlatFileConverter extends FileConverter
     protected ItemFactory itemFactory;
     protected Map taxonIds = new HashMap();
 
-    private Map genes = new HashMap();
+    private Set items = null;
+    
     private Map organisms = new HashMap();
     private Map chromosomes = new HashMap();
+    private Map genes = new HashMap();
     private Map proteins = new HashMap();
-    private Set items = new HashSet();
-
     private Map cdsFeatures = new HashMap();
-
     private Map mrnaFeatures = new HashMap();
+    private Map translationFeatures = new HashMap();
 
     private static final String TAXON_PREFIX = "taxon";
 
@@ -71,13 +72,15 @@ public class BioJavaFlatFileConverter extends FileConverter
      */
     public BioJavaFlatFileConverter(ItemWriter writer) {
         super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "0_");
     }
 
     /**
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
+        items = new HashSet();
+        
         BufferedReader br = new BufferedReader(reader);
         SequenceIterator sequences = SeqIOTools.readEmbl(br);
         while(sequences.hasNext()){
@@ -91,23 +94,18 @@ public class BioJavaFlatFileConverter extends FileConverter
                     Feature feature = (Feature) iter.next();
                     String type =  feature.getType();
                     
+                    /*
                     System.err.println("got: " + feature);
-                    
                     System.err.println("type: " + type);
-
-                    
                     Location location = feature.getLocation();
                     System.err.println("location: " + location);
-                    
                     Annotation annotation = feature.getAnnotation();
-                    
                     Iterator annoKeyIter = annotation.keys().iterator();
-                    
                     while (annoKeyIter.hasNext()) {
                         Object key = annoKeyIter.next();
                         System.err.println("  " + key + ": " + annotation.getProperty(key));
                     }
-                    
+                    */
                     if (type.equals("source")) {
                         org = handleSourceFeature(feature, chr);
                         continue;
@@ -128,14 +126,16 @@ public class BioJavaFlatFileConverter extends FileConverter
                     if (item.canReference("organism")) {
                         item.setReference("organism", org);
                     }
+                }
+                itemIter = items.iterator();
+                while (itemIter.hasNext()) {
+                    Item item = (Item) itemIter.next();
                     writer.store(ItemHelper.convert(item));
                 }
-            } catch (BioException ex) {
-                //not in GenBank format
-                ex.printStackTrace();
-            } catch (NoSuchElementException ex) {
-                //request for more sequence when there isn't any
-                ex.printStackTrace();
+            } catch (BioException e) {
+                throw new BuildException("exception while reading file: " + getCurrentFile(), e);
+            } catch (NoSuchElementException e) {
+                throw new BuildException("exception while processing file: " + getCurrentFile(), e);
             }
         }
     }
@@ -145,22 +145,52 @@ public class BioJavaFlatFileConverter extends FileConverter
      * @param chr 
      */
     private void handleCDS(Feature feature, Item chr) {
-        Annotation annotation = feature.getAnnotation();
-        String geneName = (String) annotation.getProperty("gene");
-        Item cds = getCDS(geneName);
-        cds.setReference("gene", getGene(geneName));
-        
-        Item protein = getProtein(geneName + "_protein");
-        cds.setReference("protein", protein);
-        String uniprotId = getDbxref(feature, "UniProtKB/TrEMBL");
-        protein.setAttribute("primaryAccession", uniprotId);
-        Item mRNA = makeItem("MRNA");
+        if (feature.getAnnotation().containsProperty("pseudo")) {
+            return;
+        }
 
-        String mrnaName = getUniqueName(mrnaFeatures, geneName + "_MRNA");
+        String geneIdentifier = getGeneIdentifierFromCDS(feature);
+        Item cds = getCDS(geneIdentifier);
+        Item gene = getGene(geneIdentifier);
+        cds.setReference("gene", gene);
+
+        Item mRNA = makeItem("MRNA");
+        String mrnaName = getUniqueName(mrnaFeatures, geneIdentifier + "_MRNA");
         mRNA.setAttribute("identifier", mrnaName);
         mrnaFeatures.put(mrnaName, mRNA);
-        mRNA.setReference("protein", protein);
+
+        Item translation= makeItem("Translation");
+        String translationName = getUniqueName(translationFeatures, geneIdentifier + "_translation");
+        translation.setAttribute("identifier", translationName);
+        translationFeatures.put(translationName, translation);
+        translation.setReference("transcript", mRNA);
+        mRNA.setReference("translation", translation);
+        cds.setReference("translation", translation);
+
+        String uniprotId = getDbxref(feature, "UniProtKB/TrEMBL");        
+
+        if (uniprotId != null) {
+            Item protein = getProtein(uniprotId);
+            protein.setAttribute("identifier", uniprotId);
+            cds.setReference("protein", protein);
+            protein.setAttribute("primaryAccession", uniprotId);
+            mRNA.setReference("protein", protein);
+            translation.setReference("protein", protein);
+        }
+        
         makeLocation(feature, cds, chr);
+    }
+
+    /**
+     * Return a gene name for the given feature.  Normally /gene is returned, but some
+     * less-than-good sequencing projects don't include /gene.  In those cases this method
+     * can be overridden to do something clever to find out the gene name such as reading the
+     * /product line.
+     * @param feature the Feature
+     * @return the name or null if the name cannot be determined
+     */
+    protected String getGeneIdentifierFromCDS(Feature feature) {
+        return (String) getPropList(feature.getAnnotation(), "gene").get(0);
     }
     
     private Item getCDS(String geneName) {
@@ -207,7 +237,6 @@ public class BioJavaFlatFileConverter extends FileConverter
             return (Item) proteins.get(name);
         }
         Item protein = makeItem("Protein");
-        protein.setAttribute("name", name);
         proteins.put(name, protein);
         return protein;
     }
@@ -218,6 +247,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         }
         Item gene = makeItem("Gene");
         gene.setAttribute("organismDbId", name);
+        gene.setAttribute("identifier", name);
         genes.put(name, gene);
         return gene;
     }
@@ -266,10 +296,13 @@ public class BioJavaFlatFileConverter extends FileConverter
 
     private Item handleSourceFeature(Feature feature, Item chr) {
         Annotation annotation = feature.getAnnotation();
-        String map = (String) annotation.getProperty("map");
-        String chromosomeName = (String) annotation.getProperty("map");
+        String map = null;
+        if (annotation.containsProperty("map")) {
+            map = (String) annotation.getProperty("map");
+        }
+        String chromosomeName = (String) annotation.getProperty("chromosome");
         if (map != null) {
-            chromosomeName += " " + map;
+            chromosomeName += "_" + map;
         }
 
         chromosomeName = getUniqueName(chromosomes, chromosomeName);
