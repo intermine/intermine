@@ -28,18 +28,7 @@ import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 
 public class BioJavaFlatFileConverterTest extends TestCase {
-
-    private ObjectStore os;
-    private Model model;
-    private ItemFactory itemFactory;
-
-    public void setUp() throws Exception {
-        os = ObjectStoreFactory.getObjectStore("os.bio-test");
-        model = Model.getInstanceByName("genomic");
-        itemFactory = new ItemFactory(model);
-    }
-    
-    public void testProcess() throws Exception {
+    public void testProcess1() throws Exception {
         String input = 
             IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_1.embl"));
         
@@ -50,6 +39,20 @@ public class BioJavaFlatFileConverterTest extends TestCase {
         System.out.println(itemWriter.getItems());
         Set expected = 
             new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("embl_test_1.xml")));
+        assertEquals(expected, itemWriter.getItems());
+    }
+    
+    public void testProcess2() throws Exception {
+        String input = 
+            IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_2.embl"));
+        
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        BioJavaFlatFileConverter converter = new BioJavaFlatFileConverter(itemWriter);
+        converter.process(new StringReader(input));
+        converter.close();
+        System.out.println(itemWriter.getItems());
+        Set expected = 
+            new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("embl_test_2.xml")));
         assertEquals(expected, itemWriter.getItems());
     }
 }
