@@ -50,7 +50,14 @@ sub start_element
     $self->{namespace} = $args->{Attributes}{namespace};
   } else {
     if ($args->{Name} eq "class") {
-      $self->{current_class} = new InterMine::Model::ClassDescriptor(name => $nameattr);
+      my @extends = ();
+      if (exists $args->{Attributes}{extends}) {
+        @extends = split /\s+/, $args->{Attributes}{extends};
+        map { s/.*\.(.*)/$1/ } @extends;
+      }
+      $self->{current_class} =
+        new InterMine::Model::ClassDescriptor(model => $self->{model},
+                                              name => $nameattr, extends => [@extends]);
     } else {
       my $field;
       if ($args->{Name} eq "attribute") {
@@ -92,7 +99,7 @@ sub _process
 {
   my $self = shift;
   my $file = shift;
-  my $handler = new InterMine::Model::Handler();
+  my $handler = new InterMine::Model::Handler(model => $self);
   my $parser = XML::Parser::PerlSAX->new(Handler => $handler);
 
   $parser->parse(Source => { SystemId => $file });
@@ -108,11 +115,15 @@ sub _process
   $self->{modelname} = $handler->{modelname};
 }
 
-sub get_class_by_name
+sub get_classdescriptor_by_name
 {
   my $self = shift;
   my $classname = shift;
-  return $self->{class_hash}{$classname};
+  if (exists $self->{class_hash}{$classname}) {
+    return $self->{class_hash}{$classname};
+  } else {
+    return $self->{class_hash}{$self->{namespace} . $classname}
+  }
 }
 
 sub namespace

@@ -23,10 +23,10 @@ sub make_item
 {
   my $self = shift;
   my $class = shift;
+  $self->{id_counter}++;
   return new InterMine::Item(classname => $self->{model}->namespace() . "$class",
                              model => $self->{model},
                              id => $self->{id_counter});
-  $self->{id_counter}++;
 }
 
 1;

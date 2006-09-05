@@ -4,6 +4,8 @@ use strict;
 
 use XML::Writer;
 
+my $ID_PREFIX = '0_';
+
 sub new {
   my $class = shift;
   my %opts = @_;
@@ -24,7 +26,7 @@ sub new {
 
   my $self = { id => $opts{id}, _model => $opts{model}, _classname => $classname };
 
-  my $classdesc = $self->{_model}->get_class_by_name($classname);
+  my $classdesc = $self->{_model}->get_classdescriptor_by_name($classname);
 
   if (!defined $classdesc) {
     die "class '$classname' is not in the model\n";
@@ -53,13 +55,51 @@ sub set
     die $self->{_classname}, " does not have a $name field\n";
   }
 
+  if (ref $value) {
+    if (ref $value eq 'ARRAY') {
+      if (ref $field ne 'InterMine::Model::Collection') {
+        die "tried to set field '$name' in class '", $self->{_classname},
+            " to something other than type: ", $field->get_field_type(), "\n";
+      }
+    } else {
+      if (ref $field ne 'InterMine::Model::Reference') {
+        die "tried to set field '$name' in class '", $self->{_classname},
+           " to something other than type: ", $field->get_field_type(), "\n";
+      }
+    }
+  } else {
+    if (ref $field ne 'InterMine::Model::Attribute') {
+      die "tried to set field '$name' in class '", $self->{_classname},
+          " to something other than type: ", $field->get_field_type(), "\n";
+    }
+  }
+
   $self->{$name} = $value;
+}
+
+sub get
+{
+  my $self = shift;
+  my $field = shift;
+  return $self->{$field};
 }
 
 sub model
 {
   my $self = shift;
   return $self->{_model};
+}
+
+sub classname
+{
+  my $self = shift;
+  return $self->{_classname};
+}
+
+sub classdescriptor
+{
+  my $self = shift;
+  return $self->{_classdesc};
 }
 
 sub as_xml
@@ -69,7 +109,7 @@ sub as_xml
   my $id = $self->{id};
   my $class = $self->{_classname};
 
-  $writer->startTag("item", id => $id, class => $class);
+  $writer->startTag("item", id => $ID_PREFIX . $id, class => $class);
 
   for my $key (keys %$self) {
     next if $key =~ /^_/;
@@ -79,17 +119,15 @@ sub as_xml
       die unless $val;
 
       if (ref $val) {
-        die "$key" unless $val->{id};
         if (ref $val eq 'ARRAY') {
           $writer->startTag("collection", name => $key);
           my @refs = @$val;
           for my $r (@refs) {
-            $writer->emptyTag("reference", name => $key, ref_id => '0_' . $r->{id});
+            $writer->emptyTag("reference", name => $key, ref_id => $ID_PREFIX . $r->{id});
           }
           $writer->endTag();
         } else {
-          print "--- $key $val\n";
-          $writer->emptyTag("reference", name => $key, ref_id => '0_' . $val->{id});
+          $writer->emptyTag("reference", name => $key, ref_id => $ID_PREFIX . $val->{id});
         }
       } else {
         $writer->emptyTag("attribute", name => $key, value => $val);

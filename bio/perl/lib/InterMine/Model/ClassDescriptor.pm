@@ -10,7 +10,10 @@ sub new
   $self->{field_hash} = {};
 
   if (!exists $opts{name}) {
-    die "no name given to class\n";
+    die "no name given to class constructor\n";
+  }
+  if (!exists $opts{model}) {
+    die "no model given to class constructor\n";
   }
 
   bless $self, $class;
@@ -48,12 +51,37 @@ sub name
   return $self->{name};
 }
 
+sub extends
+{
+  my $self = shift;
+  return $self->{extends};
+}
+
 sub get_field_by_name
 {
   my $self = shift;
   my $field = shift;
 
-  return $self->{field_hash}{$field};
+  if (defined $self->{field_hash}{$field}) {
+    return $self->{field_hash}{$field};
+  } else {
+    my $model = $self->{model};
+    for my $extendee (@{$self->{extends}}) {
+      my $ex_field = $model->get_classdescriptor_by_name($extendee)->get_field_by_name($field);
+      if (defined $ex_field) {
+        return $ex_field;
+      }
+    }
+  }
+
+  return undef;
+}
+
+sub valid_field
+{
+  my $self = shift;
+  my $field = shift;
+  return defined $self->get_field_by_name($field);
 }
 
 sub attributes
