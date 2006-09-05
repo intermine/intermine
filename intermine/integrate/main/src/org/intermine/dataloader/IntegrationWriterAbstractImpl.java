@@ -285,7 +285,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             TypeUtil.setFieldValue(colObj, reverseRef.getName(), dest);
                             if (type == FROM_DB) {
                                 store(colObj);
-                                store(colObj, source, skelSource, FROM_DB);
+                                // We don't need to call again on this objectm this call may have been present
+                                // to ensure the tracker is updated - but would get updated with the wrong
+                                // source anyway.  See ticket #955.
+                                //store(colObj, source, skelSource, FROM_DB);
                             } else {
                                 store(colObj, source, skelSource, SKELETON);
                             }
@@ -416,7 +419,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public Integer getSerial() throws ObjectStoreException {
         return osw.getSerial();
     }
-        
+
     /**
      * Check whether the ObjectStore is performing a transaction, delegate to internal
      * ObjectStoreWriter.
