@@ -171,7 +171,6 @@ public class BioJavaFlatFileConverter extends FileConverter
 
         if (uniprotId != null) {
             Item protein = getProtein(uniprotId);
-            protein.setAttribute("identifier", uniprotId);
             cds.setReference("protein", protein);
             protein.setAttribute("primaryAccession", uniprotId);
             mRNA.setReference("protein", protein);
