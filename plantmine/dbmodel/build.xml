@@ -1,4 +1,4 @@
-<project name="pombemine-dbmodel" default="default" basedir=".">
+<project name="plantmine-dbmodel" default="default" basedir=".">
   <description>represents the production objectstore and the model therein</description>
   <import file="../../imbuild/objectstore.xml"/>
   
@@ -9,7 +9,6 @@
     <merge-additions file="bio/sources/uniprot/uniprot_additions.xml"/>
     <merge-additions file="bio/sources/orthologue/orthologue_additions.xml"/>
     <!-- merge-additions file="interpro"/ -->
-    <merge-additions file="bio/sources/pombe-gff/pombe-gff_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/core/genomic_additions.xml"/>
   </target>

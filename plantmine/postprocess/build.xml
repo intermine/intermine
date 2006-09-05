@@ -1,6 +1,6 @@
-<project name="pombemine-postprocess" default="default" basedir=".">
+<project name="plantmine-postprocess" default="default" basedir=".">
 
-  <description>perform post processing for pombemine</description>
+  <description>perform post processing for plantmine</description>
 
   <import file="../../imbuild/postprocess.xml"/>
 
