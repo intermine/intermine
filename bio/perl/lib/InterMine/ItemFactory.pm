@@ -22,9 +22,28 @@ sub new
 sub make_item
 {
   my $self = shift;
-  my $class = shift;
+  my %args = @_;
   $self->{id_counter}++;
-  return new InterMine::Item(classname => $self->{model}->namespace() . "$class",
+
+  my $classname = "";
+  if (defined $args{classname}) {
+    if ($args{classname} =~ m;^http://;) {
+      $classname = $args{classname};
+    } else {
+      $classname = $self->{model}->namespace() . $args{classname};
+    }
+  }
+
+  my $implements = "";
+  if (defined $args{implements}) {
+    if ($args{implements} =~ m;^http://;) {
+      $implements = $args{implements};
+    } else {
+      $implements = $self->{model}->namespace() . $args{implements};
+    }
+  }
+
+  return new InterMine::Item(classname => $classname, implements => $implements,
                              model => $self->{model},
                              id => $self->{id_counter});
 }
