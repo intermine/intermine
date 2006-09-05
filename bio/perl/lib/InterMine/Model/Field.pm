@@ -17,4 +17,10 @@ sub name
   return $self->{name};
 }
 
+sub get_field_type
+{
+  my $self = shift;
+  return lc (((ref $self) =~ /.*::(.*)/)[0]);
+}
+
 1;
