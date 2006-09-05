@@ -1,6 +1,6 @@
-<project name="pombemine-webapp" default="default" basedir=".">
+<project name="plantmine-webapp" default="default" basedir=".">
 
-  <description>build, test, package pombemine-webapp</description>
+  <description>build, test, package plantmine-webapp</description>
   <import file="../../imbuild/application.xml"/>
 
   <!-- it's hacky to override do-generate, but it gets run at the right time -->
