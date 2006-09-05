@@ -37,11 +37,10 @@ $org_item->set("taxonId", $taxon_id);
 
 sub make_item
 {
-  my $classname = shift;
-  my $item = $item_factory->make_item($classname);
+  my $implements = shift;
+  my $item = $item_factory->make_item(implements => $implements);
   push @items_to_write, $item;
-  my $classdesc = $item->classdescriptor();
-  if ($classdesc->valid_field('organism')) {
+  if ($item->valid_field('organism')) {
     $item->set('organism', $org_item);
   }
   return $item;
