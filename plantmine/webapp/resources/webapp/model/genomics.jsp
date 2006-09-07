@@ -20,17 +20,13 @@
     <td>
       <div class="body">
         <p>
-          <a href="/malariamine">MalariaMine</a> contains <i>Plasmodium falciparum 3D7</i> genome
+          <a href="/plantmine/begin.do">PlantMine</a> contains <i>Arabidopsis thaliana</i> genome
           data from:
         </p>
         <ul>
           <li>
-            <a href="http://www.genedb.org/">
-              Fasta sequences for <i>P. falciparum 3D7</i></a>
-          </li>
-          <li>
-            <a href="http://www.genedb.org/">
-              GFF3 for <i>P. falciparum 3D7</i> genome features</a>
+            <a href="http://www.arabidopsis.org/">
+              The <i>Arabidopsis</i> Information Resource</i></a>
           </li>
         </ul>
       </div>
@@ -39,28 +35,28 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> genes (browse)" skipBuilder="true">
+            <im:querylink text="All <i>Arabidopsis thaliana</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+                  <constraint op="=" value="Arabidopsis thaliana" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i>Arabidopsis thaliana</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+                  <constraint op="=" value="Arabidopsis thaliana" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>
