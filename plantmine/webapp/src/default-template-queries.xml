@@ -606,31 +606,8 @@
   </template-queries>
 
   <tags>
-    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.MicroArrayExperiment" type="class" />
-    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.CDNAClone" type="class" />
     <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class" />
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinStructure" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinRegion" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />comment
-
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.BindingSite" type="class" />
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class" />
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.ProteinBindingSite" type="class" />
-    <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Transcript" type="class" />
-    <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.MicroarrayOligo" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.PCRProduct" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Primer" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.TilingPathSpan" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Location" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class" />
@@ -641,7 +618,6 @@
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class" />
@@ -654,20 +630,228 @@
     <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
     <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class" />
     <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
-    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
-    <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Deletion" type="class" />
-    <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.TransposableElementInsertionSite" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.RNAiExperiment" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Phenotype" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Disease" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.BlastMatch" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
+    <tag name="aspect:Binding Sites" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="BS_forTF" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="transcriptionFactors1" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="FlyBaseProteinBindingSites" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="TFbindingsite2geneAndFactor" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="FlyRegBindingSites" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="TFBindingsitesequence2geneAndFActor" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="Gene2TFbindingsite" type="template"/>
+    <tag name="aspect:Binding Sites" objectIdentifier="Gene_for2TFs" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractions2orthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="orthologuesGenePhenotype" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="geneDetailsOrthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="OrthologueInOneSpecies" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="OthologuesRnai_forProtein" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAP_gene2orthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAT_RNAiwithOrthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAO_GeneOrthologuesSequence" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAQ_GeneOrtholSpecies" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAY_orthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="AAZ_OrthologuesWithGO2" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="interloguesOrganisms" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="orthologues2transcripts" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="phenotype2genesWithOrthologues" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_orthol_interaction" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="interologsOrganisms" type="template"/>
+    <tag name="aspect:Comparative Genomics" objectIdentifier="interologuesOrganisms" type="template"/>
+    <tag name="aspect:Disease" objectIdentifier="geneBlastMatchDisease" type="template"/>
+    <tag name="aspect:Disease" objectIdentifier="DiseaseGenesMatch" type="template"/>
+    <tag name="aspect:Disease" objectIdentifier="DiseaseGenesMatchEvalue" type="template"/>
+    <tag name="aspect:Disease" objectIdentifier="geneEvalueDisease" type="template"/>
+    <tag name="aspect:Disease" objectIdentifier="geneEvalueDiseaseRnai" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="drosDelGeneAll" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="drosDelGeneAvailable" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion2" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="chromosomeLocation2Deletion2" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="gene2DrosDelDeletion1" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="drosDel2indac1" type="template"/>
+    <tag name="aspect:DrosDel" objectIdentifier="DrosDel overlapping gene coordinates" type="template"/>
+    <tag name="aspect:GO term" objectIdentifier="AAN_Gene_GoTerms" type="template"/>
+    <tag name="aspect:GO term" objectIdentifier="AAZ_OrthologuesWithGO2" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="geneTimeCourseResults" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="geneToMicroarrayAllExpts" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="microarrayResult2Experiment1" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="GOterm2microarrayExperiment1" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="GOterm2microarrayresult1" type="template"/>
+    <tag name="aspect:Gene Expression" objectIdentifier="Gene2MicroarrayExperiment1" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="gene2goTermwithEvidence" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="goTerm2genesWithEvidenceandWith" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="GOterm2microarrayExperiment1" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="geneGoOrthologuesMoreSpecific" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="AAM_Gene2GO2NEW" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="AAN_Gene_GoTerms" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="GOterm2GeneProteinInteraction" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="GOterm2microarrayresult1" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="geneGoOrthologues" type="template"/>
+    <tag name="aspect:Gene Ontology" objectIdentifier="ProteinGeneGO" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAH_Genes2chromosome1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAI_gene2ChromosomeLocation1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="goTerm2genesWithEvidenceandWith" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="gene2goTermwithEvidence" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAL_chromosomeLocation2genes2" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="gene2DrosDelDeletion2" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="TFbindingsite2geneAndFactor" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAN_Gene_GoTerms" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAG_gene2protein" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="chromosomeLocation2Deletion2" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAM_Gene2GO2NEW" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="intergenicSequences" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="OrthologueInOneSpecies" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="gene2DrosDelDeletion1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAP_gene2orthologues" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAV_Gene2RNAi" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="pointMutationToGene" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAJ_synonymGene2exonChromosomeLocations1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="geneToInsertionSite" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAO_OrthologuesWithGO2" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="geneOverlapppingGenes" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="DrosDel overlapping gene coordinates" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAU_phenotype2genes1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAD_genes2fasta" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAE_gene2Transcripts2" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="tilingSpanToGene" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="insertionSiteToGene" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAF_gene2exonTranscript1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="geneToPointMutation" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAQ_orthologues" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAT_RNAiwithOrthologues" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="geneToInsertionSiteDetails" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAW_gene2CERNAi" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAC_organismGenes1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAX_genes2CERNAi" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAB_Synonyms" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="organismGenesAndPointMutations" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="Object_Synonym" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAK_chromosomeLocation2geneSequence1" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="GOterm2GeneProteinInteraction" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAT_RNAiwithOrthologues2" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAO_GeneOrthologuesSequence" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAQ_GeneOrtholSpecies" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="TranscriptOrthologuesFromGene" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="geneTranscriptsExons" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="geneTranscriptsIntrons" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="AAAB_geneIdentifiersFromSynonym" type="template"/>
+    <tag name="aspect:Genomics" objectIdentifier="ProteinGeneLocation" type="template"/>
+    <tag name="aspect:Genomics Binding Sites" objectIdentifier="chromsosomeLocation2TFbindingSites" type="template"/>
+    <tag name="aspect:Genomics Binding Sites" objectIdentifier="TFbindingsite2geneAndFactor" type="template"/>
+    <tag name="aspect:Genomics Comparative Genomics" objectIdentifier="AAQ_orthologues" type="template"/>
+    <tag name="aspect:Genomics Comparative Genomics" objectIdentifier="AAR_orthologues2transcripts" type="template"/>
+    <tag name="aspect:Genomics Comparative Genomics RNAi" objectIdentifier="AAT_RNAiwithOrthologues" type="template"/>
+    <tag name="aspect:Genomics Comparative Genomics RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template"/>
+    <tag name="aspect:Genomics Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template"/>
+    <tag name="aspect:Genomics RNAi" objectIdentifier="AAW_gene2CERNAi" type="template"/>
+    <tag name="aspect:Genomics RNAi" objectIdentifier="AAX_genes2CERNAi" type="template"/>
+    <tag name="aspect:Genomics RNAi" objectIdentifier="AAU_phenotype2genes1" type="template"/>
+    <tag name="aspect:INDAC" objectIdentifier="drosDel2indac1" type="template"/>
+    <tag name="aspect:INDAC" objectIdentifier="geneToIndac" type="template"/>
+    <tag name="aspect:INDAC" objectIdentifier="microarrayOligo2chromosome" type="template"/>
+    <tag name="aspect:INDAC" objectIdentifier="indacToGene" type="template"/>
+    <tag name="aspect:INDAC" objectIdentifier="ChromosomeLocation2IndacOligos" type="template"/>
+    <tag name="aspect:INDAC" objectIdentifier="transcript2longOligo" type="template"/>
+    <tag name="aspect:INDAC DrosDel" objectIdentifier="drosDel2indac1" type="template"/>
+    <tag name="aspect:MicroArray" objectIdentifier="microarrayOligo2chromosome" type="template"/>
+    <tag name="aspect:MicroArray" objectIdentifier="transcript2longOligo" type="template"/>
+    <tag name="aspect:MicroArray PCRProduct amplicon tiling tilingPath" objectIdentifier="tilingAmpliconsInPromoter" type="template"/>
+    <tag name="aspect:MicroArray PCRProduct tiling amplicon" objectIdentifier="chromosome2tilingAmplicon" type="template"/>
+    <tag name="aspect:Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="interologuesOrganism" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="GOterm2GeneProteinInteraction" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="projectInteractionsGeneSummary2" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="projectInteractionsGeneSummary" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractions2orthologues" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="AAC_protein2proteinInteraction" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="GiotHighConfidenceSet(browse)" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="geneInterologues" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="PPinteractionsFromGene" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="interologuesOrganisms" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="proteinInteractionsWithRegions" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="InteractionDataSets" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="interProDomainToInteractions" type="template"/>
+    <tag name="aspect:Protein Interactions" objectIdentifier="Gene_orthol_interaction" type="template"/>
+    <tag name="aspect:Protein Interactions Comparative Genomics Proteins" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template"/>
+    <tag name="aspect:Protein Interactions Comparative Genomics Proteins" objectIdentifier="ProteinInteractions2orthologues" type="template"/>
+    <tag name="aspect:Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template"/>
+    <tag name="aspect:Protein Structure" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template"/>
+    <tag name="aspect:Protein Structure" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template"/>
+    <tag name="aspect:Protein Structure" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW3" type="template"/>
+    <tag name="aspect:Protein Structure" objectIdentifier="AAH_Gene2ProteinStructure2.1NEW2" type="template"/>
+    <tag name="aspect:Protein Structure" objectIdentifier="ProteinStructure" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="proteinToGeneIdentifiers" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAI_Pfam2proteinStructure" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="proteinFeature2proteins" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="BS_forTF" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAB_proteins2fasta" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinInteractions2orthologuesAndPhenotypes" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAG_gene2ProteinInteraction2StructureNEW2" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="testInterologsLoop" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAC_protein2proteinInteraction" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="domainsFamiliesByName" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinInteractions2orthologues" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAJ_gene2ProteinStructure1NEW" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAA_organismProteins1" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="interProDomainToInteractions" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="AAH_Gene2ProteinStructure2.1NEW2" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="geneDomain" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinStructure" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinGeneGO" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinGeneLocation" type="template"/>
+    <tag name="aspect:Proteins" objectIdentifier="ProteinSynomyms" type="template"/>
+    <tag name="aspect:Proteins Protein Interaction" objectIdentifier="AAD_GOidentifier2proteinInteractions" type="template"/>
+    <tag name="aspect:Proteins Protein Structure" objectIdentifier="AAI_Pfam2proteinStructure" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAU_phenotype2genes1" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="orthologuesGenePhenotype" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAS_phenotype2genesWithOrthologues" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAX_genes2CERNAi" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="OthologuesRnai_forProtein" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAW_gene2CERNAi" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="ProteinInteractionsOrthologuesRNAi_forProtein" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="geneEvalueDiseaseRnai" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="phenotype2genesWithOrthologues" type="template"/>
+    <tag name="aspect:RNAi" objectIdentifier="AAT_RNAiwithOrthologues2" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="geneToTilingSpan" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="chromosome2tilingAmplicon" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="ChrLocation2PCRProduct" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="tilingAmpliconsInPromoter" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="AAAA_Symbol_toCG" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="geneToTilingPathAmplimers" type="template"/>
+    <tag name="aspect:Tiling Path" objectIdentifier="chromLoc2TilingPath" type="template"/>
+    <tag name="aspect:TilingPath MicroArray amplimer chromosomeLocation" objectIdentifier="ChrLocation2PCRProduct" type="template"/>
+    <tag name="aspect:TilingPath primers amplimer PCRProduct MicroArray" objectIdentifier="ChrLocation2TilingPathAmplimers2" type="template"/>
   </tags>
 </userprofile>
