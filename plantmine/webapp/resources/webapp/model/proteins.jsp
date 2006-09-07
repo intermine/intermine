@@ -17,13 +17,13 @@
           <DD>
             All proteins from the <A
             href="http://www.ebi.uniprot.org/index.shtml">UniProt
-            Knowledgebase</A> (version 7.5) for the following organisms have
+            Knowledgebase</A> (version 7.5) for the following organism have
             been loaded:
             <UL>
-              <LI><I>Plasmodium falciparum (isolate 3D7)</I></LI>
+              <LI><I>Arabidopsis thaliana</I></LI>
             </UL>
             For each protein record in UniProt for each species the following
-            information is extracted and loaded into FlyMine:
+            information is extracted and loaded into PlantMine:
             <UL>
               <LI>Entry name</LI>
               <LI>Primary accession number</LI>
@@ -45,7 +45,7 @@
       <div class="body">
         <ul>
           <li>
-            <i>Plasmodium falciparum</i> proteins and corresponding genes:
+            <i>Arabidopsis thaliana</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="Protein Protein.genes">
@@ -54,7 +54,7 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Plasmodium falciparum 3D7"
+                    <constraint op="=" value="Arabidopsis thaliana"
                                 description="" identifier="" code="A">
                     </constraint>
                   </node>
@@ -68,7 +68,7 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+                    <constraint op="=" value="Arabidopsis thaliana" description="" identifier="" code="A">
                     </constraint>
                   </node>
                 </query>
