@@ -62,7 +62,7 @@
       </td>
       <td valign="top" align="right" nowrap="nowrap" width="1%" class="buildmenu">
         <div class="body">
-          <html:link action="/bagBuild">
+          <html:link action="/bag">
             <fmt:message key="begin.upload.identifiers"/>
             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
           </html:link><br/>
