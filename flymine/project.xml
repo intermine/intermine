@@ -13,7 +13,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <!-- <property name="flybase.small" location="true"/>-->
     </source>
-    <source name="flybase-dpse-gff" type="flybase-gff">
+    <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7237"/>
@@ -25,7 +25,7 @@
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
     </source>
-    <source name="flybase-dpse-chromosome-fasta" type="fasta">
+    <source name="flybase-dpse-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="7237"/>
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
@@ -39,7 +39,7 @@
       <property name="uniprot.organisms" value="7227"/>
       <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
     </source>
-    <source name="uniprot" type="uniprot">
+    <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="6239 7165 180454 7460 4932"/>
       <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
     </source>
@@ -55,8 +55,8 @@
       <!--property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current"/-->
       <property name="src.data.dir" location="/shared/data/malaria/inparanoid/2006-04-16/"/>
     </source>
-    <source name="drosdel" type="drosdel"/>
-    <source name="tiling_path" type="tiling_path">
+    <source name="drosdel" type="drosdel" dump="true"/>
+    <source name="tiling_path" type="tiling_path" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/tiling/current_gff"/>
@@ -71,7 +71,7 @@
       <property name="src.data.dir" location="/shared/data/DRSC/"/>
       <property name="src.data.dir.includes" value="*.dataset"/>
     </source>
-    <source name="redfly" type="redfly">
+    <source name="redfly" type="redfly" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/REDfly/gff"/>
@@ -86,7 +86,7 @@
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
-    <source name="flyreg" type="flyreg">
+    <source name="flyreg" type="flyreg" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/flyreg"/>
@@ -104,7 +104,7 @@
       <property name="src.data.dir" location="/shared/data/kenji"/>
       <property name="data.location" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
-    <source name="psi-intact" type="psi">
+    <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/malaria/psi/intact/2006-05-26"/>
       <property name="organisms" value="4896 5833 36329"/>
     </source>
@@ -123,7 +123,7 @@
       <!-- currently need to group all files that set Gene.identifier together -->
       <property name="src.data.dir" location="/shared/data/go-annotation/gene-organismDbId"/>
     </source>
-    <source name="name-and-wildtypefunction" type="tab-separated-file">
+    <source name="name-and-wildtypefunction" type="tab-separated-file" dump="true">
       <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
       <property name="tsv.includes" value="flyBaseFullNameWT.txt"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1"/>
@@ -172,7 +172,7 @@
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
     </source>
-    <source name="entrez-organism" type="entrez-organism">
+    <source name="entrez-organism" type="entrez-organism" dump="true">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
            file, loads that file into a target items DB, then into the final
@@ -184,18 +184,18 @@
   <post-processing>
     <post-process name="create-utr-references"/>
     <post-process name="calculate-locations"/>
-    <post-process name="create-references"/>
+    <post-process name="create-references" dump="true"/>
     <post-process name="update-orthologues"/>
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
-    <post-process name="transfer-sequences"/>
+    <post-process name="transfer-sequences" dump="true"/>
     <post-process name="create-overlap-relations-flymine">
       <property name="classesToIgnore" value="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, Pseudogene, RRNA, RepeatRegion, Supercontig, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
     </post-process>
     <post-process name="do-sources"/>
     <post-process name="create-symmetrical-relation-references"/>
 
-    <post-process name="set-collection-counts"/>
+    <post-process name="set-collection-counts" dump="true"/>
     <post-process name="create-flybase-to-uniprot-refs"/>
 
     <!-- create-flybase-to-uniprot-refs/
