@@ -440,7 +440,6 @@ sub executeCommand {
         open F, "$cmd |" or die "can't run $cmd: $?\n";
         if ($verbose) {
           while (<F>) {
-            chomp;
             print STDOUT "  [$cmd] $_";
           }
           print STDOUT `date`, "\n\n";
