@@ -99,9 +99,9 @@ note: restart_dump_prefix -- restarts from a source or post-process
     -V version this will be passed straight thru to ant as a -D value for build purposes.
 
 examples:
-  $0 [uniprot-malaria [data_dump_dir]]
+  $0 uniprot-malaria [data_dump_dir]
 or
-  $0 [transfer-sequences [data_dump_dir]]
+  $0 transfer-sequences [data_dump_dir]
 
 EOF
 }
