@@ -1002,10 +1002,10 @@ public class GoConverter extends FileConverter
      */
     class GoTermProduct
     {
-        String productId;
-        String goId;
-        String code;
-        String qualifier;
+        private String productId;
+        private String goId;
+        private String code;
+        private String qualifier;
 
         /**
          * Constructor
