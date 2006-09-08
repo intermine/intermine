@@ -86,6 +86,8 @@ for my $file (@files) {
     my ($gene_end5, $gene_end3) = @{$tigr_gene->{gene_span}};
     $gene_loc->set('object', $chr_item);
     $gene_loc->set('subject', $gene_item);
+    $gene_loc->set('start', $gene_end5);
+    $gene_loc->set('end', $gene_end3);
     $gene_loc->set('evidence', [$data_set_item]);
   }
 }
