@@ -155,6 +155,11 @@ public abstract class OverlapUtil
             ResultsRow rr = (ResultsRow) resIter.next();
 
             Location location = (Location) rr.get(0);
+
+            if (location.getStart() == null || location.getEnd() == null) {
+                continue;
+            }
+
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
 
             if (isAClassToIgnore(classesToIgnore, lsf)) {
