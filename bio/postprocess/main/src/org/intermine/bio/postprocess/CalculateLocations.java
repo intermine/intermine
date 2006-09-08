@@ -1254,7 +1254,9 @@ public class CalculateLocations
 
             lsfClone.setChromosomeLocation(locOnChr);
             if (locOnChr.getStart() != null && locOnChr.getEnd() != null) {
-                int length = locOnChr.getEnd().intValue() - locOnChr.getStart().intValue() + 1;
+                int end = locOnChr.getEnd().intValue();
+                int start = locOnChr.getStart().intValue();
+                int length = Math.abs(end - start) + 1;
                 lsfClone.setLength(new Integer(length));
 
             }
