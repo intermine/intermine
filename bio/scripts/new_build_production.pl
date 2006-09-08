@@ -85,10 +85,9 @@ sub usage
 {
   die <<'EOF';
 usage:
-  $0 [restart_dump_prefix [data_dump_directory]]
+  $0 data_dump_directory [restart_dump_prefix]
 
 note: restart_dump_prefix -- restarts from a source or post-process
-note: data_dump_directory -- an alternative to the users home directory
 
   switches/options
 
@@ -112,11 +111,11 @@ unless ($validOpts) {
 }
 
 if (@ARGV == 1) {
-  $dumpPrefix = $ARGV[0];
+  $dumpDataDir = $ARGV[0];
 } elsif (@ARGV == 2) {
-  $dumpPrefix = $ARGV[0];
-  $dumpDataDir = $ARGV[1];
-} elsif (@ARGV > 2) {
+  $dumpDataDir = $ARGV[0];
+  $dumpPrefix = $ARGV[1];
+} else {
   usage;
 }
 
