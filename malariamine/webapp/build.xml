@@ -5,7 +5,7 @@
 
   <target name="-pre-jar"
           depends="application.-pre-jar, -add-struts-config"/>
- 
+  
   <!-- it's hacky to override do-generate, but it gets run at the right time -->
   <target name="do-generate">
     <ant antfile="build.xml" dir="../dbmodel" target="summarise-objectstore" inheritAll="false"/>
@@ -42,5 +42,5 @@
       </webinf>
     </war>
 
-   </target>
+  </target>
 </project>
