@@ -56,7 +56,7 @@ public class DrosdelDataTranslator extends DataTranslator
         super(srcItemReader, mapping, srcModel, tgtModel);
 
         organism = createItem("Organism");
-        organism.addAttribute(new Attribute("abbreviation", "DM"));
+        organism.addAttribute(new Attribute("taxonId", "7227"));
         organismRef = new Reference("organism", organism.getIdentifier());
 
         drosdelDb = createItem("DataSet");
