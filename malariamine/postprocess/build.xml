@@ -1,7 +1,4 @@
 <project name="malariamine-postprocess" default="default" basedir=".">
-
   <description>perform post processing for malariamine</description>
-
   <import file="../../imbuild/postprocess.xml"/>
-
 </project>
