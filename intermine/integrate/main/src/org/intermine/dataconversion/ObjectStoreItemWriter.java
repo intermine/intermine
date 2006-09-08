@@ -18,6 +18,7 @@ import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -61,7 +62,8 @@ public class ObjectStoreItemWriter implements ItemWriter
             osw.store((InterMineObject) i.next());
             transactionCounter++;
         }
-        if (item.getClassName() == null || item.getClassName().equals("")) {
+        if (StringUtils.isEmpty(item.getClassName()) &&
+            StringUtils.isEmpty(item.getImplementations())) {
             throw new RuntimeException("className not set for item: " + item.getIdentifier());
         }
         osw.store(item);
