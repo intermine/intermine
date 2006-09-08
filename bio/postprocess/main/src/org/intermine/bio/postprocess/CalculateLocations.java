@@ -1253,8 +1253,11 @@ public class CalculateLocations
                 (LocatedSequenceFeature) cloneInterMineObject(lsf);
 
             lsfClone.setChromosomeLocation(locOnChr);
-            int length = locOnChr.getEnd().intValue() - locOnChr.getStart().intValue() + 1;
-            lsfClone.setLength(new Integer(length));
+            if (locOnChr.getStart() != null && locOnChr.getEnd() != null) {
+                int length = locOnChr.getEnd().intValue() - locOnChr.getStart().intValue() + 1;
+                lsfClone.setLength(new Integer(length));
+
+            }
 
             osw.store(lsfClone);
         }
