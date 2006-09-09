@@ -156,7 +156,7 @@ public class FilterFlyBaseGFF3Task extends Task
             || type.equals("scaffold")
             || type.equals("golden_path") || type.equals("golden_path_fragment")
             || type.equals("chromosome") || type.equals("mature_peptide")
-            || type.equals("oligo")
+            || type.equals("oligo") || type.equals("chromosome_arm")
             || type.equals("orthologous_region") || type.equals("syntenic_region")) {
             return false;
         }
