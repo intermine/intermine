@@ -3,6 +3,8 @@
   <class name="org.flymine.model.genomic.ArtificialDeletion" 
          extends="org.flymine.model.genomic.Deletion" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
+    <attribute name="confirmedByPCR" type="java.lang.Boolean"/>
+    <attribute name="confirmedByGenetics" type="java.lang.Boolean"/>
     <reference name="element1" 
                referenced-type="org.flymine.model.genomic.TransposableElementInsertionSite"/>
     <reference name="element2" 
@@ -11,5 +13,6 @@
   <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
     <attribute name="type" type="java.lang.String"/> 
     <attribute name="subType" type="java.lang.String"/> 
+    <attribute name="available" type="java.lang.Boolean"/>
   </class>
 </classes>

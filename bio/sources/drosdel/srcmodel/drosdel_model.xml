@@ -6,6 +6,7 @@
     <attribute name="end" type="int"/>
     <attribute name="type" type="java.lang.String"/>
     <attribute name="subType" type="java.lang.String"/>
+    <attribute name="available" type="boolean"/>
   </class>
   <class name="org.intermine.model.drosdel.deletion" is-interface="true">
     <attribute name="chromosomeName" type="java.lang.String"/>
@@ -13,6 +14,8 @@
     <attribute name="end" type="int"/>
     <attribute name="europeanDrosophilaNumber" type="java.lang.String"/>
     <attribute name="available" type="boolean"/>
+    <attribute name="confirmedByPCR" type="boolean"/>
+    <attribute name="confirmedByGenetics" type="boolean"/>
     <reference name="element1" referenced-type="org.intermine.model.drosdel.element"/>
     <reference name="element2" referenced-type="org.intermine.model.drosdel.element"/>
   </class>
