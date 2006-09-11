@@ -5,7 +5,7 @@
   <item id="1_7" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7873402"/>
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#RedFlyRegulatoryRegion">
+  <item id="1_1" class="http://www.flymine.org/model/genomic#RegulatoryRegion">
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
     <attribute name="identifier" value="prd_A8_repressor"/>
@@ -43,7 +43,7 @@
   <item id="1_12" class="http://www.flymine.org/model/genomic#Phenotype">
     <attribute name="identifier" value="FBbt:100005414"/>
   </item>
-  <item id="1_9" class="http://www.flymine.org/model/genomic#RedFlyRegulatoryRegion">
+  <item id="1_9" class="http://www.flymine.org/model/genomic#RegulatoryRegion">
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
     <attribute name="identifier" value="prd_P1_enhancer"/>
@@ -68,7 +68,7 @@
   <item id="1_22" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7713432"/>
   </item>
-  <item id="1_14" class="http://www.flymine.org/model/genomic#RedFlyRegulatoryRegion">
+  <item id="1_14" class="http://www.flymine.org/model/genomic#RegulatoryRegion">
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
     <attribute name="identifier" value="Scr_BSR"/>
