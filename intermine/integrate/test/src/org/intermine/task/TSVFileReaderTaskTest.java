@@ -51,7 +51,7 @@ public class TSVFileReaderTaskTest extends TestCase
         model = Model.getInstanceByName("testmodel");
     }
 
-    public void testFastaLoad() throws Exception {
+    public void testLoad() throws Exception {
 
         TSVFileReaderTask tsvTask = new TSVFileReaderTask();
         tsvTask.setIgnoreDuplicates(true);
