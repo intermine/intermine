@@ -116,7 +116,7 @@ public class InparanoidConverter extends FileConverter
 
             if (array.length < 8) {
                 throw new IllegalArgumentException("Line " + lineNum
-                                                   + " does not have at lease eight elements: "
+                                                   + " does not have at least eight elements: "
                                                    + line);
             }
 
