@@ -43,7 +43,7 @@
     <starting-points>Gene Orthologue Paralogue</starting-points>
     <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
   </aspect>
--->
+
   <aspect name="Protein Interactions">
     <subtitle>IntAct</subtitle>
     <icon-image>model/proteinInteraction.gif</icon-image>
@@ -60,4 +60,5 @@
     <tile-name>model/proteinInteraction.jsp</tile-name>
     <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
   </aspect>
+-->
 </aspects>
