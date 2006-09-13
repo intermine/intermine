@@ -157,6 +157,10 @@ public class GoConverter extends FileConverter
                 continue;
             }
             String[] array = line.split("\t", -1); //keep trailing empty Strings
+            if (array.length < 13) {
+                throw new IllegalArgumentException("Not enough elements (should be > 13) in line: "
+                                                   + line);
+            }
 
             // We only want to create GOAnnotation objects applied to genes and proteins
             // some file entries apply to type 'transcript' and possibly others
