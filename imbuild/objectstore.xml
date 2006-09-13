@@ -62,7 +62,7 @@
 
   <!-- ANALYSE DB PRODUCTION SHORTCUT -->
 
-  <target name="analyse-db-production">
+  <target name="analyse-db-production" depends="-init-properties, init, -init-deps, -init-task-xml">
     <analyse-db osName="os.production"/>
   </target>
     
