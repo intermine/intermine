@@ -107,6 +107,7 @@
   <class name="org.flymine.model.genomic.Synonym" is-interface="true">
     <attribute name="value" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
+    <attribute name="isPrimary" type="java.lang.Boolean"/>
     <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="synonyms"/>
     <reference name="source" referenced-type="org.flymine.model.genomic.DataSource"/>
     <collection name="evidence" referenced-type="org.flymine.model.genomic.InfoSource"/>
