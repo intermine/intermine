@@ -5,14 +5,14 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
 
   <sources>
-    <source name="pombe-embl" type="biojava-flatfile">
+    <source name="arabidopsis-tigrxml" type="intermine-items-xml-file" dump="true">
+      <property name="tgt.xml.file" 
+                location="/shared/data/arabidopsis/arabidopsis.org/items/tair_items.xml"/>
+    </source>
+    <source name="pombe-embl" type="biojava-flatfile" dump="true">
       <property name="src.data.dir" location="/shared/data/embl/pombe/"/>
       <property name="convertor.class"
                 value="org.intermine.bio.dataconversion.BioJavaFlatFileConverter"/>
-    </source>
-    <source name="arabidopsis-tigrxml" type="intermine-items-xml-file">
-      <property name="tgt.xml.file" 
-                location="/shared/data/arabidopsis/arabidopsis.org/items/tair_items.xml"/>
     </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="3702 4896 284812"/>
@@ -34,11 +34,11 @@
       <property name="src.data.dir" location="/shared/data/arabidopsis/go-annotation"/>
     </source>
 -->
-    <source name="entrez-organism" type="entrez-organism" dump="true">
-      <property name="tgt.xml.file" location="build/organisms.xml"/>
-    </source>
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/localInparanoid/"/>
+    </source>
+    <source name="entrez-organism" type="entrez-organism" dump="true">
+      <property name="tgt.xml.file" location="build/organisms.xml"/>
     </source>
   </sources>
 
