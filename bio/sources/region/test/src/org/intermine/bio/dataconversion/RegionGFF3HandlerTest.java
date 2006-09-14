@@ -46,14 +46,14 @@ public class RegionGFF3HandlerTest extends TestCase
     GFF3Parser parser = new GFF3Parser();
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     String seqClsName = "Chromosome";
-    String orgAbbrev = "HS";
+    String orgTaxonId= "9606";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new RegionGFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dataSetTitle,
+        converter = new GFF3Converter(writer, seqClsName, "9606", dataSourceName, dataSetTitle,
                                       tgtModel, handler);
     }
 

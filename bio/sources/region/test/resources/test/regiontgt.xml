@@ -17,7 +17,7 @@
     </collection>
   </item>
   <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="abbreviation" value="HS"/>
+    <attribute name="taxonId" value="9606"/>
   </item>
   <item id="0_10" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
