@@ -54,7 +54,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     protected ItemFactory itemFactory;
     protected Map taxonIds = new HashMap();
 
-    private Set items = null;
+    private Set itemsToStore = null;
     
     private Map organisms = new HashMap();
     private Map chromosomes = new HashMap();
@@ -64,22 +64,29 @@ public class BioJavaFlatFileConverter extends FileConverter
     private Map mrnaFeatures = new HashMap();
     private Map translationFeatures = new HashMap();
 
+    private Item dataSource;
+
     private static final String TAXON_PREFIX = "taxon";
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @throws ObjectStoreException 
      */
-    public BioJavaFlatFileConverter(ItemWriter writer) {
+    public BioJavaFlatFileConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "0_");
+
+        dataSource = itemFactory.makeItemForClass(GENOMIC_NS + "DataSource");
+        dataSource.setAttribute("name", "EMBL");
+        writer.store(ItemHelper.convert(dataSource));
     }
 
     /**
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-        items = new HashSet();
+        itemsToStore = new HashSet();
         
         BufferedReader br = new BufferedReader(reader);
         SequenceIterator sequences = SeqIOTools.readEmbl(br);
@@ -120,14 +127,14 @@ public class BioJavaFlatFileConverter extends FileConverter
                     }
                 }
                 
-                Iterator itemIter = items.iterator();
+                Iterator itemIter = itemsToStore.iterator();
                 while (itemIter.hasNext()) {
                     Item item = (Item) itemIter.next();
                     if (item.canReference("organism")) {
                         item.setReference("organism", org);
                     }
                 }
-                itemIter = items.iterator();
+                itemIter = itemsToStore.iterator();
                 while (itemIter.hasNext()) {
                     Item item = (Item) itemIter.next();
                     writer.store(ItemHelper.convert(item));
@@ -237,6 +244,8 @@ public class BioJavaFlatFileConverter extends FileConverter
         }
         Item protein = makeItem("Protein");
         proteins.put(name, protein);
+//        Item synonym = makeSynonym(protein, name, "identifier");
+//        itemsToStore.add(synonym);
         return protein;
     }
 
@@ -253,7 +262,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     
     private Item makeItem(String c) {
         Item item = itemFactory.makeItemForClass(GENOMIC_NS + c);
-        items.add(item);
+        itemsToStore.add(item);
         return item;
     }
 
@@ -264,7 +273,20 @@ public class BioJavaFlatFileConverter extends FileConverter
         Annotation annotation = feature.getAnnotation();
         String geneName = (String) getPropList(annotation, "gene").get(0);
         Item gene = getGene(geneName);
+        Item synonym = makeSynonym(gene, geneName, "identifier");
+        itemsToStore.add(synonym);
         makeLocation(feature, gene, chr);
+    }
+
+    /**
+     * Create and return a new synonym Item for the given subject item.
+     */
+    private Item makeSynonym(Item subject, String value, String type) {
+        Item item = makeItem("Synonym");
+        item.setAttribute("type", type);
+        item.setAttribute("value", value);
+        item.setReference("subject", subject);
+        return item;
     }
 
     private List getPropList(Annotation annotation, String propName) {
