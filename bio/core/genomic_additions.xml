@@ -41,6 +41,7 @@
     </class>
 
     <class name="org.flymine.model.genomic.Transcript" is-interface="true">
+        <attribute name="exonCount" type="java.lang.Integer"/>
         <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
         <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" ordered="true"
                     reverse-reference="transcripts"/>

@@ -53,10 +53,6 @@
 
   <class name="org.flymine.model.genomic.Supercontig" extends="org.flymine.model.genomic.BioEntity"  is-interface="true"/>
 
-  <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <attribute name="exonCount" type="java.lang.Integer"/>
-  </class>
-
   <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="translationStart" type="java.lang.Integer"/>
     <attribute name="translationEnd" type="java.lang.Integer"/>
