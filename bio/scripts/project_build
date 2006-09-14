@@ -2,7 +2,7 @@
 
 # Run the FlyMine production build and dump the database occasionally
 # Targets are listed at the end of the script
-# The database to dump will be found by reading the properties from $HOME/flymine.properties
+# The database to dump will be found by reading the properties from $HOME/<mine_name>.properties
 
 use strict;
 use warnings;
@@ -81,11 +81,13 @@ my $old_handle = select(LOG);
 $| = 1; # autoflush
 select $old_handle;
 
+my $current_directory = (getcwd() =~ m:.*/(.*):)[0];
 
-my $flymine_properties = "$ENV{HOME}/flymine.properties";
+my $properties_file = "$ENV{HOME}/$current_directory.properties";
 if (defined $release) {
-  $flymine_properties .= ".$release";
+  $properties_file .= ".$release";
 }
+
 my @dump_command = qw[pg_dump -c];
 my @psql_command = qw[psql -q];
 
@@ -351,10 +353,12 @@ sub get_restart_dump_suffix
   return $restart_dump_suffix;
 }
 
-my $prod_host = get_prop_val "db.production.datasource.serverName", $flymine_properties;
-my $prod_db = get_prop_val "db.production.datasource.databaseName", $flymine_properties;
-my $prod_user = get_prop_val "db.production.datasource.user", $flymine_properties;
-my $prod_pass = get_prop_val "db.production.datasource.password", $flymine_properties;
+log_and_print "reading properties from: $properties_file\n";
+
+my $prod_host = get_prop_val "db.production.datasource.serverName", $properties_file;
+my $prod_db = get_prop_val "db.production.datasource.databaseName", $properties_file;
+my $prod_user = get_prop_val "db.production.datasource.user", $properties_file;
+my $prod_pass = get_prop_val "db.production.datasource.password", $properties_file;
 my $prod_port;
 
 if ($prod_host =~ /(.+):(\d+)/) {
