@@ -7,31 +7,31 @@
   <sources>
     <source name="malaria-gff" type="malaria-gff">
       <property name="gff3.taxonId" value="36329"/>
-      <property name="src.data.dir" location="/shared/data/malaria/malaria-genome/gff"/>
+      <property name="src.data.dir" location="my_data_dir/malaria/malaria-genome/gff"/>
     </source>
     <source name="malaria-chromosome-fasta" type="fasta">
       <property name="source.name" value="fasta"/>
       <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="fasta.taxonId" value="36329"/>
-      <property name="src.data.dir" location="/shared/data/malaria/malaria-genome/fasta"/>
+      <property name="src.data.dir" location="my_data_dir/malaria/malaria-genome/fasta"/>
     </source>
     <source name="uniprot-malaria" type="uniprot">
       <property name="uniprot.organisms" value="36329"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/7.7/"/>
+      <property name="src.data.dir" location="my_data_dir/uniprot/7.7/"/>
     </source>
     <source name="go" type="go">
-      <property name="src.data.file" location="/shared/data/malaria/gene_ontology/gene_ontology.obo"/>
+      <property name="src.data.file" location="my_data_dir/malaria/gene_ontology/gene_ontology.obo"/>
     </source>
     <source name="go-annotation-gene-identifier" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="/shared/data/malaria/gene_ontology/gene_ontology.obo"/>
+      <property name="ontologyfile" location="my_data_dir/malaria/gene_ontology/gene_ontology.obo"/>
       <property name="geneattribute" value="identifier"/>
-      <property name="src.data.dir" location="/shared/data/malaria/go-annotation"/>
+      <property name="src.data.dir" location="my_data_dir/malaria/go-annotation"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
-      <property name="src.data.dir" location="/shared/data/malaria/inparanoid/2006-04-16/"/>
+      <property name="src.data.dir" location="my_data_dir/malaria/inparanoid/2006-04-16/"/>
     </source>
     <source name="psi-intact" type="psi">
-      <property name="src.data.dir" location="/shared/data/malaria/psi/intact/2006-05-26"/>
+      <property name="src.data.dir" location="my_data_dir/malaria/psi/intact/2006-05-26"/>
       <property name="organisms" value="36329"/>
     </source>
     <source name="entrez-organism" type="entrez-organism" dump="true">
