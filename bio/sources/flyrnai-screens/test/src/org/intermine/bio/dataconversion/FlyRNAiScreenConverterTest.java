@@ -10,20 +10,18 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.intermine.dataconversion.DataTranslatorTestCase;
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.xml.full.FullParser;
 
 import java.io.File;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 
-import org.intermine.xml.full.FullParser;
-import org.intermine.bio.dataconversion.FlyRNAiScreenConverter;
-import org.intermine.dataconversion.DataTranslatorTest;
-import org.intermine.dataconversion.DataTranslatorTestCase;
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.FileConverter;
+import junit.framework.TestCase;
 
 public class FlyRNAiScreenConverterTest extends TestCase
 {
@@ -41,6 +39,7 @@ public class FlyRNAiScreenConverterTest extends TestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter);
         converter.setCurrentFile(new File("FlyRNAiScreenConverterTestSet.txt"));
+        converter.setTaxonId("6239");
         converter.process(new StringReader(input));
         converter.close();
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyRNAiScreenConverterTest.xml")));
