@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.objectstore.ObjectStoreException;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Feature;
@@ -24,10 +25,10 @@ public class ArabidopsisFileConverter extends BioJavaFlatFileConverter
 
     /**
      * @param writer
+     * @throws ObjectStoreException 
      */
-    public ArabidopsisFileConverter(ItemWriter writer) {
+    public ArabidopsisFileConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
-
     }
 
     /**
