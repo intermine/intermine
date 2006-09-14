@@ -29,6 +29,8 @@ import org.intermine.util.XmlBinding;
 
 public class XmlDataLoader extends DataLoader
 {
+    private static int idCounter = 1;
+    
     /**
      * @see DataLoader#DataLoader(IntegrationWriter)
      */
@@ -52,8 +54,14 @@ public class XmlDataLoader extends DataLoader
 
             List objects = (List) binding.unmarshal(is);
 
-            getIntegrationWriter().beginTransaction();
             Iterator iter = objects.iterator();
+            while (iter.hasNext()) {
+                InterMineObject o = (InterMineObject) iter.next();
+                o.setId(new Integer(idCounter++));
+            }
+      
+            getIntegrationWriter().beginTransaction();
+            iter = objects.iterator();
             while (iter.hasNext()) {
                 getIntegrationWriter().store((InterMineObject) iter.next(), source, skelSource);
             }
