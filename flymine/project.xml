@@ -52,8 +52,7 @@
       <!-- property name="interpro.organism.taxid.list" value="5833"/ -->
     </source>
     <source name="inparanoid-orthologue" type="orthologue">
-      <!--property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current"/-->
-      <property name="src.data.dir" location="/shared/data/malaria/inparanoid/2006-04-16/"/>
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
     <source name="drosdel" type="drosdel" dump="true"/>
     <source name="tiling_path" type="tiling_path" dump="true">
@@ -105,7 +104,7 @@
       <property name="data.location" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/malaria/psi/intact/2006-05-26"/>
+      <property name="src.data.dir" location="/shared/data/psi/intact/2006-05-09"/>
       <property name="organisms" value="4896 5833 36329"/>
     </source>
     <source name="go" type="go">
