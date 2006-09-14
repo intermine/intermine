@@ -55,7 +55,7 @@ public class FlyBaseProteinBindingSiteLoaderTaskTest extends TestCase
         files[0] = new File("/home/kmr/svn/dev/bio/sources/flybase-proteinbindingsites/test/resources/flybase_protein_test.xml");
 
         task.setFileArray(files);
-        
+        task.setIntegrationWriterAlias("integration.bio-test");
         task.execute();
 
         ObjectStore os = osw.getObjectStore();
