@@ -67,7 +67,6 @@ public class UniprotDataTranslator extends DataTranslator
     private Map organisms = new HashMap();
     private FileWriter fw = null;
     private boolean outputIdentifiers = false;
-    private Map identifierToOrganismDbId = new HashMap();
     //geneIdentifier is hugo id from ensembl-human, don't create
     private boolean createGeneIdentifier = true;
     private Item uniprotDataSet;
@@ -79,12 +78,11 @@ public class UniprotDataTranslator extends DataTranslator
     private static final String SRC_NS = "http://www.intermine.org/model/uniprot#";
 
     /**
-     * @see DataTranslator
+     * @see DataTranslator#DataTranslator(ItemReader, Properties, Model, Model)
      */
     public UniprotDataTranslator(ItemReader srcItemReader, Properties mapping,
                                  Model srcModel, Model tgtModel) {
         super(srcItemReader, mapping, srcModel, tgtModel);
-        this.tgtNs = tgtNs;
         this.srcItemReader = srcItemReader;
 
         uniprotDataSet = createItem("DataSet");
@@ -96,7 +94,7 @@ public class UniprotDataTranslator extends DataTranslator
     /**
      * @see DataTranslator#getItemIterator
      */
-     public Iterator getItemIterator() throws ObjectStoreException {
+     public Iterator getItemIterator() {
          Query q = new Query();
          q.setDistinct(false);
          QueryClass qc1 = new QueryClass(org.intermine.model.fulldata.Item.class);
@@ -192,7 +190,7 @@ public class UniprotDataTranslator extends DataTranslator
 
             // find name and set all names as synonyms
             List proteinNames = getItemsInCollection(srcItem.getCollection("names"));
-            String proteinName = (String) getAttributeValue((Item) proteinNames.get(0), "name");
+            String proteinName = getAttributeValue((Item) proteinNames.get(0), "name");
             protein.addAttribute(new Attribute("identifier", proteinName));
             protein.addReference(organismReference);
             retval.add(createSynonym(protein.getIdentifier(), "identifier",
@@ -381,24 +379,28 @@ public class UniprotDataTranslator extends DataTranslator
                 String geneIdentifier = null;
                 // Gene.name = <entry><gene><name type="primary">
                 String primaryGeneName = null;
+                // stores the contents of the <entry><gene> element:
+                Map geneNameTypeToName = new HashMap();
                 Set geneNames = new HashSet();
                 {
                     Iterator srcGeneNameIter = srcGeneNames.iterator();
                     String notCG = null;
                     while (srcGeneNameIter.hasNext()) {
                         Item srcGeneName = (Item) srcGeneNameIter.next();
-                        if ("primary".equals(getAttributeValue(srcGeneName, "type"))) {
-                            primaryGeneName = new String(getAttributeValue(srcGeneName,
-                                                                           "name"));
-                        } else if ("ORF".equals(getAttributeValue(srcGeneName, "type"))) {
-                            String tmp = getAttributeValue(srcGeneName, "name");
+                        String type = getAttributeValue(srcGeneName, "type");
+                        String name = getAttributeValue(srcGeneName, "name");
+                        geneNameTypeToName.put(type, name);
+                        if ("primary".equals(type)) {
+                            primaryGeneName = name;
+                        } else if ("ORF".equals(type)) {
+                            String tmp = name;
                             if ((taxonId == 7227) && (!tmp.startsWith("CG"))) {
                                 notCG = tmp;
                             } else {
                                 geneIdentifier = tmp;
                             }
                         }
-                        geneNames.add(new String(getAttributeValue(srcGeneName, "name")));
+                        geneNames.add(new String(name));
                     }
                     // Some UniProt entries have CGxxx as Dmel_CGxxx - need to strip prefix
                     // so that they match identifiers from other sources.  Some genes have
@@ -429,6 +431,19 @@ public class UniprotDataTranslator extends DataTranslator
                     if (geneOrganismDbId != null) {
                         createGene = true;
                         dbId = getDataSourceId("WormBase");
+                    }
+                } else if (taxonId == 3702) { // Arabidopsis thaliana
+                    geneOrganismDbId = (String) geneNameTypeToName.get("ordered locus");
+                    if (geneOrganismDbId != null) {
+                        geneOrganismDbId = geneOrganismDbId.toUpperCase();
+                        createGene = true;
+                        dbId = getDataSourceId("UniProt");
+                    }
+                } else if (taxonId == 4896) {
+                    geneOrganismDbId = (String) geneNameTypeToName.get("ORF");
+                    if (geneOrganismDbId != null) {
+                        createGene = true;
+                        dbId = getDataSourceId("GeneDB");
                     }
                 } else if (taxonId == 180454) { // A. gambiae str. PEST
                     // no organismDbId and no specific dbxref to ensembl - assume that
