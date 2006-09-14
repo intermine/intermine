@@ -114,7 +114,7 @@ public class InparanoidConverter extends FileConverter
             lineNum++;
             String[] array = line.split("\t");
 
-            if (array.length < 8) {
+            if (array.length != 4 && array.length < 8) {
                 throw new IllegalArgumentException("Line " + lineNum
                                                    + " does not have at least eight elements: "
                                                    + line);
