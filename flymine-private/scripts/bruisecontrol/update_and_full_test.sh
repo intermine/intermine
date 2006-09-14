@@ -190,6 +190,8 @@ printf "\n\n------------------------------------------------------------\nTest f
 cat $ARCHIVE_TO/junit_failures.txt >> MSG
 printf "\n\n------------------------------------------------------------\nPrevious test failures:\n\n" >> MSG
 cat $JUNIT_FAIL_FILE >> MSG
+printf "\n\n------------------------------------------------------------\nTest differences:\n\n" >> MSG
+diff $JUNIT_FAIL_FILE $ARCHIVE_TO/junit_failures.txt >> MSG
 printf "\n\n------------------------------------------------------------\nstderr output:\n\n" >> MSG
 
 if [ $BUILD_BROKEN -eq 1 -a $FAILED -ne 0 ]; then
