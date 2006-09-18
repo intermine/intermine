@@ -271,20 +271,20 @@ sub start_element
     }
   }
 
-  push @{$self->{sources}}, {
+  push @{$self->{actions}}, {
                             type => $type,
                             args => ["-Dsource=$action_name"]
                            };
 
   if ($dump_flag) {
-    push @{$self->{sources}}, {
+    push @{$self->{actions}}, {
                               type => 'dump',
                               args => ["$action_name"]
                              };
   }
 
   if ($index_flag) {
-    push @{$self->{sources}}, {
+    push @{$self->{actions}}, {
                                type => 'index',
                                args => ["$action_name"]
                               };
@@ -318,7 +318,7 @@ sub get_actions
   $parser->parse(Source => { SystemId => $project_file });
 
 
-  return @{$handler->{sources}}
+  return @{$handler->{actions}}
 }
 
 # find the last existing dump file
