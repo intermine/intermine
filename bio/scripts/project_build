@@ -29,6 +29,7 @@ flags:
  -v is passed to ant
  -l attempt to restart by reading the last dump file
  -r attempt to restart just after the last dump point _without_ loading a dump
+ -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
 
 example:
@@ -44,11 +45,12 @@ if (!-f $project_file) {
 my $verbose = 0;
 my $load_last = 0;
 my $restart = 0;
+my $dry_run = 0;
 my $release;
 
 my %opts = ();
 
-getopts('vrlV:', \%opts);
+getopts('vrlnV:', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
@@ -60,6 +62,10 @@ if ($opts{l}) {
 
 if ($opts{r}) {
   $restart = 1;
+}
+
+if ($opts{n}) {
+  $dry_run = 1;
 }
 
 if ($opts{V}) {
@@ -119,19 +125,21 @@ sub run_and_check_status
   log_and_print `date`, "\n\n";
   log_and_print "starting command: @_\n";
 
-  open F, "@_ |" or die "can't run @_: $?\n";
+  if (!$dry_run) {
+    open F, "@_ |" or die "can't run @_: $?\n";
 
-  while (<F>) {
-    chomp;
-    log_message "  [$command_name] $_";
+    while (<F>) {
+      chomp;
+      log_message "  [$command_name] $_";
+    }
+
+    close F;
   }
 
   log_and_print `date`, "\n\n";
   log_and_print "finished\n\n";
 
-  close F;
-
-  if ($? != 0) {
+  if (!$dry_run && $? != 0) {
     log_and_print "failed with exit code $?: @_\n";
     print STDERR "check log: $log_file\n";
     exit $?;
@@ -178,16 +186,19 @@ sub dump_db
   log_and_print `date`, "\n\n";
   log_and_print "\ndumping: @dump_command @params\n";
 
-  my $exp = new Expect;
+  if (!$dry_run) {
+    my $exp = new Expect;
 
-  $exp->raw_pty(1);
-  $exp->spawn("ssh", $dump_host, "@dump_command @params; echo __DUMP_FINISHED__")
+    $exp->raw_pty(1);
+    $exp->spawn("ssh", $dump_host, "@dump_command @params; echo __DUMP_FINISHED__")
     or die "Cannot spawn @dump_command @params: $!\n";
 
-  $exp->expect(10, 'Password: ');
-  $exp->send("$pass\n");
-  $exp->expect(9999999, '__DUMP_FINISHED__\n');
-  $exp->soft_close();
+    $exp->expect(10, 'Password: ');
+    $exp->send("$pass\n");
+    $exp->expect(9999999, '__DUMP_FINISHED__\n');
+    $exp->soft_close();
+  }
+
   log_and_print `date`, "\n\n";
   log_and_print "finished dump\n\n";
 }
@@ -211,16 +222,18 @@ sub load_db
   log_and_print "\nrunning: @psql_command @params\n";
   warn "(ignore password prompt)\n";
 
-  my $exp = new Expect;
+  if (!$dry_run) {
+    my $exp = new Expect;
 
-  $exp->raw_pty(1);
-  $exp->spawn("ssh", $dump_host, "@psql_command @params; echo __LOAD_FINISHED__")
+    $exp->raw_pty(1);
+    $exp->spawn("ssh", $dump_host, "@psql_command @params; echo __LOAD_FINISHED__")
     or die "Cannot spawn @psql_command @params: $!\n";
 
-  $exp->expect(10, 'Password: ');
-  $exp->send("$pass\n");
-  $exp->expect(9999999, '__LOAD_FINISHED__\n');
-  $exp->soft_close();
+    $exp->expect(10, 'Password: ');
+    $exp->send("$pass\n");
+    $exp->expect(9999999, '__LOAD_FINISHED__\n');
+    $exp->soft_close();
+  }
 
   log_and_print `date`, "\n\n";
   log_and_print "finished load - now analysing\n\n";
@@ -317,8 +330,16 @@ sub get_actions
 
   $parser->parse(Source => { SystemId => $project_file });
 
+  my @actions = @{$handler->{actions}};
 
-  return @{$handler->{actions}}
+  if (@actions && $actions[-1]{type} ne 'dump') {
+    push @actions, {
+                    type => 'dump',
+                    args => ["final"]
+                   };
+  }
+
+  return @actions;
 }
 
 # find the last existing dump file
