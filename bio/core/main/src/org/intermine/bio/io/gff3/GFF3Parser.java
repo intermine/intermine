@@ -52,7 +52,7 @@ public class GFF3Parser
             String currentLine = firstGFFLine;
 
             public boolean hasNext() {
-                return (currentLine != null);
+                return currentLine != null && !currentLine.startsWith(">");
             }
             
             public Object next() {
