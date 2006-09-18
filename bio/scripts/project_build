@@ -125,6 +125,8 @@ sub run_and_check_status
   log_and_print `date`, "\n\n";
   log_and_print "starting command: @_\n";
 
+  my $result = 0;
+
   if (!$dry_run) {
     open F, "@_ |" or die "can't run @_: $?\n";
 
@@ -134,12 +136,16 @@ sub run_and_check_status
     }
 
     close F;
+
+    $result = $?;
   }
 
   log_and_print `date`, "\n\n";
   log_and_print "finished\n\n";
 
-  if (!$dry_run && $? != 0) {
+  warn "ERROR: $result\n";
+
+  if (!$dry_run && $result != 0) {
     log_and_print "failed with exit code $?: @_\n";
     print STDERR "check log: $log_file\n";
     exit $?;
