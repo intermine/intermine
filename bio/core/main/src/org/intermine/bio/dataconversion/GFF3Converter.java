@@ -285,7 +285,7 @@ public class GFF3Converter
             handler.setResult(computationalResult);
             handler.addEvidence(computationalResult);
         } else {
-            if (record.getSource() != null) {
+            if (record.getSource() != null && !record.getSource().equals("FlyBase")) {
                 // this special case added to cope with pseudoobscura data
                 Item computationalResult = createItem("ComputationalResult");
 
@@ -330,7 +330,16 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
-
+        
+        if (feature.hasAttribute("organismDbId")) {
+            Item synonym = createItem("Synonym");
+            synonym.addReference(new Reference("subject", feature.getIdentifier()));
+            String value = feature.getAttribute("organismDbId").getValue();
+            synonym.addAttribute(new Attribute("value", value));
+            synonym.addAttribute(new Attribute("type", "identifier"));
+            synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+            handler.addItem(synonym);
+        }
 
         try {
             Iterator iter = handler.getItems().iterator();

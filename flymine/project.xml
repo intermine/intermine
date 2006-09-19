@@ -8,13 +8,13 @@
       <property name="tgt.xml.file" location="datasets.xml"/>
     </source>
     <source name="flybase-dmel-gff" type="flybase-gff">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
       <!-- <property name="flybase.small" location="true"/>-->
     </source>
     <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/gff"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7237"/>
     </source>
@@ -23,7 +23,7 @@
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
     </source>
     <source name="flybase-dpse-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="7237"/>
@@ -129,8 +129,8 @@
     </source>
 
     <!--
-  Unfinished -
-    <source name="flybase-proteinbindingsites" type="flybase-proteinbindingsites">
+  Unfinished - 
+   <source name="flybase-proteinbindingsites" type="flybase-proteinbindingsites">
       <property name="taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/flybase/proteinbindingsites/"/>
       <property name="src.data.dir.includes" value="*.xml"/>

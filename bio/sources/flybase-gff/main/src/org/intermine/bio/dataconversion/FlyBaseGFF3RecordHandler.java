@@ -85,6 +85,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     }
 
     /**
+     * This method does the following transformations.
+     * 
+     * For all
      * @see GFF3RecordHandler#process(GFF3Record)
      */
     public void process(GFF3Record record) {
@@ -93,30 +96,29 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         if (!feature.hasAttribute("curated")) {
             feature.addAttribute(new Attribute("curated", "true"));
         }
-
+        
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
-        // set Gene.organismDbId
-        // name set in core - if no name symbol is CGxx?
-        // create some synonyms
-        if ("Gene".equals(clsName)) {
-            Iterator fbgnIter = parseFlyBaseId(record.getDbxrefs(), "FBgn").iterator();
-            while (fbgnIter.hasNext()) {
-                String organismDbId = (String) fbgnIter.next();
-                if (!feature.hasAttribute("organismDbId")) {
-                    feature.setAttribute("organismDbId", organismDbId);
-                }
-                addItem(createSynonym(feature, "identifier", organismDbId));
-            }
-
-            // if no name set for gene then use CGxx (FlyBase symbol rules)
-            if (feature.getAttribute("symbol") == null) {
-                feature.setAttribute("symbol", feature.getAttribute("identifier").getValue());
-                addItem(createSynonym(feature, "symbol",
-                                      feature.getAttribute("symbol").getValue()));
+        if ("Protein".equals(clsName)) {
+            // for v4.3 CDS record changed to proteins
+            feature.setClassName(tgtNs + "Translation");
+            clsName = "Translation";
+        }
+        
+        if (record.getId().startsWith("FB")) {
+            // v4.3 records have FB numbers as IDs, move to organismDbId
+            feature.setAttribute("organismDbId", record.getId());
+            feature.removeAttribute("identifier");
+        }
+        
+        if ("Protein".equals(clsName)) {
+            // we need to use the alias (eg "CG3702-PA") not the ID (eg. "FBpp0077166")
+            // because Inparanoid uses the "CG3702-PA" version
+            if (record.getAlias() != null) {
+                feature.setAttribute("identifier", record.getAlias());
             }
         }
-
+        
         // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
         // We fix this by changing the pseudogene to a transcript and then fixing the gene
         // class names later
@@ -130,17 +132,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             pseudogeneIds.addAll(record.getParents());
         }
 
-        // set MRNA.organismDbId
         if ("MRNA".equals(clsName)) {
-            // FlyBase GFF3 release 4.0 has non-coding RNAs modelled badly (fixed in 4.1)
-
-            Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBtr").iterator();
-            while (fbIter.hasNext()) {
-                String organismDbId = (String) fbIter.next();
-                if (!feature.hasAttribute("organismDbId")) {
-                    feature.setAttribute("organismDbId", organismDbId);
-                }
-                addItem(createSynonym(feature, "identifier", organismDbId));
+            if (record.getAlias() != null) {
+                feature.setAttribute("identifier", record.getAlias());
             }
         }
 
@@ -154,46 +148,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
                 }
                 addItem(createSynonym(feature, "identifier", organismDbId));
             }
-        }
-
-        // for CDS create additional Translation object
-        if ("CDS".equals(clsName)) {
-            // CDSs have identifiers like CG1234-PA - we want this to be the Translation
-            // identifier, for the CDS add an _CDS to the end.
-            String identifier = feature.getAttribute("identifier").getValue();
-            feature.setAttribute("identifier", identifier + "_CDS");
-
-            // create and reference additional Translation object, add to polypeptides collection
-            Item translation = getItemFactory().makeItem(null, tgtNs + "Translation", "");
-            translation.setReference("organism", getOrganism().getIdentifier());
-            translation.setAttribute("identifier", identifier);
-            if (record.getSource() == null) {
-                feature.addAttribute(new Attribute("curated", "true"));
-            } else {
-                feature.addAttribute(new Attribute("curated", "false"));
-            }
-            if (feature.getAttribute("symbol") != null) {
-                translation.setAttribute("symbol", feature.getAttribute("symbol").getValue());
-            }
-            translation.addCollection(new ReferenceList("evidence",
-                    Arrays.asList(new Object[] {getDataSet().getIdentifier()})));
-
-            addItem(translation);
-            addItem(createSynonym(translation, "identifier", identifier));
-
-            feature.addCollection(new ReferenceList("polypeptides",
-                new ArrayList(Collections.singleton(translation.getIdentifier()))));
-
-            Iterator fbIter = parseFlyBaseId(record.getDbxrefs(), "FBpp").iterator();
-            while (fbIter.hasNext()) {
-                String organismDbId = (String) fbIter.next();
-                if (!translation.hasAttribute("organismDbId")) {
-                    translation.setAttribute("organismDbId", organismDbId);
-                }
-                addItem(createSynonym(translation, "identifier", organismDbId));
-            }
-            // TODO add GenBank protein identifier as synonym
-
         }
 
         // make sure we have a set with all existing Synonyms and those that will
@@ -226,9 +180,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             combined.addAll(list);
         }
 
-//         if (clsName.equals("SyntenicRegion")) {
-//             makeTargetSyntenicRegion(feature, record);
-//         }
+        if (clsName.equals("SyntenicRegion")) {
+            makeTargetSyntenicRegion(feature, record);
+        }
 
         Iterator iter = combined.iterator();
         while (iter.hasNext()) {
@@ -253,6 +207,20 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             // set references from parent relations
             setReferences(references);
         }
+    }
+
+    /**
+     * Return the first alias in the given record that matches the pattern
+     */
+    private String findInAliases(GFF3Record record, String regex) {
+        Iterator aliasIter = ((List) record.getAttributes().get("Alias")).iterator();
+        while (aliasIter.hasNext()) {
+            String alias = (String) aliasIter.next();
+            if (alias.matches(regex)) {
+                return alias;
+            }
+        }
+        return null;
     }
 
     /**
@@ -313,14 +281,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         int count = 1;
         while (genesWithDuplicatedSymbolsIter.hasNext()) {
             Item thisGene = (Item) genesWithDuplicatedSymbolsIter.next();
-
             String newValue =
                 thisGene.getAttribute("symbol").getValue() + "-duplicate-symbol-" + count++;
-
             thisGene.setAttribute("symbol", newValue);
-
-            LOG.warn("gene (" + thisGene.getAttribute("identifier").getValue()
-                     + ") has duplicated symbol, created new symbol: " + newValue);
         }
 
         Iterator genesWithDuplicatedOrganismDbIdsIter = genesWithDuplicatedOrganismDbIds.iterator();
@@ -334,9 +297,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
                 + count++;
 
             thisGene.setAttribute("organismDbId", newValue);
-
-            LOG.warn("gene (" + thisGene.getAttribute("identifier").getValue()
-                     + ") has duplicated organismDbId, created new organismDbId: " + newValue);
         }
 
         finalItemIter = finalItems.iterator();
@@ -344,7 +304,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         while (finalItemIter.hasNext()) {
             Item thisItem = (Item) finalItemIter.next();
 
-            if (pseudogeneIds.contains(thisItem.getAttribute("identifier").getValue())) {
+            if (pseudogeneIds.contains(thisItem.getAttribute("organismDbId").getValue())) {
                 thisItem.setClassName(tgtNs + "Pseudogene");
             }
         }
@@ -363,18 +323,19 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
      * @param record The current GFF3Record
      */
     protected void makeTargetSyntenicRegion(Item feature, GFF3Record record) {
+        String tgtOrgTaxonId;
         String tgtOrgAbbrev = (String) ((List) record.getAttributes().get("to_species")).get(0);
         if (tgtOrgAbbrev.equals("dmel")) {
-            tgtOrgAbbrev = "DM";
+            tgtOrgTaxonId = "7227";
         } else {
             if (tgtOrgAbbrev.equals("dpse")) {
-                tgtOrgAbbrev = "DP";
+                tgtOrgTaxonId = "7237";
             } else {
                 throw new RuntimeException("unknown organism abbreviation: " + tgtOrgAbbrev);
             }
         }
 
-        Item tgtOrganism = getOrganismItem(tgtOrgAbbrev);
+        Item tgtOrganism = getOrganismItem(tgtOrgTaxonId);
 
         feature.setReference("targetOrganism", tgtOrganism.getIdentifier());
 
@@ -390,13 +351,13 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         addItem(tgtSyntenicRegion);
     }
 
-    private Item getOrganismItem(String orgAbbrev) {
-        if (otherOrganismItems.containsKey(orgAbbrev)) {
-            return (Item) otherOrganismItems.get(orgAbbrev);
+    private Item getOrganismItem(String orgTaxonId) {
+        if (otherOrganismItems.containsKey(orgTaxonId)) {
+            return (Item) otherOrganismItems.get(orgTaxonId);
         } else {
             Item otherOrganismItem = getItemFactory().makeItem(null, tgtNs + "Organism", "");
-            otherOrganismItem.setAttribute("shortName", orgAbbrev);
-            otherOrganismItems.put(orgAbbrev, otherOrganismItem);
+            otherOrganismItem.setAttribute("taxonId", orgTaxonId);
+            otherOrganismItems.put(orgTaxonId, otherOrganismItem);
             return otherOrganismItem;
         }
     }
