@@ -20,6 +20,7 @@
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNAs" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.Transcript" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
     <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" reverse-reference="transcripts" ordered="true"/>
     <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" reverse-reference="transcripts" ordered="true"/>
   </class>
@@ -50,6 +51,7 @@
   </class>
   <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>

@@ -78,7 +78,7 @@ public class FilterFlyBaseGFF3Task extends Task
                 String outName = toRead.getName();
                 File out = new File(tgtDir, outName);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(out));
-                filterGFF3(new BufferedReader(new FileReader(toRead)), writer);
+                filterGFF3(toRead, new BufferedReader(new FileReader(toRead)), writer);
                 writer.flush();
                 writer.close();
             }
@@ -93,11 +93,13 @@ public class FilterFlyBaseGFF3Task extends Task
      * @param out GFF3 file to write
      * @throws IOException if problems reading/writing
      */
-    private void filterGFF3(BufferedReader in, BufferedWriter out) throws IOException {
+    private void filterGFF3(File file, BufferedReader in, BufferedWriter out) throws IOException {
         Iterator iter = GFF3Parser.parse(in);
       RECORD:
         while (iter.hasNext()) {
             GFF3Record record = (GFF3Record) iter.next();
+            
+            String chrId = record.getSequenceID();
 
             // ignore protein_binding_sites from FlyBase that are also in FlyReg - get them from
             // FlyReg instead
@@ -113,12 +115,18 @@ public class FilterFlyBaseGFF3Task extends Task
                 }
             }
 
+            // ignore features with unusual sources
+            if (file.getName().startsWith("dmel-") && record.getSource() != null
+                && !record.getSource().equals("FlyBase")) {
+                continue;
+            }
+
             // protein_binding_site is incorrect - all FlyBase protein_binding_sites are acutally
             // transcription factor binding sites
             if (record.getType().equals("protein_binding_site")) {
                 record.setType("TF_binding_site");
             }
-            
+
             if (record.getSource() != null && record.getSource().startsWith("blast")) {
                 // ignore records with this source because they have no parents
                 continue RECORD;
@@ -134,12 +142,18 @@ public class FilterFlyBaseGFF3Task extends Task
                     record.getAttributes().put("ID", record.getNames());
                     record.getAttributes().remove("Name");
                 }
+
+                if (record.getId().equals("-")) {
+                    record.setId(record.getType() + "_" + chrId + ":" + record.getStart() + ".."
+                                 + record.getEnd());
+                }
+
                 if (seenIds.containsKey(record.getId())) {
                     // add -duplicate-2, -duplicate-3, etc. to any duplicated IDs
                     String oldId = record.getId();
                     int oldCount = ((Integer) seenIds.get(record.getId())).intValue();
                     record.setId(oldId + "-duplicate-" + oldCount);
-                    seenIds.put(record.getId(), new Integer(oldCount + 1));
+                    seenIds.put(oldId, new Integer(oldCount + 1));
 
                 } else {
                     seenIds.put(record.getId(), new Integer(1));
@@ -153,11 +167,14 @@ public class FilterFlyBaseGFF3Task extends Task
     private boolean typeToKeep(String type) {
         if (type.startsWith("match") || type.equals("aberration_junction")
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
-            || type.equals("scaffold")
+            || type.equals("scaffold") || type.equals("golden_path_region")
             || type.equals("golden_path") || type.equals("golden_path_fragment")
             || type.equals("chromosome") || type.equals("mature_peptide")
             || type.equals("oligo") || type.equals("chromosome_arm")
-            || type.equals("orthologous_region") || type.equals("syntenic_region")) {
+            || type.equals("tRNAscan-SE") || type.equals("genie")
+            || type.equals("augustus") || type.equals("genscan")
+            || type.equals("RNAiHDP") || type.equals("repeatmasker")
+            || type.equals("orthologous_region")) {
             return false;
         }
         return true;
