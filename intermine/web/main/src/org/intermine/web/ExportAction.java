@@ -85,7 +85,10 @@ public class ExportAction extends InterMineAction
             if (rowList instanceof Results) {
                 rowList = WebUtil.changeResultBatchSize((Results) rowList, BIG_BATCH_SIZE);
                 if (os instanceof ObjectStoreInterMineImpl) {
-                    ((ObjectStoreInterMineImpl) os).goFaster(((Results) rowList).getQuery());
+                    try {
+                        ((ObjectStoreInterMineImpl) os).goFaster(((Results) rowList).getQuery());
+                    } catch (ObjectStoreException e) {
+                    }
                 }
             }
 
