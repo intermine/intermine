@@ -10,6 +10,7 @@
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.InsertionSite" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.MRNA" is-interface="true">
@@ -28,6 +29,7 @@
     <attribute name="symbol" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Exon" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="exons" ordered="true"/>
   </class>
