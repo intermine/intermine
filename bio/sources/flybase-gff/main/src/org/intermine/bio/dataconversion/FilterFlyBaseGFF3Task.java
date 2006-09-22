@@ -98,7 +98,7 @@ public class FilterFlyBaseGFF3Task extends Task
       RECORD:
         while (iter.hasNext()) {
             GFF3Record record = (GFF3Record) iter.next();
-            
+
             String chrId = record.getSequenceID();
 
             // ignore protein_binding_sites from FlyBase that are also in FlyReg - get them from
@@ -166,6 +166,7 @@ public class FilterFlyBaseGFF3Task extends Task
 
     private boolean typeToKeep(String type) {
         if (type.startsWith("match") || type.equals("aberration_junction")
+            || type.startsWith("aa_") || type.startsWith("na_")
             || type.equals("DNA_motif") || type.equals("rescue_fragment")
             || type.equals("scaffold") || type.equals("golden_path_region")
             || type.equals("golden_path") || type.equals("golden_path_fragment")
@@ -174,7 +175,9 @@ public class FilterFlyBaseGFF3Task extends Task
             || type.equals("tRNAscan-SE") || type.equals("genie")
             || type.equals("augustus") || type.equals("genscan")
             || type.equals("RNAiHDP") || type.equals("repeatmasker")
-            || type.equals("orthologous_region")) {
+            || type.equals("orthologous_region")
+            // temporarily ignore CDSs
+            || type.equals("CDS")) {
             return false;
         }
         return true;
