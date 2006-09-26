@@ -127,12 +127,12 @@ public class XmlDataLoaderTest extends TestCase
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1, Collections.singleton("address"));
-        assertNotNull("Expected address to be retieved from DB", a2);
+        assertNotNull("Expected address to be retrieved from DB", a2);
         assertTrue("address id should be set", (a2.getId().intValue() != 0));
 
         // check company was stored
         Manager m2 = (Manager) writer.getObjectByExample(m1, Collections.singleton("name"));
-        assertNotNull("Expected company to be retieved from DB", m2);
+        assertNotNull("Expected company to be retrieved from DB", m2);
         assertTrue("manager id should be set", (m2.getId().intValue() != 0));
 
         toDelete.add(a2);

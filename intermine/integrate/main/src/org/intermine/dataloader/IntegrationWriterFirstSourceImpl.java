@@ -77,7 +77,7 @@ public class IntegrationWriterFirstSourceImpl extends IntegrationWriterDataTrack
      * @return an empty set
      * @throws ObjectStoreException if an error occurs
      */
-    protected Set queryEquivalentObjects(InterMineObject obj, Source source)
+    public Set queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {
         return Collections.EMPTY_SET;
     }

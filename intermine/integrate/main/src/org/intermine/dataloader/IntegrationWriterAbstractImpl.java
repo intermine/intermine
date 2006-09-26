@@ -46,7 +46,8 @@ import org.apache.log4j.Logger;
  * @author Matthew Wakeling
  */
 
-public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
+public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter,
+       EquivalentObjectFetcher
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
 
@@ -59,7 +60,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected IntPresentSet dbIdsStored = new IntPresentSet();
     protected int idMapOps = 0;
     protected boolean ignoreDuplicates = false;
-    protected EquivalentObjectHints hints;
+    protected EquivalentObjectFetcher eof;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -68,7 +69,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public IntegrationWriterAbstractImpl(ObjectStoreWriter osw) {
         this.osw = osw;
-        hints = new EquivalentObjectHints(getObjectStore());
+        eof = new HintingFetcher(osw.getObjectStore(), this);
     }
 
     /**
@@ -87,6 +88,18 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         return osw;
     }
 
+    /**
+     * Sets the EquivalentObjectFetcher that this IntegrationWriter will use to fetch equivalent
+     * objects from the production database. If this method is not called, the IntegrationWriter
+     * falls back to "this". This method is provided to permit a higher-performance system to be
+     * used instead.
+     *
+     * @param eof an EquivalentObjectFinder
+     */
+    public void setEof(EquivalentObjectFetcher eof) {
+        this.eof = eof;
+    }
+    
     /**
      * Returns a Set of objects from the idMap or database that are equivalent to the given
      * object, according to the primary keys defined by the given Source.
@@ -108,16 +121,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         if (destId == null) {
             // query database by primary key for equivalent objects
             if (obj instanceof ProxyReference) {
-
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("IDMAP CONTENTS:" + idMap.toString());
-                }
-
+                LOG.error("IDMAP CONTENTS:" + idMap.toString());
                 throw new IllegalArgumentException("Given a ProxyReference, but id not in ID Map."
-                                                   + " Source object ID: " + obj.getId()
-                                                   + (idMap.size() < 100 ? ", idMap = " : ""));
+                        + " Source object ID: " + obj.getId()
+                        + (idMap.size() < 100 ? ", idMap = " : ""));
             }
-            return queryEquivalentObjects(obj, source);
+            if ((obj.getId() == null) || ignoreDuplicates) {
+                return queryEquivalentObjects(obj, source);
+            } else {
+                return eof.queryEquivalentObjects(obj, source);
+            }
         } else {
             // was in idMap, no need to query database
             return Collections.singleton(new ProxyReference(osw, destId, InterMineObject.class));
@@ -134,11 +147,11 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    protected Set queryEquivalentObjects(InterMineObject obj, Source source)
+    public Set queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {
         Query q = null;
         try {
-            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap, hints);
+            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap, null);
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
         }
@@ -285,9 +298,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             TypeUtil.setFieldValue(colObj, reverseRef.getName(), dest);
                             if (type == FROM_DB) {
                                 store(colObj);
-                                // We don't need to call again on this objectm this call may have been present
-                                // to ensure the tracker is updated - but would get updated with the wrong
-                                // source anyway.  See ticket #955.
+                                // We don't need to call again on this object, this call may have
+                                // been present to ensure the tracker is updated - but would get
+                                // updated with the wrong source anyway.  See ticket #955.
                                 //store(colObj, source, skelSource, FROM_DB);
                             } else {
                                 store(colObj, source, skelSource, SKELETON);
