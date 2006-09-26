@@ -23,6 +23,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
 
 /**
@@ -108,10 +109,19 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         Iterator objIter = equivalentObjects.iterator();
         while (objIter.hasNext()) {
             InterMineObject obj = (InterMineObject) objIter.next();
+            if (obj instanceof ProxyReference) {
+                obj = ((ProxyReference) obj).getObject();
+            }
             classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
+        }
+        if (newId == null) {
+            newId = getSerial();
         }
         InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
         newObj.setId(newId);
+        if (type != FROM_DB) {
+            assignMapping(o.getId(), newId);
+        }
 
         if (type == SKELETON) {
             copyFields(o, newObj, source, skelSource, type);

@@ -73,6 +73,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.idMap.clear();
         iw.skeletons.clear();
         iw.beginTransaction();
+        iw.setEof(new HintingFetcher(iw.getObjectStoreWriter().getObjectStore(), iw));
     }
 
     public void tearDown() throws Exception {
