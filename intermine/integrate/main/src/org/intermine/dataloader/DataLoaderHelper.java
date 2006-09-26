@@ -268,7 +268,7 @@ public class DataLoaderHelper
                 for (int i = 0; i < tokens.length; i++) {
                     String token = tokens[i].trim();
                     if (map.get(token) == null) {
-                        throw new IllegalArgumentException("Primary key " + token 
+                        throw new IllegalArgumentException("Primary key " + token
                                 + " for class " + cld.getName() + " required by data source "
                                 + source.getName() + " in " + source.getName() + "_keys.properties"
                                 + " is not defined in " + cld.getModel().getName()
@@ -414,6 +414,7 @@ public class DataLoaderHelper
         while (pkSetIter.hasNext()) {
             PrimaryKey pk = (PrimaryKey) pkSetIter.next();
             if (!queryNulls && !objectPrimaryKeyNotNull(model, obj, cld, pk, source)) {
+                LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
                 continue;
             }
 

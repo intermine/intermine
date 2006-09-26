@@ -121,17 +121,10 @@ public class DataLoaderHelperTest extends QueryTestCase
         assertEquals(q, DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null));
     }
 
+    // null key field in object (attribute)
     public void testCreateQueryDisableNullFields1() throws Exception {
         Source source = new Source();
         source.setName("testsource");
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Employable.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.IS_NULL));
-        q.setConstraint(cs);
-        q.setDistinct(false);
 
         Employable e =
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
@@ -140,23 +133,69 @@ public class DataLoaderHelperTest extends QueryTestCase
         assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null, false));
     }
 
+    // null key field in object (reference)
     public void testCreateQueryDisableNullFields2() throws Exception {
         Source source = new Source();
         source.setName("testsource");
+
+        Company c =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setName("company1");
+        c.setAddress(null);
+
+        assertNull(DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null, false));
+    }
+
+    // null key fields in referenced object
+    public void testCreateQueryDisableNullFields3() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+
+        Company c =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setName("company1");
+        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        a.setAddress(null);
+        c.setAddress(a);
+
+        assertNull(DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null, false));
+    }
+
+    // one key has null values, expect just the other key
+    public void testCreateQueryDisableNullFields4() throws Exception {
+        Source source = new Source();
+        source.setName("testsource");
+
         Query q = new Query();
-        QueryClass qc = new QueryClass(Employable.class);
+        QueryClass qc = new QueryClass(Department.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.IS_NULL));
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("dept1")));
+        QueryClass qc1 = new QueryClass(Manager.class);
+        q.addFrom(qc1);
+        Query subQ = new Query();
+        QueryClass subQc = new QueryClass(Employable.class);
+        subQ.addFrom(subQc);
+        subQ.addToSelect(subQc);
+        ConstraintSet subCs = new ConstraintSet(ConstraintOp.AND);
+        subCs.addConstraint(new SimpleConstraint(new QueryField(subQc, "name"), ConstraintOp.EQUALS, new QueryValue("manager1")));
+        subQ.setConstraint(subCs);
+        subQ.setDistinct(false);
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "manager"), ConstraintOp.CONTAINS, qc1));
+        cs.addConstraint(new SubqueryConstraint(qc1, ConstraintOp.IN, subQ));
+
         q.setConstraint(cs);
         q.setDistinct(false);
 
-        Employable e =
-            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
-        e.setName(null);
+        Department d =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        d.setName("dept1");
+        Manager m = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        m.setName("manager1");
+        d.setManager(m);
 
-        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null, false));
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, d, source, new IntToIntMap(), null, false));
     }
 
     public void testCreateQuery3() throws Exception {
