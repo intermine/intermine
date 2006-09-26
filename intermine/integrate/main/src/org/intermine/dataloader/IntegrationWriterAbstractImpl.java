@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -99,7 +100,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public void setEof(EquivalentObjectFetcher eof) {
         this.eof = eof;
     }
-    
+
     /**
      * Returns a Set of objects from the idMap or database that are equivalent to the given
      * object, according to the primary keys defined by the given Source.
@@ -151,14 +152,18 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         throws ObjectStoreException {
         Query q = null;
         try {
-            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap, null);
+            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap, null, false);
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
         }
-        SingletonResults result = new SingletonResults(q, this, getSequence());
-        result.setNoOptimise();
-        result.setNoExplain();
-        return result;
+        if (q != null) {
+            SingletonResults result = new SingletonResults(q, this, getSequence());
+            result.setNoOptimise();
+            result.setNoExplain();
+            return result;
+        } else {
+            return new HashSet();
+        }
     }
 
 

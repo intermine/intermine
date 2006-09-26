@@ -207,15 +207,13 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         d.setName("DepartmentA1");
         d.setCompany(c);
         c.setVatNumber(1234);
-        
+
         if (doIds) {
             e.setId(new Integer(1));
             d.setId(new Integer(2));
         }
         Source source = iw.getMainSource("testsource3");
         Source skelSource = iw.getSkeletonSource("testsource3");
-
-        //fail("" + DataLoaderHelper.createPKQuery(iw.getModel(), e, source, new IntToIntMap()));
 
         iw.store(e, source, skelSource);
         iw.store(d, source, skelSource);
@@ -897,7 +895,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
-        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
+        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null, false).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
     }
 
     // a bug existed whereby storing a skeleton then a real object retrieved and failed to materialise
