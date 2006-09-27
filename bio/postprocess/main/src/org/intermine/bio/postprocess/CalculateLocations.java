@@ -443,8 +443,8 @@ public class CalculateLocations
             Location location1 = overlapLocations[0];
             Location location2 = overlapLocations[1];
 
-            LocatedSequenceFeature lsf1 = (LocatedSequenceFeature) location1.getSubject();
-            LocatedSequenceFeature lsf2 = (LocatedSequenceFeature) location2.getSubject();
+            InterMineObject lsf1 = location1.proxGetSubject();
+            InterMineObject lsf2 = location2.proxGetSubject();
 
             OverlapRelation overlapRelation = (OverlapRelation)
                 DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
