@@ -19,6 +19,7 @@ import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.BigDepartment;
 import org.intermine.model.testmodel.Cleaner;
 import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.ImportantPerson;
@@ -685,6 +686,31 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             }
         } finally {
             writer.delete(o);
+        }
+    }
+
+    public void testAddToCollection() throws Exception {
+        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Contractor c2 = new Contractor();
+        c1.setName("Michael");
+        c2.setName("Albert");
+
+        try {
+            writer.store(c1);
+            writer.store(c2);
+
+            Company c3 = (Company) writer.getObjectById(c1.getId(), Company.class);
+            assertEquals(0, c3.getContractors().size());
+
+            writer.addToCollection(c1.getId(), Company.class, "contractors", c2.getId());
+
+            c3 = (Company) writer.getObjectById(c1.getId(), Company.class);
+            assertEquals(1, c3.getContractors().size());
+            assertTrue(c3.getContractors().iterator().next() instanceof Contractor);
+            assertEquals(c2.getId(), ((Contractor) c3.getContractors().iterator().next()).getId());
+        } finally {
+            writer.delete(c1);
+            writer.delete(c2);
         }
     }
 }
