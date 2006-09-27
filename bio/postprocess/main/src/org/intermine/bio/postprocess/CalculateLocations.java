@@ -448,8 +448,9 @@ public class CalculateLocations
 
             OverlapRelation overlapRelation = (OverlapRelation)
                 DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
-            overlapRelation.addBioEntities(lsf1);
-            overlapRelation.addBioEntities(lsf2);
+            Set bioEntityCollection = overlapRelation.getBioEntities();
+            bioEntityCollection.add(lsf1);
+            bioEntityCollection.add(lsf2);
 
             ++count;
 
