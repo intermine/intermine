@@ -63,11 +63,10 @@
   <class className="org.flymine.model.genomic.Organism">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="shortName"/>
-      <fieldconfig fieldExpr="genus"/>
-      <fieldconfig fieldExpr="species"/>
-      <fieldconfig fieldExpr="abbreviation"/>
-      <fieldconfig fieldExpr="taxonId"/>
+      <fieldconfig fieldExpr="shortName" showInInlineCollection="false" showInResults="false"/>
+      <fieldconfig fieldExpr="genus" showInInlineCollection="false" showInResults="false"/>
+      <fieldconfig fieldExpr="species" showInInlineCollection="false" showInResults="false"/>
+      <fieldconfig fieldExpr="taxonId" />
     </fields>
     <longdisplayers>
       <displayer src="/model/organismLong.jsp"/>
@@ -96,6 +95,13 @@
       <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Comment">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="text"/>
     </fields>
   </class>
 
