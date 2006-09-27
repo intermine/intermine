@@ -419,6 +419,20 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
+     * Add an object to another object's collection, delegate to internal ObjectStoreWriter.
+     *
+     * @param hasId the ID of the object that has the collection
+     * @param clazz the class of the object
+     * @param fieldName the name of the collection
+     * @param hadId the ID of the object to be placed in the collection
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
+        throws ObjectStoreException {
+        osw.addToCollection(hasId, clazz, fieldName, hadId);
+    }
+
+    /**
      * Delete an object from this ObjectStore, delegate to internal ObjectStoreWriter.
      *
      * @param o the object to delete

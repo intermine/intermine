@@ -65,6 +65,21 @@ public interface ObjectStoreWriter extends ObjectStore
     public void delete(InterMineObject o) throws ObjectStoreException;
 
     /**
+     * Place an object in a many-to-many collection of another object.
+     * This method provides a way to place an object into a collection in another object without
+     * having either object loaded in memory. Only the IDs of the two objects are required, along
+     * with the name of the collection.
+     *
+     * @param hasId the ID of the object that has the collection
+     * @param clazz the class of the object that has the collection
+     * @param fieldName the name of the collection
+     * @param hadId the ID of the object to place in the collection
+     * @throws ObjectStoreException if a problem occurs
+     */
+    public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
+        throws ObjectStoreException;
+    
+    /**
      * Gets an ID number which is unique in the database.
      *
      * @return an Integer

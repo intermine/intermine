@@ -583,6 +583,67 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
+     * @see ObjectStoreWriter#addToCollection
+     */
+    public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
+        throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            addToCollectionWithConnection(c, hasId, clazz, fieldName, hadId);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Performs addToCollection with given connection
+     *
+     * @param c the Connection
+     * @param hasId the ID of the object that has the collection
+     * @param clazz the class of the object that has the collection
+     * @param fieldName the name of the collection
+     * @param hadId the ID of the object to place in the collection
+     * @throws ObjectStoreException if an error occurs
+     */
+    protected void addToCollectionWithConnection(Connection c, Integer hasId, Class clazz,
+            String fieldName, Integer hadId) throws ObjectStoreException {
+        FieldDescriptor field = (FieldDescriptor) model.getFieldDescriptorsForClass(clazz)
+            .get(fieldName);
+        if (field == null) {
+            throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
+                    + " does not exist in the model.");
+        }
+        if (field.relationType() == FieldDescriptor.M_N_RELATION) {
+            invalidateObjectById(hasId);
+            invalidateObjectById(hadId);
+            CollectionDescriptor coll = (CollectionDescriptor) field;
+            String indirectTableName = DatabaseUtil.getIndirectionTableName(coll);
+            String inwardColumnName = DatabaseUtil.getInwardIndirectionColumnName(coll);
+            String outwardColumnName = DatabaseUtil.getOutwardIndirectionColumnName(coll);
+            boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
+            String indirColNames[] = (String []) tableToColNameArray.get(indirectTableName);
+            if (indirColNames == null) {
+                indirColNames = new String[2];
+                indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
+                indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
+                tableToColNameArray.put(indirectTableName, indirColNames);
+            }
+            try {
+                batch.addRow(c, indirectTableName, indirColNames[0], indirColNames[1],
+                             (swap ? hasId : hadId).intValue(), (swap ? hadId : hasId).intValue());
+            } catch (SQLException e) {
+                throw new ObjectStoreException("Error while storing", e);
+            }
+        } else {
+            throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
+                    + " is not a many-to-many collection.");
+        }
+    }
+
+    /**
      * Produces metadata for a given table, caching it to save time.
      *
      * @param tableMaster the ClassDescriptor describing the table

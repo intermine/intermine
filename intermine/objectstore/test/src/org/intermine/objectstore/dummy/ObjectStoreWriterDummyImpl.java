@@ -64,6 +64,11 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         }
     }
 
+    public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
+        throws ObjectStoreException {
+        throw new ObjectStoreException("Not implemented");
+    }
+
     public void delete(InterMineObject o) throws ObjectStoreException {
         storedObjects.remove(o.getId());
     }
