@@ -1,0 +1,51 @@
+build.compiler=modern
+#build.compiler=jikes
+
+# Web server location - used for copying html files to the web server
+www.serverlocation=test_user@localhost:/var/www/
+
+# Web application deployment properties
+
+# location of tomcat server and path of webapp - e.g. access http://localhost:8080/malariamine
+webapp.deploy.url=http://localhost:8080
+webapp.path=malariamine
+
+# tomcat username and password needed to deploy webapp
+webapp.manager=username
+webapp.password=password
+
+# 'Home' link
+webapp.baseurl=malaria.flymine.org
+
+# where to write logs, default is tomcat log directory
+webapp.logdir=/var/log/
+
+# account name for superuser (who can edit appearance and publish templates)
+superuser.account=test_user@mail_account
+
+# run with no associated web site
+project.standalone=true
+
+# ObjectStores to use - this should not need to change
+webapp.os.alias=os.production
+webapp.userprofile.os.alias=osw.userprofile-production
+webapp.viewByID.prefix=objectDetails.do?id=
+
+# details for sending login e-mails
+mail.host=my_mail_host
+mail.from=account@my_mail_host
+mail.subject=Password for the FlyMine system
+mail.text=Your password for the FlyMine system is: {0}
+
+
+project.title=MalariaMine
+project.subTitle=An example of InterMine.bio with data from <i>Plasmodium falciparum</i>
+project.sitePrefix=http://malaria.flymine.org
+project.helpLocation=http://malaria.flymine.org/doc
+project.releaseVersion=tutorial
+project.contact=<a href="mailto:test_user%5Bat%5Dmail_account">test_user[at]mail_account</a>
+project.funded.by=MalariaMine is funded by <a href="http://www.wellcome.ac.uk/">The Wellcome Trust</a>
+
+portal.welcome = Welcome to MalariaMine
+feedback.destination = test_user@mail_address
+
