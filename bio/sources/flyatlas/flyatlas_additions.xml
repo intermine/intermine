@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.FlyAtlasResult" extends="org.flymine.model.genomic.MicroArrayResult" is-interface="true">
+  <attribute name="affyCall" type="java.lang.String"/>
+  <attribute name="presentCall" type="java.lang.Integer"/>
+  <attribute name="enrichment" type="java.lang.Double"/>
+  <attribute name="MRNASignal" type="java.lang.Double"/>
+  <attribute name="MRNASignalSEM" type="java.lang.Double"/>
+</class>
+</classes>

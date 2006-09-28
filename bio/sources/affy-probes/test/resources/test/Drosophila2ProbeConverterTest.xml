@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<items>
+  <item id="7_1" class="http://www.flymine.org/model/genomic#Transcript">
+    <attribute name="identifier" value="CG9042-RB"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="5940528"/>
+    <attribute name="start" value="5935896"/>
+    <attribute name="strand" value="1"/>
+    <reference name="object" ref_id="3_2"/>
+    <reference name="subject" ref_id="5_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="CG9042"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Affymetrix"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#ProbeSet">
+    <attribute name="description" value="E. coli  GEN=bioB  DB_XREF=gb:J04423.1  NOTE=SIF corresponding to nucleotides 2755-3052 of gb:J04423.1  DEF=E.coli 7,8-diamino-pelargonic acid (bioA), biotin synthetase (bioB), 7-keto-8-amino-pelargonic acid synthetase (bioF), bioC protein, and dethiobiotin synthetase (bioD), complete cds."/>
+    <attribute name="identifier" value="AFFX-BioB-3_at"/>
+    <attribute name="isControl" value="true"/>
+    <attribute name="name" value="AFFX-BioB-3_at"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="1616608_a_at"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="3_2"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="Affymetrix array: Drosophila_2"/>
+    <reference name="dataSource" ref_id="0_1"/>
+  </item>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="AFFX-BioB-3_at"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="3_1"/>
+  </item>
+  <item id="5_1" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="2L"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#ProbeSet">
+    <attribute name="identifier" value="1616608_a_at"/>
+    <attribute name="isControl" value="false"/>
+    <attribute name="name" value="1616608_a_at"/>
+    <reference name="gene" ref_id="8_1"/>
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="transcript" ref_id="7_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+    </collection>
+  </item>
+</items>

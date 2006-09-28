@@ -32,6 +32,12 @@
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/fasta"/>
     </source>
+    <source name="flyatlas" type="flyatlas">
+      <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
+    </source>
+    <source name="affy-probes" type="affy-probes">
+      <property name="src.data.dir" location="/shared/data/affy-probes"/>
+    </source>
     <source name="ensembl-anopheles" type="ensembl">
       <property name="organism" value="AGP"/>
     </source>
