@@ -10,6 +10,9 @@
   <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"  reverse-reference="assays"/>
   <collection name="samples" referenced-type="org.flymine.model.genomic.Sample" reverse-reference="assays"/>
 </class>
+<class name="org.flymine.model.genomic.ProbeSet" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult" reverse-reference="material"/>
+</class>
 <class name="org.flymine.model.genomic.SampleCharacteristic" is-interface="true">
   <attribute name="type" type="java.lang.String"/>
   <attribute name="value" type="java.lang.String"/>
@@ -48,12 +51,6 @@
 <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"/>
 </class>
-<class name="org.flymine.model.genomic.CompositeSequence" extends="org.flymine.model.genomic.BioEntity" is-interface="true"> 
-  <attribute name="name" type="java.lang.String"/>
-  <attribute name="url" type="java.lang.String"/>
-  <collection name="results" referenced-type="org.flymine.model.genomic.MicroArrayResult"/>
-</class>
-
 <class name="org.flymine.model.genomic.NuclearDNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.Sample" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
@@ -72,7 +69,7 @@
   <attribute name="isControl" type="java.lang.Boolean"/>
   <attribute name="value" type="java.lang.Float"/>
   <reference name="experiment" referenced-type="org.flymine.model.genomic.MicroArrayExperiment" reverse-reference="results"/>
-  <reference name="material" referenced-type="org.flymine.model.genomic.CompositeSequence" reverse-reference="results"/>
+  <reference name="material" referenced-type="org.flymine.model.genomic.ProbeSet" reverse-reference="results"/>
   <collection name="assays" referenced-type="org.flymine.model.genomic.MicroArrayAssay" reverse-reference="results"/>
   <collection name="reporters" referenced-type="org.flymine.model.genomic.Reporter" reverse-reference="results"/>
   <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="microArrayResults"/>
