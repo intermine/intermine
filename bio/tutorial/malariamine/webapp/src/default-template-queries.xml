@@ -606,31 +606,11 @@
   </template-queries>
 
   <tags>
-    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.MicroArrayExperiment" type="class" />
-    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.CDNAClone" type="class" />
-    <tag name="aspect:Gene Expression" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
     <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class" />
     <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class" />
     <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class" />
     <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinStructure" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinRegion" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />comment
-
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.BindingSite" type="class" />
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class" />
-    <tag name="aspect:Binding Sites" objectIdentifier="org.flymine.model.genomic.ProteinBindingSite" type="class" />
-    <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Transcript" type="class" />
-    <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:INDAC" objectIdentifier="org.flymine.model.genomic.MicroarrayOligo" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.PCRProduct" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Primer" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.TilingPathSpan" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class" />
-    <tag name="aspect:Tiling Path" objectIdentifier="org.flymine.model.genomic.Location" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class" />
     <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class" />
@@ -654,20 +634,8 @@
     <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
     <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class" />
     <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class" />
-    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinFamily" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
     <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
-    <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Deletion" type="class" />
-    <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.TransposableElementInsertionSite" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.RNAiExperiment" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Phenotype" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Disease" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.BlastMatch" type="class" />
-    <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
   </tags>
 </userprofile>
