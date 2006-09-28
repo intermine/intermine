@@ -124,9 +124,7 @@ public class PostProcessTask extends Task
                 LOG.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
             } else if ("create-symmetrical-relation-references".equals(operation)) {
-                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-                LOG.info("Starting CreateReferences.insertSymmetricalRelationReferences()");
-                cr.insertSymmetricalRelationReferences();
+                throw new BuildException("create-symmetrical-relation-references task is deprecated");
             } else if ("create-utr-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.createUtrRefs()");

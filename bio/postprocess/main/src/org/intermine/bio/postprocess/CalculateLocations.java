@@ -455,6 +455,10 @@ public class CalculateLocations
             ++count;
 
             osw.store(overlapRelation);
+            osw.addToCollection(lsf1.getId(), LocatedSequenceFeature.class, "overlappingFeatures",
+                    lsf2.getId());
+            osw.addToCollection(lsf2.getId(), LocatedSequenceFeature.class, "overlappingFeatures",
+                    lsf1.getId());
         }
 
         LOG.info("Stored " + count + " overlaps for " + subject + ", identifier: "

@@ -44,7 +44,6 @@
     <post-process name="update-orthologues"/>
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
-    <post-process name="create-symmetrical-relation-references" dump="true"/>
     <post-process name="transfer-sequences" dump="true"/>
 
     <post-process name="do-sources"/>

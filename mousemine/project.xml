@@ -54,7 +54,6 @@
     <!--update-orthologues/-->
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
-    <post-process name="create-symmetrical-relation-references"/>
     <post-process name="create-indexes-production-attribute"/>
     <post-process name="update-publications"/>
     <post-process name="transfer-sequences-chromosome"/>
