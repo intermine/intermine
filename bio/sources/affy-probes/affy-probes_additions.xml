@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.ProbeSet" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <attribute name="isControl" type="java.lang.Boolean"/>
+  <attribute name="description" type="java.lang.String"/>
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="probeSets"/>
+  <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="probeSets"/>
+</class>
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <collection name="probeSets" referenced-type="org.flymine.model.genomic.ProbeSet" reverse-reference="gene"/>
+</class>
+<class name="org.flymine.model.genomic.Transcript" is-interface="true">
+  <collection name="probeSets" referenced-type="org.flymine.model.genomic.ProbeSet" reverse-reference="transcript"/>
+</class>
+</classes>

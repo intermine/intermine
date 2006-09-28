@@ -27,6 +27,8 @@
     <merge-additions file="bio/sources/mage/mage_additions.xml"/>
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
     <merge-additions file="bio/sources/diseaseregion/diseaseregion_additions.xml"/>
+    <merge-additions file="bio/sources/affy-probes/affy-probes_additions.xml"/>
+    <merge-additions file="bio/sources/flyatlas/flyatlas_additions.xml"/>
   </target>
 
 </project>

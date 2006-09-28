@@ -1,0 +1,4 @@
+<project name="affy-probes-tasks" default="default" basedir=".">
+  <description>build affy-probes tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
