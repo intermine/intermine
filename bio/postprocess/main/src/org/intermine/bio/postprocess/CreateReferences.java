@@ -155,19 +155,6 @@ public class CreateReferences
     }
 
     /**
-     * Fill in missing references/collections in model by querying SymmetricalRelations
-     * @throws Exception if anything goes wrong
-     */
-    public void insertSymmetricalRelationReferences() throws Exception {
-        LOG.info("insertReferences stage 1");
-        // Transcript.exons / Exon.transcripts
-        insertSymmetricalRelationReferences(
-                LocatedSequenceFeature.class, OverlapRelation.class, "overlappingFeatures"
-        );
-    }
-
-
-    /**
      * Fill in the "orthologues" collection of Gene.  Needs to be run after
      * UpdateOrthologues which in turn relies on CreateReferences -> so has
      * become a separate method.

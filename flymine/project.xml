@@ -192,7 +192,6 @@
       <property name="classesToIgnore" value="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, Pseudogene, RRNA, RepeatRegion, Supercontig, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
     </post-process>
     <post-process name="do-sources"/>
-    <post-process name="create-symmetrical-relation-references"/>
 
     <post-process name="set-collection-counts" dump="true"/>
     <post-process name="create-flybase-to-uniprot-refs"/>

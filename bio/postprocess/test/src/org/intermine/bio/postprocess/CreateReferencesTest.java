@@ -199,7 +199,7 @@ public class CreateReferencesTest extends TestCase {
         compareResultsToExpected();
     }
 
-    public void testInsertSymmetricalRelationReferences() throws Exception {
+    /*public void testInsertSymmetricalRelationReferences() throws Exception {
         CalculateLocations cl = new CalculateLocations(osw);
         cl.fixPartials();
         cl.createLocations();
@@ -236,7 +236,7 @@ public class CreateReferencesTest extends TestCase {
         actualIDs.add(((Gene) ofIter.next()).getId());
 
         Assert.assertEquals(expectedIDs, actualIDs);
-    }
+    }*/
 
     public void testCreateUtrRefs() throws Exception {
         storedMRNA1 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
