@@ -31,7 +31,7 @@
         Quick Search
       </title>
       <para>Search for genes, proteins or any other annotation.
-        <ulink url="doc/tutorials/quickSearch.xml">Help.</ulink></para>
+        <ulink url="doc/tutorials/tutorial1-QuickSearch.xml">Help.</ulink></para>
       <para>
         <ssi-include page="browse.tile"/>
       </para>
