@@ -3,9 +3,27 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>Job Opportunities</title>
+<title>Job Opportunities</title>
 
-    <para>There are currently no positions available at FlyMine.</para>
+  <para>Vacancy Reference No: PC00789  Salary: GBP 24,161-31,525</para>
+
+  <para>Limit of tenure applies*</para>
+
+  <para>We are looking for a software developer to join a Wellcome Trust funded project applying innovative software engineering to the integration of biological data. FlyMine is a data warehouse of functional genomics data from the model organisms <emphasis>Drosophila melanogaster</emphasis> and <emphasis>Anopheles gambiae</emphasis>. The software created to enable FlyMine is generic and now being used to build other biological data warehouses.</para>
+
+  <para>FlyMine (<ulink url="http://www.flymine.org">www.flymine.org</ulink>) is a freely available resource providing a powerful Web interface for researchers to perform complex queries over a wide range of biological data. In building FlyMine we have developed InterMine (<ulink url="http://www.intermine.org">www.intermine.org</ulink>) - a data model independent, object-based data integration and query system with a sophisticated Struts/JSP Web application. A team of five software developers is responsible for designing, coding, testing and importing data into the system, many parts of which are technically challenging. We work with Java in a Unix/Linux environment and use the PostgreSQL database. All of our code is freely available under an open source licence.</para>
+
+  <para>You will be involved in all aspects of the system. You will have worked as a software developer for at least 2 years in a team environment. Experience with Java and relational databases would be a significant advantage. You should have experience or an interest in working with biological data.</para>
+
+  <para>Informal enquiries to Richard Smith: <email>richard@flymine.org</email></para>
+
+  <para>No contact from agencies please.</para>
+
+  <para>Applications, to include a <ulink url="http://www.admin.cam.ac.uk/offices/personnel/forms/pd18/">PD18</ulink> cover sheet, full CV and details of three referees, should be addressed to Mrs Tracy Oakley, Department of Genetics, Downing Street, Cambridge, CB2 3EH or e-mail: <email>t.oakley@gen.cam.ac.uk.</email></para>
+
+  <para>* The funds for this post are available until 31 December 2007 in the first instance.</para>
+
+  <para>Closing date: 20 October 2006.</para>
   </section>
 </article>
 
