@@ -1,0 +1,11 @@
+# Genome-wide RNAi screen reveals a specific sensitivity of IRES-containing RNA viruses to host translation inhibition
+# Genes Dev. 2005 Feb 15;19(4):445-52.
+# Sara Cherry, Tammy Doukas, Susan Armknecht, Sean Whelan, Hui Wang, Peter Sarnow, Norbert Perrimon
+# PMID: 15713840
+# Screen_name: DCV Screen
+# Cell line: S2 cells
+# Phenotype_description: Fluorescence measurements reflecting viral infection
+----
+Hit	Phenotype	HFA Amplicon	DRSC Amplicon	Amp. Length	Gene	FBGN	Num Potential Off-Targs	Max Off-Targ Overlap
+Y	DCV	HFA00781	DRSC00781	308	RpL27A	FBgn0010411	1	19
+Y	DCV	HFA03055	DRSC03055	160	RpL36A	FBgn0031980	0	0
