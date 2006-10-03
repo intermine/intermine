@@ -8,8 +8,8 @@
     <attribute name="end" value="5940528"/>
     <attribute name="start" value="5935896"/>
     <attribute name="strand" value="1"/>
-    <reference name="object" ref_id="3_2"/>
-    <reference name="subject" ref_id="5_1"/>
+    <reference name="subject" ref_id="3_2"/>
+    <reference name="object" ref_id="5_1"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>
     </collection>

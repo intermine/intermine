@@ -12,9 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import junit.framework.TestCase;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.InputStreamReader;
