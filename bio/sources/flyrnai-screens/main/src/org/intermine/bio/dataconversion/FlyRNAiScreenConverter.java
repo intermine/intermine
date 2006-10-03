@@ -13,6 +13,8 @@ package org.intermine.bio.dataconversion;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -20,16 +22,20 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.metadata.Model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.FileReader;
+import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
- * 
+ *
  * @author Kim Rutherford
  */
 public class FlyRNAiScreenConverter extends FileConverter
@@ -37,19 +43,20 @@ public class FlyRNAiScreenConverter extends FileConverter
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     protected Item dataSource, organism;
-    protected int id = 0;
+    private Map ids = new HashMap();
+    private ItemFactory itemFactory;
 
     private Map genes = new HashMap();
     private Map synonyms = new HashMap();
     private Map publications = new HashMap();
-    
-    private String taxonId;
+
+    protected String taxonId;
 
     private static final String PMID_PREFIX = "PMID:";
     private static final String SCREEN_NAME_PREFIX = "Screen_name:";
     private static final String CELL_LINE_PREFIX = "Cell line:";
     private static final String PHENOTYPE_DESCRIPTION_PREFIX = "Phenotype_description:";
-    
+
     private static final String[] HEADER_FIELDS = new String[] {
         PMID_PREFIX, SCREEN_NAME_PREFIX, CELL_LINE_PREFIX, PHENOTYPE_DESCRIPTION_PREFIX
     };
@@ -71,6 +78,7 @@ public class FlyRNAiScreenConverter extends FileConverter
      */
     public FlyRNAiScreenConverter(ItemWriter writer) {
         super(writer);
+        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
     }
 
     /**
@@ -81,6 +89,22 @@ public class FlyRNAiScreenConverter extends FileConverter
             throw new RuntimeException("taxonId attribute not set");
         }
 
+        // Files named *.dataset contain the actual data.  Rows that have a
+        // corresponding entry in *_curated.tsv need to have
+        // RNAiScreenHit.hasPredictedOffTargetEffect set to false, otherwise
+        // the flag should be true.  DRSC Amplicon ids can be used to match
+        // entries in the two files.
+
+        String fileName = getCurrentFile().getPath();
+        if (fileName.endsWith("_curated.tsv")) {
+            return;
+        }
+
+        File curatedFile = new File(fileName.substring(0, fileName.indexOf("."))
+            + "_curated.tsv");
+        BufferedReader curatedReader = new BufferedReader(new FileReader(curatedFile));
+        Set offTargetFalse = readCurated(curatedReader);
+
         BufferedReader br = new BufferedReader(reader);
 
         if (organism == null) {
@@ -88,15 +112,15 @@ public class FlyRNAiScreenConverter extends FileConverter
             organism.setAttribute("taxonId", taxonId);
             writer.store(ItemHelper.convert(organism));
         }
-        
+
         System.err .println("Processing file: " + getCurrentFile().getName());
-        
+
         Map headerFieldValues = getHeaderFields(br);
-        
+
         String pubmedId = (String) headerFieldValues.get(PMID_PREFIX);
-        
+
         Item publication = newPublication(pubmedId);
-        
+
         dataSet = newItem("DataSet");
         dataSet.setAttribute("title", "DRSC RNAi data set: "
                              + headerFieldValues.get(SCREEN_NAME_PREFIX));
@@ -107,21 +131,21 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
         dataSet.setReference("dataSource", dataSource);
         writer.store(ItemHelper.convert(dataSet));
-        
+
         Item rnaiScreen = newItem("RNAiScreen");
         rnaiScreen.setAttribute("name", (String) headerFieldValues.get(SCREEN_NAME_PREFIX));
-        rnaiScreen.setAttribute("phenotypeDescription", 
+        rnaiScreen.setAttribute("phenotypeDescription",
                                 (String) headerFieldValues.get(PHENOTYPE_DESCRIPTION_PREFIX));
         rnaiScreen.setAttribute("cellLine", (String) headerFieldValues.get(CELL_LINE_PREFIX));
         rnaiScreen.setReference("organism", organism);
         rnaiScreen.setReference("publication", publication);
         writer.store(ItemHelper.convert(rnaiScreen));
-        
+
         String[] columnNameRow = null;
-        
+
         // a Map from column name to column index
         Map columnNameMap = new HashMap();
-        
+
         Iterator tsvIter;
         try {
             tsvIter = TextFileUtil.parseTabDelimitedReader(br);
@@ -139,18 +163,18 @@ public class FlyRNAiScreenConverter extends FileConverter
                 }
                 continue;
             }
-            
+
             String hitsColumn = getColumnValue(columnNameMap, thisRow, HIT_COLUMN);
             String [] hitStrengths = hitsColumn.split("[ \\t]*,[ \\t]*");
-            
+
             if (hitsColumn.equals("")) {
                 continue;
             }
-            
+
             Item amplicon = newItem("Amplicon");
             String ampliconIdentifier =
                 getColumnValue(columnNameMap, thisRow, DRSC_AMPLICON_COLUMN);
-            String ampliconLength = 
+            String ampliconLength =
                 getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
 
             try {
@@ -160,23 +184,23 @@ public class FlyRNAiScreenConverter extends FileConverter
                 continue;
             }
 
-            String numOffTargets = 
+            String numOffTargets =
                 getColumnValue(columnNameMap, thisRow, NUM_OFF_TARGET_COLUMN);
-            String maxOffTargetOverlaps = 
+            String maxOffTargetOverlaps =
                 getColumnValue(columnNameMap, thisRow, MAX_OFF_TARGET_OVERLAPS_COLUMN);
             amplicon.setAttribute("identifier", ampliconIdentifier);
             amplicon.setAttribute("length", ampliconLength);
             amplicon.setReference("organism", organism);
             writer.store(ItemHelper.convert(amplicon));
-            
+
             for (int hitStrengthIndex = 0; hitStrengthIndex < hitStrengths.length;
                  hitStrengthIndex++) {
                 String hitStrength = hitStrengths[hitStrengthIndex];
-                
+
                 // get columns using the column names from the header line
                 String geneNameColumn = getColumnValue(columnNameMap, thisRow, FBGN_COLUMN);
                 String [] geneNames = geneNameColumn.split("[ \\t]*,[ \\t]*");
-                
+
                 for (int geneIndex = 0; geneIndex < geneNames.length; geneIndex++) {
                     String geneName = geneNames[geneIndex];
                     int geneNameColonIndex = geneName.lastIndexOf(':');
@@ -188,9 +212,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                     }
 
                     Item gene = newGene(geneName);
-                
-                    Item screenHit = newItem("ScreenHit");
-                    screenHit.setReference("screen", rnaiScreen);
+
+                    Item screenHit = newItem("RNAiScreenHit");
+                    screenHit.setReference("analysis", rnaiScreen);
                     screenHit.setReference("gene", gene);
                     String phenotype = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
                     screenHit.setAttribute("phenotype", phenotype);
@@ -198,26 +222,26 @@ public class FlyRNAiScreenConverter extends FileConverter
                     screenHit.setAttribute("maxOffTargetOverlaps", maxOffTargetOverlaps);
                     if (hitStrength != null && hitStrength.trim().length() > 0) {
                         try {
-                            new Float(hitStrength);     
+                            new Float(hitStrength);
                             screenHit.setAttribute("strength", hitStrength);
                         } catch (NumberFormatException e) {
                             // ignore - probably a "Y"
                         }
                     }
                     screenHit.setReference("amplicon", amplicon);
-                    
+                    String offTarget = offTargetFalse.contains(ampliconIdentifier)
+                        ? "false" : "true";
+                    screenHit.setAttribute("hasPredictedOffTargetEffect", offTarget);
                     writer.store(ItemHelper.convert(screenHit));
                 }
             }
-            
-
         }
     }
 
     private Item newPublication(String pubmedId) {
         Item publication;
         if (publications.containsKey(pubmedId)) {
-            publication = (Item) publications.get(pubmedId);           
+            publication = (Item) publications.get(pubmedId);
         } else {
             publication = newItem("Publication");
             publication.setAttribute("pubMedId", pubmedId);
@@ -329,13 +353,21 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @return a new Item
      */
     protected Item newItem(String className) {
-        Item item = new Item();
-        item.setIdentifier(alias(className) + "_" + (id++));
-        item.setClassName(GENOMIC_NS + className);
-        item.setImplementations("");
-        return item;
+        return itemFactory.makeItem(alias(className) + "_" + newId(className),
+                                    GENOMIC_NS + className, "");
     }
-    
+
+    private String newId(String className) {
+        Integer id = (Integer) ids.get(className);
+        if (id == null) {
+            id = new Integer(0);
+            ids.put(className, id);
+        }
+        id = new Integer(id.intValue() + 1);
+        ids.put(className, id);
+        return id.toString();
+    }
+
     /**
      * @see FileConverter#close()
      */
@@ -343,6 +375,43 @@ public class FlyRNAiScreenConverter extends FileConverter
         store(genes.values());
         store(synonyms.values());
         store(publications.values());
+    }
+
+    private Set readCurated(BufferedReader br) throws IOException {
+        Set offTargetFalse = new HashSet();
+        Iterator tsvIter = TextFileUtil.parseTabDelimitedReader(br);
+        String[] curatedNameRow = null;
+
+        Map curatedNameMap = new HashMap();
+        while (tsvIter.hasNext()) {
+            String [] thisRow = (String[]) tsvIter.next();
+            // get rid of header and find column headings
+            if (curatedNameRow == null) {
+                if (thisRow[0].equals("Final Hit")) {
+                    curatedNameRow = thisRow;
+                    for (int i = 0; i < curatedNameRow.length; i++) {
+                        curatedNameMap.put(curatedNameRow[i], new Integer(i));
+                    }
+                }
+                continue;
+            }
+            // reading actual data
+            String amplicon = getColumnValue(curatedNameMap, thisRow, DRSC_AMPLICON_COLUMN);
+            if (amplicon != null) {
+                offTargetFalse.add(amplicon);
+            }
+        }
+        return offTargetFalse;
+    }
+
+    private String printRow(String[] row) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("" + row.length + ": ");
+        for (int i = 0; i < row.length; i++) {
+            sb.append(row[i]);
+            sb.append(",,,,");
+        }
+        return sb.toString();
     }
 }
 

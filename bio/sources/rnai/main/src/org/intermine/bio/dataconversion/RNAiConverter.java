@@ -9,24 +9,21 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
 import java.io.Reader;
-import java.io.BufferedReader;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import org.apache.tools.ant.BuildException;
-
+import org.intermine.util.TextFileUtil;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.dataconversion.FileConverter;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.FileConverter;
 
 /**
  * DataConverter to parse an RNAi data file into Items
@@ -37,253 +34,166 @@ public class RNAiConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Map genes = new HashMap();
-    protected Map synonyms = new HashMap();
-    protected Map annotations = new HashMap();
-    protected Map phenotypes = new HashMap();
-    protected Map experimentalResults = new HashMap();
-    protected Map organisms = new HashMap();
-    protected Map annotationEvidence = new HashMap();
-
-    protected Item dataSource, dataSet;
-    protected int id = 0;
+    private Map geneMap = new HashMap(), screenMap = new HashMap(),
+        pubMap = new HashMap(), phenotypeMap = new HashMap();
+    private Map ids = new HashMap();
+    private Item dataSource, dataSet, org, ontology;
+    private ItemFactory itemFactory;
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @throws ObjectStoreException of problem reading/writing data
      */
-    public RNAiConverter(ItemWriter writer) {
+    public RNAiConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
+
+        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+
+        dataSource = createItem("DataSource");
+        dataSource.setAttribute("name", "WormBase");
+        writer.store(ItemHelper.convert(dataSource));
+
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "WormBase RNAi Phenotype");
+        dataSet.setReference("dataSource", dataSource.getIdentifier());
+        writer.store(ItemHelper.convert(dataSet));
+
+        org = createItem("Organism");
+        org.setAttribute("taxonId", "6239");
+        writer.store(ItemHelper.convert(org));
+
+        ontology = createItem("Ontology");
+        ontology.setAttribute("title", "WormBase phenotype codes");
+        writer.store(ItemHelper.convert(ontology));
     }
 
     /**
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-        BufferedReader br = new BufferedReader(reader);
+        Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
+        boolean readingData = false;
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
 
-        dataSet = newItem("DataSet");
-        String fileName = getCurrentFile().getName();
-        int setStart = fileName.indexOf("Set.txt");
-        if (setStart == -1) {
-            throw new BuildException("filename \"" + fileName + "\" for RNAi dataset must "
-                                     + "end with \"Set.txt\"");
-        }
-        String authorName = fileName.substring(0, setStart);
-        dataSet.addAttribute(new Attribute("title", authorName + " RNAi data set"));
-        writer.store(ItemHelper.convert(dataSet));
-
-        if (dataSource == null) {
-            dataSource = newItem("DataSource");
-            dataSource.addAttribute(new Attribute("name", "WormBase"));
-            writer.store(ItemHelper.convert(dataSource));
-        }
-
-        //intentionally throw away first line
-        String line = br.readLine();
-
-        while ((line = br.readLine()) != null) {
-            String[] array = line.split("\t", -1); //keep trailing empty Strings
-            Item gene = newGene(array[3], array[6], array[2],
-                                (array.length > 13 ? array[13] : null),
-                                (array.length > 14 ? array[14] : null));
-            String pubMedId;
-            if (array[7].startsWith("pmid:")) {
-                pubMedId = array[7].substring(5);
-            } else if (array[7].startsWith("pmid")) {
-                pubMedId = array[7].substring(4);
-            } else {
-                throw new IllegalArgumentException("pubMedId does not start with \"pmid:\""
-                                                   + " or \"pmid\": " + array[7]);
+            // throw out any headers
+            if (!readingData) {
+                if (line[0].startsWith("WBGene")) {
+                    readingData = true;
+                } else {
+                    continue;
+                }
             }
-            newAnnotation(gene,
-                          getPhenotype(array[4]),
-                          getExperimentalResult(pubMedId).getIdentifier());
-        }
-    }
 
-    /**
-     * @see FileConverter#close()
-     */
-    public void close() throws ObjectStoreException {
-        store(genes.values());
-        store(annotations.values());
-        store(phenotypes.values());
-    }
+            if (readingData) {
+                Item gene = createGene(line[0]);
 
-    /**
-     * Creates an Annotation, and puts it into a map for future reference.
-     * This map must be written out at the end.
-     *
-     * @param gene the gene to be attached
-     * @param phenotype the phenotype to be attached
-     * @param experimentalResultId the identifier of the ExperimentalResult to be put in the
-     * collection
-     */
-    protected void newAnnotation(Item gene, Item phenotype, String experimentalResultId) {
-        String annotationKey = gene.getIdentifier() + "-" + phenotype.getIdentifier();
-        Item annotation = (Item) annotations.get(annotationKey);
-        if (annotation == null) {
-            annotation = newItem("Annotation");
-            annotation.addReference(new Reference("subject", gene.getIdentifier()));
-            annotation.addReference(new Reference("property", phenotype.getIdentifier()));
-            ReferenceList experimentalResultCollection = new ReferenceList();
-            experimentalResultCollection.setName("evidence");
-            annotation.addCollection(experimentalResultCollection);
-            annotations.put(annotationKey, annotation);
-            annotationEvidence.put(annotationKey, new HashSet());
-        }
-        Set evidences = (Set) annotationEvidence.get(annotationKey);
-        if (!evidences.contains(experimentalResultId)) {
-            ReferenceList experimentalResultCollection = annotation.getCollection("evidence");
-            experimentalResultCollection.addRefId(experimentalResultId);
-            evidences.add(experimentalResultId);
-        }
-    }
+                // may be sixth column with a comment
+                String comment = null;
+                if (line.length == 6) {
+                    comment = line[5].trim();
+                }
+                Item phenotype = createPhenotype(line[3], line[4], comment);
+                phenotype.setReference("subject", gene.getIdentifier());
+                phenotype.setReference("gene", gene.getIdentifier());
 
-    /**
-     * Add a synonym to a gene
-     * @param gene a gene Item
-     * @param syn the actual synonym for the gene
-     * @throws ObjectStoreException if an error occurs when storing the Item
-     */
-    protected void addSynonym(Item gene, String syn) throws ObjectStoreException {
-        Item synonym = newSynonym(syn, gene);
-    }
+                Item pub = createPub(line[2]);
+                phenotype.setCollection("evidence", new ArrayList(
+                    Collections.singleton(pub.getIdentifier())));
+                Item screen = createScreen(pub);
+                phenotype.setReference("analysis", screen.getIdentifier());
 
-    /**
-     * Convenience method to create a new gene Item
-     * @param sequenceName the WormBase sequence name
-     * @param commonName the CGC-Approved gene name
-     * @param taxonId the Organism taxonId
-     * @param synonym1 a synonym, or null
-     * @param synonym2 another synonym, or null
-     * @return a new gene Item
-     * @throws ObjectStoreException if an error occurs when storing the Item
-     */
-    protected Item newGene(String sequenceName, String commonName, String taxonId,
-            String synonym1, String synonym2)  throws ObjectStoreException {
-        Item item = (Item) genes.get(sequenceName);
-        if (item == null) {
-            item = newItem("Gene");
-            item.addAttribute(new Attribute("identifier", sequenceName));
-            // identifier needs to be a Synonym for quick search to work
-            addSynonym(item, sequenceName);
-            if ((commonName != null) && (!"".equals(commonName))) {
-                item.addAttribute(new Attribute("name", commonName));
+                writer.store(ItemHelper.convert(phenotype));
             }
-            item.addReference(new Reference("organism", getOrganism(taxonId).getIdentifier()));
-            if ((synonym1 != null) && (!"".equals(synonym1))) {
-                addSynonym(item, synonym1);
-            }
-            if ((synonym2 != null) && (!"".equals(synonym2))) {
-                addSynonym(item, synonym2);
-            }
-            genes.put(sequenceName, item);
         }
-        return item;
     }
 
-    /**
-     * Convenience method to create and store a new synonym Item
-     * @param synonym the actual synonym
-     * @param subject the synonym's subject item
-     * @return a new synonym Item
-     * @throws ObjectStoreException if an error occurs in storing the Utem
-     */
-    protected Item newSynonym(String synonym, Item subject) throws ObjectStoreException {
-        if (synonyms.containsKey(synonym)) {
-            return (Item) synonyms.get(synonym);
+    private Item createGene(String organismDbId) throws ObjectStoreException {
+        Item gene = (Item) geneMap.get(organismDbId);
+        if (gene == null) {
+            gene = createItem("Gene");
+            gene.setReference("organism", org.getIdentifier());
+            gene.setAttribute("organismDbId", organismDbId);
+            geneMap.put(organismDbId, gene);
+
+            Item synonym = createItem("Synonym");
+            synonym.setAttribute("value", organismDbId);
+            synonym.setAttribute("type", "identifier");
+            synonym.setReference("subject", gene.getIdentifier());
+            synonym.setReference("source", dataSource.getIdentifier());
+
+            writer.store(ItemHelper.convert(gene));
+            writer.store(ItemHelper.convert(synonym));
         }
-        Item item = newItem("Synonym");
-        item.addAttribute(new Attribute("value", synonym));
-        item.addAttribute(new Attribute("type", "accession"));
-        item.addReference(new Reference("subject", subject.getIdentifier()));
-        item.addReference(new Reference("source", dataSource.getIdentifier()));
-        item.addToCollection("evidence", dataSet.getIdentifier());
-        writer.store(ItemHelper.convert(item));
-        synonyms.put(synonym, item);
-        return item;
+        return gene;
     }
 
-    /**
-     * Sets up a ExperimentalResult, Experiment, and Publication for a pubMedId, and puts them into
-     * a Map for future use, and stores them in the default writer.
-     *
-     * @param pubMedId the id of the publication
-     * @return an Item that is the ExperimentalResult
-     * @throws ObjectStoreException if an error occurs storing the Items
-     */
-    protected Item getExperimentalResult(String pubMedId) throws ObjectStoreException {
-        Item experimentalResult = (Item) experimentalResults.get(pubMedId);
-        if (experimentalResult == null) {
-            Item pub = newItem("Publication");
-            pub.addAttribute(new Attribute("pubMedId", pubMedId));
-            Item experiment = newItem("RNAiExperiment");
-            experiment.addReference(new Reference("publication", pub.getIdentifier()));
-            experimentalResult = newItem("ExperimentalResult");
-            experimentalResult.addReference(new Reference("analysis",
-                                                          experiment.getIdentifier()));
-
-            experimentalResults.put(pubMedId, experimentalResult);
-            writer.store(ItemHelper.convert(pub));
-            writer.store(ItemHelper.convert(experiment));
-            writer.store(ItemHelper.convert(experimentalResult));
+    private Item createPhenotype(String code, String desc, String comment)
+    throws ObjectStoreException {
+        Item rnaiPhenotype = createItem("RNAiPhenotype");
+        rnaiPhenotype.setAttribute("code", code);
+        rnaiPhenotype.setAttribute("name", desc);
+        if (comment != null && !comment.equals("")) {
+            rnaiPhenotype.setAttribute("comment", comment);
         }
-        return experimentalResult;
-    }
 
-    /**
-     * Sets up a organism for a taxonId, and puts it into a Map of organisms for future use,
-     * and stores it in the default writer.
-     *
-     * @param taxonId the id of the organism
-     * @return an Item that is the organism
-     * @throws ObjectStoreException if an error occurs storing the Item
-     */
-    protected Item getOrganism(String taxonId) throws ObjectStoreException {
-        Item organism = (Item) organisms.get(taxonId);
-        if (organism == null) {
-            organism = newItem("Organism");
-            organism.addAttribute(new Attribute("taxonId", taxonId));
-
-            organisms.put(taxonId, organism);
-            writer.store(ItemHelper.convert(organism));
-        }
-        return organism;
-    }
-
-    /**
-     * Sets up a phenotype for a code, and puts it into a Map for future use.
-     * They must be stored afterwards.
-     *
-     * @param code the code
-     * @return an Item that is the phenotype
-     */
-    protected Item getPhenotype(String code) {
-        if ("prz".equals(code) || "Prz".equals(code)) {
-            code = "Prl";
-        }
-        Item phenotype = (Item) phenotypes.get(code);
+        Item phenotype = (Item) phenotypeMap.get(code);
         if (phenotype == null) {
-            phenotype = newItem("Phenotype");
-            phenotype.addAttribute(new Attribute("RNAiCode", code));
-            phenotypes.put(code, phenotype);
+            phenotype = createItem("Phenotype");
+            phenotype.setAttribute("identifier", code);
+            phenotype.setAttribute("name", desc);
+            phenotype.setReference("ontology", ontology.getIdentifier());
+            phenotypeMap.put(code, phenotype);
+
+            writer.store(ItemHelper.convert(phenotype));
         }
-        return phenotype;
+        rnaiPhenotype.setReference("property", phenotype.getIdentifier());
+        return rnaiPhenotype;
     }
 
-    /**
-     * Convenience method for creating a new Item
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item newItem(String className) {
-        Item item = new Item();
-        item.setIdentifier(alias(className) + "_" + (id++));
-        item.setClassName(GENOMIC_NS + className);
-        item.setImplementations("");
-        return item;
+
+    private Item createPub(String pubMedId)
+        throws ObjectStoreException {
+        Item pub = (Item) pubMap.get(pubMedId);
+        if (pub == null) {
+            pub = createItem("Publication");
+            pub.setAttribute("pubMedId", pubMedId);
+            pubMap.put(pubMedId, pub);
+            writer.store(ItemHelper.convert(pub));
+        }
+        return pub;
+    }
+
+    private Item createScreen(Item pub)
+        throws ObjectStoreException {
+        String pubId = pub.getIdentifier();
+        Item screen = (Item) screenMap.get(pubId);
+        if (screen == null) {
+            screen = createItem("RNAiScreen");
+            screen.setReference("publication", pubId);
+            screen.setReference("organism", org.getIdentifier());
+            screenMap.put(pubId, screen);
+            writer.store(ItemHelper.convert(screen));
+        }
+        return screen;
+    }
+
+
+    private String newId(String className) {
+        Integer id = (Integer) ids.get(className);
+        if (id == null) {
+            id = new Integer(0);
+            ids.put(className, id);
+        }
+        id = new Integer(id.intValue() + 1);
+        ids.put(className, id);
+        return id.toString();
+    }
+
+    private Item createItem(String className) {
+        return itemFactory.makeItem(alias(className) + "_" + newId(className),
+                                    GENOMIC_NS + className, "");
     }
 }
 

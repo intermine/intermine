@@ -1,125 +1,83 @@
+<?xml version="1.0"?>
 <items>
-  <item id="6_19" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="876"/>
+  <item id="9_1" class="http://www.flymine.org/model/genomic#RNAiScreen">
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="publication" ref_id="8_1"/>
   </item>
-  <item id="7_20" class="http://www.flymine.org/model/genomic#RNAiExperiment">
-    <reference name="publication" ref_id="6_19"/>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="organismDbId" value="WBGene00016559"/>
+    <reference name="organism" ref_id="2_1"/>
   </item>
-  <item id="5_5" class="http://www.flymine.org/model/genomic#Phenotype">
-    <attribute name="RNAiCode" value="Sck"/>
-  </item>
-  <item id="9_9" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_5"/>
-    <reference name="subject" ref_id="2_2"/>
-    <collection name="evidence">
-      <reference ref_id="8_8"/>
-    </collection>
-  </item>
-  <item id="8_25" class="http://www.flymine.org/model/genomic#ExperimentalResult">
-    <reference name="analysis" ref_id="7_24"/>
-  </item>
-  <item id="7_24" class="http://www.flymine.org/model/genomic#RNAiExperiment">
-    <reference name="publication" ref_id="6_23"/>
-  </item>
-  <item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="AC7.1"/>
-    <reference name="organism" ref_id="4_4"/>
-  </item>
-  <item id="5_15" class="http://www.flymine.org/model/genomic#Phenotype">
-    <attribute name="RNAiCode" value="WT"/>
-  </item>
-  <item id="2_12" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="AC7.2a"/>
-    <attribute name="name" value="soc-2"/>
-    <reference name="organism" ref_id="4_4"/>
-  </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="6239"/>
-  </item>
-  <item id="9_11" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_10"/>
-    <reference name="subject" ref_id="2_2"/>
-    <collection name="evidence">
-      <reference ref_id="8_8"/>
-    </collection>
-  </item>
-  <item id="2_17" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="Flibble"/>
-    <reference name="organism" ref_id="4_4"/>
-  </item>
-  <item id="8_21" class="http://www.flymine.org/model/genomic#ExperimentalResult">
-    <reference name="analysis" ref_id="7_20"/>
-  </item>
-  <item id="0_0" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="RNAiConverterTest RNAi data set"/>
-  </item>
-  <item id="8_8" class="http://www.flymine.org/model/genomic#ExperimentalResult">
-    <reference name="analysis" ref_id="7_7"/>
-  </item>
-  <item id="3_13" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="accession"/>
-    <attribute name="value" value="AC7.2a"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="2_12"/>
-    <collection name="evidence">
-      <reference ref_id="0_0"/>
-    </collection>
-  </item>
-  <item id="3_14" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="accession"/>
-    <attribute name="value" value="sur-8"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="2_12"/>
-    <collection name="evidence">
-      <reference ref_id="0_0"/>
-    </collection>
-  </item>
-  <item id="3_3" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="accession"/>
-    <attribute name="value" value="AC7.1"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="2_2"/>
-    <collection name="evidence">
-      <reference ref_id="0_0"/>
-    </collection>
-  </item>
-  <item id="3_18" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="accession"/>
-    <attribute name="value" value="Flibble"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="2_17"/>
-    <collection name="evidence">
-      <reference ref_id="0_0"/>
-    </collection>
-  </item>
-  <item id="6_23" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="678"/>
-  </item>
-  <item id="5_10" class="http://www.flymine.org/model/genomic#Phenotype">
-    <attribute name="RNAiCode" value="Ste"/>
-  </item>
-  <item id="6_6" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="12529635"/>
-  </item>
-  <item id="9_16" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_15"/>
-    <reference name="subject" ref_id="2_12"/>
-    <collection name="evidence">
-      <reference ref_id="8_8"/>
-    </collection>
-  </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="WormBase"/>
   </item>
-  <item id="9_22" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="5_15"/>
-    <reference name="subject" ref_id="2_17"/>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Ontology">
+    <attribute name="title" value="WormBase phenotype codes"/>
+  </item>
+  <item id="8_2" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="11231151"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="6239"/>
+  </item>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#RNAiPhenotype">
+    <attribute name="code" value="Emb"/>
+    <attribute name="name" value="embryonic lethal"/>
+    <reference name="analysis" ref_id="9_1"/>
+    <reference name="gene" ref_id="4_1"/>
+    <reference name="property" ref_id="7_1"/>
+    <reference name="subject" ref_id="4_1"/>
     <collection name="evidence">
-      <reference ref_id="8_21"/>
-      <reference ref_id="8_25"/>
+      <reference ref_id="8_1"/>
     </collection>
   </item>
-  <item id="7_7" class="http://www.flymine.org/model/genomic#RNAiExperiment">
-    <reference name="publication" ref_id="6_6"/>
+  <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="WBGene00016559"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="4_2"/>
+  </item>
+  <item id="6_2" class="http://www.flymine.org/model/genomic#RNAiPhenotype">
+    <attribute name="code" value="WT"/>
+    <attribute name="comment" value="clone does not match to the reported genomic sequence"/>
+    <attribute name="name" value="wild type morphology"/>
+    <reference name="analysis" ref_id="9_2"/>
+    <reference name="gene" ref_id="4_2"/>
+    <reference name="property" ref_id="7_2"/>
+    <reference name="subject" ref_id="4_2"/>
+    <collection name="evidence">
+      <reference ref_id="8_2"/>
+    </collection>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="WormBase RNAi Phenotype"/>
+    <reference name="dataSource" ref_id="0_1"/>
+  </item>
+  <item id="7_1" class="http://www.flymine.org/model/genomic#Phenotype">
+    <attribute name="identifier" value="Emb"/>
+    <attribute name="name" value="embryonic lethal"/>
+    <reference name="ontology" ref_id="3_1"/>
+  </item>
+  <item id="9_2" class="http://www.flymine.org/model/genomic#RNAiScreen">
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="publication" ref_id="8_2"/>
+  </item>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="organismDbId" value="WBGene00015175"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="7_2" class="http://www.flymine.org/model/genomic#Phenotype">
+    <attribute name="identifier" value="WT"/>
+    <attribute name="name" value="wild type morphology"/>
+    <reference name="ontology" ref_id="3_1"/>
+  </item>
+  <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="WBGene00015175"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="4_1"/>
+  </item>
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="11099033"/>
   </item>
 </items>

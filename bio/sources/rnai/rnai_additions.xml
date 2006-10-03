@@ -1,7 +1,19 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.Phenotype" is-interface="true">
-  <attribute name="RNAiCode" type="java.lang.String"/>
+<class name="org.flymine.model.genomic.RNAiResult" extends="org.flymine.model.genomic.ExperimentalResult" is-interface="true">
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="rnaiResults"/>
 </class>
-<class name="org.flymine.model.genomic.RNAiExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true"/>
+<class name="org.flymine.model.genomic.RNAiPhenotype" extends="org.flymine.model.genomic.RNAiResult org.flymine.model.genomic.Annotation" is-interface="true">
+  <attribute name="code" type="java.lang.String"/>
+  <attribute name="name" type="java.lang.String"/>
+  <attribute name="comment" type="java.lang.String"/>
+</class>
+<class name="org.flymine.model.genomic.RNAiScreen" extends="org.flymine.model.genomic.Experiment" is-interface="true"/>
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/> 
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <collection name="rnaiResults" referenced-type="org.flymine.model.genomic.RNAiResult" reverse-reference="gene"/>
+</class>
+<class name="org.flymine.model.genomic.Phenotype" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+</class>
 </classes>

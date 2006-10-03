@@ -1,0 +1,8 @@
+This is a curated list of dsRNAs for the JAK/STAT screen by Baeg et al.							
+This list has had dsRNAs removed due to repeats and off-target predictions based on the work of Ma et al and Kulkarni et al.							
+							
+							
+Final Hit	HFA Amplicon	DRSC Amplicon	'S' Primer	'R' Primer	Amp. Length	Gene	Num Potential Off-Targs
+Y	HFA00439	DRSC00439	GACAATAATCTCGCGTATGAC	TCACCATATCACGACGTAAG	177	ed	0
+Y	HFA00447	DRSC03055	ACTTCGTCCAGGACACCT	GGCCAAGGGCAAGCTTAA	332	CG15432	7
+Y	HFA00591	DRSC00591	TCAAGGCCGCCAAACTG	CCACCCAAATTCGTCCTCT	441	CG3304	2

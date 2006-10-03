@@ -10,7 +10,6 @@
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/sources/rnai/rnai_additions.xml"/>
     <merge-additions file="bio/sources/ensembl/ensembl_additions.xml"/>
-    <merge-additions file="bio/sources/phenotype/phenotype_additions.xml"/>
     <merge-additions file="bio/sources/go/go_additions.xml"/>
     <merge-additions file="bio/sources/go-annotation/go-annotation_additions.xml"/>
     <merge-additions file="bio/sources/uniprot/uniprot_additions.xml"/>
@@ -29,6 +28,7 @@
     <merge-additions file="bio/sources/diseaseregion/diseaseregion_additions.xml"/>
     <merge-additions file="bio/sources/affy-probes/affy-probes_additions.xml"/>
     <merge-additions file="bio/sources/flyatlas/flyatlas_additions.xml"/>
+    <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
   </target>
 
 </project>

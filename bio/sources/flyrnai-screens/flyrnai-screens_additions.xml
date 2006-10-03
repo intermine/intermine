@@ -6,18 +6,14 @@
     <attribute name="cellLine" type="java.lang.String"/>
     <attribute name="phenotypeDescription" type="java.lang.String"/>
     <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/> 
-    <collection name="screenHits"
-                referenced-type="org.flymine.model.genomic.ScreenHit" reverse-reference="screen"/> 
   </class>
-  <class name="org.flymine.model.genomic.ScreenHit" 
+  <class name="org.flymine.model.genomic.RNAiScreenHit" extends="org.flymine.model.genomic.RNAiResult"
          is-interface="true">
     <attribute name="strength" type="java.lang.Integer"/>
+    <attribute name="hasPredictedOffTargetEffect" type="java.lang.Boolean"/>
     <attribute name="phenotype" type="java.lang.String"/>
     <attribute name="numOffTargets" type="java.lang.Integer"/>
     <attribute name="maxOffTargetOverlaps" type="java.lang.Integer"/>
-    <reference name="screen" referenced-type="org.flymine.model.genomic.RNAiScreen" 
-               reverse-reference="screenHits"/>
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     <reference name="amplicon"
                referenced-type="org.flymine.model.genomic.Amplicon" 
                reverse-reference="screenHits"/>
@@ -25,6 +21,12 @@
   <class name="org.flymine.model.genomic.Amplicon" 
          extends="org.flymine.model.genomic.LocatedSequenceFeature"
          is-interface="true">
-    <collection name="screenHits" referenced-type="org.flymine.model.genomic.ScreenHit"/>
+    <collection name="screenHits" referenced-type="org.flymine.model.genomic.RNAiScreenHit"/>
   </class>
+  <class name="org.flymine.model.genomic.RNAiResult" extends="org.flymine.model.genomic.ExperimentalResult" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="rnaiResults"/>
+  </class>
+<class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <collection name="rnaiResults" referenced-type="org.flymine.model.genomic.RNAiResult" reverse-reference="gene"/>
+</class>
 </classes>
