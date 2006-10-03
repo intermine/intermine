@@ -10,7 +10,9 @@ package org.intermine.dataloader;
  *
  */
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -31,6 +33,7 @@ public class EquivalentObjectHints
 
     private boolean databaseEmptyChecked = false;
     private boolean databaseEmpty = false;
+    private Map classStatus = new HashMap();
 
     private ObjectStore os;
 
@@ -77,9 +80,29 @@ public class EquivalentObjectHints
      * @return a boolean
      */
     public boolean classNotExists(Class clazz) {
-        // For now, we can just ignore all the parameters, and check to see if the database is empty
-        // or not.
-        return databaseEmpty();
+        if (databaseEmpty) {
+            return true;
+        }
+        Boolean status = (Boolean) classStatus.get(clazz);
+        if (status == null) {
+            try {
+                Query q = new Query();
+                QueryClass qc = new QueryClass(clazz);
+                q.addFrom(qc);
+                q.addToSelect(qc);
+                List results = os.execute(q, 0, 1, false, false, os.getSequence());
+                if (results.isEmpty()) {
+                    status = Boolean.TRUE;
+                } else {
+                    status = Boolean.FALSE;
+                }
+                classStatus.put(clazz, status);
+            } catch (ObjectStoreException e) {
+                LOG.error("Error checking database for " + clazz, e);
+                return false;
+            }
+        }
+        return status.booleanValue();
     }
 
     /**
@@ -94,6 +117,6 @@ public class EquivalentObjectHints
     public boolean pkQueryFruitless(Class clazz, String fieldName, Object value) {
         // For now, we can just ignore all the parameters, and check to see if the database is empty
         // or not.
-        return databaseEmpty();
+        return classNotExists(clazz);
     }
 }
