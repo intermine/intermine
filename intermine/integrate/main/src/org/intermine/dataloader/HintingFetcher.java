@@ -11,11 +11,13 @@ package org.intermine.dataloader;
  */
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Class providing EquivalentObjectFetcher functionality that makes use of hints to improve
@@ -25,6 +27,7 @@ import org.intermine.model.InterMineObject;
  */
 public class HintingFetcher implements EquivalentObjectFetcher
 {
+    ObjectStore os;
     EquivalentObjectHints hints;
     EquivalentObjectFetcher fetcher;
 
@@ -35,6 +38,7 @@ public class HintingFetcher implements EquivalentObjectFetcher
      * @param fetcher another EquivalentObjectFetcher
      */
     public HintingFetcher(ObjectStore os, EquivalentObjectFetcher fetcher) {
+        this.os = os;
         this.hints = new EquivalentObjectHints(os);
         this.fetcher = fetcher;
     }
@@ -46,6 +50,15 @@ public class HintingFetcher implements EquivalentObjectFetcher
         throws ObjectStoreException {
         if (hints.databaseEmpty()) {
             return Collections.EMPTY_SET;
+        }
+        Iterator classIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
+        while (classIter.hasNext()) {
+            Class clazz = (Class) classIter.next();
+            if (os.getModel().hasClassDescriptor(clazz.getName())) {
+                if (hints.classNotExists(clazz)) {
+                    return Collections.EMPTY_SET;
+                }
+            }
         }
         return fetcher.queryEquivalentObjects(obj, source);
     }
