@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.ProbeSet" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.ProbeSet" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   <attribute name="isControl" type="java.lang.Boolean"/>
   <attribute name="description" type="java.lang.String"/>
   <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="probeSets"/>
