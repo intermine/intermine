@@ -3,20 +3,6 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
-    <title>Presentations</title>
-
-    <itemizedlist>
-      <listitem>
-        <para><ulink url="techtalks/">Technology talks</ulink></para>
-      </listitem>
-
-      <listitem>
-        <para><ulink url="presentations/">Group talks</ulink></para>
-      </listitem>
-    </itemizedlist>
-  </section>
-
-  <section>
     <title>Design documents</title>
 
     <itemizedlist>
