@@ -355,10 +355,20 @@
 
   <class className="org.flymine.model.genomic.Reporter">
     <fields>
-      <fieldconfig fieldExpr="material.identifier" showInResults="false"/>
-      <fieldconfig fieldExpr="failType"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="value"/>
+      <fieldconfig fieldExpr="scale"/>
       <fieldconfig fieldExpr="isControl"/>
-      <fieldconfig fieldExpr="controlType"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.FlyAtlasResult">
+    <fields>
+      <fieldconfig fieldExpr="affyCall"/>
+      <fieldconfig fieldExpr="enrichment"/>
+      <fieldconfig fieldExpr="MRNASignal"/>
+      <fieldconfig fieldExpr="MRNASignalSEM"/>
+      <fieldconfig fieldExpr="presentCall"/>
     </fields>
   </class>
 
@@ -409,6 +419,7 @@
 
   <class className="org.flymine.model.genomic.MicroArrayAssay">
     <fields>
+      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="sample1"/>
       <fieldconfig fieldExpr="sample2"/>
     </fields>
