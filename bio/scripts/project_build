@@ -278,22 +278,21 @@ sub start_element
   my $dump_flag = exists $args->{Attributes}{dump};
   my $index_flag = exists $args->{Attributes}{index};
 
-  my $type;
-
   if ($element_name eq 'source') {
-    $type = 'integrate';
+    push @{$self->{actions}}, {
+                               type => 'integrate',
+                               args => ["-Dsource=$action_name"]
+                              };
   } else {
     if ($element_name eq 'post-process') {
-      $type = 'postprocess';
+      push @{$self->{actions}}, {
+                                 type => 'integrate',
+                                 args => ["-Daction=$action_name"]
+                                };
     } else {
       return;
     }
   }
-
-  push @{$self->{actions}}, {
-                            type => $type,
-                            args => ["-Dsource=$action_name"]
-                           };
 
   if ($dump_flag) {
     push @{$self->{actions}}, {
