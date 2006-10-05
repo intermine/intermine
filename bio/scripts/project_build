@@ -192,12 +192,20 @@ sub dump_db
   log_and_print `date`, "\n\n";
   log_and_print "\ndumping: @dump_command @params\n";
 
-  if (!$dry_run) {
+  my @spawn_args = ("@dump_command @params; echo __DUMP_FINISHED__");
+
+  if ($host ne 'localhost') {
+    unshift @spawn_args, "ssh", $dump_host;
+  }
+
+  if ($dry_run) {
+    log_and_print "command to run: @spawn_args\n";
+  } else {
     my $exp = new Expect;
 
     $exp->raw_pty(1);
-    $exp->spawn("ssh", $dump_host, "@dump_command @params; echo __DUMP_FINISHED__")
-    or die "Cannot spawn @dump_command @params: $!\n";
+    $exp->spawn(@spawn_args)
+      or die "Cannot spawn @dump_command @params: $!\n";
 
     $exp->expect(10, 'Password: ');
     $exp->send("$pass\n");
@@ -228,12 +236,21 @@ sub load_db
   log_and_print "\nrunning: @psql_command @params\n";
   warn "(ignore password prompt)\n";
 
-  if (!$dry_run) {
+  my @spawn_args = ("@psql_command @params; echo __LOAD_FINISHED__");
+
+  if ($host ne 'localhost') {
+    unshift @spawn_args, "ssh", $dump_host;
+  }
+
+  if ($dry_run) {
+    log_and_print "command to run: @spawn_args\n";
+  } else {
     my $exp = new Expect;
 
     $exp->raw_pty(1);
-    $exp->spawn("ssh", $dump_host, "@psql_command @params; echo __LOAD_FINISHED__")
-    or die "Cannot spawn @psql_command @params: $!\n";
+
+    $exp->spawn(@spawn_args)
+      or die "Cannot spawn @psql_command @params: $!\n";
 
     $exp->expect(10, 'Password: ');
     $exp->send("$pass\n");
@@ -354,9 +371,17 @@ sub get_restart_dump_suffix
 
   my %remote_suffixes = ();
 
-  open REMOTE, qq{ssh $dump_host "ls -1 $dump_file_prefix.*"|};
+  my $command;
 
-  while (my $line = <REMOTE>) {
+  if ($dump_host eq 'localhost') {
+    $command = qq{ls -1 $dump_file_prefix.*};
+  } else {
+    $command = qq{ssh $dump_host "ls -1 $dump_file_prefix.*"};
+  }
+
+  open LS_OUTPUT, qq{$command|};
+
+  while (my $line = <LS_OUTPUT>) {
     chomp $line;
     if ($line =~ /$dump_file_prefix.(.*)/) {
       $remote_suffixes{$1} = 1;
@@ -375,6 +400,8 @@ sub get_restart_dump_suffix
       }
     }
   }
+
+  close LS_OUTPUT;
 
   return $restart_dump_suffix;
 }
