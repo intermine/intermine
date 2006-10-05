@@ -131,7 +131,7 @@
     <source name="name-and-wildtypefunction" type="tab-separated-file" dump="true">
       <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
       <property name="tsv.includes" value="flyBaseFullNameWT.txt"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3"/>
     </source>
 
     <!--
