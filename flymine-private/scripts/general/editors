@@ -1,9 +1,0 @@
-#!/bin/bash
-
-echo ""
-(
-    cvs -n -q update | grep "^[AMCR] " | sed -e "s/^\([AMCR]\) /\1	$USER	/"
-    cvs editors 2>&1 | sed -e "s/^\([^	]*\)	\([^	]*\)	.*$/.	\2	\1/" | sed -e "s/^\? /\?	$USER	/"
-) | sort -k3 -k2 -r -k1 | uniq -f 1 -t "	" | sed -e "s/^\([.?AMCR]\)	\([^	]*\)	/\2	\1	/" | sort -k3 -k1 | sed -e "s/^\([^	]\+\)	\.	/\1		/"
-echo ""
-
