@@ -1,0 +1,4 @@
+DrosDel is a collection of P-element insertions for generating custom
+chromosomal aberrations in D. melanogaster.  This source adds
+ArtificialDeletion and TransposableElementInsertionSite to the model and loads
+objects of those types from a copy of the DrosDel database.
