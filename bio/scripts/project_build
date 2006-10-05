@@ -303,7 +303,7 @@ sub start_element
   } else {
     if ($element_name eq 'post-process') {
       push @{$self->{actions}}, {
-                                 type => 'integrate',
+                                 type => 'postprocess',
                                  args => ["-Daction=$action_name"]
                                 };
     } else {
