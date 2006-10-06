@@ -34,7 +34,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 
 /**
- * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
+ * DataConverter to parse an INPARANOID Orthologue/Paralogue "longsqltable" data file into Items
  * @author Mark Woodbridge
  * @author Richard Smith
  */
@@ -80,16 +80,12 @@ public class InparanoidConverter extends FileConverter
                 PropertiesUtil.getPropertiesStartingWith(code, props));
             String taxonId = codeProps.getProperty("taxonid");
             if (taxonId == null) {
-                System.out.println("taxonIds: " + taxonIds);
-                System.out.println("orgSources: " + orgSources);
                 throw new IllegalArgumentException("Unable to find taxonId property for code: "
                                                    + code + " in file: " + PROP_FILE);
             }
             taxonId = taxonId.trim();
             String source = codeProps.getProperty("source");
             if (taxonId == null) {
-                System.out.println("taxonIds: " + taxonIds);
-                System.out.println("orgSources: " + orgSources);
                 throw new IllegalArgumentException("Unable to find source property for code: "
                                                    + code + " in file: " + PROP_FILE);
             }
@@ -135,7 +131,10 @@ public class InparanoidConverter extends FileConverter
                 transId = array[4];
             }
 
+            String organismDbId = null;
+
             // for ensembl data we can create corresponding genes, parse id from additional info
+            // Ensembl gene id should be identifier
             if (array[2].startsWith("ens")) {
                 String info = array[7];
                 StringTokenizer tok = new StringTokenizer(info, " ");
@@ -145,6 +144,9 @@ public class InparanoidConverter extends FileConverter
                         geneId = bit.substring(5);
                     }
                 }
+            } else {
+                // model organism db identifiers set as Gene.organismDbId
+                organismDbId = geneId;
             }
 
             if (!index.equals(oldIndex)) {
@@ -154,22 +156,22 @@ public class InparanoidConverter extends FileConverter
                 oldIndex = index;
                 species = array[2];
                 if (transId != null) {
-                    trans = newBioEntity(transId, getOrganism(species), "Translation");
+                    trans = newBioEntity(transId, null, getOrganism(species), "Translation");
                 }
                 if (geneId != null) {
-                    gene = newBioEntity(geneId, getOrganism(species), "Gene");
+                    gene = newBioEntity(geneId, organismDbId, getOrganism(species), "Gene");
                 }
                 continue;
             }
 
             Item newTrans = null;
             if (transId != null) {
-                newTrans = newBioEntity(transId, getOrganism(array[2]), "Translation");
+                newTrans = newBioEntity(transId, null, getOrganism(array[2]), "Translation");
             }
 
             Item newGene = null;
             if (geneId != null) {
-                newGene = newBioEntity(geneId, getOrganism(array[2]), "Gene");
+                newGene = newBioEntity(geneId, organismDbId, getOrganism(array[2]), "Gene");
             }
             Item result = newResult(array[3]);
 
@@ -237,17 +239,18 @@ public class InparanoidConverter extends FileConverter
      * @param identifier identifier for the new Gene/Protein
      * @param organism the Organism for this protein
      * @param type create either a Gene or Translation
+     * @param organismDbId if not null will be set to Gene.organismDbId
      * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected Item newBioEntity(String identifier, Item organism, String type)
+    protected Item newBioEntity(String identifier, String organismDbId, Item organism, String type)
         throws ObjectStoreException {
         // HACK mouse and rat identifiers should have 'MGI:' and 'RGD:' at the start
         String taxonId = organism.getAttribute("taxonId").getValue();
         if (taxonId.equals("10116")) {
-            identifier = "RGD:" + identifier;
+            organismDbId = "RGD:" + organismDbId;
         } else if (taxonId.equals("10090")) {
-            identifier = "MGI:" + identifier;
+            organismDbId = "MGI:" + organismDbId;
         }
 
         // lookup by identifier and type, sometimes same id for translation and gene
@@ -257,7 +260,11 @@ public class InparanoidConverter extends FileConverter
         }
 
         Item item = createItem(type);
-        item.setAttribute("identifier", identifier);
+        if (type.equals("Gene") && organismDbId != null) {
+            item.setAttribute("organismDbId", organismDbId);
+        } else {
+            item.setAttribute("identifier", identifier);
+        }
         item.setReference("organism", organism.getIdentifier());
         bioEntities.put(key, item);
 

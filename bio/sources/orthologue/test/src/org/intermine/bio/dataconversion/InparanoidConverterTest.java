@@ -51,15 +51,10 @@ public class InparanoidConverterTest extends TestCase
         // note that the confidence for the first member of a group appears to be meaningless (row 1).
         // the fifth is some form of swissprot id to identify the protein
         // so...this input should produce one orthologue (rows 1 & 3) and two paralogues (1 & 2, 3 & 4)
-        String input = "14\t1217\tensCE\t1.000\tF25B5.4a.1\t100%\tUbiquitin.\tCaenorhabditis_elegans.CEL130.dec.pep.fa:>F25B5.4a.1 pep:known Chromosome:CEL130:III:5940931:5943782:1 gene:F25B5.4 transcript:F25B5.4a.1\tF25B5.4" + ENDL
-            + "14\t1217\tensCE\t0.997\tB0261.2a\t100%\tTarget of rapamycin homolog (EC 2.7.1.-) (CeTOR) (Lethal protein 363).\tCaenorhabditis_elegans.CEL130.dec.pep.fa:>B0261.2a pep:known Chromosome:CEL130:I:5245784:5262993:1 gene:B0261.2 transcript:B0261.2a\tQ95Q95" + ENDL
+        String input = "14\t1217\tmodSC\t1.000\tS000001208\t100%\tUbiquitin.\t\tF25B5.4" + ENDL
+            + "14\t1217\tmodSC\t0.997\tS000003666\t100%\t(Lethal protein 363).\t\tQ95Q95" + ENDL
             + "14\t1217\tensAG\t1.000\tENSANGP00000028450\t100%\t40S RIBOSOMAL S27A Ensembl-family member\tAnopheles_gambiae.MOZ2a.dec.pep.fa:>ENSANGP00000028450 pep:novel chromosome:MOZ2a:2R:12996734:12999022:1 gene:ENSANGG00000024959 transcript:ENSANGT00000029080" + ENDL
             + "14\t1217\tensAG\t0.566\tENSANGP00000008615\t100%\tF25C8.3 PROTEIN.\tAnopheles_gambiae.MOZ2a.dec.pep.fa:>ENSANGP00000008615 pep:known chromosome:MOZ2a:2R:6308197:6324138:-1 gene:ENSANGG00000006494 transcript:ENSANGT00000008615\tQ8T5I0" + ENDL;
-
-        String old = "14\t1217\tCE\t1.000\tT21E12.4" + ENDL
-            + "14\t1217\tCE\t0.997\tZK617.1b" + ENDL
-            + "14\t1217\tAG\t1.000\tCG32019-PA" + ENDL
-            + "14\t1217\tAG\t0.566\tCG10844-PA" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new InparanoidConverter(itemWriter);
@@ -67,9 +62,9 @@ public class InparanoidConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
- //         FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
-//          fw.write(FullRenderer.render(itemWriter.getItems()));
-//          fw.close();
+//           FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
+//           fw.write(FullRenderer.render(itemWriter.getItems()));
+//           fw.close();
 
         System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
         assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
