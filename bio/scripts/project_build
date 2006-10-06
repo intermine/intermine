@@ -194,7 +194,9 @@ sub dump_db
 
   my @spawn_args = ("@dump_command @params; echo __DUMP_FINISHED__");
 
-  if ($host ne 'localhost') {
+  if ($host eq 'localhost') {
+    @spawn_args = "sh -c '@spawn_args'";
+  } else {
     unshift @spawn_args, "ssh", $dump_host;
   }
 
@@ -238,7 +240,9 @@ sub load_db
 
   my @spawn_args = ("@psql_command @params; echo __LOAD_FINISHED__");
 
-  if ($host ne 'localhost') {
+  if ($host eq 'localhost') {
+    @spawn_args = "sh -c '@spawn_args'";
+  } else {
     unshift @spawn_args, "ssh", $dump_host;
   }
 
