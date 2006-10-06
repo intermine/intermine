@@ -71,6 +71,7 @@ public class UniprotDataTranslator extends DataTranslator
     private boolean createGeneIdentifier = true;
     private Item uniprotDataSet;
     private Reference uniprotDataSetRef;
+    private Map ids = new HashMap();
 
     private Set geneIdentifiers = new HashSet();
 
@@ -85,7 +86,7 @@ public class UniprotDataTranslator extends DataTranslator
         super(srcItemReader, mapping, srcModel, tgtModel);
         this.srcItemReader = srcItemReader;
 
-        uniprotDataSet = createItem("DataSet");
+        uniprotDataSet = createItem(tgtNs + "DataSet");
         // TODO: the dataset name shouldn't be hard coded:
         uniprotDataSet.addAttribute(new Attribute("title", "UniProt data set"));
         uniprotDataSetRef = new Reference("source", uniprotDataSet.getIdentifier());
@@ -186,7 +187,7 @@ public class UniprotDataTranslator extends DataTranslator
 
             // 1. create Protein, same for all organisms
             // <entry>
-            Item protein = createItem(tgtNs + "Protein", "");
+            Item protein = createItem(tgtNs + "Protein");
 
             // find name and set all names as synonyms
             List proteinNames = getItemsInCollection(srcItem.getCollection("names"));
@@ -257,7 +258,7 @@ public class UniprotDataTranslator extends DataTranslator
                 String srcCommentType = getAttributeValue(srcComment, "type");
                 String srcCommentText = getAttributeValue(srcComment, "text");
                 if ((srcCommentType != null) && (srcCommentText != null)) {
-                    Item comment = createItem(tgtNs + "Comment", "");
+                    Item comment = createItem(tgtNs + "Comment");
                     comment.addAttribute(new Attribute("type", srcCommentType));
                     comment.addAttribute(new Attribute("text", srcCommentText));
                     comment.addReference(uniprotDataSetRef);
@@ -291,7 +292,7 @@ public class UniprotDataTranslator extends DataTranslator
                             .get(pubMedString);
                         pubLinkCount++;
                         if (publicationId == null) {
-                            Item publication = createItem(tgtNs + "Publication", "");
+                            Item publication = createItem(tgtNs + "Publication");
                             publication.addAttribute(new Attribute("pubMedId", pubMedString));
                             retval.add(publication);
                             publicationId = publication.getIdentifier();
@@ -318,7 +319,7 @@ public class UniprotDataTranslator extends DataTranslator
             if (seqRef != null) {
                 Item srcSeq = ItemHelper.convert(srcItemReader.getItemById(seqRef.getRefId()));
                 if (srcSeq != null) {
-                    Item sequence = createItem(tgtNs + "Sequence", "");
+                    Item sequence = createItem(tgtNs + "Sequence");
                     String residues = srcSeq.getAttribute("sequence").getValue();
                     sequence.addAttribute(new Attribute("residues", residues));
                     sequence.addAttribute(new Attribute("length", "" + residues.length()));
@@ -357,7 +358,7 @@ public class UniprotDataTranslator extends DataTranslator
                         if (isGenomicDna && (emblProteinId != null)) {
                             protein.setAttribute("emblProteinId",
                                             (emblProteinId.indexOf(".") > 0
-                                            ? emblProteinId.substring(0, emblProteinId.indexOf(".")) 
+                                            ? emblProteinId.substring(0, emblProteinId.indexOf("."))
                                             : emblProteinId));
                             break;
                         }
@@ -415,85 +416,68 @@ public class UniprotDataTranslator extends DataTranslator
                 }
 
                 String dbId = null;
-                boolean createGene = false;
+                // define a gene identifier we always expect to find that is unique to this gene
+                // is different for each organism
+                String uniqueGeneIdentifier = null;
                 // geneOrganismDbId = <entry><dbReference><type="FlyBase/WormBase/..">
                 //             where designation = primary gene name
                 String geneOrganismDbId = null;
                 if (taxonId == 7227) { // D. melanogaster
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "FlyBase", geneNames);
                     // For fly data use CGxxx as key instead of FBgnxxx
-                    if (geneIdentifier != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("FlyBase");
-                    }
+                    uniqueGeneIdentifier = geneIdentifier;
+                    dbId = getDataSourceId("FlyBase");
                 } else if (taxonId == 6239) { // C. elegans
+                    // leave gene identifier as ORF id, is already ensembl id
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
-                    if (geneOrganismDbId != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("WormBase");
-                    }
+                    // was organismDbId, ok ot change?
+                    uniqueGeneIdentifier = geneIdentifier;
+                    dbId = getDataSourceId("WormBase");
                 } else if (taxonId == 3702) { // Arabidopsis thaliana
                     geneOrganismDbId = (String) geneNameTypeToName.get("ordered locus");
-                    if (geneOrganismDbId != null) {
-                        geneOrganismDbId = geneOrganismDbId.toUpperCase();
-                        createGene = true;
-                        dbId = getDataSourceId("UniProt");
-                    }
-                } else if (taxonId == 4896) {
+                    geneOrganismDbId = geneOrganismDbId.toUpperCase();
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    dbId = getDataSourceId("UniProt");
+                } else if (taxonId == 4896) {  // S. pombe
                     geneOrganismDbId = (String) geneNameTypeToName.get("ORF");
-                    if (geneOrganismDbId != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("GeneDB");
-                    }
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    dbId = getDataSourceId("GeneDB");
                 } else if (taxonId == 180454) { // A. gambiae str. PEST
                     // no organismDbId and no specific dbxref to ensembl - assume that
                     // geneIdentifier is always ensembl gene stable id and set organismDbId
                     // to be identifier
-                    if (geneIdentifier != null) {
-                        createGene = true;
-                        geneOrganismDbId = geneIdentifier;
-                        dbId = getDataSourceId("ensembl");
-                    }
+                    uniqueGeneIdentifier = geneIdentifier;
+                    geneOrganismDbId = geneIdentifier;
+                    dbId = getDataSourceId("Ensembl");
                 } else if (taxonId == 9606) { // H. sapiens
                     geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
-                    createGeneIdentifier = false;
-                    if (geneOrganismDbId != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("Ensembl");
-                    }
+                    geneIdentifier = geneOrganismDbId;
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    dbId = getDataSourceId("Ensembl");
                 } else if (taxonId == 4932) { // S. cerevisiae
                     // need to set SGD identifier to be SGD accession, also set organismDbId
-                    geneIdentifier = getDataSourceReferenceValue(srcItem, "SGD", geneNames);
-                    geneOrganismDbId = geneIdentifier;
-                    if (geneIdentifier != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("SGD");
-                    }
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "SGD", geneNames);
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    dbId = getDataSourceId("SGD");
                 } else if (taxonId == 36329) { // Malaria
                     geneOrganismDbId = geneIdentifier;
-                    if (geneIdentifier != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("GeneDB");
-                    }
+                    uniqueGeneIdentifier = geneIdentifier;
+                    dbId = getDataSourceId("GeneDB");
                 } else if (taxonId == 10090) { // Mus musculus
-                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
-                    geneIdentifier = getDataSourceReferenceValue(srcItem, "MGI", geneNames);
-                    if (geneOrganismDbId != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("Ensembl");
-                    }
-
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "MGI", geneNames);
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    dbId = getDataSourceId("Ensembl");
                 } else if (taxonId == 10116) { // Rattus norvegicus
-                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
-                    geneIdentifier = getDataSourceReferenceValue(srcItem, "RGD", geneNames);
+                    geneIdentifier = getDataSourceReferenceValue(srcItem, "Ensembl", geneNames);
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "RGD", geneNames);
                     // HACK in other places the RGD identifers start with 'RGD:'
-                    if (geneIdentifier != null && !geneIdentifier.startsWith("RGD:")) {
-                        geneIdentifier = "RGD:" + geneIdentifier;
+                    if (geneOrganismDbId != null && !geneOrganismDbId.startsWith("RGD:")) {
+                        geneOrganismDbId = "RGD:" + geneOrganismDbId;
                     }
-                    if (geneOrganismDbId != null) {
-                        createGene = true;
-                        dbId = getDataSourceId("Ensembl");
-                    }
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    dbId = getDataSourceId("Ensembl");
                 }
 
                 // output gene identifier details
@@ -510,10 +494,9 @@ public class UniprotDataTranslator extends DataTranslator
 
                 // uniprot data source has primary key of Gene.organismDbId
                 // only create gene if a value was found
-                if (createGene) {
+                if (uniqueGeneIdentifier != null) {
                     // may alrady have created this gene
-                    String geneItemId = (String) geneIdentifierToId.get(geneOrganismDbId);
-                    ReferenceList geneSynonyms = new ReferenceList("synonyms", new ArrayList());
+                    String geneItemId = (String) geneIdentifierToId.get(uniqueGeneIdentifier);
 
                     // UniProt sometimes has same identifier paired with two organismDbIds
                     // causes problems merging other data sources.  Simple check to prevent
@@ -527,7 +510,7 @@ public class UniprotDataTranslator extends DataTranslator
                         isDuplicateIdentifier = true;
                     }
                     if ((geneItemId == null) && !isDuplicateIdentifier) {
-                        Item gene = createItem(tgtNs + "Gene", "");
+                        Item gene = createItem(tgtNs + "Gene");
                         if (geneOrganismDbId != null) {
                             if (geneOrganismDbId.equals("")) {
                                 LOG.info("geneOrganismDbId was empty string");
@@ -535,7 +518,6 @@ public class UniprotDataTranslator extends DataTranslator
                             gene.addAttribute(new Attribute("organismDbId", geneOrganismDbId));
                             Item synonym = createSynonym(gene.getIdentifier(), "identifier",
                                                          geneOrganismDbId, dbId);
-                            geneSynonyms.addRefId(synonym.getIdentifier());
                             retval.add(synonym);
                         }
 
@@ -545,7 +527,6 @@ public class UniprotDataTranslator extends DataTranslator
                             if (!geneIdentifier.equals(geneOrganismDbId)) {
                                 Item synonym = createSynonym(gene.getIdentifier(), "identifier",
                                                              geneIdentifier, dbId);
-                                geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }
                             // keep a track of non-null gene identifiers
@@ -574,13 +555,11 @@ public class UniprotDataTranslator extends DataTranslator
                                     (type.equals("primary") || type.equals("synonym"))
                                                              ? "symbol" : type,
                                                              symbol, dbId);
-                                geneSynonyms.addRefId(synonym.getIdentifier());
                                 retval.add(synonym);
                             }
                         }
-                        gene.addCollection(geneSynonyms);
                         geneItemId = gene.getIdentifier();
-                        geneIdentifierToId.put(geneOrganismDbId, geneItemId);
+                        geneIdentifierToId.put(uniqueGeneIdentifier, geneItemId);
                         retval.add(gene);
                     }
 
@@ -603,7 +582,7 @@ public class UniprotDataTranslator extends DataTranslator
 
 
     private Item createSynonym(String subjectId, String type, String value, String dbId) {
-        Item synonym = createItem(tgtNs + "Synonym", "");
+        Item synonym = createItem(tgtNs + "Synonym");
         synonym.addReference(new Reference("subject", subjectId));
         synonym.addAttribute(new Attribute("type", type));
         synonym.addAttribute(new Attribute("value", value));
@@ -618,7 +597,7 @@ public class UniprotDataTranslator extends DataTranslator
     private Item getDataSource(String title) {
         Item database = (Item) databases.get(title);
         if (database == null) {
-            database = createItem(tgtNs + "DataSource", "");
+            database = createItem(tgtNs + "DataSource");
             database.addAttribute(new Attribute("name", title));
             databases.put(title, database);
         }
@@ -632,7 +611,7 @@ public class UniprotDataTranslator extends DataTranslator
     private Item getOrganism(int taxonId) {
         Integer taxonIdObj = new Integer(taxonId);
         if (organisms.get(taxonIdObj) == null) {
-            Item organism = createItem(tgtNs + "Organism", "");
+            Item organism = createItem(tgtNs + "Organism");
             organism.addAttribute(new Attribute("taxonId", taxonIdObj.toString()));
             organisms.put(taxonIdObj, organism);
         }
@@ -704,6 +683,27 @@ public class UniprotDataTranslator extends DataTranslator
         return getItemsInCollection(col, null, null);
     }
 
+
+    /**
+     * Convenience method for creating a new Item
+     * @param className the name of the class
+     * @return a new Item
+     */
+    protected Item createItem(String className) {
+        return itemFactory.makeItem(alias(className) + "_" + newId(className),
+                                    className, "");
+    }
+
+    private String newId(String className) {
+        Integer id = (Integer) ids.get(className);
+        if (id == null) {
+            id = new Integer(0);
+            ids.put(className, id);
+        }
+        id = new Integer(id.intValue() + 1);
+        ids.put(className, id);
+        return id.toString();
+    }
 
     /**
      * Given a ReferenceList fetch items and return a list of Items in the order that their
