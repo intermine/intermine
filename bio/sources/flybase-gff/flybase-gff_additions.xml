@@ -78,4 +78,7 @@
   <class name="org.flymine.model.genomic.ChromosomeArm" 
          extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   </class>
+  <class name="org.flymine.model.genomic.TFmodule" 
+         extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
+  </class>
 </classes>
