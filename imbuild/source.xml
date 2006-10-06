@@ -150,9 +150,6 @@
   -->
   <target name="-pre-load" depends="-init-flags">
     <property name="ignore.duplicates" value="false"/>
-    <echo message="indexing: os.${common.os.prefix}-tgt-items-std"/>
-    <create-indexes alias="os.${common.os.prefix}-tgt-items-std"/>
-    <analyse-db osName="os.${common.os.prefix}-tgt-items-std"/>
   </target>
 
   <!--
