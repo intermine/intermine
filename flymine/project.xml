@@ -80,6 +80,10 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/shared/data/REDfly/gff"/>
     </source>
+    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
+      <property name="src.data.file" 
+                location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
+    </source>
     <source name="homophila" type="homophila">
       <property name="src.data.dir" location="/shared/data/homophila/current" includes="homophila_matches.txt"/>
       <property name="src.data.dir.includes" value="homophila_matches.txt"/>
