@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
+  <class name="org.flymine.model.genomic.TFmodule" 
+         extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
     <attribute name="elementEvidence" type="java.lang.String"/>
+    <attribute name="accession" type="java.lang.String"/>
     <collection name="phenotypes" referenced-type="org.flymine.model.genomic.Phenotype"/>
   </class>
 </classes>

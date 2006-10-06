@@ -50,7 +50,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        feature.setClassName(tgtNs + "RegulatoryRegion");
+        feature.setClassName(tgtNs + "TFmodule");
 
         String name = record.getId();
 
@@ -127,8 +127,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         addItem(createSynonym(feature, "name", name));
 
-        feature.setAttribute("identifier", REDFLY_PREFIX + redflyID);
-        feature.setAttribute("name", name);
+        feature.setAttribute("accession", REDFLY_PREFIX + redflyID);
+        feature.setAttribute("identifier", name);
     }
 
     private Item getGene(String geneOrganismDbId) {
