@@ -20,11 +20,14 @@
   <item id="3_7" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
     <attribute name="name" value="Testis"/>
   </item>
+  <item id="3_8" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+    <attribute name="name" value="Whole Fly"/>
+  </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
     <attribute name="MRNASignal" value="1874.55"/>
-    <attribute name="MRNASignalSEM" value="85.33788237"/>
+    <attribute name="MRNASignalSEM" value="85.34"/>
     <attribute name="affyCall" value="Up"/>
-    <attribute name="enrichment" value="1.285699588"/>
+    <attribute name="enrichment" value="1.29"/>
     <attribute name="presentCall" value="4"/>
     <reference name="experiment" ref_id="2_1"/>
     <reference name="material" ref_id="4_1"/>
@@ -33,14 +36,25 @@
       <reference ref_id="3_2"/>
     </collection>
   </item>
+  <item id="5_3" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
+    <attribute name="MRNASignal" value="1458"/>
+    <attribute name="MRNASignalSEM" value="127.78"/>
+    <attribute name="presentCall" value="4"/>
+    <reference name="experiment" ref_id="2_1"/>
+    <reference name="material" ref_id="4_1"/>
+    <reference name="source" ref_id="1_1"/>
+    <collection name="assays">
+      <reference ref_id="3_8"/>
+    </collection>
+  </item>
   <item id="3_4" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
     <attribute name="name" value="Hindgut"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
     <attribute name="MRNASignal" value="1016.15"/>
-    <attribute name="MRNASignalSEM" value="23.17392572"/>
+    <attribute name="MRNASignalSEM" value="23.17"/>
     <attribute name="affyCall" value="Down"/>
-    <attribute name="enrichment" value="0.696947874"/>
+    <attribute name="enrichment" value="0.7"/>
     <attribute name="presentCall" value="4"/>
     <reference name="experiment" ref_id="2_1"/>
     <reference name="material" ref_id="4_1"/>

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.text.DecimalFormat;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
@@ -73,7 +74,8 @@ public class FlyAtlasConverter extends FileConverter
                 Item probe = createProbe(probeId);
                 store(probe);
                 // some rows have extra info on end, just look at length of headers
-                for (int i = 1; (i + 4) <= headers.length; i += 5) {
+                int i = 1;
+                for (i = 1; (i + 4) <= headers.length; i += 5) {
                     String col = headers[i];
                     String tissue = col.substring(0, col.indexOf(' ')).toLowerCase();
                     String[] results = new String[5];
@@ -81,6 +83,12 @@ public class FlyAtlasConverter extends FileConverter
                     Item result = createFlyAtlasResult(probe, tissue, results);
                     store(result);
                 }
+                // whole fly data is in final three columns, doesn't have all values
+                String tissue = headers[i];
+                String[] results = new String[5];
+                System.arraycopy(line, i, results, 1, 3);
+                Item result = createFlyAtlasResult(probe, tissue, results);
+                store(result);
             }
             lineNo++;
         }
@@ -118,11 +126,15 @@ public class FlyAtlasConverter extends FileConverter
     private Item createFlyAtlasResult(Item probe, String tissue, String[] results) {
         Item result = createItem("FlyAtlasResult");
         result.setReference("material", probe.getIdentifier());
-        result.setAttribute("affyCall", results[0]);
-        result.setAttribute("MRNASignal", results[1]);
-        result.setAttribute("MRNASignalSEM", results[2]);
+        if (results[0] != null) {
+            result.setAttribute("affyCall", results[0]);
+        }
+        result.setAttribute("MRNASignal", round(results[1], 2));
+        result.setAttribute("MRNASignalSEM", round(results[2], 2));
         result.setAttribute("presentCall", results[3]);
-        result.setAttribute("enrichment", results[4]);
+        if (results[4] != null) {
+            result.setAttribute("enrichment", round(results[4], 2));
+        }
         result.setReference("source", dataSet.getIdentifier());
 
         // set assay
@@ -164,12 +176,21 @@ public class FlyAtlasConverter extends FileConverter
         assays.put("tubule", createAssay("Tubule"));
         assays.put("ovary", createAssay("Ovary"));
         assays.put("testes", createAssay("Testis"));
+        assays.put("FlyMean", createAssay("Whole Fly"));
     }
 
     private Item createAssay(String name) {
         Item assay = createItem("MicroArrayAssay");
         assay.setAttribute("name", name);
         return assay;
+    }
+
+    private String round(String num, int dp) {
+        double d = Double.parseDouble(num);
+        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
+        format.setMaximumFractionDigits(dp);
+        format.setGroupingUsed(false);
+        return format.format(d);
     }
 
     /**
