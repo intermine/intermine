@@ -34,6 +34,7 @@ import org.flymine.model.genomic.Transcript;
 
 import org.intermine.bio.gbrowse.WriteGFFTask;
 import org.intermine.bio.postprocess.CalculateLocations;
+import org.intermine.bio.postprocess.CreateReferences;
 import org.intermine.bio.postprocess.TransferSequences;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -112,6 +113,8 @@ public class WriteGFFTaskTest extends TestCase
         CalculateLocations cl = new CalculateLocations(osw);
         cl.createLocations();
         cl.setChromosomeLocationsAndLengths();
+        CreateReferences cr = new CreateReferences(osw);
+        cr.insertReferences();
         TransferSequences ts = new TransferSequences(osw);
         ts.transferToLocatedSequenceFeatures();
         WriteGFFTask task = new WriteGFFTask();
