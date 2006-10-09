@@ -579,7 +579,6 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             ((ObjectStoreInterMineImpl) os).releaseConnection(c);
         }
     }
-    */
 
     public void testCancel() throws Exception {
         Object id = "flibble8";
@@ -606,6 +605,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
         }
     }
+    */
 
     public void testCreateTempBagTables() throws Exception {
         Query q = ObjectStoreQueriesTestCase.bagConstraint();
