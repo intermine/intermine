@@ -36,9 +36,9 @@ import org.intermine.util.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.CDNAClone;
-import org.flymine.model.genomic.CompositeSequence;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MicroArrayResult;
+import org.flymine.model.genomic.ProbeSet;
 import org.flymine.model.genomic.Reporter;
 
 import java.sql.SQLException;
@@ -281,7 +281,7 @@ public class MagePostProcess extends PostProcessor
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryClass qcCompositeSeq = new QueryClass(CompositeSequence.class);
+        QueryClass qcCompositeSeq = new QueryClass(ProbeSet.class);
         q.addFrom(qcCompositeSeq);
         q.addToSelect(qcCompositeSeq);
         q.addToOrderBy(qcCompositeSeq);
@@ -316,7 +316,7 @@ public class MagePostProcess extends PostProcessor
         res.setBatchSize(500);
 
         int count = 0;
-        CompositeSequence lastComSeq = null;
+        ProbeSet lastComSeq = null;
         Set newCollection = new HashSet();
 
         osw.beginTransaction();
@@ -324,16 +324,16 @@ public class MagePostProcess extends PostProcessor
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            CompositeSequence thisComSeq = (CompositeSequence) rr.get(0);
+            ProbeSet thisComSeq = (ProbeSet) rr.get(0);
             MicroArrayResult maResult = (MicroArrayResult) rr.get(2);
 
             if (lastComSeq == null || !thisComSeq.getId().equals(lastComSeq.getId())) {
                 if (lastComSeq != null) {
                     // clone so we don't change the ObjectStore cache
-                    CompositeSequence tempComSeq = (CompositeSequence) PostProcessUtil
+                    ProbeSet tempProbeSet = (ProbeSet) PostProcessUtil
                         .cloneInterMineObject(lastComSeq);
-                    TypeUtil.setFieldValue(tempComSeq, "results", newCollection);
-                    osw.store(tempComSeq);
+                    TypeUtil.setFieldValue(tempProbeSet, "results", newCollection);
+                    osw.store(tempProbeSet);
                     count++;
                 }
                 newCollection = new HashSet();
@@ -346,19 +346,18 @@ public class MagePostProcess extends PostProcessor
 
         if (lastComSeq != null) {
             // clone so we don't change the ObjectStore cache
-            CompositeSequence tempComSeq =
-                (CompositeSequence) PostProcessUtil.cloneInterMineObject(lastComSeq);
-            TypeUtil.setFieldValue(tempComSeq, "results", newCollection);
-            osw.store(tempComSeq);
+            ProbeSet tempProbeSet = (ProbeSet) PostProcessUtil.cloneInterMineObject(lastComSeq);
+            TypeUtil.setFieldValue(tempProbeSet, "results", newCollection);
+            osw.store(tempProbeSet);
             count++;
         }
-        LOG.info("Created " + count + " CompositeSequence.results collections");
+        LOG.info("Created " + count + " ProbeSet.results collections");
         osw.commitTransaction();
 
         // now ANALYSE tables relating to class that has been altered - may be rows added
         // to indirection tables
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(CompositeSequence.class.getName());
+            ClassDescriptor cld = model.getClassDescriptorByName(ProbeSet.class.getName());
             DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
         }
     }
