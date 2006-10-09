@@ -1,4 +1,4 @@
 # columns are fields from the Employee class: age name (dummy) fullTime
 10	EmployeeA1	dummy field 1	
 20	EmployeeA2		true
-	EmployeeA3	dummy field 2	false
+	EmployeeA3	dummy field 2	false	an_extra_field

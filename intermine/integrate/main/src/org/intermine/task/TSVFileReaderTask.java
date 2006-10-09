@@ -108,6 +108,11 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
             }
                         
             for (int columnIndex = 0; columnIndex < thisRow.length; columnIndex++) {
+                if (dfc.getColumnFieldDescriptors().size() <= columnIndex) {
+                    // ignore - no configuration for this column
+                    continue;
+                }
+
                 AttributeDescriptor columnAD =
                     (AttributeDescriptor) dfc.getColumnFieldDescriptors().get(columnIndex);
 
