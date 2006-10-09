@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -36,8 +35,6 @@ import org.apache.tools.ant.BuildException;
 
 public class TSVFileReaderTask extends FileDirectDataLoaderTask
 {
-    private static final Logger LOG = Logger.getLogger(TSVFileReaderTask.class);
-
     private File configurationFile = null;
 
     /**
