@@ -291,11 +291,16 @@ public class SequenceExporter extends InterMineAction implements TableExporter
      * Results objects and returns the first Column that contains a LocatedSequenceFeature or
      * Protein.  This is needed, for example, when the user select BioEntity and constrains the
      * identifier to "zen" - the Results contain only Genes, but the column type is BioEntity.
+     *
+     * If there is more than one LocatedSequenceFeature or Protein column, return null to prevent
+     * confusion about which column is being exported.
      * @throws ObjectStoreException 
      */
     private Column getFeatureColumn(PagedTable pt) {
         List columns = pt.getColumns();
 
+        Column returnColumn = null;
+        
         // find and remember the first valid Sequence-containing column
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
@@ -303,7 +308,12 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 Object columnType = ((Column) columns.get(i)).getType();
                 if (columnType instanceof ClassDescriptor) {
                     if (validType(((ClassDescriptor) columnType).getType())) {
-                        return column;
+                        if (returnColumn == null) {
+                            returnColumn = column;
+                        } else {
+                            // there are two or more sequence columns
+                            return null;
+                        }
                     }
                 }
             }
@@ -331,11 +341,16 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 Object o = row.get(realColumnIndex);
 
                 if (o != null && validType(o.getClass())) {
-                    return thisColumn;
+                    if (returnColumn == null) {
+                        returnColumn = thisColumn;
+                    } else {
+                        // there are two or more sequence columns
+                        return null;
+                    }
                 }
             }
         }
         
-        return null;
+        return returnColumn;
     }
 }
