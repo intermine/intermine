@@ -4,7 +4,7 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="flymine-static" type="intermine-items-xml-file">
+    <source name="flymine-static" type="intermine-items-xml-file" dump="true">
       <property name="tgt.xml.file" location="datasets.xml"/>
     </source>
     <source name="flybase-dmel-gff" type="flybase-gff">
