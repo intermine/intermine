@@ -1,5 +1,15 @@
 package org.intermine.task;
 
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -18,26 +28,20 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.xml.full.ItemFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.types.FileSet;
 
-/*
- * Copyright (C) 2002-2005 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 /**
- * TSVFileReaderTaskTest class
+ * Code for testing the TSVFileReaderTask class.
  *
  * @author Kim Rutherford
  */
@@ -58,10 +62,22 @@ public class TSVFileReaderTaskTest extends TestCase
         tsvTask.setIntegrationWriterAlias("integration.unittestsingle");
         tsvTask.setSourceName("testsource");
 
-        File file = new File("resources/TSVFileReaderTaskTest.tsv");
+        File tempFile = File.createTempFile("TSVFileReaderTaskTest", "tmp");
+        FileWriter fw = new FileWriter(tempFile);
+        InputStream is =
+            getClass().getClassLoader().getResourceAsStream("TSVFileReaderTaskTest.tsv");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            fw.write(line + "\n");
+        }
+        
+        fw.close();
+        
         FileSet fileSet = new FileSet();
 
-        fileSet.setFile(file);
+        fileSet.setFile(tempFile);
         
         tsvTask.addFileSet(fileSet);
 
@@ -69,7 +85,7 @@ public class TSVFileReaderTaskTest extends TestCase
             getClass().getClassLoader().getResourceAsStream("TSVFileReaderTaskTest.properties");
         DelimitedFileConfiguration dfc = new DelimitedFileConfiguration(model, confInputStream);
         
-        tsvTask.executeInternal(dfc, file);
+        tsvTask.executeInternal(dfc, tempFile);
 
         //Check the results to see if we have some data...
         ObjectStore os = tsvTask.getDirectDataLoader().getIntegrationWriter().getObjectStore();
