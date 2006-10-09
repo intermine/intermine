@@ -482,6 +482,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         throw failure;
     }
 
+/*
     public void testCancelMethods6() throws Exception {
         Object id = "flibble6";
         Connection c = ((ObjectStoreInterMineImpl) os).getConnection();
@@ -528,7 +529,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             ((ObjectStoreInterMineImpl) os).releaseConnection(c);
         }
     }
-
+*/
     /*This test does not work. This is due to a failing of JDBC. The Statement.cancel() method is
      * not fully Thread-safe, in that if one performs a cancel() request just before a Statement is
      * used, that operation will not be cancelled. There is a race condition between the
