@@ -61,6 +61,8 @@ public class DataTranslator
     protected Map restrictionMap = new HashMap(); // SubclassRestrictions to target class URI
     protected String tgtNs = null;
     protected ItemFactory itemFactory = null;
+    protected Map aliases = new HashMap();        // item aliases for classnames
+    protected int nextClsId = 0;
 
     /**
      * Empty constructor.
@@ -426,6 +428,22 @@ public class DataTranslator
     }
 
     /**
+     * Uniquely alias a className
+     * @param className the class name
+     * @return the alias
+     */
+    protected String alias(String className) {
+        String alias = (String) aliases.get(className);
+        if (alias != null) {
+            return alias;
+        }
+        String nextIndex = "" + (nextClsId++);
+        aliases.put(className, nextIndex);
+        LOG.info("Aliasing className " + className + " to index " + nextIndex);
+        return nextIndex;
+    }
+
+    /**
      * Create a new item and assign it an id.
      * @param className class name of new item
      * @param implementations implementations string for new item
@@ -587,7 +605,7 @@ public class DataTranslator
             }
         }
         return itemList;
-    }    
+    }
 
 
     /**
