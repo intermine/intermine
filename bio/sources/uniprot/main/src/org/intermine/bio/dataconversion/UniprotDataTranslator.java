@@ -793,7 +793,7 @@ public class UniprotDataTranslator extends DataTranslator
         desc.addConstraint(new ItemPrefetchConstraintDynamic("organisms",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
-                "entry.organisms.dbReference");
+                "entry.organisms.dbReferences");
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("dbReferences",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);

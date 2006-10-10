@@ -105,18 +105,10 @@ public class UniprotFilterTask extends Task
                     + "_filtered.xml";
                 File out = new File(tgtDir, outName);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(out));
-
-                String fragOutName = toRead.getName().substring(0, toRead.getName().indexOf('.'))
-                    + "_fragment.txt";
-                File fragOut = new File(tgtDir, fragOutName);
-                BufferedWriter fragWriter = new BufferedWriter(new FileWriter(fragOut));
-                filter.filter(new BufferedReader(new FileReader(toRead)), writer, fragWriter);
-
+                filter.filter(new BufferedReader(new FileReader(toRead)), writer);
                 writer.flush();
                 writer.close();
 
-                fragWriter.flush();
-                fragWriter.close();
             }
         } catch (Exception e) {
             throw new BuildException (e);
