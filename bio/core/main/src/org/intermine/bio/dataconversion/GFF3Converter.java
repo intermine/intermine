@@ -240,30 +240,35 @@ public class GFF3Converter
 
         Item relation;
 
-        if (record.getStart() < 1 || record.getEnd() < 1) {
-            relation = createItem("SimpleRelation");
-        } else {
-            relation = createItem("Location");
-            relation.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
-            relation.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
-            if (record.getStrand() != null && record.getStrand().equals("+")) {
-                relation.addAttribute(new Attribute("strand", "1"));
-            } else if (record.getStrand() != null && record.getStrand().equals("-")) {
-                relation.addAttribute(new Attribute("strand", "-1"));
+        if (!record.getType().equals("chromosome")) {
+            if (record.getStart() < 1 || record.getEnd() < 1) {
+                relation = createItem("SimpleRelation");
             } else {
-                relation.addAttribute(new Attribute("strand", "0"));
-            }
+                relation = createItem("Location");
+                relation.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
+                relation.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
+                if (record.getStrand() != null && record.getStrand().equals("+")) {
+                    relation.addAttribute(new Attribute("strand", "1"));
+                } else
+                    if (record.getStrand() != null && record.getStrand().equals("-")) {
+                        relation.addAttribute(new Attribute("strand", "-1"));
+                    } else {
+                        relation.addAttribute(new Attribute("strand", "0"));
+                    }
 
-            if (record.getPhase() != null) {
-                relation.addAttribute(new Attribute("phase", record.getPhase()));
+                if (record.getPhase() != null) {
+                    relation.addAttribute(new Attribute("phase", record.getPhase()));
+                }
             }
+            relation.addReference(new Reference("object", seq.getIdentifier()));
+            relation.addReference(new Reference("subject", feature.getIdentifier()));
+            relation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+                {
+                    dataSet.getIdentifier()
+                })));
+            handler.setLocation(relation);
         }
-        relation.addReference(new Reference("object", seq.getIdentifier()));
-        relation.addReference(new Reference("subject", feature.getIdentifier()));
-        relation.addCollection(new ReferenceList("evidence",
-                               Arrays.asList(new Object[] {dataSet.getIdentifier()})));
-        handler.setLocation(relation);
-
+        
         handler.addEvidence(dataSet);
 
         if (record.getScore() != null) {
@@ -437,6 +442,12 @@ public class GFF3Converter
             seq.setAttribute("identifier", identifier);
             seq.addReference(getOrgRef());
             seqs.put(identifier, seq);
+            Item synonym = createItem("Synonym");
+            synonym.addReference(new Reference("subject", seq.getIdentifier()));
+            synonym.addAttribute(new Attribute("value", identifier));
+            synonym.addAttribute(new Attribute("type", "identifier"));
+            synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+            handler.addItem(synonym);
             handler.setSequence(seq);
         }
         return seq;
