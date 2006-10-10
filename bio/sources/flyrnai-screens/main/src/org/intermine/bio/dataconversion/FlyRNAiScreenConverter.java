@@ -49,6 +49,7 @@ public class FlyRNAiScreenConverter extends FileConverter
     private Map genes = new HashMap();
     private Map synonyms = new HashMap();
     private Map publications = new HashMap();
+    private Map amplicons = new HashMap();
 
     protected String taxonId;
 
@@ -64,7 +65,9 @@ public class FlyRNAiScreenConverter extends FileConverter
     // column headings
     private static final String FBGN_COLUMN = "FBGN";
     private static final String PHENOTYPE_COLUMN = "Phenotype";
+    private static final String PHENOTYPE_DETAILS_COLUMN = "PhenotypeDetails";
     private static final String DRSC_AMPLICON_COLUMN = "DRSC Amplicon";
+    private static final String HFA_AMPLICON_COLUMN = "HFA Amplicon";
     private static final String AMPLICON_LENGTH_COLUMN = "Amp. Length";
     private static final String NUM_OFF_TARGET_COLUMN = "Num Potential Off-Targs";
     private static final String MAX_OFF_TARGET_OVERLAPS_COLUMN = "Max Off-Targ Overlap";
@@ -134,7 +137,7 @@ public class FlyRNAiScreenConverter extends FileConverter
 
         Item rnaiScreen = newItem("RNAiScreen");
         rnaiScreen.setAttribute("name", (String) headerFieldValues.get(SCREEN_NAME_PREFIX));
-        rnaiScreen.setAttribute("phenotypeDescription",
+        rnaiScreen.setAttribute("analysisDescription",
                                 (String) headerFieldValues.get(PHENOTYPE_DESCRIPTION_PREFIX));
         rnaiScreen.setAttribute("cellLine", (String) headerFieldValues.get(CELL_LINE_PREFIX));
         rnaiScreen.setReference("organism", organism);
@@ -171,27 +174,36 @@ public class FlyRNAiScreenConverter extends FileConverter
                 continue;
             }
 
-            Item amplicon = newItem("Amplicon");
+
             String ampliconIdentifier =
                 getColumnValue(columnNameMap, thisRow, DRSC_AMPLICON_COLUMN);
-            String ampliconLength =
-                getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
+            Item amplicon = (Item) amplicons.get(ampliconIdentifier);
+            if (amplicon == null) {
+                amplicon = newItem("Amplicon");
+                String ampliconLength =
+                    getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
+                String hfaAmpliconIdentifier =
+                    getColumnValue(columnNameMap, thisRow, HFA_AMPLICON_COLUMN);
+                try {
+                    new Integer(ampliconLength);
+                } catch (NumberFormatException e) {
+                    // ignore hits with invalid amplicon lengths
+                    continue;
+                }
 
-            try {
-                new Integer(ampliconLength);
-            } catch (NumberFormatException e) {
-                // ignore hits with invalid amplicon lengths
-                continue;
+                amplicon.setAttribute("identifier", ampliconIdentifier);
+                amplicon.setAttribute("length", ampliconLength);
+                amplicon.setReference("organism", organism);
+                amplicons.put(ampliconIdentifier, amplicon);
+                writer.store(ItemHelper.convert(amplicon));
+
+                Item hfaSysnonym = newSynonym(hfaAmpliconIdentifier, amplicon);
             }
 
             String numOffTargets =
                 getColumnValue(columnNameMap, thisRow, NUM_OFF_TARGET_COLUMN);
             String maxOffTargetOverlaps =
                 getColumnValue(columnNameMap, thisRow, MAX_OFF_TARGET_OVERLAPS_COLUMN);
-            amplicon.setAttribute("identifier", ampliconIdentifier);
-            amplicon.setAttribute("length", ampliconLength);
-            amplicon.setReference("organism", organism);
-            writer.store(ItemHelper.convert(amplicon));
 
             for (int hitStrengthIndex = 0; hitStrengthIndex < hitStrengths.length;
                  hitStrengthIndex++) {
@@ -216,8 +228,13 @@ public class FlyRNAiScreenConverter extends FileConverter
                     Item screenHit = newItem("RNAiScreenHit");
                     screenHit.setReference("analysis", rnaiScreen);
                     screenHit.setReference("gene", gene);
-                    String phenotype = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
-                    screenHit.setAttribute("phenotype", phenotype);
+                    String result = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
+                    screenHit.setAttribute("result", result);
+                    if (columnNameMap.containsKey(PHENOTYPE_DETAILS_COLUMN)) {
+                        String resultDesc = getColumnValue(columnNameMap, thisRow,
+                                                              PHENOTYPE_DETAILS_COLUMN);
+                        screenHit.setAttribute("resultDescription", resultDesc);
+                    }
                     screenHit.setAttribute("numOffTargets", numOffTargets);
                     screenHit.setAttribute("maxOffTargetOverlaps", maxOffTargetOverlaps);
                     if (hitStrength != null && hitStrength.trim().length() > 0) {

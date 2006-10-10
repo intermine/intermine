@@ -4,14 +4,15 @@
          extends="org.flymine.model.genomic.Experiment" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="cellLine" type="java.lang.String"/>
-    <attribute name="phenotypeDescription" type="java.lang.String"/>
+    <attribute name="analysisDescription" type="java.lang.String"/>
     <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/> 
   </class>
   <class name="org.flymine.model.genomic.RNAiScreenHit" extends="org.flymine.model.genomic.RNAiResult"
          is-interface="true">
     <attribute name="strength" type="java.lang.Integer"/>
     <attribute name="hasPredictedOffTargetEffect" type="java.lang.Boolean"/>
-    <attribute name="phenotype" type="java.lang.String"/>
+    <attribute name="result" type="java.lang.String"/>
+    <attribute name="resultDescription" type="java.lang.String"/>
     <attribute name="numOffTargets" type="java.lang.Integer"/>
     <attribute name="maxOffTargetOverlaps" type="java.lang.Integer"/>
     <reference name="amplicon"

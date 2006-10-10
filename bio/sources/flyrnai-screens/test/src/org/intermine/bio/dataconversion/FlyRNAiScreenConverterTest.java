@@ -37,9 +37,9 @@ public class FlyRNAiScreenConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("fly-rnai_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
-        //fw.close();
+        FileWriter fw = new FileWriter(new File("fly-rnai_tgt.xml"));
+        fw.write(FullRenderer.render(itemWriter.getItems()));
+        fw.close();
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyRNAiConverterTest_tgt.xml")));
 
