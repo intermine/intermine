@@ -28,6 +28,7 @@ import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
 
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
@@ -78,7 +79,7 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         ItemReader srcItemReader = new ObjectStoreItemReader(os);
 
         // uncomment to generate a new source items file from some uniprot xml
-        //retrieveFromUniprotExample("test/UniprotSrc.xml", new File("generatedSrcItems.xml"));
+        //retrieveFromUniprotExample("UniprotSrc.xml", new File("generatedSrcItems.xml"));
 
         DataTranslator translator = new UniprotDataTranslator(srcItemReader, mapping, srcModel, getTargetModel(tgtNs));
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
@@ -102,9 +103,11 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
 
     private void retrieveFromUniprotExample(String uniprot, File output) throws Exception {
         Model model = getModel();
-        Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream(uniprot)));
+        Reader srcReader = (new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/UniprotSrc.xml")));
         MockItemWriter mockIw = new MockItemWriter(new HashMap());
-        Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("uniprot.xsd"));
+
+        //Reader xsdReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/uniprot.xsd"));
+        Reader xsdReader = new FileReader(new File("../srcmodel/uniprot.xsd"));
 
         XmlConverter converter = new XmlConverter(model, xsdReader, mockIw);
         converter.process(srcReader);

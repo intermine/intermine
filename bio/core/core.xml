@@ -152,6 +152,8 @@
   <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="primaryAccession" type="java.lang.String"/>
+    <attribute name="length" type="java.lang.Integer"/>
+    <attribute name="molecularWeight" type="java.lang.Integer"/>
     <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="proteins"/>
   </class>

@@ -228,6 +228,15 @@ public class UniprotDataTranslator extends DataTranslator
             Item srcProtein = ItemHelper.convert(srcItemReader.getItemById(srcItem
                                                   .getReference("protein").getRefId()));
             if (srcProtein != null) {
+                String isFragment = "false";
+                if (srcProtein.hasAttribute("type")) {
+                    String type = srcProtein.getAttribute("type").getValue();
+                    if (type.startsWith("fragment")) {
+                        isFragment = "true";
+                    }
+                }
+                protein.setAttribute("isFragment", isFragment);
+
                 List srcProteinNames = getItemsInCollection(srcProtein.getCollection("names"));
                 Iterator srcProtNameIter = srcProteinNames.iterator();
                 while (srcProtNameIter.hasNext()) {
@@ -325,6 +334,9 @@ public class UniprotDataTranslator extends DataTranslator
                     sequence.addAttribute(new Attribute("length", "" + residues.length()));
                     retval.add(sequence);
                     protein.addReference(new Reference("sequence", sequence.getIdentifier()));
+                    // TODO uncomment this, just removed to work with old build
+                    //protein.setAttribute("length", srcSeq.getAttribute("length").getValue());
+                    //protein.setAttribute("molecularWeight", srcSeq.getAttribute("mass").getValue());
                 }
             }
 
@@ -782,12 +794,16 @@ public class UniprotDataTranslator extends DataTranslator
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor(
                 "entry.organisms.dbReference");
-        desc2.addConstraint(new ItemPrefetchConstraintDynamic("dbReference",
+        desc2.addConstraint(new ItemPrefetchConstraintDynamic("dbReferences",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
         descs.add(desc);
         desc = new ItemPrefetchDescriptor("entry.accessions");
         desc.addConstraint(new ItemPrefetchConstraintDynamic("accessions",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
+        descs.add(desc);
+        desc = new ItemPrefetchDescriptor("entry.names");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descs.add(desc);
         desc = new ItemPrefetchDescriptor("entry.comments");
@@ -831,6 +847,11 @@ public class UniprotDataTranslator extends DataTranslator
         desc2.addConstraint(new ItemPrefetchConstraintDynamic("names",
                     ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         desc.addPath(desc2);
+        descs.add(desc);
+
+        desc = new ItemPrefetchDescriptor("entry.sequence");
+        desc.addConstraint(new ItemPrefetchConstraintDynamic("sequence",
+                    ObjectStoreItemPathFollowingImpl.IDENTIFIER));
         descs.add(desc);
 
         paths.put(SRC_NS + "Entry", descs);
