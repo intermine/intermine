@@ -66,6 +66,9 @@
     </item>
     <item id="2_1" class="http://www.flymine.org/model/genomic#Protein">
         <attribute name="identifier" value="Q5TME6_ANOGA"/>
+        <attribute name="isFragment" value="false"/>
+        <attribute name="length" value="838"/>
+        <attribute name="molecularWeight" value="96122"/>
         <attribute name="name" value="ENSANGP00000011199"/>
         <attribute name="primaryAccession" value="Q5TME6"/>
         <reference name="organism" ref_id="1_1"/>
@@ -79,6 +82,9 @@
     </item>
     <item id="2_3" class="http://www.flymine.org/model/genomic#Protein">
         <attribute name="identifier" value="TINA1_DROME"/>
+        <attribute name="isFragment" value="true"/>
+        <attribute name="length" value="167"/>
+        <attribute name="molecularWeight" value="19056"/>
         <attribute name="name" value="Troponin C-akin-1 protein"/>
         <attribute name="primaryAccession" value="Q9W0Y1"/>
         <reference name="organism" ref_id="1_3"/>
@@ -99,6 +105,9 @@
     </item>
     <item id="2_2" class="http://www.flymine.org/model/genomic#Protein">
         <attribute name="emblProteinId" value="AAB03417"/>
+        <attribute name="isFragment" value="false"/>
+        <attribute name="length" value="248"/>
+        <attribute name="molecularWeight" value="28163"/>
         <attribute name="identifier" value="14331_CAEEL"/>
         <attribute name="name" value="14-3-3-like protein 1"/>
         <attribute name="primaryAccession" value="P41932"/>

@@ -140,6 +140,7 @@
 </collection>
 </item>
 <item id="0_6" class="http://www.intermine.org/model/uniprot#ProteinType">
+<attribute name="type" value="fragment"/>
 <collection name="names">
 <reference ref_id="0_7"/>
 </collection>

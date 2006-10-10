@@ -4,7 +4,7 @@
     <accession>Q9W0Y1</accession>
     <accession>Q95T30</accession>
     <name>TINA1_DROME</name>
-    <protein>
+    <protein type="fragment">
       <name>Troponin C-akin-1 protein</name>
     </protein>
     <gene>
