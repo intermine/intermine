@@ -94,9 +94,9 @@ public class UniprotDataTranslatorTest extends DataTranslatorTestCase
         }
 
         // uncomment to write out a new target items file
-        FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
-        fw.write(FullRenderer.render(tgtIw.getItems()));
-        fw.close();
+        //FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
+        //fw.write(FullRenderer.render(tgtIw.getItems()));
+        //fw.close();
         assertEquals(new LinkedHashSet(getExpectedItems()), tgtIw.getItems());
     }
 
