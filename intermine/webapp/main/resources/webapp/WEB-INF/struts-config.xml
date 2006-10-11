@@ -644,6 +644,8 @@
     <action path="/precomputeTemplate"
             type="org.intermine.web.PrecomputeTemplateController"/>
 
+    <action path="/initExternalLinks" type="org.intermine.web.results.ExternalLinksController"/>
+
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
 
