@@ -1,0 +1,80 @@
+#!/usr/bin/perl
+
+# script to download PSI data from IntAct - currently has a list of accepted
+# organisms hard-coded, should be passed in as a list.
+# Will downoad to ./psi/intact/release_date
+use strict;
+use warnings;
+
+use Net::FTP;
+
+
+my $ebi_server = "ftp.ebi.ac.uk";
+my $intact_dir = "pub/databases/intact";
+my $intact_current_link = "current";
+my $species_dir = "psi1/species";
+my $psi_dir = "psi";
+my $download_dir = "$psi_dir/intact";
+
+# list of organisms to get - this is the five letter abbreviation used as the
+# start of intact filenames.  Add more to this list to get more organisms
+my @organisms = ("drome", "caeel", "yeast");
+
+
+#### Access EBI ftp server
+my $ebi_ftp = Net::FTP->new($ebi_server, Passive => 1)
+    or die "Cannot connect to $ebi_server: $@";
+
+$ebi_ftp->login("anonymous",'-anonymous@')
+    or die "Cannot login ", $ebi_ftp->message;
+
+$ebi_ftp->cwd($intact_dir)
+    or die "Cannot change working directory ", $ebi_ftp->message;
+
+my $release_dir;
+my @dir_list = $ebi_ftp->dir();
+
+for my $dir (@dir_list) {
+    if (index($dir, "->") > 0) {
+        $release_dir = substr($dir, (index($dir, "->") + 3));
+    }
+} 
+
+# check psi directory exists
+if (!(-d $psi_dir)) {
+    mkdir $psi_dir
+        or die "failed to create directory: $psi_dir";
+}
+
+# check intact directory exists
+if (!(-d $download_dir)) {
+    mkdir $download_dir
+        or die "failed to create directory: $download_dir";
+}
+
+$download_dir .= "/$release_dir";
+
+if (-d "$download_dir") {
+    die "Directory $download_dir already exists - not downloading\n";
+} else {
+    print("Creating directory: $download_dir\n");
+    mkdir $download_dir
+        or die "unable to create $download_dir";
+}
+
+$ebi_ftp->cwd($release_dir)
+    or die "Cannot change working directory to $release_dir";
+
+$ebi_ftp->cwd($species_dir)
+    or die "Cannot change working directory to $species_dir";
+
+my @psi_files = $ebi_ftp->ls();
+
+for my $psi_file (@psi_files) {
+    my $start = substr($psi_file, 0, index($psi_file, "_"));
+    if (grep {$start eq $_} @organisms) {
+        print "getting $psi_file\n";
+        $ebi_ftp->get($psi_file, "$download_dir/$psi_file")
+            or die "can't get $psi_file from $ebi_server/ebi_ftp->pwd()/$psi_file: $?";
+    }
+}

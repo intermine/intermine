@@ -25,47 +25,73 @@ if ($homophila_page =~ /Version ([\d\.]+)/) {
   die "can't find version number in page read from $homophila_server\n";
 }
 
-my $download_dir = "homophila/$version";
+my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime;
 
-if (-d $download_dir) {
-  die "$download_dir already exists - exiting\n";
+$month += 1;
+$year -= 100;
+$year += 2000;
+
+my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
+
+my $download_dir = "${version}_$date_string";
+
+if (-d "homophila/$download_dir") {
+  die "homophila/$download_dir already exists - exiting\n";
 }
 
-mkdir $download_dir;
+mkdir "homophila/$download_dir";
 
-print "getting $homophila_data_file\n";
+my $file_to_get = "$homophila_server/$homophila_data_file.gz";
 
-io("$homophila_server/$homophila_data_file.gz") > io("$download_dir/$homophila_data_file.gz");
+print "getting $file_to_get\n";
 
-if ((system "gzip -dr $download_dir") != 0) {
-  die qq|system "gzip -dr $download_dir" failed: $?\n|;
+io($file_to_get) > io("homophila/$download_dir/$homophila_data_file.gz");
+
+if ((system "gzip -dr homophila/$download_dir") != 0) {
+  die qq|system "gzip -dr homophila/$download_dir" failed: $?\n|;
 }
 
-open HOMOPHILA_DATA, "$download_dir/$homophila_data_file"
-  or die "can't open $download_dir/$homophila_data_file\n";
-
-open HOMOPHILA_MATCHES, ">$download_dir/$homophila_matches_file"
-  or die "can't open $download_dir/$homophila_matches_file\n";
-
-open HOMOPHILA_DISEASES, ">$download_dir/$homophila_diseases_file"
-  or die "can't open $download_dir/$homophila_diseases_file\n";
+open HOMOPHILA_DATA, "homophila/$download_dir/$homophila_data_file"
+  or die "can't open homophila/$download_dir/$homophila_data_file\n";
 
 my $line = <HOMOPHILA_DATA>;
 
 if ($line !~ /CG\tOMIM_ID/) {
-  die "expected first line of $download_dir/$homophila_data_file to be a header\n";
+  die "expected first line of homophila/$download_dir/$homophila_data_file to be a header\n";
 }
+
+my %homophila_matches = ();
+my %homophila_diseases = ();
 
 while ($line = <HOMOPHILA_DATA>) {
   chomp $line;
   my @bits = split /\t/, $line;
 
-  print HOMOPHILA_MATCHES join "\t", @bits[0..3];
-  print HOMOPHILA_DISEASES join "\t", @bits[1,6];
-  print HOMOPHILA_MATCHES "\n";
-  print HOMOPHILA_DISEASES "\n";
+  # get unique matches and diseases
+  $homophila_matches{join "\t", @bits[0..3]}++;
+  $homophila_diseases{join "\t", @bits[1,6]}++;
+}
+
+open HOMOPHILA_MATCHES, ">homophila/$download_dir/$homophila_matches_file"
+   or die "can't open homophila/$download_dir/$homophila_matches_file\n";
+
+open HOMOPHILA_DISEASES, ">homophila/$download_dir/$homophila_diseases_file"
+   or die "can't open homophila/$download_dir/$homophila_diseases_file\n";
+
+for my $match (sort keys %homophila_matches) {
+  print HOMOPHILA_MATCHES "$match\n";
+}
+
+for my $disease (sort keys %homophila_diseases) {
+  print HOMOPHILA_DISEASES "$disease\n";
 }
 
 close HOMOPHILA_DATA;
 close HOMOPHILA_MATCHES;
 close HOMOPHILA_DISEASES;
+
+unlink "homophila/current";
+
+warn "created $download_dir\n";
+
+symlink $download_dir, "homophila/current" or die "can't create homophila/current";
