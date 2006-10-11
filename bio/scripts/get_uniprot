@@ -30,6 +30,8 @@ $ftp->login("anonymous",'-anonymous@')
 $ftp->cwd($uniprot_base_path)
   or die "Cannot change working directory ", $ftp->message;
 
+$ftp->type("binary");
+
 my $local_release_notes_copy = tmpnam;
 
 my $release_notes;
