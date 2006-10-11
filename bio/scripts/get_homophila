@@ -35,7 +35,7 @@ mkdir $download_dir;
 
 print "getting $homophila_data_file\n";
 
-io("$homophila_server/$homophila_data_file.gz") > "$download_dir/$homophila_data_file";
+io("$homophila_server/$homophila_data_file.gz") > io("$download_dir/$homophila_data_file.gz");
 
 if ((system "gzip -dr $download_dir") != 0) {
   die qq|system "gzip -dr $download_dir" failed: $?\n|;
