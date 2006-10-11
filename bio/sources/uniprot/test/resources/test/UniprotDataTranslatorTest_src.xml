@@ -94,6 +94,9 @@
 <item id="0_41" class="http://www.intermine.org/model/uniprot#NameType">
 <attribute name="name" value="14-3-3-like protein 1"/>
 </item>
+<item id="0_500" class="http://www.intermine.org/model/uniprot#NameType">
+<attribute name="name" value="Another name"/>
+</item>
 <item id="0_17" class="http://www.intermine.org/model/uniprot#Taxon_Lineage_Organism_Entry">
 <attribute name="taxon" value="Drosophila"/>
 </item>
@@ -178,13 +181,8 @@
 </collection>
 </item>
 <item id="0_997" class="http://www.intermine.org/model/uniprot#DbReferenceType">
-<attribute name="id" value="U61957"/>
-<attribute name="key" value="15"/>
-<attribute name="type" value="EMBL"/>
-<collection name="propertys">
-<reference ref_id="0_998"/>
-<reference ref_id="0_999"/>
-</collection>
+<attribute name="id" value="EC 1.2.3.45"/>
+<attribute name="type" value="EC"/>
 </item>
 <item id="0_24" class="http://www.intermine.org/model/uniprot#DbReferenceType">
 <attribute name="id" value="10.1126/science.287.5461.2185"/>
@@ -236,14 +234,6 @@
 <attribute name="type" value="protein sequence ID"/>
 <attribute name="value" value="AAA61872.1"/>
 </item>
-<item id="0_998" class="http://www.intermine.org/model/uniprot#PropertyType">
-<attribute name="type" value="protein sequence ID"/>
-<attribute name="value" value="AAB03417.3"/>
-</item>
-<item id="0_999" class="http://www.intermine.org/model/uniprot#PropertyType">
-<attribute name="type" value="molecule type"/>
-<attribute name="value" value="Genomic_DNA"/>
-</item>
 <item id="0_45" class="http://www.intermine.org/model/uniprot#GeneNameType">
 <attribute name="name" value="M117.2"/>
 <attribute name="type" value="ORF"/>
@@ -266,6 +256,7 @@
 <item id="0_40" class="http://www.intermine.org/model/uniprot#ProteinType">
 <collection name="names">
 <reference ref_id="0_41"/>
+<reference ref_id="0_500"/>
 </collection>
 </item>
 <item id="0_22" class="http://www.intermine.org/model/uniprot#DbReferenceType">

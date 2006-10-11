@@ -2,7 +2,8 @@
 <classes>
   <class name="org.flymine.model.genomic.Protein" is-interface="true">
     <attribute name="isFragment" type="java.lang.Boolean"/>
-    <attribute name="emblProteinId" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="ecNumber" type="java.lang.String"/>
     <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
     <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
   </class>

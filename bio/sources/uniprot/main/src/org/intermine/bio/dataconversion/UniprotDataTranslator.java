@@ -183,6 +183,7 @@ public class UniprotDataTranslator extends DataTranslator
 
         if (taxonId != 0) {
             Set retval = new HashSet();
+            Map synonyms = new HashMap();
             Reference organismReference = new Reference("organism", getOrganismId(taxonId));
 
             // 1. create Protein, same for all organisms
@@ -194,8 +195,8 @@ public class UniprotDataTranslator extends DataTranslator
             String proteinName = getAttributeValue((Item) proteinNames.get(0), "name");
             protein.addAttribute(new Attribute("identifier", proteinName));
             protein.addReference(organismReference);
-            retval.add(createSynonym(protein.getIdentifier(), "identifier",
-                                     proteinName, getDataSourceId("UniProt")));
+            createSynonym(retval, synonyms, protein.getIdentifier(), "identifier",
+                                         proteinName, getDataSourceId("UniProt"));
 
             // find primary accession and set others as synonyms <entry><accession>*
             List srcAccessions = getItemsInCollection(srcItem.getCollection("accessions"));
@@ -213,8 +214,8 @@ public class UniprotDataTranslator extends DataTranslator
                 while (srcAccIter.hasNext()) {
                     Item srcAccession = (Item) srcAccIter.next();
                     String srcAccessionString = getAttributeValue(srcAccession, "accession");
-                    retval.add(createSynonym(protein.getIdentifier(), "accession",
-                                             srcAccessionString, getDataSourceId("UniProt")));
+                    createSynonym(retval, synonyms, protein.getIdentifier(), "accession",
+                                  srcAccessionString, getDataSourceId("UniProt"));
                 }
             }
             // add UniProt Database to evidence collection
@@ -239,22 +240,28 @@ public class UniprotDataTranslator extends DataTranslator
 
                 List srcProteinNames = getItemsInCollection(srcProtein.getCollection("names"));
                 Iterator srcProtNameIter = srcProteinNames.iterator();
+                StringBuffer desc = new StringBuffer();
                 while (srcProtNameIter.hasNext()) {
                     Item srcProteinName = (Item) srcProtNameIter.next();
                     String srcProteinNameStr = getAttributeValue(srcProteinName, "name");
 
                     if (!protein.hasAttribute("name")) {
                         protein.setAttribute("name", srcProteinNameStr);
+                        desc.append(srcProteinNameStr);
+                    } else {
+                        desc.append(" (" + srcProteinNameStr + ")");
                     }
+
 
                     String srcProteinNameEvidence = getAttributeValue(srcProteinName,
                                                                       "evidence");
                     if (srcProteinNameEvidence != null) {
                         srcProteinNameStr += " (Evidence " + srcProteinNameEvidence + ")";
                     }
-                    retval.add(createSynonym(protein.getIdentifier(), "name",
-                                             srcProteinNameStr, getDataSourceId("UniProt")));
+                    createSynonym(retval, synonyms, protein.getIdentifier(), "name",
+                                  srcProteinNameStr, getDataSourceId("UniProt"));
                 }
+                protein.setAttribute("description", desc.toString());
             }
 
             // 3. get collection of Comments
@@ -335,48 +342,17 @@ public class UniprotDataTranslator extends DataTranslator
                     retval.add(sequence);
                     protein.addReference(new Reference("sequence", sequence.getIdentifier()));
                     // TODO uncomment this, just removed to work with old build
-                    //protein.setAttribute("length", srcSeq.getAttribute("length").getValue());
-                    //protein.setAttribute("molecularWeight", srcSeq.getAttribute("mass").getValue());
+                    protein.setAttribute("length", srcSeq.getAttribute("length").getValue());
+                    protein.setAttribute("molecularWeight", srcSeq.getAttribute("mass").getValue());
                 }
             }
 
-            // 6. Put an embl_seq_id in a protein so we can merge it with BioGrid's psi format data.
-            // <entry><dbReference>
-            List srcDbRefs = getItemsInCollection(srcItem.getCollection("dbReferences"));
-            Iterator srcDbRefIter = srcDbRefs.iterator();
-            while (srcDbRefIter.hasNext()) {
-                Item dbRefItem = (Item) srcDbRefIter.next();
-                String dbRefType = getAttributeValue(dbRefItem, "type");
-                if ("EMBL".equals(dbRefType)) {
-                    List props = getItemsInCollection(dbRefItem.getCollection("propertys"));
-                    Iterator pIter = props.iterator();
-                    String emblProteinId = null;
-                    boolean isGenomicDna = false;
-                    while (pIter.hasNext()) {
-                        Item dbProp = (Item) pIter.next();
-                        String dbPropType = getAttributeValue(dbProp, "type");
-                        //<property type="protein sequence ID" value="AAB03417.3"/>
-                        if ("protein sequence ID".equals(dbPropType)) {
-                            emblProteinId = getAttributeValue(dbProp, "value");
-                        }
-                        //<property type="molecule type" value="Genomic_DNA"/>
-                        else if ("molecule type".equals(dbPropType)) {
-                            String moleType = getAttributeValue(dbProp, "value");
-                            if ("Genomic_DNA".equals(moleType)) {
-                                isGenomicDna = true;
-                            }
-                        }
-                        //Potentially we may need to mod this if there is more than one per <entry>
-                        if (isGenomicDna && (emblProteinId != null)) {
-                            protein.setAttribute("emblProteinId",
-                                            (emblProteinId.indexOf(".") > 0
-                                            ? emblProteinId.substring(0, emblProteinId.indexOf("."))
-                                            : emblProteinId));
-                            break;
-                        }
-                    }
-                }
+            // 6. set Protein.ecNumber if one present in (entry><dbReference>*
+            String ecNumber = getDataSourceReferenceValue(srcItem, "EC", null);
+            if (ecNumber != null) {
+                protein.setAttribute("ecNumber", ecNumber);
             }
+
             // 7. now try to create reference to gene, choice of identifier is organism specific
             // <entry><gene>*
             // <entry><dbReference>
@@ -528,18 +504,16 @@ public class UniprotDataTranslator extends DataTranslator
                                 LOG.info("geneOrganismDbId was empty string");
                             }
                             gene.addAttribute(new Attribute("organismDbId", geneOrganismDbId));
-                            Item synonym = createSynonym(gene.getIdentifier(), "identifier",
-                                                         geneOrganismDbId, dbId);
-                            retval.add(synonym);
+                            createSynonym(retval, synonyms, gene.getIdentifier(), "identifier",
+                                          geneOrganismDbId, dbId);
                         }
 
                         if (geneIdentifier != null && createGeneIdentifier) {
                             gene.addAttribute(new Attribute("identifier", geneIdentifier));
                             // don't create duplicate synonym
                             if (!geneIdentifier.equals(geneOrganismDbId)) {
-                                Item synonym = createSynonym(gene.getIdentifier(), "identifier",
-                                                             geneIdentifier, dbId);
-                                retval.add(synonym);
+                                createSynonym(retval, synonyms, gene.getIdentifier(), "identifier",
+                                              geneIdentifier, dbId);
                             }
                             // keep a track of non-null gene identifiers
                             geneIdentifiers.add(geneIdentifier);
@@ -563,11 +537,10 @@ public class UniprotDataTranslator extends DataTranslator
                             String symbol = getAttributeValue(srcGeneName, "name");
                             // synonym already created for ORF as identifer
                             if (!type.equals("ORF")) {
-                                Item synonym = createSynonym(gene.getIdentifier(),
+                                createSynonym(retval, synonyms, gene.getIdentifier(),
                                     (type.equals("primary") || type.equals("synonym"))
                                                              ? "symbol" : type,
                                                              symbol, dbId);
-                                retval.add(synonym);
                             }
                         }
                         geneItemId = gene.getIdentifier();
@@ -592,14 +565,19 @@ public class UniprotDataTranslator extends DataTranslator
         return Collections.EMPTY_SET;
     }
 
-
-    private Item createSynonym(String subjectId, String type, String value, String dbId) {
-        Item synonym = createItem(tgtNs + "Synonym");
-        synonym.addReference(new Reference("subject", subjectId));
-        synonym.addAttribute(new Attribute("type", type));
-        synonym.addAttribute(new Attribute("value", value));
-        synonym.addReference(new Reference("source", dbId));
-        return synonym;
+    // if synonym not already create add to retval and put in synonyms map for this <entry>
+    private void createSynonym(Set retval, Map synonyms, String subjectId, String type,
+                               String value, String dbId) {
+        String key = subjectId + type + value + dbId;
+        if (!synonyms.containsKey(key)) {
+            Item synonym = createItem(tgtNs + "Synonym");
+            synonym.addReference(new Reference("subject", subjectId));
+            synonym.addAttribute(new Attribute("type", type));
+            synonym.addAttribute(new Attribute("value", value));
+            synonym.addReference(new Reference("source", dbId));
+            synonyms.put(key, synonym);
+            retval.add(synonym);
+        }
     }
 
     private String getDataSourceId(String title) {
@@ -652,7 +630,7 @@ public class UniprotDataTranslator extends DataTranslator
             if (dbName.equals(type)) {
                 // uncomment to set geneIdentifier if there is no propertys collection present (?)
                 if (srcDbRefs.size() == 1) {
-                    geneIdentifier = new String(getAttributeValue(srcDbReference,"id"));
+                    geneIdentifier = new String(getAttributeValue(srcDbReference, "id"));
                 } else {
                     List srcProperties = getItemsInCollection(srcDbReference
                                                               .getCollection("propertys"));
