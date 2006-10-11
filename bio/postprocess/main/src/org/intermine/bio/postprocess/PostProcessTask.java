@@ -124,7 +124,8 @@ public class PostProcessTask extends Task
                 LOG.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
             } else if ("create-symmetrical-relation-references".equals(operation)) {
-                throw new BuildException("create-symmetrical-relation-references task is deprecated");
+                throw new BuildException("create-symmetrical-relation-references task is"
+                        + " deprecated");
             } else if ("create-utr-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOG.info("Starting CreateReferences.createUtrRefs()");
@@ -179,7 +180,7 @@ public class PostProcessTask extends Task
                 IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
                 LOG.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
                 ig.createIntergenicRegionFeatures();
-            } else if ("create-overlap-relations-flymine".equals(operation)){
+            } else if ("create-overlap-relations-flymine".equals(operation)) {
                 String classesToIgnore = getProject().getUserProperty("classesToIgnore");
                 if (classesToIgnore == null) {
                     throw new BuildException("classesToIgnore property not set");

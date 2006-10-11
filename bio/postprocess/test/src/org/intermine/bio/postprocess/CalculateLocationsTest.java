@@ -187,7 +187,7 @@ public class CalculateLocationsTest extends TestCase {
         
         CalculateLocations cl = new CalculateLocations(osw);
         List classesToIgnore = new ArrayList();
-        classesToIgnore.add("Primer");
+        classesToIgnore.add("Primer=Exon");
         cl.createOverlapRelations(classesToIgnore, false);
 
         ObjectStore os = osw.getObjectStore();
@@ -221,6 +221,7 @@ public class CalculateLocationsTest extends TestCase {
             { 4000, 1000 },
             { 4000, 1001 },
             { 4000, 1002 },
+            { 4000, 3000 }
         };
 
         Query q = new Query();
