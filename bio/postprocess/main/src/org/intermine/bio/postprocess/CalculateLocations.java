@@ -400,8 +400,10 @@ public class CalculateLocations
     /**
      * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
      * objects that are located on chromosomes and overlap.
-     * @param classNamesToIgnore a comma separated list of the names of those classes that should be
-     * ignored when searching for overlaps.  Sub classes to these classes are ignored too
+     * @param classNamesToIgnore a List of the names of those classes that should be ignored when
+     * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
+     * entry can be of the form class=class, which specifies that the particular combination should
+     * be ignored. Hence an entry of the form class is equivalent to class=InterMineObject
      * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
      * same class.
      * @throws Exception if anything goes wrong
@@ -432,37 +434,7 @@ public class CalculateLocations
         LOG.info("Creating overlaps for " + subject + ", identifier: "
                  + subject.getIdentifier());
 
-        Iterator overlapIterator =
-            OverlapUtil.findOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches);
-
-        int count = 0;
-
-        while (overlapIterator.hasNext()) {
-            Location overlapLocations[] = (Location[]) overlapIterator.next();
-
-            Location location1 = overlapLocations[0];
-            Location location2 = overlapLocations[1];
-
-            InterMineObject lsf1 = location1.proxGetSubject();
-            InterMineObject lsf2 = location2.proxGetSubject();
-
-            OverlapRelation overlapRelation = (OverlapRelation)
-                DynamicUtil.createObject(Collections.singleton(OverlapRelation.class));
-            Set bioEntityCollection = overlapRelation.getBioEntities();
-            bioEntityCollection.add(lsf1);
-            bioEntityCollection.add(lsf2);
-
-            ++count;
-
-            osw.store(overlapRelation);
-            osw.addToCollection(lsf1.getId(), LocatedSequenceFeature.class, "overlappingFeatures",
-                    lsf2.getId());
-            osw.addToCollection(lsf2.getId(), LocatedSequenceFeature.class, "overlappingFeatures",
-                    lsf1.getId());
-        }
-
-        LOG.info("Stored " + count + " overlaps for " + subject + ", identifier: "
-                 + subject.getIdentifier());
+        OverlapUtil.createOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches, osw);
     }
 
     /**
@@ -1131,8 +1103,7 @@ public class CalculateLocations
      * @param destClass after createTransformedLocations(), extra Locations will exist between
      * moveClass objects and destClass
      * @param moveClass the class of objects to create new Locations for
-     * @throws ObjectStoreException 
-     * @throws Exception if anything goes wrong
+     * @throws ObjectStoreException if anything goes wrong
      */
     protected void createTransformedLocations(Class sourceClass, Class destClass, Class moveClass)
          throws ObjectStoreException {
