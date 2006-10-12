@@ -37,11 +37,11 @@ import org.flymine.model.genomic.Organism;
 public class EntrezPublicationRetrieverTest extends TestCase
 {
     public void testEntrezOrganismRetriever() throws Exception {
-        EntrezPublicationsRetriever eor = new TestUpdatePublicationsRetriever();
+        EntrezPublicationsRetriever eor = new TestEntrezPublicationsRetriever();
         eor.setOsAlias("os.bio-test");
 
         // Create temp file.
-        File temp = File.createTempFile("UpdatePublicationsRetriever", ".tmp");
+        File temp = File.createTempFile("EntrezPublicationsRetriever", ".tmp");
         // Delete temp file when program exits.
         temp.deleteOnExit();
 
@@ -49,24 +49,24 @@ public class EntrezPublicationRetrieverTest extends TestCase
 
         eor.execute();
 
-        List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsRetrieverTest_tgt.xml"));
+        List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_tgt.xml"));
 
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
         Assert.assertEquals(new HashSet(expected), new HashSet(actual));
     }
 
-    class TestUpdatePublicationsRetriever extends EntrezPublicationsRetriever
+    class TestEntrezPublicationsRetriever extends EntrezPublicationsRetriever
     {
-        public TestUpdatePublicationsRetriever() {
+        public TestEntrezPublicationsRetriever() {
             super();
             setOsAlias("os.bio-test");
-            setOutputFile("/tmp/TestUpdatePublicationsRetriever_dummy");
+            setOutputFile("/tmp/TestEntrezPublicationsRetriever_dummy");
         }
 
         protected Map getOrganisms(ObjectStore os) {
             try {
-                List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsRetrieverTest_src.xml"));
+                List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_src.xml"));
                 List objects =
                     FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
                 Map map = new HashMap();
@@ -83,7 +83,7 @@ public class EntrezPublicationRetrieverTest extends TestCase
         }
 
         protected Reader getReader(Set ids) {
-            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsRetrieverTest_esummary.xml"));
+            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));
         }
     }
 }
