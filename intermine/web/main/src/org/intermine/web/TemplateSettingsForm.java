@@ -16,7 +16,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * 
+ * Form used when building a template.
  * 
  * @author Thomas Riley
  */
@@ -24,21 +24,57 @@ public class TemplateSettingsForm extends ActionForm
 {
     private String description = "";
     private String name = "";
+    private String title = "";
+    private String comment = "";
     private String keywords = "";
     private boolean important;
     
     /**
-     * @return Returns the description.
+     * Return the description.
+     * @return the description.
      */
     public String getDescription() {
         return description;
     }
     
     /**
+     * Set the description
      * @param description The description to set.
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Return the title
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Set the title
+     * @param title the title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    /**
+     * Return the comment
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+    
+    /**
+     * Set the comment
+     * @param comment the comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
     }
     
     /**
@@ -93,8 +129,10 @@ public class TemplateSettingsForm extends ActionForm
         TemplateBuildState tbs =
             (TemplateBuildState) request.getSession().getAttribute(Constants.TEMPLATE_BUILD_STATE);
         setName(tbs.getName());
+        setTitle(tbs.getTitle());
         setKeywords(tbs.getKeywords());
         setImportant(tbs.isImportant());
         setDescription(tbs.getDescription());
+        setComment(tbs.getComment());
     }
 }

@@ -19,7 +19,9 @@ package org.intermine.web;
  */
 public class TemplateBuildState
 {
+    private String title = "";
     private String description = "";
+    private String comment = "";
     private String keywords = "";
     private String name = "";
     private boolean important;
@@ -31,6 +33,8 @@ public class TemplateBuildState
      */
     public TemplateBuildState(TemplateQuery template) {
         description = template.getDescription();
+        title = template.getTitle();
+        comment = template.getComment();
         name = template.getName();
         keywords = template.getKeywords();
         important = template.isImportant();
@@ -41,6 +45,7 @@ public class TemplateBuildState
      * Construct a new instance of TemplateBuildState.
      */
     public TemplateBuildState() {
+        // empty
     }
 
     /**
@@ -88,7 +93,23 @@ public class TemplateBuildState
     public void setName(String name) {
         this.name = name;
     }
-
+    
+    /**
+     * Get the template title
+     * @return the template title
+     */
+    public String getTitle() {
+        return title;
+    }
+    
+    /**
+     * Set the template title
+     * @param title the template title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
     /**
      * Get the template description
      * @return the template desccription
@@ -96,7 +117,7 @@ public class TemplateBuildState
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Set the template description
      * @param description the description
@@ -104,7 +125,23 @@ public class TemplateBuildState
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Get the template comment
+     * @return the template comment
+     */
+    public String getComment() {
+        return comment;
+    }
     
+    /**
+     * Set the template comment
+     * @param comment the comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     /**
      * Get a reference to the template query being updated. This method
      * will return null if we use is not updating an existing query.

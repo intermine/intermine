@@ -100,7 +100,20 @@
     </div>
   </c:when>
   <c:otherwise>
-  
+    
+    <c:if test="${!empty templateQuery}">
+      <div class="resultsTableTemplateHeader">
+        <div class="templateTitle">
+          <fmt:message key="results.templateName">
+            <fmt:param value="${templateQuery.title}"/>
+          </fmt:message>
+        </div>
+        <div class="templateDescription">
+          ${templateQuery.description}
+        </div>
+      </div>
+    </c:if>
+
     <html:form action="/changeTableSize">
       <div class="body">
         <%-- Page size controls --%>

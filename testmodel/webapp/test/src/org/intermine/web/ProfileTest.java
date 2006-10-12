@@ -45,7 +45,7 @@ public class ProfileTest extends TestCase
         userprofileOS = ObjectStoreFactory.getObjectStore("os.userprofile-test");
         bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
-        template = new TemplateQuery("template", "tdesc",
+        template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");
         profileManager = new DummyProfileManager(userprofileOS);

@@ -33,8 +33,12 @@ public class TemplateQuery extends PathQuery
 {
     /** Template query name. */
     protected String name;
+    /** Template query title. */
+    protected String title;
     /** Template query description. */
     protected String description;
+    /** The private comment for this query. */
+    protected String comment;
     /** Nodes with templated constraints */
     protected List editableNodes = new ArrayList();
     /** Map from node to editable constraint list */
@@ -50,13 +54,15 @@ public class TemplateQuery extends PathQuery
      * Construct a new instance of TemplateQuery.
      *
      * @param name the name of the template
-     * @param description the template description
+     * @param title the short title of this template for showing in list
+     * @param description the full template description for showing on the template form
+     * @param comment an optional private comment for this template
      * @param query the query itself
      * @param important true if template is important
      * @param keywords keywords for this template
      */
-    public TemplateQuery(String name, String description, PathQuery query,
-                         boolean important, String keywords) {
+    public TemplateQuery(String name, String title, String description, String comment,
+                         PathQuery query, boolean important, String keywords) {
         super((PathQuery) query.clone());
         if (description != null) {
             this.description = description;
@@ -67,6 +73,8 @@ public class TemplateQuery extends PathQuery
         if (keywords != null) {
             this.keywords = keywords;
         }
+        this.title = title;
+        this.comment = comment;
         this.important = important;
         // Find the editable constraints in the query.
         Iterator iter = query.getNodes().entrySet().iterator();
@@ -151,11 +159,27 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Get the tempalte description.
+     * Get the template title.
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+    
+    /**
+     * Get the template description.
      * @return the description
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Get the private comment for this template.
+     * @return the description
+     */
+    public String getComment() {
+        return comment;
     }
 
     /**
@@ -212,7 +236,7 @@ public class TemplateQuery extends PathQuery
      * @return a TemplateQuery
      */
     public Object clone() {
-        TemplateQuery templateQuery = new TemplateQuery(name, description,
+        TemplateQuery templateQuery = new TemplateQuery(name, title, description, comment,
                                                         (PathQuery) super.clone(), important,
                                                         keywords);
         templateQuery.edited = edited;

@@ -72,7 +72,8 @@
 
 <div class="body">
   <html:form action="/templateAction">
-    <p><c:out value="${templateQuery.description}"/></p>
+    <div class="templateTitle">${templateQuery.title}</div>
+    <div class="templateDescription">${templateQuery.description}</div>
     <table border="0" class="templateForm">
       <c:set var="index" value="${0}"/>
       <c:forEach items="${templateQuery.editableNodes}" var="node">
