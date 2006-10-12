@@ -228,25 +228,6 @@
     <post-process name="set-collection-counts" dump="true"/>
     <post-process name="create-flybase-to-uniprot-refs"/>
 
-    <!-- update-publications/
-    TODO - CORE:
-  <target name="update-publications" depends="compile-genomic-java-from-db">
-    <taskdef name="mappings" classname="org.flymine.postprocess.PostProcessTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <mappings operation="update-publications" objectStore="os.production" outputFile="${build.tmp}/publications.xml"/>
-
-    <taskdef name="load-xml-data"
-      classname="org.intermine.dataloader.XmlDataLoaderTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <load-xml-data integrationWriter="integration.production"
-                   xmlFile="${build.tmp}/publications.xml"
-                   sourceName="pubmed"
-                   ignoreDuplicates="true"/>
-  </target>
-    -->
     <!-- grant-db-production/
     TODO: Not really post processing but just has to be done sometime...
   <target name="grant-db-production" depends="prepare" - ->
