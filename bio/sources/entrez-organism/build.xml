@@ -7,7 +7,6 @@
        and genus from Entrez into the file -->
   <target name="-pre-retrieve" depends="source.-pre-retrieve">
     <property name="cp" refid="task.class.path"/>
-    <echo>cp: ${cp}</echo>
 
     <taskdef name="retrieve-organisms" 
              classname="org.intermine.bio.dataconversion.EntrezOrganismRetriever">
