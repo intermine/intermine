@@ -120,7 +120,7 @@ public class ProfileManagerTest extends XMLTestCase
                                                      contents);
 
         TemplateQuery template =
-            new TemplateQuery("template", "tdesc",
+            new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               false, "");
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
@@ -163,7 +163,7 @@ public class ProfileManagerTest extends XMLTestCase
                                                      objectContents);
 
 
-        template = new TemplateQuery("template", "some desc",
+        template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,
                                      "some_keyword");
 

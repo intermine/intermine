@@ -48,6 +48,8 @@ public class TemplateSettingsAction extends InterMineAction
         
         tbs.setDescription(tsf.getDescription());
         tbs.setName(tsf.getName());
+        tbs.setTitle(tsf.getTitle());
+        tbs.setComment(tsf.getComment());
         tbs.setKeywords(tsf.getKeywords());
         tbs.setImportant(tsf.isImportant());
         

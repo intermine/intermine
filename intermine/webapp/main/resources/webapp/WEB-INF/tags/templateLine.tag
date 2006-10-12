@@ -10,12 +10,12 @@
 
     <c:if test="${!templateQuery.valid}">
       <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=${type}" styleClass="brokenTmplLink">
-      <strike><span class="templateDesc"><c:out value="${templateQuery.description}"/></span></strike>
+      <strike><span class="templateTitle"><c:out value="${templateQuery.title}"/></span></strike>
       <img border="0" class="arrow" src="images/template_t.gif" alt="->"/>
       </html:link>
     </c:if>
     <c:if test="${templateQuery.valid}">
-      <span class="templateDesc">${!empty desc ? desc : templateQuery.description}</span>
+      <span class="templateTitle">${!empty desc ? desc : templateQuery.title}</span>
       <fmt:message var="linkTitle" key="templateList.run">
         <fmt:param value="${templateQuery.name}"/>
       </fmt:message>

@@ -36,7 +36,13 @@
               <fmt:message key="history.namecolumnheader"/>
             </th>
             <th align="left" nowrap>
+              <fmt:message key="history.titleheader"/>
+            </th>
+            <th align="left" nowrap>
               <fmt:message key="history.descriptionheader"/>
+            </th>
+            <th align="left" nowrap>
+              <fmt:message key="history.commentheader"/>
             </th>
             <th align="center" nowrap>
               <fmt:message key="history.actionscolumnheader"/>
@@ -80,12 +86,25 @@
               </c:choose>
               
               <td nowrap>
+                ${savedTemplate.value.title}
+              </td>
+              <td nowrap>
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">
                     ${fn:substring(savedTemplate.value.description, 0, 60)}...
                   </c:when>
                   <c:otherwise>
                     ${savedTemplate.value.description}
+                  </c:otherwise>
+                </c:choose>
+              </td>
+              <td nowrap>
+                <c:choose>
+                  <c:when test="${fn:length(savedTemplate.value.comment) > 60}">
+                    ${fn:substring(savedTemplate.value.comment, 0, 60)}...
+                  </c:when>
+                  <c:otherwise>
+                    ${savedTemplate.value.comment}
                   </c:otherwise>
                 </c:choose>
               </td>

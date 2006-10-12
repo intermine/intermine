@@ -41,12 +41,27 @@
         </td>
       </tr>
       <tr>
+        <td align="right"><fmt:message key="templateBuilder.templateTitle"/></td>
+        <td nowrap>
+          <html:text property="title" size="55"/>
+          <c:if test="${empty TEMPLATE_BUILD_STATE.title}">
+            <span class="errors">(Required)</span>
+          </c:if>
+        </td>
+      </tr>
+      <tr>
         <td align="right"><fmt:message key="templateBuilder.templateDescription"/></td>
         <td nowrap>
-          <html:text property="description" size="55"/>
+          <html:textarea property="description" cols="55" rows="3"/>
           <c:if test="${empty TEMPLATE_BUILD_STATE.description}">
             <span class="errors">(Required)</span>
           </c:if>
+        </td>
+      </tr>
+      <tr>
+        <td align="right"><fmt:message key="templateBuilder.templateComment"/></td>
+        <td nowrap>
+          <html:text property="comment" size="55"/>
         </td>
       </tr>
       <%--<tr>

@@ -42,7 +42,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         sq = new SavedQuery("query1", date, query);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
-        template = new TemplateQuery("template", "tdesc",
+        template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
                                      "");
 

@@ -22,7 +22,10 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+
+import org.intermine.web.Constants;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.TemplateQuery;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Sets up PagedTable
@@ -67,6 +70,12 @@ public class TableController extends TilesAction
             return null;
         }
         request.setAttribute("resultsTable", pt);
+
+        if (session.getAttribute(Constants.QUERY) != null) {
+            if (session.getAttribute(Constants.QUERY) instanceof TemplateQuery) {
+                request.setAttribute("templateQuery", session.getAttribute(Constants.QUERY));
+            }
+        }
         
         int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
         int size = (sizeStr == null ? pt.getPageSize() : Integer.parseInt(sizeStr));

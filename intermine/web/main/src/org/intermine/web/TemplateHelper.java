@@ -222,7 +222,9 @@ public class TemplateHelper
      */
     public static TemplateQuery buildTemplateQuery(TemplateBuildState tbs, PathQuery query) {
         TemplateQuery template = new TemplateQuery(tbs.getName(),
+                                                   tbs.getTitle(),
                                                    tbs.getDescription(),
+                                                   tbs.getComment(),
                                                    (PathQuery) query.clone(), tbs.isImportant(),
                                                    tbs.getKeywords());
         return template;

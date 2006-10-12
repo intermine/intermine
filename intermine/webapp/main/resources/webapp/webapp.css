@@ -351,6 +351,18 @@ table.results tr.even {
 table.results th.checkbox,table.results td.checkbox{
 	border-right-style: dotted;
 }
+.templateTitle {
+}
+.templateDescription {
+  font-style: italic;
+  font-size: 80%;
+}
+.resultsTableTemplateHeader {
+  padding: 5px;
+  margin-left: 5px;
+  font-weight: bold;
+}
+
 .type {
   color: #864;
 }
@@ -445,9 +457,6 @@ span.collectionDescription {
   color: #999;
   font-size: 16px;
   font-weight: bold;
-}
-
-.templateDesc {
 }
 
 a.brokenTmplLink {

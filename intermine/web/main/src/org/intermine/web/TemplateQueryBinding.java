@@ -45,11 +45,13 @@ public class TemplateQueryBinding
         try {
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
-            writer.writeAttribute("description", template.getDescription());
+            writer.writeAttribute("title", template.getTitle());
+            writer.writeAttribute("longDescription", template.getDescription());
+            writer.writeAttribute("comment", template.getComment());
             writer.writeAttribute("important", "" + template.isImportant());
             // writer.writeAttribute("keywords", template.getKeywords());
 
-            PathQueryBinding.marshal((PathQuery) template, template.getName(), template.getModel()
+            PathQueryBinding.marshal(template, template.getName(), template.getModel()
                     .getName(), writer);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -103,6 +105,8 @@ public class TemplateQueryBinding
         String templateDesc;
         String templateCat;
         String keywords;
+        String templateTitle;
+        String templateComment;
         boolean important;
 
         /**
@@ -122,7 +126,13 @@ public class TemplateQueryBinding
             throws SAXException {
             if (qName.equals("template")) {
                 templateName = attrs.getValue("name");
-                templateDesc = attrs.getValue("description");
+                templateTitle= attrs.getValue("title");
+                templateDesc = attrs.getValue("longDescription");
+                if (attrs.getValue("description") != null && templateTitle == null) {
+                    // support old serialisation format: description -> title
+                    templateTitle = attrs.getValue("description");
+                }
+                templateComment= attrs.getValue("comment");
                 templateCat = attrs.getValue("category");
                 keywords = attrs.getValue("keywords");
                 if (keywords == null) {
@@ -150,7 +160,9 @@ public class TemplateQueryBinding
                     }
                 }
                 templates.put(templateName, new TemplateQuery(templateName,
+                                                              templateTitle,
                                                               templateDesc,
+                                                              templateComment,
                                                               query,
                                                               important,
                                                               keywords));
