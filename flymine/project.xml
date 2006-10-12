@@ -220,17 +220,6 @@
     <post-process name="set-collection-counts" dump="true"/>
     <post-process name="create-flybase-to-uniprot-refs"/>
 
-    <!-- create-flybase-to-uniprot-refs/
-    TODO: Convert to datasource
-  <target name="create-flybase-to-uniprot-refs" depends="compile-genomic-java-from-db">
-    <taskdef name="fb-uniprot-refs" classname="org.flymine.postprocess.FlyBaseUniProtRefsTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-    <fb-uniprot-refs linkFile="${flybase.uniprot.link.file}"
-                     objectStoreWriter="osw.production"/>
-  </target>
-
-    -->
     <!-- update-publications/
     TODO - CORE:
   <target name="update-publications" depends="compile-genomic-java-from-db">
