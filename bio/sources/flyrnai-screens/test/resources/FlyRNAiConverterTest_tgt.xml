@@ -38,7 +38,7 @@
     <attribute name="maxOffTargetOverlaps" value="0"/>
     <attribute name="numOffTargets" value="0"/>
     <attribute name="result" value="DCV"/>
-    <attribute name="resultDescription" value="DCV details"/>
+    <attribute name="resultDetails" value="DCV details"/>
     <reference name="amplicon" ref_id="5_2"/>
     <reference name="analysis" ref_id="4_1"/>
     <reference name="gene" ref_id="7_2"/>
@@ -65,7 +65,7 @@
     <attribute name="maxOffTargetOverlaps" value="19"/>
     <attribute name="numOffTargets" value="1"/>
     <attribute name="result" value="DCV"/>
-    <attribute name="resultDescription" value="DCV details"/>
+    <attribute name="resultDetails" value="DCV details"/>
     <reference name="amplicon" ref_id="5_1"/>
     <reference name="analysis" ref_id="4_1"/>
     <reference name="gene" ref_id="7_1"/>

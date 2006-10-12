@@ -231,9 +231,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                     String result = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
                     screenHit.setAttribute("result", result);
                     if (columnNameMap.containsKey(PHENOTYPE_DETAILS_COLUMN)) {
-                        String resultDesc = getColumnValue(columnNameMap, thisRow,
+                        String resultDetails = getColumnValue(columnNameMap, thisRow,
                                                               PHENOTYPE_DETAILS_COLUMN);
-                        screenHit.setAttribute("resultDescription", resultDesc);
+                        screenHit.setAttribute("resultDetails", resultDetails);
                     }
                     screenHit.setAttribute("numOffTargets", numOffTargets);
                     screenHit.setAttribute("maxOffTargetOverlaps", maxOffTargetOverlaps);
