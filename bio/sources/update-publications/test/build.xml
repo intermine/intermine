@@ -1,0 +1,8 @@
+<project name="sources-entrez-organism-test" default="default" basedir="."
+         xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
+         xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
+  <description>build test tasks for entrez-organism</description>
+
+  <import file="../../../../imbuild/tests.xml"/>
+
+</project>
