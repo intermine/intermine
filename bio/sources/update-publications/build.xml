@@ -1,0 +1,20 @@
+<project name="update-publications" default="default" basedir=".">
+  <description>update-publications retrieve, translate and load tasks</description>
+  <import file="../../../imbuild/source.xml"/> 
+
+  <!-- special case to create a ${tgt.xml.file} (in InterMine XML format) by
+       finding the pubmed ids in the objectstore, then retrieving the details
+       from Entrez into the file -->
+  <target name="-pre-retrieve" depends="source.-pre-retrieve">
+    <property name="cp" refid="task.class.path"/>
+
+    <taskdef name="retrieve-publications" 
+             classname="org.intermine.bio.dataconversion.EntrezPublicationsRetriever">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+    
+    <echo message="retrieving from ${tgt.xml.file}"/>
+
+    <retrieve-organisms osAlias="os.production" outputFile="${tgt.xml.file}"/>
+  </target>
+</project>
