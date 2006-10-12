@@ -25,7 +25,6 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 import junit.framework.Assert;
 
-import org.intermine.bio.dataconversion.EntrezOrganismRetriever;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullParser;
@@ -35,14 +34,14 @@ import org.flymine.model.genomic.Organism;
 /**
  * Tests for EntrezOrganismRetriever.
  */
-public class EntrezOrganismRetrieverTest extends TestCase
+public class EntrezPublicationRetrieverTest extends TestCase
 {
     public void testEntrezOrganismRetriever() throws Exception {
-        EntrezOrganismRetriever eor = new TestEntrezOrganismRetriever();
+        EntrezPublicationsRetriever eor = new TestUpdatePublicationsRetriever();
         eor.setOsAlias("os.bio-test");
 
         // Create temp file.
-        File temp = File.createTempFile("EntrezOrganismRetriever", ".tmp");
+        File temp = File.createTempFile("UpdatePublicationsRetriever", ".tmp");
         // Delete temp file when program exits.
         temp.deleteOnExit();
 
@@ -50,24 +49,24 @@ public class EntrezOrganismRetrieverTest extends TestCase
 
         eor.execute();
 
-        List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezOrganismRetrieverTest_tgt.xml"));
+        List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsRetrieverTest_tgt.xml"));
 
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
         Assert.assertEquals(new HashSet(expected), new HashSet(actual));
     }
 
-    class TestEntrezOrganismRetriever extends EntrezOrganismRetriever
+    class TestUpdatePublicationsRetriever extends EntrezPublicationsRetriever
     {
-        public TestEntrezOrganismRetriever() {
+        public TestUpdatePublicationsRetriever() {
             super();
             setOsAlias("os.bio-test");
-            setOutputFile("/tmp/TestEntrezOrganismRetriever_dummy");
+            setOutputFile("/tmp/TestUpdatePublicationsRetriever_dummy");
         }
 
         protected Map getOrganisms(ObjectStore os) {
             try {
-                List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezOrganismRetrieverTest_src.xml"));
+                List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsRetrieverTest_src.xml"));
                 List objects =
                     FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
                 Map map = new HashMap();
@@ -84,7 +83,7 @@ public class EntrezOrganismRetrieverTest extends TestCase
         }
 
         protected Reader getReader(Set ids) {
-            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezOrganismRetrieverTest_esummary.xml"));
+            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UpdatePublicationsRetrieverTest_esummary.xml"));
         }
     }
 }
