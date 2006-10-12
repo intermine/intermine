@@ -64,19 +64,10 @@ public class EntrezPublicationRetrieverTest extends TestCase
             setOutputFile("/tmp/TestEntrezPublicationsRetriever_dummy");
         }
 
-        protected Map getOrganisms(ObjectStore os) {
+        protected List getPublications(ObjectStore os) {
             try {
                 List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_src.xml"));
-                List objects =
-                    FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
-                Map map = new HashMap();
-                Iterator i = objects.iterator();
-                while (i.hasNext()) {
-                    Object obj = i.next();
-                    Organism org = (Organism) obj;
-                    map.put(org.getTaxonId(), org);
-                }
-                return map;
+                return FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
