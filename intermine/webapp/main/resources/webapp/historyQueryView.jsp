@@ -165,6 +165,9 @@
         <html:submit property="delete" onclick="return confirmAction()">
           <fmt:message key="history.delete"/>
         </html:submit>
+        <html:submit property="export">
+          <fmt:message key="history.exportSelected"/>
+        </html:submit>
         </html:form>
         <br/>
       </c:otherwise>
