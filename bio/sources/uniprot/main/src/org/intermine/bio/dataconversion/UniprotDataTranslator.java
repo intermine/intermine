@@ -411,8 +411,8 @@ public class UniprotDataTranslator extends DataTranslator
                 //             where designation = primary gene name
                 String geneOrganismDbId = null;
                 if (taxonId == 7227) { // D. melanogaster
-                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "FlyBase", geneNames);
-                    // For fly data use CGxxx as key instead of FBgnxxx
+                    // UniProt has duplicate pairings of CGxxx and FBgnxxx, just get one id
+                    //geneOrganismDbId = getDataSourceReferenceValue(srcItem, "FlyBase", geneNames);
                     uniqueGeneIdentifier = geneIdentifier;
                     dbId = getDataSourceId("FlyBase");
                 } else if (taxonId == 6239) { // C. elegans

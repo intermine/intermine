@@ -32,7 +32,6 @@
     </item>
     <item id="6_3" class="http://www.flymine.org/model/genomic#Gene">
         <attribute name="identifier" value="CG2803"/>
-        <attribute name="organismDbId" value="FBgn0035083"/>
         <reference name="organism" ref_id="1_3"/>
         <collection name="evidence">
             <reference ref_id="3_1"/>
@@ -168,13 +167,7 @@
         <reference name="source" ref_id="3_1"/>
         <reference name="subject" ref_id="2_3"/>
     </item>
-    <item id="4_18" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="FBgn0035083"/>
-        <reference name="source" ref_id="3_4"/>
-        <reference name="subject" ref_id="6_3"/>
-    </item>
-    <item id="4_20" class="http://www.flymine.org/model/genomic#Synonym">
+    <item id="4_19" class="http://www.flymine.org/model/genomic#Synonym">
         <attribute name="type" value="symbol"/>
         <attribute name="value" value="Tina-1"/>
         <reference name="source" ref_id="3_4"/>
@@ -186,7 +179,7 @@
         <reference name="source" ref_id="3_1"/>
         <reference name="subject" ref_id="2_3"/>
     </item>
-    <item id="4_19" class="http://www.flymine.org/model/genomic#Synonym">
+    <item id="4_18" class="http://www.flymine.org/model/genomic#Synonym">
         <attribute name="type" value="identifier"/>
         <attribute name="value" value="CG2803"/>
         <reference name="source" ref_id="3_4"/>
