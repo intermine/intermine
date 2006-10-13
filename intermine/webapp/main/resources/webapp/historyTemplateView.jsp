@@ -10,6 +10,14 @@
 
   <im:body id="savedTemplates">
   
+    <script LANGUAGE="JavaScript">
+      <!--//<![CDATA[
+          function confirmAction() {
+          return confirm("Do you really want to delete the selected queries?")
+          }
+          //]]>-->
+    </script>
+
     <p>
       <fmt:message key="history.savedtemplates.help"/>
       <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.shtml"/>
@@ -131,7 +139,7 @@
           </c:forEach>
         </table>
         <br/>
-        <html:submit property="delete">
+        <html:submit property="delete" onclick="return confirmAction()">
           <fmt:message key="history.delete"/>
         </html:submit>
         </html:form>

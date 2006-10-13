@@ -21,12 +21,18 @@
   </c:otherwise>
 </c:choose>
 
-  
-  <im:body id="${type}">
-  	
-		<p>
-      <fmt:message key="${messageKey}"/>
-    </p>
+<im:body id="${type}">
+  <script LANGUAGE="JavaScript">
+    <!--//<![CDATA[
+    function confirmAction() {
+      return confirm("Do you really want to delete the selected queries?")
+    }
+    //]]>-->
+  </script>
+
+  <p>
+    <fmt:message key="${messageKey}"/>
+  </p>
 
     <%-- Choose the queries to display --%>
     <c:choose>
@@ -36,7 +42,7 @@
         </div>
       </c:when>
       <c:otherwise>
-        
+
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
         <table class="results history" cellspacing="0">
@@ -63,11 +69,11 @@
             <th align="center" nowrap>
               <fmt:message key="history.actionscolumnheader"/>
             </th>
-          </tr>    
+          </tr>
           <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
             <tr>
               <td>
-                <html:multibox property="selectedQueries" 
+                <html:multibox property="selectedQueries"
                                styleId="selected_${type}_${status.index}">
                   <c:out value="${savedQuery.key}" escapeXml="false"/>
                 </html:multibox>
@@ -137,7 +143,7 @@
                            titleKey="history.action.edit.hover">
                   <fmt:message key="history.action.edit"/>
                 </html:link>
-                |                
+                |
                 <c:if test="${type == 'history'}">
                   <c:if test="${!empty PROFILE.username}">
                     <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
@@ -156,14 +162,14 @@
           </c:forEach>
         </table>
         <br/>
-        <html:submit property="delete">
+        <html:submit property="delete" onclick="return confirmAction()">
           <fmt:message key="history.delete"/>
         </html:submit>
         </html:form>
         <br/>
       </c:otherwise>
     </c:choose>
-    
+
   </im:body>
 
 <!-- /historyQueryView.jsp -->
