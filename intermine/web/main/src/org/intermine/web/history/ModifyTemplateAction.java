@@ -10,14 +10,20 @@ package org.intermine.web.history;
  *
  */
 
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.util.XmlUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
+import org.intermine.web.TemplateQuery;
 import org.intermine.web.TemplateRepository;
+
+import java.io.PrintStream;
 
 import org.apache.log4j.Logger;
 
@@ -57,8 +63,12 @@ public class ModifyTemplateAction extends ModifyHistoryAction
         if (request.getParameter("delete") != null) {
             return delete(mapping, form, request, response);
         } else {
-            LOG.error("Don't know what to do");
-            return null;
+            if (request.getParameter("export") != null) {
+                return export(mapping, form, request, response);
+            } else {
+                LOG.error("Don't know what to do");
+                return null;
+            }
         }
     }
 
@@ -94,5 +104,42 @@ public class ModifyTemplateAction extends ModifyHistoryAction
         }
 
         return mapping.findForward("history");
+    }
+
+    /**
+     * Export the selected templates.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward export(ActionMapping mapping,
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ModifyTemplateForm mqf = (ModifyTemplateForm) form;
+
+        response.setContentType("text/plain");
+        response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
+        
+        PrintStream out = new PrintStream(response.getOutputStream());
+        out.println("<template-list>");
+        Map templates = profile.getSavedTemplates();
+        for (int i = 0; i < mqf.getSelected().length; i++) {
+            String name = mqf.getSelected()[i];
+            String xml = ((TemplateQuery) templates.get(name)).toXml();
+            xml = XmlUtil.indentXmlSimple(xml);
+            out.println(xml);
+        }
+        out.println("</template-list>");
+        out.flush();
+        
+        return null;
     }
 }
