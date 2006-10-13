@@ -135,9 +135,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected ObjectStoreInterMineImpl(Database db, Model model) {
         super(model);
         this.db = db;
-        if (db == null) {
-            throw new NullPointerException("db argument to ObjectStoreInterMineImpl must be set");
-        }
         schema = new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
@@ -156,9 +153,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         super(schema.getModel());
         this.db = db;
         this.schema = schema;
-        if (db == null) {
-            throw new NullPointerException("db argument to ObjectStoreInterMineImpl must be set");
-        }
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
