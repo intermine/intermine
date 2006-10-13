@@ -49,7 +49,7 @@
           <tr>
             <th>
               <input type="checkbox" id="selected_${type}"
-                             onclick="selectColumnCheckbox(this.form, '${type}')">
+                     onclick="selectColumnCheckbox(this.form, '${type}')">
             </th>
             <th align="left" colspan="2" nowrap>
               <fmt:message key="history.namecolumnheader"/>
@@ -74,7 +74,8 @@
             <tr>
               <td>
                 <html:multibox property="selectedQueries"
-                               styleId="selected_${type}_${status.index}">
+                               styleId="selected_${type}_${status.index}"
+                               onclick="setDeleteDisabledness(this.form, '${type}')">
                   <c:out value="${savedQuery.key}" escapeXml="false"/>
                 </html:multibox>
               </td>
@@ -162,10 +163,11 @@
           </c:forEach>
         </table>
         <br/>
-        <html:submit property="delete" onclick="return confirmAction()">
+        <html:submit property="delete" disabled="true" styleId="delete_button"
+                     onclick="return confirmAction()">
           <fmt:message key="history.delete"/>
         </html:submit>
-        <html:submit property="export">
+        <html:submit property="export" disabled="true" styleId="export_button">
           <fmt:message key="history.exportSelected"/>
         </html:submit>
         </html:form>
