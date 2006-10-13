@@ -59,7 +59,6 @@ create index idx_trans_id on translation(translation_id);
 
 --#Create the seq_region table with no rows - add rows as we go...
 create table seq_region as select * from anopheles_gambiae_core_37_3.seq_region limit 0;
-//##Insert the rows related to the gene table (transcript and exon share the same seq_regions...)
 insert into seq_region select * from anopheles_gambiae_core_37_3.seq_region
 where seq_region_id in (select distinct seq_region_id from gene);
 
