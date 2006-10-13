@@ -34,8 +34,7 @@ public class ExportQueryAction extends InterMineAction
     protected static final Logger LOG = Logger.getLogger(ExportQueryAction.class);
 
     /**
-     * Method called to export a PagedTable object.  Uses the type request parameter to choose the
-     * export method.
+     * Method called to export a saved Query.
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
