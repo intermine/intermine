@@ -10,15 +10,38 @@
     <!--//<![CDATA[
       function selectColumnCheckbox(form, type) {
         var columnCheckBox = 'selected_' + type;
+        var testString = columnCheckBox + '_';
         var checked = document.getElementById(columnCheckBox).checked;
+        document.getElementById('delete_button').disabled = !checked;
+        document.getElementById('export_button').disabled = !checked;
         with(form) {
-          for(i=0;i < elements.length;i++) {
-            thiselm = elements[i];
-            var testString = columnCheckBox + '_';
+          for(var i=0;i < elements.length;i++) {
+            var thiselm = elements[i];
             if(thiselm.id.indexOf(testString) != -1)
               thiselm.checked = checked;
           }
         }
+      }
+      function setDeleteDisabledness(form, type) {
+        var checkBoxPrefix = 'selected_' + type + '_';
+        var deleteDisable = true;
+        var columnCheckBoxChecked = true;
+        with(form) {
+          for(var i=0;i < elements.length;i++) {
+            var thiselm = elements[i]; 
+            if (thiselm.id.indexOf(checkBoxPrefix) != -1) {
+              if (thiselm.checked) {
+                deleteDisable = false;
+              } else {
+                columnCheckBoxChecked = false;
+              }               
+            }
+          }
+        }
+        document.getElementById('delete_button').disabled = deleteDisable;
+        document.getElementById('export_button').disabled = deleteDisable;
+        document.getElementById('selected_' + type).checked = columnCheckBoxChecked;
+        return true;
       }
       //]]>-->
   </script>
@@ -101,7 +124,9 @@
       </tiles:insert>
     </c:when>
     <c:when test="${HISTORY_PAGE=='templates'}">
-      <tiles:get name="historyTemplateView.jsp"/>
+      <tiles:insert name="historyTemplateView.jsp">
+        <tiles:put name="type" value="template"/>
+      </tiles:insert>
     </c:when>
     <c:when test="${HISTORY_PAGE=='favourites'}">
       <tiles:insert name="favourites.tile" />

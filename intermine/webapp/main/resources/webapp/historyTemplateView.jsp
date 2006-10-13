@@ -8,6 +8,8 @@
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 
+  <tiles:useAttribute id="type" name="type"/>
+
   <im:body id="savedTemplates">
   
     <script LANGUAGE="JavaScript">
@@ -59,7 +61,8 @@
           <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate" varStatus="status">
             <tr>
               <td>
-                <html:multibox property="selected" styleId="selected_template_${status.index}">
+                <html:multibox property="selected" styleId="selected_template_${status.index}"
+                               onclick="setDeleteDisabledness(this.form, '${type}')">
                   <c:out value="${savedTemplate.key}"/>
                 </html:multibox>
               </td>
@@ -139,10 +142,11 @@
           </c:forEach>
         </table>
         <br/>
-        <html:submit property="delete" onclick="return confirmAction()">
+        <html:submit property="delete" disabled="true" styleId="delete_button" 
+                     onclick="return confirmAction()">
           <fmt:message key="history.delete"/>
         </html:submit>
-        <html:submit property="export">
+        <html:submit property="export" disabled="true" styleId="export_button">
           <fmt:message key="history.exportSelected"/>
         </html:submit>
         </html:form>
