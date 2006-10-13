@@ -26,10 +26,10 @@ public class TemplateComparator implements Comparator
         TemplateQuery template0 = (TemplateQuery) arg0;
         TemplateQuery template1 = (TemplateQuery) arg1;
         
-        if (template0.description.length() < template1.description.length()) {
+        if (template0.title.length() < template1.title.length()) {
             return -1;
         } else {
-            if (template0.description.length() > template1.description.length()) {
+            if (template0.title.length() > template1.title.length()) {
                 return 1;
             } else {
                 return 0;
