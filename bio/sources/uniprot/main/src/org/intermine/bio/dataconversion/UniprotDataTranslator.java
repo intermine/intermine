@@ -66,7 +66,7 @@ public class UniprotDataTranslator extends DataTranslator
     private int pubLinkCount = 0;
     private Map organisms = new HashMap();
     private FileWriter fw = null;
-    private boolean outputIdentifiers = false;
+    private boolean outputIdentifiers = true;
     //geneIdentifier is hugo id from ensembl-human, don't create
     private boolean createGeneIdentifier = true;
     private Item uniprotDataSet;
@@ -417,8 +417,8 @@ public class UniprotDataTranslator extends DataTranslator
                     dbId = getDataSourceId("FlyBase");
                 } else if (taxonId == 6239) { // C. elegans
                     // leave gene identifier as ORF id, is already ensembl id
-                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
-                    // was organismDbId, ok ot change?
+                    // duplicate pairs of ensembl id and WBGenexxx so don't get WBGenexxx
+                    //geneOrganismDbId = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
                     uniqueGeneIdentifier = geneIdentifier;
                     dbId = getDataSourceId("WormBase");
                 } else if (taxonId == 3702) { // Arabidopsis thaliana
