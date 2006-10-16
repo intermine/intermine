@@ -66,7 +66,7 @@ public class UniprotDataTranslator extends DataTranslator
     private int pubLinkCount = 0;
     private Map organisms = new HashMap();
     private FileWriter fw = null;
-    private boolean outputIdentifiers = true;
+    private boolean outputIdentifiers = false;
     //geneIdentifier is hugo id from ensembl-human, don't create
     private boolean createGeneIdentifier = true;
     private Item uniprotDataSet;
