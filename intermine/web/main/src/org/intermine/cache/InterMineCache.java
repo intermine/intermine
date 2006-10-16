@@ -11,6 +11,7 @@ package org.intermine.cache;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -193,6 +194,37 @@ public class InterMineCache
         }
     }
 
+    /**
+     * Remove objects from the cache that match the given keys.  The length of the keys array
+     * argument should be the same as the number of keys used when storing the object.  Any nulls
+     * in the keys array will be treated as wildcards.  Eg.  If the cache contains keys: 
+     * ("foo", "123"), ("foo", "456"), ("bar", "456") then calling flushByKey with {null, "456"}
+     * will delete two entries, leaving ("foo", "123").
+     * @param cacheTag the cache tag
+     * @param keyParts the array of key parts
+     */
+    public void flushByKey(String cacheTag, Object[] keyParts) {
+        Map cache = getObjectCache(cacheTag);
+        Set keysToRemove = new HashSet();
+        Iterator iter = cache.keySet().iterator();
+       ENTRIES:
+        while(iter.hasNext()) {
+            MultiKey mkey = (MultiKey) iter.next();
+            Object[] entryKeyParts = mkey.getKeys();
+            for (int i = 0; i < entryKeyParts.length; i++) {
+                if (keyParts[i] != null && !entryKeyParts[i].equals(keyParts[i])) {
+                    continue ENTRIES;
+                }
+            }
+            // key matched
+            keysToRemove.add(mkey);
+        }
+
+        iter = keysToRemove.iterator();
+        while (iter.hasNext()) {
+            cache.remove(iter.next());
+        }
+    }
 
     /**
      * Clear the cache of all objects associated with the given cache tag.

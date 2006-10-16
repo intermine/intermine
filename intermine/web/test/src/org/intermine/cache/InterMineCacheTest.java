@@ -195,7 +195,40 @@ public class InterMineCacheTest extends TestCase
         assertEquals(createdObject, otherTagCreatedObject);
         assertTrue(createdObject != otherTagCreatedObject);
     }
-    
+
+    public void testFlushByKey() throws Exception {
+        InterMineCache cache = new InterMineCache();
+
+        String otherTag = "another_tag";
+        
+        cache.register(cacheTag, objectCreator3);
+        cache.register(otherTag, objectCreator3);
+        
+        Object createdObject1Tag1 = cache.get(cacheTag, new Integer(11), "some_string_11", new Float(1.1));
+        Object createdObject2Tag1 = cache.get(cacheTag, new Integer(21), "some_string_21", new Float(1.1));
+        Object createdObject1Tag2 = cache.get(otherTag, new Integer(12), "some_string_12", new Float(1.1));
+        Object createdObject2Tag2 = cache.get(otherTag, new Integer(22), "some_string_22", new Float(1.1));
+        Object createdObject2Tag3 = cache.get(otherTag, new Integer(32), "some_string_22", new Float(1.1));
+        
+        assertEquals(2, cache.getCachedObjectCount(cacheTag));
+        assertEquals(3, cache.getCachedObjectCount(otherTag));
+        
+        cache.flushByKey(otherTag, new Object[] {null, "some_string_22", new Float(1.1)});
+        
+        assertEquals(2, cache.getCachedObjectCount(cacheTag));
+        assertEquals(1, cache.getCachedObjectCount(otherTag));
+        
+        // make sure a new object is created
+        assertTrue(createdObject2Tag3 != cache.get(otherTag, new Integer(32),
+                                                             "some_string_22", new Float(1.1)));
+
+        assertEquals(2, cache.getCachedObjectCount(otherTag));
+        
+        cache.flushByKey(otherTag, new Object[] { null, null, null });
+        
+        assertEquals(0, cache.getCachedObjectCount(otherTag));
+    }
+
     public void testFlush() throws Exception {
         InterMineCache cache = new InterMineCache();
 
