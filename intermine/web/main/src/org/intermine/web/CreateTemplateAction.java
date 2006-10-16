@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.cache.InterMineCache;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -151,7 +152,18 @@ public class CreateTemplateAction extends InterMineAction
         }
         
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+
+        cleanCache(servletContext, template);
         
         return mapping.findForward("history");
+    }
+
+    /**
+     * Remove all entries from the cache that mention the given template.
+     */
+    private void cleanCache(ServletContext servletContext, TemplateQuery template) {
+        InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
+        cache.flushByKey(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
+                         new Object[] {template.getName(), null, null});
     }
 }
