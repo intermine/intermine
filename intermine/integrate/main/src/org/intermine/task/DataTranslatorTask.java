@@ -156,8 +156,9 @@ public class DataTranslatorTask extends DynamicAttributeTask
             Model tgt = Model.getInstanceByName(tgtModel);
 
             //TODO: Fix this hard coded bodgieness ???
-            if ("org.intermine.bio.dataconversion.EnsemblDataTranslator".equals(translator)
-                || "org.intermine.bio.dataconversion.EnsemblHumanDataTranslator".equals(translator)) {
+            String packageName = "org.intermine.bio.dataconversion";
+            if ((packageName + ".EnsemblDataTranslator").equals(translator)
+                || (packageName + ".EnsemblHumanDataTranslator").equals(translator)) {
 
                 Properties ensemblProps = new Properties();
                 InputStream epis = getClass().getClassLoader().getResourceAsStream(

@@ -10,13 +10,8 @@ package org.intermine.web.history;
  *
  */
 
-import java.util.Map;
-
-import org.intermine.objectstore.query.Query;
-
 import org.intermine.util.XmlUtil;
 import org.intermine.web.Constants;
-import org.intermine.web.MainHelper;
 import org.intermine.web.PathQuery;
 import org.intermine.web.PathQueryBinding;
 import org.intermine.web.Profile;
@@ -28,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
