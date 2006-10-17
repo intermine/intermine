@@ -4,9 +4,6 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="flymine-static" type="intermine-items-xml-file" dump="true">
-      <property name="tgt.xml.file" location="datasets.xml"/>
-    </source>
     <source name="flybase-dmel-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -37,33 +34,30 @@
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/release_2_0/fasta"/>
     </source>
+    <source name="ensembl-anopheles" type="ensembl">
+      <property name="organism" value="AGP"/>
+    </source>
+    <source name="ensembl-apis" type="ensembl">
+      <property name="organism" value="AM"/>
+    </source>
+    <source name="uniprot" type="uniprot" dump="true">
+      <property name="uniprot.organisms" value="7227 6239 7165 180454 7460 4932"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/8.8"/>
+    </source>
+    <source name="interpro" type="interpro">
+      <property name="interpro.organism.taxid.list" value="6239,7165,7227,180454"/>
+    </source>
+    <source name="rnai" type="rnai">
+      <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
+    </source>
+    <source name="inparanoid-orthologue" type="orthologue">
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
+    </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes"/>
-    </source>
-    <source name="ensembl-anopheles" type="ensembl">
-      <property name="organism" value="AGP"/>
-    </source>
-    <source name="uniprot-dros" type="uniprot">
-      <property name="uniprot.organisms" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/7.7"/>
-    </source>
-    <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 6239 7165 180454 7460 4932 10090 10116 9606"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/8.8"/>
-    </source>
-    <source name="rnai" type="rnai">
-      <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
-    </source>
-    <source name="interpro" type="interpro">
-      <!-- property name="interpro.organisms" value="6239,7165,7227,180454"/ -->
-      <property name="interpro.organism.taxid.list" value="6239,7165,7227,180454"/>
-      <!-- property name="interpro.organism.taxid.list" value="5833"/ -->
-    </source>
-    <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
     <source name="drosdel" type="drosdel" dump="true"/>
     <source name="tiling_path" type="tiling_path" dump="true">
@@ -115,22 +109,14 @@
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/2006-05-09"/>
-      <property name="organisms" value="4896 5833 36329"/>
+      <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
-    <source name="go-annotation-gene-identifier" type="go-annotation">
+    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="geneattribute" value="identifier"/>
-      <!-- currently need to group all files that set Gene.identifier together -->
-      <property name="src.data.dir" location="/shared/data/malaria/go-annotation"/>
-    </source>
-    <source name="go-annotation-gene-organismDbId" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="geneattribute" value="organismDbId"/>
-      <!-- currently need to group all files that set Gene.identifier together -->
-      <property name="src.data.dir" location="/shared/data/go-annotation/gene-organismDbId"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current" includes="*/gene_association*"/>
     </source>
     <source name="name-and-wildtypefunction" type="tab-separated-file" dump="true">
       <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
@@ -201,6 +187,9 @@
            file, loads that file into a target items DB, then into the final
            objectstore -->
       <property name="tgt.xml.file" location="build/organisms.xml"/>
+    </source>
+    <source name="flymine-static" type="intermine-items-xml-file" dump="true">
+      <property name="tgt.xml.file" location="datasets.xml"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the

@@ -62,26 +62,23 @@ public class GoConverterTest extends TestCase
     }
 
     public void testTranslate() throws Exception {
-        translateCommon(goFile, "/resources/test/GoConverterTest_src.txt",
-                "/resources/test/GoConverterTest_tgt.xml", true, false, "organismDbId");
+        translateCommon(goFile, "GoConverterTest_src.txt",
+                "GoConverterTest_tgt.xml", true, false);
     }
 
     public void testOboTranslate() throws Exception {
-        translateCommon(goOboFile, "/resources/test/GoConverterOboTest_src.txt",
-                "/resources/test/GoConverterOboTest_tgt.xml", true, false, "organismDbId");
+        translateCommon(goOboFile, "GoConverterOboTest_src.txt",
+                "GoConverterOboTest_tgt.xml", true, false);
     }
 
     private void translateCommon(File onotologyFile, String srcFile, String tgtFile,
-                                 boolean verbose, boolean writeItemFile,
-                                 String geneAttribute) throws Exception{
+                                 boolean verbose, boolean writeItemFile) throws Exception{
 
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream(srcFile));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
-        converter.setGeneattribute(geneAttribute);
         converter.setOntologyfile(onotologyFile);
-        converter.setGeneattribute("organismDbId");
         converter.process(reader);
         converter.close();
 
@@ -118,7 +115,6 @@ public class GoConverterTest extends TestCase
     public void testCreateWithObjects() throws Exception {
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
-        converter.setGeneattribute("organismDbId");
 
         List expected = new ArrayList();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
@@ -132,8 +128,10 @@ public class GoConverterTest extends TestCase
         gene2.setReference("organism", "1_1");
         gene2.addToCollection("evidence", "0_3");
         expected.add(gene2);
+        Item organism = tgtItemFactory.makeItem("1_1", GENOMIC_NS + "Organism", "");
+        organism.setAttribute("taxonId", "7227");
         assertEquals(expected, converter.createWithObjects(
-                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", "1_1", "10_10"));
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10"));
     }
 
     protected Collection getExpectedItems(String targetFile) throws Exception {
