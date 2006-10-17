@@ -805,7 +805,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         try {
             iw.store(e2, source, skelSource);
             fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
         }
     }
 
