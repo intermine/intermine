@@ -12,7 +12,7 @@
     </item>
 
     <item id="-1_1" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="abbreviation" value="DM"/>
+        <attribute name="taxonId" value="7227"/>
     </item>
 
     <item id="-1_5" class="http://www.flymine.org/model/genomic#Location">

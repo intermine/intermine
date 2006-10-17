@@ -54,7 +54,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
         this.dataLocation = dataLocation;
         // proteins are all Drosophila
         this.organism = createItem(tgtNs + "Organism", "");
-        organism.setAttribute("abbreviation", "DM");
+        organism.setAttribute("taxonId", "7227");
     }
 
     /**
