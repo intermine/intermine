@@ -24,17 +24,35 @@ import org.apache.struts.validator.ValidatorForm;
  *
  * @author  Thomas Riley
  */
-public class ImportQueryForm extends ValidatorForm
+public class ImportQueriesForm extends ValidatorForm
 {
     private String xml;
+    private Map map;
+    private String queryBuilder;
     
     /**
-     * Creates a new instance of ImportQueryForm.
+     * Creates a new instance of ImportQueriesForm.
      */
-    public ImportQueryForm() {
+    public ImportQueriesForm() {
         reset();
     }
     
+    /**
+     * Return a Map from query name to Query object.
+     * @return the Map
+     */
+    public Map getQueryMap() {
+        if (map == null) {
+            try {
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()));
+            } catch (Exception e) {
+                map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml() 
+                                                                  + "</queries>"));
+            }
+        }
+        return map;
+    }
+
     /**
      * Get the xml.
      * @return query in xml format
@@ -52,6 +70,23 @@ public class ImportQueryForm extends ValidatorForm
     }
     
     /**
+     * Get the queryBuilder field.  If true and there is only one query submitted, the action will
+     * redirect to the query builder rather than the saved query history page.
+     * @return queryBuilder the queryBuilder field
+     */
+    public String getQueryBuilder() {
+        return queryBuilder;
+    }
+
+    /**
+     * Set the queryBuilder field.
+     * @param queryBuilder the queryBuilder field
+     */
+    public void setQueryBuilder(String queryBuilder) {
+        this.queryBuilder = queryBuilder;
+    }
+    
+    /**
      * @see ActionForm#reset
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
@@ -64,6 +99,7 @@ public class ImportQueryForm extends ValidatorForm
      */
     protected void reset() {
         xml = "";
+        queryBuilder = "";
     }
 
     /**
@@ -77,13 +113,12 @@ public class ImportQueryForm extends ValidatorForm
             return errors;
         }
         try {
-           Map map = PathQueryBinding.unmarshal(new StringReader(getXml()));
-           if (map.size() != 1) {
+           if (getQueryMap().size() == 0) {
                if (errors == null) {
                    errors = new ActionErrors();
                }
                errors.add(ActionErrors.GLOBAL_MESSAGE,
-                           new ActionMessage("errors.importQuery.notone"));
+                           new ActionMessage("errors.importQuery.noqueries"));
            }
         } catch (Exception err) {
             if (errors == null) {

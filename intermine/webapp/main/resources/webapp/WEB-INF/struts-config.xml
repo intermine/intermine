@@ -67,8 +67,8 @@
     <form-bean name="templateSearchForm"
                type="org.intermine.web.TemplateSearchForm"/>
     
-    <form-bean name="importQueryForm"
-               type="org.intermine.web.ImportQueryForm"/>
+    <form-bean name="importQueriesForm"
+               type="org.intermine.web.ImportQueriesForm"/>
     
     <form-bean name="templateSettingsForm"
                type="org.intermine.web.TemplateSettingsForm"/>
@@ -155,8 +155,8 @@
     <action path="/aspect"
             forward="aspect.page"/>
     
-    <action path="/importQuery"
-            forward="importQuery.page"/>
+    <action path="/importQueries"
+            forward="importQueries.page"/>
     
     <action path="/tagImport"
             forward="importTags.page"/>
@@ -401,13 +401,14 @@
       <forward name="history" path="/history.do" redirect="true"/>
     </action>
     
-    <action path="/importQueryAction"
-            type="org.intermine.web.ImportQueryAction"
+    <action path="/importQueriesAction"
+            type="org.intermine.web.ImportQueriesAction"
             scope="request"
-            name="importQueryForm"
-            input="importQuery">
-      <forward name="importQuery" path="importQuery.page"/>
+            name="importQueriesForm"
+            input="importQueries">
+      <forward name="importQueries" path="importQueries.page"/>
       <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="history" path="/history.do?page=saved" redirect="true"/>
     </action>
     
     <action path="/browseAction"
