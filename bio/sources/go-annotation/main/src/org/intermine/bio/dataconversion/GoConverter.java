@@ -20,8 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Properties;
+import java.util.Enumeration;
 
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -51,6 +54,7 @@ import org.apache.tools.ant.BuildException;
 public class GoConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
+    protected static final String PROP_FILE = "go-annotation_config.properties";
 
     protected Map goTerms = new LinkedHashMap();
     protected Map datasources = new LinkedHashMap();
@@ -61,8 +65,7 @@ public class GoConverter extends FileConverter
     protected File ontology;
     protected Map withTypes = new LinkedHashMap();
     protected Map synonymTypes = new HashMap();
-    protected Map productWrapperMap = new LinkedHashMap();
-    private String geneAttribute;
+    protected Map productWrapperMap = new LinkedHashMap(), geneAttributes = new HashMap();
 
     protected ItemFactory itemFactory;
 
@@ -102,6 +105,36 @@ public class GoConverter extends FileConverter
 
         dataSetItem.setAttribute("description", "GO Annotation loaded on " + now.toString());
         dataSetItem.setReference("dataSource", dataSourceItem);
+
+        readConfig();
+    }
+
+    // read config file that has specific settings for each organism, key is taxon id
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+        Enumeration propNames = props.propertyNames();
+        while (propNames.hasMoreElements()) {
+            String taxonId = (String) propNames.nextElement();
+            taxonId = taxonId.substring(0, taxonId.indexOf("."));
+            Properties taxonProps = PropertiesUtil.stripStart(taxonId,
+                PropertiesUtil.getPropertiesStartingWith(taxonId, props));
+            String geneAttribute = taxonProps.getProperty("geneAttribute").trim();
+            if (geneAttribute == null) {
+                throw new IllegalArgumentException("Unable to find geneAttribute property for "
+                                                   + "taxon: " + taxonId + " in file: "
+                                                   + PROP_FILE);
+            }
+            if (!(geneAttribute.equals("identifier") || geneAttribute.equals("organismDbId"))) {
+                throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
+                                                   + taxonId + " was: " + geneAttribute);
+            }
+            geneAttributes.put(taxonId, geneAttribute);
+        }
     }
 
     /**
@@ -111,16 +144,6 @@ public class GoConverter extends FileConverter
      */
     public void setOntologyfile(File ontology) {
         this.ontology = ontology;
-    }
-
-    /**
-     * Set which attribute of gene to assign identifier to - can be
-     * 'organismDbId' or 'identifier'
-     *
-     * @param geneattribute attribute name
-     */
-    public void setGeneattribute(String geneattribute) {
-        this.geneAttribute = geneattribute;
     }
 
     /**
@@ -186,7 +209,7 @@ public class GoConverter extends FileConverter
                 Item newOrganism = newOrganism(array[12]);
 
                 ItemWrapper newProductWrapper =
-                        newProduct(productId, type, newOrganism.getIdentifier(),
+                        newProduct(productId, type, newOrganism,
                                 newDatasource.getIdentifier());
 
                 GoAnnoWithParentsPlaceHolder newPlaceHolder = new GoAnnoWithParentsPlaceHolder(
@@ -331,8 +354,8 @@ public class GoConverter extends FileConverter
             currentGoItem.setAttribute("withText", placeHolder.getWithText());
 
             List with = createWithObjects(placeHolder.getWithText(),
-                    placeHolder.getOrganism().getIdentifier(),
-                    placeHolder.getDatasource().getIdentifier());
+                                          placeHolder.getOrganism(),
+                                          placeHolder.getDatasource().getIdentifier());
 
             if (with.size() != 0) {
                 List idList = new ArrayList();
@@ -457,13 +480,13 @@ public class GoConverter extends FileConverter
      * Given the 'with' text from a gene_association entry parse for recognised identifier
      * types and create Gene or Protein items accordingly.
      *
-     * @param withText     string from the gene_association entry
-     * @param organismId   identifier of organism to reference
+     * @param withText string from the gene_association entry
+     * @param organism organism to reference
      * @param dataSourceId identifier of the datasource this item is from
      * @return a list of Items
      * @throws ObjectStoreException if there is a problem making a new product (gene/protein/etc)
      */
-    protected List createWithObjects(String withText, String organismId,
+    protected List createWithObjects(String withText, Item organism,
                                      String dataSourceId) throws ObjectStoreException {
 
         List withProductList = new ArrayList();
@@ -480,7 +503,7 @@ public class GoConverter extends FileConverter
                         WithType wt = (WithType) withTypes.get(prefix);
 
                         ItemWrapper productWrapper = newProduct(
-                                value, wt.clsName, organismId, dataSourceId);
+                                value, wt.clsName, organism, dataSourceId);
                         Item withProduct = productWrapper.getItem();
                         withProductList.add(withProduct);
                     } else {
@@ -548,32 +571,21 @@ public class GoConverter extends FileConverter
      *
      * @param accession  the accession or actual identifier of the gene/protein (eg: FBgn0019981)
      * @param type       the type
-     * @param organismId the organism identifier of the current organism item
+     * @param organism the organism of the product, may be null if a protein
      * @param dataSourceId the id of the datasource the product is from.
      * @return the geneProduct
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected ItemWrapper newProduct(String accession,
                                      String type,
-                                     String organismId,
+                                     Item organism,
                                      String dataSourceId) throws ObjectStoreException {
 
-        //if (LOG.isDebugEnabled()) {
-            StringBuffer buff = new StringBuffer();
-            buff.append("GoConverter.newProduct()");
-            buff.append(" accession:"); buff.append(accession);
-            buff.append(" type:"); buff.append(type);
-            buff.append(" organismId:"); buff.append(organismId);
-            buff.append(" dataSourceId:"); buff.append(dataSourceId);
-            LOG.debug(buff.toString());
-        //}
-
-        String key = makeProductKey(accession, type, organismId);
+        String key = makeProductKey(accession, type, organism.getIdentifier());
 
         //Have we already seen this product somewhere before?
         // if so, return the product rather than creating a new one...
         if (productWrapperMap != null && productWrapperMap.containsKey(key)) {
-
             return ((ItemWrapper) productWrapperMap.get(key));
         }
 
@@ -583,11 +595,11 @@ public class GoConverter extends FileConverter
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
 
-            if (geneAttribute != null) {
-                idField = geneAttribute;
-            } else {
-                throw new RuntimeException("GoConverter.geneAttribute is not set - check the "
-                        + "build.xml - this param should be set to identifier or organismDbId");
+            String taxonId = organism.getAttribute("taxonId").getValue();
+            idField = (String) geneAttributes.get(taxonId);
+            if (idField == null) {
+                throw new RuntimeException("Could not find a geneAttribute property for taxon: "
+                                           + taxonId + " check properties file: " + PROP_FILE);
             }
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
@@ -597,7 +609,9 @@ public class GoConverter extends FileConverter
         }
 
         Item product = createItem(clsName);
-        product.setReference("organism", organismId);
+        if (!clsName.equals("Protein")) {
+            product.setReference("organism", organism.getIdentifier());
+        }
         product.setAttribute(idField, accession);
 
         //Record some evidence that says we got/matched the gene from GO data.
@@ -627,7 +641,7 @@ public class GoConverter extends FileConverter
      */
     private String makeProductKey(String identifier, String type, String organismId) {
 
-        if (organismId == null) {
+        if (type.equalsIgnoreCase("gene") && organismId == null) {
             throw new IllegalArgumentException("No organism provided when creating "
                     + type + ": " + identifier);
         } else if (type == null) {
@@ -710,9 +724,10 @@ public class GoConverter extends FileConverter
                 title = "GeneDB";
             } else if ("SANGER".equals(code)) {
                 title = "GeneDB";
+            } else if ("RI".equals(code)) {
+                title = "RI";
             } else {
-                throw new IllegalArgumentException("Database with code '" + code
-                        + "' not recognised");
+                title = code;
             }
             item.addAttribute(new Attribute("name", title));
             datasources.put(code, item);
