@@ -53,9 +53,6 @@
         <td align="right"><fmt:message key="templateBuilder.templateDescription"/></td>
         <td nowrap>
           <html:textarea property="description" cols="55" rows="3"/>
-          <c:if test="${empty TEMPLATE_BUILD_STATE.description}">
-            <span class="errors">(Required)</span>
-          </c:if>
         </td>
       </tr>
       <tr>

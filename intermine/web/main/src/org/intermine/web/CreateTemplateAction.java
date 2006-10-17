@@ -105,12 +105,6 @@ public class CreateTemplateAction extends InterMineAction
             seenProblem = true;
         }
 
-        if (StringUtils.isEmpty(tbs.getDescription())) {
-            recordError(new ActionMessage("errors.required", "Template description", tbs.getName()),
-                    request);
-            seenProblem = true;
-        }
-        
         // Ensure that we can actually execute the query
         if (!seenProblem) {
             try {
