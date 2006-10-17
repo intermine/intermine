@@ -352,17 +352,15 @@ table.results th.checkbox,table.results td.checkbox{
 	border-right-style: dotted;
 }
 .templateTitle {
+  font-weight: bold;
+  padding: 4px;
 }
 .templateDescription {
   font-style: italic;
-  font-size: 80%;
+  font-size: 90%;
+  margin-top: 5px;
+  padding: 4px;
 }
-.resultsTableTemplateHeader {
-  padding: 5px;
-  margin-left: 5px;
-  font-weight: bold;
-}
-
 .type {
   color: #864;
 }
