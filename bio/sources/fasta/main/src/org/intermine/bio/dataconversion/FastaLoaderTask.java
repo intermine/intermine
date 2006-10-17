@@ -12,8 +12,10 @@ package org.intermine.bio.dataconversion;
 
 import java.util.NoSuchElementException;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
+import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Organism;
@@ -43,9 +45,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     protected static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
 
     private Integer fastaTaxonId;
-
+    private String sequenceType = "dna";
     private Organism org;
-
+    private String className;
     /**
      * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
      */
@@ -53,6 +55,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     //Set this if we want to do some testing...
     private File[] files = null;
+
+
 
     /**
      * Set the Taxon Id of the Organism we are loading.
@@ -64,6 +68,18 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
+     * Set the sequence type to be passed to the FASTA parser.  The default is "dna".
+     * @param sequenceType the sequence type
+     */
+    public void setSequenceType(String sequenceType) {
+        if (sequenceType.equals("${fasta.sequenceType}")) {
+            this.sequenceType = "dna";
+        } else {
+            this.sequenceType = sequenceType;
+        }
+    }
+
+    /**
      * Set the suffix to add to identifiers from the FASTA file when creating
      * LocatedSequenceFeatures.
      * @param idSuffix the suffix
@@ -72,6 +88,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         this.idSuffix = idSuffix;
     }
 
+    /**
+     * The class name to use for objects created during load.  Generally this is
+     * "org.flymine.model.genomic.LocatedSequenceFeature" or "org.flymine.model.genomic.Protein"
+     * @param className the class name
+     */
+    public void setClassName(String className) {
+        this.className = className;
+    }
+    
     //Use this for testing with junit.
     protected void setFileArray(File[] files) {
         this.files = files;
@@ -90,11 +115,17 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         super.process();
     }
-    
+
     /**
      * @throws BuildException if an ObjectStore method fails
      */
     public void execute() throws BuildException {
+        if (fastaTaxonId == null) {
+            throw new RuntimeException("fastaTaxonId needs to be set");
+        }
+        if (className == null) {
+            throw new RuntimeException("className needs to be set");
+        }
         if (files != null) {
             // setFiles() is used only for testing
             for (int i = 0; i < files.length; i++) {
@@ -115,7 +146,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
             SequenceIterator iter =
-                    (SequenceIterator) SeqIOTools.fileToBiojava("fasta", "dna", reader);
+                    (SequenceIterator) SeqIOTools.fileToBiojava("fasta", sequenceType, reader);
 
             while (iter.hasNext()) {
                 setSequence(org, iter.nextSequence());
@@ -133,8 +164,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * Create a FlyMine Sequence object for the InterMineObject of the given ID.
-     * @throws ObjectStoreException 
+     * Create a FlyMine Sequence and an object of type className for the given BioJava Sequence.
      */
     private void setSequence(Organism org, Sequence bioJavaSequence) throws ObjectStoreException {
         Class sequenceClass = org.flymine.model.genomic.Sequence.class;
@@ -145,20 +175,25 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         flymineSequence.setLength(bioJavaSequence.length());
 
 
-        Class lsfClass = org.flymine.model.genomic.LocatedSequenceFeature.class;
-        LocatedSequenceFeature flymineLSF = 
-            (LocatedSequenceFeature) getDirectDataLoader().createObject(lsfClass);
+        Class c;
+        try {
+            c = Class.forName(className);
+        } catch (ClassNotFoundException e1) {
+            throw new RuntimeException("unknown class: " + className
+                                       + " while creating new Sequence object");
+        }
+        InterMineObject imo = getDirectDataLoader().createObject(c);
 
-        flymineLSF.setIdentifier(bioJavaSequence.getName() + idSuffix);
-        flymineLSF.setSequence(flymineSequence);
-        flymineLSF.setOrganism(org);
+        TypeUtil.setFieldValue(imo, "identifier", bioJavaSequence.getName() + idSuffix);
+        TypeUtil.setFieldValue(imo, "sequence", flymineSequence);
+        TypeUtil.setFieldValue(imo, "organism", org);
 
         try {
             LOG.info("FastaLoaderTask - starting store of sequence");
             getDirectDataLoader().store(flymineSequence);
             LOG.info("FastaLoaderTask - finished store of sequence");
             LOG.info("FastaLoaderTask - starting store of located sequence feature");
-            getDirectDataLoader().store(flymineLSF);
+            getDirectDataLoader().store(imo);
             LOG.info("FastaLoaderTask - finished store of located sequence feature");
 
         } catch (ObjectStoreException e) {

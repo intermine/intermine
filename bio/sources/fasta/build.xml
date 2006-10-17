@@ -24,6 +24,8 @@
     <read-fasta integrationWriterAlias="integration.production"
                 sourceName="${source.name}"
                 idSuffix="${fasta.idSuffix}"
+                className="${fasta.className}"
+                sequenceType="${fasta.sequenceType}"
                 fastaTaxonId="${fasta.taxonId}">
       <fileset dir="${src.data.dir}" includes="${fasta.includes}"/>
     </read-fasta>
