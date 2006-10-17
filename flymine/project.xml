@@ -84,7 +84,7 @@
                 location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
     </source>
     <source name="homophila" type="homophila">
-      <property name="src.data.dir" location="/shared/data/homophila/current" includes="homophila_matches.txt"/>
+      <property name="src.data.dir" location="/shared/data/homophila/current"/>
       <property name="src.data.dir.includes" value="homophila_matches.txt"/>
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
@@ -116,7 +116,8 @@
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/current" includes="*/gene_association*"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
+      <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="name-and-wildtypefunction" type="tab-separated-file" dump="true">
       <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
