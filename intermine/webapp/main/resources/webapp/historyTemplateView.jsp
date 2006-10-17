@@ -155,11 +155,6 @@
     </c:choose>
   
       <span class="smallnote">
-        <c:if test="${!empty PROFILE.savedTemplates}">
-          <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
-            <fmt:message key="begin.exportTemplates"/>
-          </html:link><br/>
-        </c:if>
         <html:link action="/import" titleKey="begin.importTemplatesDesc">
           <fmt:message key="begin.importTemplates"/>
         </html:link>
