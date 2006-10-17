@@ -10,10 +10,9 @@ package org.intermine.web;
  *
  */
 
-import java.io.StringReader;
+import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,7 +26,7 @@ import org.apache.struts.action.ActionMapping;
  *
  * @author Thomas Riley
  */
-public class ImportQueryAction extends InterMineAction
+public class ImportQueriesAction extends InterMineAction
 {
     /**
      * @see InterMineAction#execute
@@ -38,13 +37,23 @@ public class ImportQueryAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ImportQueryForm qif = (ImportQueryForm) form;
+        ImportQueriesForm qif = (ImportQueriesForm) form;
         
-        Map queries = PathQueryBinding.unmarshal(new StringReader(qif.getXml()));
-        SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(),
-                session, response);
+        Map queries = qif.getQueryMap();
         
-        return mapping.findForward("query");
+        if (queries.size() == 1 && request.getParameter("query_builder") != null
+            && request.getParameter("query_builder").equals("yes")) {
+            SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(),
+                                     session, response);
+            return mapping.findForward("query");
+        } else {
+            Iterator iter = queries.keySet().iterator();
+            while (iter.hasNext()) {
+                String queryName = (String) iter.next();
+                PathQuery query = (PathQuery) queries.get(queryName);
+                SessionMethods.saveQuery(session, queryName, query);
+            }
+            return mapping.findForward("history");
+        }
     }
 }

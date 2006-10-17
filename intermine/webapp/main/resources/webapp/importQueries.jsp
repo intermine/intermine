@@ -5,11 +5,12 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- importQuery.jsp -->
+<!-- importQueries.jsp -->
 <html:xhtml/>
 <im:body>
   <fmt:message key="importQuery.message"/><p>
-  <html:form action="/importQueryAction">
+  <html:form action="/importQueriesAction?query_build=${param.query_builder}">
+    <html:hidden property="query_builder" value="${param.query_builder}"/>
     <table cellspacing="0" cellpadding="3" border="0">
     <tr>
       <td align="right" valign="top"><fmt:message key="importQuery.xml"/></td>
@@ -24,4 +25,4 @@
     </table>
   </html:form>
 </im:body>
-<!-- /importQuery.jsp -->
+<!-- /importQueries.jsp -->

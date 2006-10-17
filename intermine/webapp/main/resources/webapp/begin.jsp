@@ -74,7 +74,7 @@
             <fmt:message key="begin.browse.model"/>
             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
           </html:link><br/>
-          <html:link action="/importQuery">
+          <html:link action="/importQueries?query_builder=yes">
             <fmt:message key="begin.import.query"/>
             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
           </html:link><br/>
