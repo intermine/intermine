@@ -25,7 +25,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
-import org.intermine.web.results.DisplayObject;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +52,7 @@ public class ExternalLinksController extends TilesAction
     /**
      * Create a Map of external link type to URL by looking at the current object and by reading
      * the WEB_PROPERTIES.
-     *
+     * @param context The current Tile context, containing Tile attributes.
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -80,8 +79,6 @@ public class ExternalLinksController extends TilesAction
             
             String[] bits = StringUtil.split(key, ".");
             
-            // externalLinks.FlyExpress.Gene.organismDbId.urlPrefix=www.flyexpress.net/search.php?type=gene&search=
-
             if (bits[0].equals(PROPERTY_PREFIX)) {
                 String linkType = bits[1];
                 String className = bits[2];
@@ -90,7 +87,7 @@ public class ExternalLinksController extends TilesAction
 
                 String propertyType = bits[4];
                 if (!propertyType.equals(URL_TAG)) {
-                    LOG.error("unknown property format: " + key + " no \"" + URL_TAG +"\" found");
+                    LOG.error("unknown property format: " + key + " no \"" + URL_TAG + "\" found");
                     continue;
                 }
 

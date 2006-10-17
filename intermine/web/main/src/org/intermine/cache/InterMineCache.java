@@ -208,7 +208,7 @@ public class InterMineCache
         Set keysToRemove = new HashSet();
         Iterator iter = cache.keySet().iterator();
        ENTRIES:
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             MultiKey mkey = (MultiKey) iter.next();
             Object[] entryKeyParts = mkey.getKeys();
             for (int i = 0; i < entryKeyParts.length; i++) {

@@ -126,13 +126,13 @@ public class TemplateQueryBinding
             throws SAXException {
             if (qName.equals("template")) {
                 templateName = attrs.getValue("name");
-                templateTitle= attrs.getValue("title");
+                templateTitle = attrs.getValue("title");
                 templateDesc = attrs.getValue("longDescription");
                 if (attrs.getValue("description") != null && templateTitle == null) {
                     // support old serialisation format: description -> title
                     templateTitle = attrs.getValue("description");
                 }
-                templateComment= attrs.getValue("comment");
+                templateComment = attrs.getValue("comment");
                 templateCat = attrs.getValue("category");
                 keywords = attrs.getValue("keywords");
                 if (keywords == null) {
