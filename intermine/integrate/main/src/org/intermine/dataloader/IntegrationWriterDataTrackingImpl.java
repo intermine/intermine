@@ -171,6 +171,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     equivalentObjects.iterator().next();
                 if (onlyEquivalent instanceof ProxyReference) {
                     //LOG.debug("store() finished trivially for object " + oText);
+                    // This onlyEquivalent object MUST have come from the ID map.
+                    if (idMap.get(o.getId()) == null) {
+                        LOG.error("Got a ProxyReference as the only equivalent object, but not from"
+                                + " the ID map! o = " + o);
+                    }
                     return onlyEquivalent;
                 }
             }
