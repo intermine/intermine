@@ -173,20 +173,14 @@
         </html:form>
         <br/>
 
-      <span class="smallnote">
-        <!--
-        <html:link action="/exportQueries?type=user" titleKey="begin.exportTemplatesDesc">
-          <fmt:message key="begin.exportTemplates"/>
-        </html:link>
-        <br/>
-        -->
-        <html:link action="/importQueries" titleKey="begin.import.query">
-          <fmt:message key="begin.import.query"/>
-        </html:link>
-      </span>
       </c:otherwise>
     </c:choose>
 
+    <span class="smallnote">
+      <html:link action="/importQueries" titleKey="begin.import.query">
+        <fmt:message key="begin.import.query"/>
+      </html:link>
+    </span>
   </im:body>
 
 <!-- /historyQueryView.jsp -->

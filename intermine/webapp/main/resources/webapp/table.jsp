@@ -102,14 +102,17 @@
   <c:otherwise>
     
     <c:if test="${!empty templateQuery}">
-      <div class="resultsTableTemplateHeader">
-        <div class="templateTitle">
-          <fmt:message key="results.templateName">
-            <fmt:param value="${templateQuery.title}"/>
-          </fmt:message>
-        </div>
-        <div class="templateDescription">
-          ${templateQuery.description}
+      <div class="body">
+        <div class="resultsTableTemplateHeader">
+          <div>
+            <fmt:message key="results.templateName"/>: 
+            <span class="templateTitle">
+              ${templateQuery.title}
+            </span>
+          </div>
+          <div class="templateDescription">
+            ${templateQuery.description}
+          </div>
         </div>
       </div>
     </c:if>
