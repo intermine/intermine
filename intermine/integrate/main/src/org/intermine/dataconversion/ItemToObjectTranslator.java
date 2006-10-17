@@ -114,6 +114,7 @@ public class ItemToObjectTranslator extends Translator
         } catch (Exception e) {
             throw new ObjectStoreException(e);
         }
+        LOG.info("Namespace map: " + namespaceToId);
     }
 
     /**
