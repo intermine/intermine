@@ -189,7 +189,7 @@
            objectstore -->
       <property name="tgt.xml.file" location="build/organisms.xml"/>
     </source>
-    <source name="flymine-static" type="intermine-items-xml-file" dump="true">
+    <source name="flymine-static" type="intermine-items-xml-file">
       <property name="tgt.xml.file" location="datasets.xml"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
