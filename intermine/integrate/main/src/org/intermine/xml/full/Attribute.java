@@ -33,7 +33,7 @@ public class Attribute
      */
     public Attribute(String name, String value) {
         this.name = name;
-        setValue(value);
+        this.value = value;
     }
 
     /**
@@ -60,9 +60,6 @@ public class Attribute
      * @param value the value
      */
     public void setValue(String value) {
-        if (value == null) {
-            throw new RuntimeException("value null while calling setValue() on " + this);
-        }
         this.value = value;
     }
 

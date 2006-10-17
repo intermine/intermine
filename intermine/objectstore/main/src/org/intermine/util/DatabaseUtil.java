@@ -638,8 +638,7 @@ public class DatabaseUtil
             Statement s = conn.createStatement();
             if (full) {
                 s.execute("VACUUM FULL ANALYSE");
-                throw new RuntimeException("don't run VACUUM FULL ANALYSE");
-                } else {
+            } else {
                 s.execute("ANALYSE");
             }
             conn.setAutoCommit(autoCommit);
@@ -674,7 +673,6 @@ public class DatabaseUtil
                     String sql = "VACUUM FULL ANALYSE " + (String) tablesIter.next();
                     LOG.info(sql);
                     s.execute(sql);
-                    throw new RuntimeException("don't run VACUUM FULL ANALYSE");
                 } else {
                     String sql = "ANALYSE " + (String) tablesIter.next();
                     LOG.info(sql);
