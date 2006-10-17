@@ -158,6 +158,7 @@
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
       <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
+      <property name="fasta.sequenceType" value="protein"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
@@ -180,6 +181,7 @@
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
       <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
+      <property name="fasta.sequenceType" value="protein"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
