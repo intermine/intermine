@@ -108,7 +108,7 @@
       <property name="data.location" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/psi/intact/2006-05-09"/>
+      <property name="src.data.dir" location="/shared/data/psi/intact/2006-10-06"/>
       <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="go" type="go">
