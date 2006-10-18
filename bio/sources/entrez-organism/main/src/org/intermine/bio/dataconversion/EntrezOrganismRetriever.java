@@ -10,30 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Writer;
-import java.io.Reader;
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.FullRenderer;
@@ -42,15 +31,25 @@ import org.intermine.xml.full.ItemFactory;
 
 import org.flymine.model.genomic.Organism;
 
-import org.apache.log4j.Logger;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
  * Class to fill in organism information using Entrez.
  * @author Mark Woodbridge
+ * @author Kim Rutherford
  */
 public class EntrezOrganismRetriever extends Task
 {
@@ -120,7 +119,7 @@ public class EntrezOrganismRetriever extends Task
                 taxonIds.add(taxonId);
                 if (taxonIds.size() == BATCH_SIZE || !i.hasNext()) {
                     SAXParser.parse(new InputSource(getReader(taxonIds)),
-                                    new Handler(toStore, orgMap, itemFactory));
+                                    new Handler(toStore, itemFactory));
                     for (Iterator j = toStore.iterator(); j.hasNext();) {
                         Item item = (Item) j.next();
                         writer.write(FullRenderer.render(item));
@@ -146,10 +145,10 @@ public class EntrezOrganismRetriever extends Task
 
     /**
      * Retrieve the organisms to be updated
+     * @param os the ObjectStore to read from
      * @return a Map from taxonid to Organism object
-     * @throws ObjectStoreException if an error occurs
      */
-    protected Map getOrganisms(ObjectStore os) throws ObjectStoreException {
+    protected Map getOrganisms(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Organism.class);
         q.addFrom(qc);
@@ -217,10 +216,9 @@ Example
         /**
          * Constructor
          * @param toStore a set in which the new Organism items are stored
-         * @param organismMap a Map from taxon id to Organism object.
          * @param itemFactory the factory
          */
-        public Handler(Set toStore, Map organismMap, ItemFactory itemFactory) {
+        public Handler(Set toStore, ItemFactory itemFactory) {
             this.toStore = toStore;
             this.itemFactory = itemFactory;
         }
@@ -228,8 +226,7 @@ Example
         /**
          * @see DefaultHandler#startElement
          */
-        public void startElement(String uri, String localName, String qName, Attributes attrs)
-            throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if ("ERROR".equals(qName)) {
                 name = qName;
             } else if ("Id".equals(qName)) {
@@ -243,14 +240,14 @@ Example
         /**
          * @see DefaultHandler#characters
          */
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             characters.append(new String(ch, start, length));
         }
 
         /**
          * @see DefaultHandler#endElement
          */
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, String localName, String qName) {
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve taxonomy record: " + characters);
             } else if ("Id".equals(name)) {
