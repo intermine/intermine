@@ -47,10 +47,7 @@
     <post-process name="update-orthologues"/>
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
-    <post-process name="create-overlap-relations-flymine">
-      <property name="classesToIgnore" value="Primer, Contig, CDS, Chromosome, ChromosomeBand, Enhancer, Exon, FivePrimeUTR, Intron, MRNA, PCRProduct, PolyASite, Pseudogene, RRNA, RepeatRegion, Supercontig, ThreePrimeUTR, TranscriptionStartSite, TransposableElementInsertionSite"/>
-    </post-process>
-
+    <post-process name="create-overlap-relations-flymine"/>
     <post-process name="do-sources"/>
   </post-processing>
 

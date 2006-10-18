@@ -10,6 +10,9 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +21,11 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-import org.intermine.util.StringUtil;
 import org.intermine.dataloader.XmlDataLoaderTask;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Transcript;
-import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -181,18 +183,16 @@ public class PostProcessTask extends Task
                 LOG.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
                 ig.createIntergenicRegionFeatures();
             } else if ("create-overlap-relations-flymine".equals(operation)) {
-                String classesToIgnore = getProject().getUserProperty("classesToIgnore");
-                if (classesToIgnore == null) {
-                    throw new BuildException("classesToIgnore property not set");
-                }
-                
                 LOG.info("Starting CalculateLocations.createOverlapRelations()");
                 List classNamesToIgnoreList = new ArrayList();
 
-                String[] classNames = StringUtil.split(classesToIgnore, ",");
-
-                for (int i = 0; i < classNames.length; i++) {
-                    classNamesToIgnoreList.add(classNames[i].trim());
+                BufferedReader classesToIgnoreReader = new BufferedReader(new InputStreamReader(
+                            PostProcessTask.class.getClassLoader().getResourceAsStream(
+                                "classesToIgnore")));
+                String line = classesToIgnoreReader.readLine();
+                while (line != null) {
+                    classNamesToIgnoreList.add(line);
+                    line = classesToIgnoreReader.readLine();
                 }
 
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
