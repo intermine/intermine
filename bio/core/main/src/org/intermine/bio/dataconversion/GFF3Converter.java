@@ -268,7 +268,7 @@ public class GFF3Converter
                 })));
             handler.setLocation(relation);
         }
-        
+
         handler.addEvidence(dataSet);
 
         if (record.getScore() != null) {
@@ -335,7 +335,7 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
-        
+
         if (feature.hasAttribute("organismDbId")) {
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", feature.getIdentifier()));
@@ -448,8 +448,8 @@ public class GFF3Converter
             synonym.addAttribute(new Attribute("type", "identifier"));
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
-            handler.setSequence(seq);
         }
+        handler.setSequence(seq);
         return seq;
     }
 
