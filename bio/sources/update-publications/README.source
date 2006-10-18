@@ -1,5 +1,5 @@
-entrez-organism is a source that operates in two steps.  It first queries the
-ObjectStore to find the NCBI taxony identifiers of all Organism objects.  It
-then queries the NCBI taxony server to find the full species and genus of the
-organism and then updates the Organism objects with that information.  All
-InterMine sources use taxon ID to identify organism.
+update-publications is a source that operates in two steps.  It first queries
+the ObjectStore to find the pubmed identifiers of all Publications.  It then
+queries the NCBI pubmed server to find the full title and author list, then
+updates the Publication objects with that information.  All sources use pubmed
+ID to identify publications.
