@@ -148,6 +148,7 @@
   </item>
   <item id="5_6" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="primaryAccession" value="At4g36380"/>
+    <reference name="organism" ref_id="4_5"/>
     <collection name="evidence">
       <reference ref_id="0_7"/>
     </collection>
