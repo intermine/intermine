@@ -143,8 +143,9 @@ public class EntrezPublicationsRetriever
      * @throws Exception if an error occurs
      */
     protected Reader getReader(Set ids) throws Exception {
-        return new BufferedReader(new InputStreamReader(new URL(ESUMMARY_URL + StringUtil
-                                                                .join(ids, ",")).openStream()));
+        String urlString = ESUMMARY_URL + StringUtil.join(ids, ",");
+        System. err.println("retrieving: " + urlString);
+        return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
     }
 
     /**
