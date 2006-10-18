@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Arrays;
+import java.util.TreeSet;
 
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Attribute;
@@ -45,6 +46,8 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     private String tgtNs;
     private Set pseudogeneIds = new HashSet();
     private Map otherOrganismItems = new HashMap();
+    private Map cdsStarts = new HashMap(), cdsEnds = new HashMap();
+    private Set cdss = new HashSet();
 
     // items that need extra processing that can only be done after all other GFF features have
     // been read
@@ -86,7 +89,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 
     /**
      * This method does the following transformations.
-     * 
+     *
      * For all
      * @see GFF3RecordHandler#process(GFF3Record)
      */
@@ -96,26 +99,68 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         if (!feature.hasAttribute("curated")) {
             feature.addAttribute(new Attribute("curated", "true"));
         }
-        
+
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
         if ("RegulatoryRegion".equals(clsName)) {
             feature.setClassName(tgtNs + "TFmodule");
             clsName = "TFmodule";
         }
-        
+
         if ("Protein".equals(clsName)) {
             // for v4.3 CDS record changed to proteins
             feature.setClassName(tgtNs + "Translation");
             clsName = "Translation";
         }
-        
+
+        if ("CDS".equals(clsName)) {
+            // keep CDSs until the end, need to be combined into one CDS per CDS Name per
+            // transcript (Parent).  This needs to have a location with the lowest start and
+            // highest end value of all CDS parts.
+            String cdsId = feature.getAttribute("identifier").getValue();
+            String cdsName = feature.getAttribute("symbol").getValue();
+            String transcriptId = null;
+            Iterator transIter = record.getParents().iterator();
+            try {
+                transcriptId = (String) transIter.next();
+            } catch (Exception e) {
+                throw new RuntimeException("no parent found for CDS: " + cdsId);
+            }
+            if (transIter.hasNext()) {
+                throw new RuntimeException("multiple parents found for CDS: " + cdsId);
+            }
+
+            CDSHolder holder = new CDSHolder(cdsName, transcriptId,
+                                             getLocation().getAttribute("strand").getValue());
+            cdss.add(holder);
+
+            // TODO does reference to transcript get set?
+            Integer start = new Integer(getLocation().getAttribute("start").getValue());
+            Integer end = new Integer(getLocation().getAttribute("end").getValue());
+            Set starts = (Set) cdsStarts.get(holder);
+            if (starts == null) {
+                starts = new TreeSet();
+                cdsStarts.put(holder, starts);
+            }
+            starts.add(start);
+
+            Set ends = (Set) cdsEnds.get(holder);
+            if (ends == null) {
+                ends = new TreeSet();
+                cdsEnds.put(holder, ends);
+            }
+            ends.add(end);
+
+            // don't store anything now
+            clear();
+        }
+
         if (record.getId().startsWith("FB")) {
             // v4.3 records have FB numbers as IDs, move to organismDbId
             feature.setAttribute("organismDbId", record.getId());
             feature.removeAttribute("identifier");
         }
-        
+
         if ("Protein".equals(clsName)) {
             // we need to use the alias (eg "CG3702-PA") not the ID (eg. "FBpp0077166")
             // because Inparanoid uses the "CG3702-PA" version
@@ -123,7 +168,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
                 feature.setAttribute("identifier", record.getAlias());
             }
         }
-        
+
         // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
         // We fix this by changing the pseudogene to a transcript and then fixing the gene
         // class names later
@@ -207,6 +252,8 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             finalItems.add(getFeature());
 
             // unset the feature in the Item set so that it doesn't get stored automatically
+            removeFeature();
+        } else if ("CDS".equals(clsName)) {
             removeFeature();
         } else {
             // set references from parent relations
@@ -319,7 +366,32 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 
         retList.addAll(otherOrganismItems.values());
 
+        retList.addAll(createCDSs());
+
         return retList;
+    }
+
+    protected Set createCDSs() {
+        Set retval = new HashSet();
+        // How to identify a CDS is unclear.
+        Iterator cdsIter = cdss.iterator();
+        while (cdsIter.hasNext()) {
+            CDSHolder holder = (CDSHolder) cdsIter.next();
+            Item cds = getItemFactory().makeItem(null, tgtNs + "CDS", "");
+            cds.setAttribute("identifier", holder.transcriptId + "-cds");
+            cds.setAttribute("name", holder.cdsName);
+            cds.setReference("organism", getOrganism().getIdentifier());
+            retval.add(cds);
+
+            Item loc = getItemFactory().makeItem(null, tgtNs + "Location", "");
+            loc.setReference("object", getSequence().getIdentifier());
+            loc.setReference("subject", cds.getIdentifier());
+            loc.setAttribute("strand", holder.strand);
+            loc.setAttribute("start", ((TreeSet) cdsStarts.get(holder)).first().toString());
+            loc.setAttribute("end", ((TreeSet) cdsEnds.get(holder)).last().toString());
+            retval.add(loc);
+        }
+        return retval;
     }
 
 
@@ -365,6 +437,8 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             otherOrganismItems.put(orgTaxonId, otherOrganismItem);
             return otherOrganismItem;
         }
+
+
     }
 
     /**
@@ -407,4 +481,26 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         return fbs;
     }
 
+    private class CDSHolder
+    {
+        String cdsName, transcriptId, strand, key;
+
+        public CDSHolder(String cdsName, String transcriptId, String strand) {
+            this.cdsName = cdsName;
+            this.transcriptId = transcriptId;
+            this.strand = strand;
+            this.key = cdsName + transcriptId + strand;
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof CDSHolder) {
+                return this.key.equals(((CDSHolder) o).key);
+            }
+            return false;
+        }
+
+        public int hashCode() {
+            return key.hashCode();
+        }
+    }
 }
