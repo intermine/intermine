@@ -15,6 +15,6 @@
     
     <echo message="retrieving from ${tgt.xml.file}"/>
 
-    <retrieve-organisms osAlias="os.production" outputFile="${tgt.xml.file}"/>
+    <retrieve-publications osAlias="os.production" outputFile="${tgt.xml.file}"/>
   </target>
 </project>

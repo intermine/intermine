@@ -10,33 +10,29 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.File;
-import java.io.FileInputStream;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-
-import junit.framework.TestCase;
-import junit.framework.Assert;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullParser;
 
-import org.flymine.model.genomic.Organism;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Tests for EntrezOrganismRetriever.
  */
 public class EntrezPublicationRetrieverTest extends TestCase
 {
-    public void testEntrezOrganismRetriever() throws Exception {
+    public void testEntrezPublicationRetriever() throws Exception {
         EntrezPublicationsRetriever eor = new TestEntrezPublicationsRetriever();
         eor.setOsAlias("os.bio-test");
 
