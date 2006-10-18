@@ -501,9 +501,15 @@ public class GoConverter extends FileConverter
 
                     if (withTypes.containsKey(prefix)) {
                         WithType wt = (WithType) withTypes.get(prefix);
+                        ItemWrapper productWrapper = null;
 
-                        ItemWrapper productWrapper = newProduct(
-                                value, wt.clsName, organism, dataSourceId);
+                        // if a UniProt protein it may be from a differnet organism
+                        if (prefix.equals("UniProt")) {
+                            productWrapper = newProduct(value, wt.clsName,
+                                                        null, dataSourceId);
+                        } else
+                            productWrapper = newProduct(value, wt.clsName,
+                                                        organism, dataSourceId);
                         Item withProduct = productWrapper.getItem();
                         withProductList.add(withProduct);
                     } else {
@@ -581,7 +587,7 @@ public class GoConverter extends FileConverter
                                      Item organism,
                                      String dataSourceId) throws ObjectStoreException {
 
-        String key = makeProductKey(accession, type, organism.getIdentifier());
+        String key = makeProductKey(accession, type, organism);
 
         //Have we already seen this product somewhere before?
         // if so, return the product rather than creating a new one...
@@ -609,7 +615,7 @@ public class GoConverter extends FileConverter
         }
 
         Item product = createItem(clsName);
-        if (!clsName.equals("Protein")) {
+        if (organism != null) {
             product.setReference("organism", organism.getIdentifier());
         }
         product.setAttribute(idField, accession);
@@ -636,23 +642,24 @@ public class GoConverter extends FileConverter
      *
      * @param identifier the identifier
      * @param type       the type (allways lowercased)
-     * @param organismId the organism identifier of the current organism item
+     * @param organism the organism of th eproduct
      * @return A String combining all 3 that can be used as a unique hash key
      */
-    private String makeProductKey(String identifier, String type, String organismId) {
+    private String makeProductKey(String identifier, String type, Item organism) {
 
-        if (type.equalsIgnoreCase("gene") && organismId == null) {
+        if (!(type.equalsIgnoreCase("protein")) && organism == null) {
             throw new IllegalArgumentException("No organism provided when creating "
                     + type + ": " + identifier);
         } else if (type == null) {
-            throw new IllegalArgumentException("No type provided when creating " + organismId
+            throw new IllegalArgumentException("No type provided when creating " + organism
                     + ": " + identifier);
         } else if (identifier == null) {
-            throw new IllegalArgumentException("No organism provided when creating "
-                    + organismId + ": " + type);
+            throw new IllegalArgumentException("No identifier provided when creating "
+                    + organism + ": " + type);
         }
 
-        return identifier + type.toLowerCase() + organismId;
+        return identifier + type.toLowerCase() + ((type.equalsIgnoreCase("protein"))
+            ? "" : organism.getIdentifier());
     }
 
 
@@ -679,58 +686,32 @@ public class GoConverter extends FileConverter
      * @return the datasource
      */
     protected Item newDatasource(String code) {
-        // TEST both 'GOA' and 'Gene Ontology' mean same thing
 
-        // TODO is all this checking really necessary?  (rns, 05/06/06)
-        if (code.equals("GOA")) {
+        String title = null;
+        // re-write some codes to better data source names
+        if ("UniProtKB".equals(code)) {
+            title = "UniProt";
+        } else if ("FB".equals(code)) {
+            title = "FlyBase";
+        } else if ("WB".equals(code)) {
+            title = "WormBase";
+        } else if ("SP".equals(code)) {
+            title = "UniProt";
+        } else if (code.startsWith("GeneDB")) {
+            title = "GeneDB";
+        } else if ("SANGER".equals(code)) {
+            title = "GeneDB";
+        } else if ("GOA".equals(code)) {
             code = "Gene Ontology";
+        } else {
+            title = code;
         }
-        Item item = (Item) datasources.get(code);
+
+        Item item = (Item) datasources.get(title);
         if (item == null) {
             item = createItem("DataSource");
-            String title;
-            if ("UniProt".equals(code) || "UniProtKB".equals(code)) {
-                title = "UniProt";
-            } else if ("FB".equals(code)) {
-                title = "FlyBase";
-            } else if ("WB".equals(code)) {
-                title = "WormBase";
-            } else if ("SP".equals(code)) {
-                // special case for Swiss-Prot
-                title = "UniProt";
-            } else if ("MGI".equals(code)) {
-                title = "MGI";
-            } else if ("SGD".equals(code)) {
-                title = "SGD";
-            } else if ("RGD".equals(code)) {
-                title = "RGD";
-            } else if ("PINC".equals(code)) {
-                title = "PINC";
-            } else if ("HGNC".equals(code)) {
-                title = "HGNC";
-            } else if ("SWALL".equals(code)) {
-                title = "SWALL";
-            } else if ("IntAct".equals(code)) {
-                title = "IntAct";
-            } else if ("GDB".equals(code)) {
-                title = "GDB";
-            } else if ("TIGR".equals(code)) {
-                title = "TIGR";
-            } else if ("Gene Ontology".equals(code)) {
-                title = "Gene Ontology";
-            } else if ("Reactome".equals(code)) {
-                title = "Reactome";
-            } else if (code.startsWith("GeneDB")) {
-                title = "GeneDB";
-            } else if ("SANGER".equals(code)) {
-                title = "GeneDB";
-            } else if ("RI".equals(code)) {
-                title = "RI";
-            } else {
-                title = code;
-            }
-            item.addAttribute(new Attribute("name", title));
-            datasources.put(code, item);
+            item.setAttribute("name", title);
+            datasources.put(title, item);
         }
         return item;
     }
