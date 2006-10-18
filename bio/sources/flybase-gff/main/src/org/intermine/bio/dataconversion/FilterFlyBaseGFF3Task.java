@@ -175,9 +175,7 @@ public class FilterFlyBaseGFF3Task extends Task
             || type.equals("tRNAscan-SE") || type.equals("genie")
             || type.equals("augustus") || type.equals("genscan")
             || type.equals("RNAiHDP") || type.equals("repeatmasker")
-            || type.equals("orthologous_region")
-            // temporarily ignore CDSs
-            || type.equals("CDS")) {
+            || type.equals("orthologous_region")) {
             return false;
         }
         return true;
