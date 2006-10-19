@@ -321,11 +321,6 @@ public class GFF3Converter
             handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seq, tgtLocation);
         }
 
-        handler.process(record);
-
-        feature.addCollection(handler.getEvidenceReferenceList());
-        handler.clearEvidenceReferenceList();
-
         if (feature.hasAttribute("identifier")) {
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", feature.getIdentifier()));
@@ -345,6 +340,11 @@ public class GFF3Converter
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             handler.addItem(synonym);
         }
+
+        handler.process(record);
+        feature.addCollection(handler.getEvidenceReferenceList());
+        handler.clearEvidenceReferenceList();
+
 
         try {
             Iterator iter = handler.getItems().iterator();

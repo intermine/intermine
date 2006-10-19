@@ -155,9 +155,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
                 cdsEnds.put(holder, ends);
             }
             ends.add(end);
-
-            // don't store anything now
-            clear();
         }
 
         if (record.getId().startsWith("FB")) {
@@ -205,51 +202,55 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
-        // make sure we have a set with all existing Synonyms and those that will
-        // be created by GFF3Converter
-        Set synonyms = new HashSet();
-        if (feature.hasAttribute("identifier")) {
-            synonyms.add(feature.getAttribute("identifier").getValue());
-        }
-        if (feature.hasAttribute("symbol")) {
-            synonyms.add(feature.getAttribute("symbol").getValue());
-        }
-        if (feature.hasAttribute("organismDbId")) {
-            synonyms.add(feature.getAttribute("organismDbId").getValue());
-        }
-        Iterator itemIter = getItems().iterator();
-        while (itemIter.hasNext()) {
-            Item item = (Item) itemIter.next();
-            if (item.getClassName().endsWith("Synonym")) {
-                synonyms.add(item.getAttribute("value").getValue());
-            }
-        }
-        List combined = new ArrayList();
-
-        List list = (List) record.getAttributes().get("synonym_2nd");
-        if (list != null) {
-            combined.addAll(list);
-        }
-        list = (List) record.getAttributes().get("synonym");
-        if (list != null) {
-            combined.addAll(list);
-        }
 
         if (clsName.equals("SyntenicRegion")) {
             makeTargetSyntenicRegion(feature, record);
         }
 
-        Iterator iter = combined.iterator();
-        while (iter.hasNext()) {
-            String synonym = (String) iter.next();
-            if (!synonyms.contains(synonym)) {
-                if (synonym.startsWith("CG") || synonym.startsWith("CR")
-                    || synonym.startsWith("FB")) {
-                    addItem(createSynonym(feature, "identifier", synonym));
-                } else {
-                    addItem(createSynonym(feature, "symbol", synonym));
+
+        // make sure we have a set with all existing Synonyms and those that will
+        // be created by GFF3Converter
+        if (!"CDS".equals(clsName)) {
+            Set synonyms = new HashSet();
+            if (feature.hasAttribute("identifier")) {
+                synonyms.add(feature.getAttribute("identifier").getValue());
+            }
+            if (feature.hasAttribute("symbol")) {
+                synonyms.add(feature.getAttribute("symbol").getValue());
+            }
+            if (feature.hasAttribute("organismDbId")) {
+                synonyms.add(feature.getAttribute("organismDbId").getValue());
+            }
+            Iterator itemIter = getItems().iterator();
+            while (itemIter.hasNext()) {
+                Item item = (Item) itemIter.next();
+                if (item.getClassName().endsWith("Synonym")) {
+                    synonyms.add(item.getAttribute("value").getValue());
                 }
-                synonyms.add(synonym);
+            }
+            List combined = new ArrayList();
+
+            List list = (List) record.getAttributes().get("synonym_2nd");
+            if (list != null) {
+                combined.addAll(list);
+            }
+            list = (List) record.getAttributes().get("synonym");
+            if (list != null) {
+                combined.addAll(list);
+            }
+
+            Iterator iter = combined.iterator();
+            while (iter.hasNext()) {
+                String synonym = (String) iter.next();
+                if (!synonyms.contains(synonym)) {
+                    if (synonym.startsWith("CG") || synonym.startsWith("CR")
+                        || synonym.startsWith("FB")) {
+                        addItem(createSynonym(feature, "identifier", synonym));
+                    } else {
+                        addItem(createSynonym(feature, "symbol", synonym));
+                    }
+                    synonyms.add(synonym);
+                }
             }
         }
 
@@ -259,7 +260,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             // unset the feature in the Item set so that it doesn't get stored automatically
             removeFeature();
         } else if ("CDS".equals(clsName)) {
-            removeFeature();
+            clear();
         } else {
             // set references from parent relations
             setReferences(references);
