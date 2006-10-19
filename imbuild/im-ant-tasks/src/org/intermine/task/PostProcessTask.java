@@ -118,9 +118,12 @@ public class PostProcessTask extends Task
                     doCorePostProcess(name);
                 }
             }
+            
         // ok - do a specific task only
         } else {
-            if (project.getPostProcesses().containsKey(action)) {
+            if (DO_SOURCES.equals(action)) {
+                doAllSourcePostProcessing();
+            } else if (project.getPostProcesses().containsKey(action)) {
                 doCorePostProcess(action);
             } else if (project.getSources().containsKey(action)) {
                 doSourcePostProcess(action);
