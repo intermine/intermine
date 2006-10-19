@@ -261,8 +261,8 @@ public class TransferSequences
             Sequence chromosomeSequence = chr.getSequence();
 
             if (chromosomeSequence == null) {
-                throw new Exception("no sequence found for: " + chr.getIdentifier() + "  id: "
-                                    + chr.getId());
+                LOG.warn("no sequence found for: " + chr.getIdentifier() + "  id: " + chr.getId());
+                continue;
             }
 
             String featureSeq = getSubSequence(chromosomeSequence, locationOnChr);
