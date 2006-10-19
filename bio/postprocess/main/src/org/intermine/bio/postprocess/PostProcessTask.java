@@ -12,6 +12,7 @@ package org.intermine.bio.postprocess;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,10 +186,14 @@ public class PostProcessTask extends Task
             } else if ("create-overlap-relations-flymine".equals(operation)) {
                 LOG.info("Starting CalculateLocations.createOverlapRelations()");
                 List classNamesToIgnoreList = new ArrayList();
-
-                BufferedReader classesToIgnoreReader = new BufferedReader(new InputStreamReader(
-                            PostProcessTask.class.getClassLoader().getResourceAsStream(
-                                "classesToIgnore")));
+                String ignoreFileName = "classesToIgnore";
+                InputStream classesToIgnoreStream =
+                    PostProcessTask.class.getClassLoader().getResourceAsStream(ignoreFileName);
+                if (classesToIgnoreStream == null) {
+                    throw new RuntimeException("can't find resource: " + ignoreFileName);
+                }
+                BufferedReader classesToIgnoreReader =
+                    new BufferedReader(new InputStreamReader(classesToIgnoreStream));
                 String line = classesToIgnoreReader.readLine();
                 while (line != null) {
                     classNamesToIgnoreList.add(line);
