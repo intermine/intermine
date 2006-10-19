@@ -120,11 +120,16 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             String cdsId = feature.getAttribute("identifier").getValue();
             String cdsName = feature.getAttribute("symbol").getValue();
             String transcriptId = null;
-            Iterator transIter = record.getParents().iterator();
+            Iterator transIter;
+            try {
+                transIter = record.getParents().iterator();
+            } catch (Exception e) {
+                throw new RuntimeException("error getting parents for CDS: " + cdsId, e);
+            }
             try {
                 transcriptId = (String) transIter.next();
             } catch (Exception e) {
-                throw new RuntimeException("no parent found for CDS: " + cdsId);
+                throw new RuntimeException("no parent found for CDS: " + cdsId, e);
             }
             if (transIter.hasNext()) {
                 throw new RuntimeException("multiple parents found for CDS: " + cdsId);
