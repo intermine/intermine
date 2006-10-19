@@ -324,7 +324,13 @@ public class TransferSequences
 //                                        "\n location.getObject().getId() ");
         }
 
-        String subSeqString = new String(chromosomeSequenceString.substring(startPos, endPos));
+        String subSeqString;
+
+        if (startPos < endPos) {
+            subSeqString = new String(chromosomeSequenceString.substring(startPos, endPos));
+        } else {
+            subSeqString = new String(chromosomeSequenceString.substring(endPos, startPos));
+        }
 
         if (locationOnChr.getStrand().intValue() == -1) {
             SymbolList symbolList = DNATools.createDNA(subSeqString);
