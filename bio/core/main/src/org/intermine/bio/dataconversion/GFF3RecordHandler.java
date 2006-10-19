@@ -403,9 +403,14 @@ public class GFF3RecordHandler
                 String locStrand = locString.split(" ")[3];
 
                 Item targetLocation = createItem("Location", createIdentifier());
-                targetLocation.setAttribute("start", locStart);
-                targetLocation.setAttribute("end", locEnd);
-
+                if (Integer.parseInt(locStart) < Integer.parseInt(locEnd)) {
+                    targetLocation.setAttribute("start", locStart);
+                    targetLocation.setAttribute("end", locEnd);
+                } else {
+                    targetLocation.setAttribute("start", locEnd);
+                    targetLocation.setAttribute("end", locStart);
+                }
+                
                 if (locStrand != null && locStrand.equals("+")) {
                     targetLocation.setAttribute("strand", "1");
                 } else if (locStrand != null && locStrand.equals("-")) {
