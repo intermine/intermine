@@ -245,8 +245,15 @@ public class GFF3Converter
                 relation = createItem("SimpleRelation");
             } else {
                 relation = createItem("Location");
-                relation.addAttribute(new Attribute("start", String.valueOf(record.getStart())));
-                relation.addAttribute(new Attribute("end", String.valueOf(record.getEnd())));
+                int start = record.getStart();
+                int end = record.getEnd();
+                if (record.getStart() < record.getEnd()) {
+                    relation.addAttribute(new Attribute("start", String.valueOf(start)));
+                    relation.addAttribute(new Attribute("end", String.valueOf(end)));
+                } else {
+                    relation.addAttribute(new Attribute("start", String.valueOf(end)));
+                    relation.addAttribute(new Attribute("end", String.valueOf(start)));
+                }
                 if (record.getStrand() != null && record.getStrand().equals("+")) {
                     relation.addAttribute(new Attribute("strand", "1"));
                 } else

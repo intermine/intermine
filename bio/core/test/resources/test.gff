@@ -1,6 +1,6 @@
 ##gff-version 3 
 ##ucsc firstEF predictions 
-1	firstEF	promoter	2096705	2097274	1000	+	.	sourceDatabase=UCSC;ID=promoter(90%2b);Parent=exon(2179-)#2,promoter(2179-)
+1	firstEF	promoter	2097274	2096705	1000	+	.	sourceDatabase=UCSC;ID=promoter(90%2b);Parent=exon(2179-)#2,promoter(2179-)
 2	firstEF	promoter	2096850	2097419	1000	-	.	sourceDatabase=UCSC;ID=promoter(2179-);Parent=exon(2179-)#2
 1	firstEF	exon	2097064	2097289	.	-	.	sourceDatabase=UCSC;ID=exon(2179-)#2
 7	mouseChain	cross_genome_match	92403593	149996044	378348525	+	.	sourceDatabase=UCSC;ID=Mousechain:14:6:3063417..48830107;Target=6 3063417 48830107 %2b;Chromosome=6;Organism=MM;
