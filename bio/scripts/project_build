@@ -241,6 +241,7 @@ sub load_db
   my @spawn_args = ("@psql_command @params; echo __LOAD_FINISHED__");
 
   if ($dump_host eq 'localhost') {
+    $ENV{PAGER} = "/bin/cat";
     @spawn_args = "sh -c '@spawn_args'";
   } else {
     unshift @spawn_args, "ssh", $dump_host;
