@@ -30,17 +30,17 @@
     <item id="3_2" class="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="Ensembl"/>
     </item>
-    <item id="6_3" class="http://www.flymine.org/model/genomic#Gene">
-        <attribute name="identifier" value="CG2803"/>
-        <reference name="organism" ref_id="1_3"/>
+    <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
+        <attribute name="organismDbId" value="WBGene00003920"/>
+        <attribute name="symbol" value="par-5"/>
+        <reference name="organism" ref_id="1_2"/>
         <collection name="evidence">
             <reference ref_id="3_1"/>
         </collection>
     </item>
-    <item id="6_2" class="http://www.flymine.org/model/genomic#Gene">
-        <attribute name="identifier" value="M117.2"/>
-        <attribute name="symbol" value="par-5"/>
-        <reference name="organism" ref_id="1_2"/>
+    <item id="6_3" class="http://www.flymine.org/model/genomic#Gene">
+        <attribute name="identifier" value="CG2803"/>
+        <reference name="organism" ref_id="1_3"/>
         <collection name="evidence">
             <reference ref_id="3_1"/>
         </collection>
@@ -160,6 +160,12 @@
         <reference name="source" ref_id="3_1"/>
         <reference name="subject" ref_id="2_3"/>
     </item>
+    <item id="4_10" class="http://www.flymine.org/model/genomic#Synonym">
+        <attribute name="type" value="identifier"/>
+        <attribute name="value" value="WBGene00003920"/>
+        <reference name="source" ref_id="3_3"/>
+        <reference name="subject" ref_id="6_2"/>
+    </item>
     <item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
         <attribute name="type" value="accession"/>
         <attribute name="value" value="Q9W0Y1"/>
@@ -183,12 +189,6 @@
         <attribute name="value" value="CG2803"/>
         <reference name="source" ref_id="3_4"/>
         <reference name="subject" ref_id="6_3"/>
-    </item>
-    <item id="4_10" class="http://www.flymine.org/model/genomic#Synonym">
-        <attribute name="type" value="identifier"/>
-        <attribute name="value" value="M117.2"/>
-        <reference name="source" ref_id="3_3"/>
-        <reference name="subject" ref_id="6_2"/>
     </item>
     <item id="4_8" class="http://www.flymine.org/model/genomic#Synonym">
         <attribute name="type" value="name"/>

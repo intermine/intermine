@@ -416,10 +416,10 @@ public class UniprotDataTranslator extends DataTranslator
                     uniqueGeneIdentifier = geneIdentifier;
                     dbId = getDataSourceId("FlyBase");
                 } else if (taxonId == 6239) { // C. elegans
-                    // leave gene identifier as ORF id, is already ensembl id
-                    // duplicate pairs of ensembl id and WBGenexxx so don't get WBGenexxx
-                    //geneOrganismDbId = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
-                    uniqueGeneIdentifier = geneIdentifier;
+                    // just get WBGeneXXX - ORF id is a gene *model* id, i.e. effectively a transcript
+                    geneOrganismDbId = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
+                    uniqueGeneIdentifier = geneOrganismDbId;
+                    geneIdentifier = null;
                     dbId = getDataSourceId("WormBase");
                 } else if (taxonId == 3702) { // Arabidopsis thaliana
                     geneOrganismDbId = (String) geneNameTypeToName.get("ordered locus");
