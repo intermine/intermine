@@ -26,7 +26,7 @@
           when available.
         </p>
         <p>
-          Note that currently FlyMine stores the positions of the oligos relative to
+          Note: FlyMine curently stores the positions of the oligos relative to
           the transcript rather than to the chromosome.
         </p>
       </div>

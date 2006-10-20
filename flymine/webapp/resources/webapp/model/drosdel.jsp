@@ -16,15 +16,18 @@
           of <i>P</i>-element insertions for generating custom chromosomal aberrations
           in <i>D. melanogaster</i>.  The locations of the <i>P</i>-element insertions
           and the deletions that can be constructed from them have been loaded into
-          FlyMine.  Deletions that can be made from existing fly stocks are tagged as
-          available in FlyMine. Stocks can be ordered from the Szeged stock centre via
-          the <a href="http://www.drosdel.org.uk/">DrosDel</a> web site.
+          FlyMine.  Constructed deletions are tagged as available in FlyMine. Stocks 
+          can be ordered from the <a href="http://expbio.bio.u-szeged.hu/fly/index.php">Szeged stock centre</a>.
         </p>
         <p>
           The DrosDel collection has been reported in Ryder et al (2004)
-          Genetics 167 (2): 797-813
-          (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529">PubMed: 15238529</a>).
+          Genetics 167: 797-813
+          (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529">PubMed: 15238529</a>) 
+          - The DrosDel collection: a set of P-element insertions for generating custom chromosomal aberrations in <i>Drosophila melanogaster</i>.
         </p>
+
+        <p>FlyMine has additional insertions from <a href="http://www.flybase.org/">FlyBase</a> and from the <a href="http://drosophila.med.harvard.edu">Exelixis</a> collection.</p>
+
       </div>
     </td>
     <td width="40%" valign="top">
