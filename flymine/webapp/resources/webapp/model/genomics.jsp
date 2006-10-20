@@ -7,7 +7,7 @@
   <tr>
     <td valign="top">
       <div class="heading2">
-        Major data sets
+        Current data
       </div>
     </td>
     <td valign="top">
@@ -17,8 +17,17 @@
     </td>
   </tr>
   <tr>
-    <td>
+    <td valign="top">
       <div class="body">
+
+  <h4>
+   <a href="javascript:toggleDiv('hiddenDiv1');">
+    <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+     Major data sets ...
+   </a>
+  </h4>
+
+<div id="hiddenDiv1" style="display:none;">
         <p>
           <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
           <i>Anopheles</i> research communities hence the focus is on those organisms.
@@ -28,7 +37,7 @@
             <i>Drosophila melanogaster</i>
           </dt>
           <dd>
-            Release 4.2 genome annotation from <a href="http://www.flybase.org">
+            Release 4.3 genome annotation from <a href="http://www.flybase.org">
               <html:img src="model/FlyBase_logo_mini.png"/> </a>.
           </dd>
           <dt>
@@ -59,9 +68,37 @@
             </a>.
           </dd>
         </dl>
+
+  </div>
+
+    <h4>
+     <a href="javascript:toggleDiv('hiddenDiv2');">
+      <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+       Minor data sets ...
+     </a>
+    </h4>
+
+  <div id="hiddenDiv2" style="display:none;">
+
+        <p>
+          More limited information is available
+          for <i>C. elegans</i>, <i>S. cerevisiae</i> and others for
+          comparison purposes.
+        </p>
+        <dl>
+          <dt><i>Caenorhabditis elegans</i></dt>
+          <dd>
+            Genome information from <a href="http://www.wormbase.org">WormBase</a>,
+            protein interaction data from 
+            <a href="http://www.ebi.ac.uk/intact/">IntAct</a>, orthologues and
+            paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
+            terms, Uniprot and Interpro data
+          </dd>
+        </dl>
       </div>
-    </td>
-    <td width="40%" valign="top">
+    </div>
+   </td>
+   <td width="40%" valign="top">
       <div class="body">
         <ul>
           <li>
@@ -162,6 +199,7 @@
               </query>
             </im:querylink>
           </li>
+
           <li>
             <im:querylink text="All <i> Dros pseudoobscura</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
@@ -176,45 +214,6 @@
               </query>
             </im:querylink>
           </li>
-        </ul>
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <div class="heading2">
-        Minor data sets
-      </div>
-    </td>
-    <td valign="top">
-      <div class="heading2">
-        Bulk download
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <div class="body">
-        <p>
-          More limited information is available
-          for <i>C. elegans</i>, <i>S. cerevisiae</i> and others for
-          comparison purposes.
-        </p>
-        <dl>
-          <dt><i>Caenorhabditis elegans</i></dt>
-          <dd>
-            Genome information from <a href="http://www.wormbase.org">WormBase</a>,
-            protein interaction data from 
-            <a href="http://www.ebi.ac.uk/intact/">IntAct</a>, orthologues and
-            paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
-            terms, Uniprot and Interpro data
-          </dd>
-        </dl>
-      </div>
-    </td>
-    <td width="4%" valign="top">
-      <div class="body">
-        <ul>
           <li>
             <im:querylink text="<i>Caenorhabditis elegans</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene">
@@ -247,4 +246,5 @@
       </div>
     </td>
   </tr>
+
 </table>
