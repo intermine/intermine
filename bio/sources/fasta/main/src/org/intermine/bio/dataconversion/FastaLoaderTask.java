@@ -96,7 +96,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     public void setClassName(String className) {
         this.className = className;
     }
-    
+
     //Use this for testing with junit.
     protected void setFileArray(File[] files) {
         this.files = files;
@@ -107,9 +107,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             Class orgClass = Organism.class;
             org = (Organism) getDirectDataLoader().createObject(orgClass);
             org.setTaxonId(fastaTaxonId);
-            LOG.info("FastaLoaderTask - starting store of organism");
             getDirectDataLoader().store(org);
-            LOG.info("FastaLoaderTask - finished store of organism");
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store Organism object", e);
         }
@@ -189,13 +187,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         TypeUtil.setFieldValue(imo, "organism", org);
 
         try {
-            LOG.info("FastaLoaderTask - starting store of sequence");
             getDirectDataLoader().store(flymineSequence);
-            LOG.info("FastaLoaderTask - finished store of sequence");
-            LOG.info("FastaLoaderTask - starting store of located sequence feature");
             getDirectDataLoader().store(imo);
-            LOG.info("FastaLoaderTask - finished store of located sequence feature");
-
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }
