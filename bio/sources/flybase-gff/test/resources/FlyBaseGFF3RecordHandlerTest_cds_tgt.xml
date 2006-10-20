@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<items>
+  <item id="0_33" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="1223545"/>
+    <attribute name="start" value="1223426"/>
+    <attribute name="strand" value="1"/>
+    <reference name="object" ref_id="0_3"/>
+    <reference name="subject" ref_id="0_8"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_37" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBtr0100348"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_19"/>
+  </item>
+  <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="DM"/>
+  </item>
+  <item id="0_35" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="tran-2"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_19"/>
+  </item>
+  <item id="0_3" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="4"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="0_34" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBtr0100347"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_8"/>
+  </item>
+  <item id="0_32" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="tran-1"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_8"/>
+  </item>
+  <item id="0_36" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="1223545"/>
+    <attribute name="start" value="1223426"/>
+    <attribute name="strand" value="1"/>
+    <reference name="object" ref_id="0_3"/>
+    <reference name="subject" ref_id="0_19"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="1_8" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="400"/>
+    <attribute name="start" value="100"/>
+    <attribute name="strand" value="1"/>
+    <reference name="object" ref_id="0_3"/>
+    <reference name="subject" ref_id="1_7"/>
+  </item>
+  <item id="0_8" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="curated" value="true"/>
+    <attribute name="organismDbId" value="FBtr0100347"/>
+    <attribute name="symbol" value="tran-1"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="1_7" class="http://www.flymine.org/model/genomic#CDS">
+    <attribute name="identifier" value="FBtr0100347-cds"/>
+    <attribute name="name" value="Mitf-cds"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="1_6" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="900"/>
+    <attribute name="start" value="500"/>
+    <attribute name="strand" value="-1"/>
+    <reference name="object" ref_id="0_3"/>
+    <reference name="subject" ref_id="1_5"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="FlyBase"/>
+  </item>
+  <item id="1_5" class="http://www.flymine.org/model/genomic#CDS">
+    <attribute name="identifier" value="FBtr0100348-cds"/>
+    <attribute name="name" value="Mitf-cds"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="0_19" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="curated" value="true"/>
+    <attribute name="organismDbId" value="FBtr0100348"/>
+    <attribute name="symbol" value="tran-2"/>
+    <reference name="organism" ref_id="0_0"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+</items>

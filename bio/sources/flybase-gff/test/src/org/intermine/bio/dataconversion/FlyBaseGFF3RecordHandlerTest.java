@@ -18,15 +18,20 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ReferenceList;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.FullParser;
 
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -36,7 +41,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
 
     Model tgtModel;
     FlyBaseGFF3RecordHandler handler;
-    MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    MockItemWriter tgtIw;
     String seqClsName = "Chromosome";
     String orgAbbrev = "DM";
     String dataSourceName = "FlyBase";
@@ -48,19 +53,20 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
         handler = new FlyBaseGFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName, dateSetTitle,
+        tgtIw = new MockItemWriter(new LinkedHashMap());
+        converter = new GFF3Converter(tgtIw, seqClsName, orgAbbrev, dataSourceName, dateSetTitle,
                                       tgtModel, handler);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
     }
 
-    public void XtestParseFlyBaseId() throws Exception {
+    public void testParseFlyBaseId() throws Exception {
         List dbxrefs = new ArrayList(Arrays.asList(new String[] {"FlyBase:FBgn1234", "FlyBase:FBtr1234"}));
         assertEquals("FBgn1234", handler.parseFlyBaseId(dbxrefs, "FBgn").get(0));
         assertEquals("FBtr1234", handler.parseFlyBaseId(dbxrefs, "FBtr").get(0));
     }
 
-    public void XtestHandleGene() throws Exception {
+    public void testHandleGene() throws Exception {
         String gff = "4\tFlyBase\tgene\t24068\t25621\t.\t+\t.\tID=FBgn0040037;Name=CG17923;Alias=FBan0017923,CG17923;cyto_range=101F1-101F1;gbunit=AE003845;\n";
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
@@ -94,7 +100,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
     }
 
     // test that Gene->Pseudogene->Exon get changed to Pseudogene->Transcript->Exon
-    public void XtestHandlePseudoGene() throws Exception {
+    public void testHandlePseudoGene() throws Exception {
         String gff =
             "4\tFlyBase\tgene\t26994\t32391\t.\t-\t.\tID=FBgn0052011;Name=CR32011;Alias=FBan0032011,CR32011;cyto_range=101F1-102A1;gbunit=AE003845;putative_ortholog_of=FBgn0076625\n"
             + "4\tFlyBase\tpseudogene\t26994\t32391\t.\t-\t.\tID=FBtr0089182;Name=CR32011-RA;Parent=FBgn0052011;Alias=CR32011-RA\n"
@@ -184,10 +190,10 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         // this would mean two separate CDS identifiers - to be confirmed
         String ENDL = System.getProperty("line.separator");
         String gff = "4\tFlyBase\tCDS\t100\t200\t.\t+\t.\tID=CDS_CG17469:2_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
-            + "4\tFlyBase\tCDS\t500\t600\t.\t+\t.\tID=CDS_CG17469:2_744;Name=Mitf-cds;Parent=FBtr0100348;" + ENDL
+            + "4\tFlyBase\tCDS\t300\t400\t.\t+\t.\tID=CDS_CG17469:3_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
+            + "4\tFlyBase\tCDS\t500\t600\t.\t-\t.\tID=CDS_CG17469:2_744;Name=Mitf-cds;Parent=FBtr0100348;" + ENDL
             + "4\tFlyBase\tCDS\t600\t700\t.\t+\t.\tID=CDS_CG17469:3_744;Name=Mitf-cds;Parent=FBtr0100348;" + ENDL
             + "4\tFlyBase\tCDS\t800\t900\t.\t+\t.\tID=CDS_CG17469:3_745;Name=Mitf-cds;Parent=FBtr0100348;" + ENDL
-            + "4\tFlyBase\tCDS\t300\t400\t.\t+\t.\tID=CDS_CG17469:3_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
             + "4\tFlyBase\tmRNA\t1223426\t1223545\t.\t+\t.\tID=FBtr0100347;Name=tran-1;" + ENDL
             + "4\tFlyBase\tmRNA\t1223426\t1223545\t.\t+\t.\tID=FBtr0100348;Name=tran-2;" + ENDL;
 
@@ -198,22 +204,18 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         Iterator iter = handler.createCDSs().iterator();
         while (iter.hasNext()) {
             Item item = (Item) iter.next();
-            System.out.println(item);
         }
-
-
-//         Item cds = itemFactory.makeItem(null, tgtNs + "SequenceVariant", "");
-//         feature.setAttribute("identifier", "l(2)gl[275]");
-//         handler.setFeature(feature);
-
-//         Item loc1 = itemFactory.makeItem(null, tgtNs + "Location", "");
-//         loc1.setAttribute("identifier", "l(2)gl[275]");
-//         handler.setFeature(feature);
-
-//         assertTrue(true);
+        converter.store();
+        converter.close();
+        // uncomment to write out a new target items file
+        //FileWriter fw = new FileWriter(new File("flybase_cds_tgt.xml"));
+        //fw.write(FullRenderer.render(tgtIw.getItems()));
+        //fw.close();
+        LinkedHashSet expected = new LinkedHashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml")));
+        assertEquals(expected, tgtIw.getItems());
     }
 
-    public void XtestHandleSequenceVariant() throws Exception {
+    public void testHandleSequenceVariant() throws Exception {
         String gff = "2L\t.\tsequence_variant\t13563\t22471\t.\t-\t.\tID=l(2)gl[275];Parent=CG2671";
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
