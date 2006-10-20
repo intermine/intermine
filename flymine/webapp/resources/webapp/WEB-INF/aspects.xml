@@ -6,7 +6,7 @@
     <intro-text>
       The gene structure and other genome annotation in FlyMine are provided by
       a variety of curated source databases.  In most cases FlyMine includes
-      all genome features that have chromosomal locations (eg. genes and repeat regions).
+      all genome features that have chromosomal locations (e.g. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
     <starting-points>
@@ -23,11 +23,13 @@
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
     <intro-text>
-      FlyMine contains selected Microarray gene expression data sets for  &lt;i&gt;Drosophila melanogaster&lt;/i&gt;.  We plan to add more soon.
+      Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
-    <starting-points>MicroArrayExperiment MicroArrayAssay CDNAClone Gene</starting-points>
-    <aspect-source name="Array Express" url="http://www.ebi.ac.uk/arrayexpress/"/>
+    <starting-points>Gene CDNAClone MicroArrayExperiment MicroArrayAssay FlyAtlasResult ProbeSet</starting-points>
+    <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
+    <aspect-source name="FlyChip" url="http://www.flychip.org.uk/"/>  
+   <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
   </aspect>
 
   <aspect name="Transcriptional Regulation">
@@ -35,12 +37,13 @@
     <icon-image>model/bindingSites.png</icon-image>
     <large-image>model/bindingSites.png</large-image>
     <intro-text>
-      Regulatory regions from REDfly and transcription factor binding sites from FlyReg and FlyBase.
+      Regulatory regions and transcription factor binding sites in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyReg, REDfly and FlyBase.
     </intro-text>
-    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite RegulatoryRegions</starting-points>
     <tile-name>model/bindingSites.jsp</tile-name>
+    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite RegulatoryRegion TFmodule Enhancer</starting-points>
     <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
-   <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
   </aspect>
 
   <aspect name="DrosDel">
@@ -83,12 +86,16 @@
     <icon-image>model/rnai.png</icon-image>
     <large-image>model/rnai.png</large-image>
     <intro-text>
-      FlyMine currently contains RNAi experiment results only for
-      &lt;i&gt;Caenorhabditis elegans&lt;/i&gt;.  By using orthologues, gene phenotypes in other
-      organisms can be inferred from the &lt;i&gt;C. elegans&lt;/i&gt; RNAi experiments.
+     Results from cell-based RNAi interference experiments from the
+     &lt;i&gt;Drosophila&lt;/i&gt; RNAi screening center and from
+     &lt;i&gt;in vivo&lt;/i&gt; experiments in &lt;i&gt;Caenorhabditis
+     elegans&lt;/i&gt;.  By using orthologues, gene phenotypes in other
+     organisms can be inferred from the &lt;i&gt;C. elegans&lt;/i&gt;
+     RNAi experiments.
     </intro-text>
     <tile-name>model/RNAi.jsp</tile-name>
-    <starting-points>RNAiExperiment Phenotype Gene</starting-points>
+    <starting-points>Gene RNAiExperiment Phenotype RNAiScreen RNAiScreenHit Amplicon</starting-points>
+    <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
   </aspect>
 
   <aspect name="Disease">
@@ -99,7 +106,7 @@
       Homophila Human Disease to &lt;i&gt;Drosophila&lt;/i&gt; Database (version 2.1).
     </intro-text>
     <tile-name>model/diseaseAspect.jsp</tile-name>
-    <starting-points>Disease Orthologue BlastMatch Gene</starting-points>
+    <starting-points>Gene Disease Orthologue BlastMatch</starting-points>
     <aspect-source name="Homophila" url="http://superfly.ucsd.edu/homophila/"/>
   </aspect>
 
@@ -124,7 +131,7 @@
     <icon-image>model/proteins.png</icon-image>
     <large-image>model/proteins.png</large-image>
     <intro-text>
-      Protein annotation (including family and domain annotation) from UniProt
+      Protein annotation, including family and domain annotation, from UniProt
       and InterPro.
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
@@ -139,9 +146,9 @@
     <large-image>model/proteinInteraction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
-      Proteins formatted in the Proteomics Standards Initiative (PSI)
-      molecular interaction (PSI MI) format can be mapped to the FlyMine
-      data model.
+      High-throughput 2-hybrid protein interaction datasets for &lt;i&gt;D. melanogaster&lt;/i&gt;, 
+      &lt;i&gt;C. elegans&lt;/i&gt; and  &lt;i&gt;S. cerevisiae&lt;/i&gt;. The datasets were 
+      downloaded in Proteomics Standards Initiative molecular interaction PSI-MI format from the IntAct database.
     </intro-text>
     <starting-points>
       Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm
@@ -171,18 +178,8 @@
     <icon-image>model/geneOntology.png</icon-image>
     <large-image>model/geneOntology.png</large-image>
     <intro-text>
-      The Gene Ontology (GO) project is a collaborative effort to
-      address the need for consistent descriptions of gene products in
-      different databases.
-&lt;p&gt;
-      The GO collaborators are developing three structured, controlled
-      vocabularies (ontologies) that describe gene products in terms of
-      their associated biological processes, cellular components and
-      molecular functions in a species-independent manner.
-&lt;p&gt;
-      GO annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; have
-      been loaded into FlyMine.  The GO annotations are 'attached' to
-      Genes and so each gene has a reference (link) to a list of its GO
+      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.  The GO annotations are 'attached' to
+      Genes and so each Gene has a reference (link) to a list of its GO
       annotations (if available).
     </intro-text>
     <starting-points>Gene GOTerm GOAnnotation</starting-points>
