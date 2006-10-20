@@ -105,7 +105,7 @@
       <div class="body">
         <div class="resultsTableTemplateHeader">
           <div>
-            <fmt:message key="results.templateName"/>: 
+            <fmt:message key="results.templateTitle"/>: 
             <span class="templateTitle">
               ${templateQuery.title}
             </span>
