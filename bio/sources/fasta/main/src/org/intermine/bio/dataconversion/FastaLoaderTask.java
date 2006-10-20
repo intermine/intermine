@@ -46,12 +46,13 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     private Integer fastaTaxonId;
     private String sequenceType = "dna";
+    private String classAttribute = "identifier";
     private Organism org;
     private String className;
     /**
      * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
      */
-    private String idSuffix = null;
+    private String idSuffix = "";
 
     //Set this if we want to do some testing...
     private File[] files = null;
@@ -95,6 +96,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    /**
+     * The attribute of the class created to set with the identifying field.  If not set will
+     * be 'identifier'.
+     * @param classAttribute the class name
+     */
+    public void setClassAttribute(String classAttribute) {
+        this.classAttribute = classAttribute;
     }
 
     //Use this for testing with junit.
@@ -182,7 +192,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         InterMineObject imo = getDirectDataLoader().createObject(c);
 
-        TypeUtil.setFieldValue(imo, "identifier", bioJavaSequence.getName() + idSuffix);
+        String attributeValue = bioJavaSequence.getName() + idSuffix;
+        try {
+            TypeUtil.setFieldValue(imo, classAttribute, attributeValue);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error setting: " + className + "."
+                                               + classAttribute + " to: " + attributeValue
+                                               + ". Does the attribute exist?");
+        }
         TypeUtil.setFieldValue(imo, "sequence", flymineSequence);
         TypeUtil.setFieldValue(imo, "organism", org);
 
