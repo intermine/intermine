@@ -58,7 +58,9 @@ public class FastaLoaderTaskTest extends TestCase {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
-        flt.setClassName("org.flymine.model.genomic.LocatedSequenceFeature");
+        //        flt.setClassName("org.flymine.model.genomic.LocatedSequenceFeature");
+        flt.setClassName("org.flymine.model.genomic.Gene");
+        flt.setClassAttribute("organismDbId");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
 
@@ -69,15 +71,15 @@ public class FastaLoaderTaskTest extends TestCase {
             InputStream is =
                 getClass().getClassLoader().getResourceAsStream("MAL" + (i + 1) + "_trimed.fasta");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            
+
             String line = null;
             while ((line = br.readLine()) != null) {
                 fw.write(line + "\n");
             }
-            
+
             fw.close();
             files[i].deleteOnExit();
-        }     
+        }
         flt.setFileArray(files);
         flt.execute();
         //Check the results to see if we have some data...
@@ -100,7 +102,7 @@ public class FastaLoaderTaskTest extends TestCase {
 
         assertEquals(2, r.size());
     }
-    
+
     public void testProteinFastaLoad() throws Exception {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId(new Integer(36329));
@@ -109,19 +111,19 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setClassName("org.flymine.model.genomic.Protein");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
-        
+
         File[] files = new File[1];
         files[0] = File.createTempFile("pombe_sid2_short.fasta", "tmp");
         FileWriter fw = new FileWriter(files[0]);
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("pombe_sid2_short.fasta");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                
+
         String line = null;
         while ((line = br.readLine()) != null) {
             fw.write(line + "\n");
         }
-                
+
         fw.close();
         files[0].deleteOnExit();
         flt.setFileArray(files);
@@ -146,9 +148,9 @@ public class FastaLoaderTaskTest extends TestCase {
         Results r = os.execute(q);
 
         assertEquals(1, r.size());
-        
+
         Protein protein = (Protein) ((List) r.get(0)).get(0);
-        
+
         assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
                      + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"
                      + "SMNLSVEEMEKVVQPKVKRMATICQM", protein.getSequence().getResidues());
