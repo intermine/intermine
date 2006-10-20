@@ -46,7 +46,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     private String tgtNs;
     private Set pseudogeneIds = new HashSet();
     private Map otherOrganismItems = new HashMap();
-    private Map cdsStarts = new HashMap(), cdsEnds = new HashMap();
+    private Map cdsStarts = new HashMap(), cdsEnds = new HashMap(), cdsStrands = new HashMap();
     private Set cdss = new HashSet();
 
     // items that need extra processing that can only be done after all other GFF features have
@@ -135,8 +135,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
                 throw new RuntimeException("multiple parents found for CDS: " + cdsId);
             }
 
-            CDSHolder holder = new CDSHolder(cdsName, transcriptId,
-                                             getLocation().getAttribute("strand").getValue());
+            CDSHolder holder = new CDSHolder(cdsName, transcriptId);
             cdss.add(holder);
 
             // TODO does reference to transcript get set?
@@ -155,6 +154,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
                 cdsEnds.put(holder, ends);
             }
             ends.add(end);
+
+            // Some CDSs have components on different strands, take strand of lowest start
+            cdsStrands.put(holder.key + "_" + start, getLocation().getAttribute("strand").getValue());
         }
 
         if (record.getId().startsWith("FB")) {
@@ -373,7 +375,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         retList.addAll(otherOrganismItems.values());
 
         retList.addAll(createCDSs());
-
         return retList;
     }
 
@@ -392,8 +393,10 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             Item loc = getItemFactory().makeItem(null, tgtNs + "Location", "");
             loc.setReference("object", getSequence().getIdentifier());
             loc.setReference("subject", cds.getIdentifier());
-            loc.setAttribute("strand", holder.strand);
-            loc.setAttribute("start", ((TreeSet) cdsStarts.get(holder)).first().toString());
+            String start = ((TreeSet) cdsStarts.get(holder)).first().toString();
+            String strand = (String) cdsStrands.get(holder.key + "_" + start);
+            loc.setAttribute("strand", strand);
+            loc.setAttribute("start", start);
             loc.setAttribute("end", ((TreeSet) cdsEnds.get(holder)).last().toString());
             retval.add(loc);
         }
@@ -489,13 +492,12 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 
     private class CDSHolder
     {
-        String cdsName, transcriptId, strand, key;
+        String cdsName, transcriptId, key;
 
-        public CDSHolder(String cdsName, String transcriptId, String strand) {
+        public CDSHolder(String cdsName, String transcriptId) {
             this.cdsName = cdsName;
             this.transcriptId = transcriptId;
-            this.strand = strand;
-            this.key = cdsName + transcriptId + strand;
+            this.key = cdsName + transcriptId;
         }
 
         public boolean equals(Object o) {
