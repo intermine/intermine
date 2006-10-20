@@ -4,12 +4,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-
 <div class="heading">
-  Custom tile heading
+  <a href="javascript:toggleDiv('entityDiv');">
+    <img id='entityDivToggle' src="images/disclosed.gif"/> Custom tile heading
+  </a>
 </div>
 
-<div class="body">
+<div id="entityDiv" style="display:block;" class="body">
   <p>Custom tile body.</p>
   <ol>
     <li>
@@ -30,6 +31,5 @@
         </query>
       </im:querylink>
     </li>
-    
   </ol>
 </div>

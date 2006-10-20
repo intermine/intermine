@@ -10,6 +10,24 @@
 
 <html:xhtml/>
 
+<script language="javascript">
+<!--//<![CDATA[
+  
+   function toggleDiv(elementId) {
+      var element = document.getElementById(elementId);
+      var display = element.style.display;
+      if(display=='block') {
+          element.style.display='none';
+          document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+      } else {
+          element.style.display='block';
+          document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+      }
+   }
+//]]>-->
+</script>
+
+
 <%-- Import into request scope so that popup can see it --%>
 <tiles:importAttribute name="aspect" scope="request"/>
 <tiles:importAttribute name="startingPoints"/>
