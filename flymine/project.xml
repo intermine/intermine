@@ -147,6 +147,7 @@
       <property name="fasta.taxonId" value="7227"/>
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
     </source>
@@ -170,6 +171,7 @@
       <property name="fasta.taxonId" value="7237"/>
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
