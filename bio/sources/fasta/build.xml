@@ -17,7 +17,7 @@
     <property name="fasta.idSuffix" value=""/>
   </target>
 
-  !-- NOTE: we can do this with dynamic properties -->
+  <!-- NOTE: we can do this with dynamic properties -->
   <target name="load" depends="-init-suffix, init, -init-deps">
     <taskdef name="read-fasta"
       classname="org.intermine.bio.dataconversion.FastaLoaderTask"
