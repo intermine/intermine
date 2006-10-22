@@ -307,8 +307,11 @@ public class TransferSequences
         int endPos = startPos + charsToCopy;
 
         if (startPos < 0 || endPos < 0) {
-            return "";
+            LOG.error("LocatedSequenceFeature has negative coordinate, ignoring Location: "
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+            return null;
 
+            // Do we really want an exception?  Not much we can do about it.  (rns 22/10/06)
 // TODO XXX FIXME - uncomment this
 //             throw new RuntimeException("in TransferSequences.getSubSequence(): locationOnChr "
 //                                        + locationOnChr
@@ -322,6 +325,13 @@ public class TransferSequences
 //                                        + "\n location.getSubject().getId() " +
 //                                        locationOnChr.getSubject().getId() +
 //                                        "\n location.getObject().getId() ");
+        }
+
+        if (endPos > chromosomeSequenceString.length()) {
+            LOG.error("LocatedSequenceFeature has end coordinate greater than chromsome length."
+                      + "ignoring Location: "
+                      + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
+            return null;
         }
 
         String subSeqString;
@@ -432,7 +442,7 @@ public class TransferSequences
         while (resIter.hasNext()) {
            ResultsRow rr = (ResultsRow) resIter.next();
            Transcript transcript =  (Transcript) rr.get(0);
-           
+
            if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                if (currentTranscript != null) {
                    storeNewSequence(currentTranscript,
@@ -442,10 +452,10 @@ public class TransferSequences
                currentTranscriptBases = new StringBuffer();
                currentTranscript = transcript;
            }
-           
+
            Sequence exonSequence = (Sequence) rr.get(2);
            Location  location = (Location) rr.get(3);
-           
+
            if (location.getStrand() != null && location.getStrand().intValue() == -1) {
                currentTranscriptBases.insert(0, exonSequence.getResidues());
            } else {

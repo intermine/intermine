@@ -17,8 +17,14 @@
     <property name="fasta.idSuffix" value=""/>
   </target>
 
+  <target name="-init-attribute" unless="fasta.classAttribute">
+    <!-- set the default -->
+    <property name="fasta.classAttribute" value="identifier"/>
+  </target>
+
+
   <!-- NOTE: we can do this with dynamic properties -->
-  <target name="load" depends="-init-suffix, init, -init-deps">
+  <target name="load" depends="-init-suffix, -init-attribute, init, -init-deps">
     <taskdef name="read-fasta"
       classname="org.intermine.bio.dataconversion.FastaLoaderTask"
       classpathref="task.class.path"/>
