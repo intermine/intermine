@@ -30,7 +30,6 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.Orthologue;
-import org.flymine.model.genomic.Phenotype;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.RankedRelation;
 import org.flymine.model.genomic.Relation;
@@ -98,9 +97,6 @@ public class CreateReferencesTest extends TestCase {
     private Orthologue storedOrthologue1 = null;
     private Orthologue storedOrthologue2 = null;
     private GOTerm storedGOTerm = null;
-    private Phenotype storedPhenotype = null;
-    private Annotation storedPhenotypeAnnotation = null;
-    private Evidence storedPhenotypeEvidence = null;
     private OverlapRelation storedOverlapRelation = null;
     private MRNA storedMRNA1 = null;
     private MRNA storedMRNA2 = null;
@@ -261,7 +257,7 @@ public class CreateReferencesTest extends TestCase {
         storedMRNA2.setUTRs(new HashSet(Arrays.asList(new Object[] {
                                                           storedUTR3, storedUTR4
                                                       })));
-                                                      
+
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     storedMRNA1,
                                                     storedMRNA2,
@@ -270,7 +266,7 @@ public class CreateReferencesTest extends TestCase {
                                                     storedUTR3,
                                                     storedUTR4,
                                                 }));
-                                                
+
         Iterator i = toStore.iterator();
         osw.beginTransaction();
         while (i.hasNext()) {
@@ -282,9 +278,9 @@ public class CreateReferencesTest extends TestCase {
         CreateReferences cr = new CreateReferences(osw);
         cr.createUtrRefs();
 
-        MRNA dbMRNA1 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1000)); 
+        MRNA dbMRNA1 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1000));
         MRNA dbMRNA2 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1001));
-       
+
         Assert.assertEquals(storedUTR1.getIdentifier(), dbMRNA1.getThreePrimeUTR().getIdentifier());
         Assert.assertEquals(storedUTR2.getIdentifier(), dbMRNA1.getFivePrimeUTR().getIdentifier());
         Assert.assertEquals(storedUTR3.getIdentifier(), dbMRNA2.getThreePrimeUTR().getIdentifier());
@@ -569,9 +565,6 @@ public class CreateReferencesTest extends TestCase {
         Orthologue expectedOrthologue2 = (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         expectedOrthologue2.setId(storedOrthologue2.getId());
 
-        Annotation expectedPhenotypeAnnotation = (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedPhenotypeAnnotation.setId(storedPhenotypeAnnotation.getId());
-
         Protein expectedProtein =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
@@ -584,7 +577,6 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
         expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedGeneLocation, expectedOrthologue2})));
-        expectedGene.setAnnotations(Collections.singleton(expectedPhenotypeAnnotation));
         expectedGene.setProteins(Collections.singleton(expectedProtein));
 
         Transcript expectedTranscript =
@@ -682,10 +674,6 @@ public class CreateReferencesTest extends TestCase {
             (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
         expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
 
-        Annotation expectedPhenotypeAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedPhenotypeAnnotation.setId(storedPhenotypeAnnotation.getId());
-
         Protein expectedProtein =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
@@ -697,7 +685,6 @@ public class CreateReferencesTest extends TestCase {
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
-        expectedGene.setAnnotations(Collections.singleton(expectedPhenotypeAnnotation));
         expectedGene.setOrthologues(Collections.singleton(expectedOrthologue1));
         expectedGene.setSubjects(new HashSet(Arrays.asList(new Object[] {expectedOrthologue1,
             expectedTranscriptRelation})));
@@ -760,14 +747,6 @@ public class CreateReferencesTest extends TestCase {
             (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
         expectedOrthologue2.setId(storedOrthologue2.getId());
 
-        Annotation expectedPhenotypeAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        expectedPhenotypeAnnotation.setId(storedPhenotypeAnnotation.getId());
-
-        Phenotype expectedPhenotype =
-            (Phenotype) DynamicUtil.createObject(Collections.singleton(Phenotype.class));
-        expectedPhenotype.setId(storedPhenotype.getId());
-
         GOTerm expectedGOTerm =
             (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
         expectedGOTerm.setId(storedGOTerm.getId());
@@ -823,8 +802,6 @@ public class CreateReferencesTest extends TestCase {
         expectedGene.setId(storedGene.getId());
         expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedChromosomeGeneLocation, expectedOrthologue2})));
         expectedGene.setOrthologues(Collections.singleton(expectedOrthologue1));
-        expectedGene.setAnnotations(new HashSet(Arrays.asList(new Object[] {expectedPhenotypeAnnotation})));
-        expectedGene.setPhenotypes(Collections.singleton(expectedPhenotype));
         expectedGene.setProteins(Collections.singleton(expectedProtein));
 
         expectedGene1.setId(storedGene1.getId());
@@ -1093,19 +1070,6 @@ public class CreateReferencesTest extends TestCase {
         storedProtein3 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         storedProtein3.setIdentifier("Protein3");
 
-        storedPhenotypeEvidence =
-            (Evidence) DynamicUtil.createObject(Collections.singleton(Evidence.class));
-
-        storedPhenotypeAnnotation =
-            (Annotation) DynamicUtil.createObject(Collections.singleton(Annotation.class));
-        storedPhenotypeAnnotation.setEvidence(Collections.singleton(storedPhenotypeEvidence));
-
-        storedPhenotype =
-            (Phenotype) DynamicUtil.createObject(Collections.singleton(Phenotype.class));
-        storedPhenotype.setIdentifier("Phenotype1");
-        storedPhenotypeAnnotation.setProperty(storedPhenotype);
-        storedPhenotypeAnnotation.setSubject(storedGene);
-
         storedGOTerm = (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
         storedGOTerm.setIdentifier("GOTerm1");
 
@@ -1147,10 +1111,9 @@ public class CreateReferencesTest extends TestCase {
                 storedExon, storedExonRankedRelation,
                 storedChromosome, storedOrthologue1,
                 storedOrthologue2,
-                storedGOTerm, storedPhenotype,
-                storedPhenotypeAnnotation, storedProtein,
+                storedGOTerm, storedProtein,
                 storedProtein1, storedProtein2, storedProtein3,
-                storedPhenotypeEvidence, storedOverlapRelation,
+                storedOverlapRelation,
                 storedExonRankedRelation, storedExonLocation,
                 storedGeneLocation, storedGeneLocation1, storedGeneLocation2,
                 storedTranscriptLocation, storedTranscriptLocation1, storedTranscriptLocation2,
