@@ -108,9 +108,14 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if ("Protein".equals(clsName)) {
-            // for v4.3 CDS record changed to proteins
+            // for v4.3 create translations from proteins and set the identifier from the Alias
             feature.setClassName(tgtNs + "Translation");
             clsName = "Translation";
+            String identifier = record.getAlias();
+            if (identifier != null) {
+                feature.setAttribute("identifier", identifier);
+                addItem(createSynonym(feature, "identifier", identifier));
+            }
         }
 
         if ("CDS".equals(clsName)) {
