@@ -71,7 +71,7 @@ public class CreateAccountAction extends LoginHandler
 
         doLogin(servletContext, request, response, session, pm, username, password);
 
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
 
 }

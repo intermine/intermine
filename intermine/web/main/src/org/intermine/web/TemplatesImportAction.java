@@ -72,6 +72,6 @@ public class TemplatesImportAction extends InterMineAction
         recordMessage(new ActionMessage("importTemplates.done",
                                         new Integer(deleted), new Integer(imported)), request);
         
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
 }

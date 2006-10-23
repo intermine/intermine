@@ -103,7 +103,7 @@ public class ModifyTemplateAction extends ModifyHistoryAction
             tr.globalTemplatesChanged();
         }
 
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
 
     /**

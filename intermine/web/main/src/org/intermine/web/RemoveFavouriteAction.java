@@ -60,6 +60,6 @@ public class RemoveFavouriteAction extends InterMineDispatchAction
             Tag tag = (Tag) iter.next();
             pm.deleteTag(tag);
         }
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
 }

@@ -33,7 +33,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  * 
  * @author Thomas Riley
  */
-public class HistoryController extends TilesAction
+public class MyMineController extends TilesAction
 {
     /**
      * 
@@ -52,7 +52,7 @@ public class HistoryController extends TilesAction
 
         
         if (!StringUtils.isEmpty(page)) {
-            session.setAttribute(Constants.HISTORY_PAGE, page);
+            session.setAttribute(Constants.MYMINE_PAGE, page);
         }
 
         if (page != null) {

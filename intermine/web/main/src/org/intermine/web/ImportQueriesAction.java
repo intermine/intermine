@@ -53,7 +53,7 @@ public class ImportQueriesAction extends InterMineAction
                 PathQuery query = (PathQuery) queries.get(queryName);
                 SessionMethods.saveQuery(session, queryName, query);
             }
-            return mapping.findForward("history");
+            return mapping.findForward("mymine");
         }
     }
 }

@@ -122,8 +122,8 @@
     <action path="/import"
             forward="importTemplates.page"/>
             
-    <action path="/history"
-            forward="history.page"/>
+    <action path="/mymine"
+            forward="mymine.page"/>
 
     <action path="/classChooser"
             forward="classChooser.page"/>
@@ -187,7 +187,7 @@
             type="org.intermine.web.history.ModifyQueryChangeAction"
             parameter="method">
       <forward name="query" path="/query.do" redirect="true"/>
-      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="mymine" path="/mymine.do" redirect="true"/>
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
       <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
       <forward name="template" path="/template.do" redirect="true"/>
@@ -234,7 +234,7 @@
     <action path="/userTemplateAction"
             type="org.intermine.web.UserTemplateAction"
             parameter="method">
-      <forward name="begin" path="/history.do" redirect="true"/>
+      <forward name="begin" path="/mymine.do" redirect="true"/>
       <forward name="template" path="template.page"/>
     </action>
 
@@ -305,7 +305,7 @@
     <action path="/importTags"
             type="org.intermine.web.tagging.ImportTagsAction"
             name="importTagsForm">
-      <forward name="success" path="/history.do" redirect="true"/>
+      <forward name="success" path="/mymine.do" redirect="true"/>
     </action>
     
     <action path="/addToBagAction"
@@ -370,7 +370,7 @@
     <!-- Actions invoked using buttons - not validating form -->
     <action path="/createTemplate"
             type="org.intermine.web.CreateTemplateAction">
-      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="mymine" path="/mymine.do" redirect="true"/>
       <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
@@ -398,7 +398,7 @@
             name="importTemplatesForm"
             input="import">
       <forward name="import" path="importTemplates.page"/>
-      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="mymine" path="/mymine.do" redirect="true"/>
     </action>
     
     <action path="/importQueriesAction"
@@ -408,7 +408,7 @@
             input="importQueries">
       <forward name="importQueries" path="importQueries.page"/>
       <forward name="query" path="/query.do" redirect="true"/>
-      <forward name="history" path="/history.do?page=saved" redirect="true"/>
+      <forward name="mymine" path="/mymine.do?page=saved" redirect="true"/>
     </action>
     
     <action path="/browseAction"
@@ -432,7 +432,7 @@
             parameter="action"
             scope="request"
             input="history">
-      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="mymine" path="/mymine.do" redirect="true"/>
     </action>
     
     <action path="/modifyBag"
@@ -450,7 +450,7 @@
             parameter="action"
             scope="request"
             input="history">
-      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="mymine" path="/mymine.do" redirect="true"/>
     </action>
 
     <action path="/saveBag"
@@ -514,7 +514,7 @@
             input="login"
             parameter="action">
       <forward name="login" path="login.page"/>
-      <forward name="history" path="/history.do" redirect="true"/>
+      <forward name="mymine" path="/mymine.do" redirect="true"/>
     </action>
 
     <action path="/requestPasswordAction"
@@ -523,7 +523,6 @@
             input="login"
             parameter="action">
       <forward name="login" path="login.page"/>
-      <forward name="history" path="history.page"/>
     </action>
     
     <action path="/templateSettingsAction"
@@ -535,7 +534,7 @@
     
     <action path="/removeFavourite"
     		type="org.intermine.web.RemoveFavouriteAction">
-      <forward name="history" path="history.page" redirect="true"/>
+      <forward name="mymine" path="mymine.page" redirect="true"/>
     </action>
 
     <action path="/createAccountAction"
@@ -543,7 +542,7 @@
             name="createAccountForm"
             input="createAccount">
       <forward name="createAccount" path="createAccount.page"/>
-      <forward name="history" path="history.page" redirect="true"/>
+      <forward name="mymine" path="mymine.page" redirect="true"/>
     </action>
 
     <action path="/changePasswordAction"
@@ -551,7 +550,7 @@
             name="changePasswordForm"
             input="changePassword">
       <forward name="changePassword" path="changePassword.page"/>
-      <forward name="history" path="history.page"/>
+      <forward name="mymine" path="mymine.page"/>
     </action>
 
     <!-- Other actions -->
@@ -586,8 +585,8 @@
     <action path="/initObjectDetailsTemplateTable"
             type="org.intermine.web.ObjectDetailsTemplateController"/>
 
-    <action path="/initHistory"
-	    type="org.intermine.web.history.HistoryController"/>
+    <action path="/initMymine"
+	    type="org.intermine.web.history.MyMineController"/>
 
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
