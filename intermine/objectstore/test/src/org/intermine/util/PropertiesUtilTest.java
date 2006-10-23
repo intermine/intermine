@@ -100,5 +100,12 @@ public class PropertiesUtilTest extends TestCase
         assertEquals(0, p.size());
     }
 
-
+    public void testLoadInvalid() throws Exception {
+        try {
+            Properties p = PropertiesUtil.loadProperties("invalidTest.properties");
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot override non-overrideable property flibble = flobble with new value flooble", e.getMessage());
+        }
+    }
 }

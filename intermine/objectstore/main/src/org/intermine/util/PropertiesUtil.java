@@ -146,7 +146,7 @@ public class PropertiesUtil
      * @return the corresponding Properties object
      */
     public static Properties loadProperties(String filename) {
-        Properties props = new Properties();
+        Properties props = new NonOverrideableProperties();
         try {
             InputStream is = PropertiesUtil.class.getClassLoader()
                 .getResourceAsStream(filename);
