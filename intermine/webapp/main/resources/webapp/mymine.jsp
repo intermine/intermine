@@ -54,10 +54,23 @@
       <td width="1%" class="topLeft" nowrap>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </td>
-      <td width="1%" class="tab ${(MYMINE_PAGE=='history'||MYMINE_PAGE == null)?'selected':'not-selected'}"
+      <td width="1%" class="tab ${(MYMINE_PAGE=='bags'||MYMINE_PAGE == null)?'selected':'not-selected'}"
         nowrap>
         <c:choose>
-          <c:when test="${MYMINE_PAGE=='history'||MYMINE_PAGE == null}">
+          <c:when test="${MYMINE_PAGE=='bags'||MYMINE_PAGE == null}">
+            Bags
+          </c:when>
+          <c:otherwise>
+            <html:link action="/mymine?page=bags">
+              Bags
+            </html:link>
+          </c:otherwise>
+        </c:choose>
+      </td>
+      <td width="1%" class="tab ${MYMINE_PAGE=='history'?'selected':'not-selected'}"
+        nowrap>
+        <c:choose>
+          <c:when test="${MYMINE_PAGE=='history'}">
             Query History
           </c:when>
           <c:otherwise>
@@ -113,6 +126,9 @@
   </table>
 
   <c:choose>
+    <c:when test="${MYMINE_PAGE=='bags'}">
+      <tiles:insert name="bag.jsp"/>
+    </c:when>
     <c:when test="${MYMINE_PAGE=='saved'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
