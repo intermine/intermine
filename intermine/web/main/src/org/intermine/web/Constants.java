@@ -69,9 +69,9 @@ public interface Constants
     public static final String OBJECT_STORE_SUMMARY = "OBJECT_STORE_SUMMARY";
 
     /**
-     * Session attribute, name of tab selected on history page.
+     * Session attribute, name of tab selected on My Mine page.
      */
-    public static final String HISTORY_PAGE = "HISTORY_PAGE"; // serializes
+    public static final String MYMINE_PAGE = "MYMINE_PAGE"; // serializes
     
     /**
      * ServletContext attribute used to store the WebConfig object for the Model.

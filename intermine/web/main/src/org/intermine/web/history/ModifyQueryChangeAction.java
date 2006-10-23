@@ -148,7 +148,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         sq = SessionMethods.saveQuery(session,
                 SaveQueryHelper.findNewQueryName(profile.getSavedQueries(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());
-        return new ForwardParameters(mapping.findForward("history"))
+        return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("action", "rename")
             .addParameter("type", "saved")
             .addParameter("name", sq.getName()).forward();

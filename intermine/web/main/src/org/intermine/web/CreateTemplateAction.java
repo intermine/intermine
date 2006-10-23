@@ -149,7 +149,7 @@ public class CreateTemplateAction extends InterMineAction
 
         cleanCache(servletContext, template);
         
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
 
     /**

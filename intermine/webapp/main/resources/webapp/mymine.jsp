@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- history.jsp -->
+<!-- mymine.jsp -->
 
   <script type="text/javascript">
     <!--//<![CDATA[
@@ -54,53 +54,53 @@
       <td width="1%" class="topLeft" nowrap>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </td>
-      <td width="1%" class="tab ${(HISTORY_PAGE=='history'||HISTORY_PAGE == null)?'selected':'not-selected'}"
+      <td width="1%" class="tab ${(MYMINE_PAGE=='history'||MYMINE_PAGE == null)?'selected':'not-selected'}"
         nowrap>
         <c:choose>
-          <c:when test="${HISTORY_PAGE=='history'||HISTORY_PAGE == null}">
+          <c:when test="${MYMINE_PAGE=='history'||MYMINE_PAGE == null}">
             Query History
           </c:when>
           <c:otherwise>
-            <html:link action="/history?page=history">
+            <html:link action="/mymine?page=history">
               Query History
             </html:link>
           </c:otherwise>
         </c:choose>
       </td>
-      <td width="1%" class="tab ${HISTORY_PAGE=='saved'?'selected':'not-selected'}"
+      <td width="1%" class="tab ${MYMINE_PAGE=='saved'?'selected':'not-selected'}"
         nowrap>
         <c:choose>
-          <c:when test="${HISTORY_PAGE=='saved'}">
+          <c:when test="${MYMINE_PAGE=='saved'}">
             Saved Queries
           </c:when>
           <c:otherwise>
-            <html:link action="/history?page=saved">
+            <html:link action="/mymine?page=saved">
               Saved Queries
             </html:link>
           </c:otherwise>
         </c:choose>
       </td>
-      <td width="1%" class="tab ${HISTORY_PAGE=='templates'?'selected':'not-selected'}"
+      <td width="1%" class="tab ${MYMINE_PAGE=='templates'?'selected':'not-selected'}"
         nowrap>
         <c:choose>
-          <c:when test="${HISTORY_PAGE=='templates'}">
+          <c:when test="${MYMINE_PAGE=='templates'}">
             Saved Templates
           </c:when>
           <c:otherwise>
-            <html:link action="/history?page=templates">
+            <html:link action="/mymine?page=templates">
               Saved Templates
             </html:link>
           </c:otherwise>
         </c:choose>
       </td>
-      <td width="1%" class="tab ${HISTORY_PAGE=='favourites'?'selected':'not-selected'}"
+      <td width="1%" class="tab ${MYMINE_PAGE=='favourites'?'selected':'not-selected'}"
         nowrap>
         <c:choose>
-          <c:when test="${HISTORY_PAGE=='favourites'}">
+          <c:when test="${MYMINE_PAGE=='favourites'}">
             Favourite Templates&nbsp;<img src="images/star_active.gif" title="Favourites">
           </c:when>
           <c:otherwise>
-            <html:link action="/history?page=favourites">
+            <html:link action="/mymine?page=favourites">
               Favourite Templates&nbsp;<img src="images/star_active.gif" title="Favourites">
             </html:link>
           </c:otherwise>
@@ -113,22 +113,22 @@
   </table>
 
   <c:choose>
-    <c:when test="${HISTORY_PAGE=='saved'}">
+    <c:when test="${MYMINE_PAGE=='saved'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
       </tiles:insert>
     </c:when>
-    <c:when test="${HISTORY_PAGE=='history'||HISTORY_PAGE==null}">
+    <c:when test="${MYMINE_PAGE=='history'||MYMINE_PAGE==null}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="history"/>
       </tiles:insert>
     </c:when>
-    <c:when test="${HISTORY_PAGE=='templates'}">
+    <c:when test="${MYMINE_PAGE=='templates'}">
       <tiles:insert name="historyTemplateView.jsp">
         <tiles:put name="type" value="template"/>
       </tiles:insert>
     </c:when>
-    <c:when test="${HISTORY_PAGE=='favourites'}">
+    <c:when test="${MYMINE_PAGE=='favourites'}">
       <tiles:insert name="favourites.tile" />
     </c:when>
   </c:choose>
@@ -156,4 +156,4 @@
   
 </div>
 
-<!-- /history.jsp -->
+<!-- /mymine.jsp -->

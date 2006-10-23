@@ -30,9 +30,9 @@
     <put name="body" value="iqlQuery.tile"/>
     <put name="pageName" value="iqlquery"/>
   </definition>
-  <definition name="history.page" extends="layout.template">
-    <put name="body" value="history.tile"/>
-    <put name="pageName" value="history"/>
+  <definition name="mymine.page" extends="layout.template">
+    <put name="body" value="mymine.tile"/>
+    <put name="pageName" value="mymine"/>
   </definition>
   <definition name="begin.page" extends="layout.template">
     <put name="body" value="begin.tile"/>
@@ -149,7 +149,7 @@
     <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition> 
   <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
-  <definition name="history.tile" path="/history.jsp" controllerUrl="/initHistory.do"/>
+  <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>

@@ -53,6 +53,6 @@ public class LoginAction extends LoginHandler
         doLogin(servletContext, request, response, session, pm, lf.getUsername(), lf.getPassword());
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
 }
