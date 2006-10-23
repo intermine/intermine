@@ -115,6 +115,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             if (identifier != null) {
                 feature.setAttribute("identifier", identifier);
                 addItem(createSynonym(feature, "identifier", identifier));
+                String symbol = feature.getAttribute("name").getValue();
+                feature.setAttribute("symbol", symbol);
+                feature.removeAttribute("name");
             }
         }
 
@@ -164,18 +167,11 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             cdsStrands.put(holder.key + "_" + start, getLocation().getAttribute("strand").getValue());
         }
 
-        if (record.getId().startsWith("FB")) {
+        String featureIdentifier = feature.getAttribute("identifier").getValue();
+        if (featureIdentifier.startsWith("FB")) {
             // v4.3 records have FB numbers as IDs, move to organismDbId
             feature.setAttribute("organismDbId", record.getId());
             feature.removeAttribute("identifier");
-        }
-
-        if ("Protein".equals(clsName)) {
-            // we need to use the alias (eg "CG3702-PA") not the ID (eg. "FBpp0077166")
-            // because Inparanoid uses the "CG3702-PA" version
-            if (record.getAlias() != null) {
-                feature.setAttribute("identifier", record.getAlias());
-            }
         }
 
         // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
