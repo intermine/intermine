@@ -85,10 +85,22 @@
 
         <dl>
           <dt>
+            Ashrafi et al (2003) Nature 421:268-272 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12529643">PubMed: 12529643</a>).
+          </dt>
+          <dd>
+            Genome-wide RNAi analysis of <i>Caenorhabditis elegans</i> fat regulatory genes.
+          </dd>
+          <dt>
             Fraser et al (2000) Nature 408:325-330 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=11099033">PubMed: 11099033</a>).
           </dt>
           <dd>
             Functional genomic analysis of <i>C. elegans</i> chromosome 1 by systematic RNA interference.
+          </dd>
+          <dt>
+            Gonczy et al (2000) Nature 408:331-336 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=11099034">PubMed: 11099034</a>).
+          </dt>
+          <dd>
+            Functional genomic analysis of cell division in <i>C. elegans</i> using RNAi of genes on chromosome III. 
           </dd>
           <dt>
             Kamath et al (2003) Nature 421:231-237 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12529635">PubMed: 12529635</a>).
@@ -97,11 +109,57 @@
             Systematic functional analysis of the <i>Caenorhabditis elegans</i> genome using RNAi.
           </dd>
           <dt>
+            Maeda et al (2001) Current Biology 11:171-176 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=11231151">PubMed: 11231151</a>).
+          </dt>
+          <dd>
+            Large-scale analysis of gene function in <i>Caenorhabditis elegans</i> by high-throughput RNAi.
+          </dd>
+          <dt>
+            Piano et al (2002) Current Biology 12:1959-1964 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12445391">PubMed: 12445391</a>).
+          </dt>
+          <dd>
+            Gene clustering based on RNAi phenotypes of ovary-enriched genes in  <i>C. elegans</i>.
+          </dd>
+          <dt>
+            Rual et al (2004) Genome Research 21:62-68 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15489339">PubMed: 15489339</a>).
+          </dt>
+         <dd>
+            Toward improving <i>Caenorhabditis elegans</i> phenome mapping with an ORFeome-based RNAi library.
+          </dd>
+          <dt>
+            Sieburth et al (2005) Nature 436: 510-517 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16049479">PubMed: 16049479</a>).
+          </dt>
+         <dd>
+            Systematic analysis of genes required for synapse structure and function.
+          </dd>
+          <dt>
+            Sonnichsen et al (2005) Nature 434: 462-469 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15791247">PubMed: 15791247</a>).
+          </dt>
+         <dd>
+            Full-genome RNAi profiling of early embryogenesis in <i>Caenorhabditis elegans</i>.
+          </dd>
+          <dt>
             Simmer et al (2003) Plos Biology 1:77-84 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14551910">PubMed: 14551910</a>).
           </dt>
           <dd>
             Genome-wide RNAi of <i>C. elegans</i> using the hypersensitive rrf-3 strain reveals novel gene functions.
           </dd>
+
+         <dt>In addition a number of smaller scale experiments are available:
+             <im:querylink text=" All <i>C. elegans</i> RNAi experiments" skipBuilder="true">
+                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
+                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
+                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
+                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
+                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
+                         <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A"></constraint>
+                     </node>
+                 </query>
+             </im:querylink>
+         </dt>
+
         </dl>
 
       </div>
