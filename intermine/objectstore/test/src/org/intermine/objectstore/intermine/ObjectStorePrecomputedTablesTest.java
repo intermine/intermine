@@ -35,8 +35,19 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
     }
 
     public void testCreatePrecomputedTable() throws Exception {
-        ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        doTestCreatePrecomputedTable(7);
+    }
+
+    public void testCreatePrecomputedTableNegatives() throws Exception {
+        doTestCreatePrecomputedTable(2207);
+    }
+
+    public void doTestCreatePrecomputedTable(int sequenceMillions) throws Exception {
+        ObjectStoreWriterInterMineImpl writer = (ObjectStoreWriterInterMineImpl)
+            ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) writer.getObjectStore();
+        writer.sequenceBase = sequenceMillions * 1000000;
+        writer.sequenceOffset = 0;
         List toRemove = new ArrayList();
         try {
             writer.beginTransaction();
