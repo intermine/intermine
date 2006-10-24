@@ -10,6 +10,7 @@ package org.intermine.sql.precompute;
  *
  */
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1037,7 +1038,8 @@ public class QueryOptimiser
                     && (right instanceof Constant)) {
                 String value = ((Constant) right).toString();
                 for (int i = 1; i < precompOrderBySize; i++) {
-                    value += "50000000000000000000";
+                    value = new BigInteger(value + "00000000000000000000")
+                        .add(new BigInteger("50000000000000000000")).toString();
                 }
                 return new Constraint(new Constant(value), Constraint.LT,
                         orderByField);
@@ -1046,7 +1048,8 @@ public class QueryOptimiser
                     && (left instanceof Constant) && firstPrecompOrderByHasNoNulls) {
                 String value = ((Constant) left).toString();
                 for (int i = 1; i < precompOrderBySize; i++) {
-                    value += "50000000000000000000";
+                    value = new BigInteger(value + "00000000000000000000")
+                        .add(new BigInteger("50000000000000000000")).toString();
                 }
                 return new Constraint(new Constant(value), Constraint.LT,
                         orderByField);
