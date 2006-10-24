@@ -163,7 +163,7 @@
   </table>
 
   <c:choose>
-    <c:when test="${MYMINE_PAGE=='bags'}">
+    <c:when test="${MYMINE_PAGE=='bags'||MYMINE_PAGE==null}">
       <tiles:insert name="bag.jsp"/>
     </c:when>
     <c:when test="${MYMINE_PAGE=='saved'}">
@@ -171,7 +171,7 @@
         <tiles:put name="type" value="saved"/>
       </tiles:insert>
     </c:when>
-    <c:when test="${MYMINE_PAGE=='history'||MYMINE_PAGE==null}">
+    <c:when test="${MYMINE_PAGE=='history'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="history"/>
       </tiles:insert>
