@@ -62,7 +62,7 @@
                type="org.intermine.web.TemplatesImportForm"/>
     
     <form-bean name="importTagsForm"
-              type="org.intermine.web.tagging.ImportTagsForm"/>
+               type="org.intermine.web.tagging.ImportTagsForm"/>
     
     <form-bean name="templateSearchForm"
                type="org.intermine.web.TemplateSearchForm"/>
@@ -75,9 +75,9 @@
     
     <form-bean name="createAccountForm"
                type="org.intermine.web.account.CreateAccountForm"/>
-               
+    
     <form-bean name="changePasswordForm" 
-    		   type="org.intermine.web.account.ChangePasswordForm"/>
+               type="org.intermine.web.account.ChangePasswordForm"/>
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -121,7 +121,7 @@
 
     <action path="/import"
             forward="importTemplates.page"/>
-            
+    
     <action path="/mymine"
             forward="mymine.page"/>
 
@@ -142,7 +142,7 @@
     
     <action path="/feedback"
             forward="feedback.page"/>
-            
+    
     <action path="/contextHelp"
             forward="contextHelp.page"/>
     
@@ -163,11 +163,11 @@
     
     <action path="/standalone"
             forward="standalone.page"/>
-            
-	<action path="/createAccount"
+    
+    <action path="/createAccount"
             forward="createAccount.page"/>
-
-	<action path="/changePassword"
+    
+    <action path="/changePassword"
             forward="changePassword.page"/>
 
     <!-- Actions that provide downloads -->
@@ -533,7 +533,7 @@
     </action>
     
     <action path="/removeFavourite"
-    		type="org.intermine.web.RemoveFavouriteAction">
+            type="org.intermine.web.RemoveFavouriteAction">
       <forward name="mymine" path="mymine.page" redirect="true"/>
     </action>
 
@@ -569,7 +569,7 @@
 
     <action path="/initMainConstraint"
             type="org.intermine.web.MainConstraintController"/>
-            
+    
     <action path="/initMainPaths"
             type="org.intermine.web.MainPathsController"/>
 
@@ -586,7 +586,7 @@
             type="org.intermine.web.ObjectDetailsTemplateController"/>
 
     <action path="/initMymine"
-	    type="org.intermine.web.history.MyMineController"/>
+            type="org.intermine.web.history.MyMineController"/>
 
     <action path="/initIqlQuery"
             type="org.intermine.web.IqlQueryController"
@@ -594,7 +594,7 @@
 
     <action path="/initObjectView"
             type="org.intermine.web.results.ObjectViewController"/>
-            
+    
     <action path="/initObjectTrail"
             type="org.intermine.web.results.ObjectTrailController"/>
 
@@ -604,7 +604,7 @@
     <action path="/initTable"
             type="org.intermine.web.results.TableController"
             name="changeTableSizeForm"/>
-            
+    
     <action path="/initObjectDetails"
             type="org.intermine.web.results.ObjectDetailsController"/>
 
@@ -637,7 +637,7 @@
 
     <action path="/initFavourites"
             type="org.intermine.web.FavouritesController"/>
-            
+    
     <action path="/starTemplate"
             type="org.intermine.web.StarTemplateController"/>
 
