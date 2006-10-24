@@ -567,6 +567,9 @@
     <action path="/initMain"
             type="org.intermine.web.MainController"/>
 
+    <action path="/initChangePassword"
+            type="org.intermine.web.ChangePasswordController"/>
+
     <action path="/initMainConstraint"
             type="org.intermine.web.MainConstraintController"/>
     
