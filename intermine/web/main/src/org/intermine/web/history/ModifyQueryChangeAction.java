@@ -10,17 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineDispatchAction;
@@ -31,6 +20,19 @@ import org.intermine.web.SaveQueryHelper;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateQuery;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.util.MessageResources;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a saved query or bag.
@@ -148,9 +150,11 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         sq = SessionMethods.saveQuery(session,
                 SaveQueryHelper.findNewQueryName(profile.getSavedQueries(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());
+        recordMessage(new ActionMessage("savedInSavedQueries.message", sq.getName()), request);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("action", "rename")
             .addParameter("type", "saved")
+            .addParameter("page", "saved")
             .addParameter("name", sq.getName()).forward();
     }
 }
