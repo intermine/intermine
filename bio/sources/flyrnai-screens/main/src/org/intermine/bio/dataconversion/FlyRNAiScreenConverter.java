@@ -177,6 +177,11 @@ public class FlyRNAiScreenConverter extends FileConverter
 
             String ampliconIdentifier =
                 getColumnValue(columnNameMap, thisRow, DRSC_AMPLICON_COLUMN);
+            // if the amplicon doesn't appear in the curated file then we don't want
+            // to create it, probably has off target effects.
+            if (!offTargetFalse.contains(ampliconIdentifier)) {
+                continue;
+            }
             Item amplicon = (Item) amplicons.get(ampliconIdentifier);
             if (amplicon == null) {
                 amplicon = newItem("Amplicon");
@@ -245,6 +250,8 @@ public class FlyRNAiScreenConverter extends FileConverter
                             // ignore - probably a "Y"
                         }
                     }
+                    // we are only creating amplicons without off target effects
+                    // so don't really need this attribute
                     screenHit.setReference("amplicon", amplicon);
                     String offTarget = offTargetFalse.contains(ampliconIdentifier)
                         ? "false" : "true";
@@ -395,7 +402,7 @@ public class FlyRNAiScreenConverter extends FileConverter
     }
 
     private Set readCurated(BufferedReader br) throws IOException {
-        Set offTargetFalse = new HashSet();
+        Set offtarget = new HashSet();
         Iterator tsvIter = TextFileUtil.parseTabDelimitedReader(br);
         String[] curatedNameRow = null;
 
@@ -415,10 +422,10 @@ public class FlyRNAiScreenConverter extends FileConverter
             // reading actual data
             String amplicon = getColumnValue(curatedNameMap, thisRow, DRSC_AMPLICON_COLUMN);
             if (amplicon != null) {
-                offTargetFalse.add(amplicon);
+                offtarget.add(amplicon);
             }
         }
-        return offTargetFalse;
+        return offtarget;
     }
 
     private String printRow(String[] row) {
