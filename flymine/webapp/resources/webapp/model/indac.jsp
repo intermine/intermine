@@ -55,20 +55,6 @@
             </im:querylink>
           </li>
         </ul>
-        <ul>
-          <li>
-            <im:querylink text="All INDAC microarray oligos identifiers and
-                                their locations on the associated transcript
-                                (for export/download)" skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.objects.start MicroarrayOligo.objects.end MicroarrayOligo.objects.subject.identifier">
-                <node path="MicroarrayOligo" type="MicroarrayOligo">
-                </node>
-                <node path="MicroarrayOligo.objects" type="Location">
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-        </ul>
       </div>
     </td>
   </tr>
