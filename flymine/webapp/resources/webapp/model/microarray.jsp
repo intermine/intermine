@@ -8,14 +8,31 @@ Current data
 </div>
 
 <div class="body">
+
+
 <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
-     <i>D. melanogaster</i>  - Microarray-based gene expression data from FlyAtlas ...
+     <i>D. melanogaster</i>  - Probe set data from Affymetrix ...
   </a>
 </h4>
 
 <div id="hiddenDiv1" style="display:none;">
+
+<dt> Probe sets from the <a href="http://www.affymetrix.com/">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a microarray tool for studying expression of <i>D. melanogaster</i> transcripts.</dt>
+<dd> Comprised of 18,880 probe sets for the analysis of over 18,500 transcripts. </dd>
+<dd> Sequences used in the design of the GeneChip <i>Drosophila</i> Genome 2.0 Array were selected from Flybase version 3.1.</dd>
+
+</div>
+
+<h4>
+  <a href="javascript:toggleDiv('hiddenDiv2');">
+    <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+     <i>D. melanogaster</i>  - Microarray-based gene expression data from FlyAtlas ...
+  </a>
+</h4>
+
+<div id="hiddenDiv2" style="display:none;">
 
 <dt>An affymetrix microarray-based atlas of gene expression in the adult <i>Drosophila</i> fly from <a href="http://www.flyatlas.org/">FlyAtlas</a>.</dt>
 <dd>
@@ -27,13 +44,13 @@ This approach has proven valuable in understanding the function of the Malpighia
 </div>
 
 <h4>
-  <a href="javascript:toggleDiv('hiddenDiv2');">
-    <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+  <a href="javascript:toggleDiv('hiddenDiv3');">
+    <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
       <i>D. melanogaster</i>  - Experiments performed in the FlyChip facility and submitted to ArrayExpress ...
  </a>
 </h4>
 
-<div id="hiddenDiv2" style="display:none;"> 
+<div id="hiddenDiv3" style="display:none;"> 
 
 <p>
 Bate M - Identification of genes regulated by synaptic transmission in embryos - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-2">E-FLYC-2</a>
@@ -52,13 +69,13 @@ Whitfield W - Identification of aberrant gene expression in the presence of muta
 </div>
 
 <h4>
-  <a href="javascript:toggleDiv('hiddenDiv3');">
-    <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
+  <a href="javascript:toggleDiv('hiddenDiv4');">
+    <img id='hiddenDiv4Toggle' src="images/undisclosed.gif"/>
      <i>D. melanogaster</i>  - Gene expression data from ArrayExpress ...
    </a>
 </h4>
 
-<div id="hiddenDiv3" style="display:none;"> 
+<div id="hiddenDiv4" style="display:none;"> 
 
 <dt>
 Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
