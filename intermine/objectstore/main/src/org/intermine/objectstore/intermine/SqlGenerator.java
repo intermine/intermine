@@ -803,16 +803,54 @@ public class SqlGenerator
         } else {
             state.addToWhere(negate ? "(NOT (" : (loseBrackets && (!disjunctive) ? "" : "("));
             boolean needComma = false;
+            Map subqueryConstraints = new HashMap();
             Set constraints = c.getConstraints();
             Iterator constraintIter = constraints.iterator();
             while (constraintIter.hasNext()) {
                 Constraint subC = (Constraint) constraintIter.next();
+                if (disjunctive && (subC instanceof SubqueryConstraint)) {
+                    SubqueryConstraint subQC = (SubqueryConstraint) subC;
+                    Query subQCQuery = subQC.getQuery();
+                    QueryEvaluable subQCEval = subQC.getQueryEvaluable();
+                    QueryClass subQCClass = subQC.getQueryClass();
+                    StringBuffer left = new StringBuffer();
+                    if (subQCEval != null) {
+                        queryEvaluableToString(left, subQCEval, q, state);
+                    } else {
+                        queryClassToString(left, subQCClass, q, schema, QUERY_SUBQUERY_CONSTRAINT,
+                                state);
+                    }
+                    left.append(" " + subQC.getOp().toString() + " (");
+                    StringBuffer existing = (StringBuffer) subqueryConstraints.get(left.toString());
+                    if (existing == null) {
+                        existing = new StringBuffer();
+                        subqueryConstraints.put(left.toString(), existing);
+                    } else {
+                        existing.append(" UNION ");
+                    }
+                    existing.append(generate(subQCQuery, schema, state.getDb(), null,
+                                QUERY_SUBQUERY_CONSTRAINT, state.getBagTableNames()));
+                } else {
+                    if (needComma) {
+                        state.addToWhere(disjunctive ? " OR " : " AND ");
+                    }
+                    needComma = true;
+                    constraintToString(state, subC, q, schema, newSafeness, (!negate)
+                            && (!disjunctive));
+                }
+            }
+            Iterator subqueryConstraintIter = subqueryConstraints.entrySet().iterator();
+            while (subqueryConstraintIter.hasNext()) {
+                Map.Entry entry = (Map.Entry) subqueryConstraintIter.next();
+                String left = (String) entry.getKey();
+                String right = ((StringBuffer) entry.getValue()).toString();
                 if (needComma) {
-                    state.addToWhere(disjunctive ? " OR " : " AND ");
+                    state.addToWhere(" OR ");
                 }
                 needComma = true;
-                constraintToString(state, subC, q, schema, newSafeness, (!negate)
-                        && (!disjunctive));
+                state.addToWhere(left);
+                state.addToWhere(right);
+                state.addToWhere(")");
             }
             state.addToWhere(negate ? "))" : (loseBrackets && (!disjunctive) ? "" : ")"));
         }
