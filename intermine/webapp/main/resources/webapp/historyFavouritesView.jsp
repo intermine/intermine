@@ -3,23 +3,27 @@
 <!-- historyFavouritesView.jsp -->
 <html:xhtml/>
 
-  <im:body id="savedTemplates">
+  <im:body id="favourites">
 
     <p>
       <fmt:message key="history.favouritetemplates.help"/>
     </p>
   
-	<c:choose>
-		<c:when test="${empty favouriteTemplates}">
-	        <div class="altmessage">
-	          None
-    	    </div>
-		</c:when>
-		<c:otherwise>
+    <c:choose>
+      <c:when test="${empty favouriteTemplates}">
+	<div class="altmessage">
+	  None
+    	</div>
+      </c:when>
+      <c:otherwise>
 
         <html:form action="/modifyTemplate">
         <table class="results history" cellspacing="0">
           <tr>
+            <th>
+              <input type="checkbox" id="selected_template"
+                     onclick="selectColumnCheckbox(this.form, 'template')"/>
+            </th>
             <th align="left" nowrap>
               <fmt:message key="history.namecolumnheader"/>
             </th>
@@ -32,6 +36,13 @@
           </tr>    
           <c:forEach items="${favouriteTemplates}" var="favouriteTemplate" varStatus="status">
             <tr>
+              <td>
+                <html:multibox property="selected" styleId="selected_template_${status.index}"
+                               onclick="setDeleteDisabledness(this.form, 'template')">
+                  <c:out value="${favouriteTemplate.name}"/>
+                </html:multibox>
+              </td>
+              
               <c:choose>
                 <c:when test="${!favouriteTemplate.valid}">
                   <td align="left" nowrap>
@@ -80,16 +91,19 @@
                 <html:link action="/exportTemplates?type=user&amp;name=${favouriteTemplate.name}"
                 				titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
-                </html:link> |
-                <html:link action="/removeFavourite?name=${favouriteTemplate.name}"
-                				titleKey="history.action.removeFav.hover">
-                  <fmt:message key="history.action.removeFav"/>
                 </html:link>
               </td>
             </tr>
           </c:forEach>
         </table>
         <br/>
+        <html:submit property="remove_favourite" disabled="true" styleId="remove_button" 
+                     onclick="return confirmAction()">
+          <fmt:message key="history.favourites.remove"/>
+        </html:submit>
+        <html:submit property="export" disabled="true" styleId="export_button">
+          <fmt:message key="history.exportSelected"/>
+        </html:submit>
         </html:form>
         <br/>
         </c:otherwise>
@@ -105,6 +119,6 @@
           <fmt:message key="begin.importTemplates"/>
         </html:link>
       </span>
-    </c:if>
-  </im:body> -->
+    </c:if> -->
+  </im:body>
 <!-- /historyFavouritesView.jsp -->
