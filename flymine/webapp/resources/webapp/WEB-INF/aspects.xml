@@ -23,13 +23,19 @@
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
     <intro-text>
+      &lt;p&gt;
       Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
+      &lt;/p&gt;
+      &lt;p&gt;
+      Probe set data from Affymetrix.
+      &lt;/p&gt;
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
     <starting-points>Gene CDNAClone MicroArrayExperiment MicroArrayAssay FlyAtlasResult ProbeSet</starting-points>
+    <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
     <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
+    <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
     <aspect-source name="FlyChip" url="http://www.flychip.org.uk/"/>  
-   <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
   </aspect>
 
   <aspect name="Transcriptional Regulation">
