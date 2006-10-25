@@ -532,11 +532,6 @@
       <forward name="query" path="/query.do" redirect="true"/>
     </action>
     
-    <action path="/removeFavourite"
-            type="org.intermine.web.RemoveFavouriteAction">
-      <forward name="mymine" path="mymine.page" redirect="true"/>
-    </action>
-
     <action path="/createAccountAction"
             type="org.intermine.web.account.CreateAccountAction"
             name="createAccountForm"

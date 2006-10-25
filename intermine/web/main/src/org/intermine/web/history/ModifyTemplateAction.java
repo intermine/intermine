@@ -10,23 +10,27 @@ package org.intermine.web.history;
  *
  */
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.intermine.model.userprofile.Tag;
+import org.intermine.util.XmlUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.TemplateRepository;
+import org.intermine.web.tagging.TagTypes;
+
+import java.io.PrintStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.util.XmlUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.TemplateQuery;
-import org.intermine.web.TemplateRepository;
-
-import java.io.PrintStream;
-
 import org.apache.log4j.Logger;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -66,8 +70,12 @@ public class ModifyTemplateAction extends ModifyHistoryAction
             if (request.getParameter("export") != null) {
                 return export(mapping, form, request, response);
             } else {
-                LOG.error("Don't know what to do");
-                return null;
+                if (request.getParameter("remove_favourite") != null) {
+                    return removeFavourite(mapping, form, request, response);
+                } else {
+                    LOG.error("Don't know what to do");
+                    return null;
+                }
             }
         }
     }
@@ -141,5 +149,36 @@ public class ModifyTemplateAction extends ModifyHistoryAction
         out.flush();
         
         return null;
+    }    
+
+    /**
+     * Remove the selected templates from the list of favourites.
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    private ActionForward removeFavourite(ActionMapping mapping, ActionForm form, 
+                                          HttpServletRequest request,
+                                          HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = request.getSession().getServletContext();
+        ProfileManager pm =
+            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        ModifyTemplateForm mqf = (ModifyTemplateForm) form;
+        for (int i = 0; i < mqf.getSelected().length; i++) {
+            String templateName = mqf.getSelected()[i];
+            List tagList = pm.getTags(null, templateName, TagTypes.TEMPLATE, profile.getUsername());
+            for (Iterator iter = tagList.iterator(); iter.hasNext();) {
+                Tag tag = (Tag) iter.next();
+                pm.deleteTag(tag);
+            }
+        }
+        return mapping.findForward("mymine");
     }
+
 }
