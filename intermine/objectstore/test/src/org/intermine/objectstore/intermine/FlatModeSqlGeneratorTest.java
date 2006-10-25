@@ -217,6 +217,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ForeignKey", Collections.singleton("Company"));
         results.put("ForeignKey2", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("ForeignKey2", Collections.singleton("Company"));
+        results.put("OrSubquery", NO_RESULT);
+        results2.put("OrSubquery", NO_RESULT);
     }
 
     protected DatabaseSchema getSchema() throws Exception {

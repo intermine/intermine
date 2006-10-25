@@ -464,6 +464,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("CompanyA"), new Integer(3)},
                              { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
         results.put("ForeignKey2", toList(r));
+
+        r = new Object[][] { { data.get("CompanyA") },
+                             { data.get("CompanyB") },
+                             { data.get("ContractorA") },
+                             { data.get("EmployeeB1") } };
+        results.put("OrSubquery", toList(r));
     }
 
     /**

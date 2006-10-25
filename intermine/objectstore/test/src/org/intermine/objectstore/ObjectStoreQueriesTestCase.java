@@ -27,6 +27,7 @@ import junit.framework.AssertionFailedError;
 
 import org.intermine.SummaryAssertionFailedError;
 import org.intermine.SummaryException;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.*;
 import org.intermine.objectstore.query.*;
 import org.intermine.util.DynamicUtil;
@@ -231,6 +232,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("FieldPathExpression", fieldPathExpression());
         queries.put("ForeignKey", foreignKey());
         queries.put("ForeignKey2", foreignKey2());
+        queries.put("OrSubquery", orSubquery());
     }
 
     /*
@@ -1549,6 +1551,32 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc);
         q.addToSelect(new QueryFieldPathExpression(qc, "CEO", "id", new Integer(3)));
         q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM InterMineObject AS a1_ WHERE a1_ IN (SELECT a2_ FROM Company AS a2_) OR a1_ IN (SELECT a3_ FROM Broke AS a3_)
+     */
+    public static Query orSubquery() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setDistinct(false);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+        q.setConstraint(cs);
+        Query q2 = new Query();
+        q2.setDistinct(false);
+        QueryClass qc2 = new QueryClass(Company.class);
+        q2.addFrom(qc2);
+        q2.addToSelect(qc2);
+        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, q2));
+        Query q3 = new Query();
+        q3.setDistinct(false);
+        QueryClass qc3 = new QueryClass(Broke.class);
+        q3.addFrom(qc3);
+        q3.addToSelect(qc3);
+        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, q3));
         return q;
     }
 }

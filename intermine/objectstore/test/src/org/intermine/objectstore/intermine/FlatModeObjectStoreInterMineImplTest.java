@@ -42,6 +42,7 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
         results.put("DynamicClassRef4", NO_RESULT);
         results.put("DynamicClassConstraint", NO_RESULT);
         results.put("DynamicBagConstraint2", NO_RESULT);
+        results.put("OrSubquery", NO_RESULT);
     }
 
     public static void oneTimeTearDown() throws Exception {
