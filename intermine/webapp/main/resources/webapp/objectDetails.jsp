@@ -127,7 +127,7 @@ Event.observe(window, 'load', loadInlineTemplates, false);
         <im:body id="summary">
           <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
 
-            <%-- Show the summary fields (fields that are shown in tables of this object type) --%>
+            <%-- Show the summary fields as configured in webconfig.xml --%>
             <c:forEach items="${object.fieldExprs}" var="expr">
               <c:if test="${object.fieldConfigMap[expr].showInSummary}">
                 <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
@@ -158,6 +158,9 @@ Event.observe(window, 'load', loadInlineTemplates, false);
                 <tr>
                   <td>
                     <span class="attributeField">${entry.key}</span>
+                    <c:forEach items="${object.clds}" var="cld">
+                      <im:typehelp type="${cld.unqualifiedName}.${entry.key}"/>
+                    </c:forEach>
                   </td>
                   <td>
                     <c:set var="maxLength" value="60"/>
