@@ -54,6 +54,7 @@ public class QueryTest extends TestCase
         q3.addSelect(sv);
         q3.addWhere(new Constraint(f, Constraint.LT, c));
     }
+
     public void testGetSQLString() throws Exception {
         Query q = new Query();
         Table t = new Table("mytable");
@@ -1159,5 +1160,18 @@ public class QueryTest extends TestCase
         Query q1 = new Query(sql);
 
         assertEquals(sql, q1.toString());
+    }
+
+    public void testScientificNumbers() throws Exception {
+        Query q = new Query("SELECT table.field AS a FROM table WHERE table.field < 1.3432E-11");
+        Query eq = new Query();
+        Table t = new Table("table");
+        Field f = new Field("field", t);
+        Constant c = new Constant("1.3432E-11");
+        SelectValue sv = new SelectValue(f, "a");
+        eq.addFrom(t);
+        eq.addSelect(sv);
+        eq.addWhere(new Constraint(f, Constraint.LT, c));
+        assertEquals(eq, q);
     }
 }
