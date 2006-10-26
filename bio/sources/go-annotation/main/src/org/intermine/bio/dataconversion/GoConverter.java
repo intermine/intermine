@@ -210,7 +210,7 @@ public class GoConverter extends FileConverter
 
                 ItemWrapper newProductWrapper =
                         newProduct(productId, type, newOrganism,
-                                newDatasource.getIdentifier());
+                                newDatasource.getIdentifier(), true);
 
                 GoAnnoWithParentsPlaceHolder newPlaceHolder = new GoAnnoWithParentsPlaceHolder(
                         qualifier, newDatasource, newPublication, goEvidence, newProductWrapper,
@@ -504,12 +504,13 @@ public class GoConverter extends FileConverter
                         ItemWrapper productWrapper = null;
 
                         // if a UniProt protein it may be from a differnet organism
-                        if (prefix.equals("UniProt")) {
+                        // also FlyBase mey be from a different Drosophila species
+                        if (prefix.equals("UniProt") || prefix.equals("FB")) {
                             productWrapper = newProduct(value, wt.clsName,
-                                                        null, dataSourceId);
+                                                        organism, dataSourceId, false);
                         } else
                             productWrapper = newProduct(value, wt.clsName,
-                                                        organism, dataSourceId);
+                                                        organism, dataSourceId, true);
                         Item withProduct = productWrapper.getItem();
                         withProductList.add(withProduct);
                     } else {
@@ -585,7 +586,8 @@ public class GoConverter extends FileConverter
     protected ItemWrapper newProduct(String accession,
                                      String type,
                                      Item organism,
-                                     String dataSourceId) throws ObjectStoreException {
+                                     String dataSourceId,
+                                     boolean createOrganism) throws ObjectStoreException {
 
         String key = makeProductKey(accession, type, organism);
 
@@ -615,7 +617,7 @@ public class GoConverter extends FileConverter
         }
 
         Item product = createItem(clsName);
-        if (organism != null) {
+        if (organism != null && createOrganism == true) {
             product.setReference("organism", organism.getIdentifier());
         }
         product.setAttribute(idField, accession);
@@ -647,10 +649,7 @@ public class GoConverter extends FileConverter
      */
     private String makeProductKey(String identifier, String type, Item organism) {
 
-        if (!(type.equalsIgnoreCase("protein")) && organism == null) {
-            throw new IllegalArgumentException("No organism provided when creating "
-                    + type + ": " + identifier);
-        } else if (type == null) {
+        if (type == null) {
             throw new IllegalArgumentException("No type provided when creating " + organism
                     + ": " + identifier);
         } else if (identifier == null) {
@@ -658,7 +657,7 @@ public class GoConverter extends FileConverter
                     + organism + ": " + type);
         }
 
-        return identifier + type.toLowerCase() + ((type.equalsIgnoreCase("protein"))
+        return identifier + type.toLowerCase() + ((organism == null)
             ? "" : organism.getIdentifier());
     }
 
