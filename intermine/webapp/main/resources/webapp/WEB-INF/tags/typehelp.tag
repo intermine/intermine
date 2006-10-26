@@ -5,4 +5,11 @@
 
 <%-- wraps helplink to properly format the type context help --%>
 
-<c:if test="${!empty classDescriptions[type]}"><im:helplink text="${type}: ${classDescriptions[type]}"/></c:if>
+<%
+   String type = (String) jspContext.getAttribute("type");
+   
+   request.setAttribute("field", type.substring(type.lastIndexOf(".") + 1));
+%>
+
+
+<c:if test="${!empty classDescriptions[type]}"><im:helplink text="${field}: ${classDescriptions[type]}"/></c:if>
