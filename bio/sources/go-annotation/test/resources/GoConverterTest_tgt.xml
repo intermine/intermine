@@ -128,14 +128,12 @@
   </item>
   <item id="7_20" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="FBgn0026430"/>
-    <reference name="organism" ref_id="4_12"/>
     <collection name="evidence">
       <reference ref_id="0_7"/>
     </collection>
   </item>
   <item id="7_22" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="FBgn0001612"/>
-    <reference name="organism" ref_id="4_12"/>
     <collection name="evidence">
       <reference ref_id="0_7"/>
     </collection>
