@@ -11,7 +11,9 @@ package org.intermine.path;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -19,6 +21,8 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.util.TypeUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -33,6 +37,8 @@ public class Path
     private ClassDescriptor startCld;
     private List elements;
     private FieldDescriptor endFld;
+    private Model model;
+    private String path;
     private boolean containsCollections = false;
     
     
@@ -42,9 +48,14 @@ public class Path
      * @param path a String of the form "Department.manager.name"
      */
     public Path(Model model, String path) {
+        if (model == null) {
+            throw new IllegalArgumentException("model argument is null");
+        }
+        this.model = model;
         if (path == null) {
             throw new IllegalArgumentException("path argument is null");
         }
+        this.path = path;
         if (StringUtils.isBlank(path)) {
             throw new IllegalArgumentException("path argument is blank");
         }
@@ -167,8 +178,8 @@ public class Path
 
     /**
      * If the last element in the path is an attribute, return the Class of the attribute,
-     *  otherwise return null
-     * @return the Class of the last element (if an attribute)
+     * otherwise return null
+     * @return the Class of the last element if an attribute, or null otherwise
      */
     public Class getEndType() {
         if (endFld == null) {
@@ -180,6 +191,32 @@ public class Path
         return null;
     }
 
+    public Object resolve(InterMineObject o) {
+        Set clds = model.getClassDescriptorsForClass(o.getClass());
+        if (!clds.contains(getStartClassDescriptor())) {
+            throw new RuntimeException("ClassDescriptor from the start of path: " + path
+                                       + " is not a superclass of the class: " + o.getClass()
+                                       + " while resolving object: " + o);
+        }
+
+        Iterator iter = elements.iterator();
+
+        Object current = o;
+        
+        while (iter.hasNext()) {
+            FieldDescriptor element = (FieldDescriptor) iter.next();
+            String fieldName = element.getName();
+            try {
+                current = TypeUtil.getFieldValue(current, fieldName);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("IllegalAccessException while trying to get value of "
+                                           + "field \"" + fieldName + "\" in object: " + o);
+            }
+        }
+        
+        return current;
+    }
+    
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -210,5 +247,12 @@ public class Path
      */
     public int hashCode() {
         return 0;
+    }
+
+    /**
+     * @return
+     */
+    public List getElements() {
+        return elements;
     }
 }
