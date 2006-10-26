@@ -10,19 +10,16 @@ package org.intermine.path;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.Iterator;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
+import org.intermine.util.DynamicUtil;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the Path class.
@@ -93,4 +90,18 @@ public class PathTest extends TestCase
         assertNull(path.getEndFieldDescriptor()); 
         assertNull(path.getEndType());
     }
+    
+    
+    public void testResolve() {
+        Path path = new Path(model, "Department.company.name");
+        Department department = 
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        Company company = 
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        department.setName("department name");
+        company.setName("company name");
+        department.setCompany(company);
+        assertEquals("company name", path.resolve(department));
+    }
 }
+
