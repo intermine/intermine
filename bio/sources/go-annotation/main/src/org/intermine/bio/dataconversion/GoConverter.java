@@ -702,7 +702,7 @@ public class GoConverter extends FileConverter
         } else if ("SANGER".equals(code)) {
             title = "GeneDB";
         } else if ("GOA".equals(code)) {
-            code = "Gene Ontology";
+            title = "Gene Ontology";
         } else {
             title = code;
         }
