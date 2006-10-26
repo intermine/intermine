@@ -15,6 +15,7 @@ import java.util.Collections;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.util.DynamicUtil;
@@ -91,6 +92,13 @@ public class PathTest extends TestCase
         assertNull(path.getEndType());
     }
     
+    public void testResolveShort() {
+        Path path = new Path(model, "Department.name");
+        Department department = 
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        department.setName("department name");
+        assertEquals("department name", path.resolve(department));
+    }
     
     public void testResolve() {
         Path path = new Path(model, "Department.company.name");
@@ -103,5 +111,39 @@ public class PathTest extends TestCase
         department.setCompany(company);
         assertEquals("company name", path.resolve(department));
     }
+
+    public void testResolveLong() {
+        Path path = new Path(model, "Department.company.CEO.name");
+        Department department = 
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        Company company = 
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        CEO ceo = 
+            (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
+        department.setName("department name");
+        company.setName("company name");
+        ceo.setName("ceo name");
+        department.setCompany(company);
+        company.setCEO(ceo);
+        assertEquals("ceo name", path.resolve(department));
+    }
+    
+    public void testResolveReference() {
+        Path path = new Path(model, "Department.company.CEO");
+        Department department = 
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        Company company = 
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        CEO ceo = 
+            (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
+        department.setName("department name");
+        company.setName("company name");
+        ceo.setName("ceo name");
+        department.setCompany(company);
+        company.setCEO(ceo);
+        CEO resCEO = (CEO) path.resolve(department);
+        assertEquals("ceo name", resCEO.getName());
+    }
 }
+
 
