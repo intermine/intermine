@@ -62,6 +62,7 @@ public class GoConverter extends FileConverter
     protected Map organisms = new LinkedHashMap();
     protected Map termIdNameMap = new LinkedHashMap();
     protected int id = 0;
+    protected Map ids = new HashMap();
     protected File ontology;
     protected Map withTypes = new LinkedHashMap();
     protected Map synonymTypes = new HashMap();
@@ -609,7 +610,7 @@ public class GoConverter extends FileConverter
         }
 
         boolean includeOrganism;
-        if (idField.equals("organismDbId")) {
+        if (idField.equals("organismDbId") || type.equals("protein")) {
             includeOrganism = false;
         } else {
             includeOrganism = createOrganism;
@@ -787,7 +788,19 @@ public class GoConverter extends FileConverter
      * @return a new Item
      */
     protected Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + (id++), GENOMIC_NS + className, "");
+        return itemFactory.makeItem(alias(className) + "_" + (id++),
+                                    GENOMIC_NS + className, "");
+    }
+
+    private String newId(String className) {
+        Integer id = (Integer) ids.get(className);
+        if (id == null) {
+            id = new Integer(0);
+            ids.put(className, id);
+        }
+        id = new Integer(id.intValue() + 1);
+        ids.put(className, id);
+        return id.toString();
     }
 
     /**
