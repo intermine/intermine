@@ -219,6 +219,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ForeignKey2", Collections.singleton("Company"));
         results.put("OrSubquery", NO_RESULT);
         results2.put("OrSubquery", NO_RESULT);
+        results.put("ScientificNumber", "SELECT a1_.bigDecimalObjType AS a1_bigDecimalObjType, a1_.booleanObjType AS a1_booleanObjType, a1_.booleanType AS a1_booleanType, a1_.dateObjType AS a1_dateObjType, a1_.doubleObjType AS a1_doubleObjType, a1_.doubleType AS a1_doubleType, a1_.floatObjType AS a1_floatObjType, a1_.floatType AS a1_floatType, a1_.id AS a1_id, a1_.intObjType AS a1_intObjType, a1_.intType AS a1_intType, a1_.longObjType AS a1_longObjType, a1_.longType AS a1_longType, a1_.name AS a1_name, a1_.shortObjType AS a1_shortObjType, a1_.shortType AS a1_shortType, a1_.stringObjType AS a1_stringObjType FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
+        results2.put("ScientificNumber", Collections.singleton("Types"));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

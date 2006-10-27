@@ -253,5 +253,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("ForeignKey", new IqlQuery("SELECT a1_, a1_.CEO.id(DEF null) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("ForeignKey2", new IqlQuery("SELECT a1_, a1_.CEO.id(DEF 3) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("OrSubquery", new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE (a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_) OR a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Broke AS a1_))", null));
+        results.put("ScientificNumber", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Types AS a1_ WHERE (a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32)", null));
     }
 }

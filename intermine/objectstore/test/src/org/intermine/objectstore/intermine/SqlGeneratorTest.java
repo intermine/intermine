@@ -326,6 +326,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ForeignKey2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE (a1_.id IN (SELECT a1_.id FROM Company AS a1_ UNION SELECT a1_.id FROM Broke AS a1_)) ORDER BY a1_.id");
         results2.put("OrSubquery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "Broke"})));
+        results.put("ScientificNumber", "SELECT a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
+        results2.put("ScientificNumber", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Types"})));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
