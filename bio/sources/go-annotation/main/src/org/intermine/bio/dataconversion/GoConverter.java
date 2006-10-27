@@ -588,18 +588,10 @@ public class GoConverter extends FileConverter
                                      Item organism,
                                      String dataSourceId,
                                      boolean createOrganism) throws ObjectStoreException {
-
-        String key = makeProductKey(accession, type, organism, createOrganism);
-
-        //Have we already seen this product somewhere before?
-        // if so, return the product rather than creating a new one...
-        if (productWrapperMap != null && productWrapperMap.containsKey(key)) {
-            return ((ItemWrapper) productWrapperMap.get(key));
-        }
-
         String idField;
         String clsName;
 
+        // find gene attribute first to see if organism shoudld be part of key
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
 
@@ -614,6 +606,20 @@ public class GoConverter extends FileConverter
             idField = "primaryAccession";
         } else {
             throw new IllegalArgumentException("Unrecognised geneProduct type '" + type + "'");
+        }
+
+        boolean includeOrganism;
+        if (idField.equals("organismDbId")) {
+            includeOrganism = false;
+        } else {
+            includeOrganism = createOrganism;
+        }
+        String key = makeProductKey(accession, type, organism, includeOrganism);
+
+        //Have we already seen this product somewhere before?
+        // if so, return the product rather than creating a new one...
+        if (productWrapperMap != null && productWrapperMap.containsKey(key)) {
+            return ((ItemWrapper) productWrapperMap.get(key));
         }
 
         Item product = createItem(clsName);
