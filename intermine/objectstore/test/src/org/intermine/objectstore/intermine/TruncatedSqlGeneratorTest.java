@@ -270,6 +270,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ForeignKey2", Collections.singleton("InterMineObject"));
         results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.InterMineObject' AND (a1_.id IN (SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' UNION SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Broke')) ORDER BY a1_.id");
         results2.put("OrSubquery", Collections.singleton("InterMineObject"));
+        results.put("ScientificNumber", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Types' AND a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
+        results2.put("ScientificNumber", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

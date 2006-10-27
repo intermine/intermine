@@ -233,6 +233,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ForeignKey", foreignKey());
         queries.put("ForeignKey2", foreignKey2());
         queries.put("OrSubquery", orSubquery());
+        queries.put("ScientificNumber", scientificNumber());
     }
 
     /*
@@ -1577,6 +1578,22 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q3.addFrom(qc3);
         q3.addToSelect(qc3);
         cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, q3));
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E+4
+     */
+    public static Query scientificNumber() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Types.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setDistinct(false);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        q.setConstraint(cs);
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "doubleType"), ConstraintOp.LESS_THAN, new QueryValue(new Double(1.3432E+24))));
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "floatType"), ConstraintOp.GREATER_THAN, new QueryValue(new Float(-8.56E-32))));
         return q;
     }
 }

@@ -470,6 +470,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("ContractorA") },
                              { data.get("EmployeeB1") } };
         results.put("OrSubquery", toList(r));
+
+        r = new Object[][] { { data.get("Types1") } };
+        results.put("ScientificNumber", toList(r));
     }
 
     /**
