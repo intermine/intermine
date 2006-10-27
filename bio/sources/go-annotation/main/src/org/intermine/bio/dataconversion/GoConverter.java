@@ -589,7 +589,7 @@ public class GoConverter extends FileConverter
                                      String dataSourceId,
                                      boolean createOrganism) throws ObjectStoreException {
 
-        String key = makeProductKey(accession, type, organism);
+        String key = makeProductKey(accession, type, organism, createOrganism);
 
         //Have we already seen this product somewhere before?
         // if so, return the product rather than creating a new one...
@@ -647,7 +647,8 @@ public class GoConverter extends FileConverter
      * @param organism the organism of th eproduct
      * @return A String combining all 3 that can be used as a unique hash key
      */
-    private String makeProductKey(String identifier, String type, Item organism) {
+    private String makeProductKey(String identifier, String type, Item organism,
+                                  boolean createOrganism) {
 
         if (type == null) {
             throw new IllegalArgumentException("No type provided when creating " + organism
@@ -657,8 +658,8 @@ public class GoConverter extends FileConverter
                     + organism + ": " + type);
         }
 
-        return identifier + type.toLowerCase() + ((organism == null)
-            ? "" : organism.getIdentifier());
+        return identifier + type.toLowerCase() + ((createOrganism)
+            ? organism.getIdentifier() : "");
     }
 
 
