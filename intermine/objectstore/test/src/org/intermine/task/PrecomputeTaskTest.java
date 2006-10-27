@@ -12,6 +12,7 @@ package org.intermine.task;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -212,7 +213,7 @@ public class PrecomputeTaskTest extends StoreDataTestCase
 
     class DummyPrecomputeTask extends PrecomputeTask {
         protected List queries = new ArrayList();
-        protected void precompute(Query query) {
+        protected void precompute(Query query, Collection indexes) {
             queries.add(query);
         }
     }
