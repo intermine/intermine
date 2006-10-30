@@ -248,6 +248,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                                     && (fieldSource.equals(source)
                                         || (fieldSource.equals(skelSource) && (type != SOURCE)))) {
                                 if (type == SOURCE) {
+                                    if (obj instanceof ProxyReference) {
+                                         obj = ((ProxyReference) obj).getObject();
+                                    }
                                     String errMessage;
                                     if (dbIdsStored.contains(obj.getId())) {
                                         errMessage = "There is already an equivalent "
