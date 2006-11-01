@@ -52,8 +52,8 @@ public class EntrezPublicationsRetriever
     // number of summaries to retrieve per request
     protected static final int BATCH_SIZE = 50;
 
-    private String osAlias = null;
-    private String outputFile = null;
+    private String osAlias = null, outputFile = null;
+    private Set seenPubMeds = new HashSet();
 
     static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
 
@@ -197,9 +197,13 @@ public class EntrezPublicationsRetriever
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {
+                String pubMedId = characters.toString();
                 publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
-                toStore.add(publication);
-                publication.setAttribute("pubMedId", characters.toString());
+                publication.setAttribute("pubMedId", pubMedId);
+                if(!seenPubMeds.contains(pubMedId)) {
+                    toStore.add(publication);
+                    seenPubMeds.add(pubMedId);
+                }
             } else if ("PubDate".equals(name)) {
                 String year = characters.toString().split(" ")[0];
                 try {
