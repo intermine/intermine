@@ -10,10 +10,12 @@
 
     <!-- Add new news at the top here -->
     <item>
-      <title>FlyMine is hiring</title>
+      <title>FlyMine Workshop</title>
       <link>http://www.flymine.org/project/jobs</link>
       <description>
-        FlyMine is looking for an experienced software developer to join the team.  &lt;a href="http://www.flymine.org/project/jobs/"&gt;More information&lt;/a&gt;.
+        A joint FlyMine/FlyBase workshop will held on Thursday 23rd November in the Department of Genetics. For more information and booking please see &lt;a href="http://www.bio.cam.ac.uk/gradschool/current/courses/bioinformatics.html
+
+"&gt;workshop information&lt;/a&gt;.
       </description>
       <pubDate>Fri, 29 Sep 2006 11:00 GMT</pubDate>
     </item>
