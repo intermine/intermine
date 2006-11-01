@@ -125,7 +125,7 @@ public class InparanoidConverter extends FileConverter
             // some files have gene id, no translations
             // TODO this should be specified in the config files
             if ("modSC".equals(array[2]) || "modRR".equals(array[2]) || "modMM".equals(array[2])
-                || "modSP".equals(array[2]) || "sanPF".equals(array[2])) {
+                || "modSP".equals(array[2]) || "sanPF".equals(array[2]) || "modCE".equals(array[2])) {
                 geneId = array[4];
             } else {
                 transId = array[4];
