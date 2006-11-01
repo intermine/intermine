@@ -158,6 +158,7 @@ public class EntrezPublicationsRetriever
         String name;
         StringBuffer characters;
         ItemFactory itemFactory;
+        boolean duplicateEntry = false;
 
         /**
          * Constructor
@@ -177,6 +178,8 @@ public class EntrezPublicationsRetriever
                 name = qName;
             } else if ("Id".equals(qName)) {
                 name = "Id";
+            } else if ("DocSum".equals(qName)) {
+                duplicateEntry = false;
             } else {
                 name = attrs.getValue("Name");
             }
@@ -194,16 +197,22 @@ public class EntrezPublicationsRetriever
          * @see DefaultHandler#endElement(String, String, String)
          */
         public void endElement(String uri, String localName, String qName) {
+            // do nothing if we have seen this pubmed id before
+            if (duplicateEntry) {
+                return;
+            }
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve pubmed record: " + characters);
             } else if ("Id".equals(name)) {
                 String pubMedId = characters.toString();
+                if (seenPubMeds.contains(pubMedId)) {
+                    duplicateEntry = true;
+                    return;
+                }
                 publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
                 publication.setAttribute("pubMedId", pubMedId);
-                if(!seenPubMeds.contains(pubMedId)) {
-                    toStore.add(publication);
-                    seenPubMeds.add(pubMedId);
-                }
+                toStore.add(publication);
+                seenPubMeds.add(pubMedId);
             } else if ("PubDate".equals(name)) {
                 String year = characters.toString().split(" ")[0];
                 try {

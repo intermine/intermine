@@ -18,6 +18,7 @@ import java.util.Set;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullParser;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +50,7 @@ public class EntrezPublicationRetrieverTest extends TestCase
 
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(expected), new HashSet(actual)));
         Assert.assertEquals(new HashSet(expected), new HashSet(actual));
     }
 
