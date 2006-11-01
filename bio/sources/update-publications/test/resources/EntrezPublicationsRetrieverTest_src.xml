@@ -5,8 +5,5 @@
 <item id="3" class="" implements="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="10021351"/>
 </item>
-<item id="5" class="" implements="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="10021351"/>
-</item>
 </items>
 
