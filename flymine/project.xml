@@ -145,7 +145,6 @@
     -->
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
-      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
@@ -154,7 +153,6 @@
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.idSuffix" value="-cds"/>
-      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
@@ -169,7 +167,6 @@
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
-      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
@@ -178,19 +175,31 @@
     <source name="flybase-dpse-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.idSuffix" value="-cds"/>
-      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
     <source name="flybase-dpse-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
-      <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
       <property name="fasta.classAttribute" value="symbol"/>
       <property name="fasta.includes" value="dpse-all-translation-*.fasta"/>
       <property name="fasta.sequenceType" value="protein"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
+    </source>
+    <source name="flybase-dpse-transcript-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
+      <property name="fasta.classAttribute" value="identifier"/>
+      <property name="fasta.includes" value="dpse-all-transcript-r*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
+    </source>
+    <source name="flybase-dmel-transcript-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
+      <property name="fasta.includes" value="dmel-all-transcript-r*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
