@@ -118,12 +118,16 @@ public class CreateReferences
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
                              CDS.class, "gene");
 
+        // Gene.translations / Translations.gene
+        insertReferenceField(Gene.class, "transcripts", MRNA.class, "translation",
+                             Translation.class, "gene");
+
         LOG.info("insertReferences stage 10");
         insertReferenceField(Gene.class, "CDSs", CDS.class, "polypeptides",
                              Translation.class, "gene");
 
         LOG.info("insertReferences stage 11");
-        insertReferenceField(Translation.class, "CDSs", CDS.class, "MRNAs",
+        insertReferenceField(Translation.class, "CDSs", CDS.class, "MRNA",
                              MRNA.class, "translation");
 
         LOG.info("insertReferences stage 12");

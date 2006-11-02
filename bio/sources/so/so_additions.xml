@@ -31,7 +31,7 @@
   </class>
   <class name="org.flymine.model.genomic.Silencer" extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true"/>
   <class name="org.flymine.model.genomic.CDS" extends="org.flymine.model.genomic.GenePart" is-interface="true">
-    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" ordered="true" reverse-reference="CDSs"/>
+    <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="CDSs"/>
     <collection name="polypeptides" referenced-type="org.flymine.model.genomic.Polypeptide" ordered="true" reverse-reference="CDSs"/>
   </class>
   <class name="org.flymine.model.genomic.TandemRepeat" extends="org.flymine.model.genomic.RepeatRegion" is-interface="true"/>
@@ -53,7 +53,7 @@
   <class name="org.flymine.model.genomic.RRNA58S" extends="org.flymine.model.genomic.RRNA" is-interface="true"/>
   <class name="org.flymine.model.genomic.PseudogenicRegion" extends="org.flymine.model.genomic.Region" is-interface="true"/>
   <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.ProcessedTranscript" is-interface="true">
-    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" ordered="true" reverse-reference="MRNAs"/>
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" ordered="true" reverse-reference="MRNA"/>
     <collection name="codons" referenced-type="org.flymine.model.genomic.Codon" ordered="true" reverse-reference="MRNAs"/>
     <collection name="ESTs" referenced-type="org.flymine.model.genomic.EST" ordered="true" reverse-reference="MRNAs"/>
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" ordered="true" reverse-reference="MRNAs"/>

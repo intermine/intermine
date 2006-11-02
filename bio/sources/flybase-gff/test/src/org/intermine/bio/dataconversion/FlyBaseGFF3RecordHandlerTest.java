@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
@@ -74,7 +75,8 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         GFF3Record record = (GFF3Record) iter.next();
 
         Item feature = itemFactory.makeItem(null, tgtNs + "Gene", "");
-        feature.setAttribute("identifier", "CG1234");
+        feature.setAttribute("identifier", "FBgn0040037");
+        //feature.setAttribute("organismDbId", "FBgn0040037");
 
         handler.setFeature(feature);
         handler.process(record);
@@ -123,10 +125,10 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
 
             Item feature = itemFactory.makeItem(null, tgtNs + className, "");
             if (term.equals("gene")) {
-                feature.setAttribute("identifier", "CR32011");
+                feature.setAttribute("identifier", "FBgn0052011");
             } else {
                 if (term.equals("pseudogene")) {
-                    feature.setAttribute("identifier", "CR32011-RA");
+                    feature.setAttribute("identifier", "FBtr0089182");
                 } else {
                     feature.setAttribute("identifier", "CR32011:7");
                 }
@@ -212,6 +214,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         //fw.write(FullRenderer.render(tgtIw.getItems()));
         //fw.close();
         LinkedHashSet expected = new LinkedHashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml")));
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(expected, tgtIw.getItems()));
         assertEquals(expected, tgtIw.getItems());
     }
 

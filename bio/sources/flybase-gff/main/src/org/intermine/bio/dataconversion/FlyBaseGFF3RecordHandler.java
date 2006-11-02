@@ -45,7 +45,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     private static final Logger LOG = Logger.getLogger(FlyBaseGFF3RecordHandler.class);
     private String tgtNs;
     private Set pseudogeneIds = new HashSet();
-    private Map otherOrganismItems = new HashMap();
+    private Map otherOrganismItems = new HashMap(), transcriptIds = new HashMap();
     private Map cdsStarts = new HashMap(), cdsEnds = new HashMap(), cdsStrands = new HashMap();
     private Set cdss = new HashSet();
 
@@ -70,7 +70,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         references.put("InsertionSite", "genes");
         references.put("Intron", "transcripts");
         // release 4.0 gff3 is inconsistent with parents of RNAs
-        // Gene.transcripts collection set in post-processing
         references.put("MRNA", "gene");
         references.put("NcRNA", "gene");
         references.put("SnRNA", "gene");
@@ -84,7 +83,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         references.put("SequenceVariant", "genes");
         references.put("FivePrimeUTR", "MRNAs");
         references.put("ThreePrimeUTR", "MRNAs");
-        references.put("CDS", "MRNAs");
+        references.put("Translation", "MRNA");
     }
 
     /**
@@ -165,6 +164,10 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 
             // Some CDSs have components on different strands, take strand of lowest start
             cdsStrands.put(holder.key + "_" + start, getLocation().getAttribute("strand").getValue());
+        }
+
+        if ("MRNA".equals(clsName)) {
+            transcriptIds.put(feature.getAttribute("identifier").getValue(), feature.getIdentifier());
         }
 
         String featureIdentifier = feature.getAttribute("identifier").getValue();
@@ -389,6 +392,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             cds.setAttribute("identifier", holder.transcriptId + "-cds");
             cds.setAttribute("name", holder.cdsName);
             cds.setReference("organism", getOrganism().getIdentifier());
+            if (transcriptIds.containsKey(holder.transcriptId)) {
+                cds.setReference("MRNA", (String) transcriptIds.get(holder.transcriptId));
+            }
             retval.add(cds);
 
             Item loc = getItemFactory().makeItem(null, tgtNs + "Location", "");
