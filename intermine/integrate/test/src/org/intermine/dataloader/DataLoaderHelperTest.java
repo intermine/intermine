@@ -198,6 +198,43 @@ public class DataLoaderHelperTest extends QueryTestCase
         assertEquals(q, DataLoaderHelper.createPKQuery(model, d, source, new IntToIntMap(), null, false));
     }
 
+    // one key has null values, expect just the other key
+    public void testCreateQueryDisableNullFields5() throws Exception {
+        Source source = new Source();
+        source.setName("testsource4");
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("dept1")));
+        QueryClass qc1 = new QueryClass(Company.class);
+        q.addFrom(qc1);
+        Query subQ = new Query();
+        QueryClass subQc = new QueryClass(Company.class);
+        subQ.addFrom(subQc);
+        subQ.addToSelect(subQc);
+        ConstraintSet subCs = new ConstraintSet(ConstraintOp.AND);
+        subCs.addConstraint(new SimpleConstraint(new QueryField(subQc, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(1234))));
+        subQ.setConstraint(subCs);
+        subQ.setDistinct(false);
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc, "company"), ConstraintOp.CONTAINS, qc1));
+        cs.addConstraint(new SubqueryConstraint(qc1, ConstraintOp.IN, subQ));
+
+        q.setConstraint(cs);
+        q.setDistinct(false);
+
+        Department d =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        d.setName("dept1");
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        c.setVatNumber(1234);
+        d.setCompany(c);
+
+        assertEquals(q, DataLoaderHelper.createPKQuery(model, d, source, new IntToIntMap(), null, false));
+    }
+
     public void testCreateQuery3() throws Exception {
         Source source = new Source();
         source.setName("testsource");
