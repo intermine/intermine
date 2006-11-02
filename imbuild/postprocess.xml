@@ -10,6 +10,15 @@
     <property name="action" value=""/>
   </target>
   
+  <target name="-define-task-classpath">
+    <!-- Override to alter the classpath created -->
+    <path id="task.class.path">
+      <pathelement location="${build.task.dir}"/>
+      <pathelement location="${resources.dir}"/>
+      <path refid="project.execute.path"/>
+    </path>
+  </target>
+
   <!--
     Perform a post-processing step.
     The post-processing action (a sources dir name) should be provided on the command line.
