@@ -186,7 +186,7 @@ public class PostProcessTask extends Task
             } else if ("create-overlap-relations-flymine".equals(operation)) {
                 LOG.info("Starting CalculateLocations.createOverlapRelations()");
                 List classNamesToIgnoreList = new ArrayList();
-                String ignoreFileName = "classesToIgnore";
+                String ignoreFileName = "overlap.config";
                 InputStream classesToIgnoreStream =
                     PostProcessTask.class.getClassLoader().getResourceAsStream(ignoreFileName);
                 if (classesToIgnoreStream == null) {
@@ -220,7 +220,7 @@ public class PostProcessTask extends Task
                 xdlt.setIgnoreDuplicates(true);
                 xdlt.setXmlFile(pubFile);
                 xdlt.execute();
-                
+
             } else if ("add-licences".equals(operation)) {
                 LOG.info("Starting add-licences");
                 new AddLicences(getObjectStoreWriter()).execute();
