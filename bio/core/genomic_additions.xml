@@ -48,8 +48,6 @@
                     reverse-reference="transcripts"/>
         <collection name="exons" referenced-type="org.flymine.model.genomic.Exon"
                     reverse-reference="transcripts" ordered="true"/>
-        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" 
-                   reverse-reference="transcript"/>
     </class>
 
     <class name="org.flymine.model.genomic.NcRNA" is-interface="true"/>
@@ -64,9 +62,7 @@
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
         <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"
                    reverse-reference="translations"/>
-        <reference name="transcript" referenced-type="org.flymine.model.genomic.Transcript"
-                   reverse-reference="translation"/>
-        <reference name="mrna" referenced-type="org.flymine.model.genomic.MRNA"/>
+        <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="translation"/>
         <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS"
                     reverse-reference="translation" ordered="true"/>
     </class>
@@ -84,7 +80,7 @@
     <class name="org.flymine.model.genomic.MRNA" is-interface="true">
         <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
         <reference name="threePrimeUTR" referenced-type="org.flymine.model.genomic.ThreePrimeUTR"/>
-        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
+        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="MRNA"/>
         <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR"
                     reverse-reference="MRNAs" ordered="true"/>
     </class>
