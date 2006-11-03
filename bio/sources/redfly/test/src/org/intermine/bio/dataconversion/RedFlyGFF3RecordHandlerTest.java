@@ -16,10 +16,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.FullParser;
@@ -43,20 +45,21 @@ public class RedFlyGFF3RecordHandlerTest extends XMLTestCase
 {
     private Model tgtModel;
     private RedFlyGFF3RecordHandler handler;
-    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    private MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
     private String seqClsName = "Chromosome";
-    private String orgAbbrev = "DM";
+    private String taxonId = "DM";
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
     private String tgtNs;
     private ItemFactory itemFactory;
     private List featureIdentifiers;
+    private GFF3Converter converter;
 
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
         handler = new RedFlyGFF3RecordHandler(tgtModel);
         // call the GFF3Converter constructor to initialise the handler
-        new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
+        converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName,
                           dataSetTitle, tgtModel, handler);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
@@ -73,7 +76,7 @@ public class RedFlyGFF3RecordHandlerTest extends XMLTestCase
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
         LinkedHashSet allItems = new LinkedHashSet();
-        
+
         Iterator iter = GFF3Parser.parse(srcReader);
 
         featureIdentifiers = new ArrayList();
@@ -87,37 +90,48 @@ public class RedFlyGFF3RecordHandlerTest extends XMLTestCase
             handler.setFeature(feature);
             handler.process(record);
             feature.setAttribute("identifier", record.getId());
-            
+
             featureIdentifiers.add(feature.getIdentifier());
-            
+
             allItems.addAll(handler.getItems());
         }
-        
-        StringBuffer actualXml = new StringBuffer();
-        
-        actualXml.append("<items>");
 
-        Iterator itemIter = allItems.iterator();
-        
-        while (itemIter.hasNext()) {
-            actualXml.append(itemIter.next());
-        }
-        
-        actualXml.append("</items>");
-        
-        XMLUnit.setIgnoreWhitespace(true);
-        
-        assertXMLEqual(getExpectedItems(), actualXml.toString());
+//         converter.parse(srcReader);
+//         converter.store();
+//         converter.close();
+
+        System.out.println(DataTranslatorTestCase.printCompareItemSets(getExpectedItems(), allItems));
+        assertEquals(getExpectedItems(), allItems);
+//         StringBuffer actualXml = new StringBuffer();
+
+//         actualXml.append("<items>");
+
+//         Iterator itemIter = allItems.iterator();
+
+//         while (itemIter.hasNext()) {
+//             actualXml.append(itemIter.next());
+//         }
+
+//         actualXml.append("</items>");
+
+//         XMLUnit.setIgnoreWhitespace(true);
+
+//         assertXMLEqual(getExpectedItems(), actualXml.toString());
     }
-    
-    protected String getExpectedItems() throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("RedFlyGFF3RecordHandlerTest.xml")));
-        StringBuffer buff = new StringBuffer();
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            buff.append(line);
-        }
-        return buff.toString();
+
+//     protected String getExpectedItems() throws Exception {
+//         BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("RedFlyGFF3RecordHandlerTest.xml")));
+//         StringBuffer buff = new StringBuffer();
+//         String line = null;
+//         while ((line = br.readLine()) != null) {
+//             buff.append(line);
+//         }
+//         return buff.toString();
+//     }
+
+
+    private Set getExpectedItems() throws Exception {
+        return new LinkedHashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("RedFlyGFF3RecordHandlerTest.xml")));
     }
 
 }
