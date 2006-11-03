@@ -4,6 +4,7 @@
          extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
     <attribute name="elementEvidence" type="java.lang.String"/>
     <attribute name="accession" type="java.lang.String"/>
-    <collection name="phenotypes" referenced-type="org.flymine.model.genomic.Phenotype"/>
+    <collection name="anatomyOntology" referenced-type="org.flymine.model.genomic.AnatomyTerm"/>
   </class>
+  <class name="org.flymine.model.genomic.AnatomyTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
 </classes>

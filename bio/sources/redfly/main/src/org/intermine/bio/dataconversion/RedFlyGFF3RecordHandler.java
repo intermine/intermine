@@ -31,7 +31,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 {
     private String tgtNs;
     private String REDFLY_PREFIX = "REDfly:";
-    private Map phenotypeMap = new HashMap();
+    private Map anatomyMap = new HashMap();
     private Map geneMap = new HashMap();
     private Map publications = new HashMap();
 
@@ -65,14 +65,14 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         if (ontologyTermIds != null) {
             Iterator ontologyTermIdsIter = ontologyTermIds.iterator();
-            List phenotypeItems = new ArrayList();
+            List anatomyItems = new ArrayList();
 
             while (ontologyTermIdsIter.hasNext()) {
                 String ontologyTermId = (String) ontologyTermIdsIter.next();
-                phenotypeItems.add(getPhenotype(ontologyTermId).getIdentifier());
+                anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
             }
 
-            feature.setCollection("phenotypes", phenotypeItems);
+            feature.setCollection("anatomyOntology", anatomyItems);
         }
 
         String geneName = null;
@@ -144,16 +144,16 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         return geneItem;
     }
 
-    private Item getPhenotype(String ontologyTermId) {
-        if (phenotypeMap.containsKey(ontologyTermId)) {
-            return (Item) phenotypeMap.get(ontologyTermId);
+    private Item getAnatomy(String ontologyTermId) {
+        if (anatomyMap.containsKey(ontologyTermId)) {
+            return (Item) anatomyMap.get(ontologyTermId);
         }
 
-        Item phenotypeItem = getItemFactory().makeItem(null, tgtNs + "Phenotype", "");
-        phenotypeItem.addAttribute(new Attribute("identifier", ontologyTermId));
-        addItem(phenotypeItem);
-        phenotypeMap.put(ontologyTermId, phenotypeItem);
-        return phenotypeItem;
+        Item anatomyItem = getItemFactory().makeItem(null, tgtNs + "AnatomyTerm", "");
+        anatomyItem.addAttribute(new Attribute("identifier", ontologyTermId));
+        addItem(anatomyItem);
+        anatomyMap.put(ontologyTermId, anatomyItem);
+        return anatomyItem;
     }
 
     /**
@@ -172,7 +172,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         addItem(publicationItem);
         publications.put(pubmedId, publicationItem);
         return publicationItem;
-    } 
+    }
 
     /**
      * Create a synonym Item from the given information.
