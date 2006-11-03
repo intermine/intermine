@@ -43,6 +43,7 @@ import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
+import org.flymine.model.genomic.CDS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -231,21 +232,32 @@ public class TransferSequences
             Location locationOnChr = (Location) rr.get(2);
 
             if (feature instanceof Assembly) {
-                LOG.error("in transferToLocatedSequenceFeatures() ignoring: "
+                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
                           + feature);
                 continue;
             }
 
             if (feature instanceof ChromosomeBand) {
-                LOG.error("in transferToLocatedSequenceFeatures() ignoring: "
+                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
                           + feature);
                 continue;
             }
 
             if (feature instanceof Transcript) {
-                LOG.error("in transferToLocatedSequenceFeatures() ignoring: "
+                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
                           + feature);
                 continue;
+            }
+
+            if (feature instanceof CDS) {
+                LOG.warn("in transferToLocatedSequenceFeatures() ignoring: "
+                          + feature);
+                continue;
+            }
+
+            if (feature.getSequence() != null) {
+                LOG.warn("in transferToLocatedSequenceFeatures() ignooring: "
+                         + feature + " - already has a sequence");
             }
 
             if (feature instanceof Gene) {
