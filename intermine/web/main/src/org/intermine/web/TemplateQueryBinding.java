@@ -46,8 +46,16 @@ public class TemplateQueryBinding
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
             writer.writeAttribute("title", template.getTitle());
-            writer.writeAttribute("longDescription", template.getDescription());
-            writer.writeAttribute("comment", template.getComment());
+            if (template.getDescription() == null) {
+                writer.writeAttribute("longDescription", "");
+            } else {
+                writer.writeAttribute("longDescription", template.getDescription());
+            }
+            if (template.getComment() == null) {
+                writer.writeAttribute("comment", "");
+            } else {
+                writer.writeAttribute("comment", template.getComment());
+            }
             writer.writeAttribute("important", "" + template.isImportant());
             // writer.writeAttribute("keywords", template.getKeywords());
 
