@@ -24,7 +24,16 @@
     <attribute name="title" value="DRSC RNAi data set: DCV Screen"/>
     <reference name="dataSource" ref_id="3_1"/>
   </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="DRSC03055"/>
+    <reference name="source" ref_id="3_1"/>
+    <reference name="subject" ref_id="5_1"/>
+    <collection name="evidence">
+      <reference ref_id="2_1"/>
+    </collection>
+  </item>
+  <item id="6_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0031980"/>
     <reference name="source" ref_id="3_1"/>
@@ -35,6 +44,9 @@
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="Drosophila RNAi Screening Center"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="Renato Paro lab"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Amplicon">
     <attribute name="identifier" value="DRSC03055"/>
@@ -48,10 +60,10 @@
     <reference name="organism" ref_id="0_1"/>
     <reference name="publication" ref_id="1_1"/>
   </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="HFA03055"/>
-    <reference name="source" ref_id="3_1"/>
+    <reference name="source" ref_id="3_2"/>
     <reference name="subject" ref_id="5_1"/>
     <collection name="evidence">
       <reference ref_id="2_1"/>
