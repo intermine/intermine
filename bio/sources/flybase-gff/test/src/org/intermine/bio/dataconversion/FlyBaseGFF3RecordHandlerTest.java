@@ -44,7 +44,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
     FlyBaseGFF3RecordHandler handler;
     MockItemWriter tgtIw;
     String seqClsName = "Chromosome";
-    String orgAbbrev = "DM";
+    String taxonId = "7227";
     String dataSourceName = "FlyBase";
     String dateSetTitle = "FlyBase Drosophila melanogaster data set";
     GFF3Converter converter;
@@ -55,7 +55,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         tgtModel = Model.getInstanceByName("genomic");
         handler = new FlyBaseGFF3RecordHandler(tgtModel);
         tgtIw = new MockItemWriter(new LinkedHashMap());
-        converter = new GFF3Converter(tgtIw, seqClsName, orgAbbrev, dataSourceName, dateSetTitle,
+        converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName, dateSetTitle,
                                       tgtModel, handler);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
