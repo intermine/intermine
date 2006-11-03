@@ -42,7 +42,7 @@ public class FlyRNAiScreenConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Item dataSource, organism;
+    protected Item dataSource, organism, hfaSource;
     private Map ids = new HashMap();
     private ItemFactory itemFactory;
 
@@ -132,6 +132,11 @@ public class FlyRNAiScreenConverter extends FileConverter
             dataSource.setAttribute("name", "Drosophila RNAi Screening Center");
             writer.store(ItemHelper.convert(dataSource));
         }
+        if (hfaSource == null) {
+            hfaSource = newItem("DataSource");
+            hfaSource.setAttribute("name", "Renato Paro lab");
+            writer.store(ItemHelper.convert(hfaSource));
+        }
         dataSet.setReference("dataSource", dataSource);
         writer.store(ItemHelper.convert(dataSet));
 
@@ -202,7 +207,8 @@ public class FlyRNAiScreenConverter extends FileConverter
                 amplicons.put(ampliconIdentifier, amplicon);
                 writer.store(ItemHelper.convert(amplicon));
 
-                Item hfaSysnonym = newSynonym(hfaAmpliconIdentifier, amplicon);
+                Item drscSynonym = newSynonym(ampliconIdentifier, amplicon, dataSource);
+                Item hfaSysnonym = newSynonym(hfaAmpliconIdentifier, amplicon, hfaSource);
             }
 
             String numOffTargets =
@@ -341,7 +347,7 @@ public class FlyRNAiScreenConverter extends FileConverter
             item = newItem("Gene");
             item.setAttribute("organismDbId", geneName);
             // identifier needs to be a Synonym for quick search to work
-            newSynonym(geneName, item);
+            newSynonym(geneName, item, dataSource);
             item.setReference("organism", organism);
             genes.put(geneName, item);
         }
@@ -354,7 +360,7 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @param subject the synonym's subject item
      * @return a new synonym Item
      */
-    protected Item newSynonym(String synonymName, Item subject) {
+    protected Item newSynonym(String synonymName, Item subject, Item source) {
         if (synonymName == null) {
             throw new RuntimeException("synonymName can't be null");
         }
@@ -365,7 +371,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         item.setAttribute("value", synonymName);
         item.setAttribute("type", "identifier");
         item.setReference("subject", subject.getIdentifier());
-        item.setReference("source", dataSource.getIdentifier());
+        item.setReference("source", source.getIdentifier());
         item.addToCollection("evidence", dataSet.getIdentifier());
         synonyms.put(synonymName, item);
         return item;
