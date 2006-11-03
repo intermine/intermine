@@ -101,11 +101,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
-        if ("RegulatoryRegion".equals(clsName)) {
-            feature.setClassName(tgtNs + "TFmodule");
-            clsName = "TFmodule";
-        }
-
         if ("Protein".equals(clsName)) {
             // for v4.3 create translations from proteins and set the identifier from the Alias
             feature.setClassName(tgtNs + "Translation");
