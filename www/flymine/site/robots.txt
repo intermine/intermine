@@ -123,3 +123,9 @@ Disallow: /release-2.0/loginAction.do
 Disallow: /release-2.0/requestPasswordAction.do
 Disallow: /release-2.0/templateSettingsAction.do
 Disallow: /t1dmine-preview/
+Disallow: /stemcell-preview/
+Disallow: /stemcell/
+Disallow: /malaria/
+Disallow: /mouse/
+Disallow: /plantmine/
+Disallow: /plantmine-preview/
