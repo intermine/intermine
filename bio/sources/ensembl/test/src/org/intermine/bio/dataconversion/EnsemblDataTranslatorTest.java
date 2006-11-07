@@ -42,7 +42,6 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         super(arg, "osw.bio-fulldata-test");
         ensemblItemFactory = new ItemFactory(Model.getInstanceByName("ensembl"));
         genomicItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        //TODO: load the ensembl properties...
         ensemblProperties = getEnsemblProperties();
     }
 
@@ -54,43 +53,25 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
+
+        System.out.println("itemMap: " + itemMap);
         EnsemblDataTranslator translator = new EnsemblDataTranslator(
                 new MockItemReader(itemMap), mapping, srcModel, getTargetModel(tgtNs), ensemblProperties, "AGP");
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        FileWriter writer = new FileWriter(new File("exptmp"));
+        FileWriter writer = new FileWriter(new File("ensembl_tgt.xml"));
         writer.write(FullRenderer.render(tgtIw.getItems()));
         writer.close();
 
-        Collection expectedItems = getExpectedItems();
-        HashSet expectedItemSet = new HashSet(expectedItems);
-        Set tgtItemSet = tgtIw.getItems();
-
-        String expectedNotActual = "in expected, but not in actual: "
-                + makeLogStringFromItemSet(compareItemSets(expectedItemSet, tgtItemSet));
-
-        //LOG.debug("RAW EXPECTED ITEMS:" + makeLogStringFromItemSet(expectedItemSet));
-        //LOG.debug("RAW TARGET ITEMS:" + makeLogStringFromItemSet(tgtItemSet));
-
-        Collection actualExpectedItems = getExpectedItems();
-        HashSet actualItemSet = new HashSet(actualExpectedItems);
-        Set tgtItemSet2 = tgtIw.getItems();
-
-        String actualNotExpected = "in actual, but not in expected: "
-                + makeLogStringFromItemSet(compareItemSets(tgtItemSet2, actualItemSet));
-
-        if (expectedNotActual.length() > 25) {
-            LOG.debug(expectedNotActual);
-            LOG.debug(actualNotExpected);
-        }
+        //System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
-    
+
     public void testSetOrganismDbId() throws Exception {
-        String srcNs = "http://www.flymine.org/model/ensembl#";
+        String srcNs = "http://www.intermine.org/model/ensembl#";
         Item gene = createSrcItem(srcNs + "gene", "1_1", "");
         gene.addReference(new Reference("seq_region", "1_99"));
         gene.addAttribute(new Attribute("description", "Transcribed locus [Source:UniGene;Acc:Hs.429230]"));
@@ -143,11 +124,11 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_tgt.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("EnsemblDataTranslatorFunctionalTest_tgt.xml"));
     }
 
     protected Collection getSrcItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/EnsemblDataTranslatorFunctionalTest_src.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("EnsemblDataTranslatorFunctionalTest_src.xml"));
     }
 
     protected String getModelName() {
@@ -175,20 +156,10 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     private Properties getEnsemblProperties() throws IOException {
-
         Properties ensemblProps = new Properties();
-
-        String userDir = System.getProperty("user.dir");
-
-        System.out.println(userDir);
-
-        InputStream epis = getClass().getClassLoader().getResourceAsStream("test/ensembl_config.properties");
-
+        InputStream epis = getClass().getClassLoader().getResourceAsStream("ensembl_config.properties");
         ensemblProps.load(epis);
-
         return ensemblProps;
     }
-
-
 }
 

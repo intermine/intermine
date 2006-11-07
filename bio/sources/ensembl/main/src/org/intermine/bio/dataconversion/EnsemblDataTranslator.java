@@ -282,11 +282,6 @@ public class EnsemblDataTranslator extends DataTranslator
             if (synonym != null) {
                 result.add(synonym);
             }
-            // assembly maps to null but want to create location on a supercontig
-        } else if ("assembly".equals(srcItemClassName)) {
-            Item location = createAssemblyLocation(result, srcItem);
-            result.add(location);
-            // seq_region map to null, become Chromosome, Supercontig, Clone and Contig respectively
         } else if ("seq_region".equals(srcItemClassName)) {
             Item seq = getSeqItem(srcItem.getIdentifier(), true, srcItem);
             seq.addReference(config.getOrganismRef());
@@ -503,7 +498,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
         //Use the default approach of setting both the organismDbId & identifier to
         // be the same value - the ensembl stable id.
-        tgtItem.addAttribute(new Attribute("organismDbId", stableId));
+
+        tgtItem.setAttribute("identifier", stableId);
 
         //Set up all the optional xref synonyms - if the gene is KNOWN it should
         // have an ensembl xref to another db's accesssion for the same gene.
@@ -540,9 +536,9 @@ public class EnsemblDataTranslator extends DataTranslator
                 // external database accession.
                 //NOTE: if the xref is being used as an alternative identifier it will already have
                 // a synonym with type 'identifier'.
-                if (config.useXrefDbsForGeneIdentifier()
+                if (config.useXrefDbsForGeneOrganismDbId()
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
-                    tgtItem.addAttribute(new Attribute("identifier", accession));
+                    tgtItem.setAttribute("organismDbId", accession);
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession",
                                    accession, extDbRef);
@@ -711,67 +707,6 @@ public class EnsemblDataTranslator extends DataTranslator
                 LOG.warn("setNameAttribute() failed to find marker_synonym:" + markerSynRefId);
             }
         }
-    }
-
-    /**
-     * @param results the current collection of items to be stored.
-     * @param srcItem = assembly
-     * @return location item which reflects the relations between chromosome and contig,
-     *         supercontig and contig, clone and contig
-     * @throws org.intermine.objectstore.ObjectStoreException
-     *          when anything goes wrong.
-     */
-    protected Item createAssemblyLocation(Collection results, Item srcItem)
-            throws ObjectStoreException {
-        int start, end, asmStart, cmpStart, cmpEnd; //asmEnd,
-        int contigLength, bioEntityLength, length;
-        String ori, contigId, bioEntityId;
-
-        contigId = srcItem.getReference("cmp_seq_region").getRefId();
-        bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
-        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
-        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
-
-        contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
-        bioEntityLength = Integer.parseInt(bioEntity.getAttribute("length").getValue());
-        asmStart = Integer.parseInt(srcItem.getAttribute("asm_start").getValue());
-        cmpStart = Integer.parseInt(srcItem.getAttribute("cmp_start").getValue());
-        //asmEnd = Integer.parseInt(srcItem.getAttribute("asm_end").getValue());
-        cmpEnd = Integer.parseInt(srcItem.getAttribute("cmp_end").getValue());
-        ori = srcItem.getAttribute("ori").getValue();
-
-        //some occasions in ensembl, e.g. contig AC087365.3.1.104495 ||AC144832.1.1.45226
-        //Chromosome, Supercontig have shorter length than contig
-        //need to truncate the longer part
-        if (contigLength < bioEntityLength) {
-            length = contigLength;
-        } else {
-            length = bioEntityLength;
-        }
-        if (ori.equals("1")) {
-            start = asmStart - cmpStart + 1;
-            end = start + length - 1;
-        } else {
-            if (cmpEnd == length) {
-                start = asmStart;
-                end = start + length - 1;
-            } else {
-                start = asmStart - (length - cmpEnd);
-                end = start + length - 1;
-            }
-        }
-
-        Item location = createItem(tgtNs + "Location", "");
-        location.addAttribute(new Attribute("start", Integer.toString(start)));
-        location.addAttribute(new Attribute("end", Integer.toString(end)));
-        location.addAttribute(new Attribute("startIsPartial", "false"));
-        location.addAttribute(new Attribute("endIsPartial", "false"));
-        location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
-        location.addReference(new Reference("subject",
-                (getSeqItem(contigId, false, srcItem)).getIdentifier()));
-        location.addReference(new Reference("object",
-                (getSeqItem(bioEntityId, false, srcItem)).getIdentifier()));
-        return location;
     }
 
     /**
@@ -1361,7 +1296,7 @@ public class EnsemblDataTranslator extends DataTranslator
         private Item organism = null;
         private Reference organismRef = null;
 
-        private boolean useXrefDbsForGeneIdentifier;
+        private boolean useXrefDbsForGeneOrganismDbId;
         private boolean storeDna;
         private boolean createAnalysisResult;
 
@@ -1413,8 +1348,8 @@ public class EnsemblDataTranslator extends DataTranslator
             organismRef = new Reference("organism", organism.getIdentifier());
 
             //This boolean indicates that we want to use configurable identifier fields...
-            useXrefDbsForGeneIdentifier = Boolean.valueOf(
-                    organismProps.getProperty("flag.useXrefDbsForGeneIdentifier")).booleanValue();
+            useXrefDbsForGeneOrganismDbId = Boolean.valueOf(
+                    organismProps.getProperty("flag.useXrefDbsForGeneOrganismDbId")).booleanValue();
             createAnalysisResult = Boolean.valueOf(
                     organismProps.getProperty("flag.createAnalysisResult")).booleanValue();
             storeDna = Boolean.valueOf(
@@ -1432,7 +1367,7 @@ public class EnsemblDataTranslator extends DataTranslator
             initEnsemblDataSet();
 
             //try and load the props if we need to use custom gene identifiers - i.e. Hugo for Human
-            if (useXrefDbsForGeneIdentifier) {
+            if (useXrefDbsForGeneOrganismDbId) {
 
                 geneXrefDbName = organismProps.getProperty("gene.identifier.xref.dataSourceName");
 
@@ -1553,8 +1488,8 @@ public class EnsemblDataTranslator extends DataTranslator
         /**
          * @return Do we want to use any external db ids - i.e. SwissProt/Uniprot etc for Genes?
          * */
-        boolean useXrefDbsForGeneIdentifier() {
-            return useXrefDbsForGeneIdentifier;
+        boolean useXrefDbsForGeneOrganismDbId() {
+            return useXrefDbsForGeneOrganismDbId;
         }
         boolean createAnalysisResult() {
             return createAnalysisResult;
