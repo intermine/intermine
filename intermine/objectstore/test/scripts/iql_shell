@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# The following environment variables need to be set
+# INTERMINE: location of local InterMine installation
+
+export INTERMINE=~/svn/dev/intermine
+
+cd $INTERMINE
+
+CP=$CLASSPATH
+
+#for i in $INTERMINE/lib/*.jar ; do
+#    CP=$CP:$i
+#done
+
+#for i in $INTERMINE/dist/*.jar ; do
+#    CP=$CP:$i
+#done
+
+CP=$CP:.
+CP=$CP:$INTERMINE/objectstore/main/dist/intermine-objectstore.jar
+CP=$CP:$INTERMINE/objectstore/model/testmodel/dist/testmodel.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/antlr-2.7.6-caching.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/cglib-full-2.0.1-patched.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/libreadline-java.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/log4j.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/postgresql.jar
+CP=$CP:$INTERMINE/objectstore/test/resources:$INTERMINE/resources/runtime:~:$INTERMINE/flymine_stuff:$INTERMINE/flymine_stuff/resources
+
+if test -z "$LD_LIBRARY_PATH" ; then
+    export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
+else
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/lib:/usr/lib/jni
+fi
+
+echo "Using classpath: $CP"
+echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+
+java -cp $CP org.intermine.objectstore.query.iql.IqlShell $*
+
