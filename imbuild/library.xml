@@ -273,6 +273,6 @@
     </taskdef>
     <!--property name="cp" refid="dot.class.path"/>
     <echo message="class path is ${cp}"/-->
-    <dot directory="${main.src.dir}" packageName="org.intermine" file="src.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
+    <dot directory="${src.dir}" packageName="org.intermine" file="src.dot" omit="java.io.Serializable,java.lang.Object" boring="java.lang.Object"/>
   </target>
 </project>
