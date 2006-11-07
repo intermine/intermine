@@ -630,7 +630,7 @@
     <attribute name="translationEnd" value="356"/>
     <attribute name="translationStart" value="10"/>
     <reference name="organism" ref_id="-1_1"/>
-    <reference name="transcript" ref_id="3_478"/>
+    <reference name="MRNA" ref_id="3_478"/>
   </item>
 
   <item id="-1_56" class="http://www.flymine.org/model/genomic#TRNA">
