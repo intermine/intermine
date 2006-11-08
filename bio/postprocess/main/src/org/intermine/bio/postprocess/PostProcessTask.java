@@ -183,6 +183,10 @@ public class PostProcessTask extends Task
                 IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
                 LOG.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
                 ig.createIntergenicRegionFeatures();
+            } else if ("create-intron-features".equals(operation)) {
+                IntronUtil iu = new IntronUtil(getObjectStoreWriter());
+                LOG.info("Starting IntronUtil.createIntronFeatures()");
+                iu.createIntronFeatures();
             } else if ("create-overlap-relations-flymine".equals(operation)) {
                 LOG.info("Starting CalculateLocations.createOverlapRelations()");
                 List classNamesToIgnoreList = new ArrayList();

@@ -232,10 +232,10 @@
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="transfer-sequences" dump="true"/>
     <post-process name="create-overlap-relations-flymine"/>
+    <post-process name="create-intron-features"/>
     <post-process name="do-sources"/>
 
     <post-process name="set-collection-counts" dump="true"/>
-    <post-process name="create-flybase-to-uniprot-refs"/>
 
     <!-- grant-db-production/
     TODO: Not really post processing but just has to be done sometime...
