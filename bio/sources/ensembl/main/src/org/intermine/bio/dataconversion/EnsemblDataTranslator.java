@@ -204,7 +204,7 @@ public class EnsemblDataTranslator extends DataTranslator
                         result.add(anaResult);
                     }
 
-                    // the default gene organismDbId should be its stable id (or identifier if none)
+                    // the default gene identifier should be its stable id (or identifier if none)
                     //i.e. for anoph they are the same, but for human they are differant
                     //note: the organismDbId is effecivly what we choose as a primary accession
                     // and thus may differ from what we want to assign as the identifier...
@@ -282,6 +282,11 @@ public class EnsemblDataTranslator extends DataTranslator
             if (synonym != null) {
                 result.add(synonym);
             }
+            // assembly maps to null but want to create location on a supercontig
+        } else if ("assembly".equals(srcItemClassName)) {
+            Item location = createAssemblyLocation(result, srcItem);
+            result.add(location);
+            // seq_region map to null, become Chromosome, Supercontig, Clone and Contig respectively
         } else if ("seq_region".equals(srcItemClassName)) {
             Item seq = getSeqItem(srcItem.getIdentifier(), true, srcItem);
             seq.addReference(config.getOrganismRef());
@@ -496,10 +501,7 @@ public class EnsemblDataTranslator extends DataTranslator
         // <- gene_stable_id.gene
         String stableId = stableIdItem.getAttribute("stable_id").getValue();
 
-        //Use the default approach of setting both the organismDbId & identifier to
-        // be the same value - the ensembl stable id.
-
-        tgtItem.setAttribute("identifier", stableId);
+        tgtItem.addAttribute(new Attribute("identifier", stableId));
 
         //Set up all the optional xref synonyms - if the gene is KNOWN it should
         // have an ensembl xref to another db's accesssion for the same gene.
@@ -538,7 +540,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 // a synonym with type 'identifier'.
                 if (config.useXrefDbsForGeneOrganismDbId()
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
-                    tgtItem.setAttribute("organismDbId", accession);
+                    tgtItem.addAttribute(new Attribute("organismDbId", accession));
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession",
                                    accession, extDbRef);
@@ -707,6 +709,67 @@ public class EnsemblDataTranslator extends DataTranslator
                 LOG.warn("setNameAttribute() failed to find marker_synonym:" + markerSynRefId);
             }
         }
+    }
+
+    /**
+     * @param results the current collection of items to be stored.
+     * @param srcItem = assembly
+     * @return location item which reflects the relations between chromosome and contig,
+     *         supercontig and contig, clone and contig
+     * @throws org.intermine.objectstore.ObjectStoreException
+     *          when anything goes wrong.
+     */
+    protected Item createAssemblyLocation(Collection results, Item srcItem)
+            throws ObjectStoreException {
+        int start, end, asmStart, cmpStart, cmpEnd; //asmEnd,
+        int contigLength, bioEntityLength, length;
+        String ori, contigId, bioEntityId;
+
+        contigId = srcItem.getReference("cmp_seq_region").getRefId();
+        bioEntityId = srcItem.getReference("asm_seq_region").getRefId();
+        Item contig = ItemHelper.convert(srcItemReader.getItemById(contigId));
+        Item bioEntity = ItemHelper.convert(srcItemReader.getItemById(bioEntityId));
+
+        contigLength = Integer.parseInt(contig.getAttribute("length").getValue());
+        bioEntityLength = Integer.parseInt(bioEntity.getAttribute("length").getValue());
+        asmStart = Integer.parseInt(srcItem.getAttribute("asm_start").getValue());
+        cmpStart = Integer.parseInt(srcItem.getAttribute("cmp_start").getValue());
+        //asmEnd = Integer.parseInt(srcItem.getAttribute("asm_end").getValue());
+        cmpEnd = Integer.parseInt(srcItem.getAttribute("cmp_end").getValue());
+        ori = srcItem.getAttribute("ori").getValue();
+
+        //some occasions in ensembl, e.g. contig AC087365.3.1.104495 ||AC144832.1.1.45226
+        //Chromosome, Supercontig have shorter length than contig
+        //need to truncate the longer part
+        if (contigLength < bioEntityLength) {
+            length = contigLength;
+        } else {
+            length = bioEntityLength;
+        }
+        if (ori.equals("1")) {
+            start = asmStart - cmpStart + 1;
+            end = start + length - 1;
+        } else {
+            if (cmpEnd == length) {
+                start = asmStart;
+                end = start + length - 1;
+            } else {
+                start = asmStart - (length - cmpEnd);
+                end = start + length - 1;
+            }
+        }
+
+        Item location = createItem(tgtNs + "Location", "");
+        location.addAttribute(new Attribute("start", Integer.toString(start)));
+        location.addAttribute(new Attribute("end", Integer.toString(end)));
+        location.addAttribute(new Attribute("startIsPartial", "false"));
+        location.addAttribute(new Attribute("endIsPartial", "false"));
+        location.addAttribute(new Attribute("strand", srcItem.getAttribute("ori").getValue()));
+        location.addReference(new Reference("subject",
+                (getSeqItem(contigId, false, srcItem)).getIdentifier()));
+        location.addReference(new Reference("object",
+                (getSeqItem(bioEntityId, false, srcItem)).getIdentifier()));
+        return location;
     }
 
     /**
