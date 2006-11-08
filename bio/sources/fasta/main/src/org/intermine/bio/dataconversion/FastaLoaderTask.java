@@ -202,6 +202,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         TypeUtil.setFieldValue(imo, "sequence", flymineSequence);
         TypeUtil.setFieldValue(imo, "organism", org);
+        TypeUtil.setFieldValue(imo, "length", new Integer(flymineSequence.getLength()));
 
         try {
             getDirectDataLoader().store(flymineSequence);

@@ -58,7 +58,6 @@ public class FastaLoaderTaskTest extends TestCase {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
-        //        flt.setClassName("org.flymine.model.genomic.LocatedSequenceFeature");
         flt.setClassName("org.flymine.model.genomic.Gene");
         flt.setClassAttribute("organismDbId");
         flt.setIntegrationWriterAlias("integration.bio-test");
@@ -154,6 +153,7 @@ public class FastaLoaderTaskTest extends TestCase {
         assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
                      + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"
                      + "SMNLSVEEMEKVVQPKVKRMATICQM", protein.getSequence().getResidues());
+        assertEquals(new Integer(146), protein.getLength());
     }
 
     public void tearDown() throws Exception {
