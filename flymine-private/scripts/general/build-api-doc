@@ -1,0 +1,9 @@
+#!/bin/sh
+
+cd ~/svn/trunk
+svn up
+cd imbuild/javadoc
+ant
+
+chmod -R a+rX build/javadoc/
+rsync -avn --delete build/javadoc/ flymine@www.flymine.org:/var/www/intermine/api/
