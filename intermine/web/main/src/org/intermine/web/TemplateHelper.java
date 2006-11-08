@@ -90,18 +90,18 @@ public class TemplateHelper
         if (userName != null) {
             profile = pm.getProfile(userName);
         }
-        if (profile == null) {
+        if (profile == null && session != null) {
             profile = (Profile) session.getAttribute(Constants.PROFILE);
         }
-        if (USER_TEMPLATE.equals(type)) {
+        if (profile == null || GLOBAL_TEMPLATE.equals(type)) {
+            Map templates =
+                SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
+            return (TemplateQuery) templates.get(templateName);
+        } else if (USER_TEMPLATE.equals(type)) {
             return (TemplateQuery) profile.getSavedTemplates().get(templateName);
         } else if (SHARED_TEMPLATE.equals(type)) {
             // TODO implement shared templates
             return null;
-        } else if (GLOBAL_TEMPLATE.equals(type)) {
-            Map templates =
-                SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
-            return (TemplateQuery) templates.get(templateName);
         } else if (ALL_TEMPLATE.equals(type)) {
             TemplateQuery tq = findTemplate(servletContext, session, userName,
                                             templateName, GLOBAL_TEMPLATE);
