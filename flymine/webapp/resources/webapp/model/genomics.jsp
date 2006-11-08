@@ -92,7 +92,7 @@
             protein interaction data from 
             <a href="http://www.ebi.ac.uk/intact/">IntAct</a>, orthologues and
             paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
-            terms, Uniprot and Interpro data
+            terms, Uniprot and Interpro data.
           </dd>
         </dl>
       </div>

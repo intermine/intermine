@@ -53,10 +53,6 @@
           <dd>
           Bergman et al (2005) Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468">PubMed: 15572468</a>) - <i>Drosophila</i> DNase I footprint database: a systematic genome annotation of transcription factor binding sites in the fruitfly, <i>Drosophila melanogaster</i>.
           </dd>
-          <dt>
-            Protein binding sites for <i>D. melanogaster</i> annotated by 
-            <a href="http://flybase.bio.indiana.edu">FlyBase</a>.
-          </dt>
         </dl>
       </div>
      </div>
@@ -90,35 +86,6 @@
                 </node>
                 <node path="TFBindingSite.evidence.title" type="String">
                   <constraint op="=" value="FlyReg data set">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="FlyBase binding site data" skipBuilder="true">
-              <query name="" model="genomic" view="BindingSite">
-                <node path="BindingSite" type="BindingSite">
-                </node>
-                <node path="BindingSite.evidence" type="DataSet">
-                </node>
-                <node path="BindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyBase Drosophila melanogaster data set">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="FlyBase binding site data for export" 
-                          skipBuilder="true">
-              <query name="" model="genomic" view="BindingSite.identifier BindingSite.length BindingSite.chromosome.identifier BindingSite.chromosomeLocation.start BindingSite.chromosomeLocation.end">
-                <node path="BindingSite" type="BindingSite">
-                </node>
-                <node path="BindingSite.evidence" type="DataSet">
-                </node>
-                <node path="BindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyBase Drosophila melanogaster data set">
                   </constraint>
                 </node>
               </query>
