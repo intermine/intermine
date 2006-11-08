@@ -9,11 +9,6 @@
       all genome features that have chromosomal locations (e.g. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
-    <starting-points>
-      Gene Transcript Exon TRNA NcRNA Chromosome ChromosomeBand
-      Orthologue Paralogue IntergenicRegion GOTerm RepeatRegion TransposableElement TFBindingSite
-      Pseudogene RRNA SnRNA SnoRNA UTR MRNA
-    </starting-points> 
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae"/>
   </aspect>
@@ -31,11 +26,9 @@
       &lt;/p&gt;
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
-    <starting-points>Gene CDNAClone MicroArrayExperiment MicroArrayAssay FlyAtlasResult ProbeSet</starting-points>
     <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
     <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
-    <aspect-source name="FlyChip" url="http://www.flychip.org.uk/"/>  
   </aspect>
 
   <aspect name="Transcriptional Regulation">
@@ -46,7 +39,6 @@
       Regulatory regions and transcription factor binding sites in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyReg, REDfly and FlyBase.
     </intro-text>
     <tile-name>model/bindingSites.jsp</tile-name>
-    <starting-points>Gene BindingSite TFBindingSite ProteinBindingSite RegulatoryRegion TFmodule Enhancer</starting-points>
     <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
     <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
@@ -60,7 +52,6 @@
       DrosDel P-element insertion and deletion locations.
     </intro-text>
     <tile-name>model/drosdel.jsp</tile-name>
-    <starting-points>Gene Deletion TransposableElementInsertionSite</starting-points>
     <aspect-source name="DrosDel" url="http://www.drosdel.org.uk/"/>
   </aspect>
 
@@ -72,7 +63,6 @@
       Primers designed to tile across whole genomes or regions of genomes.
     </intro-text>
     <tile-name>model/tilingPath.jsp</tile-name>
-    <starting-points>PCRProduct Primer TilingPathSpan Chromosome Location</starting-points>
   </aspect>
 
   <aspect name="INDAC">
@@ -83,7 +73,6 @@
       Long oligos from the International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium.
     </intro-text>
     <tile-name>model/indac.jsp</tile-name>
-    <starting-points>Transcript Gene MicroarrayOligo</starting-points>
     <aspect-source name="International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium" url="http://www.indac.net/"/>
   </aspect>
 
@@ -100,7 +89,6 @@
      RNAi experiments.
     </intro-text>
     <tile-name>model/RNAi.jsp</tile-name>
-    <starting-points>Gene RNAiExperiment Phenotype RNAiScreen RNAiScreenHit Amplicon</starting-points>
     <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
   </aspect>
 
@@ -112,7 +100,6 @@
       Homophila Human Disease to &lt;i&gt;Drosophila&lt;/i&gt; Database (version 2.1).
     </intro-text>
     <tile-name>model/diseaseAspect.jsp</tile-name>
-    <starting-points>Gene Disease Orthologue BlastMatch</starting-points>
     <aspect-source name="Homophila" url="http://superfly.ucsd.edu/homophila/"/>
   </aspect>
 
@@ -128,7 +115,6 @@
       taxon. Paralogues are the result of gene duplication.
     </intro-text>
     <tile-name>model/inparanoid.jsp</tile-name>
-    <starting-points>Gene Orthologue Paralogue</starting-points>
     <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
   </aspect>
 
@@ -141,7 +127,6 @@
       and InterPro.
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
-    <starting-points>Protein ProteinFeature ProteinDomain ProteinFamily</starting-points>
     <aspect-source name="InterPro" url="http://www.ebi.ac.uk/interpro"/>
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
@@ -156,9 +141,6 @@
       &lt;i&gt;C. elegans&lt;/i&gt; and  &lt;i&gt;S. cerevisiae&lt;/i&gt;. The datasets were 
       downloaded in Proteomics Standards Initiative molecular interaction PSI-MI format from the IntAct database.
     </intro-text>
-    <starting-points>
-      Protein ProteinInteraction ProteinInteractionExperiment ProteinInteractionTerm
-    </starting-points>
     <tile-name>model/proteinInteraction.jsp</tile-name>
     <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
   </aspect>
@@ -170,10 +152,6 @@
     <intro-text>
       3-D protein structures from the Mizuguchi lab.
     </intro-text>
-    <starting-points>
-      Protein ProteinStructure ProteinRegion ProteinFeature ProteinDomain
-      ProteinFamily
-    </starting-points>
     <tile-name>model/proteinStructure.jsp</tile-name>
     <aspect-source name="Kenji Mizuguchi lab"
                    url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
@@ -188,7 +166,6 @@
       Genes and so each Gene has a reference (link) to a list of its GO
       annotations (if available).
     </intro-text>
-    <starting-points>Gene GOTerm GOAnnotation</starting-points>
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
