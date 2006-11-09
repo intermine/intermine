@@ -336,7 +336,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
             Query q = IqlQueryParser.parse(new IqlQuery("select Company from Company where Company.name = Company.vatNumber", "org.intermine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because the two types do not match");
         } catch (IllegalArgumentException e) {
-            assertEquals("Invalid constraint: java.lang.String = java.lang.Integer", e.getMessage());
+            assertEquals("Invalid constraint: QueryField(org.intermine.model.testmodel.Company, name) (a java.lang.String) = QueryField(org.intermine.model.testmodel.Company, vatNumber) (a java.lang.Integer)", e.getMessage());
         }
         try {
             Query q = IqlQueryParser.parse(new IqlQuery("select Company from Company where Company.departments = Company.vatNumber", "org.intermine.model.testmodel"));
