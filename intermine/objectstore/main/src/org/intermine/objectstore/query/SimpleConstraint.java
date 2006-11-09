@@ -61,10 +61,9 @@ public class SimpleConstraint extends Constraint
             qe2.youAreType(qe1.getType());
         }
         if (!validComparison(qe1.getType(), op, qe2.getType())) {
-            throw new IllegalArgumentException("Invalid constraint: "
-                                               + qe1.getType().getName()
-                                               + " " + op
-                                               + " " + qe2.getType().getName());
+            throw new IllegalArgumentException("Invalid constraint: " + qe1 + " (a "
+                    + qe1.getType().getName() + ") " + op + " " + qe2 + " (a "
+                    + qe2.getType().getName() + ")");
         }
 
         this.qe1 = qe1;
