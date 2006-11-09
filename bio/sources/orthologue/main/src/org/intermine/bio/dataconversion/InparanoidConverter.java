@@ -144,6 +144,9 @@ public class InparanoidConverter extends FileConverter
                         geneId = bit.substring(5);
                     }
                 }
+                if (array[2].equals("ensCE")) {
+                    organismDbId = geneId;
+                }
             } else {
                 // model organism db identifiers set as Gene.organismDbId
                 organismDbId = geneId;
