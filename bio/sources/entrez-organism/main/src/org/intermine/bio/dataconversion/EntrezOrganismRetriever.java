@@ -260,6 +260,8 @@ Example
                 int spaceIndex = text.indexOf(" ");
                 organism.setAttribute("genus", text.substring(0, spaceIndex));
                 organism.setAttribute("species", text.substring(spaceIndex + 1));
+                organism.setAttribute("shortName", text.charAt(0) + ". "
+                                      + text.substring(spaceIndex + 1));
             }
             name = null;
         }

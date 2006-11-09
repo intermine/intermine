@@ -2,12 +2,14 @@
   <item id="-1_2" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="genus" value="Drosophila"/>
     <attribute name="name" value="Drosophila melanogaster"/>
+    <attribute name="shortName" value="D. melanogaster"/>
     <attribute name="species" value="melanogaster"/>
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="-1_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="genus" value="Anopheles"/>
     <attribute name="name" value="Anopheles gambiae str. PEST"/>
+    <attribute name="shortName" value="A. gambiae str. PEST"/>
     <attribute name="species" value="gambiae str. PEST"/>
     <attribute name="taxonId" value="180454"/>
   </item>
