@@ -82,8 +82,7 @@
 -->
     <source name="protein_structure" type="protein_structure">
       <!-- property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model/1557"/ -->
-      <property name="src.data.dir" location="/shared/data/kenji"/>
-      <property name="data.location" location="/shared/data/kenji/data/pfam-3d/model"/>
+      <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/2006-10-13"/>
