@@ -37,20 +37,13 @@
       </div>
       <div class="body">
         <ul>
-          <li>
-            <im:querylink text="All INDAC microarray oligos and their
-                                associated transcript (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo MicroarrayOligo.transcript"/>
-            </im:querylink>
-          </li>
            <li>
             <im:querylink text="All INDAC microarray oligo sequences with their identifier, length and tm (for export in FASTA)" skipBuilder="true">
              <query name="" model="genomic" view="MicroarrayOligo MicroarrayOligo.identifier MicroarrayOligo.length MicroarrayOligo.tm"/>
             </im:querylink>
           </li>         
           <li>
-            <im:querylink text="All INDAC microarray oligo identifiers and the identifier
-                                of the associated transcript (for export/download)" skipBuilder="true">
+            <im:querylink text="All INDAC microarray oligo identifiers and the identifier of the associated transcript " skipBuilder="true">
               <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.transcript.identifier"/>
             </im:querylink>
           </li>

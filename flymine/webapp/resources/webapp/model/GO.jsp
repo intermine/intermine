@@ -50,69 +50,40 @@
       </div>
       <div class="body">
         <ul>
+
           <li>
-            All gene/GO annotation pairs from <i>D. melanogaster</i>
-            <im:querylink text="(browse)" skipBuilder="true">
-<query name="" model="genomic" view="Gene Gene.goAnnotation">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
-            </im:querylink>
-            <im:querylink text="(export)" skipBuilder="true">
-<query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
-            </im:querylink>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            All gene/GO annotation pairs from <i>A. gambiae</i> 
-            <im:querylink text="(browse)" skipBuilder="true">
-<query name="" model="genomic" view="Gene Gene.annotations">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Gene.annotations" type="Annotation">
-  </node>
-  <node path="Gene.annotations.property" type="GOTerm">
-  </node>
-</query>
-            </im:querylink>
-            <im:querylink text="(export)" skipBuilder="true">
-<query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.identifier Gene.annotations.name Gene.annotations.qualifier">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Gene.annotations" type="GOAnnotation">
-  </node>
-</query>
-            </im:querylink>
-          </li>
-        </ul>
+            <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
+             <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
+              <node path="Gene" type="Gene">
+               </node>
+              <node path="Gene.organism" type="Organism">
+               </node>
+              <node path="Gene.organism.name" type="String">
+              <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+             </constraint>
+              </node>
+           </query>
+          </im:querylink>
+         </li>
+
+         <li>
+           <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
+            <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.identifier Gene.annotations.name Gene.annotations.qualifier">
+             <node path="Gene" type="Gene">
+              </node>
+             <node path="Gene.organism" type="Organism">
+              </node>
+             <node path="Gene.organism.name" type="String">
+             <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+            </constraint>
+           </node>
+            <node path="Gene.annotations" type="GOAnnotation">
+           </node>
+          </query>
+         </im:querylink>
+        </li>
+
+       </ul>
       </div>
     </td>
   </tr>

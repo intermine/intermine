@@ -41,6 +41,16 @@
               <html:img src="model/FlyBase_logo_mini.png"/> </a>.
           </dd>
           <dt>
+            <i>Drosophila pseudoobscura</i>
+          </dt>
+          <dd>
+            Release 2.0 genome annotations from
+             <a href="http://www.flybase.org">
+              <html:img src="model/FlyBase_logo_mini.png"/>
+            </a>.
+          </dd>
+        </dl>
+          <dt>
             <i>Anopheles gambiae</i> str. PEST
           </dt> 
           <dd>
@@ -58,16 +68,6 @@
               <html:img src="model/ensembl_logo_mini.png"/>
             </a>.
           </dd>
-          <dt>
-            <i>Drosophila pseudoobscura</i>
-          </dt>
-          <dd>
-            Release 2.0 genome annotations from
-             <a href="http://www.flybase.org">
-              <html:img src="model/FlyBase_logo_mini.png"/>
-            </a>.
-          </dd>
-        </dl>
 
   </div>
 
@@ -101,22 +101,9 @@
    <td width="40%" valign="top">
       <div class="body">
         <ul>
+
           <li>
-            <im:querylink text="All <i>Drosophila</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i>Drosophila</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i>Drosophila melanogaster</i> gene identifiers and chromosomal positions " skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
@@ -129,65 +116,10 @@
               </query>
             </im:querylink>
           </li>
+
           <li>
-            <im:querylink text="All <i>Anopheles</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i>Anopheles</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i> Drosophila pseudoobscura</i> gene identifiers and chromosomal positions " skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i>Apis</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i>Apis</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i> Dros pseudoobscura</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
@@ -201,22 +133,38 @@
           </li>
 
           <li>
-            <im:querylink text="All <i> Dros pseudoobscura</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
+            <im:querylink text="All <i>Anopheles Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="A">
+                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>
             </im:querylink>
           </li>
+
           <li>
-            <im:querylink text="<i>Caenorhabditis elegans</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene">
+            <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+
+          <li>
+            <im:querylink text="All <i>Caenorhabditis elegans</i> gene identifiers and chromosomal positions " skipBuilder="true">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
@@ -228,20 +176,7 @@
               </query>
             </im:querylink>
           </li>
-          <li>
-            <im:querylink text="<i>Caenorhabditis elegans</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
+
         </ul>
       </div>
     </td>

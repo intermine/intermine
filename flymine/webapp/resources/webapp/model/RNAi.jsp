@@ -3,12 +3,13 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<TABLE width="100%">
+<table width="100%">
   <tr>
-    <td valign="top">
+    <td valign="top" rowspan="2">
       <div class="heading2">
         Current data
       </div>
+
       <div class="body">
 
   <h4>
@@ -165,29 +166,16 @@
       </div>
 </div>
 
-      <td width="30%" valign="top">
-        <div class="heading2">
-          Bulk download
-        </div>
-        <div class="body">
+    <td valign="top">
+      <div class="heading2">
+        Bulk download <i>Drosophila</i> data
+      </div>
+      <div class="body">
+     </div>
           
           <ul>
             <li>
-              <im:querylink text="All <i>C. elegans</i> RNAi phenotype data (browse)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene Gene.phenotypes">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                </query>
-              </im:querylink>
-            </li>
-            <li>
-              <im:querylink text="All <i>C. elegans</i> RNAi phenotype data (for export/download)" skipBuilder="true">
+              <im:querylink text="All <i>C. elegans</i> RNAi phenotype data " skipBuilder="true">
                 <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.phenotypes.name Gene.phenotypes.RNAiCode Gene.phenotypes.identifier">
                   <node path="Gene" type="Gene">
                   </node>
@@ -200,174 +188,7 @@
                 </query>
               </im:querylink>
             </li>
-            <li>
-              <im:querylink text="Kamath et al, 2003 (browse)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene Gene.annotations.property">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations" type="Annotation">
-                  </node>
-                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
-                    <constraint op="=" value="12529635">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations.property" type="Phenotype">
-                  </node>
-                </query>        
-              </im:querylink>
-            </li>
-            <li>
-              <im:querylink text="Kamath et al, 2003 (for export/download)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.property.name Gene.annotations.property.RNAiCode Gene.annotations.property.identifier">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations" type="Annotation">
-                  </node>
-                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
-                    <constraint op="=" value="12529635">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations.property" type="Phenotype">
-                  </node>
-                </query>
-              </im:querylink>
-            </li>
-            <li>
-              <im:querylink text="Fraser et al, 2000 (browse)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene Gene.annotations.property">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations" type="Annotation">
-                  </node>
-                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
-                    <constraint op="=" value="11099033">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations.property" type="Phenotype">
-                  </node>
-                </query>
-              </im:querylink>
-            </li>
-            <li>
-              <im:querylink text="Fraser et al, 2000 (for export/download)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.property.name Gene.annotations.property.RNAiCode Gene.annotations.property.identifier">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations" type="Annotation">
-                  </node>
-                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
-                    <constraint op="=" value="11099033">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations.property" type="Phenotype">
-                  </node>
-                </query>        
-              </im:querylink>
-            </li>
-            <li>
-              <im:querylink text="Simmer et al, 2003 (browse)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene Gene.annotations.property">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations" type="Annotation">
-                  </node>
-                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
-                    <constraint op="=" value="14551910">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations.property" type="Phenotype">
-                  </node>
-                </query>        
-              </im:querylink>
-            </li>
-            <li>
-              <im:querylink text="Simmer et al, 2003 (for export/download)" skipBuilder="true">
-                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.property.name Gene.annotations.property.RNAiCode Gene.annotations.property.identifier">
-                  <node path="Gene" type="Gene">
-                  </node>
-                  <node path="Gene.organism" type="Organism">
-                  </node>
-                  <node path="Gene.organism.shortName" type="String">
-                    <constraint op="=" value="C. elegans">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations" type="Annotation">
-                  </node>
-                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
-                  </node>
-                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
-                    <constraint op="=" value="14551910">
-                    </constraint>
-                  </node>
-                  <node path="Gene.annotations.property" type="Phenotype">
-                  </node>
-                </query>        
-              </im:querylink>
-            </li>
+
             <li>
               <im:querylink text="All phenotype identifiers, names and RNAi codes" skipBuilder="true">
                 <query name="" model="genomic" view="Phenotype.identifier Phenotype.name Phenotype.RNAiCode">
@@ -375,7 +196,130 @@
               </im:querylink>
             </li>
           </ul>
+</tr>
+
+<tr>
+
+    <td valign="top">
+      <div class="heading2">
+        Bulk download <i>C. elegans</i> data
+      </div>
+      <div class="body">
+          
+          <ul>
+            <li>
+              <im:querylink text="All <i>C. elegans</i> RNAi phenotype data " skipBuilder="true">
+                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.phenotypes.name Gene.phenotypes.RNAiCode Gene.phenotypes.identifier">
+                  <node path="Gene" type="Gene">
+                  </node>
+                  <node path="Gene.organism" type="Organism">
+                  </node>
+                  <node path="Gene.organism.shortName" type="String">
+                    <constraint op="=" value="C. elegans">
+                    </constraint>
+                  </node>
+                </query>
+              </im:querylink>
+            </li>
+
+            <li>
+              <im:querylink text="All phenotype identifiers, names and RNAi codes" skipBuilder="true">
+                <query name="" model="genomic" view="Phenotype.identifier Phenotype.name Phenotype.RNAiCode">
+                </query>
+              </im:querylink>
+            </li>
+          </ul>
+
+          <ul>
+            <li>
+              <im:querylink text="Kamath et al, 2003 " skipBuilder="true">
+                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.property.name Gene.annotations.property.RNAiCode Gene.annotations.property.identifier">
+                  <node path="Gene" type="Gene">
+                  </node>
+                  <node path="Gene.organism" type="Organism">
+                  </node>
+                  <node path="Gene.organism.shortName" type="String">
+                    <constraint op="=" value="C. elegans">
+                    </constraint>
+                  </node>
+                  <node path="Gene.annotations" type="Annotation">
+                  </node>
+                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
+                    <constraint op="=" value="12529635">
+                    </constraint>
+                  </node>
+                  <node path="Gene.annotations.property" type="Phenotype">
+                  </node>
+                </query>
+              </im:querylink>
+            </li>
+
+            <li>
+              <im:querylink text="Fraser et al, 2000 " skipBuilder="true">
+                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.property.name Gene.annotations.property.RNAiCode Gene.annotations.property.identifier">
+                  <node path="Gene" type="Gene">
+                  </node>
+                  <node path="Gene.organism" type="Organism">
+                  </node>
+                  <node path="Gene.organism.shortName" type="String">
+                    <constraint op="=" value="C. elegans">
+                    </constraint>
+                  </node>
+                  <node path="Gene.annotations" type="Annotation">
+                  </node>
+                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
+                    <constraint op="=" value="11099033">
+                    </constraint>
+                  </node>
+                  <node path="Gene.annotations.property" type="Phenotype">
+                  </node>
+                </query>        
+              </im:querylink>
+            </li>
+
+            <li>
+              <im:querylink text="Simmer et al, 2003 " skipBuilder="true">
+                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.property.name Gene.annotations.property.RNAiCode Gene.annotations.property.identifier">
+                  <node path="Gene" type="Gene">
+                  </node>
+                  <node path="Gene.organism" type="Organism">
+                  </node>
+                  <node path="Gene.organism.shortName" type="String">
+                    <constraint op="=" value="C. elegans">
+                    </constraint>
+                  </node>
+                  <node path="Gene.annotations" type="Annotation">
+                  </node>
+                  <node path="Gene.annotations.evidence" type="ExperimentalResult">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis" type="Analysis">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis.publication" type="Publication">
+                  </node>
+                  <node path="Gene.annotations.evidence.analysis.publication.pubMedId" type="String">
+                    <constraint op="=" value="14551910">
+                    </constraint>
+                  </node>
+                  <node path="Gene.annotations.property" type="Phenotype">
+                  </node>
+                </query>        
+              </im:querylink>
+            </li>
+          </ul>
+
         </div>
-      </TD>
-  </TR>
-</TABLE>
+      </td>
+  </tr>
+</table>
