@@ -66,68 +66,35 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="Tiling path PCR products (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="PCRProduct"/>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="Tiling path PCR products identifier and
-                                chromosome locations (for export/download)" skipBuilder="true">
+            <im:querylink text="All tiling path PCR product identifiers and chromosomal locations " skipBuilder="true">
               <query name="" model="genomic" view="PCRProduct.identifier PCRProduct.promoter PCRProduct.chromosomeLocation.start PCRProduct.chromosomeLocation.end PCRProduct.chromosome.identifier"/>
             </im:querylink>
           </li>
-        </ul>
-        <ul>
+
           <li>
-            <im:querylink text="All tiling path primers (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Primer"/>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All tiling path primer identifiers and
-                                chromosome locations (browse)" skipBuilder="true">
+            <im:querylink text="All tiling path primer identifiers and chromosomal locations " skipBuilder="true">
               <query name="" model="genomic" view="Primer.identifier Primer.chromosomeLocation.start Primer.chromosomeLocation.end Primer.chromosome.identifier"/>
             </im:querylink>
           </li>
-        </ul>
-        <ul>
+
           <li>
-            <im:querylink text="All tiling path forward primers (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="ForwardPrimer"/>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All tiling path forward primer identifiers and
-                                chromosome locations (for export/download)" skipBuilder="true">
+            <im:querylink text="All tiling path forward primer identifiers and chromosomal locations " skipBuilder="true">
               <query name="" model="genomic" view="ForwardPrimer.identifier ForwardPrimer.chromosomeLocation.start ForwardPrimer.chromosomeLocation.end ForwardPrimer.chromosome.identifier"/>
             </im:querylink>
           </li>
-        </ul>
-        <ul>
+
           <li>
-            <im:querylink text="All tiling path reverse primers (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="ReversePrimer"/>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All tiling path reverse primer identifiers and
-                                chromosome locations (for export/download)" skipBuilder="true">
+            <im:querylink text="All tiling path reverse primer identifiers and chromosomal locations " skipBuilder="true">
               <query name="" model="genomic" view="ReversePrimer.identifier ReversePrimer.chromosomeLocation.start ReversePrimer.chromosomeLocation.end ReversePrimer.chromosome.identifier"/>
             </im:querylink>
           </li>
-        </ul>
-        <ul>
+
           <li>
-            <im:querylink text="All tiling path spans (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="TilingPathSpan"/>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All tiling path span identifiers and
-                                chromosome locations (for export/download)" skipBuilder="true">
+            <im:querylink text="All tiling path span identifiers and chromosomal locations " skipBuilder="true">
               <query name="" model="genomic" view="TilingPathSpan.identifier TilingPathSpan.chromosomeLocation.start TilingPathSpan.chromosomeLocation.end TilingPathSpan.chromosome.identifier"/>
             </im:querylink>
           </li>
+
         </ul>
       </div>
     </td>

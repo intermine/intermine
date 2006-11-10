@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<TABLE width="100%">
+<table width="100%">
   <tr>
 
     <td valign="top">
@@ -53,8 +53,8 @@
           <dd>
           Bergman et al (2005) Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468">PubMed: 15572468</a>) - <i>Drosophila</i> DNase I footprint database: a systematic genome annotation of transcription factor binding sites in the fruitfly, <i>Drosophila melanogaster</i>.
           </dd>
-        </dl>
-      </div>
+        </div>
+      </dl>
      </div>
     </td>
 
@@ -64,21 +64,9 @@
       </div>
       <div class="body">        
         <ul>
+
           <li>
-            <im:querylink text="FlyReg binding site data" skipBuilder="true">
-              <query name="" model="genomic"
-                     view="TFBindingSite TFBindingSite.gene TFBindingSite.factor TFBindingSite.chromosomeLocation">
-                <node path="TFBindingSite.evidence" type="DataSet">
-                </node>
-                <node path="TFBindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyReg data set">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="FlyReg binding site data for export" skipBuilder="true">
+            <im:querylink text="FlyReg transcription factor binding sites " skipBuilder="true">
               <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
                 <node path="TFBindingSite" type="TFBindingSite">
                 </node>
@@ -91,8 +79,39 @@
               </query>
             </im:querylink>
           </li>
+
+          <li>
+            <im:querylink text="REDfly regulatory regions " skipBuilder="true">
+             <query name="" model="genomic" view="TFmodule.identifier TFmodule.length TFmodule.chromosome.identifier TFmodule.chromosomeLocation.start TFmodule.chromosomeLocation.end TFmodule.gene.identifier TFmodule.elementEvidence">
+             <node path="TFmodule" type="TFmodule">
+              </node>
+             <node path="TFmodule.evidence" type="DataSet">
+              </node>
+             <node path="TFmodule.evidence.title" type="String">
+              <constraint op="LIKE" value="%REDfly%" description="" identifier="" editable="true" code="A">
+              </constraint>
+             </node>
+             </query>
+           </im:querylink>
+          </li>
+
+          <li>
+            <im:querylink text="FlyBase regulatory regions " skipBuilder="true">
+           <query name="" model="genomic" view="RegulatoryRegion.identifier RegulatoryRegion.length RegulatoryRegion.chromosome.identifier RegulatoryRegion.chromosomeLocation.start RegulatoryRegion.chromosomeLocation.end">
+            <node path="RegulatoryRegion" type="RegulatoryRegion">
+             </node>
+            <node path="RegulatoryRegion.evidence" type="DataSet">
+             </node>
+            <node path="RegulatoryRegion.evidence.title" type="String">
+              <constraint op="LIKE" value="FlyBase%" description="" identifier="" code="A">
+              </constraint>
+            </node>
+           </query>
+           </im:querylink>
+          </li>
+
         </ul>
       </div>
-    </TD>
-  </TR>
-</TABLE>
+    </td>
+  </tr>
+</table>
