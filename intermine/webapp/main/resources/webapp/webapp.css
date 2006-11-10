@@ -352,6 +352,9 @@ table.results th.checkbox,table.results td.checkbox{
 	border-right-style: dotted;
 }
 .templateTitle {
+  padding: 4px;
+}
+.templateTitleBold {
   font-weight: bold;
   padding: 4px;
 }
