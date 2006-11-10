@@ -36,10 +36,10 @@
       </div>
       <div class="body">
         <ul>
+
           <li>
-            <im:querylink text="Available deletions from the DrosDel dataset (browse)"
-                          skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion">
+            <im:querylink text="All DrosDel deletions " skipBuilder="true">
+              <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.available ArtificialDeletion.chromosome.identifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
                 <node path="ArtificialDeletion" type="ArtificialDeletion">
                 </node>
                 <node path="ArtificialDeletion.organism" type="Organism">
@@ -47,17 +47,13 @@
                 <node path="ArtificialDeletion.organism.name" type="String">
                   <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
                   </constraint>
-                  <node path="ArtificialDeletion.available" type="Boolean">
-                    <constraint op="=" value="true" description="" identifier="" code="B">
-                    </constraint>
-                  </node>
                 </node>
               </query>
             </im:querylink>
           </li>
+
           <li>
-            <im:querylink text="Available DrosDel deletions and positions (export)"
-                          skipBuilder="true">
+            <im:querylink text="All available DrosDel deletions " skipBuilder="true">
               <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.chromosome.identifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
                 <node path="ArtificialDeletion" type="ArtificialDeletion">
                 </node>
@@ -74,54 +70,30 @@
               </query>
             </im:querylink>
           </li>
+
           <li>
-            <im:querylink text="All deletions from the DrosDel dataset (browse)"
-                          skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion">
-                <node path="ArtificialDeletion" type="ArtificialDeletion">
-                </node>
-                <node path="ArtificialDeletion.organism" type="Organism">
-                </node>
-                <node path="ArtificialDeletion.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
+            <im:querylink text="All DrosDel insertions " skipBuilder="true">
+            <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.identifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end" constraintLogic="A and B">
+             <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
+              </node>
+             <node path="TransposableElementInsertionSite.organism" type="Organism">
+              </node>
+             <node path="TransposableElementInsertionSite.organism.name" type="String">
+               <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+               </constraint>
+              </node>
+             <node path="TransposableElementInsertionSite.evidence" type="DataSet">
+              </node>
+             <node path="TransposableElementInsertionSite.evidence.title" type="String">
+              <constraint op="LIKE" value="%DrosDel%" description="" identifier="" code="B">
+              </constraint>
+             </node>
+            </query>
+           </im:querylink>
           </li>
-          <li>
-            <im:querylink text="All DrosDel deletions and positions (export)"
-                          skipBuilder="true">
-              <query name="" model="genomic" view="ArtificialDeletion.identifier ArtificialDeletion.available ArtificialDeletion.chromosome.identifier ArtificialDeletion.chromosomeLocation.start ArtificialDeletion.chromosomeLocation.end">
-                <node path="ArtificialDeletion" type="ArtificialDeletion">
-                </node>
-                <node path="ArtificialDeletion.organism" type="Organism">
-                </node>
-                <node path="ArtificialDeletion.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All insertion sites from the DrosDel dataset (browse)"
-                          skipBuilder="true">
-              <query name="" model="genomic" view="TransposableElementInsertionSite">
-                <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
-                </node>
-                <node path="TransposableElementInsertionSite.organism" type="Organism">
-                </node>
-                <node path="TransposableElementInsertionSite.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="DrosDel insertion sites and positions (export)"
-                          skipBuilder="true">
+
+        <li>
+            <im:querylink text="All P-element insertions (including Exelixis and DrosDel)" skipBuilder="true">
               <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.identifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end">
                 <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
                 </node>
@@ -134,6 +106,7 @@
               </query>
             </im:querylink>
           </li>
+
         </ul>
       </div>
     </td>

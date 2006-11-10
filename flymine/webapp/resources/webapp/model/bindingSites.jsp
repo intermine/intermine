@@ -66,21 +66,6 @@
         <ul>
 
           <li>
-            <im:querylink text="FlyReg transcription factor binding sites " skipBuilder="true">
-              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
-                <node path="TFBindingSite" type="TFBindingSite">
-                </node>
-                <node path="TFBindingSite.evidence" type="DataSet">
-                </node>
-                <node path="TFBindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyReg data set">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-
-          <li>
             <im:querylink text="REDfly regulatory regions " skipBuilder="true">
              <query name="" model="genomic" view="TFmodule.identifier TFmodule.length TFmodule.chromosome.identifier TFmodule.chromosomeLocation.start TFmodule.chromosomeLocation.end TFmodule.gene.identifier TFmodule.elementEvidence">
              <node path="TFmodule" type="TFmodule">
@@ -108,6 +93,21 @@
             </node>
            </query>
            </im:querylink>
+          </li>
+
+          <li>
+            <im:querylink text="FlyReg transcription factor binding sites " skipBuilder="true">
+              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
+                <node path="TFBindingSite" type="TFBindingSite">
+                </node>
+                <node path="TFBindingSite.evidence" type="DataSet">
+                </node>
+                <node path="TFBindingSite.evidence.title" type="String">
+                  <constraint op="=" value="FlyReg data set">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
           </li>
 
         </ul>

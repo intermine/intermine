@@ -1,13 +1,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<table width="100%">
+  <tr>
+    <td valign="top" rowspan="2">
+      <div class="heading2">
+        Current data
+      </div>
 
-<div class="heading2">
-Current data
-</div>
-
-<div class="body">
+      <div class="body">
 
 
 <h4>
@@ -82,3 +85,32 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
 </div>
 
 </div>
+</td>
+
+
+    <td valign="top">
+      <div class="heading2">
+        Bulk download
+      </div>
+      <div class="body">
+          
+          <ul>
+            <li>
+             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> Genome 2.0 Array " skipBuilder="true">
+              <query name="" model="genomic" view="ProbeSet.identifier ProbeSet.length ProbeSet.isControl">
+               </query>
+             </im:querylink>
+            </li>
+
+            <li>
+             <im:querylink text="All FlyAtlas results for <i>D. melanogaster genes</i> " skipBuilder="true">
+             <query name="" model="genomic" view="FlyAtlasResult.genes.identifier FlyAtlasResult.material.identifier FlyAtlasResult.MRNASignal FlyAtlasResult.MRNASignalSEM FlyAtlasResult.enrichment FlyAtlasResult.presentCall FlyAtlasResult.affyCall FlyAtlasResult.assays.name">
+             </query>
+             </im:querylink>
+            </li>
+
+          </ul>
+        </div>
+      </td>
+    </tr>
+</table>
