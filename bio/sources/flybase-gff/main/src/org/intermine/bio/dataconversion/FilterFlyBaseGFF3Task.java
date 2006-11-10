@@ -101,30 +101,10 @@ public class FilterFlyBaseGFF3Task extends Task
 
             String chrId = record.getSequenceID();
 
-            // ignore protein_binding_sites from FlyBase that are also in FlyReg - get them from
-            // FlyReg instead
-            if (record.getType().equals("protein_binding_site")) {
-                if (record.getDbxrefs() != null) {
-                    Iterator dbxrefIter = record.getDbxrefs().iterator();
-                    while (dbxrefIter.hasNext()) {
-                        String dbxref = (String) dbxrefIter.next();
-                        if (dbxref.startsWith("FlyReg")) {
-                            continue RECORD;
-                        }
-                    }
-                }
-            }
-
             // ignore features with unusual sources
             if (file.getName().startsWith("dmel-") && record.getSource() != null
                 && !record.getSource().equals("FlyBase")) {
                 continue;
-            }
-
-            // protein_binding_site is incorrect - all FlyBase protein_binding_sites are acutally
-            // transcription factor binding sites
-            if (record.getType().equals("protein_binding_site")) {
-                record.setType("TF_binding_site");
             }
 
             if (record.getSource() != null && record.getSource().startsWith("blast")) {
