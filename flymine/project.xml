@@ -120,7 +120,7 @@
     <source name="ensembl-anopheles" type="ensembl">
       <property name="organism" value="AGP"/>
     </source>
-    <source name="ensembl-apis" type="ensembl">
+    <source name="ensembl-apis-mellifera" type="ensembl">
       <property name="organism" value="AM"/>
     </source>
     <source name="mage" type="mage" dump="true">
