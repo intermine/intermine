@@ -894,8 +894,8 @@
         </node>
       </query>
     </template>
-    <template name="Object_Synonym" description="Find an entry in the database using any identifier or synonym." important="false" keywords="Genomics">
-      <query name="Object_Synonym" model="genomic" view="Synonym.subject">
+    <template name="A_IdentifierSynonym_Object" description="Find an entry in the database using any identifier or synonym." important="false" keywords="Genomics">
+      <query name="A_IdentifierSynonym_Object" model="genomic" view="Synonym.subject">
         <node path="Synonym" type="Synonym">
         </node>
         <node path="Synonym.value" type="String">
@@ -1324,7 +1324,6 @@
     <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.Deletion" type="class" />
     <tag name="aspect:DrosDel" objectIdentifier="org.flymine.model.genomic.TransposableElementInsertionSite" type="class" />
-    <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.RNAiExperiment" type="class" />
     <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Phenotype" type="class" />
     <tag name="aspect:RNAi" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
     <tag name="aspect:Disease" objectIdentifier="org.flymine.model.genomic.Disease" type="class" />
