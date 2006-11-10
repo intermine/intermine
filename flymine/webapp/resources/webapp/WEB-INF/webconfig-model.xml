@@ -123,15 +123,14 @@
       <fieldconfig fieldExpr="organismDbId"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
-      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="organism.name" />
       <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
                    showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/synonymDisplayer.jsp"/>
+      <displayer src="/model/synonymDisplayer.jsp" />
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
@@ -182,6 +181,7 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
       <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
