@@ -118,6 +118,10 @@ public abstract class InterMineBag extends AbstractSet
         return size();
     }
 
+    /**
+     * Get the real set of Bag Elements
+     * @return a LinkedHashSet containing the bag elements
+     */
     protected synchronized LinkedHashSet getRealSet() {
         if (set != null) {
             return set;
@@ -155,6 +159,10 @@ public abstract class InterMineBag extends AbstractSet
         }
     }
 
+    /**
+     * Get the real set for writting to it (add, remove, clear)
+     * @return a LinkedHasSet
+     */
     private synchronized LinkedHashSet getRealSetForWrite() {
         if (set == null) {
             set = getRealSet();
@@ -162,10 +170,17 @@ public abstract class InterMineBag extends AbstractSet
         return set;
     }
 
+    /**
+     * Tells if the bag needs to written to the database
+     * @return a boolean
+     */
     public synchronized boolean needsWrite() {
         return set != null;
     }
 
+    /**
+     * Resets to the database
+     */
     public synchronized void resetToDatabase() {
         setReference = new SoftReference(set);
         size = set.size();

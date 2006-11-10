@@ -169,10 +169,11 @@ public class FieldConfig
      * @see java.lang.String#toString
      */
     public String toString() {
-        return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer + "\" doNotTruncate=\"" + doNotTruncate
-               + "\" showInSummary=\"" + showInSummary + "\" showInInlineCollection=\"" 
-               + showInInlineCollection + "\" showInResults=\"" + showInResults
-            + "\"" + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
+        return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer
+               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary
+               + "\" showInInlineCollection=\"" + showInInlineCollection + "\" showInResults=\""
+               + showInResults + "\""
+               + (fieldExporter == null ? "" : " fieldExporter=" + fieldExporter) + "/>";
     }
 
     /**
@@ -227,11 +228,22 @@ public class FieldConfig
         this.sectionTitle = sectionTitle;
     }
 
-	public String getDisplayer() {
-		return displayer;
-	}
+    /**
+     * Get the displayer for that field
+     * 
+     * @return the path to the jsp displayer
+     */
+    public String getDisplayer() {
+        return displayer;
+    }
 
-	public void setDisplayer(String displayer) {
-		this.displayer = displayer;
-	}
+    /**
+     * Set the displayer
+     * 
+     * @param displayer
+     *            the path to the jsp displayer
+     */
+    public void setDisplayer(String displayer) {
+        this.displayer = displayer;
+    }
 }
