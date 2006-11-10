@@ -123,6 +123,9 @@
     <source name="ensembl-apis" type="ensembl">
       <property name="organism" value="AM"/>
     </source>
+    <source name="mage" type="mage" dump="true">
+      <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
+    </source>
     <source name="name-and-wildtypefunction" type="tab-separated-file" dump="true">
       <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
       <property name="tsv.includes" value="flyBaseFullNameWT.txt"/>
@@ -225,16 +228,16 @@
     <post-process name="calculate-locations"/>
     <post-process name="create-references" dump="true"/>
     <post-process name="link-related-proteins-and-interactions"/>
-    <post-process name="create-intergenic-region-features"/>
     <post-process name="update-orthologues"/>
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences" dump="true"/>
     <post-process name="create-overlap-relations-flymine"/>
-    <post-process name="create-intron-features"/>
     <post-process name="do-sources"/>
 
     <post-process name="set-collection-counts" dump="true"/>
+    <post-process name="create-intron-features"/>
 
     <!-- grant-db-production/
     TODO: Not really post processing but just has to be done sometime...
