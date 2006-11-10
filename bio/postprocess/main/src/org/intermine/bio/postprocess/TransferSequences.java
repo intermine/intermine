@@ -185,6 +185,7 @@ public class TransferSequences
             BufferedReader bufferedReader = new BufferedReader(reader);
             String sequenceString = bufferedReader.readLine();
             osw.beginTransaction();
+            LOG.info("Storing sequence for chromosome: " + chr.getIdentifier());
             storeNewSequence(chr, sequenceString);
             osw.commitTransaction();
         }
@@ -262,7 +263,7 @@ public class TransferSequences
 
             if (feature instanceof Gene) {
                 Gene gene = (Gene) feature;
-                if (gene.getLength().intValue() > 2000000) {
+                if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
                     LOG.error("gene too long in transferToLocatedSequenceFeatures() ignoring: "
                               + gene);
                     continue;
