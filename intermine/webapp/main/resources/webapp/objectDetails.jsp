@@ -129,7 +129,21 @@ Event.observe(window, 'load', loadInlineTemplates, false);
 
             <%-- Show the summary fields as configured in webconfig.xml --%>
             <c:forEach items="${object.fieldExprs}" var="expr">
-              <c:if test="${object.fieldConfigMap[expr].showInSummary}">
+              <c:choose>
+              <c:when test="${object.fieldConfigMap[expr].showInSummary && ! empty object.fieldConfigMap[expr].displayer}">
+              <tr>
+                <td nowrap>
+                    <b><span class="attributeField">${expr}</span></b>
+                </td>
+                <td nowrap>
+                  <tiles:insert page="${object.fieldConfigMap[expr].displayer}">
+                    <tiles:put name="object" beanName="object"/>
+                    <tiles:put name="expr" value="${expr}" />
+                  </tiles:insert>
+              	</td>
+              </tr>
+              </c:when>
+              <c:when test="${object.fieldConfigMap[expr].showInSummary}">
                 <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
                 <tr>
                   <td nowrap>
@@ -149,7 +163,8 @@ Event.observe(window, 'load', loadInlineTemplates, false);
                     </c:choose>
                   </td>
                 </tr>
-              </c:if>
+              </c:when>
+              </c:choose>
             </c:forEach>
 
             <%-- Show all other fields --%>
@@ -200,7 +215,6 @@ Event.observe(window, 'load', loadInlineTemplates, false);
           <%-- Show the *table* displayers for this object type --%>
           <c:forEach items="${LEAF_DESCRIPTORS_MAP[object.object]}" var="cld2">
             <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
-              <c:set var="cld2" value="${cld2}" scope="request"/>
               <p><tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/></p>
             </c:if>
           </c:forEach>
