@@ -75,6 +75,8 @@ public class WebConfig
         
         digester.addObjectCreate("webconfig/class/fields/fieldconfig", FieldConfig.class);
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
+        digester.addSetProperties("webconfig/class/fields/fieldconfig", "name", "name");
+        digester.addSetProperties("webconfig/class/fields/fieldconfig", "displayer", "displayer");
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
 
         digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
