@@ -133,7 +133,7 @@
           </li>
 
           <li>
-            <im:querylink text="All <i>Anopheles Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
+            <im:querylink text="All <i>Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>

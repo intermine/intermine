@@ -362,6 +362,51 @@
 
         </ul>
 
+
+
+
+       <ul>
+          <li>
+            <im:querylink text="All <i>C. cerevisiae</i> protein interactions " skipBuilder="true">
+<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
+  <node path="ProteinInteraction" type="ProteinInteraction">
+  </node>
+  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
+  </node>
+  <node path="ProteinInteraction.interactors.role" type="String">
+    <constraint op="=" value="bait" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
+  </node>
+  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
+  </node>
+  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
+    <constraint op="=" value="prey" description="" identifier="" code="B">
+    </constraint>
+  </node>
+  <node path="ProteinInteraction.interactors.interaction.interactors.protein" type="Protein">
+  </node>
+  <node path="ProteinInteraction.interactors.interaction.interactors.protein.organism" type="Organism">
+    <constraint op="=" value="ProteinInteraction.interactors.protein.organism" code="D">
+    </constraint>
+  </node>
+  <node path="ProteinInteraction.interactors.protein" type="Protein">
+  </node>
+  <node path="ProteinInteraction.interactors.protein.organism" type="Organism">
+  </node>
+  <node path="ProteinInteraction.interactors.protein.organism.shortName" type="String">
+    <constraint op="=" value="C. cerevisiae" description="" identifier="" code="C">
+    </constraint>
+  </node>
+  <node path="ProteinInteraction.evidence" type="AnalysisResult">
+  </node>
+</query>
+            </im:querylink>
+          </li>
+
+
+
       </div>
     </td>
   </tr>
