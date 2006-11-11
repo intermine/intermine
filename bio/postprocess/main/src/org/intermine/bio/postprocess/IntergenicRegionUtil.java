@@ -88,7 +88,7 @@ public class IntergenicRegionUtil
         Integer previousChrId = null;
         Set locationSet = new HashSet();
         Map locToGeneMap = new HashMap();
-    
+
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
@@ -104,7 +104,7 @@ public class IntergenicRegionUtil
             }
 
             addToLocToGeneMap(locToGeneMap, loc, gene);
-        
+
             locationSet.add(loc);
             previousChrId = chrId;
         }
@@ -122,7 +122,7 @@ public class IntergenicRegionUtil
     /**
      * Add a value to a Map from keys to List of values, creating the value list as needed.
      * @param map the Map
-     * @param key the key 
+     * @param key the key
      * @param value the value
      */
     protected static void addToListMap(Map map, Object key, Object value) {
@@ -133,7 +133,7 @@ public class IntergenicRegionUtil
         }
         valuesList.add(value);
     }
-    
+
     private void addToLocToGeneMap(Map locToGeneMap, Location loc, Gene gene) {
         addToListMap(locToGeneMap, loc.getStart(), gene);
         addToListMap(locToGeneMap, loc.getEnd(), gene);
@@ -173,6 +173,11 @@ public class IntergenicRegionUtil
                                                       Integer chrId)
         throws ObjectStoreException {
         final Chromosome chr = (Chromosome) os.getObjectById(chrId);
+
+        // do nothing if chromosome has no length set
+        if (chr.getLength() == null) {
+            return new HashSet().iterator();
+        }
         final BitSet bs = new BitSet(chr.getLength().intValue() + 1);
 
         Iterator locationIter = locationSet.iterator();
@@ -256,7 +261,7 @@ public class IntergenicRegionUtil
                 List nextGenes = (List) locToGeneMap.get(new Integer(newLocEnd + 1));
                 if (nextGenes != null) {
                     Iterator nextGenesIter = nextGenes.iterator();
-                
+
                     while (nextGenesIter.hasNext()) {
                         Gene nextGene = (Gene) nextGenesIter.next();
                         Integer strand = nextGene.getChromosomeLocation().getStrand();
@@ -274,7 +279,7 @@ public class IntergenicRegionUtil
                 List prevGenes = (List) locToGeneMap.get(new Integer(newLocStart - 1));
                 if (prevGenes != null) {
                     Iterator prevGenesIter = prevGenes.iterator();
-                
+
                     while (prevGenesIter.hasNext()) {
                         Gene prevGene = (Gene) prevGenesIter.next();
                         Integer strand = prevGene.getChromosomeLocation().getStrand();
