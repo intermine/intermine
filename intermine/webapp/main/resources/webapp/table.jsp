@@ -161,7 +161,6 @@
     <c:when test="${column.visible}">
     		<c:if test="${dataType == 'primitive'}">
             <th align="center" class="checkbox">
-            ${dataType}
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
                              onclick="selectColumnCheckbox(${status.index}, '${dataType}')"
                              disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
