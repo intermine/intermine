@@ -15,21 +15,21 @@
     <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="Swiss-Prot data set"/>
         <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
-        <attribute name="version" value="48.8"/>
+        <attribute name="version" value="UniProt 8.9"/>
         <attribute name="url" value="http://ca.expasy.org/sprot"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="12" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="TrEMBL data set"/>
         <attribute name="description" value="Translated CDSs from the EMBL database"/>
-        <attribute name="version" value="31.8"/>
+        <attribute name="version" value="UniProt 8.9"/>
         <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="UniProt data set"/>
         <attribute name="description" value="UniProt Knowledgebase"/>
-        <attribute name="version" value="7.5"/>
+        <attribute name="version" value="8.9"/>
         <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
@@ -43,7 +43,7 @@
     <item id="21" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
         <attribute name="description" value="The FlyBase Drosophila melanogaster genome data set"/>
-        <attribute name="version" value="4.2.1"/>
+        <attribute name="version" value="4.3"/>
         <attribute name="url" value="http://www.flybase.org"/>
         <reference name="dataSource" ref_id="20"/>
     </item>
@@ -77,35 +77,6 @@
             value="The database of the genetics, genomics and biology of Caenorhabditis elegans"/>
         <attribute name="url" value="http://www.wormbase.org"/>
     </item>
-    <item id="41" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="WormBase Caenorhabditis elegans data set"/>
-        <attribute name="description" value="The C. elegans genome data set"/>
-        <attribute name="version" value="?????"/>
-        <attribute name="url" value="http://www.wormbase.org"/>
-        <reference name="dataSource" ref_id="40"/>
-    </item>
-    <item id="42" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Fraser RNAi data set"/>
-        <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Fraser et al Nature 408:325-330 (2000)"/>
-        <attribute name="version" value="2000"/>
-        <attribute name="url" value="http://www.wormbase.org"/>
-        <reference name="dataSource" ref_id="40"/>
-    </item>
-    <item id="43" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Kamath RNAi data set"/>
-        <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Kamath et al. Nature 421:231-237 (2003)"/>
-        <attribute name="version" value="?????"/>
-        <attribute name="url" value="http://www.wormbase.org"/>
-        <reference name="dataSource" ref_id="40"/>
-    </item>
-    <item id="44" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-        <attribute name="title" value="Simmer RNAi data set"/>
-        <attribute name="description" value="The Caenorhabditis elegans RNAi data set from Simmer et al., PLoS Biol. 1(1):077-084 (2003)"/>
-        <attribute name="version" value="2003"/>
-        <attribute name="url" value="http://www.wormbase.org"/>
-        <reference name="dataSource" ref_id="40"/>
-    </item>
-
     <item id="50" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="MGI"/>
         <attribute name="description" value="Mouse Genome Database Project"/>
@@ -214,7 +185,6 @@
         <attribute name="title" value="Mizuguchi protein structure predictions"/>
         <attribute name="description"
             value="Prediction of structure and function for the Drosophila genome sequences"/>
-        <attribute name="version" value="???"/>
         <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/research.htm"/>
         <reference name="dataSource" ref_id="150"/>
     </item>
@@ -261,7 +231,7 @@
         <attribute name="title" value="Ensembl Anopheles"/>
         <attribute name="description"
             value="The Ensembl Anopheles gambiae genome annotation"/>
-        <attribute name="version" value="37.3"/>
+        <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
@@ -269,7 +239,7 @@
         <attribute name="title" value="Ensembl Apis"/>
         <attribute name="description"
             value="The Ensembl Apis mellifera genome annotation"/>
-        <attribute name="version" value="37.2d"/>
+        <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://www.ensembl.org/Apis_mellifera"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
@@ -339,6 +309,14 @@
         <attribute name="description" value="Rat Genome Database"/>
         <attribute name="url" value="http://rgd.mcw.edu/"/>
     </item>
+
+    <item id="330" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="FlyAtlas"/>
+        <attribute name="description"
+            value="FlyAtlas: Gene expression in the adult fly."/>
+        <attribute name="url" value="http://www.flyatlas.org"/>
+    </item>
+
 
 
 </items>
