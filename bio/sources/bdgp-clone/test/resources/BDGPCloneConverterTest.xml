@@ -4,7 +4,7 @@
     <attribute name="title" value="BDGP cDNA clone data set"/>
   </item>
   <item id="-1_3" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="abbreviation" value="DM"/>
+    <attribute name="taxonId" value="7227"/>
   </item>
   <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="BDGP"/>

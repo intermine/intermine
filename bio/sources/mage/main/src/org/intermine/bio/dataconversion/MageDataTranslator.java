@@ -1589,7 +1589,13 @@ public class MageDataTranslator extends DataTranslator
          Item organism = new Item();
          if (!organismMap.containsKey(value)) {
              organism = createItem(tgtNs + className, implementation);
-             organism.setAttribute("name", value);
+             String taxonId = null;
+             if (value.equals("Drosophila melanogaster")) {
+                 taxonId = "7227";
+             } else {
+                 throw new RuntimeException("No taxon id known for organism: " + value);
+             }
+             organism.setAttribute("taxonId", taxonId);
              organismMap.put(value, organism);
          } else {
              organism = (Item) organismMap.get(value);
