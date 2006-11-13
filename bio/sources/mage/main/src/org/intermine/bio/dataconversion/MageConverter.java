@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -106,6 +107,7 @@ public class MageConverter extends FileConverter
         this.itemFactory = new ItemFactory(Model.getInstanceByName("mage"));
     }
 
+
     /**
      * @see FileConverter#process
      */
@@ -114,6 +116,11 @@ public class MageConverter extends FileConverter
         time = System.currentTimeMillis();
         start = time;
 
+        String fileName = getCurrentFile().getPath();
+        System.err.println("fileName: " + fileName);
+        if (!fileName.endsWith(".xml")) {
+            return;
+        }
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());
@@ -373,13 +380,17 @@ public class MageConverter extends FileConverter
                                       .getFilenameURI();
             System.err .println("Reading data from: " + fileName);
             boolean emptyFile = false;
-            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-            if (is.available() == 0) {
-                emptyFile = true;
-                LOG.warn("Ignoring empty data file: " + fileName);
-            }
+            String dataFile = getCurrentFile().getParent() + "/" + fileName;
+            System.out.println("data file: " + dataFile);
+            FileReader fr = new FileReader(new File(dataFile));
+            BufferedReader br = new BufferedReader(fr);
+//             InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
+//             if (is.available() == 0) {
+//                 emptyFile = true;
+//                 LOG.warn("Ignoring empty data file: " + fileName);
+//             }
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             int cubeOrder = order.getValue();
 
             switch (cubeOrder) {

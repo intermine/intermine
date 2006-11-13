@@ -1,4 +1,4 @@
-package org.flymine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -41,7 +41,7 @@ public class BDGPCloneConverterTest extends TestCase
         converter.process(new StringReader(input));
         converter.close();
 
-        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/BDGPCloneConverterTest.xml")));
+        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("BDGPCloneConverterTest.xml")));
         assertEquals(expected, itemWriter.getItems());
     }
 }

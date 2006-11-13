@@ -21,7 +21,7 @@
     <merge-additions file="bio/sources/flybase-gff/flybase-gff_additions.xml"/>
     <merge-additions file="bio/sources/homophila/homophila_additions.xml"/>
     <merge-additions file="bio/sources/interpro/interpro_additions.xml"/>
-    <merge-additions file="bio/sources/cdnaclone/cdnaclone_additions.xml"/>
+    <merge-additions file="bio/sources/bdgp-clone/bdgp-clone_additions.xml"/>
     <merge-additions file="bio/sources/drosdel/drosdel_additions.xml"/>
     <merge-additions file="bio/sources/mage/mage_additions.xml"/>
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
