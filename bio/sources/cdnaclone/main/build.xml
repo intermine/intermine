@@ -1,4 +1,0 @@
-<project name="cdnaclone-tasks" default="default" basedir=".">
-  <description>build cdnaclone tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
