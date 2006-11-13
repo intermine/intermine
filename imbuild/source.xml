@@ -159,8 +159,7 @@
   <target name="-retrieve-src-from-custom-file" if="have.file.custom.src">
     <convert-file clsName="${convertor.class}"
                   osName="osw.${common.os.prefix}-src-items"
-                  model="${target.model}"
-                  dynamicAttrs="${dynamicAttrs}">
+                  model="${target.model}">
       <fileset dir="${src.data.dir}"/>
     </convert-file>
   </target>
