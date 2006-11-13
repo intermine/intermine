@@ -53,7 +53,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
         writer.store(ItemHelper.convert(dataSet));
 
         organism = createItem("Organism");
-        organism.setAttribute("abbreviation", "DM");
+        organism.setAttribute("taxonId", "7227");
         writer.store(ItemHelper.convert(organism));
     }
 
