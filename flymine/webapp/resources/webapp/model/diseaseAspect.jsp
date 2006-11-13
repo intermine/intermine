@@ -54,9 +54,9 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All disease matches from the Homophila data set" 
+            <im:querylink text="All diseases from the Homophila data set" 
                           skipBuilder="true">
-              <query name="" model="genomic" view="Disease">
+              <query name="" model="genomic" view="Disease.omimId Disease.description">
               </query>
             </im:querylink>
           </li>
