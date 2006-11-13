@@ -159,13 +159,16 @@
           
 <c:choose>
     <c:when test="${column.visible}">
+    		<c:if test="${dataType == 'primitive'}">
             <th align="center" class="checkbox">
+            ${dataType}
               <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
                              onclick="selectColumnCheckbox(${status.index}, '${dataType}')"
                              disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
                 <c:out value="${status.index}"/>
               </html:multibox>
             </th>
+            </c:if>
 
             <th align="center" valign="top" >
 
@@ -286,13 +289,15 @@
                 <c:choose>
                   <c:when test="${column.visible}">
                     <%-- the checkbox to select this object --%>
-                    <td align="center" class="checkbox">
+                    <c:if test="${dataType == 'primitive'}">
+                    <td align="center" class="checkbox">                
                       <html:multibox property="selectedObjects"
                                      styleId="selectedObjects_${status2.index}${dataType}_${status.index}"
                                      onclick="itemChecked(${status2.index}, '${dataType}')">
                         <c:out value="${status2.index},${status.index}"/>
                       </html:multibox>
                     </td>
+                    </c:if>
                     <td>
                       <c:set var="object" value="${row[column.index]}" scope="request"/>
                       <c:choose>
