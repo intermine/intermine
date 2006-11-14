@@ -69,7 +69,7 @@ public class ProfileManager
     protected InterMineBagBinding bagBinding = new InterMineBagBinding();
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
-
+    private Map tagCheckers = null;
     private Map tagCache = null;
 
     /**
@@ -79,7 +79,7 @@ public class ProfileManager
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
-        makeTagCheckers(os.getModel());
+        tagCheckers = makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
     }
 
@@ -603,8 +603,6 @@ public class ProfileManager
         return tagCache;
     }
 
-    private final Map tagCheckers = new HashMap();
-
     /**
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
@@ -654,7 +652,8 @@ public class ProfileManager
         }
     }
 
-    private void makeTagCheckers(final Model model) {
+    protected Map makeTagCheckers(final Model model) {
+        Map tagCheckers = new HashMap();
         TagChecker fieldChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
                          UserProfile userProfile) {
@@ -715,6 +714,7 @@ public class ProfileManager
             }
         };
         tagCheckers.put("class", classChecker);
+        return tagCheckers;
     }
 }
 
