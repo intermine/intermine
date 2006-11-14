@@ -106,17 +106,19 @@ public class TemplateListHelper
         }
         
         
+      TEMPLATE:
         for (Iterator iter = all.iterator(); iter.hasNext(); ) {
             TemplateQuery template = (TemplateQuery) iter.next();
             List constraints = template.getAllConstraints();
             Model model = os.getModel();
             Iterator constraintIter = constraints.iterator();
+            List fieldExprs = new ArrayList();
             while (constraintIter.hasNext()) {
                 Constraint c = (Constraint) constraintIter.next();
 
                 String constraintIdentifier = c.getIdentifier();
                 String[] bits = constraintIdentifier.split("\\.");
-                
+ 
                 if (bits.length == 2) {
                     String className = model.getPackageName() + "." + bits[0];
                     String fieldName = bits[1];
@@ -127,18 +129,19 @@ public class TemplateListHelper
                             && model.getClassDescriptorByName(className)
                                 .getFieldDescriptorByName(fieldName) != null) {
                             templates.add(template);
-                            
-                            List fieldExprs = (List) fieldExprsOut.get(template);
-                            if (fieldExprs == null) {
-                                fieldExprs = new ArrayList();
-                                fieldExprsOut.put(template, fieldExprs);
-                            }
                             fieldExprs.add(fieldExpr);
                         }
                     } catch (ClassNotFoundException err) {
                         LOG.error(err);
                     }
+                } else {
+                    // we can't handle anything like "Department.company.name" yet so ignore this
+                    // template
+                    break TEMPLATE;
                 }
+            }
+            if (fieldExprs.size() > 0) {
+                fieldExprsOut.put(template, fieldExprs);
             }
         }
         
