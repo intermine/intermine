@@ -255,4 +255,12 @@ public abstract class InterMineBag extends AbstractSet
             iter.remove();
         }
     }
+    
+    /**
+     * Set the userId for this bag
+     * @param userId the userId from the profile as an Integer
+     */
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 }

@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,19 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
-
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -45,6 +36,18 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.InterMineBag;
@@ -52,12 +55,6 @@ import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
 import org.intermine.web.tagging.TagTypes;
-
-import java.io.StringReader;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -313,10 +310,12 @@ public class ProfileManager
                     osw.delete((InterMineObject) i.next());
                 }
             } else {
-                userProfile = new UserProfile();
-                userProfile.setUsername(profile.getUsername());
-                userProfile.setPassword(profile.getPassword());
-                userProfile.setId(userId);
+                // Should not happen
+                throw new RuntimeException("The UserProfile is null");
+//                userProfile = new UserProfile();
+//                userProfile.setUsername(profile.getUsername());
+//                userProfile.setPassword(profile.getPassword());
+//                userProfile.setId(userId);
             }
 
             for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {

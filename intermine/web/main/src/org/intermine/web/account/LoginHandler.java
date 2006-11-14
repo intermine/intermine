@@ -94,6 +94,8 @@ public abstract class LoginHandler extends InterMineAction
         for (Iterator iter = mergeBags.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
+            // Make sure the userId gets set to be the profile one
+            bag.setUserId(profile.getUserId());
             String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
                     .keySet());
             profile.saveBag(name, bag);
