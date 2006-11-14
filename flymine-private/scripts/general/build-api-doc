@@ -1,5 +1,8 @@
 #!/bin/sh
 
+export INIT=/software/noarch/local/init
+. $INIT/bash/common.bashrc
+
 cd ~/svn/trunk
 svn up
 cd imbuild/javadoc
