@@ -885,16 +885,6 @@ public class CreateReferences
 
         }
 
-        LOG.debug("Setting values for protein.proteinInteractions");
-        for (Iterator p2iIt = proteinToInteractionsMap.keySet().iterator(); p2iIt.hasNext();) {
-            Protein nextProtein = (Protein) p2iIt.next();
-            Set nextInteractionSet = (Set) proteinToInteractionsMap.get(nextProtein);
-            nextProtein.setProteinInteractions(nextInteractionSet);
-            //Don't store the proteins here as we still have work to do on them
-            LOG.debug("PROTEIN:" + nextProtein.getPrimaryAccession()
-                    + " HAS THIS MANY INTERACTIONS:" + nextInteractionSet.size());
-        }
-
         LOG.debug("Setting values for protein.interactingProteins");
         for (Iterator p2iIt2 = proteinToInteractionsMap.keySet().iterator(); p2iIt2.hasNext();) {
             Protein nextProtein = (Protein) p2iIt2.next();
