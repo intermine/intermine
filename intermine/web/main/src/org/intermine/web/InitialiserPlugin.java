@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,6 +31,7 @@ import javax.servlet.ServletException;
 import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -97,7 +99,7 @@ public class InitialiserPlugin implements PlugIn
         loadClassDescriptions(servletContext, os);
         
         summarizeObjectStore(servletContext, os);
-        createProfileManager(servletContext, os);
+        ProfileManager pm = createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
         servletContext.setAttribute(Constants.TEMPLATE_REPOSITORY,
@@ -106,6 +108,8 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
         makeCache(servletContext, os);
+        
+        cleanTags(pm);
     }
 
     /**
@@ -358,8 +362,9 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Create the profile manager and place it into to the servlet context.
+     * @return 
      */
-    private void createProfileManager(ServletContext servletContext, ObjectStore os)
+    private ProfileManager createProfileManager(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         try {
             Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
@@ -372,6 +377,7 @@ public class InitialiserPlugin implements PlugIn
                     + "userprofile database is available", e);
         }
         servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
+        return profileManager;
     }
 
     /**
@@ -382,6 +388,32 @@ public class InitialiserPlugin implements PlugIn
             profileManager.close();
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Remove class tags from the user profile that refer to classes that non longer exist
+     * @param pm the ProfileManager to alter
+     */
+    protected static void cleanTags(ProfileManager pm) {
+        List classTags = pm.getTags(null, null, "class", null);
+        List tagsToDelete = new ArrayList();
+        
+        Iterator iter = classTags.iterator();
+        while (iter.hasNext()) {
+            Tag tag = (Tag) iter.next();
+            // check that class exists
+            try {
+                Class.forName(tag.getObjectIdentifier());
+            } catch (ClassNotFoundException e) {
+                tagsToDelete.add(tag);
+            }
+        }
+        
+        iter = tagsToDelete.iterator();
+        while (iter.hasNext()) {
+            Tag tag = (Tag) iter.next();
+            pm.deleteTag(tag);
         }
     }
     
