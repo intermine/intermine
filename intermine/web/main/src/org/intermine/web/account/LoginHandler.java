@@ -22,12 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.InterMineException;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 
 /**
@@ -98,7 +100,14 @@ public abstract class LoginHandler extends InterMineAction
             bag.setUserId(profile.getUserId());
             String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
                     .keySet());
-            profile.saveBag(name, bag);
+            try {
+                int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
+                                              "max.bag.size.notloggedin",
+                                              Constants.MAX_NOT_LOGGED_BAG_SIZE);
+                profile.saveBag(name, bag, maxNotLoggedSize);
+            } catch (InterMineException iex) {
+                throw new RuntimeException(iex.getMessage());
+            }
         }
 
         SessionMethods.setLoggedInCookie(session, response);

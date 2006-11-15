@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.InterMineException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -270,7 +271,15 @@ public class SaveBagAction extends InterMineAction
 
             return mapping.findForward("results");
         }
-        profile.saveBag(bagName, bag);
+        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
+        try {
+            profile.saveBag(bagName, bag, maxNotLoggedSize);
+        } catch (InterMineException e) {
+            recordError(new ActionMessage(e.getMessage(), String.valueOf(maxNotLoggedSize)),
+                        request);
+            return mapping.findForward("results");
+        }
 
         recordMessage(new ActionMessage("bag.saved", bagName), request);
 

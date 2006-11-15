@@ -15,19 +15,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.intermine.InterMineException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
 import org.intermine.web.bag.InterMinePrimitiveBag;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
 
 /**
  * 
@@ -61,9 +62,17 @@ public class AddToBagAction extends InterMineAction
                 recordError(new ActionMessage("bag.typesDontMatch"), request);
             } else {
                 ((InterMineIdBag) existingBag).add(id);
-                profile.saveBag(bagName, existingBag);
+                try {
+                    int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
+                                                  "max.bag.size.notloggedin",
+                                                  Constants.MAX_NOT_LOGGED_BAG_SIZE);
+                    profile.saveBag(bagName, existingBag, maxNotLoggedSize);
+                } catch (InterMineException e) {
+                    recordError(new ActionMessage(e.getMessage()), request);
+                }
                 SessionMethods.invalidateBagTable(session, bagName);
                 recordMessage(new ActionMessage("bag.addedToBag", bagName), request);
+                return mapping.findForward("objectDetails");
             }
         } else {
             recordError(new ActionMessage("bag.noSuchBag"), request);
