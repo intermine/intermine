@@ -30,6 +30,7 @@ import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateHelper;
 import org.intermine.web.TemplateQuery;
+import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
 
@@ -130,7 +131,10 @@ public class AjaxServices
            InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
            profile.deleteBag(name);
            SessionMethods.invalidateBagTable(session, name);
-           profile.saveBag(newName, bag);
+           int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
+                                          "max.bag.size.notloggedin",
+                                          Constants.MAX_NOT_LOGGED_BAG_SIZE);
+           profile.saveBag(newName, bag, maxNotLoggedSize);
         } else {
             return "Type unknown";
         }

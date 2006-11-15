@@ -213,4 +213,9 @@ public interface Constants
      * display or whether it should forward to project.sitePrefix
      */
     public static final String ARCHIVED = "ARCHIVED";
+    
+    /**
+     * Maximum size a bag should have if the user is not logged in (to save memory)
+     */
+    public static final int MAX_NOT_LOGGED_BAG_SIZE = 100;
 }

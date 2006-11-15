@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.store.Directory;
+import org.intermine.InterMineException;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineIdBag;
@@ -262,10 +264,16 @@ public class Profile
      * Save a bag
      * @param name the bag name
      * @param bag the bag
+     * @param maxNotLoggedSize the maximum bag size allowed when user not logged in
+     * @exception InterMineException thrown when the bag size is to high
      */
-    public void saveBag(String name, InterMineBag bag) {
+    public void saveBag(String name, InterMineBag bag, int maxNotLoggedSize)
+                    throws InterMineException {
+        if (StringUtils.isEmpty(username) && bag.getSize() > maxNotLoggedSize) {
+            throw new InterMineException("bag.bigNotLoggedIn");
+        }
         savedBags.put(name, bag);
-        if (manager != null) {
+        if (manager != null && !StringUtils.isEmpty(username)) {
             manager.saveProfile(this);
         }
     }
@@ -276,7 +284,7 @@ public class Profile
      */
     public void deleteBag(String name) {
         savedBags.remove(name);
-        if (manager != null) {
+        if (manager != null  && !StringUtils.isEmpty(username)) {
             manager.saveProfile(this);
         }
     }

@@ -32,6 +32,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 
+import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -214,7 +215,15 @@ public class BuildBagAction extends InterMineLookupDispatchAction
             bagToSave = identifierBag;
         }
 
-        profile.saveBag(newBagName, bagToSave);
+        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
+        try {
+            profile.saveBag(newBagName, bagToSave, maxNotLoggedSize);
+        } catch (InterMineException e) {
+            recordError(new ActionMessage(e.getMessage(), String.valueOf(maxNotLoggedSize)),
+                        request);
+            return mapping.findForward("buildBag");
+        }
 
         recordMessage(new ActionMessage("bagBuild.saved", newBagName,
                                         new Integer(bagToSave.size())), request);

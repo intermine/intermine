@@ -117,7 +117,9 @@ public class ModifyBagAction extends InterMineAction
             return mapping.findForward("bag");
         }
 
-        profile.saveBag(name, combined);
+        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
+        profile.saveBag(name, combined, maxNotLoggedSize);
 
         return mapping.findForward("bag");
     }
@@ -180,7 +182,9 @@ public class ModifyBagAction extends InterMineAction
         InterMineBag combined =
             new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, intersect);
 
-        profile.saveBag(name, combined);
+        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
+        profile.saveBag(name, combined, maxNotLoggedSize);
 
         return mapping.findForward("bag");
     }
@@ -243,7 +247,10 @@ public class ModifyBagAction extends InterMineAction
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag resultBag =
             new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, subtract);
-        profile.saveBag(name, resultBag);
+        int defaultMaxNotLoggedSize = 3;
+        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                                             defaultMaxNotLoggedSize);
+        profile.saveBag(name, resultBag, maxNotLoggedSize);
 
         return mapping.findForward("bag");
     }

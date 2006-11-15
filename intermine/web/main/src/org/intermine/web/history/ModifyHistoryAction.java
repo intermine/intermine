@@ -20,6 +20,7 @@ import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 
 import org.apache.commons.lang.StringUtils;
@@ -118,7 +119,11 @@ public abstract class ModifyHistoryAction extends InterMineAction
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
             profile.deleteBag(name);
             SessionMethods.invalidateBagTable(session, name);
-            profile.saveBag(newName, bag);
+            int maxNotLoggedSize = WebUtil.getIntSessionProperty(
+                                          session,
+                                          "max.bag.size.notloggedin",
+                                          Constants.MAX_NOT_LOGGED_BAG_SIZE);
+            profile.saveBag(newName, bag, maxNotLoggedSize);
         } else {
             LOG.error("Don't understand type parameter: " + type);
         }
