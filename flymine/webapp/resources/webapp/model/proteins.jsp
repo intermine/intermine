@@ -76,7 +76,7 @@
       </div>
     </td>
 
-    <td valign="top">
+    <td width="40%" valign="top">
       <div class="heading2">
         Bulk download <i>Drosophila</i> data
       </div>
@@ -119,19 +119,19 @@
 
           <li>              
               <im:querylink text="<i>D. melanogaster</i> proteins with corresponding protein domains " skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
-                  <node path="ProteinDomain" type="ProteinDomain">
-                  </node>
-                  <node path="ProteinDomain.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Drosophila" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
+               <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
+                <node path="ProteinDomain" type="ProteinDomain">
+                 </node>
+                <node path="ProteinDomain.proteins" type="Protein">
+                 </node>
+                <node path="ProteinDomain.proteins.organism" type="Organism">
+                 </node>
+                <node path="ProteinDomain.proteins.organism.name" type="String">
+                 </node>
+                <node path="ProteinDomain.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Drosophila" description="" identifier="" code="A">
+                  </constraint>
+                 </node>
                 </query>
               </im:querylink>
           </li>
@@ -157,19 +157,19 @@
 
           <li>
               <im:querylink text="<i>D. melanogaster</i> proteins with corresponding protein families " skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
-                  <node path="ProteinFamily" type="ProteinFamily">
-                  </node>
-                  <node path="ProteinFamily.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Drosophila" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
+               <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName">
+                <node path="ProteinFamily" type="ProteinFamily">
+                 </node>
+                <node path="ProteinFamily.proteins" type="Protein">
+                 </node>
+                <node path="ProteinFamily.proteins.organism" type="Organism">
+                 </node>
+                <node path="ProteinFamily.proteins.organism.name" type="String">
+                 </node>
+                <node path="ProteinFamily.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Drosophila" description="" identifier="" code="A">
+                   </constraint>
+                 </node>
                 </query>
               </im:querylink>
           </li>
@@ -178,9 +178,8 @@
     </td>
   </tr>
 
-
   <tr>
-    <td valign="top">
+    <td width="40%" valign="top">
       <div class="heading2">
         Bulk download <i>Anopheles</i> data
       </div>
@@ -222,19 +221,19 @@
 
           <li>
               <im:querylink text="<i>A. gambiae</i> proteins with corresponding protein domains " skipBuilder="true">
-                <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName" constraintLogic="A and B">
-                  <node path="ProteinDomain" type="ProteinDomain">
-                  </node>
-                  <node path="ProteinDomain.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinDomain.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Anopheles" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
+               <query name="" model="genomic" view="ProteinDomain.proteins.name ProteinDomain.proteins.identifier ProteinDomain.identifier ProteinDomain.interproId ProteinDomain.name ProteinDomain.shortName">
+                <node path="ProteinDomain" type="ProteinDomain">
+                 </node>
+                <node path="ProteinDomain.proteins" type="Protein">
+                 </node>
+                <node path="ProteinDomain.proteins.organism" type="Organism">
+                 </node>
+                <node path="ProteinDomain.proteins.organism.name" type="String">
+                 </node>
+                <node path="ProteinDomain.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Anopheles" description="" identifier="" code="A">
+                   </constraint>
+                 </node>
                 </query>
               </im:querylink>
           </li>
@@ -260,20 +259,20 @@
 
           <li>
               <im:querylink text="<i>A. gambiae</i> proteins with corresponding protein families " skipBuilder="true">
-                <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName" constraintLogic="A and B">
-                  <node path="ProteinFamily" type="ProteinFamily">
-                  </node>
-                  <node path="ProteinFamily.proteins" type="Protein">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism" type="Organism">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.name" type="String">
-                  </node>
-                  <node path="ProteinFamily.proteins.organism.genus" type="String">
-                    <constraint op="=" value="Anopheles" description="" identifier="" code="A">
-                    </constraint>
-                  </node>
-                </query>
+               <query name="" model="genomic" view="ProteinFamily.proteins.name ProteinFamily.proteins.identifier ProteinFamily.identifier ProteinFamily.interproId ProteinFamily.name ProteinFamily.shortName">
+                <node path="ProteinFamily" type="ProteinFamily">
+                 </node>
+                <node path="ProteinFamily.proteins" type="Protein">
+                 </node>
+                <node path="ProteinFamily.proteins.organism" type="Organism">
+                 </node>
+                <node path="ProteinFamily.proteins.organism.name" type="String">
+                 </node>
+                <node path="ProteinFamily.proteins.organism.genus" type="String">
+                  <constraint op="=" value="Anopheles" description="" identifier="" code="A">
+                   </constraint>
+                 </node>
+               </query>
               </im:querylink>
           </li>
         </ul>

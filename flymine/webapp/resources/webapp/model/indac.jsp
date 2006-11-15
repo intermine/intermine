@@ -31,23 +31,22 @@
         </p>
       </div>
     </td>
-    <td valign="top" width="40%">
+
+    <<td width="40%" valign="top">
       <div class="heading2">
         Bulk download
       </div>
       <div class="body">
-        <ul>
-           <li>
-            <im:querylink text="All INDAC microarray oligo sequences with their identifier, length and tm (for export in FASTA)" skipBuilder="true">
-             <query name="" model="genomic" view="MicroarrayOligo MicroarrayOligo.identifier MicroarrayOligo.length MicroarrayOligo.tm"/>
-            </im:querylink>
-          </li>         
+         <ul>
+      
           <li>
-            <im:querylink text="All INDAC microarray oligo identifiers and the identifier of the associated transcript " skipBuilder="true">
-              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.tm MicroarrayOligo.transcript.identifier"/>
+            <im:querylink text="All INDAC microarray oligos with their length and tm and the identifier of the associated transcript " skipBuilder="true">
+              <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.length MicroarrayOligo.tm MicroarrayOligo.transcript.identifier">
+              </query>
             </im:querylink>
+
           </li>
-        </ul>
+         </ul>
       </div>
     </td>
   </tr>

@@ -4,8 +4,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <TABLE width="100%">
-  <TR>
-    <TD valign="top">
+  <tr>
+    <td valign="top">
       <div class="heading2">
         Current data
       </div>
@@ -26,15 +26,15 @@
           In addition, orthologues from these five species to several others:
         </p>
         <p>
-          <I>C. familiaris , D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, P. falciparum 3D7, R. norvegicus, S. cerevisiae, S. pombe, T. nigroviridis, T. rubripes</I>
+          <i>C. familiaris , D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, P. falciparum 3D7, R. norvegicus, S. cerevisiae, S. pombe, T. nigroviridis, T. rubripes</I>
         <p>
           <im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
             <query name="" model="genomic" view="Orthologue.object.organism.shortName Orthologue.subject.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
           </im:querylink>
       </div>
-    </TD>
+    </td>
 
-    <TD width="45%" valign="top">
+    <td width="40%" valign="top">
       <div class="heading2">
        Bulk download
       </div>
@@ -196,8 +196,8 @@
 
         </ul>
       </div>
-    </TD>
-  </TR>
+    </td>
+  </tr>
 </TABLE>
  
 
