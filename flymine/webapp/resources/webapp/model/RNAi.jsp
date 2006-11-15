@@ -166,7 +166,7 @@
       </div>
 </div>
 
-    <td valign="top">
+   <td width="40%" valign="top">
       <div class="heading2">
         Bulk download
       </div>
@@ -190,7 +190,7 @@
                </node>
               </query>
               </im:querylink>
-            </li> 
+            </li>
 
             <li>
               <im:querylink text="All <i>C. elegans</i> RNAi data " skipBuilder="true">

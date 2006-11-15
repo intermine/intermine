@@ -4,8 +4,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <TABLE width="100%">
-  <TR>
-    <TD valign="top">
+  <tr>
+    <td valign="top">
       <div class="heading2">
         Current data
       </div>
@@ -46,22 +46,8 @@
           Mendelian Inheritance in Man<sup><font size="-2">TM</font></sup></a>
         </p>
       </div>
-    </TD>
-    <TD width="30%" valign="top">
-      <div class="heading2">
-       Bulk download
-      </div>
-      <div class="body">
-        <ul>
-          <li>
-            <im:querylink text="All diseases from the Homophila data set" 
-                          skipBuilder="true">
-              <query name="" model="genomic" view="Disease.omimId Disease.description">
-              </query>
-            </im:querylink>
-          </li>
-        </ul>
-      </div>
-    </TD>
-  </TR>
+    </td>
+
+
+  </tr>
 </TABLE>

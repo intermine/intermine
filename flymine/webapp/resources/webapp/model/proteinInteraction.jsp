@@ -171,8 +171,7 @@
        Bulk download
       </div>
       <div class="body">
-        
-        <ul>
+          <ul>
           <li>
             <im:querylink text="All <i>D. melanogaster</i> protein interactions " skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D and E">
@@ -221,74 +220,6 @@
           </li>
 
           <li>
-            <im:querylink text="Giot et al, 2003 " skipBuilder="true">
-<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and E">
-  <node path="ProteinInteraction" type="ProteinInteraction">
-  </node>
-  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
-  </node>
-  <node path="ProteinInteraction.interactors.role" type="String">
-    <constraint op="=" value="bait" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
-    <constraint op="=" value="prey" description="" identifier="" code="B">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment" type="ProteinInteractionExperiment">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication" type="Publication">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" type="String">
-    <constraint op="=" value="14605208" description="" identifier="" code="E">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.evidence" type="AnalysisResult">
-  </node>
-</query>
-            </im:querylink>
-          </li>
-
-          <li>
-            <im:querylink text="Stanyon et al, 2004 " skipBuilder="true">
-<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and E">
-  <node path="ProteinInteraction" type="ProteinInteraction">
-  </node>
-  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
-  </node>
-  <node path="ProteinInteraction.interactors.role" type="String">
-    <constraint op="=" value="bait" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
-    <constraint op="=" value="prey" description="" identifier="" code="B">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment" type="ProteinInteractionExperiment">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication" type="Publication">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" type="String">
-    <constraint op="=" value="15575970" description="" identifier="" code="E">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.evidence" type="AnalysisResult">
-  </node>
-</query>
-            </im:querylink>
-          </li>
-       </ul>
-
-       <ul>
-          <li>
             <im:querylink text="All <i>C. elegans</i> protein interactions " skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
   <node path="ProteinInteraction" type="ProteinInteraction">
@@ -328,45 +259,6 @@
           </li>
 
           <li>
-            <im:querylink text="Li et al, 2004 " skipBuilder="true">
-<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and E">
-  <node path="ProteinInteraction" type="ProteinInteraction">
-  </node>
-  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
-  </node>
-  <node path="ProteinInteraction.interactors.role" type="String">
-    <constraint op="=" value="bait" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
-    <constraint op="=" value="prey" description="" identifier="" code="B">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment" type="ProteinInteractionExperiment">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication" type="Publication">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" type="String">
-    <constraint op="=" value="14704431" description="" identifier="" code="E">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.evidence" type="AnalysisResult">
-  </node>
-</query>
-            </im:querylink>
-          </li>
-
-        </ul>
-
-
-
-
-       <ul>
-          <li>
             <im:querylink text="All <i>C. cerevisiae</i> protein interactions " skipBuilder="true">
 <query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
   <node path="ProteinInteraction" type="ProteinInteraction">
@@ -404,8 +296,7 @@
 </query>
             </im:querylink>
           </li>
-
-
+         </ul>
 
       </div>
     </td>
