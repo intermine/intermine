@@ -378,19 +378,12 @@ public class MageConverter extends FileConverter
             }
             String fileName = ((BioDataCube) bad.getBioDataValues()).getDataExternal()
                                       .getFilenameURI();
-            System.err .println("Reading data from: " + fileName);
-            boolean emptyFile = false;
+            //            boolean emptyFile = false;
             String dataFile = getCurrentFile().getParent() + "/" + fileName;
-            System.out.println("data file: " + dataFile);
+            System.err .println("Reading data from: " + dataFile);
             FileReader fr = new FileReader(new File(dataFile));
             BufferedReader br = new BufferedReader(fr);
-//             InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-//             if (is.available() == 0) {
-//                 emptyFile = true;
-//                 LOG.warn("Ignoring empty data file: " + fileName);
-//             }
 
-//             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             int cubeOrder = order.getValue();
 
             switch (cubeOrder) {
