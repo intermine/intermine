@@ -125,6 +125,7 @@
     </source>
     <source name="mage" type="mage" dump="true">
       <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
+      <property name="quantitationtypes" value="Signal med ratio"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone" dump="true">
       <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
