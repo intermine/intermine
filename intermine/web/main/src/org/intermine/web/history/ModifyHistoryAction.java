@@ -128,7 +128,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
             LOG.error("Don't understand type parameter: " + type);
         }
 
-        return mapping.findForward("history");
+        return mapping.findForward("mymine");
     }
     
     /**
