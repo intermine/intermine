@@ -96,10 +96,10 @@
                 </c:otherwise>
               </c:choose>
               
-              <td nowrap>
+              <td>
                 ${savedTemplate.value.title}
               </td>
-              <td nowrap>
+              <td>
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">
                     ${fn:substring(savedTemplate.value.description, 0, 60)}...
@@ -109,7 +109,7 @@
                   </c:otherwise>
                 </c:choose>
               </td>
-              <td nowrap>
+              <td>
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.comment) > 60}">
                     ${fn:substring(savedTemplate.value.comment, 0, 60)}...
