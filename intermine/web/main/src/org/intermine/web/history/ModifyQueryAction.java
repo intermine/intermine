@@ -97,7 +97,11 @@ public class ModifyQueryAction extends ModifyHistoryAction
             }
         }
 
-        return mapping.findForward("mymine");
+        if ("history".equals(type)) {
+            return mapping.findForward("history");
+        } else {
+            return mapping.findForward("mymine");
+        }
     }
     
     /**
