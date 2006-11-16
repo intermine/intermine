@@ -35,18 +35,6 @@
           </c:otherwise>
         </c:choose>
       </td>
-      <td width="1%" class="tab ${MYMINE_PAGE=='history'?'selected':'not-selected'}" nowrap="true">
-        <c:choose>
-          <c:when test="${MYMINE_PAGE=='history'}">
-            <fmt:message key="mymine.queryhistory.tab.title"/>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=history">
-              <fmt:message key="mymine.queryhistory.tab.title"/>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-      </td>
       <td width="1%" class="tab ${MYMINE_PAGE=='saved'?'selected':'not-selected'}" nowrap="true">
         <c:choose>
           <c:when test="${!loggedin}">
@@ -129,11 +117,6 @@
     <c:when test="${MYMINE_PAGE=='saved'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
-      </tiles:insert>
-    </c:when>
-    <c:when test="${MYMINE_PAGE=='history'}">
-      <tiles:insert name="historyQueryView.jsp">
-        <tiles:put name="type" value="history"/>
       </tiles:insert>
     </c:when>
     <c:when test="${MYMINE_PAGE=='templates'}">

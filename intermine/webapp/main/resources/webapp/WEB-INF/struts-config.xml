@@ -124,6 +124,9 @@
     
     <action path="/mymine"
             forward="mymine.page"/>
+            
+    <action path="/history"
+            forward="history.page"/>
 
     <action path="/classChooser"
             forward="classChooser.page"/>
@@ -433,6 +436,7 @@
             scope="request"
             input="history">
       <forward name="mymine" path="/mymine.do" redirect="true"/>
+      <forward name="history" path="/history.do" redirect="true"/>
     </action>
     
     <action path="/modifyBag"

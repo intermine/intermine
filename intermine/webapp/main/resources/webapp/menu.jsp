@@ -35,8 +35,8 @@
     <img src="images/inspect.gif" width="12" height="11" alt="-&gt;"/>
   </span>
   <span class="menu-item">
-    <html:link action="/mymine.do?page=bags">
-      <fmt:message key="menu.buildBag"/>
+    <html:link action="/history.do">
+      <fmt:message key="menu.history"/>
     </html:link>
   </span>
   <span class="menu-item">
