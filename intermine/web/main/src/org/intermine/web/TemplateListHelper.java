@@ -137,7 +137,7 @@ public class TemplateListHelper
                 } else {
                     // we can't handle anything like "Department.company.name" yet so ignore this
                     // template
-                    break TEMPLATE;
+                    continue TEMPLATE;
                 }
             }
             if (fieldExprs.size() > 0) {
