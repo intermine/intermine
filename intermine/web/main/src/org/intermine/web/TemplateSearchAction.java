@@ -105,6 +105,7 @@ public class TemplateSearchAction extends InterMineAction
             MultiSearcher searcher = new MultiSearcher(searchables);
             
             Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
+
             Query query;
             try {
                 QueryParser queryParser = new QueryParser("content", analyzer);
@@ -125,7 +126,8 @@ public class TemplateSearchAction extends InterMineAction
             LOG.info("Found " + hits.length() + " document(s) that matched query '"
                     + queryString + "' in " + time + " milliseconds:");
             
-            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
+            QueryScorer scorer = new QueryScorer(query);
+            Highlighter highlighter = new Highlighter(formatter, scorer);
             
             for (int i = 0; i < hits.length(); i++) {
                 TemplateQuery template = null;
@@ -143,10 +145,10 @@ public class TemplateSearchAction extends InterMineAction
                 typeMap.put(template, type);
                 
                 TokenStream tokenStream
-                    = analyzer.tokenStream("", new StringReader(template.getDescription()));
+                    = analyzer.tokenStream("", new StringReader(template.getTitle()));
                 highlighter.setTextFragmenter(new NullFragmenter());
                 highlightedMap.put(template,
-                        highlighter.getBestFragment(tokenStream, template.getDescription()));
+                        highlighter.getBestFragment(tokenStream, template.getTitle()));
             }
             
             request.setAttribute("results", hitMap);

@@ -307,7 +307,7 @@ public class TemplateRepository
             
             Document doc = new Document();
             doc.add(new Field("name", template.getName(), Field.Store.YES, Field.Index.TOKENIZED));
-            doc.add(new Field   ("content", template.getDescription()
+            doc.add(new Field   ("content", template.getTitle() + " : " + template.getDescription()
                                  + " " + template.getKeywords(), Field.Store.NO, 
                                  Field.Index.TOKENIZED));
             doc.add(new Field("type", type, Field.Store.YES, Field.Index.NO));
