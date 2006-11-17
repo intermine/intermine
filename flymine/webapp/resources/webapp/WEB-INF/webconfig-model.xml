@@ -76,23 +76,20 @@
   <class className="org.flymine.model.genomic.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
-    <tabledisplayer src="/model/locatedSequenceFeatureShort.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.Exon">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
@@ -109,9 +106,8 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
@@ -163,7 +159,7 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organism.name"/>
-      <fieldconfig fieldExpr="length"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
@@ -203,9 +199,8 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="exonCount"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
@@ -479,9 +474,8 @@
   <class className="org.flymine.model.genomic.ArtificialDeletion">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="chromosomeLocation.start"/>
-      <fieldconfig fieldExpr="chromosomeLocation.end"/>
-      <fieldconfig fieldExpr="chromosome.identifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="available"/>
     </fields>
 
