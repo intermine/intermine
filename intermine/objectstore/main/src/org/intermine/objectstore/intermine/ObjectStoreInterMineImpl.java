@@ -96,6 +96,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Batch logTableBatch = null;
     protected String logTableName = null;
     protected boolean logEverything = false;
+    protected long statsBagTableTime = 0;
     protected long statsGenTime = 0;
     protected long statsOptTime = 0;
     protected long statsNulTime = 0;
@@ -292,13 +293,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
                 if (loggerAlias != null) {
                     try {
-                        LOG.debug("INTERMINE LOGGER INSTANTIATED FOR OSALIAS:" + loggerAlias);
+                        LOG.debug("Intermine logger instantiated for osalias:" + loggerAlias);
                         os.logger = InterMineLoggerFactory.getInterMineLogger(loggerAlias);
                     } catch (Exception e) {
-                        LOG.debug("INTERMINE LOGGER UNABLE TO BE INSTANTIATED!", e);
+                        LOG.debug("Intermine logger unable to be instantiated!", e);
                     }
                 } else {
-                    LOG.debug("INTERMINE LOGGER ALIAS NOT SET FOR OSALIAS:" + osAlias);
+                    LOG.debug("Intermine logger alias not set for osalias:" + osAlias);
                 }
 
                 if (logfile != null) {
@@ -654,9 +655,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public synchronized void close() throws ObjectStoreException {
         LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequenceNumber
-                + ", time spent: SQL Gen: " + statsGenTime + ", SQL Optimise: " + statsOptTime
-                + ", Nulls: " + statsNulTime + ", Estimate: " + statsEstTime
-                + ", Execute: " + statsExeTime + ", Results Convert: " + statsConTime);
+                + ", time spent: Bag Tables: " + statsBagTableTime + ", SQL Gen: " + statsGenTime
+                + ", SQL Optimise: " + statsOptTime + ", Nulls: " + statsNulTime + ", Estimate: "
+                + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
+                + statsConTime);
         flushLogTable();
         Connection c = null;
         try {
@@ -719,8 +721,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
         checkSequence(sequence, q, "Execute (START " + start + " LIMIT " + limit + ") ");
 
+        long preBagTableTime = System.currentTimeMillis();
+        if (getMinBagTableSize() != -1) {
+            createTempBagTables(c, q);
+            flushOldTempBagTables(c);
+        }
         long preGenTime = System.currentTimeMillis();
-        String sql = generateSql(c, q, start, limit);
+        String sql = SqlGenerator.generate(q, start, limit, schema, db, bagConstraintTables);
         String generatedSql = sql;
         try {
             long estimatedTime = 0;
@@ -811,6 +818,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
                         permittedTime, postConvert - postExecute, q, sql);
             }
+            long bagTableTime = preGenTime - preBagTableTime;
+            statsBagTableTime += bagTableTime;
             long genTime = startOptimiseTime - preGenTime;
             statsGenTime += genTime;
             long optTime = endOptimiseTime - startOptimiseTime;
@@ -827,10 +836,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 LOG.info("(VERBOSE) iql: " + q + "\n"
                          + "generated sql: " + generatedSql + "\n"
                          + "optimised sql: " + sql + "\n"
-                         + "generate: " + genTime + " ms, optimise: " + optTime + " ms, "
-                         + "replace nulls: " + nulTime + " ms,  estimate: " + estTime + " ms, "
-                         + "execute: " + exeTime + " ms, convert results: " + conTime + " ms, "
-                         + "total: " + (postConvert - preGenTime) + " ms");
+                         + "bag tables: " + bagTableTime + "generate: " + genTime
+                         + " ms, optimise: " + optTime + " ms, " + "replace nulls: " + nulTime
+                         + " ms,  estimate: " + estTime + " ms, " + "execute: " + exeTime
+                         + " ms, convert results: " + conTime + " ms, total: "
+                         + (postConvert - preBagTableTime) + " ms");
             }
             QueryOrderable firstOrderBy = null;
             firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
