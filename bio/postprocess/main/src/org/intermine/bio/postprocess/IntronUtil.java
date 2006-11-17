@@ -36,6 +36,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.ProxyReference;
 
 import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.DataSource;
@@ -133,6 +134,8 @@ public class IntronUtil
         Transcript lastTran = null;
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
+
+        osw.beginTransaction();
         while (resultsIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resultsIter.next();
             Transcript thisTran = (Transcript) rr.get(0);
@@ -146,7 +149,7 @@ public class IntronUtil
                 tranCount++;
                 intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
                 exonCount += locationSet.size();
-                if ((tranCount % 100) == 0) {
+                if ((tranCount % 1000) == 0) {
                     LOG.info("Created " + intronCount + " Introns for " + tranCount
                              + " Transcripts with " + exonCount + " Exons.");
                 }
@@ -165,13 +168,18 @@ public class IntronUtil
 
         LOG.info("Read " + tranCount + " transcripts with " + exonCount + " exons.");
 
-        osw.beginTransaction();
+        //osw.beginTransaction();
+        int stored = 0;
         for (Iterator i = intronMap.keySet().iterator(); i.hasNext();) {
             String identifier = (String) i.next();
             Intron intron = (Intron) intronMap.get(identifier);
             osw.store(intron);
-            osw.store(intron.getChromosomeLocation());
-            osw.store((InterMineObject) intron.getSynonyms().iterator().next());
+            //osw.store(intron.getChromosomeLocation());
+            //osw.store((InterMineObject) intron.getSynonyms().iterator().next());
+            stored++;
+            if (stored % 1000 == 0) {
+                LOG.info("Stored " + stored + " introns.");
+            }
         }
 
         if (intronMap.size() > 1) {
@@ -264,9 +272,11 @@ public class IntronUtil
                 synonym.setSubject(intron);
                 synonym.setType("identifier");
                 synonym.setValue(intron.getIdentifier());
+                osw.store(synonym);
 
                 intron.setChromosomeLocation(location);
-                intron.addSynonyms(synonym);
+                osw.store(location);
+
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intron.setLength(new Integer(length));
                 intron.addTranscripts(transcript);
