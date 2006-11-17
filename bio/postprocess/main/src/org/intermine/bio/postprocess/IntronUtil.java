@@ -132,7 +132,7 @@ public class IntronUtil
         Set locationSet = new HashSet();
         Transcript lastTran = null;
         Location lastTranLoc = null;
-        int tranCount = 0, exonCount = 0;
+        int tranCount = 0, exonCount = 0, intronCount = 0;
         while (resultsIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resultsIter.next();
             Transcript thisTran = (Transcript) rr.get(0);
@@ -144,8 +144,12 @@ public class IntronUtil
 
             if (!thisTran.getId().equals(lastTran.getId())) {
                 tranCount++;
-                Set intronSet = createIntronFeatures(locationSet, lastTran, lastTranLoc);
+                intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
                 exonCount += locationSet.size();
+                if ((tranCount % 100) == 0) {
+                    LOG.info("Created " + intronCount + " Introns for " + tranCount
+                             + " Transcripts with " + exonCount + " Exons.");
+                }
                 locationSet = new HashSet();
                 lastTran = thisTran;
                 lastTranLoc = (Location) rr.get(1);
@@ -154,7 +158,7 @@ public class IntronUtil
         }
 
         if (lastTran != null) {
-            Set intronSet = createIntronFeatures(locationSet, lastTran, lastTranLoc);
+            intronCount += createIntronFeatures(locationSet, lastTran, lastTranLoc);
             tranCount++;
             exonCount += locationSet.size();
         }
@@ -174,7 +178,6 @@ public class IntronUtil
             osw.store(dataSet);
         }
         osw.commitTransaction();
-        //osw.abortTransaction();
     }
 
 
@@ -187,13 +190,13 @@ public class IntronUtil
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
-    protected Set createIntronFeatures(Set locationSet, Transcript transcript, Location tranLoc)
+    protected int createIntronFeatures(Set locationSet, Transcript transcript, Location tranLoc)
         throws ObjectStoreException {
         //final BitSet bs = new BitSet(transcript.getLength().intValue() + 1);
         final BitSet bs = new BitSet(transcript.getLength().intValue());
 
         if (locationSet.size() == 1) {
-            return null;
+            return 0;
         }
         Chromosome chr = transcript.getChromosome();
 
@@ -275,59 +278,6 @@ public class IntronUtil
                 intronMap.put(identifier, intron);
             }
         }
-
-        Set intronSet = new HashSet();
-        for (Iterator i = intronMap.keySet().iterator(); i.hasNext(); ) {
-            intronSet.add(intronMap.get(i.next()));
-        }
-        return intronSet;
-    }
-
-    /**
-     * @param os objectStore
-     * @param transcriptId Integer
-     * @return all the exons locationSet for the particular transcriptId
-     */
-    private Set getLocationSet(ObjectStore os, Integer transcriptId) {
-        Set locationSet = new HashSet();
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        Query q = new Query();
-        QueryClass qct = new QueryClass(Transcript.class);
-        QueryField qf = new QueryField(qct, "id");
-        SimpleConstraint sc1 = new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                            new QueryValue(transcriptId));
-
-        q.addFrom(qct);
-        q.addToSelect(qf);
-        q.addToOrderBy(qf);
-        cs.addConstraint(sc1);
-
-        QueryCollectionReference ref1 = new QueryCollectionReference(qct, "exons");
-        QueryClass qce = new QueryClass(Exon.class);
-        q.addFrom(qce);
-        q.addToSelect(qce);
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qce);
-        cs.addConstraint(cc1);
-
-        QueryClass qcl = new QueryClass(Location.class);
-        q.addFrom(qcl);
-        q.addToSelect(qcl);
-        QueryObjectReference ref2 = new QueryObjectReference(qcl, "subject");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qce);
-        cs.addConstraint(cc2);
-
-        q.setConstraint(cs);
-
-        Results res = new Results(q, os, os.getSequence());
-        Iterator iter = res.iterator();
-        while (iter.hasNext()) {
-            ResultsRow rr = (ResultsRow) iter.next();
-            Integer id = (Integer) rr.get(0);
-            Location loc = (Location) rr.get(2);
-            locationSet.add(loc);
-        }
-        return locationSet;
+        return intronCount;
     }
 }
