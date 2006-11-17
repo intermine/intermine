@@ -71,95 +71,97 @@
             </th>
           </tr>
           <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
-            <tr>
-              <td>
-                <html:multibox property="selectedQueries"
-                               styleId="selected_${type}_${status.index}"
-                               onclick="setDeleteDisabledness(this.form, '${type}')">
-                  <c:out value="${savedQuery.key}" escapeXml="false"/>
-                </html:multibox>
-              </td>
-              <c:choose>
-                <c:when test="${!savedQuery.value.pathQuery.valid}">
-                  <td align="left" colspan="2" nowrap>
-                    <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
-                    <strike>${savedQuery.value.name}</strike>
-                    </html:link>
-                  </td>
-                </c:when>
-                <c:otherwise>
-                  <tiles:insert name="historyElementName.jsp">
-                    <tiles:put name="name" value="${savedQuery.key}"/>
-                    <tiles:put name="type" value="${type}"/>
-                  </tiles:insert>
-                </c:otherwise>
-              </c:choose>
-              <td align="center" nowrap>
+            <c:if test="${!empty savedQuery.key && !empty savedQuery.value}">
+              <tr>
+                <td>
+                  <html:multibox property="selectedQueries"
+                                 styleId="selected_${type}_${status.index}"
+                                 onclick="setDeleteDisabledness(this.form, '${type}')">
+                    <c:out value="${savedQuery.key}" escapeXml="false"/>
+                  </html:multibox>
+                </td>
                 <c:choose>
-                  <c:when test="${savedQuery.value.dateCreated != null}">
-                    <fmt:formatDate value="${savedQuery.value.dateCreated}" type="both" pattern="dd/M/yy K:mm a"/>
+                  <c:when test="${!savedQuery.value.pathQuery.valid}">
+                    <td align="left" colspan="2" nowrap>
+                      <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
+                      <strike>${savedQuery.value.name}</strike>
+                      </html:link>
+                    </td>
                   </c:when>
                   <c:otherwise>
-                    n/a
+                    <tiles:insert name="historyElementName.jsp">
+                      <tiles:put name="name" value="${savedQuery.key}"/>
+                      <tiles:put name="type" value="${type}"/>
+                    </tiles:insert>
                   </c:otherwise>
                 </c:choose>
-              </td>
-              <td align="right">
-                <c:choose>
-                  <c:when test="${savedQuery.value.pathQuery.info != null}">
-                    <c:out value="${savedQuery.value.pathQuery.info.rows}"/>
-                  </c:when>
-                  <c:otherwise>
-                    n/a
-                  </c:otherwise>
-                </c:choose>
-              </td>
-              <td align="left" nowrap>
-                <c:forEach items="${savedQuery.value.pathQuery.view}" var="item" varStatus="status">
-                  <c:if test="${status.first}">
-                    <c:choose>
-                      <c:when test="${fn:indexOf(item, '.') > 0}">
-                        <span class="historySummaryRoot">${fn:substringBefore(item, '.')}</span>
-                      </c:when>
-                      <c:otherwise>
-                        <span class="historySummaryRoot">${item}</span>
-                      </c:otherwise>
-                    </c:choose>
+                <td align="center" nowrap>
+                  <c:choose>
+                    <c:when test="${savedQuery.value.dateCreated != null}">
+                      <fmt:formatDate value="${savedQuery.value.dateCreated}" type="both" pattern="dd/M/yy K:mm a"/>
+                    </c:when>
+                    <c:otherwise>
+                      n/a
+                    </c:otherwise>
+                  </c:choose>
+                </td>
+                <td align="right">
+                  <c:choose>
+                    <c:when test="${savedQuery.value.pathQuery.info != null}">
+                      <c:out value="${savedQuery.value.pathQuery.info.rows}"/>
+                    </c:when>
+                    <c:otherwise>
+                      n/a
+                    </c:otherwise>
+                  </c:choose>
+                </td>
+                <td align="left" nowrap>
+                  <c:forEach items="${savedQuery.value.pathQuery.view}" var="item" varStatus="status">
+                    <c:if test="${status.first}">
+                      <c:choose>
+                        <c:when test="${fn:indexOf(item, '.') > 0}">
+                          <span class="historySummaryRoot">${fn:substringBefore(item, '.')}</span>
+                        </c:when>
+                        <c:otherwise>
+                          <span class="historySummaryRoot">${item}</span>
+                        </c:otherwise>
+                      </c:choose>
+                    </c:if>
+                  </c:forEach>
+                </td>
+                <td align="left" nowrap>
+                  <c:forEach items="${savedQuery.value.pathQuery.view}" var="item">
+                    <im:unqualify className="${item}" var="text"/>
+                    <span class="historySummaryShowing">${text}</span>
+                  </c:forEach>
+                </td>
+                <td align="center" nowrap>
+                  <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}"
+                             titleKey="history.action.execute.hover">
+                    <fmt:message key="history.action.execute"/>
+                  </html:link>
+                  |
+                          <html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}&type=${type}"
+                             titleKey="history.action.edit.hover">
+                    <fmt:message key="history.action.edit"/>
+                  </html:link>
+                  |
+                  <c:if test="${type == 'history'}">
+                    <c:if test="${!empty PROFILE.username}">
+                      <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
+                                 titleKey="history.action.save.hover">
+                        <fmt:message key="history.action.save"/>
+                      </html:link>
+                      |
+                    </c:if>
                   </c:if>
-                </c:forEach>
-              </td>
-              <td align="left" nowrap>
-                <c:forEach items="${savedQuery.value.pathQuery.view}" var="item">
-                  <im:unqualify className="${item}" var="text"/>
-                  <span class="historySummaryShowing">${text}</span>
-                </c:forEach>
-              </td>
-              <td align="center" nowrap>
-                <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}"
-                           titleKey="history.action.execute.hover">
-                  <fmt:message key="history.action.execute"/>
-                </html:link>
-                |
-      			<html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}&type=${type}"
-                           titleKey="history.action.edit.hover">
-                  <fmt:message key="history.action.edit"/>
-                </html:link>
-                |
-                <c:if test="${type == 'history'}">
-                  <c:if test="${!empty PROFILE.username}">
-                    <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
-                               titleKey="history.action.save.hover">
-                      <fmt:message key="history.action.save"/>
-                    </html:link>
-                    |
-                  </c:if>
-                </c:if>
-                <html:link action="/exportQuery?name=${savedQuery.key}&amp;type=${type}"
-                           titleKey="history.action.export.hover">
-                  <fmt:message key="history.action.export"/>
-                </html:link>
-              </td>
-            </tr>
+                  <html:link action="/exportQuery?name=${savedQuery.key}&amp;type=${type}"
+                             titleKey="history.action.export.hover">
+                    <fmt:message key="history.action.export"/>
+                  </html:link>
+                </td>
+              </tr>
+            </c:if>
           </c:forEach>
         </table>
         <br/>

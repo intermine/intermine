@@ -62,8 +62,11 @@ public class FavouritesController extends TilesAction
             List userTags = pm.getTags("favourite", null, TagTypes.TEMPLATE, profile.getUsername());
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
                 Tag element = (Tag) iter.next();
-                favouriteTemplates.add((TemplateQuery) savedTemplates.get(element
-                        .getObjectIdentifier()));
+                TemplateQuery templateQuery =
+                    (TemplateQuery) savedTemplates.get(element.getObjectIdentifier());
+                if (templateQuery != null) {
+                    favouriteTemplates.add(templateQuery);
+                }
             }
         }
         servletContext.setAttribute("favouriteTemplates", favouriteTemplates);
