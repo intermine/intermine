@@ -16,7 +16,7 @@
       <emphasis>FlyMine</emphasis> - An integrated database for Drosophila and
       Anopheles genomics 
     </productname>
-    <pubdate>10 January 2005</pubdate>
+    <pubdate>October 2006</pubdate>
     <copyright>
       <year>2002,2003,2004,2005</year>
       <holder>FlyMine</holder>
@@ -36,1754 +36,1438 @@
     </legalnotice>
     <abstract>
       <para>
-        This document describes release 2.1 of the FlyMine Drosophila and Anopheles
+        This document describes release 6.0 of the FlyMine Drosophila and Anopheles
         integrated genomics database.
       </para>
     </abstract>
   </bookinfo>
 
-  <chapter>
-    <title>The FlyMine Project</title>
-
-    <itemizedlist>
-      <listitem>
-        <para>
-          <!-- <ulink url="../../introduction.xml">The FlyMine project</ulink> -->
-          <ulink url="http://www.flymine.org/introduction.html">The FlyMine project</ulink>
-        </para>
-      </listitem>
-    </itemizedlist>
-  </chapter>
 
   <chapter id="manualIntroduction">
-      <title>Introduction - ways to query FlyMine</title>
+   <title>Introduction</title>
 
-      <para>
-        FlyMine provides three web-based ways to query the integrated data: A
-        query Builder, predefined template queries and a quick
-        search.
-      </para> 
+   <sect1 id="manualQueryFlyMine">
+      <title>Ways to query FlyMine</title>
+
+        <para> FlyMine provides three web-based ways to query the
+        integrated data: A Quick Search, predefined template queries
+        and a Query Builder. The FlyMine introduction 'What can I do
+        with FlyMine' shows a very brief overview of how to use
+        FlyMine. </para>
 
       <orderedlist numeration="upperalpha">
-        <listitem>
-          <para>
-           The Query Builder: allows you to build your own queries and
-           is the most advanced way to access the data. It  requires some
-           investment in time to learn how to use.
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-        Predefined template queries: provide quick and easy access to
-        the data.  A template query basically consists of a form, in
-        which you fill in the boxes to define your query.  Template
-        queries range from fairly simple queries to complex queries
-        covering two or more datasets.
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-        The quick search: allows you to browse the database,
-        starting from a particular name or identifier.  This is very
+       <listitem>
+        <para> Quick Search: Allows you to browse the database,
+        starting from a particular name or identifier. This is very
         useful if you do not have a particular query you want to run
         and want to browse all the information or specific information
-        about a particular entry in the database.
-          </para>
-        </listitem>
+        about a particular entry in the database. A Quick Search box is
+        available in the top menu bar on every FlyMine page. See <xref
+        linkend="manualQuickSearch"/>.
+       </para> </listitem>
+
+       <listitem>
+         <para> Template queries: These predefined queries provide
+         quick and easy access to the data. A template query
+         basically consists of a form, in which you fill in the boxes
+         to define your query. Template queries range from fairly
+         simple queries to complex queries covering two or more
+         datasets or data aspects. See <xref linkend="manualTemplateQueries"/> 
+         and <xref linkend="manualAspects"/>.
+         </para>
+       </listitem>
+
+       <listitem>
+          <para> The Query Builder: Advanced users can use a flexible
+          query interface to construct their own data mining queries
+          across the multiple integrated data sources, to modify
+          existing template queries or to create their own template
+          queries. Access the FlyMine Query Builder via the <link
+          linkend="manualFlyMineHome">FlyMine homepage</link>
+          or choose a query starting point on an aspect
+          page. See <xref linkend="manualQueryBuilder"/>.</para>
+       </listitem>
+
       </orderedlist>
-    
-      <para>
-        These query methods are described in more detail in the
-        following chapters.
-      </para>
-  
 
-      <sect1>
-         <title>Accessing the query methods</title> 
+   </sect1>
 
-	<para>The FlyMine main query page provides three main routes
-            to access the different query methods.  To go to the main
-            query page click on 'Start a query' from the FlyMine home
-            page.
-        </para>
+   <sect1 id="manualFlyMineHome">  
+     <title>The FlyMine homepage</title> 
 
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="homePage1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Home page</phrase>
-        </textobject>
-      </mediaobject>
-    </sect1>
+	<para> The FlyMine homepage provides four main routes
+          to access the different query methods. </para>
  
-
-    <sect1 id ="manualMainQueryPage">
-       <title>The main query page</title>
- 
-        <para>The main query page has three sections:
-        </para>
-
       <orderedlist numeration="upperalpha">
         <listitem>
-          <para>
-          Aspects: provide 'views' of the different types of data
-          available. Each aspect provides details about data available
-          for the particular data type, access to the query builder
-          from starting points relevant to that data type and a list
-          of related template queries. See <xref linkend="manualAspects"/>
-          </para>
+          <para> Quick Search: a Quick Search box is clearly available
+          on the homepage as well as in the top menu bar on every
+          FlyMine page. See <xref
+          linkend="manualQuickSearch"/>.</para> </listitem>
+
+        <listitem>
+          <para> Aspects: FlyMine presents data as 'aspects' with each
+          aspect providing a view of the different types of data
+          available. The FlyMine homepage shows all the aspects that
+          are available. Clicking on an Aspect icon will bring you to
+          the aspect homepage. Each aspect provides details about
+          data available for the particular data type, access to the
+          Query Builder from starting points relevant to that data
+          type and a list of related template queries. See <xref
+          linkend="manualAspects"/>. </para>
+
         </listitem>
 
         <listitem>
-          <para>
-        Quick Search: simple access that allows browsing of the data
-        available.
-          </para>
+          <para> Template search: allows searching of all the template
+          queries available via keywords. See <xref
+          linkend="manualTemplateQueries"/>. </para>
         </listitem>
 
-        <listitem>
-          <para>
-        Search templates: allows searching of all the template queries
-        available via key words.
-          </para>
-        </listitem>
+       <listitem>
+          <para> The Query Builder: allows you to build your own
+          queries and is the most advanced way to access the data.
+          You can access the Query Builder by clicking on 'List all
+          classes' at the bottom of the FlyMine homepage and selecting
+          one class as a starting point. Alternatively, you can use
+          the 'Browse model' option at the bottom of the FlyMine
+          homepage and browse to the class you are interested
+          in. Finally, you can choose a query starting point on an
+          aspect page. See <xref
+          linkend="manualQueryBuilder"/>. </para> 
+      </listitem>
+
       </orderedlist>
 
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="mainQueryPage1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Main Query Page</phrase>
-        </textobject>
-      </mediaobject>
+      <para> The FlyMine homepage also provides information related to
+      the FlyMine database and the FlyMine project via the menu bar on
+      the left.</para>
 
-
-       <para> Each of these is described in more detail in the next
-            chapters.
-       </para>
-
-      </sect1>
-   
-</chapter>
-
-   <chapter id="manualAspects">
-      <title>Aspects</title> 
-
-      <sect1>
-       <title>Introduction</title>
-      
-      <para>FlyMine presents data as 'aspects', with each aspect
-       providing a 'view' of a particular type of data (for example
-       Gene Expression or Protein Interactions) and how this can be
-       linked with other types of data.  The main query page
-       shows all the aspects that are available:
-      </para>
-
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="aspects1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Aspects</phrase>
-        </textobject>
-      </mediaobject>
-     </sect1>
-
-      <sect1>
-       <title>Aspect Details</title>
-
-      <para>Each aspect provides a summary of the data available,
-      quick links to browse or export that data, starting-points for
-      building a query using the query builder and a set of template
-      queries.  The screenshot below shows the protein-interaction aspect:
-      </para>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="proteinInteractionAspects1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Aspects</phrase>
-        </textobject>
-      </mediaobject>
-
-     </sect1>
-
-   </chapter>
-      
-
-
-
-
-
-  <chapter id="manualQueryBuilder">
-    <title>The FlyMine Query Builder</title>
-     <sect1>
-         <title>Introduction</title>
-
-	<para>Different types of data in FlyMine are described by
-	classes.  For example, information describing genes is 'held'
-	in the 'Gene' class.  A class contains fields to hold specific
-	information about the type of item it is describing.  For
-	example, the Gene class includes the fields 'name' and
-	'identifier'. Each item within a class is called an
-	object. For example the 'Notch' gene is an object that belongs
-	to the Gene class.  The different classes that describe the
-	data in FlyMine are linked together (through references).  For
-	example, the Gene class is linked to the Transcript class and
-	other relevent classes. The classes and the way in which they
-	are all linked together is called the FlyMine data model. (see
-	<xref linkend="manualCOF"/> and <xref linkend="manualFields"/>
-	for an explanation of these concepts)
-       </para>
-
-
-    <para>
-      The FlyMine query builder allows you to construct queries on the
-      data in the FlyMine database.  The query-builder interface
-      enables you to browse through classes and fields of the data
-      model, selecting those that you wish to constrain and those that
-      you wish to include in your results. The following points provide
-      a basic outline of the steps involved in building a query with
-      links to where you can find more detailed information:
-    </para>
-  
-    <orderedlist>
-      <listitem>
-        <para>
-          STARTING POINT: Choose the starting point for your query
-          either from the classes displayed (which have been divided
-          into biologically meaniful categories) or by selecting the
-          'List all classes' link.  This will take you to the main
-          query builder page. See <xref linkend="manualClasschooser"/>
-          for more details.
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          BROWSE: In the model browser of the query builder, browse to
-          the classes and fields you are interested in. See
-          <xref linkend="manualModelbrowser"/>
-          for more details.
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          CONSTRAIN: Select the classes and/or fields you wish to
-          constrain using the -&gt; constrain arrows. Specify your
-          constraints in the right hand constraints list.  See <xref
-          linkend="manualConstraintslist"/> for more details.
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          SHOW: Select the classes and/or fields you wish to show in
-          the results output using the "show" buttons. The
-          classes/fields selected will appear in the output fields
-          list. See <xref linkend="manualOutputfields"/> for more
-          details.
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          VIEW: Press 'show results' to view your results in the
-          results page.  See <xref linkend="manualShowresults"/> for
-          more details.
-        </para>
-      </listitem>
-    </orderedlist>
    </sect1>
 
-
-  <sect1 id="manualClasschooser">
-      <title>Selecting a starting point for your query</title>
-
-      <para>To use the query builder you have to first select a
-      starting point.  The starting point can be any FlyMine class (eg
-      Gene, Transcript, Protein etc).  Each 'aspect' has a set of
-      commonly used starting points relating to that type of
-      data. Clicking on a class will take you to the query builder
-      (see <xref linkend="manualQuerybuilder"/>).
-      </para>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="startingPoints1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>class Selection</phrase>
-        </textobject>
-      </mediaobject>
-
-      <para>
-        In addition to the commonly used classes, a full list of
-        classes from which you can start your query can be accessed by
-        clicking on the 'List all classes' link on the main query
-        page. This takes you to the class chooser page (see screenshot
-        below). This page contains a list of classes for which objects
-        exist in the database (i.e. classes for which there is data
-        associated).
-      </para>
-
-      <para>
-        Selecting the class from which you wish to start your query
-        and pressing the 'Select' button will take you to the query
-        builder (see <xref linkend="manualQuerybuilder"/>).
-      </para>
-
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="classSelectionAll2.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Class Selection All</phrase>
-        </textobject>
-      </mediaobject>
-
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="classSelectionAll1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Class Selection All</phrase>
-        </textobject>
-      </mediaobject>
-
-
-      <para>
-        The browse model button (again accessed from the main query
-        page- see screenshot above) allows you to browse the complete
-        FlyMine data model. This shows all the classes in FlyMine,
-        some of which do not yet have data associated with them.
-      </para>
-
-      <para>
-        In browse mode, the number on the right shows the number of
-        objects associated with that class.
-      </para>
-
-      <para>
-        Clicking on a class name within the browser will take you to
-        the query builder (see <xref linkend="manualQuerybuilder"/>).
-      </para>
-
-     <mediaobject>
-        <imageobject>
-          <imagedata fileref="browsingModel1.png" />
-        </imageobject>
-        <textobject>
-            <phrase>Browsing Model</phrase>
-        </textobject>
-      </mediaobject>
- 
-    </sect1>
-
-
-  <sect1 id="manualQuerybuilder">
-    <title>The query builder page</title>
-    <para>
-      The main FlyMine query builder page is composed of 3
-      sections:
-    </para>
-
-    <itemizedlist>
-      <listitem>
-        <para>
-          <link linkend="manualModelbrowser">a model browser (left)</link>
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          <link linkend="manualConstraintslist">a constraints list (right)</link>
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          <link linkend="manualOutputfields">an output fields list (bottom)</link>.
-          The output fields list will initially say 'No fields
-          selected for output'.
-        </para>
-      </listitem>
-    </itemizedlist>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="queryBuilder1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-   </sect1>
-
-    <sect1 id="manualModelbrowser">
-      <title>The model browser</title>
-
-      <para>
-        The model browser allows you to browse through the FlyMine
-        data model, selecting the classes that contain the objects you
-        require. Depending on the starting class you will be able to
-        navigate to other classes as defined by the references between
-        the classes (see <xref linkend="manualCOF"/> for an
-        explanation of these concepts). In other words, to combine
-        classes containing the objects you require, you find a path
-        through the classes that link together the information you
-        require. Within the model browser classes that can be accessed
-        from a parent class (ie are linked to the parent class through
-        a reference) are shown as fields within that class (see <xref
-        linkend="manualFields"/> for more explanation on fields).
-      </para>
-
-      <para>
-        For each class and field within the model browser there is
-        a 'show' and a 'constrain'  option. These are used to
-        either select a class/field to show in the results output
-        (see <xref linkend="manualOutputfields"/>) or to constrain in
-        the constraints list (see <xref
-        linkend="manualConstraintslist"/>).
-      </para>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="modelBrowser1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-    
-
-    <sect2 id ="manualFields">
-      <title>Fields</title>
-
-      <para>
-        The following is an explanation of the classes and fields
-        displayed by the model browser. The Gene class is used as an
-        example, but the information is easily transferable to other
-        classes. The screen-shot below shows the model browser
-        displaying the Gene class.
-      </para>
-
-      <para>
-        The following are 'fields' of the Gene class: identifier, name
-        and organismDbId. Class fields hold just one piece of
-        information which can be either text or a number. The fields
-        of a class are always displayed directly below the class name
-        and can be distinguished from other fields (see below) as they
-        do not a have a + for expanding before them.
-      </para>
-
-      <para>
-        The field called Organism is a reference (ie a link) to the
-        organism class. Fields which are references to other classes have a
-        field name (in this case organism) followed by the name of the class
-        it is referencing (in this case Organism).
-      </para>
-
-      <para>
-        The field called Transcript is also a reference to a class - the
-        Transcript class. This field, however, also has the type 'collection'.
-        This is because a particular gene object in the Gene class will
-        reference (link to) one or more transcript objects in the Transcripts
-        class. The transcript collection is a list of references to these
-        transcript objects.
-      </para>
-
-      <para>
-        The other fields in the gene class are all of the type class
-        collection as described above.
-      </para>
-
-      <para>
-        An object is a specific member of a class and it's related
-        information (eg the Notch gene is a member of the Gene
-        class). Therefore if you select 'show' next to the Gene class,
-        you are asking for objects of the Gene class which includes
-        all the information stored about each object. For example, if
-        you query for the Notch gene object, your results will include
-        all the fields and referenced classes associated with the
-        Notch gene.  If you select a fields of a class to 'show' (eg
-        gene name), you are asking for only a specific piece of
-        information stored with the objects of that class.
-      </para>
-
-      <para>
-        For specific information about each class or fields click
-        on the ? help link next to the class/field in the model
-        browser.
-      </para>
-
-
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="fields1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-    </sect2>
-  </sect1>
-
-    <sect1 id="manualConstraintslist">
-      <title>Applying constraints to your query</title>
-
-      <para>
-        The constraints list is on the right hand side of the query
-        builder page. In this section you specify the constraints you
-        wish to apply to particular classes and fields.  A
-        constraint is like a filter - you filer out a subset of the
-        objects in a class which have certain characteristics (defined
-        by the constraint).
-      </para>
-
-      <para>
-        To apply a constraint to a field, navigate to the field in the
-        model browser and click on the 'constrain' button next to
-        it. This will add the field to the constraints list and bring
-        up a box in which you specify your constraint.
-      </para>
-
-      <para>
-        The type of constraint you can add will vary depending on the
-        type of field you selected to constrain.
-      </para>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="constraining1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-    </sect1>
-
-    <sect1 id="manualOutputfields">
-      <title>Selecting what to show in your results</title>
-
-      <para>
-        The output fields list is located at the bottom of the query
-        builder (underneath the <link
-        linkend="manualModelbrowser">Model browser</link>).  Initially
-        the output fields list will say 'No fields selected for
-        output'.
-      </para>
-
-      <para>
-        The output fields list shows all fields that you have selected
-        to show in your results. To select a field to show in the
-        results output you press 'show' next to the field.
-      </para>
-
-      <para>
-        The order of fields in the output fields list can be changed
-        using the &lt; and &gt; arrows. Fields can be deleted from the
-        output fields list using the x.
-      </para>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="showFields1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-    </sect1>
-
-    <sect1 id="manualShowresults">
-      <title>Viewing results</title>
-
-      <para>
-        Pressing 'Show results' will run your query. When your query is
-        run an estimate is first made of how long it will take to run the
-        query and how many objects should be returned by the query. If your
-        query is going to take a very long time to run, it will be stopped and
-        a message will appear at the top of the screen.
-      </para>
-
-      <para>
-        When your query has run, your results will be displayed on the
-        <link linkend="manualResults">results page</link>.
-      </para>
-    </sect1>
-
-    <sect1 id="manualSavingqueries">
-      <title>Saving queries</title>
-
-      <para>
-        All queries that you run are saved to your
-        <link linkend="manualHistory">query history</link>. Your query will be
-        named query_x (where x increments for each query run).
-      </para>
-
-      <para>
-        Saved queries can be accessed from your <link
-        linkend="manualHistory">query history</link>. This history is
-        available for the duration of your session unless you log in -
-        in which case you can then save your queries permanently (See <xref
-        linkend="loggingIn"/>).
-      </para>
-
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="saving1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-
-      <para>
-        If you are logged in, it is also possible to save a query
-        configuration with a name that you choose directly from the
-        query builder. Once you have added fields to the <link
-        linkend="manualOutputfields">output fields list</link> in the
-        <link linkend="manualQuerybuilder">FlyMine query
-        builder</link> a box at the bottom will become available for
-        you to save your query with a specific name.
-      </para>
-
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="saving2.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-
-      </sect1>
-
-      <sect1 id="manualExportingQueriesQueryBuilder">
-          <title>Exporting queries as XML from the query builder</title>
- 
-           <para>Queries can be exported as xml from the query builder page - see screenshot below.
-           </para>
-
-           <para>Queries saved as xml can be imported into the FlyMine
-           query builder - see <xref linkend="importingXMLQueries"/>
-           </para>
- 
-
-          <mediaobject>
-           <imageobject>
-             <imagedata fileref="exportQuery2.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-         </mediaobject>
-
-    </sect1>
-
-
-
-  <sect1 id="manualExamplequeries">
-    <title>Example queries</title>
-    <para>
-      A number of <ulink url="/examples.do">example queries</ulink>
-      are available to help you construct your own queries.
-    </para>
-    
-    <para>
-      Click on the query name to display the query in the query
-      builder interface. From here you can edit the query or run it
-      again.
-    </para>
-  </sect1>
-
-
- </chapter>
-
-
-
-  <chapter id="manualBrowsingdata">
-    <title>Browsing FlyMine</title>
-    <para>
-      There are two ways to browse the data in FlyMine:
-      1. directly from the main query page or 2. through a query
-      you construct yourself.
-    </para>
-
-    <sect1>
-      <title>Browsing directly</title>
-
-      <para>
-        The FlyMine Quick Search, accessible from the main query page
-        (see screenshot below), allows you to quickly and directly
-        access the data in FlyMine.  Entering any object identifier
-        (such as a gene name or identifier) will take you straight to
-        the details page for that object (see <xref
-        linkend="manualObjectDetails"/>). Wildcards (*) can be
-        attached to any text entered to increase the scope of your
-        search.  (A wild card added to the end of the text will search
-        for anything beginning with that text (eg zen* will search zen
-        and anything that begins with zen - and so your query could
-        return several results such as zen, zen2 and zen-4).  A *
-        added to the beginning of your text will search for anything
-        that ends in that text (eg *_DROME will search for all entries
-        ending in _DROME - ie all the Drosophila entries in
-        Uniprot). The Quick Search is case-insensitive.
-      </para>
-
-      <para> In cases where more than one object is returned by your
-        quick search, the results will provide a summary of each
-        object with a link to each object details page.
-     </para>
-    
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="browsing1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
-    </sect1>
-
-    <sect1>
-      <title>Browsing from a query</title>
-      <para>
-        Queries can be constructed using the FlyMine query builder in
-        such a way that the results are browsable.  (see <xref
-        linkend="manualQueryBuilder"/> for details on using the query
-        builder). If you select an entire class to 'show' in the
-        output (as opposed to selecting fields of a class, see
-        screenshot below), your result will provide links to the
-        details pages for the objects returned from that class, from
-        where you can browse the information stored in the objects
-        fields and in classes referenced from the object. (See <xref
-        linkend="manualFields"/> and <xref
-        linkend="manualObjectDetails"/> for more details).
-      </para>
-
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="modelBrowserBrowsing1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
- 
-   </sect1>
   </chapter>
 
-  <chapter id="manualTemplatequeries">
+  <chapter id="manualObjectDetails">
+    <title>Object details pages</title>
+
+    <para> For every object in the FlyMine database there is an object
+    details page which provides all the fields, references and
+    collections for that object (see <xref linkend="manualDataModel"/>
+    for an explanation of these concepts) along with additional
+    information such as the GBrowse genome viewer for sequence
+    features. Object details pages can be accessed using the Quick
+    Search option on the FlyMine homepage or on the top menu bar of
+    every FlyMine page, or from result tables by clicking on an
+    object that provides a link. If you are using the Quick Search
+    box, you may be taken to an object details page directly if only
+    one object in the database matches your search.  All object
+    details pages have the same basic structure: The top part provides
+    summary information for every object, whereas the lower part,
+    'Other details by aspect' has more detailed information divided
+    into 'aspects'. The aspects correspond to categories of data shown
+    on the FlyMine homepage. (See <ulink
+    url="tutorial1-QuickSearch.xml">Tutorial 1</ulink> for more
+    information).</para>
+
+   <sect1>
+     <title>Example: Object details page for your gene of choice.</title> 
+
+      <para> - The top left shows summary information for the gene -
+      identifier, name and chromosome coordinates. Use the '+' boxes
+      next to 'proteins', 'synonyms', etc. to open in-line tables with
+      more details. The 'FASTA' buttons retrieve sequences for any
+      feature they appear next to.</para>
+
+      <para> - The top right presents additional information for the
+      object as well as links to external reports:</para>
+
+   <itemizedlist>
+
+     <listitem><para> A link to the gene report of the relevant model
+     organism database.</para></listitem>
+
+     <listitem><para> A GBrowse image for the area surrounding this
+     gene. Clicking on the image takes you to the GBrowse genome
+     viewer. Clicking on any feature in GBrowse will take you to an
+     Object details page in FlyMine.</para></listitem>
+
+     <listitem><para> An image of the temporal expression of the gene according to Arbeitman et al.
+      (2002), if available (e.g. CG3936).</para></listitem>
+
+     <listitem><para> A link to FlyExpress data, if available (e.g. CG2328).</para></listitem>
+
+   </itemizedlist>
+
+     <para>Scroll down the page to see 'Other details by aspect': This
+     section has more detailed information about this gene divided
+     into 'aspects'. The aspects correspond to categories of data
+     shown on the FlyMine homepage.</para>
+
+   <itemizedlist>
+
+     <listitem>
+      <para> Entries in green show fields directly related to the
+      object. Use '+' boxes to open summary tables.</para>
+    </listitem>
+
+    <listitem>
+     <para> Entries in black text allow you to see the results of
+      <link linkend="manualTemplateQueries">predefined template
+      queries</link> run for the object ('templates' See <ulink
+      url="tutorial3-Templates.xml">Tutorial 3</ulink>).  Those shown
+      in light grey did not return any results.</para>
+     </listitem>
+
+    <listitem>
+     <para> '[details...]' links take you to Object details pages for
+     related database entries.</para>
+   </listitem>
+
+   </itemizedlist>
+
+ </sect1>
+
+  </chapter>
+
+  <chapter id="manualQuickSearch">
+    <title>Quick Search</title>
+
+          <para> The Quick Search option can be accessed on the
+          FlyMine homepage as well as on the top menu bar of every
+          FlyMine page. The Quick Search option provides an easy way
+          for users to retrieve objects where a name or identifier is
+          known, and browse all data available for that object and
+          related objects. </para>
+
+          <para> Entering any object identifier (such as a gene name
+          or identifier) will take you straight to the <link
+          linkend="manualObjectDetails">Object details page</link> for
+          that object and <link
+          linkend="manualFlyMineIdentifiers">identifier</link>. Wild
+          cards (*) can be attached to any text entered to increase
+          the scope of your search. A wild card added to the end of
+          the text will search for anything beginning with that text
+          (e.g. zen* will search zen and anything that begins with zen
+          - and so your query could return several results such as
+          zen, zen2 and zen-4).  A * added to the beginning of your
+          text will search for anything that ends in that text
+          (e.g. *_DROME will search for all entries ending in _DROME -
+          i.e. all the Drosophila entries in Uniprot). Quick Search is
+          case-insensitive.  In cases where more than one object is
+          returned by your Quick Search, the results will provide a
+          list of objects which match the query. Clinking on any of
+          them will take you to the corresponding details pages for
+          each object. </para>
+
+  </chapter>
+
+  <chapter id="manualAspects">
+    <title>Data aspects</title>
+
+         <para> The FlyMine website presents the principle data types
+          grouped together as different 'aspects', such as protein
+          interactions or gene expression. Each aspect provides
+          background information on the origin of particular source
+          datasets (e.g. literature references and links to source
+          databases), access to convenient derivative bulk datasets
+          for browsing or export in standard format, as well as
+          relevant <link linkend="manualTemplateQueries">predefined
+          template queries</link> and classes for use as starting
+          points in the <link linkend="manualQueryBuilder">Query
+          Builder</link>. The template queries available for a
+          particular aspect range from simple queries to retrieve just
+          one data type to more complex queries which incorporate data
+          from other aspects.  The aspects allow researchers to easily
+          focus on a particular type of data and, for instance, easily
+          identify relevant template queries. Currently, there are 13
+          different aspects in FlyMine </para>
+
+  </chapter>
+
+  <chapter id="manualTemplateQueries">
     <title>Predefined template queries</title>
 
    <sect1>
       <title>Introduction</title>
-    <para>
-      To provide a more direct route to the data in FlyMine, a number
-      of queries have been predefined as templates.  A template query
-      provides a form with various boxes for you to fill in. A number
-      of template queries have been predefined. These range from
-      simple queries to more complex queries covering a wide range of
-      data.  More template queries will be added as FlyMine develops.
+
+    <para> To enable users to quickly and easily carry out a range of
+    queries, both simple and complex, FlyMine includes a growing
+    library of predefined 'template' queries. Templates provide a
+    description of a predefined query with a form to fill in a number
+    of constraints. Default values are always provided so that example
+    output can be generated immediately. The variables define
+    constraints (or filters) on one or more types of data, for example
+    by requiring that a gene name includes the string of letters
+    "twi". The variable can either be a single value or a list of
+    objects (i.e. a <link linkend="manualBags">bag</link>). This
+    ability to constrain a template query to a list of objects is a
+    particularly powerful feature, enabling a large amount of data to
+    be collected very quickly. Templates range from relatively simple
+    queries to more complex queries, integrating two or more
+    datasets. Templates are created by biologists at FlyMine from
+    within the web interface. Further templates can be added at any
+    time. More template queries will be added as FlyMine
+    develops. Suggestions from the research community are
+    welcomed</para>
+
+    <para> In addition, users are able to select individual templates
+    and add them to a 'favourites' list available from their <link
+    linkend="manualMyMine">query history or 'My Mine'</link> page. To
+    set a template as a favourite, click on the star icon by the
+    template query. </para>
+
+    <para> Importantly, since template queries can (optionally) be
+    displayed in the <link linkend="manualQueryBuilder">Query
+    Builder</link> page before being executed, it is possible for a
+    user to modify any template.  Thus templates can be used as a
+    starting point in the generation of related queries.  Note: this
+    feature acts as a training tool for the Query Builder, by allowing
+    users to first understand the function of a query through
+    executing it, and then by allowing them to examine the underlying
+    structure of the query in the Query Builder. </para>
+
+    <para> In addition to the predefined template library, users are
+    able to create and save their own template queries from any query
+    constructed using the Query Builder interface.  This complements
+    the query history and allows users to build their own library of
+    useful functionality.  Templates can be <link
+    linkend="manualImportExportQueries">exported and imported</link>
+    as xml, thus facilitating the sharing of templates between users.
     </para>
 
-    <para>
-      Template queries can be accessed from the main FlyMine query
-      page.  Templates can be selected either via a link from the
-      class categories section, where the templates have also been
-      divided into appropriate biological categories (note that a
-      template query may belong in more than category) or from the
-      'Predefined template queries' section on the main query page,
-      from where there is a link to all template queries (see
-      screenshot below).  Alternatively, you can search the template
-      queries by clicking on the Search Templates link on the main
-      menu bar.
-    </para>
+   </sect1>
 
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="templates1.png" />
-        </imageobject><textobject><phrase> </phrase></textobject>
-      </mediaobject>
+   <sect1 id="manualAccessTemplates">
+      <title>Accessing template queries</title>
 
-    </sect1>
+    <para> Template queries can be accessed in the following ways:</para>
 
+    <orderedlist numeration="upperalpha">
+      <listitem>
+       <para> Using the 'Template search' option on the FlyMine
+        homepage. Enter one or more keywords to find predefined
+        template queries relating to a certain type of data. Select
+        'Public templates' to search predefined templates, 'My
+        templates' to search templates you have created and saved
+        yourself or 'Everything' to search all templates. The keyword
+        search facility uses the templates full descriptions rather
+        than its shortened title (see below). The results are graded
+        by similarity to the search terms. An option to view the full
+        list of all templates is also available. </para> </listitem>
+
+      <listitem>
+       <para> Using the 'Search templates' option on the top menu bar
+       of every FlyMine page, which has the same features as mentioned
+       above. </para> </listitem>
+
+      <listitem>
+       <para> Every <link linkend="manualAspects">aspect</link> has a
+       list of templates related to the data presented in that
+       particular aspect. Note that a template query may appear on
+       more than one aspect page if it combines data from more than
+       one aspect. </para> </listitem>
+
+      <listitem>
+       <para> <link linkend="manualObjectDetails">Object detail
+       pages</link> list templates queries that have been pre-run for
+       that particular object. </para>
+      </listitem>
+     </orderedlist>
+
+       <para> In all cases: Clicking on the 't' next to the template
+       text will show the template page. </para>
+
+       <para> Templates appear on aspect pages and Object details
+       pages with their title, e.g. GO term --> Genes, where the
+       part before the arrow refers to the query starting point, and
+       the part after the arrow to the query output. On the template
+       page itself, apart from the title, a more complete description
+       of what the template does is given: e.g. for the previous
+       example: 'Search for genes annotated with a particular GO term
+       (or any of its children)'. Templates range from relatively
+       simple queries, such as 'Gene --> Orthologues (Search for
+       predicted orthologues for a particular gene)' to more complex
+       queries, integrating two or more datasets: like 'Gene -->
+       Protein + Interacting Proteins + Pfam domain with predicted 3-D
+       structure (For the protein product of a particular gene, show
+       any proteins it has been shown to interact with and for these
+       proteins their Pfam domain content').</para>
+ 
+  </sect1>
   
-    <sect1>
-      <title>How to run predefined template queries</title>
-    <para>
-      To run a template query:
-    </para>
+  <sect1 id="manualRunTemplates">
+      <title>How to run a template query</title>
+
+    <para> For an example, see <ulink url="tutorial3-Templates.xml">Tutorial 3</ulink>. </para>
+
+    <para> To run a template query: </para>
 
     <orderedlist>
       <listitem>
-        <para>
-          Select the query you wish to run either from the lists on
-          the main Query page, by selecting 'view all template
-          queries', or by searching the templates with the 'Search
-          Templates' option.  Pressing the -&gt; next to the query
-          description will take you to the template form.
-        </para>
+       <para> <link linkend="manualAccessTemplates">Select the
+       template query</link> you wish to run. Pressing the 't' next to
+       the template title will take you to the template form, where
+       you will find a more complete description of the
+       template. </para> 
+       </listitem>
 
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="templates1.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-        </mediaobject>
+      <listitem>
+       <para> Fill in the boxes with the appropriate values or leave
+       them with the default values shown. </para>
       </listitem>
 
       <listitem>
-        <para>
-          Fill in the boxes with the appropriate values or
-          leave them with the default values shown (see screenshot
-          below).
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
-          Pressing the 'View results' button will take you directly to the
-          results page (see <xref linkend="manualResults"/> for more
-          details). Pressing the 'View query' button will display the template
-          query in the FlyMine Query Builder.  Here you can either use the
-          template as a starting point for building a more complex query, edit
-          the query or simply run the query as it is.  Press 'Show results' to
-          run your query. See <xref linkend="manualQueryBuilder"/> for more
-          details.
-        </para>
-
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="templates2.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-        </mediaobject>
+ 
+       <para> Pressing the 'Show Results' button will take you
+       directly to the <link linkend="manualResults">results</link>
+       page.  Pressing the 'Edit Query' button will display the
+       template query in the FlyMine <link
+       linkend="manualQueryBuilder">Query Builder</link>.  Here you
+       can either use the template as a starting point for building a
+       more complex query, edit the query or simply run the query as
+       it is.  Press 'Show Results' to run your query. </para>
 
       </listitem>
+
     </orderedlist>
-   </sect1>
+
+  </sect1>
+
+  <sect1 id="manualCreateTemplates">
+    <title>Creating your own template queries</title>
+
+        <para> For an example, see <ulink url="tutorial7-buildtemplate.xml">Tutorial 7</ulink>. </para>
+
+        <para> Any query that has been built using the FlyMine <link
+        linkend="manualQueryBuilder">Query Builder</link> can be saved
+        as a template query, as long as it includes at least one
+        editable constraint. In order to build a template you need to
+        be <link linkend="manualLoggingIn">logged-in</link> into
+        FlyMine. Templates that you create yourself are saved to your
+        <link linkend="manualMyMine">account</link>. </para>
+
+    <orderedlist>
+      <listitem>
+        <para> The easiest way to start building a template is to
+        start from an existing template. Alternatively, a starting
+        point for the Query Builder can be selected from the FlyMine
+        homepage ('List all classes') or from an aspect page ('Query
+        starting points') (see <xref
+        linkend="manualStartQB"/>).</para>
+      </listitem>
+
+      <listitem>
+        <para> When building a query with the Query Builder, none of
+        the constraints will be editable. However, at least one
+        constraint needs to be editable in order to be able to save
+        the query as a template. To make a constraint editable, click
+        on the lock next to the constraint: A field with 'Template
+        constraint settings' will appear in the right column. Click in
+        the check-box next to 'Editable'. At the same time, it is
+        possible to add a label to the editable constraint (optional)
+        to clarify what it is by typing in a label in 'Constraint
+        label'. Click on the 'Update' button in this field. The label
+        will appear on the template page after creating the template
+        (see below). </para>
+
+        <para> An editable constraint will have an open lock in the
+        constraint list, whereas the lock of a constraint that cannot
+        be edited will appear locked. The label of the editable
+        constraint will appear below the constraint, in
+        italics. </para>
+
+        <para> If no label was added after a constraint was made
+        editable, 'no label' will appear under the
+        constraint. Clicking on 'no label' allows you to add a
+        label. Click on 'Update' to implement the change. The label
+        you give will appear above the constraint box on the template
+        page and so should provide direction as to what the query is
+        going to do. </para>
+      </listitem>
+
+      <listitem>
+        <para> Each new template requires a name and a title. A
+        description and comment are optional. All will be appear in
+        your list of template queries, after creating the template
+        (see below). Only the title and description will appear on the
+        template page. Therefore, they should provide as much
+        information as possible about what the template will do and
+        make it distinguishable from other template queries. After
+        filling at least the 'Name' and 'Title' boxes, click on
+        'Update settings' below the boxes. </para> </listitem>
+
+      <listitem>
+        <para> Before creating a template, preview the template using
+        the black arrow next to 'Template preview' and make any
+        changes, if necessary. To save this query as a template, click
+        on 'Create template'. </para>
+      </listitem>
+
+      <listitem>
+        <para> You will be able to view and run this template from
+        your 'My Mine' page <link linkend="manualMyMine">My Mine
+        page</link>. Access your account via the 'My Mine' button in
+        the top menu bar on every FlyMine page. Your templates will be
+        saved under 'Saved Template Queries'. To go to a template
+        page, click on the name of the template. A yellow star next to
+        the query name marks it as a favourite query. To mark a
+        template as a favourite, click on the star icon next to the
+        template name. As a result, the star will become yellow. Once
+        a template has been created, it can still be edited, by
+        clicking on 'Edit' in the 'Actions' column. The template
+        queries can also be <link
+        linkend="manualImportExportQueries">exported and imported
+        </link> in xml format. This feature allows you to pass a query
+        on to someone else. </para> </listitem> </orderedlist>
+        </sect1>
+
   </chapter>
 
+     
+  <chapter id="manualQueryBuilder">
+    <title>The FlyMine Query Builder</title>
+
+     <sect1>
+      <title>Introduction</title>
+
+	<para> The FlyMine Query Builder allows you to construct
+        queries on the data in the FlyMine database. The query-builder
+        interface enables you to browse through classes and fields of
+        the data model, selecting those that you wish to constrain and
+        those that you wish to include in your results. </para>
+
+	<para> Different types of data in FlyMine are described by
+        classes.  For example, information describing genes is 'held'
+        in the 'Gene' class.  A class contains fields to hold specific
+        information about the type of item it is describing.  For
+        example, the Gene class includes the fields 'name' and
+        'identifier'. Each item within a class is called an
+        object. For example the 'Notch' gene is an object that belongs
+        to the Gene class.  The different classes that describe the
+        data in FlyMine are linked together (through references).  For
+        example, the Gene class is linked to the Transcript class and
+        other relevant classes. The classes and the way in which they
+        are all linked together is called the FlyMine data model. See
+        <xref linkend="manualDataModel"/> for an explanation of these
+        concepts. </para>
+
+    </sect1>
+
+    <sect1 id="manualStartQB">
+     <title>Accessing the Query Builder</title> 
+
+        <para> To use the Query Builder you have to first select a
+        starting point.  The starting point can be any FlyMine class
+        (e.g.  Gene, Transcript, Protein, etc.). Choose the starting
+        point for your query by selecting a class (1) via 'List all
+        classes' at the bottom of the FlyMine homepage, or (2) via
+        'Query starting point' at the bottom of an aspect page, where
+        a set of commonly used starting points relating to that type
+        of data is listed.  Alternatively, you can use the 'Browse
+        model' option at the bottom of the FlyMine homepage and browse
+        to the classes and fields you are interested in. This shows
+        all the classes in FlyMine, some of which do not yet have data
+        associated with them. In browse mode, the number on the right
+        shows the number of objects associated with that class.  All
+        options mentioned above will take you to the main Query
+        Builder page.</para>
+
+    </sect1>
+
+    <sect1 id="manualPageQB"> 
+     <title>Query Builder page</title>
+
+       <para> The main FlyMine Query Builder page is composed of 3 main sections:</para>
+
+   <sect2 id="manualModelBrowserQB"> 
+ 
+    <title>The model browser</title>
+
+       <para> The model browser allows you to browse through the
+       FlyMine data model. Depending on the starting class you will be
+       able to navigate to other classes as defined by the references
+       between the classes. In other words, to combine classes
+       containing the objects you require, you find a path through the
+       classes that link together the information you require. Within
+       the model browser, classes that can be accessed from a parent
+       class (i.e. are linked to the parent class through a reference)
+       are shown as fields (with a + for expanding before them) within
+       that class. (See <xref linkend="manualDataModel"/> for an
+       explanation of classes and fields and <xref
+       linkend="manualExampleModelQB"/> therein for a specific
+       example). For each class and field within the model browser
+       there is a 'CONSTRAIN' option and a 'SHOW' option. These are
+       used to either constrain it in the constraints list or to
+       select a class or field to show in the results <link
+       linkend="manualRunQB">output</link>. </para>
+
+     </sect2>
+
+   <sect2 id="manualConstrainSectionQB"> 
+ 
+    <title>The constraint section</title>
+             
+       <para> The constraint section allows you specify the
+       constraints you wish to apply to particular classes and
+       fields. A constraint is like a filter - you filter out a subset
+       of the objects in a class which have certain characteristics
+       (defined by the constraint). The constraint section consists of
+       three parts: (1) 'Constraints on the current query' lists the
+       constraints that have been added to particular classes and
+       attributes. (2) 'Constraint logic' allows you to change the
+       relationship between the different constraints. (3) 'Constrain'
+       provides boxes to constrain a field or class. This last section
+       only appears when a constraint is selected from the Model
+       browser but hasn't been added to the query yet. See <xref
+       linkend="manualBuildingQueryQB"/> for details on how to
+       constrain a query.</para>
+
+   <orderedlist>
+    <listitem>
+     
+      <para> Constraints on the current query - This section lists the
+      constraints that have been added to particular classes and
+      attributes. Constraints can be added to a class or attribute
+      from the Model browser on the left by clicking on
+      <inlinemediaobject><imageobject><imagedata
+      fileref="constrain.gif" /></imageobject></inlinemediaobject>
+      next to the class/attribute.  Constraints can be removed using
+      <inlinemediaobject><imageobject><imagedata fileref="cross.gif"
+      /></imageobject></inlinemediaobject>. To change a constraint,
+      click on <inlinemediaobject><imageobject><imagedata
+      fileref="edit.gif" /></imageobject></inlinemediaobject>. You can
+      now change the constraint under the 'Constrain' section that
+      will have appeared (below 'Constraint logic') and click on 'Add
+      to query' to constrain your query again.</para>
+
+    </listitem>
+
+    <listitem> 
+ 
+      <para> Constrain - The 'Constrain' section provides boxes for
+      you to constrain a field or class. The type of constraint you
+      can add will depend on whether a class or an attribute (a field
+      with only one unique piece of information, like e.g. an
+      identifier, as opposed to a field that references to another
+      class) is selected. If you have selected an attribute either
+      specify a particular constraint using the box provided or set
+      the attribute to be 'Has no value' or 'Has a value'. Classes for
+      which there are subclasses (e.g. tRNA is a subclass of
+      Transcript) can be constrained to a particular subclass. If the
+      query already has one or more constraints, you can also define
+      the logic between them and the new constraint by selecting
+      either 'and' or 'or'. Once you have defined your constraint (and
+      its relationship with other constraints) press 'Add to
+      query'. The new constraint will appear in the 'Constraints on
+      the current query'.</para>
+ 
+    </listitem>
+
+    <listitem> 
+
+      <para> Constraint logic - This section will be empty until
+      there are at least two constraints in the query.  Each
+      constraint will then have a letter next to it on the
+      'Constraints on the current query' list which will allow you to
+      change the relationship between the different constraints.
+      Click on 'edit' to change the logic between the constraints
+      (and, or, grouping) and then on 'Update' to incorporate the
+      logic into the query again. </para>
+
+    </listitem>
+
+   </orderedlist>
+
+  </sect2>
+
+  <sect2 id="manualOutputListQB"> 
+ 
+    <title>The output list</title>
+
+       <para> The output list (bottom) shows all fields that you have
+       selected to show in your results. Initially, the output list
+       (bottom) will say 'No fields selected for output'. See <xref
+       linkend="manualRunQB"/> for more details.</para>
+
+   </sect2>
+
+   </sect1> 
+ 
+   <sect1 id="manualBuildingQueryQB">
+
+    <title>Constraining a query with the Query Builder</title>
+
+    <para> You can think of the classes as boxes containing lots of
+    individual items (objects). To create a query you want certain
+    items from certain boxes. You therefore have to select the boxes
+    that require the items you want and constrain the boxes so that
+    you only select the subset of items in the boxes that you
+    require. To query FlyMine you therefore select the classes that
+    hold the objects you require. Constraints can be applied to the
+    objects contained in a class, so that only a certain subset of
+    those objects which have the required characteristics are
+    selected. For example the Gene class contains a large number of
+    genes (gene objects) from all the organisms represented in
+    FlyMine. However you may only be interested in data related to one
+    specific gene. You would therefore constrain the gene name field
+    of the gene class to that of the required gene. </para>
+
+
+   <sect2>
+
+    <title>Add one constraint</title>    
+
+    <para> To apply a constraint to a class or field, navigate to the
+    class or field in the model browser (left) and click on the
+    <inlinemediaobject><imageobject><imagedata fileref="constrain.gif"
+    /></imageobject></inlinemediaobject> button next to it. This will
+    add it to the constraints list and bring up a box in which you
+    specify your constraint.  The type of constraint you can add will
+    depend on whether a class or an attribute (a field with only one
+    unique piece of information, like e.g. an identifier, as opposed
+    to a field that references to another class) is selected. If you
+    have selected an attribute either specify a particular constraint
+    using the box provided or set the attribute to be 'Has no value'
+    or 'Has a value'. Classes for which there are subclasses
+    (e.g. tRNA is a subclass of Transcript) can be constrained to a
+    particular subclass. If the query already has one or more
+    constraints, you can also define the logic between them and the
+    new constraint by selecting either 'and' or 'or'. Once you have
+    defined your constraint (and its relationship with other
+    constraints) press 'Add to query'. The new constraint will appear
+    in the 'Constraints on the current query' list. </para>
+
+   </sect2>
+
+   <sect2>
+
+    <title>Constraining to subclasses</title> 
+
+    <para>Some classes are subdivided in to more specialised
+    subclasses. For some queries you may only be interested in data
+    relating to a particular subclass of a class, e.g. you may only be
+    interested in the tRNA transcripts. In these cases you need to
+    constrain the class to the subclass that you require. The
+    difference between this and the examples above is that you are
+    constraining the actual class, rather than a field of a
+    class. </para>
+
+   </sect2>
+
+   <sect2>
+
+  <title>Combining data from different classes</title> 
+
+    <para>Because of the relationships between the objects in the
+    classes you may only need to constrain one class to retrieve a
+    subset of items from another class, e.g. if you want all the genes
+    from Drosophila, you only need to constrain the organism class to
+    Drosophila to retrieve that subset of genes from the gene
+    class. If you wish to know about the transcripts of a particular
+    gene you would combine information from the Gene class and the
+    Transcript class. By constraining the 'name' field of the gene
+    class to a particular gene, you will only retrieve information
+    from the transcripts class that relates to that gene (i.e. you do
+    not need to apply the constraint to the transcripts class as
+    well). This is because that particular gene object has a
+    relationship to particular objects (instances) of the transcript
+    class (i.e. those transcripts that are produced from that
+    particular gene). </para> 
+ 
+ </sect2>
+
+  </sect1>
+
+   <sect1 id ="manualRunQB">
+     <title>Show query results</title> 
+
+     <para> To select a class or field to show in the results output,
+     press <inlinemediaobject><imageobject><imagedata
+     fileref="show.gif" /></imageobject></inlinemediaobject> next to
+     the class/field. Fields that have been selected for output will
+     appear in a blue box in the model browser and constraint
+     list. Fields can be deleted from the output fields list using the
+     <inlinemediaobject><imageobject><imagedata fileref="cross.gif"
+     /></imageobject></inlinemediaobject>. The order of fields in the
+     output fields list can be changed by clicking and dragging
+     them. The results will be sorted alphabetically, in ascending
+     order, based on the first column. Press 'Show results' to run
+     your query and view your results in the results page.  When your
+     query is run an estimate is first made of how long it will take
+     to run the query and how many objects should be returned by the
+     query. If your query is going to take a very long time to run, it
+     will be stopped and a message will appear at the top of the
+     screen. When your query has run, your results will be displayed
+     on the results page. You can go back to edit your query by
+     clicking on the 'Current query' in the top menu bar.</para>
+
+   </sect1>
+
+   <sect1 id ="manualSaveExportQB">
+     <title>Saving and exporting your query</title> 
+
+      <para> All queries that you run are saved to your <link
+      linkend="manualMyMine">account</link>. Your query will be named
+      query_x (where x increments for each query run). Saved queries
+      can be accessed from your account via the <link
+      linkend="manualMyMine">My Mine</link> button at the top of any
+      FlyMine page. This query history is available for the duration
+      of your session unless you <link linkend="manualLoggingIn">log
+      in</link> - in which case you can then save your queries
+      permanently. </para>
+
+      <para> If you are logged-in, it is also possible to save a query
+      configuration with a name that you choose directly from the
+      Query Builder. Once you have added fields to the output in the
+      Query Builder, a box at the bottom will become available for you
+      to save your query with a specific name. </para>
+
+      <para> Queries can be exported as xml from the Query Builder
+      page.  Queries saved as xml can be imported into the FlyMine
+      Query Builder - see <xref
+      linkend="manualImportExportQueries"/>. </para>
+
+    </sect1>
+
+  </chapter>
 
 
   <chapter id="manualResults">
     <title>Results</title>
-      <sect1>
-        <title>Introduction</title>
 
-      <para>
-        FlyMine results can be either a table of simple attributes or
-        a table of object summaries or a combination of both. In
-        addition there are object details pages which provide more
-        information about specific objects.  The type of result table
-        displayed depends on what items have been selected to show in
-        the results - ie. only class fields, only classes or a
-        combination of fields and classes.  See <xref
-        linkend="manualFields"/> for an explanation of classes and
-        fields.  Each of these types of result are described
-        in more detail in the following sections . The general
-        features of each result display are described below.
-      </para>
+      <para> FlyMine results can be either an <link
+      linkend="manualObjectDetails">Object details page</link> which
+      provides more information about one specific object, or a table. </para>
 
-    <para>
-      The results page displays the first 10 items returned by your
-      query.
-    </para>
+      <para> The results table displays the results in alphabetic
+      order, based on the content in the first column.  The number of
+      items displayed can be changed by changing the number in the
+      'Page size' box.  You can scroll through the items using 'Next',
+      or go to the last 10 items using 'Last'. The total number of
+      items returned by your query is estimated. An estimate is given
+      because, for large queries, only a subset of the total number of
+      items is initially returned by the query. This is to improve
+      query run time for large queries. Clicking on 'Last' will give
+      you the exact number of items returned by your query.  The
+      column headers reflect the relationships between different
+      classes/attributes within the query.  A column can be moved to
+      the right or to the left by clicking on the appropriate arrow on
+      top of the column. Clicking on the smaller double arrow on top
+      of a column will hide the column. The types of columns and their
+      initial order are determined by the underlying Query Builder. To
+      change the output, click on 'Query' in the trail at the top of
+      the result page or on 'Current query' in the top menu bar. Both
+      options will display the template page. Clicking on 'Edit Query'
+      will display the query in the Query Builder. To sort the results
+      based on a certain column different from the first one, you need
+      to put that column first using the Query Builder (changing the
+      order on the result page using the arrows will not re-sort the
+      results). </para>
+ 
 
-    <para>
-      The number of items displayed can be changed by changing the
-      number in the Page size box and pressing Change.
-    </para>
-
-    <para>
-      You can scroll through the items using Next, or go to the last
-      10 items using Last.
-    </para>
-
-    <para>
-      The total number of items returned by your query is estimated.
-      An estimate is given because, for large queries, only a subset
-      of the total number of items is initially returned by the
-      query. This is to improve query run time for large queries.
-      Clicking on 'last' will give you the exact number of items
-      returned by your query.
-    </para>
-
-    <para>
-      From the results page you can save your data to a bag (see <xref
-      linkend="manualSavingBags"/>) and export your data in various
-      formats (see <xref linkend="manualExportingData"/>).
-    </para>
-
-    <para>
-      If there are any objects in your results (as opposed to
-      class fields) you can click on an object to view it in
-      detail (see <xref linkend="manualObjectDetails"/>).
-    </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="tableResults1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-
-         
-        </sect1>
-
-        <sect1>
-          <title>Exportable results tables</title>
-            <para>
-               An exportable table of simple attributes can be created
-               if a query is constructed to only show class fields (as
-               opposed to entire objects belonging to a class), as
-               these consist of a single value, such as a name or
-               number. Such tables are useful if you wish to download
-               data (to a speadsheet for example).  The screenshots
-               below show an example of a query constructed to show
-               only class fields and the table it produces.
-            </para>
-
-
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="tableResults2.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-        </mediaobject>
-
-        </sect1>
-
-      <sect1>
-          <title>Object summary results</title>
-              
-            <para>
-             If a query is constructed such that only classes are
-             selected to 'show' in the results, the results table will
-             be a summary of the objects returned by your query.  The
-             screenshot below shows an example of Gene objects
-             returned by a query.  Each object in the summary table
-             has a link to a details page which provides more
-             information about that object - see <xref
-             linkend="manualObjectDetails"/>
-             </para>
-                
-
-
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="geneDetails1.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-        </mediaobject>
-
-       </sect1>
-
-
-  <sect1 id="manualObjectDetails">
-    <title>Object details pages</title>
-
-    <para>
-      For every object in the FlyMine database there is a details page
-      which provides all the fields, references and collections for
-      that object along with additional information such as the
-      GBrowse genome viewer for sequence features. (see <xref
-      linkend="manualFields"/> for an explanation of these concepts).
-    </para>
-
-    <para>
-      The object details page can be accessed from your results
-      by clicking on the [details...] links. From this detailed
-      results view it is possible to browse the information contained
-      in the referenced classes (see screenshot below).
-    </para>
-
-    <para>
-      If you are using the Quick Search from the main query
-      page, you may be taken to an object details page directly if
-      only one object in the database matches your search.
-    </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="resultsDetails1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-   </sect1>
+      <para> From the results page you can save your data to a <link
+      linkend="manualBags">bag</link> and <link
+      linkend="manualExportData">export</link> your data in various
+      formats. </para>
 
   </chapter>
 
 
+  <chapter id="manualExportData">
+    <title>Exporting data</title>
+
+    <sect1 id="manualExportTables">
+     <title>Exporting Tables</title>
+
+     <para> Data can be exported from the results page in various
+     formats - currently Excel (or open office) format, comma
+     separated values, tab separated values, or for objects with
+     sequences, FASTA format. Currently, either the entire results
+     table or specific columns can be exported. If nothing is
+     selected, the entire data set will be exported. If you do not
+     wish to export certain columns these can be hidden using the
+     small double arrow in the column header.</para>
+
+    </sect1>
+
+    <sect1 id="manualExportfasta">
+     <title>Exporting FASTA files</title>
+
+     <para> If the results table contains a column with objects that
+     have a nucleotide or amino acid sequence, it is possible to
+     export all sequences from that column in FASTA format.
+     Currently, the FASTA export option will export the sequences
+     belonging to objects in the first visible (i.e. not hidden)
+     column only. Therefore, if that column does not contain any
+     sequence-linked objects, the FASTA export option will not be
+     activated. Columns can be moved to the first position by using
+     the arrows in the header. If objects appear more than once in the
+     column, the sequence will only be exported once.</para>
+
+    </sect1>
+ 
+  </chapter>
 
 
-<chapter id = "Bags">
+ <chapter id = "manualBags">
   <title>Bags</title>
 
   <sect1>
      <title>Introduction</title>
-       
-      <para>
-        Bags are holders for lists of data.  The data in a bag can be
-        either fields (eg a list of gene identifiers) or a set of
-        objects (or a combination of fields and objects). The
-        following sections describe how bags can be created and used
-        in FlyMine.
-      </para>
 
-  </sect1>
+      <para> All queries in FlyMine can be performed on lists or
+      'bags' that you create yourself. Bags are holders for lists of
+      data, e.g. a list of gene identifiers. Bags can be created from
+      an external source or from results from previous queries. Saved
+      bags of data can be used to constrain queries (either in a <link
+      linkend="manualTemplateQueries">template query</link> or in the
+      <link linkend="manualQueryBuilder">Query Builder</link>),
+      perform logical operations (union, intersect, subtract) and can
+      be exported.  </para>
 
+      <para> The 'Bag page' can be found under 'My Mine' or 'Bags',
+      both in the top menu bar of every FlyMine page.</para>
 
-
-
-  <sect1 id="manualSavingBags">
-    <title>Saving bags of data from a query</title>
-
-    <para>
-      Data can be saved into 'bags' and stored in your query history.
-      To save your data to a bag select the required data and either
-      add it to an existing bag or save it to a new bag, using the
-      boxes displayed underneath the results. Selecting the
-      check-boxes next to the column headings will select the entire
-      column for saving.  Alternatively, individual items can be saved
-      by selecting check-boxes next to the items. Saved bags of data
-      can be viewed from your History page (accessible from the menu
-      bar - see <xref linkend="manualHistory"/>).
-    </para>
-
-    <para>
-      Saved bags of data can be used to constrain new queries, perform
-      logical operations and can be exported (see <xref
-      linkend="manualUsingBags"/>. If you have saved bags of data
-      these will become available for constraining queries in the
-      constraint list of the query builder page.
-    </para>
+      <para> To save your bags permanently, you need to be <link
+      linkend="manualLoggingIn">logged-in</link>. </para>
 
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="savingBags1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-   </sect1>
+ </sect1>
 
-  <sect1 id="manualCreatingBag">
-    <title>Creating a bag of identifiers from an external source</title>
+ <sect1 id="manualMakingBags">
+     <title>Making a bag</title>
 
-    <para>
-      A bag can be created from an external source.  From the main
-      query page click on the 'Create a bag of identifiers' link (see
-      screenshot below).
-    </para>
+    <itemizedlist>
+     <listitem>
 
+      <para> Bags can be created from an external source: The
+      left-hand side 'My bags' on the bag page shows you the list of
+      your saved bags. The right-hand side 'Create a new bag' allows
+      you to type or past in a list of <link
+      linkend="manualFlyMineIdentifiers">identifiers</link>, or upload
+      a file containing the list. Do not mix up different types of
+      identifiers if you want to use your bag to constrain a query -
+      e.g. make a bag of gene symbols only or gene identifiers
+      only.</para>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="createBag1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
+     </listitem>
+ 
+     <listitem>
+      <para> Data from previous queries can also be saved into a
+      bag. To save your data to a bag select the required data on a
+      result page and either add it to an existing bag or save it to a
+      new bag, using the boxes displayed underneath the
+      results. Selecting the check boxes next to the column headings
+      will select the entire column for saving. Alternatively,
+      individual items can be saved by selecting check boxes next to
+      the items. Currently, a bag can only contain one column.</para>
+      </listitem>
 
+    </itemizedlist>
 
-    <para>
-      To make your bag, either type or cut and paste in a list of
-      identifiers, or upload a list from a file. Enter a name for your
-      bag (or leave the default) and press 'Make bag' to save the bag
-      of identifiers to your <link
-      linkend="manualHistory">history</link>.  Do not mix up different
-      types of identifiers if want to use your bag to constrain a
-      query - eg make a bag of gene symbols only or gene identifiers
-      only.  See <xref linkend="manualUsingBags"/> for details on how
-      to use a bag of identifiers in a query and for performing the
-      logical operations union and intersect.
-    </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="createBag2.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
   </sect1>
 
   <sect1 id="manualUsingBags">
     <title>Making use of bags</title>
 
-    <para>Bags can be used in three different ways: to constrain a
-    query (either a template query or in the query builder), to
-    perform logical operations and to export data.  The following
-    sections describe each of these in more detail.
-    </para>
-  </sect1>
+     <para> Bags can be used in three different ways: to constrain a
+     query, either in a <link linkend="manualTemplateQueries">template
+     query</link> or in the <link linkend="manualQueryBuilder">Query
+     Builder</link>, to save query results within FlyMine and to
+     perform logical operations. </para>
+
+    <orderedlist>
+
+     <listitem>    
+       <para> Any variable (box) in a template query can be
+       constrained to a bag (or 'not in' a bag) rather than a single
+       value. If you have bags saved in your history the option to
+       constrain each variable to a bag will appear automatically. For
+       example, if you want to run a particular query for a list of
+       genes rather than a single gene, you can create a bag of gene
+       symbols/identifiers and run a template query using this
+       bag.</para> 
+
+       <para> Bags of data can be used to constrain queries in the
+       Query Builder. If you have bags of saved data under <link
+       linkend="manualMyMine">'My Mine'</link> you will automatically
+       be able to use these from within the Query Builder to constrain
+       a query. When a field or class is selected for constraining a
+       query using the Query Builder the constraint box in the right
+       hand constraint panel will ask you to either add a constraint
+       or constrain to a choice of your bags. </para>
+
+     </listitem>
+
+     <listitem> 
+      <para> Result from queries can also be saved into a bag. To save
+      your data to a bag select the required data on a result page and
+      either add it to an existing bag or save it to a new bag, using
+      the boxes displayed underneath the results. Selecting the check
+      boxes next to the column headings will select the entire column
+      for saving. Alternatively, individual items can be saved by
+      selecting check boxes next to the items. Currently, a bag can
+      only contain one column.</para>
+     </listitem>
+
+     <listitem>
+      <para> The logical operations, union, intersect and subtract,
+      can be performed on bags of data from your <link
+      linkend="manualMyMine">bag page</link>. Use the check-boxes
+      next to your saved bags to select two or more bags for these
+      operations. </para> 
+    </listitem>
 
 
-  <sect1 id="logicalOperations">
-    <title>Using bags for logical operations</title>
-
-    <para>
-      The logical operations, union and intersect, can be performed on bags of
-      data from your <link linkend="manualHistory">history</link> page. Use the
-      checkbuttons next to your saved bags to select two or more bags for
-      these operations. (see screenshot below).
-    </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="logicalOps1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-    
-     </sect1>
-
-    <sect1 id="constrainingTemplatesWithBags">
-        <title>Using bags to constrain template queries</title>
-   
-        <para>
-           Any variable (box) in a template query can be constrained
-           to a bag (or 'not in' a bag) rather than a single
-           value. If you have bags saved in your history the option to
-           constrain each variable to a bag will appear automatically
-           (see screenshot below). For example, if you want to run a
-           particular query for a list of genes rather than a single
-           gene, you can create a bag of gene symbols/identifiers and
-           run a template query using this bag.
-        </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="templateBags1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-
-   </sect1>
-
-
-  <sect1 id="constrainingQueryBuilderWithBags">
-     <title>Using bags to constrain queries in the query builder</title>
-
-    <para>
-      Bags of data can be used to constrain queries in the query
-      builder.  If you have bags of data saved in your history you will
-      automatically be able to use these from within the query builder
-      to constrain a query.  When a field or class is selected for
-      constraining in the query builder the constraint box in the right
-      hand constaint pane will ask you to either add a constraint or
-      constrain to a choice of your bags (see screenshot below).
-    </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="constrain2Bag1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
- 
-  </sect1>
+    </orderedlist> 
   
+  </sect1>
 
-  <sect1 id="exportingBags">
-      <title>Exporting the contents of a bag</title>
+  <sect1 id="manualExportBags">
+     <title>Exporting the contents of a bag</title>
 
-  <para>
-      To export the contents of a bag, click on the bag name. This
-      will display the contents of the bag as a results page - with
-      the export options available at the bottom of the page - see
-      <xref linkend="manualExportingData"/>)
-  </para>
+      <para> To export the contents of a bag, click on the bag
+      name. This will display the contents of the bag as a results
+      page - with the export options available at the bottom of the
+      page - see <xref linkend="manualExportData"/>) </para>
 
  </sect1>
 
-</chapter>
+ </chapter>
 
 
+  <chapter id="manualMyMine">
+    <title>Personal FlyMine account: My Mine</title>
 
-  <chapter id="manualExportingData">
-    <title>Exporting data</title>
-
-   <sect1 id="exportingTables">
-      <title>Exporting Tables</title>
-
-    <para>
-      Data can be exported from the results page in various formats -
-      currently Excel (or open office) format, comma separated values,
-      tab separated values, or for items with sequences, fasta format.
-      The entire data set will be exported - you do not need to select
-      any check-boxes. If you do not wish to export certain columns
-      these can be hidden using the 'hide' option in the column
-      header.
-    </para>
-
-    <para>It is best to create a table of simple attributes (see <xref
-    linkend="manualResults"/> ) if you wish to export data. Although
-    you can export results containing object summaries you will
-    probably find the format fairly un-usable.  An exception to this
-    is if you want to export a fasta file - in this case you need to
-    select the object (class) to 'show' in your results (eg the Gene or
-    Protein class) - see <xref linkend="manualExportingFasta"/>.
-    </para>
-
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="exportingData1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-   </sect1>
-
- 
-    <sect1 id="manualExportingFasta">
-       <title>Exporting fasta files</title>
- 
-    <para>To export a fasta file of sequences you must create a query
-    which returns the object summaries for each object you want to
-    export (eg a set of Gene or Protein objects) (as opposed to simple
-    fields such as the gene symbol or identifier - see <xref
-    linkend="manualFields"/>)
-    </para>
-
-    <para>Some template queries are available which will return
-     results suitable for exporting fasta files (eg output genes from a
-     particular organism in a format suitable for creating a fasta
-     database).
-    </para>
-
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="exportingDataFasta1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-    </sect1>
- 
-  </chapter>
-
-
-  <chapter id="manualHistory">
-    <title>History</title>
-
-      <sect1>
+     <sect1>
         <title>Introduction</title>
-    <para>
-      The history page displays your saved bags and queries.
-    </para>
 
-    <para>
-      A saved query is a copy of the actual query configuration,
-      created in the query builder.
-    </para>
+      <para> A saved query is a copy of the actual query
+      configuration, created in the <link
+      linkend="manualQueryBuilder">Query Builder</link>. Saved
+      templates and previously executed queries can be viewed from
+      your account or 'My Mine' page accessed at the top menu bar on
+      any FlyMine page. Your query history will remain available to
+      you only for the duration of a session unless you create and use
+      a <link linkend="manualLoggingIn">login</link>. If you log in
+      (via button on top menu bar), your queries and bags will be
+      stored permanently.  </para>
 
-    <para>
-      All queries that you run are saved in your query history with
-      the default name query_x (where x increments for each query run)
-      You can also save a query with a name of your choice using the
-      'Save query' box at the bottom of the query builder
-      interface. (see <xref linkend="manualSavingqueries"/>)
-    </para>
+     </sect1>
 
-    <para>
-    If you run a template query it will be saved to your query
-    history.  However, if you then access this query from your
-    history, it will be displayed in the query builder.  If you just
-    wish to run this query again, press the 'Show results' button
-    towards the bottom of the query builder.
-    </para>
+     <sect1>
+       <title>My Mine</title>
 
-    <para>
-      Saved bags are created by saving specific data from the results
-      page, or are uploaded from an external source.  (see <xref
-      linkend="manualSavingBags"/>).
-    </para>
+      <para> Your query history, called 'My Mine', is divided into
+      five lists: <link linkend="manualBags">Bags</link>, Query
+      History, Saved Queries, Saved Templates and Favourite Templates,
+      plus a tab to allow you to change your password (only visible
+      when <link linkend="manualLoggingIn">logged-in</link>. If you
+      are not <link linkend="manualLoggingIn">logged-in</link>, only
+      your Query History will be activated, the others will be
+      greyed-out. After logging-in, you will be able to view your
+      Saved Queries, Saved Templates and Favourite Templates. Saving
+      queries from Query History and importing queries into your Query
+      History is only possible if you are logged-in. </para>
+
+      <para> Every query and template list includes columns giving the
+      date the query or template was created, the class from which the
+      query was started, the approximate number of rows in the
+      results, the fields selected to show in the results output and
+      access to a number of actions (run, edit, export) that can be
+      performed on the queries.</para>
+
+      <orderedlist numeration="upperalpha">
+       <listitem>
+        <para> Query History - All queries that you run are saved in
+         your query history with the default name 'query_x' (where x
+         increments for each query run). To change the name of the
+         query, click on the pencil next to the query name.  It is
+         possible to run the query again ('Actions - Run') or to
+         change the query in the Query Builder ('Actions-
+         Edit'). These queries will only be saved during the time of
+         the current session.  To save queries permanently and to
+         import queries, you need to be <link
+         linkend="manualLoggingIn">logged-in</link>. To save a query,
+         select it by clicking on the check-boxes next to the name and
+         press 'Save' in the 'Actions' column. A message will appear
+         confirming that the queries have been saved permanently and
+         the queries will now appear under 'Saved Queries' (see below)
+         where it will be suggested to change its name. The query will
+         also stay in Query History for the rest of the
+         session. Queries can also be exported or deleted by selecting
+         them individually using the check-boxes (or clicking on the
+         check-box on top of the column to select all at once) and
+         clicking the 'Export' or 'Delete' buttons at the bottom of
+         the page.  After pressing 'Delete' you will need to confirm
+         that you really want to delete the selected
+         queries. Exporting a query will not delete it from your query
+         history.</para>
+       </listitem>
+
+       <listitem>
+        <para> Saved Queries - lists all queries that you have saved
+        before. They will be saved permanently.  It is possible to
+        rename the query (via the pencil next to the query name), to
+        run it again ('Actions - Run') and to edit it in the Query
+        Builder ('Actions- Edit').  Queries can also be exported or
+        deleted by selecting them individually using the check-boxes
+        (or clicking on the check-box on top of the column to select
+        all at once) and clicking the 'Export' or 'Delete' buttons at
+        the bottom of the page. After pressing 'Delete' you will be
+        asked to confirm that you really want to delete the selected
+        queries.  Exporting a query will not delete it from your query
+        history.  This page also allows you to import queries by using
+        the 'Import query from XML' link at the bottom of the page, if
+        you are <link linkend="manualLoggingIn">logged-in</link>.
+        Enter queries in XML format in the space provided and press
+        'Submit'.  The imported queries will be stored under 'Saved
+        Queries'.  Existing queries with identical names will get an
+        automatic extension to make it unique, e.g. dmel-proteins-1,
+        dmel-proteins-2.</para> </listitem>
+       <listitem>
+
+        <para> Saved Templates - provides a list of all templates that
+        you created yourself or have imported. They will be saved
+        permanently. It is possible to rename the template query (via
+        pencil next to the template name), to run it again ('Actions -
+        Run') and to edit it in the Query Builder ('Actions- Edit').
+        Templates can also be exported or deleted by selecting them
+        individually using the check-boxes (or clicking on the
+        check-box on top of the column to select all at once) and
+        clicking the 'Export' or 'Delete' buttons at the bottom of the
+        page.  After pressing 'Delete' you will be asked to confirm
+        that you really want to delete the selected queries.
+        Exporting a template will not delete it from your query
+        history.  This page also allows you to import templates by
+        using the 'Import template query' link at the bottom of the
+        page, if you are <link
+        linkend="manualLoggingIn">logged-in</link>. Enter queries in
+        XML format in the space provided and press 'Submit'. The
+        imported templates will be stored under 'Saved Templates'.
+        Existing templates with identical names will get an automatic
+        extension to make it unique, e.g. dmel-proteins-1,
+        dmel-proteins-2.  You can select templates to become
+        'favourite templates'.  To mark a template as a favourite,
+        click on the star next to the template name, which will then
+        become yellow.  The template will stay in this list but will
+        also appear in the 'Favourite Templates' list.  To unmark it,
+        go to 'Favourite Templates' (see below), select the template
+        and press 'Remove from Favourite List' at the bottom of the
+        page. </para>
+
+       </listitem>
+
+       <listitem>
+        <para> Favourite Templates - lists your favourite templates.
+        To mark a template as a favourite, click on the star next to
+        the template title, which will then become yellow. The
+        template will stay under 'Saved Queries' but will now also
+        appear in the 'Favourite Templates' list.  To remove a
+        template from the favourites list, select the template and
+        press 'Remove from Favourite List' at the bottom of the
+        'Favourite Templates' page. It is possible to rename the
+        template query (via pencil next to the template name), to run
+        it again ('Actions - Run') and to edit it in the Query Builder
+        ('Actions- Edit').  Favourite templates can also be exported
+        by selecting them individually using the check-boxes (or
+        clicking on the check-box on top of the column to select all
+        at once) and clicking the 'Export' button at the bottom of the
+        page. Exporting a template will not delete it from your query
+        history. This page also allows you to import templates by
+        using the 'Import template query' link at the bottom of the
+        page, if you are <link
+        linkend="manualLoggingIn">logged-in</link>.  Enter queries in
+        XML format in the space provided and press 'Submit'. The
+        imported templates will be stored under 'Saved
+        Templates'. Existing templates with identical names will get
+        an automatic extension to make it unique,
+        e.g. dmel-proteins-1, dmel-proteins-2. </para>
+
+       </listitem>
+
+    </orderedlist>
  
+    </sect1>
 
-   <mediaobject>
-      <imageobject>
-        <imagedata fileref="history1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-  </sect1>
-
-
-     <sect1 id = "loggingIn">
+    <sect1 id = "manualLoggingIn">
 	<title>Logging in</title>
 	    
-     <para>Your history will remain available to you only for the
-     duration of a session unless you create and use a log in.  If you
-     log in, your history will be stored permanently.
-     </para>
+     <para> Your bags and query history will remain available to you
+     only for the duration of a session unless you create and use a
+     log in. If you log in, your bags and queries will be stored
+     permanently. </para>
  
-     <para> To log in, click on the Log in link in the main menu bar.
-     If you have never logged in before, enter your email address into
-     the third box and press 'request password'.  A password will be
-     emailed to you immediately.  You can then log in.  Your username
-     is the email address for which you requested a password.  If you
-     forget your password, enter your email address into the third box
-     and it will be emailed to you again.
-     </para>
-
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="logIn1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
+     <para> To log in, click on the' Log in' link on the top menu bar
+     or at the bottom of a 'My Mine' page. If you have never logged in
+     before, go to '..or create an account'. Enter your email address,
+     choose a password and confirm it and click on 'Create
+     account'. You can then log in.  Your username is the email
+     address for which you chose a password. If you forgot your
+     password, click on 'forgotten password'. You will be asked to
+     enter your email address. Click on 'Request password' and your
+     password will then be send to you again. </para>
 
     </sect1>    
- 
-    <sect1 id="savingPermanently">
-         <title>Saving queries permanently to your history</title>
-     
-      <para>All queries that you run are saved in your query history
-      with the default name query_x (where x increments for each query
-      run).  Such queries however will only be available for the
-      duration of a session unless you save them permanently to your
-      history.
-      </para>
 
-      <para>To save a query permanently, use the 'Save' option
-      available next to the query - see screenshot below. NOTE: you
-      must be logged in to save a query permanently (see <xref
-      linkend="loggingIn"/>).
-      </para>
-
-   <mediaobject>
-      <imageobject>
-        <imagedata fileref="savingPermanently1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-    </sect1>
-
-
-    <sect1>
-      <title>Using saved queries</title>
-
-
-      <para>The list of saved queries includes columns giving the date
-      the query was created, the class from which the query was
-      started, and the fields selected to show in the results output
-      (see screenshot below).
-      </para>
-
-      <para>
-        Click on the query name to display the query in the query
-        builder interface. From here you can edit the query or run it
-        again. (see <xref linkend="manualQueryBuilder"/>).
-      </para>
-
-      <para>
-      The name of a query can be changed using the edit button (see screenshot below).
-      </para>
-
-      <para>Saved queries can be exported as xml - see <xref linkend="exportingQueriesHistory"/>.
-      </para>
-
-   <mediaobject>
-      <imageobject>
-        <imagedata fileref="history2.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-    </sect1>
-
-    <sect1 id="exportingQueriesHistory">
-       <title>Exporting queries</title>
-          
-         <para>Queries can be exported as xml from your history.  Each query has an 'Export' option.
-         </para>
-
-   <mediaobject>
-      <imageobject>
-        <imagedata fileref="exportQuery1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-
-     <para>Queries saved as xml can be imported from the main query
-     page see <xref linkend="importingXMLQueries"/>.  This
-     export/import feature is therefore useful if you wish to pass a
-     query on to someone else.
-     </para>
-
-     <para>
-     Queries can also be exported as xml from the query builder page -
-     see <xref linkend="manualExportingQueriesQueryBuilder"/>
-     </para>
-
-    </sect1>
-
-    <sect1>
-      <title>Using saved bags</title>
-
-      <para>
-        Click on the bag name to view its items in the results
-        page. Bags can be used to perform logical operations and to
-        constrain queries - see <xref linkend="manualUsingBags"/>)
-      </para>
-    </sect1>
-
-    <sect1>
-      <title>Deleting saved bags and queries</title>
-
-      <para>
-        Select the check-boxes of the bags or queries you wish to delete and
-        press the appropriate Delete button.
-      </para>
-    </sect1>
  </chapter> 
 
-  <chapter id="manualCreatingTemplates">
-    <title>Creating your own template queries</title>
 
-      <sect1>
-        <title>Introduction</title>
-         <para>
-           Any query that has been built using the query builder can
-           be saved as a template query (as long as it includes some
-           constraints).  Templates that you create yourself are saved
-           to your history.
-         </para>
+   <chapter id="manualImportExportQueries">
+       <title>Exporting and importing (template) queries</title>
 
-         <para>Templates are created from the main query builder page.
-         In the bottom right hand corner is a button called 'Build
-         Template' (note you will only be able to see this if you are
-         logged in):
-         </para>
+     <para> The export/import feature allows you to pass a query on to
+     someone else. </para>
 
-  <mediaobject>
-      <imageobject>
-        <imagedata fileref="buildTemplate1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
+    <sect1> 
+       <title>Exporting queries in xml format</title>
 
+     <para> Queries can be exported as xml or IQL either from the
+     <link linkend="manualQueryBuilder">Query Builder</link> page
+     ('Actions - Export this query as XML or IQL').  Saved queries can
+     also be exported as xml from your 'Saved Queries' on your <link
+     linkend="manualMyMine">My Mine</link> page. Select the
+     templates individually using the check-boxes (or click on the
+     check-box on top of the column to select all at once) and click
+     the 'Export' button at the bottom of the page.  Exporting a
+     query will not delete it from your query history. </para>
 
-      </sect1>
+    </sect1> 
 
-
-      <sect1>
-        <title>Building a template</title>
-         <para>
-         The Build Template form first provides the following fields for you to fill in:  
-         </para>
-
-      <orderedlist numeration="upperalpha">
-        <listitem>
-          <para>
-           Short name:  Give your template query a short name.  
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-          Description: The description will appear in your list of
-          template queries and so should provide as much information
-          as possible about what the template will do, without being
-          too long.  It should distinguish it from other template
-          queries.
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-           Keywords: Provide some key words that can be used for
-       searching your templates.
-          </para>
-        </listitem>
-        </orderedlist>
-    
-
-
-          <para>The template form then provides a box containing
-          details of the constraints you specified in the query
-          builder.  You can create the template so that your
-          constraints can either be edited (ie changed in the template
-          query) or set (ie cannot be changed).  However, at least one
-          constraint has to be editable.  Set up your constraints in
-          the following way:
-          </para>
-
-
-      <orderedlist numeration="upperalpha">
-        <listitem>
-          <para>
-           Decide which constraints you want to be editable by selecting the appropriate check boxes. 
-           </para>
-        </listitem>
-
-        <listitem>
-          <para>
-          Give each constraint (whether editable or not) a label.  The
-          label you give will appear above the constraint box in the
-          template query and so should provide direction as to what
-          the query is going to do.  For example, if you are creating
-          a template query to 'find genes annotated with a particular
-          GO term from a particular organism' your labels might read
-          something like, A. organism constraint: 'Fine genes from
-          organism:'; B. GO term constraint: 'Annotated with GO
-          term:'.  It will become clear if your labels make sense when
-          you preview your query.
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
-          Use the preview button to check your template before you
-          create it and make any necessary changes.
-         </para>
-        </listitem>
-
-        <listitem>
-          <para>
-          Press the 'Create template' button to create the template.
-          You will be able to view and run this template from your
-          history page.
-          </para>
-        </listitem>
-       </orderedlist>
-
-  <mediaobject>
-      <imageobject>
-        <imagedata fileref="buildTemplate2.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-
-
-      </sect1>
-
-
-  </chapter>
-
-
-   <chapter id="importingXMLQueries">
+    <sect1> 
        <title>Importing queries in xml format</title>
 
-     <para>Queries saved as xml can be imported from the main
-     query page - see screenshot below. 
-     </para>
+     <para> A single query saved as xml can be imported from the
+     FlyMine homepage. Click on 'Import a query from XML' at the
+     bottom of the homepage. Paste a query in XML format and press
+     'Submit' to load the query into the <link
+     linkend="manualQueryBuilder">Query Builder</link>. To save the
+     query permanently, you will need to log-in.  Multiple queries can
+     be imported at once from your <link linkend="manualMyMine">My
+     Mine</link>, if you are logged-in. The imported queries will be
+     stored under 'Saved Queries'. Existing queries with identical
+     names will get an automatic extension to make it unique,
+     e.g. dmel-proteins-1, dmel-proteins-2. </para>
 
-     <para>Queries can be saved as xml either from the query builder
-     or from your history page (see <xref
-     linkend="manualExportingQueriesQueryBuilder"/> and <xref
-     linkend="exportingQueriesHistory"/>).
-     </para>
+    </sect1> 
 
-    <para>
-     This export/import feature is therefore useful
-     if you wish to pass a query on to someone else.
-    </para>
+    <sect1> 
+       <title>Exporting templates in xml format</title>
 
+     <para> Template queries can be exported as xml from your 'Saved
+     Queries' on your <link linkend="manualMyMine">My Mine</link>
+     page. Select the templates individually using the check-boxes (or
+     click on the check-box on top of the column to select all at
+     once) and click the 'Export' button at the bottom of the page.
+     Exporting a template will not delete it from your query
+     history. </para>
 
-   <mediaobject>
-      <imageobject>
-        <imagedata fileref="importXML1.png" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
+    </sect1> 
+
+    <sect1> 
+      <title>Importing templates in xml format</title>
+
+     <para> A single template saved as xml can be imported from the
+     FlyMine homepage. Click on 'Import a template from XML' at the
+     bottom of the homepage. Paste a template in XML format and press
+     'Submit' to load the query into the Query Builder. To save the
+     template permanently, you will need to log-in. Multiple
+     templates can be imported at once from your <link
+     linkend="manualMyMine">Query History</link>, it you are
+     logged-in. The imported templates will be stored under 'Saved
+     Templates'. Existing templates with identical names will get an
+     automatic extension to make it unique, e.g. dmel-proteins-1,
+     dmel-proteins-2. </para>
+
+    </sect1> 
 
    </chapter>
 
-
-
   <chapter id="manualFlyMineIdentifiers">
     <title>Identifiers, Accessions and Synonyms in FlyMine</title>
-    <para>
-      This page describes the meanings and origins of identifiers of
-      biological objects in FlyMine. As FlyMine aggregates data from
-      multiple sources there are often many different identifiers for the
-      same entity. Available identifiers vary between biological object
-      type, organism and data source. FlyMine attempts to choose a standard
-      or commonly used unique identifier for each biological type and
-      retains all other identifiers as synonyms with a reference to their
-      source.
-    </para>
+ 
+    <para> This page describes the meanings and origins of identifiers
+    of biological objects in FlyMine. As FlyMine aggregates data from
+    multiple sources there are often many different identifiers for
+    the same entity. Available identifiers vary between biological
+    object type, organism and data source. FlyMine attempts to choose
+    a standard or commonly used unique identifier for each biological
+    type and retains all other identifiers as synonyms with a
+    reference to their source. </para>
 
-    <para>
-      BioEntity is the root class of all biological objects in the
-      FlyMine model. This has an identifier field that all subclasses (e.g.
-      Chromosome, Gene, Exon) inherit. The identifier field is almost always
-      populated with a value unique in the context of a particular organism.
-      The only time when 'identifier' can be empty is when another primary
-      identifier field exists (e.g. Gene, Protein) and a data source has
-      only provided the alternative.
-    </para>
+    <para> BioEntity is the root class of all biological objects in
+    the FlyMine model. This has an identifier field that all
+    subclasses (e.g.  Chromosome, Gene, Exon) inherit. The identifier
+    field is almost always populated with a value unique in the
+    context of a particular organism.  The only time when 'identifier'
+    can be empty is when another primary identifier field exists
+    (e.g. Gene, Protein) and a data source has only provided the
+    alternative. </para>
 
-    <para>
-      In some cases this is a standard identifier (e.g. Protein -
-      UniProt id), for biological types that are not so widely referenced
-      this will be the identifier for the primary data source used (e.g.
-      Exon - Ensembl stable id). For some types the identifier is more akin
-      to a name than a universal identifier (e.g. Chromsome - 'X'). All
-      widely used identifiers that FlyMine has loaded are also stored as
-      Synonyms of the BioEntity linked to the source.
-    </para>
+    <para> In some cases this is a standard identifier (e.g. Protein -
+    UniProt id), for biological types that are not so widely
+    referenced this will be the identifier for the primary data source
+    used (e.g.  Exon - Ensembl stable id). For some types the
+    identifier is more akin to a name than a universal identifier
+    (e.g. Chromosome - 'X'). All widely used identifiers that FlyMine
+    has loaded are also stored as Synonyms of the BioEntity linked to
+    the source. </para>
 
-    <para>
-      Gene - for some organisms there are two commonly used
-      identification schemes, for example Drosophila has FlyBase FBgn*** and
-      Computed CG***. Gene has an additional identifier field, 'organismDbId',
-      which contains the id used in the main annotation database for each
-      organism. So for Drosophila 'organismDbId' is a FlyBase id and
-      'identifier' is CG*** id.  In addition Gene has a 'name' and field. All 
-      additional names and identifiers should be available as Synonyms.
-    </para>
+    <para> Gene - for some organisms there are two commonly used
+    identification schemes, for example Drosophila has FlyBase FBgn***
+    and Computed CG***. Gene has an additional identifier field,
+    'organismDbId', which contains the id used in the main annotation
+    database for each organism. So for Drosophila 'organismDbId' is a
+    FlyBase id and 'identifier' is CG*** id.  In addition Gene has a
+    'name' and 'symbol' field. All additional names and identifiers
+    should be available as Synonyms. </para>
 
-    <para>
-      Protein - Where possible the 'identifier' field id the UniProt identifer 
-      (e.g. 18C_DROME). Protein has an additional 'primaryAccession' field which 
-      will be the UniProt primary accession where available (e.g. P16909). All 
-      accession numbers available in UniProt are stored as synonyms with type 
-      'accession' (i.e. P16909, Q9VPA8).
-    </para>
+    <para> Protein - Where possible the 'identifier' field is the
+    UniProt identifier (e.g. 18C_DROME). Protein has an additional
+    'primaryAccession' field which will be the UniProt primary
+    accession where available (e.g. P16909). All accession numbers
+    available in UniProt are stored as synonyms with type 'accession'
+    (e.g. P16909, Q9VPA8). </para>
 
-    <para>
-      It is conceivable that a data source could provide a Protein
-      with a TrEMBL identifier/accession which has been superceeded as the
-      primary UniProt identifier/accesssion by the inclusion of that protein
-      in SwissProt. This could result in two Protein objects existing in the
-      FlyMine database representing the same actual protein - one with the
-      current UniProt ids, on with TrEMBL ids. We aim to run a
-      post-processing step to find and correct these situations in future.
-    </para>
+    <para> It is conceivable that a data source could provide a
+    Protein with a TrEMBL identifier/accession which has been
+    superseded as the primary UniProt identifier/accession by the
+    inclusion of that protein in SwissProt. This could result in two
+    Protein objects existing in the FlyMine database representing the
+    same actual protein - one with the current UniProt ids, on with
+    TrEMBL ids. We aim to run a post-processing step to find and
+    correct these situations in future. </para>
 
-    <para>
-      Synonyms represent alternative names and accessions for a
-      BioEntity. The 'source' reference points at an InfoSource object (i.e.
-      Database, Publication) from which the synonym was loaded.  Synonym has
-      a 'type' field which defines it as an 'accession', 'identifier'  or a 
-      'name'.
-    </para>
+    <para> Synonyms represent alternative names and accessions for a
+    BioEntity. The 'source' reference points at an InfoSource object
+    (i.e.  Database, Publication) from which the synonym was loaded.
+    Synonym has a 'type' field which defines it as an 'accession',
+    'identifier' or a 'name'. </para>
+
   </chapter>
+
 
   <chapter id="manualDataModel">
     <title>The FlyMine Data Model</title>
-    <para>
-      The FlyMine database is built using
-      <ulink url="http://www.intermine.org"> InterMine</ulink>, an open-source data
-      warehouse system for integrating the data from many sources into one
-      object-based database. The FlyMine data model is generated by merging
-      existing and emerging ontologies and standards (e.g. MAGE, SO, PSI),
-      thus enabling data to be loaded from a variety of sources and
-      providing the flexibility to easily incorporate new data sources as
-      they appear. Additional FlyMine specific classes help link the
-      ontologies and provide classes relating to the evidence and source for
-      a particular piece of data. To get the most out of querying FlyMine it
-      is useful to understand a bit about the underlying data model. First
-      of all it is useful to understand the concepts of
-      <link linkend="manualCOF">classes, objects and fields</link>.
-    </para>
-  </chapter>
 
-  <chapter id="manualCOF">
-    <title>Classes, Objects and Fields - the basics</title>
-    <para>
-      Classes can be thought of as templates to describe information
-      about a specific type of thing. Things which have similar properties
-      belong to the same class. For example in FlyMine there is a 'Gene'
-      class. The Gene class describes properties of genes. The actual
-      properties are known as fields. The class is a holder for a set of
-      fields that provide information about the 'thing'. For example the
-      Gene class has the fields name, residues etc. An object is an actual
-      member of a class (known as an 'instance' of that class). For example,
-      the Notch gene is a member of the gene class. Every object of a class
-      has the set of properties (fields) that describe that class, although
-      some of these fields may be empty (ie. there may not be any data
-      available for some fields). The classes in the FlyMine data model form
-      a hierarchy with classes lower down the hierarchy being
-      specialisations of classes higher up. For example, the transcript
-      class forms more specialised subclasses such as primary transcript,
-      processed transcript, tRNA etc. The top class in the model is called
-      the InterMine object class. Every class in FlyMine is therefore a
-      specialisation of the InterMine object class.
-    </para>
+  <sect1>
+    <title>Introduction</title>
 
-    <para>
-      Classes in the hierarchy are linked together by references. A
-      reference is a pointer from one class to another class. For example,
-      The Transcript class has a reference to the exon class as exons are
-      part of a transcript. A specific object of a class has a reference to
-      a specific object or objects in another class. For example, there is a
-      reference between the Gene class and the Transcript class. In practise
-      this actually means that individual objects of the Gene class have a
-      reference to specific objects of the transcripts class. ie. a
-      particular gene object has particular transcripts. When a class has a
-      reference to another class, the referenced class will appear as field
-      within the class.
-    </para>
+    <para> The FlyMine database is built using <ulink
+    url="http://www.intermine.org"> InterMine</ulink>, an open-source
+    data warehouse system for integrating the data from many sources
+    into one object-based database.  The FlyMine data model is
+    generated by merging existing and emerging ontologies and
+    standards (e.g. MAGE, SO, PSI), thus enabling data to be loaded
+    from a variety of sources and providing the flexibility to easily
+    incorporate new data sources as they appear.  Additional FlyMine
+    specific classes help link the ontologies and provide classes
+    relating to the evidence and source for a particular piece of
+    data.  To get the most out of querying FlyMine it is useful to
+    understand a bit about the underlying data model.  First of all it
+    is useful to understand the concepts of <link
+    linkend="manualCOF">classes, objects and fields</link>. </para>
 
-    <para>
-      Fields can be one of several different data types. For example
-      some fields simply contain one piece of information, such as a
-      name.  In this case the field is the type 'String' (a String is
-      basically a piece of text that can include letters and
-      numbers). Similarly, fields that contain just a number will be of
-      the type, integer. A field that is a reference to another class
-      will be of type 'class'. Fields that contain a list of objects (or
-      references to objects of a different class) are known as
-      collections. See <xref linkend="manualModelbrowser"/> for more
-      information.
-    </para>
+  </sect1>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="classDiag3.gif" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
+  <sect1 id="manualCOF">
+    <title>Classes, Objects and Fields - the basics</title> 
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="objectDiag1.gif" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-  </chapter>
+    <para> Classes can be thought of as templates to describe
+    information about a specific type of thing. Things which have
+    similar properties belong to the same class. For example in
+    FlyMine there is a 'Gene' class. The Gene class describes
+    properties of genes. The actual properties are known as
+    fields. The class is a holder for a set of fields that provide
+    information about the 'thing'. For example the Gene class has the
+    fields: name, identifier, organismDbId, etc. An object is an
+    actual member of a class (known as an 'instance' of that
+    class). For example, the Notch gene is a member of the Gene
+    class. Every object of a class has the set of properties (fields)
+    that describe that class, although some of these fields may be
+    empty (i.e. there may not be any data available for some
+    fields). The classes in the FlyMine data model form a hierarchy
+    with classes lower down the hierarchy being specialisations of
+    classes higher up. For example, the Transcript class contains more
+    specialised subclasses such as PrimaryTranscript,
+    ProcessedTranscript, etc. The top class in the FlyMine model is
+    called the InterMineObject class. Every class in FlyMine is
+    therefore a specialisation of the InterMineObject class. You can
+    browse the structure of the data model using the 'Browse model'
+    link at the bottom of the FlyMine home page. This shows all the
+    classes in FlyMine, some of which do not yet have data associated
+    with them. In browse mode, the number on the right shows the
+    number of objects associated with that class. Clicking on one of
+    the classes will take you to the <link
+    linkend="manualPageQB">Query Builder page</link>. </para>
 
-  <chapter id="manualSelectingData">
-    <title>Selecting data from classes</title>
+    <para> Classes in the hierarchy are linked together by
+    references. A reference is a pointer from one class to another
+    class. For example, the Gene class has a reference to the Exon
+    class as exons are part of a gene. A specific object of a class
+    has a reference to a specific object or objects in another
+    class. For example, the Drosophila melanogaster Notch gene has 9
+    exons. Therefore, the object 'Notch' from the Gene class has a
+    reference to 9 objects in the Exon class, namely to its 9
+    exons. When a class has a reference to another class, the
+    referenced class will appear as a field within the class on
+    the Query Builder page. </para>
 
-    <para>
-      You can think of the classes as boxes containing lots of individual
-      items (objects). To create a query you want certain items from certain
-      boxes. You therefore have to select the boxes that require the items you
-      want and constrain the boxes so that you only select the subset of items
-      in the boxes that you require. To query FlyMine you therefore select the
-      classes that hold the objects you require. Constraints can be applied to
-      the objects contained in a class, so that only a certain subset of those
-      objects which have the required characteristics are selected. For example
-      the gene class contains a large number of genes (gene objects) from all
-      the organisms represented in FlyMine. However you may only be interested
-      in data related to one specific gene. You would therefore constrain the
-      gene name field of the gene class to that of the required gene.
-    </para>
+    <para> Fields can be one of three different data types. (1) Some
+    fields simply contain an attribute, i.e. one unique piece of
+    information that belongs to a particular object, such as a name.
+    In this case the field is the type 'string' (a string is basically
+    a piece of text that can include letters and numbers). Similarly,
+    fields that contain just a number will be of the type
+    'integer'. (2) A field that is a reference to another class will
+    be of type 'class'. (3) Fields that contain a list of objects (or
+    references to objects of a different class) are known as
+    collections.</para>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="constrainDiag2.gif" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-  </chapter>
+    <para> For specific information about each class or field click
+    on the ? help link next to the class/field in the model
+    browser or in the Query Builder. </para>
 
-  <chapter id="manualCombiningData">
-    <title>Combining data from different classes</title>
-    <para>
-      Because of the relationships between the objects in the classes you
-      may only need to constrain one class to retrieve a subset of items from
-      another class. eg if you want all the genes from Drosophila, you only need
-      to constrain the organism class to Drosophila to retrieve that subset of
-      genes from the gene class. If you wish to know about the transcripts of a
-      particular gene you would combine information from the Gene class and the
-      Transcript class. By constraining the 'name' field of the gene class to a
-      particular gene, you will only retrieve information from the transcripts
-      class that relates to that gene (ie you do not need to apply the
-      constraint to the transcripts class as well). This is because that
-      particular gene object has a relationship to particular objects
-      (instances) of the transcript class (ie those transcripts that are
-      produced from that particular gene).
-    </para>
+</sect1>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="constrainDiag1.gif" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-  </chapter>
+   <sect1 id="manualExampleModelQB">
+    <title>Example of classes and fields</title>
 
-  <chapter id="manualConstrainingData">
-    <title>Constraining to subclasses</title>
+     <para> The following is an explanation of the classes and fields
+     displayed by the model browser on the <link
+     linkend="manualPageQB">Query Builder page</link>. The Gene class
+     is used as an example, but the information is easily transferable
+     to other classes. </para>
 
-    <para>
-      Some classes are subdivided in to more specialised subclasses. For
-      some queries you may only be interested in data relating to a particular
-      subclass of a class. For example, you may only be interested in the tRNA
-      transcripts. In these cases you need to constrain the class to the
-      subclass that you require. The difference between this and the examples
-      above is that you are constraining the actual class, rather than a field
-      of a class.
-    </para>
+     <para> The following are examples of fields of the Gene class:
+     identifier, name and organismDbId. This type of field holds just
+     one piece of information which can be either text or a
+     number. The fields of a class are always displayed directly below
+     the class name and can be distinguished from other types of
+     fields (see below) as they do not a have a + for expanding before
+     them. </para>
 
-    <mediaobject>
-      <imageobject>
-        <imagedata fileref="constrainDiag3.gif" />
-      </imageobject><textobject><phrase> </phrase></textobject>
-    </mediaobject>
-  </chapter>
+     <para> The field called Organism is a reference (i.e. a link) to
+     the organism class. Fields which are references to other classes
+     have a field name (in this case organism) followed by the name of
+     the class it is referencing (in this case Organism). </para>
+
+     <para> The field called 'exons' is also a reference to a class -
+     the Exon class. This field, however, also has the type
+     'collection'. This is because a particular gene object in the
+     Gene class can reference (link to) one or more exon objects in
+     the Exon class. The exon collection is a list of references to
+     these objects. For example, the Drosophila melanogaster Notch
+     gene has 9 exons. Therefore, the object 'Notch' from the Gene
+     class has a reference to 9 objects in the Exon class, namely to
+     its 9 exons. However, each gene belongs only to one organism and
+     therefore the Organism field is not of the collection
+     type. </para>
+
+   </sect1>
+
+ </chapter>
+
 
   <appendix id="docLicence" label="A">
     <title>
@@ -1794,8 +1478,9 @@
 		GNU Free Documentation License
 		  Version 1.2, November 2002
 
+----------------------------
 
- Copyright (C) 2000,2001,2002  Free Software Foundation, Inc.
+Copyright (C) 2000,2001,2002  Free Software Foundation, Inc.
      59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
@@ -1806,7 +1491,7 @@
 The purpose of this License is to make a manual, textbook, or other
 functional and useful document "free" in the sense of freedom: to
 assure everyone the effective freedom to copy and redistribute it,
-with or without modifying it, either commercially or noncommercially.
+with or without modifying it, either commercially or non-commercially.
 Secondarily, this License preserves for the author and publisher a way
 to get credit for their work, while not being considered responsible
 for modifications made by others.
@@ -1915,7 +1600,7 @@ no effect on the meaning of this License.
 2. VERBATIM COPYING
 
 You may copy and distribute the Document in any medium, either
-commercially or noncommercially, provided that this License, the
+commercially or non-commercially, provided that this License, the
 copyright notices, and the license notice saying this License applies
 to the Document are reproduced in all copies, and that you add no other
 conditions whatsoever to those of this License.  You may not use
@@ -2610,6 +2295,7 @@ OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 
 END OF TERMS AND CONDITIONS
+
       </synopsis>
     </para>
   </appendix>
