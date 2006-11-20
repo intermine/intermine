@@ -107,7 +107,7 @@ public class ObjectStoreSummary
         }
         // always empty references and collections
         LOG.info("Looking for empty collections and references...");
-        Model model = os.getModel();
+	/*  Model model = os.getModel();
         for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
             long startTime = System.currentTimeMillis();
             ClassDescriptor cld = (ClassDescriptor) iter.next();
@@ -116,7 +116,7 @@ public class ObjectStoreSummary
             emptyFieldsMap.put(cld.getName(), emptyFields);
             lookForEmptyThings(cld, emptyFields, os);
             LOG.info("\t" + (System.currentTimeMillis() - startTime) + " millis");
-        }
+	    }*/
     }
     
     /**
