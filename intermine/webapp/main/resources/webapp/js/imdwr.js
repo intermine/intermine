@@ -14,12 +14,17 @@ function precomputeTemplate(templateName){
 	 });
 }
 
+function editName(name){
+  document.getElementById('form_'+name).style.display="block";
+  document.getElementById('name_'+name).style.display="none";
+}
+  
 function renameElement(name, type, index){
 	document.getElementById('form_'+name).style.display="none";
 	document.getElementById('name_'+name).innerHTML="<i>saving...</i>";
 	document.getElementById('name_'+name).style.display="block";
 	AjaxServices.rename(name,type, document.getElementById('newName_'+name).value, function(str){
 		document.getElementById('name_'+name).innerHTML=str;
-		document.getElementById('selected_bag_'+index).value=str;
+		document.getElementById('selected_' + type + '_' + index).value=str;
 	});
 }
