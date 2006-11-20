@@ -8,7 +8,7 @@
 <tiles:useAttribute id="type" name="type"/>
 <tiles:useAttribute id="index" name="index"/>
 
-<!-- historyElementName.jsp -->
+<!-- renamableElement.jsp -->
 <html:xhtml/>
     <td align="left" colspan="" nowrap class="noRightBorder">
       <span id="form_${name}" style="display:none;">
@@ -18,9 +18,16 @@
       <span id="name_${name}">
         <c:set var="nameForURL"/>
         <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
-        <html:link action="/modifyQueryChange?method=load&amp;name=${nameForURL}&type=${type}">
-          <c:out value="${name}"/>
-        </html:link>
+        <c:choose>
+          <c:when test="${type == 'bag'}">
+            <html:link action="/modifyQueryChange?method=load&amp;name=${nameForURL}&type=${type}">
+              <c:out value="${name}"/>
+            </html:link>
+          </c:when>
+          <c:otherwise>
+              <c:out value="${name}"/>
+          </c:otherwise>
+        </c:choose>
       </span>
     </td>
     
@@ -29,4 +36,4 @@
         <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
       </a>
     </td>
-<!-- /historyElementName.jsp -->
+<!-- /renamableElement.jsp -->

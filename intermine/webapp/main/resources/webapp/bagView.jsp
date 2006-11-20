@@ -20,10 +20,6 @@
       }
     }
   }
-  function editName(name){
-    document.getElementById('form_'+name).style.display="block";
-    document.getElementById('name_'+name).style.display="none";
-  }
   function noenter() {
     return !(window.event && window.event.keyCode == 13); 
   }
@@ -68,7 +64,7 @@
                 </html:multibox>
               </td>
 
-              <tiles:insert name="bagElementName.jsp">
+              <tiles:insert name="renamableElement.jsp ">
                 <tiles:put name="name" value="${savedBag.key}"/>
                 <tiles:put name="type" value="bag"/>
                 <tiles:put name="index" value="${status.index}"/>

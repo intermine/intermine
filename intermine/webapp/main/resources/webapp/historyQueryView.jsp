@@ -89,9 +89,10 @@
                     </td>
                   </c:when>
                   <c:otherwise>
-                    <tiles:insert name="historyElementName.jsp">
+                    <tiles:insert name="renamableElement.jsp">
                       <tiles:put name="name" value="${savedQuery.key}"/>
                       <tiles:put name="type" value="${type}"/>
+                      <tiles:put name="index" value="${status.count-1}"/>
                     </tiles:insert>
                   </c:otherwise>
                 </c:choose>
