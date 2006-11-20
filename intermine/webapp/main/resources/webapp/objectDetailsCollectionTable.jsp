@@ -61,11 +61,18 @@
                 </c:if>
               </c:forEach>
             </td>
-            <c:forEach items="${collection.table.expressions}" var="expr">
+            <c:forEach items="${collection.table.fieldConfigs}" var="fieldConfig">
               <td>
                  <c:choose>
-                  <c:when test="${!empty expr}">
-                    <im:eval evalExpression="thisRowObject.${expr}" evalVariable="outVal"/>
+                  <c:when test="${!empty fieldConfig && !empty fieldConfig.displayer}">
+                    <c:set var="interMineObject" value="${thisRowObject}" scope="request"/>
+                    <tiles:insert page="${fieldConfig.displayer}">
+                      <tiles:put name="expr" value="${fieldConfig.fieldExpr}" />
+                    </tiles:insert>
+                  </c:when>
+                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
+                    <im:eval evalExpression="thisRowObject.${fieldConfig.fieldExpr}"
+                             evalVariable="outVal"/>
                     <span class="value">${outVal}</span>
 
                     <c:if test="${empty outVal}">
