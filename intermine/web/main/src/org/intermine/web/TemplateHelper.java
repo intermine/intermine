@@ -247,6 +247,12 @@ public class TemplateHelper
         for (int constraintIndex = 0; constraintIndex < constraints.size(); constraintIndex++) {
             Constraint c = (Constraint) constraints.get(constraintIndex);
 
+            if (!c.isEditable()) {
+                // this constraint doesn't need to be filled in
+                unmatchedConstraintCount--;
+                continue;
+            }
+            
             String constraintIdentifier = c.getIdentifier();
             String[] bits = constraintIdentifier.split("\\.");
 

@@ -116,31 +116,37 @@ public class TemplateListHelper
             while (constraintIter.hasNext()) {
                 Constraint c = (Constraint) constraintIter.next();
 
+                if (!c.isEditable()) {
+                    continue;
+                }
+                
                 String constraintIdentifier = c.getIdentifier();
                 String[] bits = constraintIdentifier.split("\\.");
  
-                if (bits.length == 2) {
-                    String className = model.getPackageName() + "." + bits[0];
-                    String fieldName = bits[1];
-                    String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
-                    try {
-                        Class iface = Class.forName(className);
-                        if (types.contains(iface)
-                            && model.getClassDescriptorByName(className)
-                                .getFieldDescriptorByName(fieldName) != null) {
-                            templates.add(template);
-                            fieldExprs.add(fieldExpr);
-                        }
-                    } catch (ClassNotFoundException err) {
-                        LOG.error(err);
-                    }
-                } else {
+                if (bits.length != 2) {
                     // we can't handle anything like "Department.company.name" yet so ignore this
                     // template
                     continue TEMPLATE;
                 }
+                
+                String className = model.getPackageName() + "." + bits[0];
+                String fieldName = bits[1];
+                String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
+                try {
+                    Class iface = Class.forName(className);
+                    if (types.contains(iface)
+                        && model.getClassDescriptorByName(className)
+                             .getFieldDescriptorByName(fieldName) != null) {
+                        fieldExprs.add(fieldExpr);
+                    }
+                } catch (ClassNotFoundException err) {
+                    LOG.error(err);
+                    continue TEMPLATE;
+                }
+
             }
             if (fieldExprs.size() > 0) {
+                templates.add(template);
                 fieldExprsOut.put(template, fieldExprs);
             }
         }
