@@ -244,8 +244,9 @@ public class TemplateHelper
 
         //templateForm.setView(viewName);
 
-        for (int constraintIndex = 0; constraintIndex < constraints.size(); constraintIndex++) {
-            Constraint c = (Constraint) constraints.get(constraintIndex);
+        Iterator constraintIter = constraints.iterator();
+        while (constraintIter.hasNext()) {
+            Constraint c = (Constraint) constraintIter.next();
 
             if (!c.isEditable()) {
                 // this constraint doesn't need to be filled in
@@ -256,6 +257,8 @@ public class TemplateHelper
             String constraintIdentifier = c.getIdentifier();
             String[] bits = constraintIdentifier.split("\\.");
 
+            int formIndex = 1;
+            
             if (bits.length == 2) {
                 String className = model.getPackageName() + "." + bits[0];
                 String fieldName = bits[1];
@@ -275,8 +278,10 @@ public class TemplateHelper
 
                             unmatchedConstraintCount--;
 
-                            templateForm.setAttributeOps("" + (constraintIndex + 1), equalsString);
-                            templateForm.setAttributeValues("" + (constraintIndex + 1), fieldValue);
+                            templateForm.setAttributeOps("" + formIndex, equalsString);
+                            templateForm.setAttributeValues("" + formIndex, fieldValue);
+
+                            formIndex++;                            
                         }
                     }
                 } catch (ClassNotFoundException e) {
