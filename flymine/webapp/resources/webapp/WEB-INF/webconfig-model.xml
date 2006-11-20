@@ -478,12 +478,19 @@
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="available"/>
     </fields>
-
-    <longdisplayers>
+   <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
     </longdisplayers>
   </class>
 
+
+  <class className="org.flymine.model.genomic.RegulatoryRegion">
+    <fields>
+     <fieldconfig fieldExpr="identifier"/>
+     <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+   </fields>
+  </class>
+ 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
