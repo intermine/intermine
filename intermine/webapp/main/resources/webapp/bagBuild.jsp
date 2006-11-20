@@ -38,11 +38,6 @@
       <html:submit property="action">
         <fmt:message key="bagBuild.makeStringBag"/>
       </html:submit>
-      <c:if test="${!empty WEB_PROPERTIES['begin.browse.template']}">
-        <html:submit property="action">
-          <fmt:message key="bagBuild.makeObjectBag"/>
-        </html:submit>
-      </c:if>
     </p>
   </html:form>
 </div>
