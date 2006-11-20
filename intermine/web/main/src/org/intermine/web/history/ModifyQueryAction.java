@@ -10,13 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import org.intermine.util.XmlUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.PathQuery;
-import org.intermine.web.PathQueryBinding;
-import org.intermine.web.Profile;
-import org.intermine.web.SavedQuery;
-
 import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +20,13 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.util.XmlUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.PathQuery;
+import org.intermine.web.PathQueryBinding;
+import org.intermine.web.Profile;
+import org.intermine.web.SavedQuery;
 
 /**
  * Action that results from a button press on the user profile page.
@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionMapping;
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
-public class ModifyQueryAction extends ModifyHistoryAction
+public class ModifyQueryAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyQueryAction.class);
     
@@ -53,10 +53,6 @@ public class ModifyQueryAction extends ModifyHistoryAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        ActionForward af = super.execute(mapping, form, request, response);
-        if (af != null) {
-            return af;
-        }
         if (request.getParameter("delete") != null) {
             return delete(mapping, form, request, response);
         } else {
