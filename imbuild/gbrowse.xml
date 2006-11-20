@@ -18,7 +18,8 @@
   <!--
       Write GFF3 files suitable for reading into GBrowse.
     -->
-  <target name="write-gff" depends="-init-gff, -init-properties, init, -init-deps">
+  <target name="write-gff" depends="-init-gff, -init-properties, init, -init-deps"
+          description="Write a GFF3 file containing all of the LocatedSequenceFeatures">
     <taskdef name="write-gff" classname="org.intermine.bio.gbrowse.WriteGFFTask">
       <classpath refid="task.class.path"/>
     </taskdef>
