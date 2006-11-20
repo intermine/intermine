@@ -10,20 +10,10 @@ package org.intermine.web.history;
  *
  */
 
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.intermine.model.userprofile.Tag;
-import org.intermine.util.XmlUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.TemplateQuery;
-import org.intermine.web.TemplateRepository;
-import org.intermine.web.tagging.TagTypes;
-
-import java.io.PrintStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +24,15 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.util.XmlUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.TemplateQuery;
+import org.intermine.web.TemplateRepository;
+import org.intermine.web.tagging.TagTypes;
 
 /**
  * Action that results from a button press on the user profile page.
@@ -41,7 +40,7 @@ import org.apache.struts.action.ActionMapping;
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
-public class ModifyTemplateAction extends ModifyHistoryAction
+public class ModifyTemplateAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyTemplateAction.class);
     
@@ -60,10 +59,6 @@ public class ModifyTemplateAction extends ModifyHistoryAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        ActionForward af = super.execute(mapping, form, request, response);
-        if (af != null) {
-            return af;
-        }
         if (request.getParameter("delete") != null) {
             return delete(mapping, form, request, response);
         } else {
