@@ -43,16 +43,13 @@ public class InlineResultsTable
     protected List resultsAsList;
     // just those objects that we will display
     protected List subList;
-    protected List columns = null;
+    private List fieldConfigs = null;
     protected List columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
     protected int size = -1;
     protected WebConfig webConfig;
     protected Map webProperties;
-
-    // a list of the expressions to use for each column
-    private List expressions = null;
 
     /**
      * Construct a new InlineResultsTable object
@@ -78,17 +75,17 @@ public class InlineResultsTable
     }
 
     /**
-     * Return heading for the columns
+     * Return heading for the fieldConfigs
      * @return the column names
      */
     public List getColumnNames() {
-        if (columns == null) {
+        if (fieldConfigs == null) {
             initialise();
         }
 
         List columnNames = new ArrayList();
 
-        Iterator columnIter = columns.iterator();
+        Iterator columnIter = fieldConfigs.iterator();
 
         while (columnIter.hasNext()) {
             columnNames.add(((FieldConfig) columnIter.next()).getFieldExpr());
@@ -111,18 +108,6 @@ public class InlineResultsTable
         return columnFullNames;
     }
 
-    /**
-     * Return a List of configured expressions (from the FieldConfig objects) - one for each column.
-     * @return the expression List
-     */
-    public List getExpressions() {
-        if (expressions == null) {
-            initialise();
-        }
-        
-        return expressions;
-    }
-    
     /**
      * Get the class descriptors of each object displayed in the table
      * @return the set of class descriptors for each row
@@ -166,14 +151,13 @@ public class InlineResultsTable
 
     /**
      * Create the tableRows, columnNames and subList Lists by looping over the first elements of the
-     * collection.  The names of all fields to be displayed are collected in the columns List then
-     * and the expressions to display are collected in the tableRows List.  The fields of the rows
-     * in the tableRows List will always be in the same order as the elements of the columns List.
+     * collection.  The names of all fields to be displayed are collected in the fieldConfigs List then
+     * and the fieldConfigs to display are collected in the tableRows List.  The fields of the rows
+     * in the tableRows List will always be in the same order as the elements of the fieldConfigs List.
      */
     protected void initialise() {
-        columns = new ArrayList(); 
+        fieldConfigs = new ArrayList(); 
         columnFullNames = new ArrayList();
-        expressions = new ArrayList();
         subList = new ArrayList();
         
         Iterator resultsIter = resultsAsList.subList(0, getSize()).iterator();
@@ -202,13 +186,12 @@ public class InlineResultsTable
             while (objectFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
 
-                if (!columns.contains(fc)) {
-                    columns.add(fc);
+                if (!fieldConfigs.contains(fc)) {
+                    fieldConfigs.add(fc);
 
                     String expr = fc.getFieldExpr();
 
-                    expressions.add(fc.getFieldExpr());
-                    // only add full column names for simple expressions - ie. ones that specify a
+                    // only add full column names for simple fieldConfigs - ie. ones that specify a
                     // field in the current class
                     if (theClass != null && expr.indexOf(".") == -1) {
                         columnFullNames.add(theClass.getUnqualifiedName() + "." + expr);
@@ -235,9 +218,9 @@ public class InlineResultsTable
         while (classDescriptorsIter.hasNext()) {
             ClassDescriptor thisClassDescriptor = (ClassDescriptor) classDescriptorsIter.next();
 
-            List fieldConfigs = getClassFieldConfigs(thisClassDescriptor);
+            List rowFieldConfigs = getClassFieldConfigs(thisClassDescriptor);
 
-            Iterator fieldConfigIterator = fieldConfigs.iterator();
+            Iterator fieldConfigIterator = rowFieldConfigs.iterator();
 
             while (fieldConfigIterator.hasNext()) {
                 FieldConfig fc = (FieldConfig) fieldConfigIterator.next();
@@ -285,5 +268,13 @@ public class InlineResultsTable
         }
 
         return size;
+    }
+
+    /**
+     * Return a List of FieldConfig objects - one per column.
+     * @return the FieldConfigs
+     */
+    public List getFieldConfigs() {
+        return fieldConfigs;
     }
 }

@@ -7,6 +7,5 @@
 <!-- chromosomeLocDisplayer.jsp -->
 
 <html:xhtml/>
-<b><c:out value="${object.object.chromosome.identifier}:${object.object.chromosomeLocation.start}-${object.object.chromosomeLocation.end}" /></b>
-
+<b><c:out value="${interMineObject.chromosome.identifier}: ${interMineObject.chromosomeLocation.start}-${interMineObject.chromosomeLocation.end}" /></b>
 <!-- /chromosomeLocDisplayer.jsp -->

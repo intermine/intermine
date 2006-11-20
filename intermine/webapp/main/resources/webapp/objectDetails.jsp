@@ -136,8 +136,8 @@ Event.observe(window, 'load', loadInlineTemplates, false);
                     <b><span class="attributeField">${expr}</span></b>
                 </td>
                 <td nowrap>
+                  <c:set var="interMineObject" value="${object.object}" scope="request"/>
                   <tiles:insert page="${object.fieldConfigMap[expr].displayer}">
-                    <tiles:put name="object" beanName="object"/>
                     <tiles:put name="expr" value="${expr}" />
                   </tiles:insert>
               	</td>
