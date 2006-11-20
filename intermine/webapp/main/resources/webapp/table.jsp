@@ -100,21 +100,26 @@
     </div>
   </c:when>
   <c:otherwise>
-    
+
     <c:if test="${!empty templateQuery}">
-      <div class="body">
-        <div class="resultsTableTemplateHeader">
-          <div>
-            <fmt:message key="results.templateTitle"/>: 
-            <span class="templateTitleBold">
-              ${templateQuery.title}
-            </span>
-          </div>
-          <div class="templateDescription">
-            ${templateQuery.description}
+
+      <%-- show the discription only if we've run a query (rather than viewing
+           a bag) - see #1031 --%>
+      <c:if test="${resultsTable.class.name == 'org.intermine.web.results.PagedResults'}">
+        <div class="body">
+          <div class="resultsTableTemplateHeader">
+            <div>
+              <fmt:message key="results.templateTitle"/>: 
+              <span class="templateTitleBold">
+                ${templateQuery.title}
+              </span>
+            </div>
+            <div class="templateDescription">
+              ${templateQuery.description}
+            </div>
           </div>
         </div>
-      </div>
+      </c:if>
     </c:if>
 
     <html:form action="/changeTableSize">
