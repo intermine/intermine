@@ -66,6 +66,12 @@
     <analyse-db osName="os.production"/>
   </target>
     
+  <!-- CREATE INDEXES ON ALL NON-PRIMARY KEY ATTRIBUTES -->
+
+  <target name="create-indexes-attribute" depends="-init-build-db">
+    <create-indexes alias="${objectstore.name}" attributeIndexes="true"/>
+  </target>
+
   <!-- GENERATE (FETCH) -->
 
   <target name="-init-generate" depends="model.-init-generate">
