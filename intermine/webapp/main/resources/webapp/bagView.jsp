@@ -64,7 +64,7 @@
                 </html:multibox>
               </td>
 
-              <tiles:insert name="renamableElement.jsp ">
+              <tiles:insert name="renamableElement.jsp">
                 <tiles:put name="name" value="${savedBag.key}"/>
                 <tiles:put name="type" value="bag"/>
                 <tiles:put name="index" value="${status.index}"/>
