@@ -312,10 +312,10 @@ public class ProfileManager
             } else {
                 // Should not happen
                 throw new RuntimeException("The UserProfile is null");
-//                userProfile = new UserProfile();
-//                userProfile.setUsername(profile.getUsername());
-//                userProfile.setPassword(profile.getPassword());
-//                userProfile.setId(userId);
+//                 userProfile = new UserProfile();
+//                 userProfile.setUsername(profile.getUsername());
+//                 userProfile.setPassword(profile.getPassword());
+//                 userProfile.setId(userId);
             }
 
             for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
@@ -372,6 +372,22 @@ public class ProfileManager
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public void createProfile(Profile profile) {
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUsername(profile.getUsername());
+        userProfile.setPassword(profile.getPassword());
+        //userProfile.setId(userId);
+
+        try {
+            osw.store(userProfile);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+        profile.setUserId(userProfile.getId());
+        saveProfile(profile);
     }
 
     /**
