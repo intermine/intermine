@@ -107,7 +107,7 @@ public class LoadDefaultTemplatesTask extends Task
                 String password = RequestPasswordAction.generatePassword();
                 profileDest = new Profile(pm, username, null, password,
                                       new HashMap(), new HashMap(), new HashMap());
-                pm.saveProfile(profileDest);
+                pm.createProfile(profileDest);
             } else {
                 LOG.info("Profile for " + username + ", clearing template queries");
                 profileDest = pm.getProfile(username, pm.getPassword(username));
