@@ -46,16 +46,16 @@
          </dd>
          <dt>In addition a number of protein interactions and complexes from smaller scale experiments are available:
              <im:querylink text=" <i>D. melanogaster</i> experiment list" skipBuilder="true">
-                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
-                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
-                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
-                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
-                         <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A"></constraint>
-                     </node>
-                 </query>
+                 <query name="" model="genomic" view="Protein.publications.title Protein.publications.pubMedId Protein.publications.firstAuthor Protein.publications.year">
+  <node path="Protein" type="Protein">
+  </node>
+  <node path="Protein.organism" type="Organism">
+  </node>
+  <node path="Protein.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
              </im:querylink>
          </dt>
        </dl>
@@ -81,16 +81,16 @@
          </dd>
             <dt>In addition a number of protein interactions and complexes from smaller scale experiments are available:
                 <im:querylink text=" <i>C. elegans</i> experiment list" skipBuilder="true">
-                    <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
-                        <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
-                        <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
-                        <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
-                        <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
-                        <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
-                        <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
-                            <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A"></constraint>
-                        </node>
-                    </query>
+                    <query name="" model="genomic" view="Protein.publications.title Protein.publications.pubMedId Protein.publications.firstAuthor Protein.publications.year">
+  <node path="Protein" type="Protein">
+  </node>
+  <node path="Protein.organism" type="Organism">
+  </node>
+  <node path="Protein.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
                 </im:querylink>
             </dt>
          </dl>
@@ -149,16 +149,16 @@
          <dt>
            In addition a number of protein interactions and complexes from smaller scale experiments are available:
              <im:querylink text=" <i>S. cerevisiae</i> experiment list" skipBuilder="true">
-                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
-                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
-                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
-                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
-                         <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A"></constraint>
-                     </node>
-                 </query>
+                 <query name="" model="genomic" view="Protein.publications.title Protein.publications.pubMedId Protein.publications.firstAuthor Protein.publications.year">
+  <node path="Protein" type="Protein">
+  </node>
+  <node path="Protein.organism" type="Organism">
+  </node>
+  <node path="Protein.organism.name" type="String">
+    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
              </im:querylink>
          </dt>
        </dl>
