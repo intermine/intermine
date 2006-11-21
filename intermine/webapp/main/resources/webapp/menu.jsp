@@ -29,6 +29,11 @@
     </html:link>
   </span>
   <span class="menu-item">
+    <html:link action="/mymine.do?page=bags">
+      <fmt:message key="menu.bags"/>
+    </html:link>
+  </span>
+  <span class="menu-item">
     <html:link action="/templateSearch.do">
       <fmt:message key="menu.searchTemplates"/>
     </html:link>
