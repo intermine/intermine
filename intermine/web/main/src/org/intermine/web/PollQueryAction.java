@@ -30,7 +30,7 @@ import org.apache.struts.action.ActionMessage;
 /**
  * Repeatedly poll the status of a running query and forward client to appropriate page
  * each time.
- * 
+ *
  * @see org.intermine.web.QueryMonitor
  * @see org.intermine.web.QueryMonitorTimeout
  * @see org.intermine.web.SessionMethods#runQuery
@@ -39,7 +39,7 @@ import org.apache.struts.action.ActionMessage;
 public class PollQueryAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(PollQueryAction.class);
-    
+
     /**
      * Handle request from client.
      *
@@ -59,22 +59,22 @@ public class PollQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         String qid = request.getParameter("qid");
         boolean followSingleResult = "followSingleResult".equals(mapping.getParameter());
-        
+
         if (StringUtils.isEmpty(qid)) {
             recordError(new ActionMessage("errors.pollquery.emptyqid", qid), request);
             return mapping.findForward("error");
         }
-        
+
         QueryMonitorTimeout controller = (QueryMonitorTimeout)
                 SessionMethods.getRunningQueryController(qid, session);
         if (controller == null) {
             LOG.debug("invalid qid " + qid + " redirecting as if cancelled");
             return mapping.findForward("cancelled");
         }
-        
+
         // First tickle the controller to avoid timeout
         controller.tickle();
-        
+
         if (controller.isCancelledWithError()) {
             LOG.debug("query qid " + qid + " error");
             return mapping.findForward("failure");
@@ -86,8 +86,8 @@ public class PollQueryAction extends InterMineAction
             LOG.debug("query qid " + qid + " complete");
             // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
-            if (followSingleResult && pr.getSize () == 1
-                    && ((List) pr.getAllRows ().get(0)).size() == 1) {
+            if (followSingleResult && pr.getSize () == 1) {
+                // Query can have more than one column, forward from the first
                 Object o = ((List) pr.getAllRows ().get(0)).get(0);
                 if (o instanceof InterMineObject) {
                     return new ActionForward("/objectDetails.do?id="
@@ -112,7 +112,7 @@ public class PollQueryAction extends InterMineAction
             } else {
                 request.setAttribute("imgnum", new Integer(imgnum));
             }
-            
+
             // there are different action mappings for different kinds of
             // query (portal, template, query builder) so we have to refresh
             // to the correct path
