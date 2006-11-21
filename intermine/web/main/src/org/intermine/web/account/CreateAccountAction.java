@@ -28,13 +28,13 @@ import org.intermine.web.RequestPasswordAction;
 
 /**
  * @author Xavier Watkins
- * 
+ *
  */
 public class CreateAccountAction extends LoginHandler
 {
     /**
      * Method called when user has finished updating a constraint
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -54,7 +54,7 @@ public class CreateAccountAction extends LoginHandler
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         String username = ((CreateAccountForm) form).getUsername();
         String password = ((CreateAccountForm) form).getPassword();
-        pm.saveProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
+        pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                 new HashMap()));
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         RequestPasswordAction.email(username, password, webProperties);
@@ -62,7 +62,7 @@ public class CreateAccountAction extends LoginHandler
          * This code generates an MD5 key for the given username which is then
          * encoded in Hexadecimal. This could later be used for account
          * activation.
-         * 
+         *
          * try { MessageDigest md5 = MessageDigest.getInstance("MD5"); byte[]
          * buffer = username.getBytes(); md5.update(buffer); byte[] array =
          * md5.digest(); String encoded = HexBin.encode(array); } catch
