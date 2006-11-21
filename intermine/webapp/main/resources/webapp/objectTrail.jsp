@@ -6,7 +6,7 @@
 <!-- objectTrail.jsp -->
 
 <html:xhtml/>
-<c:if test="${!empty trailElements}">
+<c:if test="${!empty trailElements && templateQuery.name != WEB_PROPERTIES['begin.browse.template']}">
   <div class="body objectTrail">
     Trail: <html:link action="/query.do?showTemplate=true"
                  styleClass="objectTrailLinkResults">Query</html:link>

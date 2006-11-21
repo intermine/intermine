@@ -105,7 +105,8 @@
 
       <%-- show the discription only if we've run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${resultsTable.class.name == 'org.intermine.web.results.PagedResults'}">
+      <c:if test="${(resultsTable.class.name == 'org.intermine.web.results.PagedResults')
+                    && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
             <div>
