@@ -148,16 +148,16 @@
 
          <dt>In addition a number of smaller scale experiments are available:
              <im:querylink text=" All <i>C. elegans</i> RNAi experiments " skipBuilder="true">
-                 <query name="" model="genomic" view="ProteinInteractionExperiment ProteinInteractionExperiment.publication.pubMedId ProteinInteractionExperiment.publication.firstAuthor ProteinInteractionExperiment.publication.year">
-                     <node path="ProteinInteractionExperiment" type="ProteinInteractionExperiment"></node>
-                     <node path="ProteinInteractionExperiment.hostOrganism" type="String"></node>
-                     <node path="ProteinInteractionExperiment.interactions" type="ProteinInteraction"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins" type="Protein"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism" type="Organism"></node>
-                     <node path="ProteinInteractionExperiment.interactions.proteins.organism.name" type="String">
-                         <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A"></constraint>
-                     </node>
-                 </query>
+                <query name="" model="genomic" view="RNAiScreen.publication.title RNAiScreen.publication.pubMedId RNAiScreen.publication.firstAuthor RNAiScreen.publication.year">
+                     <node path="RNAiScreen" type="RNAiScreen">
+                      </node>
+                      <node path="RNAiScreen.organism" type="Organism">
+                      </node>
+                      <node path="RNAiScreen.organism.name" type="String">
+                        <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+                      </constraint>
+                  </node>
+               </query>
              </im:querylink>
          </dt>
 
