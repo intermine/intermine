@@ -497,6 +497,4 @@
                      className="org.flymine.web.GFF3Exporter"/>
   <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
                      className="org.intermine.bio.web.ProteinInteractionExporter"/>
-  <tableExportConfig id="proteinInteractionViewExporter" actionPath="/exportAction?type=proteinInteractionViewExporter"
-                     className="org.intermine.bio.web.ProteinInteractionViewExporter"/>
 </webconfig>
