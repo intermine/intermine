@@ -94,9 +94,27 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             } else {
                 flyMineSequence = FlyMineSequenceFactory.make((Protein) obj);
             }
+            if (flyMineSequence == null) {
+                return null;
+            }
             Annotation annotation = flyMineSequence.getAnnotation();
-            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                    ((BioEntity) obj).getIdentifier());
+            BioEntity bioEntity = (BioEntity) obj;
+            String identifier = bioEntity.getIdentifier();
+            if (identifier == null) {
+                identifier = bioEntity.getName();
+                if (identifier == null) {
+                    if (bioEntity instanceof Gene) {
+                        Gene gene = ((Gene) bioEntity);
+                        identifier = gene.getOrganismDbId();
+                        if (identifier == null) {
+                            identifier = gene.getAccession();
+                        } else {
+                            identifier = "[no_identifier]";
+                        }
+                    }
+                }
+            }
+            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
             OutputStream out = response.getOutputStream();
             SeqIOTools.writeFasta(out, flyMineSequence);
         }
