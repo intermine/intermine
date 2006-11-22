@@ -13,9 +13,9 @@
   </c:when>
   <c:otherwise>
     <b><im:value>${outVal}</im:value></b>
+    <html:link action="sequenceExporter?object=${object.id}">
+      <html:img styleClass="fasta" src="model/fasta.gif"/>
+    </html:link>
   </c:otherwise>
 </c:choose>
-<html:link action="sequenceExporter?object=${object.id}">
-  <html:img styleClass="fasta" src="model/fasta.gif"/>
-</html:link>
 <!-- /sequenceShortDisplayerWithField.jsp -->
