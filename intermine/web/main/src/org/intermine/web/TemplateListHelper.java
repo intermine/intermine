@@ -137,6 +137,14 @@ public class TemplateListHelper
                     if (types.contains(iface)
                         && model.getClassDescriptorByName(className)
                              .getFieldDescriptorByName(fieldName) != null) {
+/*
+                        Path path = new Path(model, fieldExpr);
+                        if (path.resolve(object) == null) {
+                            // ignore this template because putting a null into a template isn't
+                            // a good idea
+                            continue TEMPLATE;
+                        }
+*/
                         fieldExprs.add(fieldExpr);
                     }
                 } catch (ClassNotFoundException err) {
