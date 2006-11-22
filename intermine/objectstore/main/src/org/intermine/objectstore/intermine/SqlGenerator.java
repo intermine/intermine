@@ -1572,63 +1572,73 @@ public class SqlGenerator
     protected static String buildOrderBy(State state, Query q, DatabaseSchema schema)
             throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
+        HashSet seen = new HashSet();
         boolean needComma = false;
         Iterator orderByIter = q.getEffectiveOrderBy().iterator();
         while (orderByIter.hasNext()) {
             Object node = orderByIter.next();
             if (!((node instanceof QueryValue) || (node instanceof QueryPathExpression))) {
-                retval.append(needComma ? ", " : " ORDER BY ");
-                needComma = true;
+                StringBuffer buffer = new StringBuffer();
                 if (node instanceof QueryClass) {
+                    retval.append(needComma ? ", " : " ORDER BY ");
+                    needComma = true;
                     queryClassToString(retval, (QueryClass) node, q, schema, ID_ONLY, state);
                 } else if (node instanceof QueryObjectReference) {
                     QueryObjectReference ref = (QueryObjectReference) node;
-                    StringBuffer buffer = new StringBuffer();
                     buffer.append((String) state.getFieldToAlias(ref.getQueryClass())
                             .get(ref.getFieldName()));
-                    retval.append(buffer.toString());
-                    if (q.isDistinct()) {
-                        if (q.getSelect().contains(ref.getQueryClass())) {
-                            // This means that the field's QueryClass is present in the SELECT list,
-                            // so adding the field artificially will not alter the number of rows
-                            // of a DISTINCT query.
-                            if (!schema.isFlatMode()) {
-                                buffer.append(" AS ")
-                                    .append(state.getOrderByAlias());
-                                state.addToOrderBy(buffer.toString());
+                    if (!seen.contains(buffer.toString())) {
+                        retval.append(needComma ? ", " : " ORDER BY ");
+                        needComma = true;
+                        retval.append(buffer.toString());
+                        seen.add(buffer.toString());
+                        if (q.isDistinct()) {
+                            if (q.getSelect().contains(ref.getQueryClass())) {
+                                // This means that the field's QueryClass is present in the SELECT
+                                // list, so adding the field artificially will not alter the number
+                                // of rows of a DISTINCT query.
+                                if (!schema.isFlatMode()) {
+                                    buffer.append(" AS ")
+                                        .append(state.getOrderByAlias());
+                                    state.addToOrderBy(buffer.toString());
+                                }
+                            } else {
+                                throw new ObjectStoreException("Reference " + buffer.toString()
+                                        + " in the ORDER BY list must be in the SELECT list, or the"
+                                        + " whole QueryClass must be in the SELECT list, or the"
+                                        + " query made non-distinct");
                             }
-                        } else {
-                            throw new ObjectStoreException("Reference " + buffer.toString()
-                                    + " in the ORDER BY list must be in the SELECT list, or the"
-                                    + " whole QueryClass must be in the SELECT list, or the"
-                                    + " query made non-distinct");
                         }
                     }
                 } else {
-                    queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
-                    if ((!q.getSelect().contains(node)) && q.isDistinct()
-                            && (node instanceof QueryField)) {
-                        FromElement fe = ((QueryField) node).getFromElement();
-                        StringBuffer buffer = new StringBuffer();
-                        queryEvaluableToString(buffer, (QueryEvaluable) node, q, state);
-                        if (q.getSelect().contains(fe)) {
-                            // This means that this field is not in the SELECT list, but its
-                            // FromElement is, therefore adding it artificially to the SELECT
-                            // list will not alter the number of rows of a DISTINCT query.
-                            if (!schema.isFlatMode()) {
-                                buffer.append(" AS ")
-                                    .append(state.getOrderByAlias());
-                                state.addToOrderBy(buffer.toString());
+                    queryEvaluableToString(buffer, (QueryEvaluable) node, q, state);
+                    if (!seen.contains(buffer.toString())) {
+                        retval.append(needComma ? ", " : " ORDER BY ");
+                        needComma = true;
+                        retval.append(buffer.toString());
+                        seen.add(buffer.toString());
+                        if ((!q.getSelect().contains(node)) && q.isDistinct()
+                                && (node instanceof QueryField)) {
+                            FromElement fe = ((QueryField) node).getFromElement();
+                            if (q.getSelect().contains(fe)) {
+                                // This means that this field is not in the SELECT list, but its
+                                // FromElement is, therefore adding it artificially to the SELECT
+                                // list will not alter the number of rows of a DISTINCT query.
+                                if (!schema.isFlatMode()) {
+                                    buffer.append(" AS ")
+                                        .append(state.getOrderByAlias());
+                                    state.addToOrderBy(buffer.toString());
+                                }
+                            } else if (fe instanceof QueryClass) {
+                                throw new ObjectStoreException("Field " + buffer.toString()
+                                        + " in the ORDER BY list must be in the SELECT list, or the"
+                                        + " whole QueryClass " + fe.toString() + " must be in the"
+                                        + " SELECT list, or the query made non-distinct");
+                            } else {
+                                throw new ObjectStoreException("Field " + buffer.toString()
+                                        + " in the ORDER BY list must be in the SELECT list, or the"
+                                        + " query made non-distinct");
                             }
-                        } else if (fe instanceof QueryClass) {
-                            throw new ObjectStoreException("Field " + buffer.toString()
-                                    + " in the ORDER BY list must be in the SELECT list, or the"
-                                    + " whole QueryClass " + fe.toString() + " must be in the"
-                                    + " SELECT list, or the query made non-distinct");
-                        } else {
-                            throw new ObjectStoreException("Field " + buffer.toString()
-                                    + " in the ORDER BY list must be in the SELECT list, or the"
-                                    + " query made non-distinct");
                         }
                     }
                 }

@@ -158,6 +158,20 @@ public class QueryOptimiser
                             precomputedTables, cache);
     }
 
+    /**
+     * Runs the optimiser through the query repesented in the String and Query, given the Connection
+     * and a set of PrecomputedTables.
+     *
+     * @param query the query String to optimise
+     * @param originalQuery the Query object to optimise - or optionally null
+     * @param database a Database
+     * @param explainConnection the database connection to use, or null if database is a Database
+     * @param context a QueryOptimiserContext, to alter settings
+     * @param precomputedTables a Set of PrecomputedTables
+     * @param cache an OptimiserCache
+     * @return a BestQuery object
+     * @throws SQLException if a database error occurs
+     */
     public static BestQuery optimiseWith(String query, Query originalQuery, Database database,
             Connection explainConnection, QueryOptimiserContext context, Set precomputedTables,
             OptimiserCache cache) throws SQLException {
