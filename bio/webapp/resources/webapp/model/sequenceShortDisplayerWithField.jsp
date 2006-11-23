@@ -6,16 +6,18 @@
 <!-- sequenceShortDisplayerWithField.jsp -->
 <tiles:importAttribute name="expr" ignore="false"/>
 <html:xhtml/>
-<im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
+<im:eval evalExpression="interMineObject.${expr}" evalVariable="outVal"/>
 <c:choose>
   <c:when test="${empty outVal}">
     &nbsp;
   </c:when>
   <c:otherwise>
     <b><im:value>${outVal}</im:value></b>
-    <html:link action="sequenceExporter?object=${object.id}">
-      <html:img styleClass="fasta" src="model/fasta.gif"/>
-    </html:link>
+    <c:if test="${!empty interMineObject.sequence}">
+      <html:link action="sequenceExporter?object=${interMineObject.id}">
+        <html:img styleClass="fasta" src="model/fasta.gif"/>
+      </html:link>
+    </c:if>
   </c:otherwise>
 </c:choose>
 <!-- /sequenceShortDisplayerWithField.jsp -->
