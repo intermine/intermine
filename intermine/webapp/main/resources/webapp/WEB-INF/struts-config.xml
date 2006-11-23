@@ -289,7 +289,7 @@
       <forward name="results" path="results.page"/>
       <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
       <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
-      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
+      <forward name="waiting" path="/pollTemplateQuery.do" redirect="true"/>
     </action>
     
     <action path="/editTemplate"
@@ -333,8 +333,7 @@
     
     <!-- wait for a template query to run -->
     <action path="/pollTemplateQuery"
-            type="org.intermine.web.PollQueryAction"
-            parameter="followSingleResult">
+            type="org.intermine.web.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>
       <!-- problem running query -->
