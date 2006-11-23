@@ -108,8 +108,9 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         identifier = gene.getOrganismDbId();
                         if (identifier == null) {
                             identifier = gene.getAccession();
-                        } else {
-                            identifier = "[no_identifier]";
+                            if (identifier == null) {
+                                identifier = "[no_identifier]";
+                            }
                         }
                     }
                 }
