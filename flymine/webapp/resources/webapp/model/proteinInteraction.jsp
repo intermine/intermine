@@ -174,46 +174,34 @@
           <ul>
           <li>
             <im:querylink text="All <i>D. melanogaster</i> protein interactions " skipBuilder="true">
-<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D and E">
-  <node path="ProteinInteraction" type="ProteinInteraction">
+   <query name="" model="genomic" view="ProteinInteractor.interaction.shortName ProteinInteractor.role ProteinInteractor.protein.identifier ProteinInteractor.protein.primaryAccession ProteinInteractor.interaction.interactors.role ProteinInteractor.interaction.interactors.protein.identifier ProteinInteractor.interaction.interactors.protein.primaryAccession ProteinInteractor.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
+  <node path="ProteinInteractor" type="ProteinInteractor">
   </node>
-  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
+  <node path="ProteinInteractor.protein" type="Protein">
   </node>
-  <node path="ProteinInteraction.interactors.role" type="String">
-    <constraint op="=" value="bait" description="" identifier="" code="A">
+  <node path="ProteinInteractor.protein.organism" type="Organism">
+  </node>
+  <node path="ProteinInteractor.protein.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
+  <node path="ProteinInteractor.interaction" type="ProteinInteraction">
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
+  <node path="ProteinInteractor.interaction.interactors" type="ProteinInteractor">
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
-    <constraint op="=" value="prey" description="" identifier="" code="B">
+  <node path="ProteinInteractor.interaction.interactors.protein" type="Protein">
+  </node>
+  <node path="ProteinInteractor.interaction.interactors.protein.organism" type="Organism">
+    <constraint op="=" value="ProteinInteractor.protein.organism" description="" identifier="" code="B">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.protein" type="Protein">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.protein.organism" type="Organism">
-    <constraint op="=" value="ProteinInteraction.interactors.protein.organism" code="D">
+  <node path="ProteinInteractor.interaction.interactors.role" type="String">
+    <constraint op="=" value="prey" description="" identifier="" code="D">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment" type="ProteinInteractionExperiment">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication" type="Publication">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" type="String">
-    <constraint op="!=" value="11196647" description="" identifier="" code="E">
+  <node path="ProteinInteractor.role" type="String">
+    <constraint op="=" value="bait" description="" identifier="" code="C">
     </constraint>
-  </node>
-  <node path="ProteinInteraction.interactors.protein" type="Protein">
-  </node>
-  <node path="ProteinInteraction.interactors.protein.organism" type="Organism">
-  </node>
-  <node path="ProteinInteraction.interactors.protein.organism.shortName" type="String">
-    <constraint op="=" value="D. melanogaster" description="" identifier="" code="C">
-    </constraint>
-  </node>
-  <node path="ProteinInteraction.evidence" type="AnalysisResult">
   </node>
 </query>
             </im:querylink>
@@ -221,80 +209,74 @@
 
           <li>
             <im:querylink text="All <i>C. elegans</i> protein interactions " skipBuilder="true">
-<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
-  <node path="ProteinInteraction" type="ProteinInteraction">
+<query name="" model="genomic" view="ProteinInteractor.interaction.shortName ProteinInteractor.role ProteinInteractor.protein.identifier ProteinInteractor.protein.primaryAccession ProteinInteractor.interaction.interactors.role ProteinInteractor.interaction.interactors.protein.identifier ProteinInteractor.interaction.interactors.protein.primaryAccession ProteinInteractor.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
+  <node path="ProteinInteractor" type="ProteinInteractor">
   </node>
-  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
+  <node path="ProteinInteractor.protein" type="Protein">
   </node>
-  <node path="ProteinInteraction.interactors.role" type="String">
-    <constraint op="=" value="bait" description="" identifier="" code="A">
+  <node path="ProteinInteractor.protein.organism" type="Organism">
+  </node>
+  <node path="ProteinInteractor.protein.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
+  <node path="ProteinInteractor.interaction" type="ProteinInteraction">
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
+  <node path="ProteinInteractor.interaction.interactors" type="ProteinInteractor">
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
-    <constraint op="=" value="prey" description="" identifier="" code="B">
+  <node path="ProteinInteractor.interaction.interactors.protein" type="Protein">
+  </node>
+  <node path="ProteinInteractor.interaction.interactors.protein.organism" type="Organism">
+    <constraint op="=" value="ProteinInteractor.protein.organism" description="" identifier="" code="B">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.protein" type="Protein">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.protein.organism" type="Organism">
-    <constraint op="=" value="ProteinInteraction.interactors.protein.organism" code="D">
+  <node path="ProteinInteractor.interaction.interactors.role" type="String">
+    <constraint op="=" value="prey" description="" identifier="" code="D">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.protein" type="Protein">
-  </node>
-  <node path="ProteinInteraction.interactors.protein.organism" type="Organism">
-  </node>
-  <node path="ProteinInteraction.interactors.protein.organism.shortName" type="String">
-    <constraint op="=" value="C. elegans" description="" identifier="" code="C">
+  <node path="ProteinInteractor.role" type="String">
+    <constraint op="=" value="bait" description="" identifier="" code="C">
     </constraint>
-  </node>
-  <node path="ProteinInteraction.evidence" type="AnalysisResult">
   </node>
 </query>
             </im:querylink>
+
           </li>
 
           <li>
-            <im:querylink text="All <i>C. cerevisiae</i> protein interactions " skipBuilder="true">
-<query name="" model="genomic" view="ProteinInteraction.shortName ProteinInteraction.interactors.role ProteinInteraction.interactors.protein.identifier ProteinInteraction.interactors.protein.primaryAccession ProteinInteraction.interactors.interaction.interactors.role ProteinInteraction.interactors.interaction.interactors.protein.identifier ProteinInteraction.interactors.interaction.interactors.protein.primaryAccession ProteinInteraction.evidence.confidence ProteinInteraction.evidence.confidenceDesc ProteinInteraction.interactors.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
-  <node path="ProteinInteraction" type="ProteinInteraction">
+            <im:querylink text="All <i>S. cerevisiae</i> protein interactions " skipBuilder="true">
+<query name="" model="genomic" view="ProteinInteractor.interaction.shortName ProteinInteractor.role ProteinInteractor.protein.identifier ProteinInteractor.protein.primaryAccession ProteinInteractor.interaction.interactors.role ProteinInteractor.interaction.interactors.protein.identifier ProteinInteractor.interaction.interactors.protein.primaryAccession ProteinInteractor.interaction.experiment.publication.pubMedId" constraintLogic="A and B and C and D">
+  <node path="ProteinInteractor" type="ProteinInteractor">
   </node>
-  <node path="ProteinInteraction.interactors" type="ProteinInteractor">
+  <node path="ProteinInteractor.protein" type="Protein">
   </node>
-  <node path="ProteinInteraction.interactors.role" type="String">
-    <constraint op="=" value="bait" description="" identifier="" code="A">
+  <node path="ProteinInteractor.protein.organism" type="Organism">
+  </node>
+  <node path="ProteinInteractor.protein.organism.name" type="String">
+    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction" type="ProteinInteraction">
+  <node path="ProteinInteractor.interaction" type="ProteinInteraction">
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors" type="ProteinInteractor">
+  <node path="ProteinInteractor.interaction.interactors" type="ProteinInteractor">
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.role" type="String">
-    <constraint op="=" value="prey" description="" identifier="" code="B">
+  <node path="ProteinInteractor.interaction.interactors.protein" type="Protein">
+  </node>
+  <node path="ProteinInteractor.interaction.interactors.protein.organism" type="Organism">
+    <constraint op="=" value="ProteinInteractor.protein.organism" description="" identifier="" code="B">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.protein" type="Protein">
-  </node>
-  <node path="ProteinInteraction.interactors.interaction.interactors.protein.organism" type="Organism">
-    <constraint op="=" value="ProteinInteraction.interactors.protein.organism" code="D">
+  <node path="ProteinInteractor.interaction.interactors.role" type="String">
+    <constraint op="=" value="prey" description="" identifier="" code="D">
     </constraint>
   </node>
-  <node path="ProteinInteraction.interactors.protein" type="Protein">
-  </node>
-  <node path="ProteinInteraction.interactors.protein.organism" type="Organism">
-  </node>
-  <node path="ProteinInteraction.interactors.protein.organism.shortName" type="String">
-    <constraint op="=" value="C. cerevisiae" description="" identifier="" code="C">
+  <node path="ProteinInteractor.role" type="String">
+    <constraint op="=" value="bait" description="" identifier="" code="C">
     </constraint>
-  </node>
-  <node path="ProteinInteraction.evidence" type="AnalysisResult">
   </node>
 </query>
             </im:querylink>
+
           </li>
          </ul>
 
