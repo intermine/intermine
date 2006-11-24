@@ -106,16 +106,16 @@ public class IntronTest extends TestCase{
         IntronUtil iru = new IntronUtil(osw);
 
         Transcript t1 = createTranscriptT1(100);
-        Set intronSet1 = iru.createIntronFeatures(locationSet1, t1, t1.getChromosomeLocation());
-        assertEquals(2, intronSet1.size());
+        int is1 = iru.createIntronFeatures(locationSet1, t1, t1.getChromosomeLocation());
+        assertEquals(2, is1);
 
         Transcript t2 = createTranscriptT2(100);
-        Set intronSet2 = iru.createIntronFeatures(locationSet2, t2, t2.getChromosomeLocation());
-        assertEquals(3, intronSet2.size());
+        int is2 = iru.createIntronFeatures(locationSet2, t2, t2.getChromosomeLocation());
+        assertEquals(3, is2);
 
         Transcript t3 = createTranscriptT3(100);
-        Set intronSet3 = iru.createIntronFeatures(locationSet3, t3, t3.getChromosomeLocation());
-        assertEquals(null, intronSet3);
+        int is3 = iru.createIntronFeatures(locationSet3, t3, t3.getChromosomeLocation());
+        assertEquals(0, is3);
 
     }
 
