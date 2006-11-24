@@ -29,6 +29,8 @@ import net.sf.cglib.proxy.*;
 public class DynamicUtil
 {
     private static Map classMap = new HashMap();
+    private static Map decomposeMap = new HashMap();
+    private static Map friendlyNameMap = new HashMap();
 
     /**
      * Cannot construct
@@ -146,41 +148,45 @@ public class DynamicUtil
      * @param clazz the Class to decompose
      * @return a Set of Class objects
      */
-    public static Set decomposeClass(Class clazz) {
-        if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
-            // Decompose
-            Set retval = new LinkedHashSet();
-            retval.add(clazz.getSuperclass());
-            Class interfs[] = clazz.getInterfaces();
-            for (int i = 0; i < interfs.length; i++) {
-                Class inter = interfs[i];
-                if (net.sf.cglib.proxy.Factory.class != inter) {
-                    boolean notIn = true;
-                    Iterator inIter = retval.iterator();
-                    while (inIter.hasNext() && notIn) {
-                        Class in = (Class) inIter.next();
-                        if (in.isAssignableFrom(inter)) {
-                            // That means that the one already in the return value is more general
-                            // than the one we are about to put in, so we can get rid of the one
-                            // already in.
-                            inIter.remove();
+    public static synchronized Set decomposeClass(Class clazz) {
+        Set retval = (Set) decomposeMap.get(clazz);
+        if (retval == null) {
+            if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
+                // Decompose
+                retval = new LinkedHashSet();
+                retval.add(clazz.getSuperclass());
+                Class interfs[] = clazz.getInterfaces();
+                for (int i = 0; i < interfs.length; i++) {
+                    Class inter = interfs[i];
+                    if (net.sf.cglib.proxy.Factory.class != inter) {
+                        boolean notIn = true;
+                        Iterator inIter = retval.iterator();
+                        while (inIter.hasNext() && notIn) {
+                            Class in = (Class) inIter.next();
+                            if (in.isAssignableFrom(inter)) {
+                                // That means that the one already in the return value is more
+                                // general than the one we are about to put in, so we can get rid
+                                // of the one already in.
+                                inIter.remove();
+                            }
+                            if (inter.isAssignableFrom(in)) {
+                                // That means that the one already in the return value is more
+                                // specific than the one we would have added, so don't bother.
+                                notIn = false;
+                            }
                         }
-                        if (inter.isAssignableFrom(in)) {
-                            // That means that the one already in the return value is more specific
-                            // than the one we would have added, so don't bother.
-                            notIn = false;
+                        if (notIn) {
+                            retval.add(inter);
                         }
-                    }
-                    if (notIn) {
-                        retval.add(inter);
                     }
                 }
+            } else {
+                // Normal class - return it.
+                retval = Collections.singleton(clazz);
             }
-            return retval;
-        } else {
-            // Normal class - return it.
-            return Collections.singleton(clazz);
+            decomposeMap.put(clazz, retval);
         }
+        return retval;
     }
 
     /**
@@ -211,5 +217,28 @@ public class DynamicUtil
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Cannot find one of '" + classNames + "' in model", e);
         }
+    }
+
+    /**
+     * Creates a friendly name for a given class.
+     *
+     * @param clazz the class
+     * @return a String describing the class, without package names
+     */
+    public static synchronized String getFriendlyName(Class clazz) {
+        String retval = (String) friendlyNameMap.get(clazz);
+        if (retval == null) {
+            retval = "";
+            Iterator iter = decomposeClass(clazz).iterator();
+            boolean needComma = false;
+            while (iter.hasNext()) {
+                Class constit = (Class) iter.next();
+                retval += needComma ? "," : "";
+                needComma = true;
+                retval += constit.getName().substring(constit.getName().lastIndexOf('.') + 1);
+            }
+            friendlyNameMap.put(clazz, retval);
+        }
+        return retval;
     }
 }

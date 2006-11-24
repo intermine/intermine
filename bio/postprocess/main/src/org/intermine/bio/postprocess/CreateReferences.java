@@ -160,7 +160,7 @@ public class CreateReferences
 
     /**
      * Fill in the "orthologues" collection of Gene.  Needs to be run after
-     * UpdateOrthologues which in turn relies on CreateReferences -> so has
+     * UpdateOrthologues which in turn relies on CreateReferences -&gt; so has
      * become a separate method.
      * @throws Exception if anything goes wrong
      */
@@ -177,7 +177,7 @@ public class CreateReferences
      * and then set exon.gene
      *
      * in overview we are doing:
-     * BioEntity1 -> BioEntity2 -> BioEntity3   ==>   BioEntitiy1 -> BioEntity3
+     * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntitiy1 -&gt; BioEntity3
      * @param sourceClass the first class in the query
      * @param sourceClassFieldName the field in the sourceClass which should contain the
      * connectingClass
@@ -256,7 +256,7 @@ public class CreateReferences
      *   (gene.transcripts CONTAINS transcript AND transcript.protein CONTAINS protein)
      *   ORDER BY gene
      * and then set protected gene.protein (if created
-     * BioEntity1 -> BioEntity2 -> BioEntity3   ==>   BioEntity1 -> BioEntity3
+     * BioEntity1 -&gt; BioEntity2 -&gt; BioEntity3   ==&gt;   BioEntity1 -&gt; BioEntity3
      * @param firstClass the first class in the query
      * @param firstClassFieldName the field in the firstClass which should contain the
      * connectingClass
@@ -325,8 +325,8 @@ public class CreateReferences
                         count += newCollection.size();
                         osw.store(tempObject);
                    } catch (IllegalAccessException e) {
-                        LOG.error("Object with ID: " + thisDestObject.getId()
-                                  + " has no " + createFieldName + " field");
+                        LOG.error("Object with ID " + thisDestObject.getId()
+                                  + " has no " + createFieldName + " field", e);
                     }
                 }
 
