@@ -47,13 +47,36 @@ public class ImportQueriesAction extends InterMineAction
                                      session, response);
             return mapping.findForward("query");
         } else {
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Iterator iter = queries.keySet().iterator();
             while (iter.hasNext()) {
                 String queryName = (String) iter.next();
+                queryName = validateQueryName(queryName, profile);
                 PathQuery query = (PathQuery) queries.get(queryName);
+                queryName = validateQueryName(queryName, profile);
                 SessionMethods.saveQuery(session, queryName, query);
             }
             return mapping.findForward("mymine");
+        }
+    }
+    
+    private String validateQueryName(String queryName, Profile profile) {
+        String newQueryName = queryName;
+        if (newQueryName == null || newQueryName.equals("")) {
+            newQueryName = "imported_query";
+        }
+        
+        if (profile.getSavedQueries().containsKey(newQueryName)) {
+            int i = 1;
+            while (true) {
+                String testName = newQueryName + "_" + i;
+                if (!profile.getSavedQueries().containsKey(testName)) {
+                    return testName;
+                }
+                i++;
+            }
+        } else {
+            return newQueryName;
         }
     }
 }
