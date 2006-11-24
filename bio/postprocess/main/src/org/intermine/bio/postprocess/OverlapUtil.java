@@ -142,6 +142,7 @@ public abstract class OverlapUtil
         Map currentLocations = new HashMap();
 
         int count = 0;
+        HashMap summary = new HashMap();
         Iterator resIter = results.iterator();
 
         while (resIter.hasNext()) {
@@ -189,6 +190,18 @@ public abstract class OverlapUtil
                                     "overlappingFeatures", currLsf.getId());
                             osw.addToCollection(currLsf.getId(), LocatedSequenceFeature.class,
                                     "overlappingFeatures", lsf.getId());
+
+                            // Log it, for the summary.
+                            String classname1 = DynamicUtil.getFriendlyName(lsf.getClass());
+                            String classname2 = DynamicUtil.getFriendlyName(currLsf.getClass());
+
+                            String summaryLine = classname1.compareTo(classname2) == 1
+                                ? classname2 + " - " + classname1 : classname1 + " - " + classname2;
+                            Integer summaryCount = (Integer) summary.get(summaryLine);
+                            if (summaryCount == null) {
+                                summaryCount = new Integer(0);
+                            }
+                            summary.put(summaryLine, new Integer(summaryCount.intValue() + 1));
                         }
                     }
                 }
@@ -197,6 +210,11 @@ public abstract class OverlapUtil
         }
         LOG.info("Stored " + count + " overlaps for " + subject + ", identifier: "
                  + subject.getIdentifier());
+        Iterator summaryIter = summary.entrySet().iterator();
+        while (summaryIter.hasNext()) {
+            Map.Entry summaryEntry = (Map.Entry) summaryIter.next();
+            LOG.info(summaryEntry.getValue() + " overlaps for " + summaryEntry.getKey());
+        }
     }
 
     /**
