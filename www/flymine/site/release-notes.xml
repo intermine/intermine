@@ -3,6 +3,83 @@
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
   <section>
+    <title>FlyMine version 6.0 - release notes</title>
+
+    <para>FlyMine 6.0 adds data from seven <emphasis>Dropsophila</emphasis> RNAi screens from the DRSC,
+          microarray-based gene expression data from FlyAtlas and Transcriptional cis-regulatory modules 
+          (CRMs) from REDfly.  Template queries have a new, succinct naming scheme and identifiers/names
+          in results tables are now links to object details pages.  Other data sources have been
+          updated/added and there are numerous interface improvements.</para>
+
+    <para>
+NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's object bags have not been ported to release 6.0 but can still be retrieved from the release 5.0 archive.  If any user wishes to use information from old object bags we recommend exporting from 5.0 as a list of appropriate identifiers and uploading to release 6.0.  Please contact us if you require any help with this.   All other saved information has been transferred to release 6.0.
+    </para>
+
+    <para>
+   An upcoming release of FlyMine will introduce a new system for uploading and managing bags of data.  -- FlyMine,
+    </para>
+
+      <itemizedlist>
+      <listitem>
+        <para>Data</para>
+        <itemizedlist>
+    <listitem><para>NEW - Microarray-based gene expression data for <emphasis>D. melanogaster</emphasis> from FlyAtlas.</para></listitem>
+    <listitem><para>NEW - High-throughput cell-based RNAi screens from the <emphasis>Drosophila</emphasis> RNAi Screening Center.</para></listitem>
+    <listitem><para>NEW - Transcriptional cis-regulatory modules (CRMs) for <emphasis>D.melanogaster</emphasis> from REDfly.</para></listitem>
+    <listitem><para>NEW - Probe sets from the Affymetrix GeneChip Drosophila Genome 2.0 Array.</para></listitem>
+    <listitem><para>NEW - Syntenic regions between <emphasis>D. melanogaster</emphasis> and <emphasis>D. pseudoobscura.</emphasis></para></listitem>
+    <listitem><para>NEW - Orthologues and GO annotation for <emphasis>S. pombe</emphasis> and <emphasis>P. falciparum.</emphasis></para></listitem>
+    <listitem><para>NEW - Anatomy ontology for <emphasis>Drosophila</emphasis>.</para></listitem>
+    <listitem><para>UPDATE - <emphasis>D. melanogaster</emphasis> genome annotation updated to version 4.3.</para></listitem>
+    <listitem><para>UPDATE - UniProt protein data is now at version 8.9.</para></listitem>
+    <listitem><para>UPDATE - Worm RNAi data from WormBase 30th September 2006.</para></listitem>
+    <listitem><para>UPDATE - <emphasis>D. melanogaster</emphasis> BACs are now loaded.</para></listitem>
+    <listitem><para>UPDATE - Protein fragments from UniProt are now identified by an isFragment true/false attribute.</para></listitem>
+    <listitem><para>UPDATE - Proteins now have a length (in amino acids) and molecularWeight (in Daltons).</para></listitem>
+    <listitem><para>FIX - Protein interaction confidence scores restored.</para></listitem>
+    <listitem><para>FIX - PCRProducts now reference the TilingPathSpan they create.</para></listitem>
+    <listitem><para>FIX - Some unpublished micorarry experiments have been removed.</para></listitem>
+       </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>User Interface</para>
+        <itemizedlist>
+    <listitem><para>NEW - Names and identifiers in results tables now link to object details pages.</para></listitem>
+    <listitem><para>NEW - Template names have been changed so that they now have a short name and a longer description. The short name is the main name and is displayed on the aspect pages, template search results and the object details pages. This shorter name has the format 'query starting point(s)' --> 'query output' and allows easier scanning of templates to find the one required. The longer description can be viewed when the template form is accessed.</para></listitem>
+    <listitem><para>NEW - When running a template query the title and description is displayed above the results.</para></listitem>
+    <listitem><para>NEW - The trail now includes a 'Query' link back to the template or Query Builder, i.e. now 'Query -> Results'.</para></listitem>
+    <listitem><para>UPDATE - It is no longer possible to create bags of objects from results or upload.</para></listitem>
+    <listitem><para>UPDATE - Chromosomal locations are displayed in a more compact format (e.g. 2R:1598168-1676472).</para></listitem>
+    <listitem><para>UPDATE - 'History' had been renamed to 'My Mine' and the layout improved.</para>
+        <itemizedlist>
+          <listitem><para>improved query and template XML import/export options.</para></listitem>
+          <listitem><para>added a 'Change Password' tab.</para></listitem>
+          <listitem><para>bag listing and upload pages have been combined.</para></listitem>
+        </itemizedlist></listitem>
+    <listitem><para>FIX - Searches in bags of strings are no longer case sensitive.</para></listitem>
+    <listitem><para>FIX - After running a template query 'Current Query' will now return to the template form instead of the Query Builder page.</para></listitem>
+    <listitem><para>FIX - To address a performance issue bag size is limited to 100 entries unless you are logged in (when the limit is much higher). </para></listitem>
+       </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Tools</para>
+        <itemizedlist>
+          <listitem><para>There are no changes to tools availale in release 6.0.</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Known issues</para>
+        <itemizedlist>
+          <listitem><para>There are currently no known issues with data in release 6.0.</para></listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
     <title>FlyMine version 5.0 - release notes</title>
     
       <para>FlyMine 5.0 adds genome annotation for <emphasis>D. pseudoobscura</emphasis> (release 2.0 from FlyBase) and <emphasis>A. mellifera</emphasis> (release 2.0 from Ensembl) with InParanoid orthologues to the other genomes in FlyMine.  Also added are InParanoid orthologues to many other species and GO annotation for some of them.  Interface improvements include the ability for users to tag favourite templates and to change their password.</para>

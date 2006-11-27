@@ -128,7 +128,6 @@ public class PrecomputeTemplatesTask extends Task
 
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            HashMap pathToQueryNode = new HashMap();
             TemplateQuery template = (TemplateQuery) entry.getValue();
 
             List indexes = new ArrayList();
@@ -178,9 +177,14 @@ public class PrecomputeTemplatesTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes,
+            ObjectStoreInterMineImpl osInterMineImpl = ((ObjectStoreInterMineImpl) os);
+            if (!osInterMineImpl.isPrecomputed(query, PRECOMPUTE_CATEGORY_TEMPLATE)) {
+                osInterMineImpl.precompute(query, indexes,
                                                        PRECOMPUTE_CATEGORY_TEMPLATE);
-        } catch (ObjectStoreException e) {
+            } else {
+                 LOG.info("Skipping template " + name + " - already precomputed.");
+            }
+         } catch (ObjectStoreException e) {
             throw new BuildException("Exception while precomputing query: " + name
                                      + ", " + query + " with indexes " + indexes, e);
         }

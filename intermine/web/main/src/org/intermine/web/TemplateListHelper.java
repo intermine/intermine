@@ -147,8 +147,8 @@ public class TemplateListHelper
                             // a good idea
                             continue TEMPLATE;
                         }
+                        fieldExprs.add(fieldExpr);
                     }
-                    fieldExprs.add(fieldExpr);
                 } catch (ClassNotFoundException err) {
                     LOG.error(err);
                     continue TEMPLATE;

@@ -75,7 +75,7 @@
           <name>GO annotations</name>
           <description>
             &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             Gene Ontology assignments&lt;/a&gt;
           </description>
           <version>Dec 22nd 2004</version>
@@ -100,11 +100,11 @@
           <version>Release 2b</version>
         </source>
         <source>
-          <name>Uniprot proteins</name>
+          <name>UniProt proteins</name>
           <description>
             Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
-            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
-            (trembl and Swissprot)&lt;/a&gt; 
+            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;UniProt
+            (TrEMBL and Swissprot)&lt;/a&gt; 
           </description>
           <version></version>
         </source>
@@ -167,7 +167,7 @@
           <name>GO annotations</name>
           <description>
             &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             Gene Ontology assignments&lt;/a&gt;
           </description>
           <version>Dec 22nd 2004</version>
@@ -192,11 +192,11 @@
           <version>Release 2b</version>
         </source>
         <source>
-          <name>Uniprot proteins</name>
+          <name>UniProt proteins</name>
           <description>
             Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
-            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
-            (trembl and swissprot)&lt;/a&gt; 
+            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;UniProt
+            (TrEMBL and Swissprot)&lt;/a&gt; 
           </description>
           <version></version>
         </source>
@@ -254,7 +254,7 @@
           <name>GO annotations</name>
           <description>
             &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             Gene Ontology assignments&lt;/a&gt; for &lt;i&gt;D. melanogaster&lt;/i&gt;, A. Gambiae and &lt;i&gt;C. elegans&lt;/i&gt;.
           </description>
           <version>March 16th  2005</version>
@@ -296,11 +296,11 @@
           <version>Release 2b</version>
         </source>
         <source>
-          <name>Uniprot proteins</name>
+          <name>UniProt proteins</name>
           <description>
             Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
-            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
-            (trembl and swissprot)&lt;/a&gt; 
+            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;UniProt
+            (TrEMBL and Swissprot)&lt;/a&gt; 
           </description>
           <version></version>
         </source>
@@ -357,7 +357,7 @@
           <name>GO annotations</name>
           <description>
             &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             Gene Ontology assignments&lt;/a&gt; for &lt;i&gt;D. melanogaster&lt;/i&gt;, A. Gambiae and &lt;i&gt;C. elegans&lt;/i&gt;.
           </description>
           <version>March 16th  2005</version>
@@ -406,11 +406,11 @@
           <version>Release 2b</version>
         </source>
         <source>
-          <name>Uniprot proteins</name>
+          <name>UniProt proteins</name>
           <description>
             Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from
-            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
-            (trembl and swissprot)&lt;/a&gt; 
+            &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;UniProt
+            (TrEMBL and Swissprot)&lt;/a&gt; 
           </description>
           <version>5.7</version>
         </source>
@@ -467,8 +467,8 @@
         <source>
           <name>GO annotations for &lt;i&gt;A. gambiae&lt;/i&gt;</name>
           <description>
-            Gene Ontology assignemnts for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            Gene Ontology assignments for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             GOA&lt;/a&gt;
           </description>
           <version>8th August 2005</version>
@@ -510,10 +510,10 @@
           <version>4.0</version>
         </source>
         <source>
-          <name>Interpro protein family and domain data</name>
+          <name>InterPro protein family and domain data</name>
           <description>
             Protein Family and Domain data for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from &lt;a
-            href="http://www.ebi.ac.uk/interpro/"&gt;Interpro&lt;/a&gt;
+            href="http://www.ebi.ac.uk/interpro/"&gt;InterPro&lt;/a&gt;
           </description>
           <version>10.0</version>
         </source>
@@ -553,12 +553,12 @@
           <version>Release 2b</version>
         </source>
         <source>
-          <name>Uniprot proteins</name>
+          <name>UniProt proteins</name>
           <description>
             Proteins for &lt;i&gt;D. melanogaster&lt;/i&gt;,
             &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;
-            from &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
-            (trembl and swissprot)&lt;/a&gt;
+            from &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;UniProt
+            (TrEMBL and Swissprot)&lt;/a&gt;
           </description>
           <version>6.8</version>
         </source>
@@ -618,8 +618,8 @@
         <source>
           <name>GO annotations for &lt;i&gt;A. gambiae&lt;/i&gt;</name>
           <description>
-            Gene Ontology assignemnts for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            Gene Ontology assignments for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             GOA&lt;/a&gt;
           </description>
           <version>8th August 2005</version>
@@ -661,10 +661,10 @@
           <version>4.0</version>
         </source>
         <source>
-          <name>Interpro protein family and domain data</name>
+          <name>InterPro protein family and domain data</name>
           <description>
             Protein Family and Domain data for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from &lt;a
-            href="http://www.ebi.ac.uk/interpro/"&gt;Interpro&lt;/a&gt;
+            href="http://www.ebi.ac.uk/interpro/"&gt;InterPro&lt;/a&gt;
           </description>
           <version>10.0</version>
         </source>
@@ -707,7 +707,7 @@
         <source>
           <name>&lt;i&gt;D. pseudoobscura&lt;/i&gt; genome annotation</name>
           <description>
-            Genome Annotation for &lt;i&gt;D. psuedoobscura&lt;/i&gt; from &lt;a
+            Genome Annotation for &lt;i&gt;D. pseudoobscura&lt;/i&gt; from &lt;a
             href="http://www.flybase.org/"&gt;FlyBase&lt;/a&gt;
           </description>
           <version>Release 2.0</version>
@@ -729,12 +729,12 @@
           <version>Release 2.0</version>
         </source>
         <source>
-          <name>Uniprot proteins</name>
+          <name>UniProt proteins</name>
           <description>
             Proteins for &lt;i&gt;D. melanogaster, D. pseudoobscura,
             A. gambiae, A. mellifera, C. elegans&lt;/i&gt; and &lt;i&gt;S. cerevisiae&lt;/i&gt;
-            from &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
-            (trembl and swissprot)&lt;/a&gt;
+            from &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;UniProt
+            (TrEMBL and Swissprot)&lt;/a&gt;
           </description>
           <version>7.5</version>
         </source>
@@ -768,10 +768,10 @@
           <version></version>
         </source>
         <source>
-          <name>Protein interactions - &lt;i&gt;D. melanogasterm, C. elegans, S. cerevisiae&lt;/i&gt; protein-protein interactions</name> 
+          <name>Protein interactions - &lt;i&gt;D. melanogaster, C. elegans, S. cerevisiae&lt;/i&gt; protein-protein interactions</name> 
           <description>
             All protein-protein interaction data from &lt;a href="http://www.ebi.ac.uk/intact/"&gt;IntAct&lt;/a&gt;
-            . See Protein Interactions aspect to retrieve full list of publcations.
+            . See Protein Interactions aspect to retrieve full list of publications.
           </description>
           <version></version>
         </source>
@@ -801,8 +801,8 @@
         <source>
           <name>GO annotations for &lt;i&gt;A. gambiae&lt;/i&gt;</name>
           <description>
-            Gene Ontology assignemnts from &lt;a
-            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            Gene Ontology assignments from &lt;a
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;UniProt
             GOA&lt;/a&gt;
           </description>
           <version>4th March 2006</version>
@@ -843,10 +843,10 @@
           <version>4.0</version>
         </source>
         <source>
-          <name>Interpro protein family and domain data</name>
+          <name>InterPro protein family and domain data</name>
           <description>
             Protein Family and Domain data for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from &lt;a
-            href="http://www.ebi.ac.uk/interpro/"&gt;Interpro&lt;/a&gt;
+            href="http://www.ebi.ac.uk/interpro/"&gt;InterPro&lt;/a&gt;
           </description>
           <version>12.0</version>
         </source>
@@ -873,6 +873,210 @@
              &lt;a href=""&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, April 19th 2006</version>
+        </source>
+      </sources>
+      
+      <sources version="6.0">
+        <source>
+          <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation</name>
+          <description>
+            Genome Annotation for &lt;i&gt;D. melanogaster&lt;/i&gt; from &lt;a
+            href="http://www.flybase.org/"&gt;FlyBase&lt;/a&gt;
+          </description>
+          <version>Release 4.3</version>
+        </source>
+        <source>
+          <name>&lt;i&gt;D. pseudoobscura&lt;/i&gt; genome annotation</name>
+          <description>
+            Genome Annotation for &lt;i&gt;D. psuedoobscura&lt;/i&gt; from &lt;a
+            href="http://www.flybase.org/"&gt;FlyBase&lt;/a&gt;
+          </description>
+          <version>Release 2.0</version>
+        </source>
+        <source>
+          <name>&lt;i&gt;A. gambiae&lt;/i&gt; genome annotation</name>
+          <description>
+            Genome Annotation for &lt;i&gt;A. gambiae&lt;/i&gt; from &lt;a
+            href="http://www.ensembl.org/"&gt;Ensembl&lt;/a&gt;
+          </description>
+          <version>Release AgamP3</version>
+        </source>
+        <source>
+          <name>&lt;i&gt;A. mellifera&lt;/i&gt; genome annotation</name>
+          <description>
+            Genome Annotation for &lt;i&gt;A. mellifera&lt;/i&gt; from &lt;a
+            href="http://www.ensembl.org/"&gt;Ensembl&lt;/a&gt;
+          </description>
+          <version>Release 2.0</version>
+        </source>
+        <source>
+          <name>Uniprot proteins</name>
+          <description>
+            Proteins for &lt;i&gt;D. melanogaster, D. pseudoobscura,
+            A. gambiae, A. mellifera, C. elegans&lt;/i&gt; and &lt;i&gt;S. cerevisiae&lt;/i&gt;
+            from &lt;a href="http://www.ebi.uniprot.org/index.shtml"&gt;Uniprot
+            (trembl and swissprot)&lt;/a&gt;
+          </description>
+          <version>8.9</version>
+        </source>
+        <source>
+          <name>Orthologues and paralogues</name>
+          <description>
+            Orthologues and Paralogues between
+            &lt;i&gt;D. melanogaster, C. elegans, D. pseudoobscura, A. gambiae&lt;/i&gt; and
+            &lt;i&gt;A. mellifera&lt;/i&gt;.
+            Also orthologues from these five organisms to &lt;i&gt;C. familiaris , D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, T. nigroviridis, T. rubripes, S. pombe, P. falciparum&lt;/i&gt;
+            from &lt;a
+            href="http://inparanoid.cgb.ki.se/index.html"&gt;inParanoid&lt;/a&gt;
+          </description>
+          <version>16th April 2005</version>
+        </source>
+        <source>
+          <name>Protein interactions - &lt;i&gt;D. melanogaster, C. elegans, S. cerevisiae&lt;/i&gt; protein-protein interactions</name> 
+          <description>
+            All protein-protein interaction data from &lt;a href="http://www.ebi.ac.uk/intact/"&gt;IntAct&lt;/a&gt;
+            . See Protein Interactions aspect to retrieve full list of publcations
+          </description>
+          <version></version>
+        </source>
+        <source>
+          <name>&lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions</name>
+          <description>
+            &lt;i&gt;D. melanogaster&lt;/i&gt; protein domain 3-D structure predictions from
+            &lt;a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"&gt;Kenji Mizuguchi&lt;/a&gt;
+          </description>
+          <version>9th April 2006</version>
+        </source>
+        <source>
+          <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes</name>
+          <description>
+            RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
+            &lt;a href="http://www.wormbase.org"&gt;WormBase&lt;/a&gt;
+          </description>
+          <version>30th September 2006</version>
+        </source>
+        <source>
+          <name>Gene Ontology</name>
+          <description>
+            &lt;a href="http://www.geneontology.org/"&gt;The Gene Ontology&lt;/a&gt;
+          </description>
+          <version>6th October 2006</version>
+        </source>
+        <source>
+          <name>GO annotations for &lt;i&gt;A. gambiae, A. mellifera, C. elegans&lt;/i&gt;</name>
+          <description>
+            Gene Ontology assignemnts from &lt;a
+            href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Uniprot
+            GOA&lt;/a&gt;
+          </description>
+          <version>12th September 2006</version>
+        </source>
+        <source>
+          <name>GO annotations for &lt;i&gt;D. melanogaster, M. musculus, R. norvegicus, S. cerevisiae&lt;/i&gt; and
+            &lt;i&gt;C. elegans&lt;/i&gt;</name> 
+          <description>
+            Gene Ontology assignments 
+            from the &lt;a href="http://www.geneontology.org/GO.current.annotations.shtml"&gt;Gene
+            Ontology Site&lt;/a&gt;
+          </description>
+          <version>21st October 2006 (Dm, Mm, Sc, Pf); 3rd September 2006 (Sp); 14th October 2006 (Rn)</version>
+        </source>
+        <source>
+          <name>INDAC microarray oligo set</name>
+          <description>
+            &lt;a href="http://www.indac.net/"&gt;INDAC&lt;/a&gt; microarray long
+            oligo set for &lt;i&gt;D. melanogaster&lt;/i&gt;
+          </description>
+          <version>1.0</version>
+        </source>
+        <source>
+          <name>FlyReg DNase I footprints</name>
+          <description>
+            DNase I footprints from the
+            &lt;a
+            href="http://www.flyreg.org/"&gt;Drosophila DNase I Footprint Database&lt;/a&gt; 
+          </description>
+          <version>2.0</version>
+        </source>
+        <source>
+          <name>Whole genome tiling path</name>
+          <description>
+            Locations of primers and amplimers tiled across whole
+            &lt;i&gt;D. melanogaster&lt;/i&gt; genome
+          </description>
+          <version>4.0</version>
+        </source>
+        <source>
+          <name>Interpro protein family and domain data</name>
+          <description>
+            Protein Family and Domain data for &lt;i&gt;D. melanogaster&lt;/i&gt;, &lt;i&gt;A. gambiae&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt; from &lt;a
+            href="http://www.ebi.ac.uk/interpro/"&gt;Interpro&lt;/a&gt;
+          </description>
+          <version>12.0</version>
+        </source>
+        <source>
+          <name>Microarray gene expression data</name>
+          <description>
+            Five &lt;i&gt;D. melanogaster&lt;/i&gt; microarray gene expression experiments from &lt;a
+            href="http://www.ebi.ac.uk/arrayexpress/"&gt;ArrayExpress&lt;/a&gt;
+          </description>
+          <version></version>
+        </source>
+        <source>
+          <name>FlyAtlas gene expression data</name>
+          <description>
+            Microarray-based gene expression data for adult &lt;i&gt;D. melanogaster&lt;/i&gt; tissues
+            from &lt;a href="http://www.flyatlas.org"&gt;FlyAtlas&lt;/a&gt;
+          </description>
+          <version>28th September 2006</version>
+        </source>
+        <source>
+          <name>DrosDel</name>
+          <description>
+            &lt;i&gt;D. melanogaster&lt;/i&gt; P-element insertion and
+            deletion locations from &lt;a
+            href="http://www.drosdel.org.uk/"&gt;DrosDel&lt;/a&gt;
+          </description>
+          <version></version>
+        </source>
+        <source>
+          <name>Homophila</name>
+          <description>
+             &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+          </description>
+          <version>2.1, 11th October 2006</version>
+        </source>
+        <source>
+          <name>REDfly</name>
+          <description>
+             Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
+            href="http://redfly.ccr.buffalo.edu/"&gt;REDfly&lt;/a&gt;
+          </description>
+          <version>25th June 2006</version>
+        </source>
+        <source>
+          <name>Affymetrix GeneChip Probes</name>
+          <description>
+              GeneChip genome Array from &lt;a
+            href="http://www.affymetrix.com/"&gt;Affymetrix&lt;/a&gt;
+          </description>
+          <version>2.0</version>
+        </source>
+        <source>
+          <name>&lt;i&gt;Drosophila&lt;/i&gt; RNAi screens from DRSC</name>
+          <description>
+            High-throughput cell-based RNAi screens from the &lt;a
+            href="http://flyrnai.org/"&gt;Drosophila RNAi Screening Center&lt;/a&gt;
+          </description>
+          <version>5th October 2006</version>
+        </source>
+        <source>
+          <name>&lt;i&gt;Drosophila&lt;/i&gt; Anatomy Ontology</name>
+          <description>
+            &lt;i&gt;Drosophila&lt;/i&gt; Anatomy ontology from  &lt;a
+            href="http://www.flybase.net/"&gt;FlyBase&lt;/a&gt;
+          </description>
+          <version>26th July 2006</version>
         </source>
       </sources>
     </para>
