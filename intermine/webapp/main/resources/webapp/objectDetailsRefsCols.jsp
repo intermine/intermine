@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 
-<!-- /objectDetailsRefsCols.jsp -->
+<!-- objectDetailsRefsCols.jsp -->
 
 <html:xhtml/>
 

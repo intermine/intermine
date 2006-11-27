@@ -17,6 +17,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
 
@@ -50,8 +51,9 @@ public class HeartbeatAction extends InterMineAction
             QueryClass c = new QueryClass(InterMineObject.class);
             q.addFrom(c);
             q.addToSelect(c);
-            PagedTable pt = TableHelper.makeTable(os, q);
-            int size = pt.getRows().size();
+            Results r = TableHelper.makeResults(os, q);
+            TableHelper.initResults(r);
+            int size = r.size();
             if (size > 0) {
                 response.getOutputStream().print("OK");
             } else {

@@ -1,28 +1,27 @@
 package org.intermine.web.history;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.intermine.objectstore.query.ConstraintOp;
-
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.Constants;
 import org.intermine.web.Constraint;
 import org.intermine.web.PathQuery;
@@ -31,24 +30,20 @@ import org.intermine.web.ProfileManager;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateQuery;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
-import org.intermine.model.InterMineObject;
+//import org.intermine.web.bag.InterMineBag;
 
 import javax.servlet.http.HttpSession;
-import servletunit.struts.MockStrutsTestCase;
-import servletunit.HttpServletResponseSimulator;
 
-import org.intermine.model.userprofile.UserProfile;
+import servletunit.struts.MockStrutsTestCase;
 
 
 public class ModifyBagActionTest extends MockStrutsTestCase
 {
+    /*
     PathQuery query, queryBag;
     SavedQuery sq, sqBag, hist, hist2;
     Date date = new Date();
-    InterMineBag bag, bag2;
+    InterMineBag bag2;
     TemplateQuery template;
     ObjectStoreWriter userProfileOSW;
     Integer userId;
@@ -78,8 +73,6 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         queryBag = new PathQuery(Model.getInstanceByName("testmodel"));
         queryBag.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
-        bag = new InterMinePrimitiveBag(userId, "bag1", userProfileOSW, Collections.singleton("entry1"));
-        bag2 = new InterMineIdBag(userId, "bag2", userProfileOSW, Collections.singleton(new Integer(1)));
         sq = new SavedQuery("query1", date, query);
         sqBag = new SavedQuery("query3", date, queryBag);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
@@ -91,7 +84,6 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
         profile.saveQuery(sq.getName(), sq);
         profile.saveQuery(sqBag.getName(), sqBag);
-        profile.saveBag("bag1", bag);
         profile.saveBag("bag2", bag2);
         profile.saveHistory(hist);
         profile.saveHistory(hist2);
@@ -205,48 +197,6 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         assertEquals("/history.do?action=rename&type=bag&name=bag1", getActualForward());
     }
 
-    public void testUnionConflictingTypes() {
-        addRequestParameter("selectedBags", new String[]{"bag2", "bag1"});
-        addRequestParameter("union", "Union");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyActionErrors(new String[]{"bag.typesDontMatch"});
-        verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
-    public void testIntersectConflictingTypes() {
-        addRequestParameter("selectedBags", new String[]{"bag2", "bag1"});
-        addRequestParameter("intersect", "Intersect");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyActionErrors(new String[]{"bag.typesDontMatch"});
-        verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
-    public void testUnionConflictingTypesNothingSelected() {
-        addRequestParameter("union", "Union");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyActionErrors(new String[]{"errors.modifyBag.none"});
-        verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
-    public void testIntersectConflictingTypesNothingSelected() {
-        addRequestParameter("intersect", "Intersect");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyActionErrors(new String[]{"errors.modifyBag.none"});
-        verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
     public void testUnionNoName() {
         addRequestParameter("selectedBags", new String[]{"bag2", "bag1"});
         addRequestParameter("union", "Union");
@@ -268,56 +218,5 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         verifyForward("bag");
         assertEquals(2, getProfile().getSavedBags().size());
     }
-
-    public void testIntersectPrimitiveBags() {
-        InterMinePrimitiveBag bag = new InterMinePrimitiveBag(userId, "bag3", userProfileOSW, Collections.singleton("entry1"));
-        getProfile().saveBag("bag3", bag);
-        addRequestParameter("selectedBags", new String[]{"bag1", "bag3"});
-        addRequestParameter("intersect", "Intersect");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("bag");
-        assertEquals(4, getProfile().getSavedBags().size());
-    }
-
-    public void testIntersectObjectBags() {
-        InterMineIdBag bag = new InterMineIdBag(userId, "bag3", userProfileOSW, Collections.singleton(new Integer(1)));
-        getProfile().saveBag("bag3", bag);
-        addRequestParameter("selectedBags", new String[]{"bag2", "bag3"});
-        addRequestParameter("intersect", "Intersect");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("bag");
-        assertEquals(4, getProfile().getSavedBags().size());
-    }
-
-    public void testUnionPrimitiveBags() {
-        InterMinePrimitiveBag bag = new InterMinePrimitiveBag(userId, "bag3", userProfileOSW, Collections.singleton("entry1"));
-        getProfile().saveBag("bag3", bag);
-        addRequestParameter("selectedBags", new String[]{"bag1", "bag3"});
-        addRequestParameter("union", "Union");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("bag");
-        assertEquals(4, getProfile().getSavedBags().size());
-    }
-
-    public void testUnionObjectBags() {
-        InterMineIdBag bag = new InterMineIdBag(userId, "bag3", userProfileOSW, Collections.singleton(new Integer(1)));
-        getProfile().saveBag("bag3", bag);
-        addRequestParameter("selectedBags", new String[]{"bag2", "bag3"});
-        addRequestParameter("union", "Union");
-        addRequestParameter("newBagName", "bagA");
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("bag");
-        assertEquals(4, getProfile().getSavedBags().size());
-    }
+    */
 }

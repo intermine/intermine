@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
  */
 public class InlineTemplateTable implements Serializable
 {
-    private Map webProperties;
     private int inlineSize = -1;
     private ArrayList inlineResults;
     private static final Logger LOG = Logger.getLogger(InlineTemplateTable.class);
@@ -38,14 +37,13 @@ public class InlineTemplateTable implements Serializable
     
     /**
      * Construct a new InlineTemplateTable
-     * @param results the Results of running the template query
+     * @param pagedResults the Results of running the template query
      * @param columnNames the names of each column in the Results object
      * @param webProperties the web properties from the session
      */
-    public InlineTemplateTable(Results results, List columnNames, Map webProperties) {
-        this.columnNames = columnNames;
-        this.webProperties = webProperties;
-        resultsSize = results.size();
+    public InlineTemplateTable(PagedResults pagedResults, Map webProperties) {
+        this.columnNames = pagedResults.getColumnNames();
+        resultsSize = pagedResults.getSize();
         
         String maxInlineTableSizeString =
             (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
@@ -63,10 +61,10 @@ public class InlineTemplateTable implements Serializable
             inlineSize = resultsSize;
         }   
 
-        inlineResults = new ArrayList(getInlineSize(results, maxInlineTableSize));
+        inlineResults = new ArrayList(inlineSize);
 
-        for (int i = 0; i < getInlineSize(results, maxInlineTableSize); i++) {
-            inlineResults.add(results.get(i));
+        for (int i = 0; i < inlineSize; i++) {
+            inlineResults.add(pagedResults.getRows().get(i));
         }
     }
 
@@ -80,19 +78,13 @@ public class InlineTemplateTable implements Serializable
 
     /**
      * Return the part of the Results that should be display inline in the object details pages.
+     * This is used only in JSP files currently.
      * @return the first getSize() rows from the Results object that was passed to the constructor
      */
     public List getInlineResults() {
         return inlineResults;
     }
     
-    /**
-     * Return the number of table rows or the INLINE_TABLE_SIZE whichever is smaller.
-     */
-    private int getInlineSize(Results results, int maxInlineTableSize) {
-        return inlineSize;
-    }
-
     /**
      * Return the number of rows in the Results object that was passed to the constructor.
      * @return the row count

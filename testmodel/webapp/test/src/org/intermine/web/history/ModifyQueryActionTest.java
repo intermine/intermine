@@ -1,13 +1,12 @@
 package org.intermine.web.history;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Collections;
+import java.util.Date;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.web.Constants;
 import org.intermine.web.Constraint;
@@ -16,14 +15,14 @@ import org.intermine.web.Profile;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateQuery;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
+//import org.intermine.web.bag.InterMineBag;
+//import org.intermine.web.bag.InterMinePrimitiveBag;
 
 import servletunit.struts.MockStrutsTestCase;
 
 public class ModifyQueryActionTest extends MockStrutsTestCase
 {
+    /*
     PathQuery query, queryBag;
     SavedQuery sq, sqBag, hist, hist2;
     Date date = new Date();
@@ -46,7 +45,6 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         queryBag.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
         bag = new InterMinePrimitiveBag(userId, "bag1", userprofileOS, Collections.singleton("entry1"));
-        bag2 = new InterMineIdBag(userId, "bag2", userprofileOS, Collections.singleton(new Integer(1)));
         sq = new SavedQuery("query1", date, query);
         sqBag = new SavedQuery("query3", date, queryBag);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
@@ -169,4 +167,5 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         verifyActionErrors(new String[]{"errors.required"});
         assertEquals("/history.do?action=rename&type=" + type + "&name=query1", getActualForward());
     }
+    */
 }

@@ -19,7 +19,10 @@ import java.util.Collections;
 import java.io.Reader;
 import java.io.InputStreamReader;
 
+import org.apache.struts.action.ActionErrors;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
+import org.intermine.web.bag.InterMineBag;
 
 import junit.framework.TestCase;
 
@@ -35,9 +38,6 @@ public class TemplateHelperTest extends TestCase
 
     public void testPrecomputeQuery() throws Exception {
         Iterator i = templates.keySet().iterator();
-        while (i.hasNext()) {
-            System.out.println("template: " + (String) i.next());
-        }
         TemplateQuery t = (TemplateQuery) templates.get("employeeByName");
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
@@ -49,5 +49,55 @@ public class TemplateHelperTest extends TestCase
         List expIndexes = new ArrayList(Collections.singleton(pathToQueryNode.get("Employee.name")));
         assertEquals(expIndexes.toString(), indexes.toString());
     }
+    
+    public void testTemplateFormToTemplateQuerySimple() throws Exception {
+        // Set EmployeeName != "EmployeeA1"
+        TemplateQuery template = (TemplateQuery) templates.get("employeeByName");
 
+        TemplateForm tf = new TemplateForm();
+        tf.setAttributeOps("1", "" + ConstraintOp.NOT_EQUALS.getIndex());
+        tf.setAttributeValues("1", "EmployeeA1");
+        tf.parseAttributeValues(template, null, new ActionErrors(), false);
+
+        TemplateQuery expected = (TemplateQuery) template.clone();
+        PathNode tmpNode = (PathNode) expected.getEditableNodes().get(0);
+        PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPath());
+        Constraint c = node.getConstraint(0);
+        node.getConstraints().set(0, new Constraint(ConstraintOp.NOT_EQUALS,
+                "EmployeeA1", true, c.getDescription(), c.getCode(), c.getIdentifier()));
+        expected.setEdited(true);
+        
+        TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, new HashMap());
+        assertEquals(expected.toXml(), actual.toXml());
+    }
+    
+    public void testTemplateFormToTemplateQueryIdBag() throws Exception {
+        TemplateQuery template = (TemplateQuery) templates.get("employeeByName");
+
+        TemplateForm tf = new TemplateForm();
+        tf.setUseBagConstraint("1", true);
+        tf.setBagOp("1", "" + ConstraintOp.IN.getIndex());
+        tf.setBag("1", "bag1");
+        tf.parseAttributeValues(template, null, new ActionErrors(), false);
+        InterMineBag bag1 = new InterMineBag(new Integer(101), "bag1", "Employee", 1, null);
+        Map savedBags = new HashMap();
+        savedBags.put("bag1", bag1);
+        
+        TemplateQuery expected = (TemplateQuery) template.clone();
+        PathNode tmpNode = (PathNode) expected.getEditableNodes().get(0);
+        PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPath());
+        PathNode parent = (PathNode) expected.getNodes().get(node.getParent().getPath());
+        Constraint c = node.getConstraint(0);
+        Constraint cc = new Constraint(ConstraintOp.IN,
+                "bag1", true, c.getDescription(), c.getCode(), c.getIdentifier());
+        expected.getNodes().remove(node.getPath());
+        parent.getConstraints().add(cc);
+        expected.setEdited(true);
+        
+        System.out.println("expected: " + expected.toXml());
+        
+        TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, savedBags);
+        System.out.println("actual: " + actual.toXml());
+        assertEquals(expected.toXml(), actual.toXml());
+    }
 }

@@ -122,8 +122,8 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
-            subHandler = new InterMineBagHandler(profileManager.getObjectStore(),
-                    savedBags, idObjectMap, idUpgrader, null);
+            subHandler = new InterMineBagHandler(profileManager.getUserProfileObjectStore(),
+                                                 profileManager.getObjectStore(), savedBags, null);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();

@@ -10,9 +10,10 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -24,16 +25,16 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.config.WebConfig;
 
 /**
  * Action that creates a table of collection elements for display.
@@ -88,8 +89,6 @@ public class CollectionDetailsAction extends Action
             }
         }
 
-        ClassDescriptor refClass = refDesc.getReferencedClassDescriptor();
-
         Collection c;
 
         if (refDesc instanceof CollectionDescriptor) {
@@ -98,7 +97,12 @@ public class CollectionDetailsAction extends Action
             c = Collections.singletonList(TypeUtil.getFieldValue(o, field));
         }
 
-        PagedCollection pc = new PagedCollection(field, c, refClass);
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        String referencedClassName = TypeUtil.unqualifiedName(refDesc.getReferencedClassName());
+        WebCollection webCollection = 
+            new WebCollection(os, referencedClassName, c, model, webConfig, classKeys);
+        PagedCollection pc = new PagedCollection(webCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
 

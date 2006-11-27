@@ -2,12 +2,24 @@
   <userprofile username="bob" password="bob_pass">
     <bags>
       <bag name="bag1">
-        <element type="java.lang.String" value="foo1"/>
+        <row>
+          <element type="java.lang.String" value="foo1"/>
+        </row>
+        <row>
         <element type="java.lang.String" value="foo2"/>
+        </row>
+        <row>
         <element type="java.lang.String" value="foo3"/>
+        </row>
+        <row>
         <element type="java.lang.Integer" value="100"/>
+        </row>
+        <row>
         <element type="java.lang.Boolean" value="true"/>
+        </row>
+        <row>
         <element type="java.lang.Float" value="1.1"/>
+        </row>
       </bag>
     </bags>
     <queries>
@@ -84,16 +96,28 @@
     </items>
     <bags>
       <bag name="sally_bag1">
-        <element type="java.lang.String" value="some value"/>
+        <row>
+          <element type="java.lang.String" value="some value"/>
+        </row>
       </bag>
       <bag name="sally_bag2">
-        <element type="java.lang.Integer" value="123"/>
+        <row>
+          <element type="java.lang.Integer" value="123"/>
+        </row>
       </bag>
       <bag name="sally_bag3">
-        <element type="org.intermine.model.InterMineObject" value="1010"/>
-        <element type="org.intermine.model.InterMineObject" value="1011"/>
-        <element type="org.intermine.model.InterMineObject" value="1012"/>
-        <element type="org.intermine.model.InterMineObject" value="1006"/>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="1010"/>
+        </row>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="1011"/>
+        </row>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="1012"/>
+        </row>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="1006"/>
+        </row>
       </bag>
     </bags>
     <queries>

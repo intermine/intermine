@@ -20,9 +20,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.Constraint;
 import org.intermine.web.ForwardParameters;
@@ -35,14 +44,7 @@ import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateHelper;
 import org.intermine.web.TemplateListHelper;
 import org.intermine.web.TemplateQuery;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.util.MessageResources;
+import org.intermine.web.bag.InterMineBag;
 
 /**
  * Action to handle events from the object details page
@@ -69,24 +71,57 @@ public class ModifyDetails extends DispatchAction
         ServletContext servletContext = session.getServletContext();
         String name = request.getParameter("name");
         String type = request.getParameter("type");
+        String bagName = request.getParameter("bagName");
+        String useBagNode = request.getParameter("useBagNode");
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, type);
         PathQuery query = (PathQuery) template.clone();
 
+
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPath());
-            for (int ci = 0; ci < node.getConstraints().size(); ci++) {
-                Constraint c = (Constraint) node.getConstraint(ci);
-                if (c.getIdentifier() != null) {
-                    // If special request parameter key is present then we initialise
-                    // the form bean with the parameter value
-                    String paramName = c.getIdentifier() + "_value";
-                    String constraintValue = request.getParameter(paramName);
-                    if (constraintValue != null) {
-                        nodeCopy.setConstraintValue(nodeCopy.getConstraint(ci), constraintValue);
+
+            name = TypeUtil.unqualifiedName(node.getParentType());
+            
+            if (bagName == null || bagName.length() == 0) {
+                for (int ci = 0; ci < node.getConstraints().size(); ci++) {
+                    Constraint c = (Constraint) node.getConstraint(ci);
+                    if (c.getIdentifier() != null) {
+                        // If special request parameter key is present then we initialise
+                        // the form bean with the parameter value
+                        String paramName = c.getIdentifier() + "_value";
+                        String constraintValue = request.getParameter(paramName);
+                        if (constraintValue != null) {
+                            nodeCopy
+                                    .setConstraintValue(nodeCopy.getConstraint(ci), 
+                                                        constraintValue);
+                        }
                     }
+                }
+            } else if (useBagNode != null && name.equals(useBagNode)) {
+                PathNode parent = (PathNode) query.getNodes()
+                .get(nodeCopy.getParent().getPath());
+
+                Constraint c = (Constraint) node.getConstraint(0);
+                ConstraintOp constraintOp = ConstraintOp.IN;
+                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                InterMineBag interMineIdBag = (InterMineBag) profile.getSavedBags()
+                                                                        .get(bagName);
+                Constraint bagConstraint = new Constraint(constraintOp, interMineIdBag, true,
+                                                          c.getDescription(), c.getCode(),
+                                                          c.getIdentifier());
+                parent.getConstraints().add(bagConstraint);
+
+                // remove the constraint on this node, possibly remove node
+                // nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
+                if (nodeCopy.getConstraints().size() == 1) {
+                    query.getNodes().remove(nodeCopy.getPath());
+                } else {
+                    // TODO sort out removing constraint from node, simply removing
+                    // could cause problems as operations based on list indexes. Need
+                    // wait until finished dealing with node.
                 }
             }
         }
@@ -209,29 +244,44 @@ public class ModifyDetails extends DispatchAction
         ServletContext sc = session.getServletContext();
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         String type = request.getParameter("type");
-        String id = request.getParameter("object");
+        String id = request.getParameter("id");
         String templateName = request.getParameter("template");
+        String detailsType = request.getParameter("detailsType");
         ObjectStore os = (ObjectStore) sc.getAttribute(Constants.OBJECTSTORE);
-        
-        InterMineObject o = os.getObjectById(new Integer(id));
+
         TemplateQuery tq = TemplateHelper.findTemplate(sc, session, userName, templateName, type);
-        Map displayObjects = (Map) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
-        DisplayObject obj = (DisplayObject) displayObjects.get(o);
-        
         ComponentContext cc = new ComponentContext();
-        cc.putAttribute("displayObject", obj);
-        cc.putAttribute("templateQuery", tq);
-        cc.putAttribute("placement", request.getParameter("placement"));
         
-        Map fieldExprs = new HashMap();
-        TemplateListHelper
-            .getAspectTemplateForClass(request.getParameter("placement"), sc, o,
-                    fieldExprs);
-        cc.putAttribute("fieldExprMap", fieldExprs);
-        
-        new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
-        request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
-        return mapping.findForward("objectDetailsTemplateTable");
+        if (detailsType.equals("object")) {
+            InterMineObject o = os.getObjectById(new Integer(id));
+            Map displayObjects = (Map) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
+            DisplayObject obj = (DisplayObject) displayObjects.get(o);
+            cc.putAttribute("displayObject", obj);
+            cc.putAttribute("templateQuery", tq);
+            cc.putAttribute("placement", request.getParameter("placement"));
+            Map fieldExprs = new HashMap();
+            TemplateListHelper
+                .getAspectTemplateForClass(request.getParameter("placement"), sc, o,
+                        fieldExprs);
+            cc.putAttribute("fieldExprMap", fieldExprs);
+            new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
+            request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+            return mapping.findForward("objectDetailsTemplateTable");
+       } else {
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            InterMineBag interMineIdBag = (InterMineBag) profile.getSavedBags().get(id);
+            cc.putAttribute("interMineIdBag", interMineIdBag);
+            cc.putAttribute("templateQuery", tq);
+            cc.putAttribute("placement", request.getParameter("placement"));
+            Map fieldExprs = new HashMap();
+            TemplateListHelper
+            .getAspectTemplatesForType(request.getParameter("placement"), sc, interMineIdBag, 
+                                       fieldExprs);
+            cc.putAttribute("fieldExprMap", fieldExprs);
+            new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
+            request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+            return mapping.findForward("objectDetailsTemplateTable");
+        }
     }
     
     /**

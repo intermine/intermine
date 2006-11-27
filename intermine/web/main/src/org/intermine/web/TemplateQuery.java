@@ -76,25 +76,6 @@ public class TemplateQuery extends PathQuery
         this.title = title;
         this.comment = comment;
         this.important = important;
-        // Find the editable constraints in the query.
-        Iterator iter = query.getNodes().entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            PathNode node = (PathNode) entry.getValue();
-            Iterator citer = node.getConstraints().iterator();
-            while (citer.hasNext()) {
-                Constraint c = (Constraint) citer.next();
-                if (c.isEditable()) {
-                    List ecs = (List) constraints.get(node);
-                    if (ecs == null) {
-                        ecs = new ArrayList();
-                        editableNodes.add(node);
-                        constraints.put(node, ecs);
-                    }
-                    ecs.add(c);
-                }
-            }
-        }
     }
 
     /**
@@ -104,14 +85,33 @@ public class TemplateQuery extends PathQuery
      * @param node  a PathNode with editable constraints
      * @return      List of Constraints for Node
      */
-    public List getConstraints(PathNode node) {
-        if (constraints.get(node) == null) {
-            return Collections.EMPTY_LIST;
-        } else {
-            return (List) constraints.get(node);
-        }
+    public List getEditableConstraints(PathNode node) {
+        return getEditableConstraints(node.getPath());
     }
 
+    /**
+     * Return all constrains for a given node or an empty list if none
+     * For a Path with editable constraints, get all the editable
+     * constraints as a List.
+     *
+     * @param node  a PathNode with editable constraints
+     * @return      List of Constraints for Node
+     */
+    public List getEditableConstraints(String path) {
+        if (nodes.get(path) == null) {
+            return Collections.EMPTY_LIST;          
+        } else {
+            List ecs = new ArrayList();
+            Iterator cIter = ((PathNode) nodes.get(path)).getConstraints().iterator();
+            while (cIter.hasNext()) {
+                Constraint c = (Constraint) cIter.next();
+                if (c.isEditable()) {
+                    ecs.add(c);
+                }
+            }
+            return ecs;
+        }
+    }
 
     /**
      * Return a clone of this template query with all editable constraints
@@ -135,9 +135,6 @@ public class TemplateQuery extends PathQuery
                 }
             }
         }
-        clone.constraints.clear();
-        clone.editableNodes.clear();
-        
         return clone;
     }
 
@@ -147,15 +144,12 @@ public class TemplateQuery extends PathQuery
      * @return a List of all the Constraints of fields in this template query
      */
     public List getAllEditableConstraints() {
-        List returnList = new ArrayList();
-
-        Iterator iter = constraints.values().iterator();
-
-        while (iter.hasNext()) {
-            returnList.addAll((List) iter.next());
+        List ecs = new ArrayList();
+        Iterator nodeIter = nodes.keySet().iterator();
+        while (nodeIter.hasNext()) {
+            ecs.addAll(getEditableConstraints((String) nodeIter.next()));
         }
-
-        return returnList;
+        return ecs;
     }
 
     /**
@@ -187,6 +181,14 @@ public class TemplateQuery extends PathQuery
      * @return the nodes
      */
     public List getEditableNodes() {
+        List editableNodes = new ArrayList();
+        Iterator nodeIter = nodes.values().iterator();
+        while (nodeIter.hasNext()) {
+            PathNode node = (PathNode) nodeIter.next();
+            if (!(getEditableConstraints(node).isEmpty())) {
+                editableNodes.add(node);
+            }
+        }
         return editableNodes;
     }
 

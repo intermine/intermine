@@ -11,20 +11,27 @@ package org.intermine.web;
  */
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.store.Directory;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+
 import org.intermine.InterMineException;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
 import org.intermine.web.tagging.TagTypes;
+
+import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.lucene.store.Directory;
 
 /**
  * Class to represent a user of the webapp
@@ -231,35 +238,33 @@ public class Profile
     }
     
     /**
-     * Get a mapping from bag name to InterMineIdBag
-     * @return all InterMineIdBags mapped by name
+     * Returns all bags of a given type
+     * @param type the type
+     * @return a Map containing the bags
      */
-    public Map getObjectBags() {
-        TreeMap map = new TreeMap();
+    public Map getBagsOfType(String type, Model model) {
+    // TODO this should deal with inheritance in model
+        type = model.getPackageName() + "." + type;
+        Set classAndSubs = new HashSet();
+        classAndSubs.add(type);
+        Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(type)).iterator();
+        while (subIter.hasNext()) {
+            classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
+        }
+        
+        TreeMap map = new TreeMap();        
         for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
-            if (entry.getValue() instanceof InterMineIdBag) {
-                map.put(entry.getKey(), entry.getValue());
+            InterMineBag bag = (InterMineBag) entry.getValue();
+            if (bag instanceof InterMineBag 
+                             && classAndSubs.contains(model.getPackageName() + "." 
+                                     +((InterMineBag) bag).getType())) {
+                map.put(entry.getKey(), bag);
             }
         }
         return map;
-    }
     
-    /**
-     * Get a mapping from bag name to InterMinePrimitiveBag
-     * @return all InterMinePrimitiveBags mapped by name
-     */
-    public Map getPrimitiveBags() {
-        TreeMap map = new TreeMap();
-        for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            if (entry.getValue() instanceof InterMinePrimitiveBag) {
-                map.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return map;
     }
-
     /**
      * Save a bag
      * @param name the bag name

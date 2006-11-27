@@ -9,7 +9,10 @@
 
 <!-- objectView.jsp -->
 <html:xhtml/>
+<c:set var="object" value="${resultElement.field}"/>
+
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
+
 <div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
@@ -18,6 +21,11 @@
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
           <im:abbreviate value="${object}" length="${maxLength}"/>
+        </c:when>
+        <c:when test="${resultElement.keyField}">
+          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${prepend}${param.trail}_${resultElement.id}">
+            <c:out value="${object}" default="${nullFieldText}"/>
+          </html:link>
         </c:when>
         <c:otherwise>
           <c:out value="${object}" default="${nullFieldText}"/>
@@ -28,7 +36,7 @@
       <c:if test="${fn:substring(param.table, 0, 7) == 'results'}">
         <c:set var="prepend" value="_${param.table}"/>
       </c:if>
-      <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
+      <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${prepend}${param.trail}_${resultElement.id}" scope="request"/>
       <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>

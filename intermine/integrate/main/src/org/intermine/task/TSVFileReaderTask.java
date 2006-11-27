@@ -49,7 +49,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
      * Query all objects of the class given by the className specified in the configurationFile that
      * have a reference to the organism given by the organismAbbreviation parameter.  Set fields in
      * the objects by using the tab separated files as input.
-     * @param file the File
+     * @param file the File to process
      * @throws BuildException if an ObjectStore method fails
      */
     public void processFile(File file) throws BuildException {
@@ -83,7 +83,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
      * @throws ObjectStoreException if the there is an ObjectStore problem
      */
     void executeInternal(DelimitedFileConfiguration dfc, File file)
-        throws BuildException, ObjectStoreException {
+        throws BuildException {
         String className = dfc.getConfigClassDescriptor().getName();
 
         System.err .println("Processing file: " + file.getName());
@@ -105,6 +105,9 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
                 o = getDirectDataLoader().createObject(className);
             } catch (ClassNotFoundException e) {
                 throw new BuildException("cannot find class while reading: " + file, e);
+            } catch (ObjectStoreException e) {
+                throw new BuildException("exception while creating object of type: " 
+                                         + className, e);
             }
                         
             for (int columnIndex = 0; columnIndex < thisRow.length; columnIndex++) {

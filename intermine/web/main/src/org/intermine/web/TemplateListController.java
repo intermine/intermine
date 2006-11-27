@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.web.results.DisplayObject;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +25,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.results.DisplayObject;
 
 /**
  * Controller for the template list tile.
@@ -53,11 +53,15 @@ public class TemplateListController extends TilesAction
             aspect = aspect.substring(7).trim();
         }
 
+        InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
         List templates = null;
         
         if (StringUtils.equals("global", type)) {
-            if (object == null) {
+            if (interMineIdBag != null) {
+                templates = TemplateListHelper.getAspectTemplatesForType(aspect, servletContext, 
+                                                                  interMineIdBag, new HashMap());
+            } else if (object == null) {
                 templates = TemplateListHelper.getAspectTemplates(aspect, servletContext);
             } else {
                 Map fieldExprs = new HashMap();

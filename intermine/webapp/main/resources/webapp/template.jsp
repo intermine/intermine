@@ -45,12 +45,16 @@
   function clickUseBag(index)
   {
     var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
+    
     document.templateForm["attributeOps("+index+")"].disabled=useBag;
     if (document.templateForm["attributeOptions("+index+")"])
       document.templateForm["attributeOptions("+index+")"].disabled=useBag;
     document.templateForm["attributeValues("+index+")"].disabled=useBag;
     document.templateForm["bag("+index+")"].disabled=!useBag;
     document.templateForm["bagOp("+index+")"].disabled=!useBag;
+    if(selectedBagName){
+      document.templateForm["bag("+index+")"].value=selectedBagName;
+    }
   }
 
   /***********************************************************
@@ -82,7 +86,11 @@
           <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
           <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
           <c:set var="options" value="${displayConstraints[con].optionsList}"/>
-          
+		  <c:if test="${! empty constraintBags[con]}">
+            <c:set var="bags" value="${constraintBags[con]}"/>
+            <c:set var="bagType" value="${constraintBagTypes[con]}"/>
+          </c:if>
+                    
           <c:if test="${!empty con.description}">
             <tr>
               <td align="right" valign="top" rowspan="2">
@@ -138,8 +146,9 @@
               </c:if>
               
                 <br/>
-                
-                <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty PROFILE.savedBags?'true':'false'}"/>
+
+           	  <c:if test="${!empty bagType}">                
+                <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
                 
                 <fmt:message key="template.or"/>
                 <fmt:message key="template.constraintobe"/>
@@ -152,26 +161,32 @@
                 </html:select>
                 <fmt:message key="template.bag"/>
                 <html:select property="bag(${index})">
-                  <c:forEach items="${PROFILE.savedBags}" var="bag">
+                  <c:forEach items="${bags}" var="bag">
                     <html:option value="${bag.key}">
                       <c:out value="${bag.key}"/>
                     </html:option>
                   </c:forEach>
                 </html:select>
                 
-                <c:if test="${empty PROFILE.savedBags}">
+                <c:if test="${empty bags}">
                   <div class="noBagsMessage">
-                    <fmt:message key="template.nobags"/>
+                    <fmt:message key="template.nobags">
+           				<fmt:param value="${bagType}"/>
+         			</fmt:message>
                   </div>
                 </c:if>
-                
+
                 <script type="text/javascript">
                 <!--
-                  clickUseBag(${index});
+                  var selectedBagName = '${selectedBagNames[con]}';
+                  if(selectedBagName){
+	                  clickUseBag(${index});
+                  }
                 //-->
                 </script>
-                
+              </c:if>
               <script type="text/javascript">
+          
                 <!--
                 /* setting options popup value to correct initial state. */
                 if (document.templateForm["attributeOptions(${index})"] != null)

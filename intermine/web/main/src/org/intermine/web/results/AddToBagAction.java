@@ -20,15 +20,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.InterMineException;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
-import org.intermine.web.SessionMethods;
+import org.intermine.web.bag.BagElement;
+import org.intermine.web.bag.BagHelper;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * 
@@ -57,11 +62,7 @@ public class AddToBagAction extends InterMineAction
         
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
-            if (existingBag instanceof InterMinePrimitiveBag) {
-                // error
-                recordError(new ActionMessage("bag.typesDontMatch"), request);
-            } else {
-                ((InterMineIdBag) existingBag).add(id);
+/*
                 try {
                     int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
                                                   "max.bag.size.notloggedin",
@@ -72,6 +73,23 @@ public class AddToBagAction extends InterMineAction
                 }
                 SessionMethods.invalidateBagTable(session, bagName);
                 recordMessage(new ActionMessage("bag.addedToBag", bagName), request);
+*/
+                
+            try {
+                InterMineObject o = (InterMineObject) os.getObjectById(new Integer(id));
+                if (BagHelper.isOfBagType(existingBag, o, os)) {
+                    BagElement bagElement = new BagElement(new Integer(id),
+                                                                    existingBag.getType());
+                    existingBag.add(bagElement);
+                    recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName())
+                                    , request);
+                } else {
+                    recordError(new ActionMessage("bag.typesDontMatch"), request);
+                }
+                // TODO add a warning when object already in bag ??
+            } catch (ObjectStoreException e) {
+                recordError(new ActionMessage("bag.error"), request, e);
+
                 return mapping.findForward("objectDetails");
             }
         } else {

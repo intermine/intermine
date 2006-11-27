@@ -16,8 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.model.InterMineObject;
 import org.intermine.web.results.PagedTable;
+import org.intermine.web.results.ResultElement;
+import org.intermine.web.results.WebResults;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -84,15 +85,34 @@ public class PollQueryAction extends InterMineAction
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
             LOG.debug("query qid " + qid + " complete");
-            // Look at results, if only one result, go straight to object details page
+                        // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
-            if (followSingleResult && pr.getSize () == 1) {
-                // Query can have more than one column, forward from the first
-                Object o = ((List) pr.getAllRows ().get(0)).get(0);
-                if (o instanceof InterMineObject) {
-                    return new ActionForward("/objectDetails.do?id="
-                            + ((InterMineObject) o).getId()
-                            + "&trail=_" + ((InterMineObject) o).getId(), true);
+            if (followSingleResult) {
+                List allRows = pr.getAllRows ();
+                if ((allRows instanceof WebResults) ) {
+                    WebResults webResults = (WebResults) allRows;
+                    // Query can have more than one column, forward from
+                    // the first
+                    Object o = null;
+                    if (webResults.size() == 1) {
+                        o = webResults.getResultElements(0).get(0);                    
+                    } else if (webResults.size() > 1 && webResults.size() < 100) {
+                        // special case hack - if every element of the first column is the same,
+                        // use that as the object to forward to
+                        o = webResults.getResultElements(0).get(0);
+                        for (int i = 1; i < webResults.size(); i++) {
+                            if (!o.equals(webResults.getResultElements(i).get(0))) {
+                                o = null;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (o != null && (o instanceof ResultElement) ) {
+                        String url = "/objectDetails.do?id=" + ((ResultElement) o).getId()
+                            + "&trail=_" + ((ResultElement) o).getId();
+                        return new ActionForward(url, true);
+                    }
                 }
             }
             return new ForwardParameters(mapping.findForward("results"))

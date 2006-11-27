@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,10 +76,11 @@ public class TemplateAction extends InterMineAction
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                 templateName, templateType);
-
+        Map savedBags = (Map) ((Profile) session.getAttribute(Constants.PROFILE)).getSavedBags();
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template);
+            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 
+                                                                                 savedBags);
             SessionMethods.loadQuery(queryCopy.getPathQuery(), request.getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
             form.reset(mapping, request);
@@ -97,7 +100,8 @@ public class TemplateAction extends InterMineAction
         }
 
         // Otherwise show the results: load the modified query from the template
-        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template);
+        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 
+                                                                             savedBags);
         SessionMethods.loadQuery(queryCopy, request.getSession(), response);
         form.reset(mapping, request);
 

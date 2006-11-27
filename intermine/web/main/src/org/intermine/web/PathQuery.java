@@ -190,6 +190,19 @@ public class PathQuery
     }
     
     /**
+     * Returns the view as a List of Path objects.
+     * @return the value of view as Paths
+     */
+    public List getViewAsPaths() {
+        List returnList = new ArrayList();
+        Iterator iter = getView().iterator();
+        while (iter.hasNext()) {
+            returnList.add(MainHelper.makePath(model, this, (String) iter.next()));
+        }
+        return returnList;
+    }
+    
+    /**
      * Get alternative select list by name.
      * @param name view name
      * @return List of Strings
@@ -431,7 +444,7 @@ public class PathQuery
      * @param string the constraint code
      * @return the Constraint with matching code or null
      */
-    private Constraint getConstraintByCode(String string) {
+    public Constraint getConstraintByCode(String string) {
         Iterator iter = getAllConstraints().iterator();
         while (iter.hasNext()) {
             Constraint c = (Constraint) iter.next();

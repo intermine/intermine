@@ -3,8 +3,24 @@
   <userprofile password="bob_pass" username="bob">
     <bags>
       <bag name="bag1">
-        <element type="java.lang.Integer" value="100"/>
-        <element type="java.lang.Float" value="1.1"/>
+        <row>
+          <element type="java.lang.String" value="foo1"/>
+        </row>
+        <row>
+          <element type="java.lang.String" value="foo2"/>
+        </row>
+        <row>
+          <element type="java.lang.String" value="foo3"/>
+        </row>
+        <row>
+          <element type="java.lang.Integer" value="100"/>
+        </row>
+        <row>
+          <element type="java.lang.Boolean" value="true"/>
+        </row>
+        <row>
+          <element type="java.lang.Float" value="1.1"/>
+        </row>
         <element type="java.lang.Boolean" value="true"/>
         <element type="java.lang.String" value="foo2"/>
         <element type="java.lang.String" value="foo3"/>
@@ -45,6 +61,10 @@
           <reference ref_id="3"/>
           <reference ref_id="4"/>
         </collection>
+        <collection name="secretarys">
+          <reference ref_id="14"/>
+          <reference ref_id="15"/>
+        </collection>
       </item>
       <item id="6" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
         <attribute name="name" value="DepartmentB1"/>
@@ -83,16 +103,28 @@
     </items>
     <bags>
       <bag name="sally_bag1">
-        <element type="java.lang.String" value="some value"/>
+        <row>
+          <element type="java.lang.String" value="some value"/>
+        </row>
       </bag>
       <bag name="sally_bag2">
-        <element type="java.lang.Integer" value="123"/>
+        <row>
+          <element type="java.lang.Integer" value="123"/>
+        </row>
       </bag>
       <bag name="sally_bag3">
-        <element type="org.intermine.model.InterMineObject" value="6"/>
-        <element type="org.intermine.model.InterMineObject" value="11"/>
-        <element type="org.intermine.model.InterMineObject" value="10"/>
-        <element type="org.intermine.model.InterMineObject" value="12"/>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="10"/>
+        </row>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="11"/>
+        </row>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="12"/>
+        </row>
+        <row>
+          <element type="org.intermine.model.InterMineObject" value="6"/>
+        </row>
       </bag>
     </bags>
     <queries>

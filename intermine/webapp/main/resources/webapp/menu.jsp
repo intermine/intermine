@@ -24,8 +24,20 @@
     </span>
   </c:if>
   <span class="menu-item">
-    <html:link action="/mymine.do">
-      <fmt:message key="menu.mymine"/>
+    <c:choose>
+      <c:when test="${!empty QUERY}">
+        <html:link action="/query.do?showTemplate=true">
+          <fmt:message key="menu.currentquery"/>
+        </html:link>
+      </c:when>
+      <c:otherwise>
+        <fmt:message key="menu.currentquery"/>
+      </c:otherwise>
+    </c:choose>
+  </span>
+  <span class="menu-item">
+    <html:link action="/history.do">
+      <fmt:message key="menu.history"/>
     </html:link>
   </span>
   <span class="menu-item">
@@ -43,18 +55,6 @@
     <html:link action="/history.do">
       <fmt:message key="menu.history"/>
     </html:link>
-  </span>
-  <span class="menu-item">
-    <c:choose>
-      <c:when test="${!empty QUERY}">
-        <html:link action="/query.do?showTemplate=true">
-          <fmt:message key="menu.currentquery"/>
-        </html:link>
-      </c:when>
-      <c:otherwise>
-        <fmt:message key="menu.currentquery"/>
-      </c:otherwise>
-    </c:choose>
   </span>
   <span class="menu-item">
     <html:link action="/feedback.do">

@@ -10,6 +10,7 @@
 <html:xhtml/>
 
 <tiles:importAttribute name="displayObject" ignore="true"/>
+<tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="important" ignore="true"/>
 <tiles:importAttribute name="noTemplatesMsgKey" ignore="true"/>
 <tiles:importAttribute name="placement"/>
@@ -24,6 +25,7 @@
     <c:if test="${!important || templateQuery.important}">
       <tiles:insert name="objectDetailsTemplate.jsp">
         <tiles:put name="displayObject" beanName="displayObject"/>
+        <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
         <tiles:put name="templateQuery" beanName="templateQuery"/>
         <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="type" value="${type}"/>

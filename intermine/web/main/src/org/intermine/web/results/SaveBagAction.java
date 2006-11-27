@@ -10,13 +10,29 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import org.intermine.objectstore.query.Results;
+
+import org.intermine.InterMineException;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.Constants;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
+import org.intermine.web.bag.BagElement;
+import org.intermine.web.bag.InterMineBag;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,21 +42,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.InterMineException;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Results;
-import org.intermine.web.Constants;
-import org.intermine.web.InterMineAction;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.WebUtil;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * Saves selected items in a new bag or combines with existing bag.
@@ -92,25 +93,20 @@ public class SaveBagAction extends InterMineAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
      */
     public ActionForward saveBag(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws ServletException {
+                                 HttpServletResponse response) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        //PagedTable pt = (PagedTable) session.getAttribute(Constants.RESULTS_TABLE);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm crf = (SaveBagForm) form;
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStore userProfileOs = ((ProfileManager) servletContext.getAttribute(Constants
                     .PROFILE_MANAGER)).getUserProfileObjectStore();
 
-        InterMineBag bag = null;
-        boolean storingIds = false;
         int defaultMax = 10000;
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
@@ -127,23 +123,17 @@ public class SaveBagAction extends InterMineAction
             bagName = crf.getExistingBagName();
         }
 
-        if (type instanceof ClassDescriptor) {
-            bag = new InterMineIdBag(profile.getUserId(), bagName, userProfileOs,
-                    Collections.EMPTY_SET);
-            storingIds = true;
-        } else {
-            bag = new InterMinePrimitiveBag(profile.getUserId(), bagName, userProfileOs,
-                    Collections.EMPTY_SET);
-        }
+        // TODO make more generic when type thing is ready by creating an InterMineIdBag
+        InterMineBag bag = new InterMineBag(profile.getUserId(), bagName, null, userProfileOs, os,
+                                                     Collections.EMPTY_SET);
 
-        // set to true if there is a complete column to save as a bag
-        boolean wholeColumnToSave = false;
+        // the number of complete columns to save in the bag
+        int wholeColumnsToSave = 0;
 
         for (int i = 0; i < crf.getSelectedObjects().length; i++) {
             String selectedObjectString = crf.getSelectedObjects()[i];
             if (selectedObjectString.indexOf(",") == -1) {
-                wholeColumnToSave = true;
-                break;
+                wholeColumnsToSave++;
             }
         }
 
@@ -152,7 +142,7 @@ public class SaveBagAction extends InterMineAction
         if (allRows instanceof Results) {
             Results results = (Results) allRows;
 
-            if (results.size() > maxBagSize && wholeColumnToSave) {
+            if (wholeColumnsToSave * results.size() > maxBagSize) {
                 ActionMessage actionMessage =
                     new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                 recordError(actionMessage, request);
@@ -195,56 +185,72 @@ public class SaveBagAction extends InterMineAction
             }
         }
 
+        // as we add objects from the selected column to the bag, add the indexes
+        // (ie. "2,3" - row 2, column 3) of the objects so we know not to add them twice
+        Set seenObjects = new HashSet();
+        ArrayList objectTypes = new ArrayList();
+
         // save selected columns first
-        if (wholeColumnToSave) {
-            for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
-                List thisRow = (List) rowIterator.next();
-
-                // go through the selected items (checkboxes) and add to the bag-to-save
-                for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
-                     itemIterator.hasNext();) {
-                    String selectedObject = (String) itemIterator.next();
-                    // selectedObject is of the form "column,row" or "column"
-                    int commaIndex = selectedObject.indexOf(",");
-                    if (commaIndex == -1) {
-                        int column = Integer.parseInt(selectedObject);
-
-                        if (storingIds) {
-                            Integer id = ((InterMineObject) thisRow.get(column)).getId();
-                            bag.add(id);
-                        } else {
-                            bag.add(thisRow.get(column));
-                        }
-
-                        if (bag.size() > maxBagSize) {
-                            ActionMessage actionMessage =
-                                new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                            recordError(actionMessage, request);
-
-                            return mapping.findForward("results");
-                        }
-                    }
-                }
-            }
-        }
+        // TODO check if this really is obsolete now with the new bag system
+//        if (wholeColumnsToSave > 0) {
+//            int rowCount = 0;
+//            for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
+//                List thisRow = (List) rowIterator.next();
+//
+//                List rowToSave = new ArrayList();
+//                
+//                // go through the selected items (checkboxes) and add to the bag-to-save
+//                for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
+//                     itemIterator.hasNext();) {
+//                    String selectedObject = (String) itemIterator.next();
+//                    // selectedObject is of the form "column,row" or "column"
+//                    int commaIndex = selectedObject.indexOf(",");
+//                    if (commaIndex == -1) {
+//                        int column = Integer.parseInt(selectedObject);
+//                        Object columnValue = null;
+//                        if (column < thisRow.size()) {
+//                            columnValue = thisRow.get(column);
+//                        }
+//                        rowToSave.add(columnValue);
+//                        seenObjects.add(rowCount + "," + column);
+//                    }
+//                }
+//                bag.add(rowToSave);
+//                if (bag.size() > maxBagSize) {
+//                    ActionMessage actionMessage =
+//                        new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+//                    recordError(actionMessage, request);
+//
+//                    return mapping.findForward("results");
+//                }
+//                rowCount++;
+//            }
+//        }
 
         // now save individually selected items
         for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
              itemIterator.hasNext();) {
             String selectedObject = (String) itemIterator.next();
+            // renove the type information
+            selectedObject = selectedObject.substring(0, selectedObject.lastIndexOf(","));
             // selectedObject is of the form "column,row" or "column"
             int commaIndex = selectedObject.indexOf(",");
             if (commaIndex != -1) {
                 // use the column,row to pick out the object from PagedTable
                 int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
                 int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-                Object value = ((List) pt.getRows().get(row)).get(column);
-                if (storingIds) {
-                    Integer id = ((InterMineObject) value).getId();
-                    bag.add(id);
-                } else {
-                    bag.add(value);
+                if (seenObjects.contains(row + "," + column)) {
+                    continue;
                 }
+                Object value = ((List) pt.getRows().get(row)).get(column);
+                ResultElement resCell = (ResultElement) value;
+                BagElement bagElement = new BagElement(resCell);
+                
+                if (!objectTypes.contains(resCell.getType())) {
+                    objectTypes.add(resCell.getType());
+                }
+                
+                bag.add(bagElement);
                 if (bag.size() > maxBagSize) {
                     ActionMessage actionMessage =
                         new ActionMessage("bag.tooBig", new Integer(maxBagSize));
@@ -254,14 +260,24 @@ public class SaveBagAction extends InterMineAction
                 }
             }
         }
+        
+        if (objectTypes.size() > 1 || objectTypes == null) {
+            ActionMessage actionMessage =
+                new ActionMessage("The bag contains more than one different type");
+            recordError(actionMessage, request);
+            return mapping.findForward("results");
+        }
 
+        bag.setType(objectTypes.get(0).toString());
+        
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
-            if (!existingBag.getClass().equals(bag.getClass())) {
+            if (!existingBag.getType().equals(bag.getType())) {
                 recordError(new ActionMessage("bag.typesDontMatch"), request);
                 return mapping.findForward("results");
             }
             bag.addAll(existingBag);
+            bag.setSavedBagId(existingBag.getSavedBagId());
             SessionMethods.invalidateBagTable(session, bagName);
         }
         if (bag.size() > maxBagSize) {

@@ -10,9 +10,6 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.web.results.DisplayObject;
-import org.intermine.web.results.InlineTemplateTable;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +21,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.results.DisplayObject;
+import org.intermine.web.results.InlineTemplateTable;
 
 /**
  * Controller for an inline table created by running a template on an object details page.
@@ -45,10 +46,12 @@ public class ObjectDetailsTemplateController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         DisplayObject displayObject = (DisplayObject) context.getAttribute("displayObject");
+        InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
-        if (displayObject == null) {
+        if (displayObject == null && interMineIdBag == null) {
             return null;
         }
         
@@ -56,11 +59,18 @@ public class ObjectDetailsTemplateController extends TilesAction
         String templateName = templateQuery.getName();
         
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();        
-        Integer objectId = displayObject.getObject().getId();
-
-        InlineTemplateTable itt =
-            TemplateHelper.getInlineTemplateTable(servletContext, templateName,
+        InlineTemplateTable itt = null;
+        
+        if (displayObject != null) {
+            Integer objectId = displayObject.getObject().getId();
+            itt =
+                TemplateHelper.getInlineTemplateTable(servletContext, templateName,
                                                   objectId, userName);
+        } else {
+            itt =
+                TemplateHelper.getInlineTemplateTable(servletContext, templateName,
+                                                  interMineIdBag, userName);
+        }
         
         if (itt != null) {
             context.putAttribute("table", itt);

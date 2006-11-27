@@ -15,15 +15,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.TemplateListController;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.Constants;
+import org.intermine.web.TemplateListController;
+import org.intermine.web.bag.InterMineBag;
 
 /**
  * Controller for the objectDetailsAspect tile.
@@ -44,11 +44,13 @@ public class ObjectDetailsAspectController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         DisplayObject dobj = (DisplayObject) context.getAttribute("displayObject");
+        InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         
         ComponentContext cc = new ComponentContext();
         cc.putAttribute("type", "global");
         cc.putAttribute("placement", context.getAttribute("placement"));
         cc.putAttribute("displayObject", dobj);
+        cc.putAttribute("interMineIdBag", interMineIdBag);
         
         new TemplateListController().execute(cc, mapping, form, request, response);
         return null;

@@ -10,19 +10,20 @@ package org.intermine.web.bag;
  *
  */
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.HashSet;
+
+import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-
-import junit.framework.TestCase;
+import org.intermine.web.results.ResultElement;
 
 
 /**
@@ -51,26 +52,19 @@ public class InterMineBagBindingTest extends TestCase
         Integer userId = new Integer(101);
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("InterMineBagBindingTest.xml");
-        BufferedReader tmpReader = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = tmpReader.readLine()) != null) {
-            System.out.println(line);
-        }
+
         Map savedBags = InterMineBagBinding.unmarshal(new InputStreamReader(is), os,
                                                       new PkQueryIdUpgrader(), userId);
         Map expected = new LinkedHashMap();
 
-        //primitives
-        HashSet contents = new HashSet();
-        contents.add(new Integer(10));
-        contents.add("ten");
-        InterMineBag primitives = new InterMinePrimitiveBag(userId, "bag1", os, contents);
-        expected.put("primitives", primitives);
-
-        //objects
         HashSet objectContents = new HashSet();
         objectContents.add(new Integer(1));
-        InterMineBag objects = new InterMinePrimitiveBag(userId, "bag2", os, objectContents);
+
+        Collection c = new ArrayList();
+        c.add(new BagElement(new Integer(10), "Gene"));
+        c.add(new BagElement(new Integer(20), "Gene"));
+        c.add(new BagElement(new Integer(30), "Gene"));
+        InterMineBag objects = new InterMineBag(userId, "bag2", "Gene", os, c);
         expected.put("objects", objects);
 
         assertEquals(expected, savedBags);

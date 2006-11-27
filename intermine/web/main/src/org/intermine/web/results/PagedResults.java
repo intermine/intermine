@@ -10,24 +10,14 @@ package org.intermine.web.results;
  *
  */
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.intermine.objectstore.query.ResultsInfo;
 
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreLimitReachedException;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryHelper;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.FromElement;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.FieldDescriptor;
+
+import java.io.Serializable;
 
 /**
  * A pageable and configurable table created from the Results object.
@@ -37,17 +27,7 @@ import org.intermine.metadata.FieldDescriptor;
  */
 public class PagedResults extends PagedTable implements Serializable
 {
-    protected transient Results results;
-
-    /**
-     * Create a new PagedResults object from the given Results object.
-     *
-     * @param results the Results object
-     * @param model the Model for the Results
-     */
-    public PagedResults(Results results, Model model) {
-        this(QueryHelper.getColumnAliases(results.getQuery()), results, model);
-    }
+    protected transient WebResults results;
 
     /**
      * Create a new PagedResults object from the given Results object.
@@ -55,27 +35,27 @@ public class PagedResults extends PagedTable implements Serializable
      * @param results the Results object
      * @param columnNames the headings for the Results columns
      * @param model the Model for the Results
+     * @param pathToQueryNode a mappping between  QueryPath
+     * @param servletContext the ServletContext used to get the WebConfig object and the classKeys 
+     *        Map.
      */
-    public PagedResults(List columnNames, Results results, Model model) {
-        super(columnNames);
+    public PagedResults(WebResults results){
+        super(results.getColumns());
         this.results = results;
-        setColumnTypes(model);
-        try {
-            updateRows();
-        } catch (PageOutOfRangeException e) {
-            throw new RuntimeException("unable to create a PagedResults object", e);
-        }
+
+        updateRows();
     }
+    
 
     /**
-     * @see PagedTable#getAllRows
+     * @see PagedTable#getAllRows()
      */
     public List getAllRows() {
         return results;
     }
 
     /**
-     * @see PagedTable#getSize
+     * @see PagedTable#getSize()
      */
     public int getSize() {
         try {
@@ -86,7 +66,7 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#isSizeEstimate
+     * @see PagedTable#isSizeEstimate()
      */
     public boolean isSizeEstimate() {
         try {
@@ -97,32 +77,13 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#getExactSize
+     * @see PagedTable#getExactSize()
      */
     protected int getExactSize() {
         return results.size();
     }
 
-    /**
-     * @throws PageOutOfRangeException
-     * @see PagedTable#updateRows
-     */
-    protected void updateRows() throws PageOutOfRangeException {
-        rows = new ArrayList();
-        try {
-            for (int i = startRow; i < startRow + pageSize; i++) {
-                rows.add(results.get(i));
-            }
-        } catch (IndexOutOfBoundsException e) {
-                // ignore 
-        } catch (RuntimeException e) {
-            if (e.getCause() instanceof ObjectStoreLimitReachedException) {
-                throw new PageOutOfRangeException("PagedResults.updateRows() failed",
-                                                  e.getCause());
-            }
-        }
-    }
-
+    
     /**
      * Return information about the results
      * @return the relevant ResultsInfo
@@ -133,46 +94,27 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#getMaxRetrievableIndex
+     * @see PagedTable#getMaxRetrievableIndex()
      */
     public int getMaxRetrievableIndex() {
-        return results.getObjectStore().getMaxOffset();
+        return results.getMaxRetrievableIndex();
     }
 
     /**
-     * Call setType() on each Column, setting it the type to a ClassDescriptor, a FieldDescriptor
-     * or Object.class
+     * @see PagedTable#updateRows()
      */
-    private void setColumnTypes(Model model) {
-        Query q = results.getQuery();
+    public void updateRows() {
+        List newRows = new ArrayList();
+        for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
 
-        Iterator columnIter = getColumns().iterator();
-        Iterator selectListIter = q.getSelect().iterator();
-
-        while (columnIter.hasNext()) {
-            Column thisColumn = (Column) columnIter.next();
-            QueryNode thisQueryNode = (QueryNode) selectListIter.next();
-
-            if (thisQueryNode instanceof QueryClass) {
-                Class thisQueryNodeClass = ((QueryClass) thisQueryNode).getType();
-                thisColumn.setType(model.getClassDescriptorByName(thisQueryNodeClass.getName()));
-            } else {
-                if (thisQueryNode instanceof QueryField) {
-                    QueryField queryField = (QueryField) thisQueryNode;
-                    FromElement fe = queryField.getFromElement();
-                    if (fe instanceof QueryClass) {
-                        QueryClass queryClass = (QueryClass) fe;
-                        Map fieldMap = model.getFieldDescriptorsForClass(queryClass.getType());
-                        FieldDescriptor fd =
-                            (FieldDescriptor) fieldMap.get(queryField.getFieldName());
-                        thisColumn.setType(fd);
-                    } else {
-                        thisColumn.setType(Object.class);
-                    }
-                } else {
-                    thisColumn.setType(Object.class);
-                }
+            try {
+                List resultsRow = results.getResultElements(i);
+                newRows.add(resultsRow);
+            } catch (IndexOutOfBoundsException e) {
+                // we're probably at the end of the results object, so stop looping
+                break;
             }
         }
+        setRows(newRows);
     }
 }

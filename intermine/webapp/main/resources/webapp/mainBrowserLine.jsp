@@ -8,7 +8,6 @@
 <!-- mainBrowser.jsp -->
 
 <html:xhtml/>
-
     <div class="browserline">
       <c:if test="${node.indentation > 0}">
         <c:forEach begin="1" end="${node.indentation}">
@@ -52,7 +51,7 @@
           <img src="images/blank.gif" width="11" height="11" alt=" "/>
         </c:otherwise>
       </c:choose>
-      <im:viewableSpan path="${fullpath}" viewPaths="${viewPaths}" idPrefix="browser">
+      <im:viewableSpan path="${fullpath}"node="${node}" idPrefix="browser">
         <c:if test="${node.indentation > 0}">
           <c:choose>
             <c:when test="${node.collection}">
@@ -100,8 +99,17 @@
           </fmt:message>
         </c:otherwise>
       </c:choose>
+      <c:set var="summary" value="${node.reference || node.collection || (!node.reference && !node.collection && !node.attribute)}" />
       <c:choose>
-        <c:when test="${viewPaths[fullpath] == null && !isNull}">
+        <c:when test="${!node.selected && !isNull && summary}">
+          <html:link action="/mainChange?method=addToView&amp;path=${node.path}" title="${selectNodeTitle}">
+            <img class="arrow" src="images/show-ref.gif" width="60" height="13" alt="show" style="margin-right:-0.5ex"/>
+          </html:link>
+        </c:when>
+        <c:when test="${node.selected  && summary}">
+            <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" alt="show" style="margin-right:-0.5ex"/>
+        </c:when>
+        <c:when test="${!node.selected && !isNull}">
           <html:link action="/mainChange?method=addToView&amp;path=${node.path}" title="${selectNodeTitle}">
             <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
           </html:link>
@@ -112,7 +120,7 @@
       </c:choose>
       <c:choose>
         <c:when test="${empty node.parent && prefix == path
-                      && empty PROFILE.objectBags && empty loopQueryOps}">
+                      && empty loopQueryOps}">
           <%-- don't offer to constrain if this is the top node, there are no
                bags and no potential loop queries --%> 
           <img class="arrow" src="images/constrain-disabled.gif" width="70"

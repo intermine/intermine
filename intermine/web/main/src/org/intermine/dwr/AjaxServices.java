@@ -14,15 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.Query;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
@@ -33,6 +28,13 @@ import org.intermine.web.TemplateQuery;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import uk.ltd.getahead.dwr.WebContext;
 import uk.ltd.getahead.dwr.WebContextFactory;

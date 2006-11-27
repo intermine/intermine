@@ -107,6 +107,8 @@ public class InitialiserPlugin implements PlugIn
         
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
+        // load class keys
+        loadClassKeys(servletContext, os);
         makeCache(servletContext, os);
         
         cleanTags(pm);
@@ -164,6 +166,22 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute("classDescriptions", classDescriptions);
     }
 
+    /**
+     * Load keys that describe how objects should be uniquely identified
+     */
+    private void loadClassKeys(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        Properties classKeyProps = new Properties();
+        try {
+            classKeyProps.load(servletContext
+                    .getResourceAsStream("/WEB-INF/class_keys.properties"));
+        } catch (Exception e) {
+            throw new ServletException("Error loading class descriptions", e);
+        }
+        Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+        servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+    }
+    
     /**
      * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
      */

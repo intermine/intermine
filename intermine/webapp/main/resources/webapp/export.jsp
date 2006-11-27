@@ -12,18 +12,18 @@
 <div class="body">
   <ul>
     <li>
-      <html:link action="/exportAction?table=${param.table}&amp;type=csv">
+      <html:link action="/exportAction?table=${tableName}&amp;type=csv&amp;tableType=${tableType}">
         <fmt:message key="export.csv"/>
       </html:link>
     </li>
     <li>
-      <html:link action="/exportAction?table=${param.table}&amp;type=tab">
+      <html:link action="/exportAction?table=${tableName}&amp;type=tab&amp;tableType=${tableType}">
         <fmt:message key="export.tabdelimited"/>
       </html:link>
     </li>
-    <c:if test="${resultsTable.size <= WEB_PROPERTIES['max.excel.export.size']}">
+    <c:if test="${pagedTable.size <= WEB_PROPERTIES['max.excel.export.size']}">
       <li>
-        <html:link action="/exportAction?table=${param.table}&amp;type=excel">
+        <html:link action="/exportAction?table=${tableName}&amp;type=excel&amp;tableType=${tableType}">
           <fmt:message key="export.excel">
             <fmt:param value="${WEB_PROPERTIES['max.excel.export.size']}"/>
           </fmt:message>
@@ -35,9 +35,16 @@
 
     <c:forEach var="entry" items="${exporters}" varStatus="status">
       <li>
-        <html:link action="${entry.value.actionPath}&amp;table=${param.table}">
+        <c:choose>
+          <c:when test="${empty entry.value}">
+            <span class="nullStrike"><fmt:message key="exporter.${entry.key}.description"/></span>
+          </c:when>
+          <c:otherwise>
+        <html:link action="${entry.value.actionPath}&amp;table=${tableName}&amp;tableType=${tableType}">
           <fmt:message key="exporter.${entry.key}.description"/>
         </html:link>
+          </c:otherwise>
+        </c:choose>
       </li>
     </c:forEach>
 

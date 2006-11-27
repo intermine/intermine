@@ -17,6 +17,7 @@ package org.intermine.web;
 public class MetadataNode extends Node
 {
     String button;
+    boolean selected = false;
 
     /**
      * Constructor for a root node
@@ -46,4 +47,13 @@ public class MetadataNode extends Node
     public String getButton()  {
         return button;
     }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+    
 }

@@ -10,14 +10,16 @@ package org.intermine.web;
  *
  */
 
-import java.util.HashSet;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ResultsRow;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -27,25 +29,13 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.IdUpgrader;
-import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Item;
+import org.intermine.web.bag.InterMineBag;
 import org.intermine.xml.full.ItemFactory;
-
-import java.io.Reader;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.xml.sax.InputSource;
-
-import org.apache.log4j.Logger;
 
 /**
  * Code for reading and writing Profile objects as XML.
@@ -98,27 +88,6 @@ public class ProfileBinding
 
             if (writeBags) {
                 ItemFactory itemFactory = new ItemFactory(os.getModel());
-
-                Set idSet = new HashSet();
-
-                getProfileObjectIds(profile, os, idSet);
-
-                if (!idSet.isEmpty()) {
-                    List objects = os.getObjectsByIds(idSet);
-
-                    writer.writeStartElement("items");
-                    Iterator objectsIter = objects.iterator();
-
-                    while (objectsIter.hasNext()) {
-                        ResultsRow rr = (ResultsRow) objectsIter.next();
-                        InterMineObject o = (InterMineObject) rr.get(0);
-                        Item item = itemFactory.makeItem(o);
-                        FullRenderer.render(writer, item);
-                    }
-
-                    writer.writeEndElement();
-                }
-
                 writer.writeStartElement("bags");
                 for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
@@ -176,53 +145,9 @@ public class ProfileBinding
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling profile", e);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("exception while marshalling profile", e);
         }
     }
-
-    /**
-     * Get the ids of objects in all bags and all objects mentioned in primary keys of those
-     * items (recursively).
-     * @param profile read the object in the bags from this Profile
-     * @param os the ObjectStore to use when following references
-     * @param idsToSerialise object ids are added to this Set
-     */
-    private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise)
-        throws ObjectStoreException {
-        for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            InterMineBag bag = (InterMineBag) entry.getValue();
-
-            if (bag instanceof InterMineIdBag) {
-                //Iterator iter = bag.iterator();
-
-                List objects = os.getObjectsByIds(bag);
-                Iterator iter = objects.iterator();
-                while (iter.hasNext()) {
-                        ResultsRow rr = (ResultsRow) iter.next();
-                        InterMineObject o = (InterMineObject) rr.get(0);
-                        getIdsFromObject(o, os.getModel(), idsToSerialise);
-                }
-//                 while (iter.hasNext()) {
-//                     Integer id = (Integer) iter.next();
-//                     InterMineObject object;
-//                     try {
-//                         object = os.getObjectById(id);
-//                     } catch (ObjectStoreException e) {
-//                         throw new RuntimeException("Unable to find object for id: " + id, e);
-//                     }
-//                     if (object != null) {
-//                         getIdsFromObject(object, os.getModel(), idsToSerialise);
-//                     } else {
-//                         LOG.error("object was null for id: " + id.toString() + " for user: "
-//                                   + profile.getUsername());
-//                     }
-//            }
-            }
-        }
-    }
-
+    
     /**
      * For the given object, add its ID and all IDs of all objects in any of its primary keys to
      * idsToSerialise.

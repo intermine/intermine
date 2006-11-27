@@ -10,33 +10,18 @@ package org.intermine.web;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-
-import org.intermine.cache.InterMineCache;
-import org.intermine.cache.ObjectCreator;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.results.InlineTemplateTable;
-
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -47,6 +32,23 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
+import org.intermine.cache.InterMineCache;
+import org.intermine.cache.ObjectCreator;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.results.InlineTemplateTable;
+import org.intermine.web.results.PagedResults;
+import org.intermine.web.results.WebResults;
 
 /**
  * Static helper routines related to templates.
@@ -124,18 +126,23 @@ public class TemplateHelper
      *
      * @param tf        the template form bean
      * @param template  the template query involved
+     * @param savedBags the saved bags
      * @return          a new TemplateQuery matching template with user supplied constraints
      */
-    public static TemplateQuery templateFormToTemplateQuery(TemplateForm tf, 
-                                                            TemplateQuery template) {
+    public static TemplateQuery templateFormToTemplateQuery(TemplateForm tf,
+                                                            TemplateQuery template,
+                                                            Map savedBags) {
         TemplateQuery queryCopy = (TemplateQuery) template.clone();
+
+        // if this query comes from current query it may have been altered
+        // to use a bag constraint
 
         // Step over nodes and their constraints in order, ammending our
         // PathQuery copy as we go
         int j = 0;
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
+            for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
                 String key = "" + (j + 1);
                 PathNode nodeCopy = (PathNode) queryCopy.getNodes().get(node.getPath());
@@ -145,9 +152,41 @@ public class TemplateHelper
                     ConstraintOp constraintOp = ConstraintOp.
                     getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
                     Object constraintValue = tf.getBag(key);
-                    nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                            new Constraint(constraintOp, constraintValue, true,
-                                    c.getDescription(), c.getCode(), c.getIdentifier()));
+                    // if using an id bag need to swap for a constraint on id
+                    InterMineBag bag;
+                    if (constraintValue instanceof InterMineBag) {
+                        bag = (InterMineBag) constraintValue;
+                    } else {
+                        bag = (InterMineBag) savedBags.get(constraintValue);
+                    }
+                    if (bag instanceof InterMineBag) {
+                        // constrain parent object of this node to be in bag
+                        PathNode parent = (PathNode) queryCopy.getNodes()
+                            .get(nodeCopy.getParent().getPath());
+                        Constraint bagConstraint = new Constraint(constraintOp, constraintValue,
+                                true, c.getDescription(), c.getCode(), c.getIdentifier());
+                        parent.getConstraints().add(bagConstraint);
+
+                        // remove the constraint on this node, possibly remove node
+                        //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
+                        if (nodeCopy.getConstraints().size() == 1) {
+                            queryCopy.getNodes().remove(nodeCopy.getPath());
+                        } else {
+                            // TODO sort out removing constraint from node, simply removing
+                            // could cause problems as operations based on list indexes.  Need
+                            // wait until finished dealing with node.
+
+                            // ?? get editable nodes and check if there are no longer constraints
+                            // ?? and node not in select list then remove?
+                        }
+                    } else {
+                        nodeCopy.getConstraints().set(
+                                node.getConstraints().indexOf(c),
+                                new Constraint(constraintOp, constraintValue,
+                                        true, c.getDescription(), c.getCode(),
+                                        c.getIdentifier()));
+                    }
+
                 } else {
                     // Parse user input
                     String op = (String) tf.getAttributeOps(key);
@@ -167,7 +206,7 @@ public class TemplateHelper
         if (!StringUtils.isEmpty(tf.getView())) {
             queryCopy.setView(template.getAlternativeView(tf.getView()));
         }
-        
+
         queryCopy.setEdited(true);
         return queryCopy;
     }
@@ -237,10 +276,12 @@ public class TemplateHelper
      */
     private static int fillTemplateForm(TemplateQuery template, //String viewName,
                                         InterMineObject object,
+                                        InterMineBag bag,
                                         TemplateForm templateForm, Model model) {
         List constraints = template.getAllConstraints();
         int unmatchedConstraintCount = constraints.size();
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
+        String inString = ConstraintOp.IN.getIndex().toString();
 
         //templateForm.setView(viewName);
 
@@ -266,7 +307,7 @@ public class TemplateHelper
                 try {
                     Class testClass = Class.forName(className);
 
-                    if (testClass.isInstance(object)) {
+                    if (object != null && testClass.isInstance(object)) {
                         ClassDescriptor cd = model.getClassDescriptorByName(className);
                         if (cd.getFieldDescriptorByName(fieldName) != null) {
                             Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
@@ -284,6 +325,13 @@ public class TemplateHelper
                             formIndex++;                            
                         }
                     }
+                    if (bag != null && (TypeUtil.unqualifiedName(testClass.toString()))
+                                    .equals(bag.getType())) {
+                        unmatchedConstraintCount--;
+                        templateForm.setBagOp("" + formIndex, inString);
+                        templateForm.setBag("" + formIndex, bag);
+                        templateForm.setUseBagConstraint("" + formIndex, true);
+                    }
                 } catch (ClassNotFoundException e) {
                     LOG.error(e);
                 } catch (IllegalAccessException e) {
@@ -297,11 +345,13 @@ public class TemplateHelper
 
 
     /**
-     * Make and return an InlineTemplateTable for the given template and interMineObjectId.
+     * Make and return an InlineTemplateTable for the given template and interMineObjectId or
+     * InterMineIdBag
      */
     private static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
                                                                TemplateQuery template,
-                                                               InterMineObject object) {
+                                                               InterMineObject object,
+                                                               InterMineBag bag) {
         TemplateForm templateForm = new TemplateForm();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
@@ -312,22 +362,27 @@ public class TemplateHelper
         }*/
 
         int unconstrainedCount =
-            fillTemplateForm(template, /*viewName,*/ object, templateForm, os.getModel());
+            fillTemplateForm(template, /*viewName,*/ object, bag, templateForm, os.getModel());
         if (unconstrainedCount > 0) {
             return null;
         }
 
         templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
 
-         PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template);
+         PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
+                                                                          new HashMap());
         try {
-            Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
+            Map pathToQueryNode = new HashMap();
+            Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode);
             Results results = os.execute(query);
+            Model model = os.getModel();
+            WebResults webResults =
+                new WebResults(pathQuery.getViewAsPaths(), results, model, pathToQueryNode,
+                               (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
+            PagedResults pagedResults = new PagedResults(webResults);
 
-            List columnNames = new ArrayList(pathQuery.getView());
             InlineTemplateTable itt =
-                new InlineTemplateTable(results, columnNames, webProperties);
-            List viewNodes = pathQuery.getView();
+                new InlineTemplateTable(pagedResults, webProperties);
 
             /*Iterator viewIter = viewNodes.iterator();
             while (viewIter.hasNext()) {
@@ -388,6 +443,31 @@ public class TemplateHelper
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
             public Serializable create(String templateName, /*String viewName,*/
+                                       InterMineBag interMineIdBag, String userName) {
+                if (userName.equals(NO_USERNAME_STRING)) {
+                    // the create method can't have a null argument, but null is the signal for
+                    // findTemplate() that there is no current user
+                    userName = null;
+                }
+                TemplateQuery template =
+                    TemplateHelper.findTemplate(servletContext, null, userName,
+                                                templateName, TemplateHelper.ALL_TEMPLATE);
+
+                    if (template == null) {
+                        throw new IllegalStateException("Could not find template \""
+                                                        + templateName + "\"");
+                    }
+
+                InterMineObject object;
+//                try {
+//                    object = os.getObjectById(id);
+//                } catch (ObjectStoreException e) {
+//                    throw new RuntimeException("cannot find object for ID: " + id);
+//                }
+                return makeInlineTemplateTable(servletContext, template, /*viewName,*/ null,
+                                               interMineIdBag);
+            };
+            public Serializable create(String templateName, /*String viewName,*/
                                        Integer id, String userName) {
                 if (userName.equals(NO_USERNAME_STRING)) {
                     // the create method can't have a null argument, but null is the signal for
@@ -409,7 +489,8 @@ public class TemplateHelper
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("cannot find object for ID: " + id);
                 }
-                return makeInlineTemplateTable(servletContext, template, /*viewName,*/ object);
+                return makeInlineTemplateTable(servletContext, template, /*viewName,*/ object,
+                                               null);
             }
         };
 
@@ -418,17 +499,17 @@ public class TemplateHelper
 
     /**
      * Make (or find in the global cache) and return an InlineTemplateTable for the given
-     * template, interMineObjectId and user name.
+     * template, InterMineIdBag and user name.
      * @param servletContext the ServletContext
      * @param templateName the template name
-     * @param interMineObjectId the object Id
+     * @param interMineIdBag the InterMineIdBag
      * @param userName the user name
      * @return the InlineTemplateTable
      */
     public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
-                                                                 String templateName,
-                                                                 Integer interMineObjectId,
-                                                                 String userName) {
+                                                             String templateName,
+                                                             InterMineBag interMineIdBag,
+                                                             String userName) {
         if (userName == null) {
             // the ObjectCreator.create() method can't have a null argument, but null is the signal
             // for findTemplate() that there is no current user
@@ -437,7 +518,31 @@ public class TemplateHelper
 
         InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
         return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                                               templateName, interMineObjectId, userName);
+                                               templateName, interMineIdBag, userName);
+    }
+
+    /**
+     * Make (or find in the global cache) and return an InlineTemplateTable for the given
+     * template, interMineObjectId and user name.
+     * @param servletContext the ServletContext
+     * @param templateName the template name
+     * @param id the object Id
+     * @param userName the user name
+     * @return the InlineTemplateTable
+     */
+    public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
+                                                             String templateName,
+                                                             Integer id,
+                                                             String userName) {
+        if (userName == null) {
+            // the ObjectCreator.create() method can't have a null argument, but null is the signal
+            // for findTemplate() that there is no current user
+            userName = NO_USERNAME_STRING;
+        }
+
+        InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
+        return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
+                                               templateName, id, userName);
     }
 
 
@@ -456,9 +561,9 @@ public class TemplateHelper
     // template.getKeywords());
     // return clone;
     // }
-    
-    
-    
+
+
+
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
@@ -480,7 +585,7 @@ public class TemplateHelper
         while (niter.hasNext()) {
             PathNode node = (PathNode) niter.next();
             // look for editable constraints
-            List ecs = template.getConstraints(node);
+            List ecs = template.getEditableConstraints(node);
             if (ecs != null && ecs.size() > 0) {
                 // NOTE: at one point this exhibited a bug where aliases were repeated
                 // in the generated query, seems to be fixed now though.
@@ -497,12 +602,15 @@ public class TemplateHelper
         Query query =
                 MainHelper.makeQuery((PathQuery) templateClone, new HashMap(), pathToQueryNode);
 
-        // create additional indexes on fields added to select list
+        // Queries only select objects, need to add editable constraints to select so they can
+        // be indexed in precomputed table.  Create additional indexes for fields.
         Iterator indexIter = indexPaths.iterator();
         while (indexIter.hasNext()) {
             String path = (String) indexIter.next();
+            query.addToSelect((QueryNode) pathToQueryNode.get(path));
             indexes.add(pathToQueryNode.get(path));
         }
+
         return query;
     }
 }

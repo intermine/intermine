@@ -2,7 +2,7 @@
 html, body 
 {
     color: #000000;
-    background-color: #C0C0C0;
+    background-color: #CACACA;
 }
 
 a 
@@ -38,4 +38,7 @@ a
 }
 .address {
   font-weight: bold;
+}
+.highlightCell{
+  background-color: #D4D4D4;
 }

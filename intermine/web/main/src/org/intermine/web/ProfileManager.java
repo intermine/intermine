@@ -52,8 +52,6 @@ import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
 import org.intermine.web.tagging.TagTypes;
 
 /**
@@ -193,6 +191,7 @@ public class ProfileManager
         q.addToSelect(new QueryField(qc, "name"));
         q.addToSelect(new QueryField(qc, "size"));
         q.addToSelect(new QueryField(qc, "objects"));
+        q.addToSelect(new QueryField(qc, "type"));
         q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "userProfile"),
                     ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
                         UserProfile.class)));
@@ -206,19 +205,9 @@ public class ProfileManager
             List row = (List) i.next();
             String bagName = (String) row.get(0);
             int bagSize = ((Integer) row.get(1)).intValue();
-            boolean bagIsObjects = ((Boolean) row.get(2)).booleanValue();
-            //try {
-            //    savedBags.putAll(InterMineBagBinding.unmarshal(new StringReader(bag.getBag()), os,
-            //                IdUpgrader.ERROR_UPGRADER, userProfile.getId()));
-            //} catch (Exception err) {
-            //    // Ignore rows that don't unmarshal (they probably reference
-            //    // another model.
-            //    LOG.warn("Failed to unmarshal saved bag: " + bag.getBag());
-            //}
-            savedBags.put(bagName, bagIsObjects
-                    ? (InterMineBag) new InterMineIdBag(userProfile.getId(), bagName, bagSize, osw)
-                    : (InterMineBag) new InterMinePrimitiveBag(userProfile.getId(), bagName,
-                        new Integer(bagSize), osw));
+            String type = (String) row.get(3);
+            savedBags.put(bagName, new InterMineBag(userProfile.getId(), bagName, type,
+                        bagSize, osw, os));
         }
         Map savedQueries = new HashMap();
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
@@ -325,13 +314,38 @@ public class ProfileManager
                     String bagName = (String) entry.getKey();
                     bag = (InterMineBag) entry.getValue();
                     if (bag.needsWrite()) {
-                        SavedBag savedBag = new SavedBag();
+                        SavedBag savedBag = null;
+                        if (bag.getSavedBagId() != null) {
+                            // TODO fix problem with missing InterMineObject table
+                            // at the moment making query but should use
+                            // getObjectById()
+                            // savedBag= (SavedBag) osw.getObjectById(bag.getSavedBagId());
+                            try {
+                                Query q = new Query();
+                                QueryClass qc = new QueryClass(SavedBag.class);
+                                q.addFrom(qc);
+                                q.addToSelect(qc);
+                                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                                cs.addConstraint(new SimpleConstraint(new QueryField(qc, "id"),
+                                            ConstraintOp.EQUALS, new QueryValue
+                                            (bag.getSavedBagId())));
+                                q.setConstraint(cs);
+                                Results res = osw.execute(q);
+                                savedBag = (SavedBag) ((List) res.get(0)).get(0);
+                            } catch (ObjectStoreException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        if (savedBag == null) {
+                            savedBag = new SavedBag();
+                        }
                         savedBag.setBag(bagBinding.marshal(bag, bagName));
                         savedBag.setUserProfile(userProfile);
                         savedBag.setName(bagName);
                         savedBag.setSize(bag.size());
-                        savedBag.setObjects(bag instanceof InterMineIdBag);
+                        savedBag.setType(bag.getType());
                         osw.store(savedBag);
+                        bag.setSavedBagId(savedBag.getId());
                         bag.resetToDatabase();
                     }
                 } catch (Exception e) {

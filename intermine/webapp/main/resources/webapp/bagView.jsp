@@ -52,6 +52,9 @@
             <th align="left" colspan="2" nowrap>
               <fmt:message key="query.savedbags.namecolumnheader"/>
             </th>
+            <th nowrap>
+              <fmt:message key="query.savedbags.typecolumnheader"/>
+            </th>
             <th align="right" nowrap>
               <fmt:message key="query.savedbags.countcolumnheader"/>
             </th>
@@ -70,26 +73,16 @@
                 <tiles:put name="index" value="${status.index}"/>
               </tiles:insert>
               
+              <td><c:out value="${savedBag.value.type}" /></td>
+              
               <td align="right">
                 <c:out value="${savedBag.value.size}"/>
-                <c:choose>
-                  <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">
-                    <c:if test="${savedBag.value.size == 1}">
-                      object
-                    </c:if>
-                    <c:if test="${savedBag.value.size != 1}">
-                      objects
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <c:if test="${savedBag.value.size == 1}">
-                      value
-                    </c:if>
-                    <c:if test="${savedBag.value.size != 1}">
-                      values
-                    </c:if>
-                  </c:otherwise>
-                </c:choose>
+                <c:if test="${savedBag.value.size == 1}">
+                  value
+                </c:if>
+                <c:if test="${savedBag.value.size != 1}">
+                  unique values
+                </c:if>
               </td>
             </tr>
           </c:forEach>

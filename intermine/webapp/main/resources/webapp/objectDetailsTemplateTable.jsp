@@ -15,7 +15,7 @@
 <html:xhtml/>
 
 <div style="overflow: auto; padding: 3px">
-  <c:if test="${displayObject != null && table != null && !empty table.inlineResults}">
+  <c:if test="${(displayObject != null || interMineIdBag !=null) && table != null && !empty table.inlineResults}">
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
       <tr>
         <td width="15">
@@ -51,19 +51,21 @@
             <tbody>
               <c:forEach items="${table.inlineResults}" var="row" varStatus="status">
                 <tr>
-                  <c:forEach items="${row}" var="object">
+                  <c:forEach items="${row}" var="resultElement">
                     <c:choose>
-                      <c:when test="${empty object}">
+                      <c:when test="${empty resultElement}">
                         <td><fmt:message key="objectDetails.nullField"/></td>
                       </c:when>
                       <c:otherwise>
-                        <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
+                        <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[resultElement]}"/>
                         <td>
                           <c:choose>
                             <c:when test="${empty leafClds}">
-                              ${object}
+                              <c:set var="resultElement" value="${resultElement}" scope="request"/>
+                              <tiles:insert name="objectView.tile" />
                             </c:when>
                             <c:otherwise>
+                              <c:set var="object" value="${resultElement.object}"/>
                               <c:set var="displayObject2" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                               <%-- Link to object --%>
                               <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${prepend}${param.trail}_${object.id}" scope="request"/>
@@ -121,11 +123,18 @@
 
 <c:set var="extra" value=""/>
 <c:if test="${!empty fieldExprMap}">
+  <c:choose>
+  <c:when test="${! empty displayObject}">
   <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
     <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
     <c:set var="fieldValue" value="${displayObject.object[fieldName]}"/>
     <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
   </c:forEach>
+  </c:when>
+  <c:otherwise>
+    <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
+  </c:otherwise>
+  </c:choose>
 </c:if>
 [<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;type=global${extra}">
   Show in table...

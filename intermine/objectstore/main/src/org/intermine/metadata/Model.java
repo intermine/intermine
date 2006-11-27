@@ -158,7 +158,9 @@ public class Model
     public Set getAllSubs(ClassDescriptor cld) {
         Set returnSubs = new HashSet(); 
         Set directSubs = getDirectSubs(cld);
-        returnSubs.addAll(directSubs);
+        if (directSubs != null) {
+            returnSubs.addAll(directSubs);
+        }
         Iterator directSubsIterator = directSubs.iterator();
         while (directSubsIterator.hasNext()) {
             returnSubs.addAll(getAllSubs((ClassDescriptor) directSubsIterator.next()));

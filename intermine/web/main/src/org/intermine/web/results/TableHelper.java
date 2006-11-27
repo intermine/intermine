@@ -10,8 +10,6 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.List;
-
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -29,37 +27,6 @@ public abstract class TableHelper
      */
     public static final int BATCH_SIZE = 500;
 
-    /**
-     * Make a results table from an objectstore and a query and call initTable.
-     * @param os the ObjectStore against which to run the Query
-     * @param query the Query to create the PagedTable for
-     * @return a PagedResults object for the argument Query
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public static PagedResults makeTable(ObjectStore os, Query query)
-        throws ObjectStoreException {
-        Results r = makeResults(os, query);
-        initResults(r);
-        PagedResults pr = new PagedResults(r, os.getModel());
-        return pr;
-    }
-
-    /**
-     * Make a results table from an objectstore, a query and a view and call initTable.
-     * @param os the ObjectStore against which to run the Query
-     * @param query the Query to create the PagedTable for
-     * @param view the list of paths to SELECT
-     * @return a PagedResults object for the argument Query
-     * @throws ObjectStoreException if an error occurs in the underlying ObjectStore
-     */
-    public static PagedResults makeTable(ObjectStore os, Query query, List view)
-        throws ObjectStoreException {
-        Results r = makeResults(os, query);
-        initResults(r);
-        PagedResults pr = new PagedResults(view, r, os.getModel());
-        return pr;
-    }
-    
     /**
      * Must be called after makeResults to check that the query is valid and
      * fetch the first row.

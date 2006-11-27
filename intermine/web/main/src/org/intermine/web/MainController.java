@@ -24,10 +24,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.WebConfig;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -68,22 +73,49 @@ public class MainController extends TilesAction
      */
     public static void populateRequest(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         
-        // set up the metadata
-        request.setAttribute("nodes",
-                             MainHelper.makeNodes((String) session.getAttribute("path"), model));
-
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         List view = SessionMethods.getEditingView(session);
+
         request.setAttribute("viewPaths", listToMap(view));
         request.setAttribute("viewPathOrder", createIndexMap(view));
         request.setAttribute("viewPathTypes", getPathTypes(view, query));
+        
+        // set up the metadata
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Collection nodes = MainHelper.makeNodes((String) session.getAttribute("path"), model);
+        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+            MetadataNode node = (MetadataNode) iter.next();
+            // Update view nodes
+            String pathName = (String) node.getPath();
+            if (view.contains(pathName)) {
+                node.setSelected(true);
+            } else {
+            Path path = new Path(model, pathName);
+            // If an object has been selected, select its fields instead
+            if (path.getEndFieldDescriptor() == null || path.endIsReference()) {
+                    ClassDescriptor cld = path.getEndClassDescriptor();
+                    List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+                    Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
+                    while (cldFieldConfigIter.hasNext()) {
+                        FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+                        String pathFromField = pathName + "." + fc.getFieldExpr();
+                        if (! view.contains(pathFromField)) {
+                            node.setSelected(false);
+                            break;
+                        }
+                        node.setSelected(true);
+                    }
+                }
+            }
+        }
+        request.setAttribute("nodes", nodes);
+        
         Map prefixes = getViewPathLinkPaths(query);
         request.setAttribute("viewPathLinkPrefixes", prefixes);
         request.setAttribute("viewPathLinkPaths", getPathTypes(prefixes.values(), query));

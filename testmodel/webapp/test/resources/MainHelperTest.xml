@@ -1,0 +1,35 @@
+<query-list>
+  <query name="employee" model="testmodel" view="Employee"></query>
+  <query name="employeeName" model="testmodel" view="Employee.name"></query>
+  <query name="employeeAndName" model="testmodel" view="Employee Employee.name"></query>
+  <query name="employeeDepartment" model="testmodel" view="Employee.name Employee.department.name"></query>
+  <query name="employeeDepartmentReference" model="testmodel" view="Employee.name Employee.department"></query>
+  <query name="employeeDepartmentCompany" model="testmodel" view="Employee.name Employee.department.name Employee.department.company.name">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.department" type="Department">
+    </node>
+    <node path="Employee.department.name" type="String">
+      <constraint op="=" value="DepartmentA1" description="" identifier="" code="A">
+      </constraint>
+    </node>
+  </query>
+  <query name="employeeCompany" model="testmodel" view="Employee.name Employee.department.company.name">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.department" type="Department">
+    </node>
+    <node path="Employee.department.name" type="String">
+      <constraint op="=" value="DepartmentA1" description="" identifier="" code="A">
+      </constraint>
+    </node>
+  </query>
+  <query name="employeeDepartmentEmployees" model="testmodel" view="Employee.name Employee.department.name Employee.department.employees.name">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.name" type="String">
+      <constraint op="=" value="EmployeeA1" description="" identifier="" code="A">
+      </constraint>
+    </node>
+  </query>
+</query-list>

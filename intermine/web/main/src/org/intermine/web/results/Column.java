@@ -1,5 +1,7 @@
 package org.intermine.web.results;
 
+import org.intermine.path.Path;
+
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -18,9 +20,26 @@ package org.intermine.web.results;
 public class Column
 {
     protected boolean visible;
-    protected String name = "";
     protected int index;
     protected Object type;
+    protected boolean selectable;
+    private Path path;
+
+    /**
+     * Gets the value of selectable
+     * @return a boolean
+     */
+    public boolean isSelectable() {
+        return selectable;
+    }
+
+    /**
+     * Sets the value of selectable
+     * @param selectable value to assign to selectable
+     */
+    public void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+    }
 
     /**
      * Gets the value of visible
@@ -38,24 +57,6 @@ public class Column
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
-    }
-
-    /**
-     * Gets the value of name
-     *
-     * @return the value of name
-     */
-    public String getName()  {
-        return name;
-    }
-
-    /**
-     * Sets the value of name
-     *
-     * @param name value to assign to name
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -97,7 +98,7 @@ public class Column
      */
     public boolean equals(Object other) {
         if (other instanceof Column) {
-            return name.equals(((Column) other).getName());
+            return getPath().toString().equals(((Column) other).getPath().toString());
         }
         return false;
     }
@@ -106,13 +107,29 @@ public class Column
      * @see Object#hashCode
      */
     public int hashCode() {
-        return name.hashCode();
+        return getPath().toString().hashCode();
     }
 
     /**
      * @see Object#toString
      */
     public String toString() {
-        return "[Column " + name + " " + (visible ? "visible" : "not visible") + "]";
+        return "[Column " + getPath() + " " + (visible ? "visible" : "not visible") + "]";
+    }
+
+    /**
+     * Set the Path that this column is displaying
+     * @param path the Path
+     */
+    public void setPath(Path path) {
+        this.path = path;
+    }
+    
+    /**
+     * Get the Path set by setPath().
+     * @return the Path
+     */
+    public Path getPath() {
+        return path;
     }
 }

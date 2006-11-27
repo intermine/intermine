@@ -15,17 +15,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
@@ -38,6 +43,8 @@ import org.intermine.web.WebUtil;
  */
 public class ModifyBagAction extends InterMineAction
 {
+    private static final Logger LOG = Logger.getLogger(InterMineAction.class);
+    
     /**
      * Forward to the correct method based on the button pressed
      * @param mapping The ActionMapping used to select this instance
@@ -89,7 +96,8 @@ public class ModifyBagAction extends InterMineAction
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
 
-        if (!typesMatch(savedBags, selectedBags)) {
+        String type = getTypesMatch(savedBags, selectedBags, os);
+        if (type == null) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("bag");
         }
@@ -103,7 +111,7 @@ public class ModifyBagAction extends InterMineAction
             union.addAll((Collection) savedBags.get(selectedBags[i]));
         }
         InterMineBag combined =
-            new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, union);
+            new InterMineBag(profile.getUserId(), name, type, profileOs, os, union);
 
         int defaultMax = 10000;
 
@@ -126,20 +134,38 @@ public class ModifyBagAction extends InterMineAction
 
     /**
      * Given a set of bag names, find out whether they are all of the same type.
-     *
-     * @param bags map from bag name to InterMineBag subclass
+     * 
+     * @param bags map from bag name to InterMineIdBag subclass
      * @param selectedBags names of bags to match
-     * @return true if all named bags are of the same type, false if not
+     * @param os the obejct store
+     * @return a String containing the type name or null if there was no match
      */
-    private static boolean typesMatch(Map bags, String selectedBags[]) {
+    private static String getTypesMatch(Map bags, String selectedBags[], ObjectStore os) {
         // Check that all selected bags are of the same type
-        Class type = bags.get(selectedBags[0]).getClass();
-        for (int i = 1; i < selectedBags.length; i++) {
-            if (bags.get(selectedBags[i]).getClass() != type) {
-                return false;
+        String type = ((InterMineBag) bags.get(selectedBags[0])).getType();
+        Model model = os.getModel();
+        String packageName = model.getPackageName();
+        StringBuffer className = new StringBuffer(packageName + "." + type);
+        try {
+            Set classDescriptors  = model.getClassDescriptorsForClass(Class.forName(
+                                                                   className.toString()));
+            for (int i = 1; i < selectedBags.length; i++) {
+                boolean currentMatch = false;
+                String otherType = ((InterMineBag) bags.get(selectedBags[i])).getType();
+                for (Iterator iter = classDescriptors.iterator(); iter.hasNext();) {
+                    ClassDescriptor cld = (ClassDescriptor) iter.next();
+                    if (otherType.equals(TypeUtil.unqualifiedName(cld.getName()))) {
+                        currentMatch = true;
+                    }
+                }
+                if (!currentMatch) {
+                    return null;
+                }
             }
+        } catch (ClassNotFoundException e) {
+            LOG.error("error while matching bag types", e);
         }
-        return true;
+       return type;
     }
 
     /**
@@ -166,7 +192,8 @@ public class ModifyBagAction extends InterMineAction
         Map savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
 
-        if (!typesMatch(savedBags, selectedBags)) {
+        String type = getTypesMatch(savedBags, selectedBags, os);
+        if (type == null) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("bag");
         }
@@ -180,7 +207,7 @@ public class ModifyBagAction extends InterMineAction
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag combined =
-            new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, intersect);
+            new InterMineBag(profile.getUserId(), name, type, profileOs, os,intersect);
 
         int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
                                                              Constants.MAX_NOT_LOGGED_BAG_SIZE);
@@ -214,7 +241,8 @@ public class ModifyBagAction extends InterMineAction
         String[] selectedBags = mbf.getSelectedBags();
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
 
-        if (!typesMatch(savedBags, selectedBags)) {
+        String type = getTypesMatch(savedBags, selectedBags, os);
+        if (type == null) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("bag");
         }
@@ -246,7 +274,7 @@ public class ModifyBagAction extends InterMineAction
 
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag resultBag =
-            new InterMinePrimitiveBag(profile.getUserId(), name, profileOs, subtract);
+            new InterMineBag(profile.getUserId(), name, type, profileOs, os, subtract);
         int defaultMaxNotLoggedSize = 3;
         int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
                                                              defaultMaxNotLoggedSize);
