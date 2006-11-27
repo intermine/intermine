@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+q<?xml version="1.0" encoding="utf-8"?>
 <menu>
   <item title="Main">
     <item url="/index.xml" title="Home"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
     <item url="/doc/links.xml" title="Links"/>
+    <item url="/contact/index.xml" title="Contact us"/>
   </item>
 
   <item title="Release info">

@@ -186,6 +186,9 @@ public class Path
      * @return the end-is-attribute flag
      */
     public boolean endIsAttribute() {
+        if (endFld == null) {
+            return false;
+        }
         return endFld.isAttribute();
     }
 
@@ -194,6 +197,9 @@ public class Path
      * @return the end-is-collection flag
      */
     public boolean endIsCollection() {
+        if (endFld == null) {
+            return false;
+        }
         return endFld.isCollection();
     }
 
@@ -202,6 +208,9 @@ public class Path
      * @return the end-is-reference flag
      */
     public boolean endIsReference() {
+        if (endFld == null) {
+            return false;
+        }
         return endFld.isReference();
     }
 
