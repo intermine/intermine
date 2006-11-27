@@ -10,16 +10,32 @@ package org.intermine.web.results;
  *
  */
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.MainHelper;
+import org.intermine.web.PathQuery;
+import org.intermine.web.PathQueryBinding;
 
 public class PagedResultsTest extends TestCase
 {
@@ -29,11 +45,13 @@ public class PagedResultsTest extends TestCase
 
     private ObjectStoreDummyImpl os;
     private IqlQuery fq;
+    private Model model;
 
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
         fq = new IqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.intermine.model.testmodel");
+        model = Model.getInstanceByName("testmodel");
     }
 
     private PagedResults getEmptyResults() throws Exception {
@@ -44,7 +62,6 @@ public class PagedResultsTest extends TestCase
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
-        Model model = Model.getInstanceByName("testmodel");
         return new PagedResults(results, model);
     }
 
@@ -53,7 +70,6 @@ public class PagedResultsTest extends TestCase
         // Make sure we definitely know the end
         results.setBatchSize(20);
         results.get(0);
-        Model model = Model.getInstanceByName("testmodel");
         return new PagedResults(results, model);
     }
 
@@ -61,7 +77,6 @@ public class PagedResultsTest extends TestCase
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        Model model = Model.getInstanceByName("testmodel");
         return new PagedResults(results, model);
     }
 
@@ -69,7 +84,6 @@ public class PagedResultsTest extends TestCase
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        Model model = Model.getInstanceByName("testmodel");
         return new PagedResults(results, model);
     }
 
@@ -90,6 +104,122 @@ public class PagedResultsTest extends TestCase
         assertEquals(25, dr.getSize());
     }
 
+    public void testGetIndexForColumn() throws Exception {
+        Map queries = readQueries();
+        Map headers = new HashMap();
+        Map expected = new HashMap();
+        Map results = new HashMap();
+
+        Employee e1 = new Employee();
+        e1.setName("employee1");
+        e1.setId(new Integer(101));
+
+        Employee e2 = new Employee();
+        e2.setName("employee2");
+        e2.setId(new Integer(102));
+
+        Department d1 = new Department();
+        d1.setName("DepartmentA1");
+        d1.setId(new Integer(201));
+       
+        Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        c1.setName("Company1");
+        c1.setId(new Integer(301));
+
+        ObjectStore os = new ObjectStoreDummyImpl();
+        results.put("employee", toList(new Object[][] { { e1 } }));
+        expected.put("employee", Arrays.asList(new ResultElement[] {new ResultElement(e1,e1.getId(), "Employee", false)}));
+        headers.put("employee", toList(new Object[] {"Employee"}));
+        
+        results.put("employeeName", toList(new Object[][] { { e1 } }));
+        expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false)}));
+        headers.put("employeeName", toList(new Object[] {"Employee"}));
+
+        results.put("employeeAndName", toList(new Object[][] { { e1 } }));
+        expected.put("employeeAndName", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(),"Employee", false),
+            new ResultElement(e1,e1.getId(),"Employee", false)}));
+        headers.put("employeeAndName", toList(new Object[] {"Employee", "Employee"}));
+ 
+        results.put("employeeDepartment", toList(new Object[][] { { e1, d1 } }));
+        expected.put("employeeDepartment", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false), 
+                new ResultElement(d1,d1.getId(),"Department", false)}));
+        headers.put("employeeDepartment", toList(new Object[] {"Employee", "Employee.department"}));
+
+        results.put("employeeDepartmentReference", toList(new Object[][] { { e1, d1 } }));
+        expected.put("employeeDepartmentReference", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false), 
+                new ResultElement(d1, d1.getId(), "Department", false)}));
+        headers.put("employeeDepartmentReference", toList(new Object[] {"Employee", "Employee.department"}));
+        
+        results.put("employeeDepartmentCompany", toList(new Object[][] { { e1, d1, c1 } }));
+        expected.put("employeeDepartmentCompany", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(),"Employee", false),
+                new ResultElement(d1,d1.getId(),"Department", false),
+                new ResultElement(c1,c1.getId(),"Company", false)}));
+        headers.put("employeeDepartmentCompany", toList(new Object[] {"Employee", "Employee.department", "Employee.department.company"}));
+        
+        results.put("employeeCompany", toList(new Object[][] { { e1, c1 } }));
+        expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false),
+                new ResultElement(c1,c1.getId(),"Company", false)}));
+        headers.put("employeeCompany", toList(new Object[] {"Employee", "Employee.department.company"}));
+        
+        results.put("employeeDepartmentEmployees", toList(new Object[][] { { e1, d1, e2 } } ));
+        expected.put("employeeDepartmentEmployees", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false),
+                new ResultElement(d1,d1.getId(),"Department", false),
+                new ResultElement(e2,e2.getId(),"Employee", false)}));
+        headers.put("employeeDepartmentEmployees", toList(new Object[] {"Employee", "Employee.department", "Employee.department.employees"}));
+        
+        // check all queries, fail if no expected values set
+        Iterator queryIter = queries.entrySet().iterator();
+        while (queryIter.hasNext()) {
+        	Map.Entry entry = (Map.Entry) queryIter.next();
+        	String queryName = (String) entry.getKey();
+            if (!expected.containsKey(queryName)) {
+                fail("no expected column indexes set up for query: " + queryName);
+            }
+
+            PathQuery pq = (PathQuery) entry.getValue();
+            Map pathToQueryNode = new HashMap();
+            Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode);
+            Results r = new DummyResults(os, q, (List) results.get(queryName));
+//            PagedResults pr = new PagedResults(pq.getView(), r, model, pathToQueryNode, null);
+            WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, null);
+            PagedResults pr = new PagedResults(webResults);
+            assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
+         }
+    }
+
+    private class DummyResults extends Results {
+        List rows;
+
+        public DummyResults(ObjectStore os, Query query, List rows) {
+            super(query, os, os.getSequence());
+            this.rows = rows;	
+        }
+
+        public Object get(int index) {
+            return rows.get(index);
+        }
+    }
+
+    private List toList(Object array[][]) {
+        List rows = new ArrayList();
+        for(int i=0;i<array.length;i++) {
+            rows.add(new ResultsRow(Arrays.asList((Object[])array[i])));
+        }
+        return rows;
+    }
+    
+    private List toList(Object array[]) {
+        List rows = new ArrayList();
+        for(int i=0;i<array.length;i++) {
+            rows.add(array[i]);
+        }
+        return rows;
+    }
+    
+    private Map readQueries() throws Exception {
+        InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
+        return PathQueryBinding.unmarshal(new InputStreamReader(is));
+    }
 //     public void testSizeLow() throws Exception {
 //         PagedResults dr = getEstimateTooLowResults();
 //         dr.setPageSize(10);

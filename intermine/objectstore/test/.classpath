@@ -10,6 +10,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry kind="lib" path="build/main"/>
+	<classpathentry kind="lib" path="/intermine-web-test/build/main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

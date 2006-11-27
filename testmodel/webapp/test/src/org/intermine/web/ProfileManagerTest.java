@@ -18,12 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.metadata.Model;
@@ -36,9 +36,8 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.XmlBinding;
+import org.intermine.web.bag.BagElement;
 import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 
 import java.io.BufferedReader;
@@ -109,16 +108,9 @@ public class ProfileManagerTest extends XMLTestCase
         String bobName = "bob";
 
         Set contents = new HashSet();
-        contents.add("foo1");
-        contents.add("foo2");
-        contents.add("foo3");
-        contents.add(new Integer(100));
-        contents.add(new Boolean(true));
-        contents.add(new Float(1.1));
-        InterMineBag bag = new InterMinePrimitiveBag(bobId, "bag1",
-                                                     os,
-                                                     contents);
-
+        InterMineBag bag = new InterMineBag(bobId, "bag1", "Employee", os, contents);
+        bag.add(new BagElement(new Integer(4), "Employee"));
+        
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")),
@@ -137,15 +129,6 @@ public class ProfileManagerTest extends XMLTestCase
         // sally details
         String sallyName = "sally";
 
-        contents.add("some value");
-        bag = new InterMinePrimitiveBag(sallyId, "bag2",
-                                        os,
-                                        contents);
-        otherContents.add(new Integer(123));
-        InterMineBag otherBag = new InterMinePrimitiveBag(sallyId, "bag3",
-                                                     os,
-                                                     otherContents);
-
 
         Set objectContents = new HashSet();
 
@@ -158,10 +141,8 @@ public class ProfileManagerTest extends XMLTestCase
         // and will also implicitly add the Company of this department to the output because the
         // primary key of the Department includes the company reference
         objectContents.add(new Integer(6));
-        InterMineIdBag objectBag = new InterMineIdBag(sallyId, "bag4",
-                                                     os,
-                                                     objectContents);
 
+        InterMineBag objectBag = new InterMineBag(sallyId, "bag2", "Employee", os, contents);
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,
@@ -170,9 +151,8 @@ public class ProfileManagerTest extends XMLTestCase
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap());
         sallyProfile.saveQuery("query1", sq);
-        sallyProfile.saveBag("sally_bag1", bag);
-        sallyProfile.saveBag("sally_bag2", otherBag);
-        sallyProfile.saveBag("sally_bag3", objectBag);
+        sallyProfile.saveBag("sally_bag1", objectBag);
+
         sallyProfile.saveTemplate("template", template);
     }
 

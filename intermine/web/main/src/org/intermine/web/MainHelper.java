@@ -32,6 +32,8 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.path.Path;
+
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -50,7 +52,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.bag.InterMineIdBag;
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineBag;
 
 /**
  * Helper methods for main controller and main action
@@ -70,7 +73,7 @@ public class MainHelper
         request.setAttribute(attributeName, session.getAttribute(attributeName));
         session.removeAttribute(attributeName);
     }
-    
+
     /**
      * Given a path, render a set of metadata Nodes to the relevant depth
      * @param path of form Gene.organism.name
@@ -189,7 +192,7 @@ public class MainHelper
         Map codeToCS = new HashMap();
         ConstraintSet rootcs = null;
         ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
-        
+
         if (pathQuery.getAllConstraints().size() == 1) {
             Constraint c = (Constraint) pathQuery.getAllConstraints().get(0);
             codeToCS.put(c.getCode(), andcs);
@@ -250,21 +253,15 @@ public class MainHelper
                 String code = c.getCode();
                 ConstraintSet cs = (ConstraintSet) codeToCS.get(code);
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    Collection bag = (Collection) savedBags.get(c.getValue());
-                    if (bag instanceof InterMineIdBag) {
-                        // constrain the id of the object
-                        QueryField qf = new QueryField((QueryClass) qn, "id");
-                        cs.addConstraint(new BagConstraint(qf, c.getOp(), bag));
+                    InterMineBag bag;
+                    if (c.getValue() instanceof InterMineBag) {
+                        bag = (InterMineBag) c.getValue();
+                        
                     } else {
-                        if (qn.getType().equals(String.class)) {
-                            QueryFunction qf = new QueryFunction((QueryField) qn,
-                                                                 QueryFunction.LOWER);
-                            cs.addConstraint(new BagConstraint(qf, c.getOp(), 
-                                                               lowerCaseBag(bag)));
-                        } else {
-                            cs.addConstraint(new BagConstraint(qn, c.getOp(), bag));
-                        }
+                        bag = (InterMineBag) savedBags.get(c.getValue());
                     }
+                    QueryField qf = new QueryField((QueryClass) qn, "id");
+                    cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getListOfIds()));
                 } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL
                         || c.getOp() == ConstraintOp.IS_NULL) {
@@ -291,14 +288,14 @@ public class MainHelper
                 }
             }
         }
-        
+
         // Now process loop constraints. The constraint parameter refers backwards and
         // forwards in the query so we can't process these in the above loop.
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
             QueryNode qn = (QueryNode) queryBits.get(path);
-            
+
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 ConstraintSet cs = (ConstraintSet) codeToCS.get(c.getCode());
@@ -321,7 +318,16 @@ public class MainHelper
 
         //build the SELECT list
         for (Iterator i = view.iterator(); i.hasNext();) {
-            q.addToSelect((QueryNode) queryBits.get(i.next()));
+            PathNode pn = (PathNode) pathQuery.getNodes().get(i.next());
+            QueryNode qn = null;
+            if (pn.isAttribute()) {
+                qn = ((QueryNode) queryBits.get(pn.getPrefix()));
+            } else {
+                qn = ((QueryNode) queryBits.get(pn.getPath()));
+            }
+            if (!q.getSelect().contains(qn)) {
+                q.addToSelect(qn);
+            }
         }
 
         //caller might want path to query node map (e.g. PrecomputeTask)
@@ -350,7 +356,7 @@ public class MainHelper
      * Given a LogicExpression, generate a tree of ConstraintSets that reflects the
      * expression and add entries to the codeToConstraintSet Map from map from
      * constraint code to ConstraintSet.
-     * 
+     *
      * @param logic the parsed logic expression
      * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
      * @return root ConstraintSet
@@ -368,10 +374,10 @@ public class MainHelper
         } else {
             throw new IllegalArgumentException("logic expression must contain a root operator");
         }
-        
+
         return root;
     }
-    
+
     private static void makeConstraintSets(LogicExpression.Node node, ConstraintSet set,
             Map codeToConstraintSet) {
         Iterator iter = node.getChildren().iterator();
@@ -525,10 +531,10 @@ public class MainHelper
             return Class.forName("java.lang." + className).getName();
         }
     }
-    
+
     /**
      * Given a path, find out whether it represents an attribute or a reference/collection.
-     * 
+     *
      * @param path the path
      * @param pathQuery the path query
      * @return true if path ends with an attribute, false if not
@@ -538,7 +544,7 @@ public class MainHelper
         return !(classname.startsWith(pathQuery.getModel().getPackageName())
                 || classname.endsWith("InterMineObject"));
     }
-    
+
     /**
      * Return the fully qualified type of the last node in the given path.
      * @param path the path
@@ -622,5 +628,45 @@ public class MainHelper
         }
 
         return cld.getName();
+    }
+
+    /**
+     * Given the string version of a path (eg. "Department.employees.seniority"), and a PathQuery,
+     * create a Path object.  The PathQuery is needed to find the class constraints that effect the
+     * path.
+     * @param model the Model to pass to the Path constructor
+     * @param query the PathQuery
+     * @param fullPathName the full path as a string
+     * @return a new Path object
+     */
+    public static Path makePath(Model model, PathQuery query, String fullPathName) {
+        Map subClassConstraintMap = new HashMap();
+        
+        Iterator viewPathNameIter = query.getNodes().keySet().iterator();
+        while (viewPathNameIter.hasNext()) {
+            String viewPathName = (String) viewPathNameIter.next();
+            PathNode pathNode = query.getNode(viewPathName);
+            subClassConstraintMap.put(viewPathName, pathNode.getType());
+        }
+        
+        Path path = new Path(model, fullPathName, subClassConstraintMap);
+        return path;
+    }
+
+    /**
+     * Convert a path and prefix to a path
+     * @param prefix the prefix (eg null or Department.company)
+     * @param path the path (eg Company, Company.departments)
+     * @return the new path
+     */
+    public static String toPath(String prefix, String path) {
+        if (prefix != null) {
+            if (path.indexOf(".") == -1) {
+                path = prefix;
+            } else {
+                path = prefix + "." + path.substring(path.indexOf(".") + 1);
+            }
+        }
+        return path;
     }
 }

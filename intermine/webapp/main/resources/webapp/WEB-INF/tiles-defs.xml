@@ -26,10 +26,6 @@
     <put name="body" value="query.tile"/>
     <put name="pageName" value="query"/>
   </definition>
-  <definition name="iqlQuery.page" extends="layout.template">
-    <put name="body" value="iqlQuery.tile"/>
-    <put name="pageName" value="iqlquery"/>
-  </definition>
   <definition name="mymine.page" extends="layout.template">
     <put name="body" value="mymine.tile"/>
     <put name="pageName" value="mymine"/>
@@ -130,6 +126,10 @@
     <put name="body" value="changePassword.jsp"/>
     <put name="pageName" value="changePassword"/>
   </definition>
+  <definition name="bagDetails.page" extends="layout.template">
+    <put name="body" value="bagDetails.tile"/>
+    <put name="pageName" value="bagDetails"/>
+  </definition>
   <!--tiles-->
   <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
@@ -152,7 +152,6 @@
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition> 
-  <definition name="iqlQuery.tile" path="/iqlQuery.jsp" controllerUrl="/initIqlQuery.do"/>
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="history.tile" path="/history.jsp" />
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
@@ -172,6 +171,7 @@
   <definition name="precomputeTemplate.tile" path="precompute.jsp" controllerUrl="/precomputeTemplate.do" />
   <definition name="externalLinks.tile" path="/externalLinks.jsp"
               controllerUrl="/initExternalLinks.do"/>
+  <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />
   
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

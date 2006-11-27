@@ -214,14 +214,9 @@
         </c:otherwise>
       </c:choose>
       <%-- Find the right set of bags --%>
-      <c:choose>
-        <c:when test="${editingNode.attribute}">
-          <c:set var="bags" value="${PROFILE.primitiveBags}"/>
-        </c:when>
-        <c:otherwise>
-          <c:set var="bags" value="${PROFILE.objectBags}"/>
-        </c:otherwise>
-      </c:choose>
+<%--      <c:if test="${editingNode.attribute}">
+        <c:set var="bags" value="${PROFILE.primitiveBags}"/>
+      </c:if>--%>
       <%-- Display popup if bags exist --%>
       <c:if test="${!empty bags}">
         <p style="text-align: left;">

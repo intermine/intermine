@@ -266,7 +266,7 @@ public class TemplateForm extends ActionForm
         int j = 0;
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            for (Iterator ci = template.getConstraints(node).iterator(); ci.hasNext();) {
+            for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
                 
                 String key = "" + (j + 1);

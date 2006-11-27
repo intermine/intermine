@@ -10,6 +10,7 @@
 <html:xhtml/>
 
 <tiles:importAttribute name="displayObject" ignore="true"/>
+<tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="templateQuery"/>
 <tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="type"/>
@@ -25,7 +26,7 @@
 
 <div class="templateLine">
   <c:choose>
-    <c:when test="${empty displayObject}">
+    <c:when test="${empty displayObject && empty interMineIdBag}">
       <%-- no icon at all --%>
     </c:when>
     <%--
@@ -59,7 +60,7 @@
   <div class="${displayObject == null ? '' : 'templateDetails'}">
     <span class="${cssClass}" id="label_${uid}">
       <im:templateLine type="${type}" templateQuery="${templateQuery}"
-                       className="${className}" interMineObject="${interMineObject}"/>
+                       className="${className}" interMineObject="${interMineObject}" bagName="${interMineIdBag.name}"/>
       <span id="count_${uid}" class="templateResCount"></span><br/>
     </span>
   </div>
@@ -69,6 +70,7 @@
       <c:if test="${verbose}">
         <tiles:insert name="objectDetailsTemplateTable.tile">
           <tiles:put name="displayObject" beanName="displayObject"/>
+          <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
           <tiles:put name="templateQuery" beanName="templateQuery"/>
           <tiles:put name="placement" value="${placement}"/>
         </tiles:insert>
@@ -84,14 +86,24 @@
     </tiles:insert>
   </c:if>
   
-  <c:if test="${!verbose && displayObject != null}">
-    <script type="text/javascript">
-      <!--//<![CDATA[
-        $('img_${uid}').src='images/spinner.gif';
-        queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}');
-      //]]>-->
-    </script>
-  </c:if>
+  <c:choose>
+    <c:when test="${!verbose && displayObject != null}">
+      <script type="text/javascript">
+        <!--//<![CDATA[
+          $('img_${uid}').src='images/spinner.gif';
+          queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}');
+        //]]>-->
+      </script>
+    </c:when>
+    <c:when test="${!verbose && interMineIdBag != null}">
+      <script type="text/javascript">
+        <!--//<![CDATA[
+          $('img_${uid}').src='images/spinner.gif';
+          queueInlineTemplateQuery('${placement}', '${templateName}', '${interMineIdBag.name}');
+        //]]>-->
+      </script>
+    </c:when>
+  </c:choose>
   
 </div>
 <!-- /objectDetailsTemplate.jsp -->

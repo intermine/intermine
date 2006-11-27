@@ -1,0 +1,165 @@
+package org.intermine.web.results;
+
+/*
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.iql.IqlQuery;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
+
+import junit.framework.TestCase;
+
+/**
+ * Tests for the WebResults class
+ *
+ * @author Kim Rutherford
+ */
+
+public class WebResultsTest extends TestCase
+{
+    private Results results;
+    private Company company1;
+    private Company company2;
+    private Company company3;
+    private Department department1;
+    private Department department2;
+    private Department department3;
+    private WebResults webResults;
+    
+    public WebResultsTest (String arg) {
+        super(arg);
+    }
+
+    public void setUp() throws Exception {
+        super.setUp();
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os.setResultsSize(15);
+        IqlQuery fq = new IqlQuery("SELECT DISTINCT a1_, a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company AS a3_ WHERE (a1_.manager CONTAINS a2_ AND a2_.company CONTAINS a3_)", "org.intermine.model.testmodel");
+        Query query = fq.toQuery();
+        results = os.execute(query);
+
+        // Set up some known objects in the first 3 results rows
+        department1 = new Department();
+        department1.setName("Department1");
+        department1.setId(new Integer(4));
+        department2 = new Department();
+        department2.setName("Department2");
+        department2.setId(new Integer(5));
+        department3 = new Department();
+        department3.setName("Department3");
+        department3.setId(new Integer(6));
+
+        company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company1.setName("Company1");
+        company1.setVatNumber(101);
+        company1.setId(new Integer(1));
+        company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company2.setName("Company2");
+        company2.setVatNumber(102);
+        company2.setId(new Integer(2));
+        company3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company3.setName("Company3");
+        company3.setVatNumber(103);
+        company3.setId(new Integer(3));
+
+
+        ResultsRow row = new ResultsRow();
+        row.add(department1);
+        row.add(company1);
+        os.addRow(row);
+        row = new ResultsRow();
+        row.add(department2);
+        row.add(company2);
+        os.addRow(row);
+        row = new ResultsRow();
+        row.add(department3);
+        row.add(company3);
+        os.addRow(row);
+
+        final Model model = Model.getInstanceByName("testmodel");
+        List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
+            add(new Path(model, "Department.name"));
+            add(new Path(model, "Department.manager[CEO].company.name"));
+            add(new Path(model, "Department.manager[CEO].company.vatNumber"));
+        }};
+        Map pathToQueryNode = new HashMap();
+        QueryClass deptQC = (QueryClass) query.getSelect().get(0);
+        pathToQueryNode.put("Department", deptQC);
+        QueryField deptNameQF = new QueryField(deptQC, "name");
+        pathToQueryNode.put("Department.name", deptNameQF);
+        QueryClass compQC = (QueryClass) query.getSelect().get(1);
+        pathToQueryNode.put("Department.manager.company", compQC);
+        QueryField compNameQF = new QueryField(compQC, "name");
+        pathToQueryNode.put("Department.manager.company.name", compNameQF );
+        QueryField compVatNumQF = new QueryField(compQC, "vatNumber");
+        pathToQueryNode.put("Department.manager.company.vatNumber", compVatNumQF);
+        
+        Map classKeys = new HashMap();
+        classKeys.put("Company", "name");
+        webResults = new WebResults(view, results, model, pathToQueryNode, classKeys);
+    }
+    
+    public void test() {
+        assertEquals("Department1", ((List) webResults.get(0)).get(0));
+        assertEquals("Company1", ((List) webResults.get(0)).get(1));
+        assertEquals(new Integer(101), ((List) webResults.get(0)).get(2));
+        assertEquals("Department2", ((List) webResults.get(1)).get(0));
+        assertEquals("Company2", ((List) webResults.get(1)).get(1));
+        assertEquals(new Integer(102), ((List) webResults.get(1)).get(2));
+        assertEquals("Department3", ((List) webResults.get(2)).get(0));
+        assertEquals("Company3", ((List) webResults.get(2)).get(1));
+        assertEquals(new Integer(103), ((List) webResults.get(2)).get(2));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

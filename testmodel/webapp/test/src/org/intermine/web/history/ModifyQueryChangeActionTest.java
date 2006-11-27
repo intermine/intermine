@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashSet;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.web.Constants;
 import org.intermine.web.PathQuery;
@@ -13,13 +12,13 @@ import org.intermine.web.Profile;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TemplateQuery;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
+//import org.intermine.web.bag.InterMineBag;
 
 import servletunit.struts.MockStrutsTestCase;
 
 public class ModifyQueryChangeActionTest extends MockStrutsTestCase
 {
+    /*
     PathQuery query;
     SavedQuery sq, hist, hist2;
     Date date = new Date();
@@ -38,7 +37,6 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         userprofileOS.setModel(Model.getInstanceByName("userprofile"));
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         query.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
-        bag = new InterMinePrimitiveBag(userId, "bag1", userprofileOS, new HashSet());
         sq = new SavedQuery("query1", date, query);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
@@ -117,4 +115,5 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         assertEquals(2, profile.getSavedQueries().size());
         assertEquals(2, profile.getHistory().size());
     }
+    */
 }

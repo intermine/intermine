@@ -13,25 +13,27 @@ package org.intermine.web;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import org.intermine.objectstore.query.Results;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.TextFileUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
 import org.intermine.web.config.TableExportConfig;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.results.Column;
 import org.intermine.web.results.DisplayObject;
+import org.intermine.web.results.PagedCollection;
 import org.intermine.web.results.PagedTable;
+import org.intermine.web.results.WebCollection;
+import org.intermine.web.results.WebResults;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -73,31 +75,43 @@ public class ExportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         String type = request.getParameter("type");
+        String tableType = request.getParameter("tableType");
 
         List rowList = null;
-        ObjectStore os = null;
+
         try {
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
-            os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-            rowList = pt.getAllRows();
-            if (rowList instanceof Results) {
-                rowList = WebUtil.changeResultBatchSize((Results) rowList, BIG_BATCH_SIZE);
-                if (os instanceof ObjectStoreInterMineImpl) {
-                    try {
-                        ((ObjectStoreInterMineImpl) os).goFaster(((Results) rowList).getQuery());
-                    } catch (ObjectStoreException e) {
-                    }
+            PagedTable pt;
+            
+            if (tableType.equals("bag")) {
+                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+                String bagName = request.getParameter("table");
+                InterMineBag imBag = (InterMineBag) profile.getSavedBags().get(bagName);
+
+                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+                Model model = os.getModel();
+                
+                WebCollection webCollection = 
+                    new WebCollection(os, imBag.getType(), imBag, model, webConfig, classKeys);
+                pt = new PagedCollection(webCollection);
+                
+            } else {
+                pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
+                rowList = pt.getAllRows();
+                if (rowList instanceof WebResults) {
+                    ((WebResults) rowList).goFaster();
                 }
             }
-
+            
             if (type.equals("excel")) {
-                return excel(mapping, form, request, response);
+                return excel(mapping, request, response, pt);
             } else if (type.equals("csv")) {
-                return csv(mapping, form, request, response);
+                return csv(request, response, pt);
             } else if (type.equals("tab")) {
-                return tab(mapping, form, request, response);
+                return tab(request, response, pt);
             }
 
             WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -114,22 +128,15 @@ public class ExportAction extends InterMineAction
                 return tableExporter.export(mapping, form, request, response);
             }
         } finally {
-            if (os instanceof ObjectStoreInterMineImpl) {
-                ((ObjectStoreInterMineImpl) os).releaseGoFaster(((Results) rowList).getQuery());
+            if (rowList instanceof WebResults) {
+                ((WebResults) rowList).releaseGoFaster();
             }
         }
     }
-    
-    /**
-     * The batch size to use when we need to iterate through the whole result set.
-     */
-    public static final int BIG_BATCH_SIZE = 5000;
-
+ 
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
@@ -137,9 +144,8 @@ public class ExportAction extends InterMineAction
      *  an exception
      */
     public ActionForward excel(ActionMapping mapping,
-                               ActionForm form,
                                HttpServletRequest request,
-                               HttpServletResponse response)
+                               HttpServletResponse response, PagedTable pt)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -150,8 +156,6 @@ public class ExportAction extends InterMineAction
         response.setContentType("Application/vnd.ms-excel");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "attachment; filename=\"results-table.xls\"");
-
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         if (pt == null) {
             return mapping.getInputForward();
@@ -257,18 +261,15 @@ public class ExportAction extends InterMineAction
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
+     * @param pt 
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward csv(ActionMapping mapping,
-                             ActionForm form,
-                             HttpServletRequest request,
-                             HttpServletResponse response)
+    public ActionForward csv(HttpServletRequest request,
+                             HttpServletResponse response, PagedTable pt)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -280,10 +281,6 @@ public class ExportAction extends InterMineAction
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.csv\"");
 
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-
-        List allRows = pt.getAllRows();
-        
         TextFileUtil.writeCSVTable(response.getOutputStream(), pt.getAllRows(),
                 getOrder(pt), getVisible(pt), pt.getMaxRetrievableIndex() + 1,
                 getObjectFormatter(model, webConfig));
@@ -294,18 +291,14 @@ public class ExportAction extends InterMineAction
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward tab(ActionMapping mapping,
-                             ActionForm form,
-                             HttpServletRequest request,
-                             HttpServletResponse response)
+    public ActionForward tab(HttpServletRequest request,
+                             HttpServletResponse response, PagedTable pt)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -316,8 +309,6 @@ public class ExportAction extends InterMineAction
         response.setContentType("text/tab-separated-values");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.tsv\"");
-
-        PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         List allRows = pt.getAllRows();
         

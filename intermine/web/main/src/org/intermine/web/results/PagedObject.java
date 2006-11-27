@@ -31,17 +31,18 @@ public class PagedObject extends PagedTable
 
         List row = new ArrayList();
         row.add(o);
-        rows = new ArrayList();
-        rows.add(row);
+        List newRows = new ArrayList();
+        newRows.add(row);
+        setRows(newRows);
 
-        ((Column) getColumns().get(0)).setType(Object.class);
+        ((Column) getColumns().get(0)).setType("java.lang.Object");
     }
 
     /**
      * @see PagedTable#getAllRows
      */
     public List getAllRows() {
-        return rows;
+        return getRows();
     }
 
     /**

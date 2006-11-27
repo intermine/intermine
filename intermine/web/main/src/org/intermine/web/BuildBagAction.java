@@ -10,38 +10,18 @@ package org.intermine.web;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
-
-import org.intermine.InterMineException;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineIdBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
 
 /**
  * An action that makes a bag from text.
@@ -68,7 +48,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                                        HttpServletRequest request,
                                        HttpServletResponse response)
         throws Exception {
-        return makeBag(mapping, form, request, response, null);
+        return makeBag(mapping, form, request, null);
     }
 
     /**
@@ -92,7 +72,7 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         ServletContext servletContext = session.getServletContext();
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
-        return makeBag(mapping, form, request, response, templateName);
+        return makeBag(mapping, form, request, templateName);
     }
 
     /**
@@ -101,7 +81,6 @@ public class BuildBagAction extends InterMineLookupDispatchAction
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      *
      * @exception Exception if the application business logic throws
@@ -110,13 +89,14 @@ public class BuildBagAction extends InterMineLookupDispatchAction
     private ActionForward makeBag(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response,
                                  String converterTemplateName)
         throws Exception {
+        throw new RuntimeException("not implemented");
+        /*
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BuildBagForm buildBagForm = (BuildBagForm) form;
+        ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String newBagName = buildBagForm.getBagName();
         ObjectStore userProfileOs = ((ProfileManager) servletContext.getAttribute(Constants
@@ -124,8 +104,9 @@ public class BuildBagAction extends InterMineLookupDispatchAction
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
-        InterMineBag identifierBag = new InterMinePrimitiveBag(profile.getUserId(), newBagName,
+        InterMineIdBag identifierBag = new InterMinePrimitiveBag(profile.getUserId(), newBagName,
                 userProfileOs, Collections.EMPTY_SET);
+
         String trimmedText = buildBagForm.getText().trim();
         FormFile formFile = buildBagForm.getFormFile();
 
@@ -149,14 +130,21 @@ public class BuildBagAction extends InterMineLookupDispatchAction
             }
         }
 
+        int lineCount = 0;
         String thisLine;
         while ((thisLine = reader.readLine()) != null) {
+            List list = new ArrayList();
+
+            int elementCount = 0;
+            
             StringTokenizer st = new StringTokenizer(thisLine, " \n\t,");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-                identifierBag.add(token);
+                list.add(token);
 
-                if (identifierBag.size() > maxBagSize) {
+                elementCount++;
+                
+                if (elementCount > maxBagSize) {
                     ActionMessage actionMessage =
                         new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                     recordError(actionMessage, request);
@@ -164,57 +152,23 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                     return mapping.findForward("buildBag");
                 }
             }
+            
+            if (list.size() > 0) {
+                lineCount++;
+                identifierBag.add(list);
+            }
         }        
 
-        InterMineBag bagToSave = null;
-        
-        if (converterTemplateName != null) {
-            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-            Integer inOp = ConstraintOp.IN.getIndex();
-            TemplateQuery template =
-                TemplateHelper.findTemplate(servletContext, session, userName, 
-                                            converterTemplateName, "global");
-
-            if (template == null) {
-                throw new IllegalStateException("Could not find template \"" 
-                                                + converterTemplateName + "\"");
-            }
-
-            InterMineIdBag idBag = new InterMineIdBag(profile.getUserId(), newBagName,
-                    userProfileOs, Collections.EMPTY_SET);
-
-            String queryBagName = "id_bag_name";
-
-            // Map from bag name to bag for passing to makeQuery
-            Map bagMap = new HashMap();
-            bagMap.put(queryBagName, identifierBag);
-            
-            // Populate template form bean
-            TemplateForm tf = new TemplateForm();
-            tf.setBagOp("1", inOp.toString());
-            tf.setBag("1", queryBagName);
-            
-            tf.setUseBagConstraint("1", true);
-            tf.parseAttributeValues(template, session, new ActionErrors(), false);
-
-            PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(tf, template);
-            Query query = MainHelper.makeQuery(pathQuery, bagMap);
-            Results results = os.execute(query);
-
-            Iterator resultsIter = results.iterator();
-            
-            while (resultsIter.hasNext()) {
-                ResultsRow rr = (ResultsRow) resultsIter.next();
-                InterMineObject o = (InterMineObject) (rr.get(0));
-                
-                idBag.add(o.getId().intValue());
-            }
-
-            bagToSave = idBag;
-        } else {
-            bagToSave = identifierBag;
+        if (identifierBag.width() > 10 && lineCount == 1) {
+            // flatten the bag into one column - the user is unlikely to want a single row bag
+            Collection collection = (Collection) identifierBag.asListOfLists().get(0);
+            identifierBag =  new InterMinePrimitiveBag(profile.getUserId(), newBagName, 
+                                                       new Integer(identifierBag.width()), os);
+            identifierBag.addAll(collection);
         }
-
+        
+        InterMineIdBag bagToSave = null;
+        bagToSave = identifierBag;
         int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
                                                              Constants.MAX_NOT_LOGGED_BAG_SIZE);
         try {
@@ -229,7 +183,9 @@ public class BuildBagAction extends InterMineLookupDispatchAction
                                         new Integer(bagToSave.size())), request);
 
         return mapping.findForward("buildBag");
+        */
     }
+
 
     /**
      * Distributes the actions to the necessary methods, by providing a Map from action to

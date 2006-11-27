@@ -1,5 +1,6 @@
 <%@ tag body-content="scriptless" %>
-<%@ attribute name="viewPaths" type="java.util.Map" required="true" %>
+<%@ attribute name="node" type="org.intermine.web.MetadataNode" required="false" %>
+<%@ attribute name="viewPaths" type="java.util.Map" required="false" %>
 <%@ attribute name="path" required="true" %>
 <%@ attribute name="idPrefix" required="true" %>
 <%@ attribute name="test" type="java.lang.Boolean" required="false" %>
@@ -18,12 +19,12 @@
                 to viewablejs (see viewablejs.tag)
 --%>
 
-<c:if test="${viewPaths[path] && (empty test || test)}">
+<c:if test="${(node.selected || viewPaths[path]) && (empty test || test)}">
   <span class="showing" id="${idPrefix}${fn:replace(path,".","")}"
           onmouseover="enterPath('${fn:replace(path,".","")}')"
           onmouseout="exitPath('${fn:replace(path,".","")}')">
 </c:if>
 <jsp:doBody/>
-<c:if test="${viewPaths[path] && (empty test || test)}">
+<c:if test="${(node.selected || viewPaths[path]) && (empty test || test)}">
   </span>
 </c:if>

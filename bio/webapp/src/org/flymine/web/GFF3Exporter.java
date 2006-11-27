@@ -152,7 +152,7 @@ public class GFF3Exporter implements TableExporter
                         continue;
                     }
 
-                    String fieldName = thisColumn.getName();
+                    String fieldName = thisColumn.getPath().toString();
 
                     int lastDotPos = fieldName.lastIndexOf(".");
 

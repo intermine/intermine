@@ -37,6 +37,7 @@ import org.intermine.web.results.DisplayObjectFactory;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
+import org.intermine.web.results.WebResults;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
@@ -124,7 +125,8 @@ public class SessionMethods
         RunQueryThread runnable = new RunQueryThread() {
             public void run () {
                 try {
-                    Query q = MainHelper.makeQuery(query, profile.getSavedBags());
+                    Map pathToQueryNode = new HashMap();
+                    Query q = MainHelper.makeQuery(query, profile.getSavedBags(), pathToQueryNode);
                     Results rtmp = TableHelper.makeResults(os, q);
                     rtmp.setNoPrefetch();
                     // Register request id for query on this thread
@@ -135,7 +137,10 @@ public class SessionMethods
                     }
                     r = rtmp; // set property - allow main request thread to progress
                     TableHelper.initResults(r);
-                    pr = new PagedResults(query.getView(), r, os.getModel());
+                    WebResults webResults = 
+                        new WebResults(query.getViewAsPaths(), r, os.getModel(), pathToQueryNode,
+                                       (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
+                    pr = new PagedResults(webResults);
                 } catch (ObjectStoreException e) {
                     String key = (e instanceof ObjectStoreQueryDurationException)
                         ? "errors.query.estimatetimetoolong"

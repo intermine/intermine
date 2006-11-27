@@ -55,7 +55,7 @@ public class DirectDataLoader extends DataLoader
      * Create a new object of the given class name and give it a unique ID.
      * @param className the class name
      * @return the new InterMineObject
-     * @throws ClassNotFoundException if the given class can't be found
+     * @throws ClassNotFoundException if the given class doesn't exist
      */
     public InterMineObject createObject(String className) throws ClassNotFoundException {
         return createObject(Class.forName(className));

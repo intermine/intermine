@@ -10,20 +10,28 @@ package org.flymine.web;
  *
  */
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.SessionMethods;
 import org.intermine.web.TableExporter;
 import org.intermine.web.results.Column;
 import org.intermine.web.results.PagedTable;
+import org.intermine.web.results.ResultElement;
+import org.intermine.web.results.WebCollection;
+import org.intermine.web.results.WebResults;
 
 import org.flymine.biojava.FlyMineSequence;
 import org.flymine.biojava.FlyMineSequenceFactory;
@@ -151,14 +159,13 @@ public class SequenceExporter extends InterMineAction implements TableExporter
 
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
-        List columns = pt.getColumns();
-
         // the first column that contains exportable features
         Column featureColumn = getFeatureColumn(pt);
 
         int realFeatureIndex = featureColumn.getIndex();
 
-        int writtenSequencesCount = 0;
+        // IDs of the features we have successfully output - used to avoid duplicates
+        Set exportedIDs = new HashSet();
 
         try {
             List rowList = pt.getAllRows();
@@ -168,7 +175,13 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                  rowIndex++) {
                 List row;
                 try {
-                    row = (List) rowList.get(rowIndex);
+                    if (rowList instanceof WebResults) {
+                        row = ((WebResults) rowList).getResultElements(rowIndex);
+                    } else if (rowList instanceof WebCollection) {
+                        row = ((WebCollection) rowList).getResultElements(rowIndex);
+                    } else {
+                        row = (List) rowList.get(rowIndex);
+                    }
                 } catch (RuntimeException e) {
                     // re-throw as a more specific exception
                     if (e.getCause() instanceof ObjectStoreException) {
@@ -178,54 +191,97 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     }
                 }
 
-                InterMineObject object = (InterMineObject) row.get(realFeatureIndex);
-
                 StringBuffer header = new StringBuffer();
 
-                for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                    Column thisColumn = (Column) columns.get(columnIndex);
-
-                    if (!thisColumn.isVisible()) {
-                        continue;
-                    }
-
-                    // the column order from PagedTable.getList() isn't necessarily the order that
-                    // the user has chosen for the columns
-                    int realColumnIndex = thisColumn.getIndex();
-
-                    if (realColumnIndex == realFeatureIndex) {
-                        // skip - this is the column containing the valid type
-                        continue;
-                    }
-
-                    header.append(row.get(realColumnIndex));
-                    header.append(" ");
+                Object resultObject = row.get(realFeatureIndex);
+                
+                ResultElement resultElement;
+                if (resultObject instanceof ResultElement) {
+                    resultElement = (ResultElement) resultObject;
+                } else {
+                    // ignore other objects
+                    continue;
                 }
 
                 FlyMineSequence flyMineSequence;
 
-                if (object instanceof Sequence) {
-                    Sequence sequence = (Sequence) object;
-                    object =
-                        ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
-                    if (object == null) {
-                        // no LocatedSequenceFeature found
-                        object = ResidueFieldExporter.getProteinForSequence(os, sequence);
-                        if (object == null) {
-                            // no Protein either
-                            continue;
-                        }
-                    }
+                Object object = os.getObjectById(resultElement.getId());
+                
+                if (!(object instanceof InterMineObject)) {
+                    continue;
                 }
+
+                Integer objectId = ((InterMineObject) object).getId();
+                if (exportedIDs.contains(objectId)) {
+                    // exported already
+                    continue;
+                }
+                
                 if (object instanceof LocatedSequenceFeature) {
                     LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
                     flyMineSequence = FlyMineSequenceFactory.make(feature);
+                    if (feature.getIdentifier() == null) {
+                        if (feature instanceof Gene) {
+                            header.append(((Gene) feature).getOrganismDbId());
+                        } else {
+                            header.append("[unknown_identifier]");
+                        }
+                    } else {
+                        header.append(feature.getIdentifier());
+                    }
+                    header.append(' ');
+                    if (feature.getName() == null) {
+                        header.append("[unknown_name]");
+                    } else {
+                        header.append(feature.getName());
+                    }
+                    if (feature.getChromosomeLocation() != null) {
+                        header.append(' ');
+                        header.append(feature.getChromosome().getIdentifier());
+                        header.append(':');
+                        header.append(feature.getChromosomeLocation().getStart());
+                        header.append('-');
+                        header.append(feature.getChromosomeLocation().getEnd());
+                        header.append(' ');
+                        header.append(feature.getLength());
+                    }
+                    try {
+                        Gene gene = (Gene) TypeUtil.getFieldValue(feature, "gene");
+                        if (gene != null) {
+                            String geneIdentifier = gene.getIdentifier();
+                            if (geneIdentifier != null) {
+                                header.append(' ');
+                                header.append("gene:");
+                                header.append(geneIdentifier);
+                            }
+                        }
+                    } catch (IllegalAccessException e) {
+                        // ignore
+                    }
                 } else {
                     if (object instanceof Protein) {
                         Protein protein = (Protein) object;
                         flyMineSequence = FlyMineSequenceFactory.make(protein);
+                        header.append(protein.getIdentifier());
+                        header.append(' ');
+                        if (protein.getName() == null) {
+                            header.append("[unknown_name]");
+                        } else {
+                            header.append(protein.getName());
+                        }
+                        Iterator iter = protein.getGenes().iterator();
+                        while (iter.hasNext()) {
+                            Gene gene = (Gene) iter.next();
+                            String geneIdentifier = gene.getIdentifier();
+                            if (geneIdentifier != null) {
+                                header.append(' ');
+                                header.append("gene:");
+                                header.append(geneIdentifier);
+                            }
+
+                        }
                     } else {
-                        // just ignore other objects
+                        // ignore other objects
                         continue;
                     }
                 }
@@ -248,7 +304,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     } else {
                         // last resort
                         annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                               "sequence_" + writtenSequencesCount);
+                                               "sequence_" + exportedIDs.size());
                     }
                 }
 
@@ -261,14 +317,14 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 }
                 SeqIOTools.writeFasta(outputStream, flyMineSequence);
 
-                writtenSequencesCount++;
+                exportedIDs.add(objectId);
             }
 
             if (outputStream != null) {
                 outputStream.close();
             }
 
-            if (writtenSequencesCount == 0) {
+            if (exportedIDs.size() == 0) {
                 ActionErrors messages = new ActionErrors();
                 ActionError error = new ActionError("errors.export.nothingtoexport");
                 messages.add(ActionErrors.GLOBAL_ERROR, error);
@@ -304,6 +360,30 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 || Sequence.class.isAssignableFrom(type));
     }
 
+    private boolean validType(String className) {
+        try {
+            if (className.indexOf('.') == -1) {
+                // FIXME this is a HACK - the ResultElement should include type package name
+                return validType(Class.forName("org.flymine.model.genomic." + className));
+            } else {
+                return validType(Class.forName(className));
+            }
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+    
+    private boolean validType(InterMineObject imo) {
+        Set classes = DynamicUtil.decomposeClass(imo.getClass());
+        Iterator iter = classes.iterator();
+        while (iter.hasNext()) {
+            if (validType((Class) iter.next())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Return the first column that contains features that can be exported.  It first checks the
      * Column objects from the PagedTable.
@@ -326,9 +406,16 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
-                Object columnType = ((Column) columns.get(i)).getType();
-                if (columnType instanceof ClassDescriptor) {
-                    if (validType(((ClassDescriptor) columnType).getType())) {
+                Path columnPath = column.getPath();
+                if (columnPath.endIsAttribute()) {
+                    List elementCDs = columnPath.getElementClassDescriptors();
+                    ClassDescriptor columnCD;
+                    if (elementCDs.size() == 0) {
+                        columnCD = columnPath.getStartClassDescriptor();
+                    } else {
+                        columnCD = (ClassDescriptor) elementCDs.get(elementCDs.size() - 1);
+                    }
+                    if (validType(columnCD.getName())) {
                         if (returnColumn == null) {
                             returnColumn = column;
                         } else {
@@ -337,6 +424,9 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         }
                     }
                 }
+
+                // only consider the first visible column
+                break;
             }
         }
 
@@ -359,14 +449,22 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             while (rowListIter.hasNext()) {
                 List row = (List) rowListIter.next();
           
-                Object o = row.get(realColumnIndex);
+                if (realColumnIndex < row.size()) {
+                    Object o = row.get(realColumnIndex);
 
-                if (o != null && validType(o.getClass())) {
-                    if (returnColumn == null) {
-                        returnColumn = thisColumn;
-                    } else {
-                        // there are two or more sequence columns
-                        return null;
+                    if (o != null && o instanceof ResultElement) {
+                        ResultElement resultElement = (ResultElement) o;
+                        InterMineObject imo;
+                        try {
+                            imo = resultElement.getInterMineObject();
+                        } catch (ObjectStoreException e) {
+                            // give up 
+                            return null;
+                        }
+                        
+                        if (resultElement.isKeyField() && validType(imo)) {
+                            return thisColumn;
+                        }
                     }
                 }
             }

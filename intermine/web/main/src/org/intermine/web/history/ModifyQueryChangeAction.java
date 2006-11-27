@@ -66,9 +66,6 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         
         if (request.getParameter("type").equals("history")) {
             sq = (SavedQuery) profile.getHistory().get(queryName);
-        } else if (request.getParameter("type").equals("bag")) {
-            return new ForwardParameters(mapping.findForward("bagDetails"))
-                .addParameter("bagName", queryName).forward();
         } else {
             sq = (SavedQuery) profile.getSavedQueries().get(queryName);
         }

@@ -20,13 +20,14 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMinePrimitiveBag;
+//import org.intermine.web.bag.InterMineBag;
+//import org.intermine.web.bag.InterMinePrimitiveBag;
 
 import junit.framework.TestCase;
 
 public class ProfileTest extends TestCase
 {
+    /*
     PathQuery query;
     SavedQuery sq;
     Date date = new Date();
@@ -173,4 +174,5 @@ public class ProfileTest extends TestCase
             throw new UnsupportedOperationException();
         }
     }
+    */
 }

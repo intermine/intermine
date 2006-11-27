@@ -3,9 +3,10 @@
   <bags/>
   <queries>
   </queries>
+
   <template-queries>
     <template name="employeeByName" description="View all the employees with certain name" important="false">
-      <query name="employeeByName" model="testmodel" view="Employee">
+      <query name="employeeByName" model="testmodel" view="Employee.name Employee.age">
         <node path="Employee" type="Employee">
         </node>
         <node path="Employee.name" type="String">
@@ -14,8 +15,9 @@
         </node>
       </query>
     </template>
+
     <template name="employeesFromCompanyAndDepartment" description="View all the employees that work within a certain department of the specified company" important="false">
-      <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee" constraintLogic="A and B">
+      <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node>
         <node path="Employee.department" type="Department">
@@ -32,8 +34,9 @@
         </node>
       </query>
     </template>
+
     <template name="employeesOfACertainAge" description="View all the employees of a certain age" important="false">
-      <query name="employeesOfACertainAge" model="testmodel" view="Employee" constraintLogic="A and B">
+      <query name="employeesOfACertainAge" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node>
         <node path="Employee.age" type="int">
@@ -44,8 +47,9 @@
         </node>
       </query>
     </template>
+
     <template name="employeesOverACertainAgeFromDepartmentA" description="View all the employees of a certain age from a certain department" important="false">
-      <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee" constraintLogic="A and B">
+      <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node>
         <node path="Employee.age" type="int">
@@ -61,6 +65,7 @@
       </query>
     </template>
   </template-queries>
+
   <tags>
     <tag name="aspect:People" objectIdentifier="org.intermine.model.testmodel.Employee" type="class">
     </tag>

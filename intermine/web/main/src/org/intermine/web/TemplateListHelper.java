@@ -12,7 +12,9 @@ package org.intermine.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,15 +22,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.servlet.ServletContext;
-
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
+
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -128,30 +132,27 @@ public class TemplateListHelper
                     // template
                     continue TEMPLATE;
                 }
-                
+
                 String className = model.getPackageName() + "." + bits[0];
                 String fieldName = bits[1];
                 String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
                 try {
                     Class iface = Class.forName(className);
                     if (types.contains(iface)
-                        && model.getClassDescriptorByName(className)
-                             .getFieldDescriptorByName(fieldName) != null) {
-/*
+                                    && model.getClassDescriptorByName(className)
+                                    .getFieldDescriptorByName(fieldName) != null) {
                         Path path = new Path(model, fieldExpr);
                         if (path.resolve(object) == null) {
                             // ignore this template because putting a null into a template isn't
                             // a good idea
                             continue TEMPLATE;
                         }
-*/
-                        fieldExprs.add(fieldExpr);
                     }
+                    fieldExprs.add(fieldExpr);
                 } catch (ClassNotFoundException err) {
                     LOG.error(err);
                     continue TEMPLATE;
                 }
-
             }
             if (fieldExprs.size() > 0) {
                 templates.add(template);
@@ -162,5 +163,96 @@ public class TemplateListHelper
         Collections.sort(templates, TEMPLATE_COMPARATOR);
         
         return templates;
+    }
+    
+    /**
+     * Get all the templates for a given type
+     * @param context the servlet context
+     * @param bag the bag from which to get the type from
+     * @return a Map containing the templates of the given type
+     */
+    public static Map getTemplateListForType (ServletContext context, InterMineBag bag) {
+        String type = bag.getType();
+        HashMap templates = new HashMap();
+        String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        ProfileManager pm = SessionMethods.getProfileManager(context);
+        Profile p = pm.getProfile(sup);
+        Collection templateList = p.getSavedTemplates().values();
+        for (Iterator iter = templateList.iterator(); iter.hasNext();) {
+            TemplateQuery templateQuery = (TemplateQuery) iter.next();
+            List nodes = templateQuery.getEditableNodes();
+            for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+                PathNode node = (PathNode) iterator.next();
+                String name = null;
+                if (node.getParentType() != null) {
+                    name = TypeUtil.unqualifiedName(node.getParentType());
+                    if (ClassKeyHelper.isKeyField((Map) context.getAttribute(Constants.CLASS_KEYS), 
+                                                   node.getParentType(), node.getFieldName())) {
+                        if (type.equals(name)) {
+                            templates.put(templateQuery, TemplateHelper.GLOBAL_TEMPLATE);
+                            break;
+                        }
+                    }
+                }
+           }
+        }
+        return templates;
+    }
+    
+    /**
+     * Get the Set of templates for a given aspect and a given type
+     * @param aspect aspect name
+     * @param context servlet context
+     * @param bag the bag from which to extract the type
+     * @param fieldExprsOut a map to populate with matching node names
+     * @return the List of templates
+     */
+    public static List getAspectTemplatesForType(String aspect, ServletContext context, 
+                                                 InterMineBag bag, Map fieldExprsOut) {
+        if (aspect.startsWith("aspect:")) {
+            aspect = aspect.substring(7).trim();
+        }
+        String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
+        ProfileManager pm = SessionMethods.getProfileManager(context);
+        Profile p = pm.getProfile(sup);
+        String type = bag.getType();
+
+        Map templates = new TreeMap();
+        List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
+        
+        for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
+            Tag tag = (Tag) iter.next();
+            if (tag.getTagName().startsWith("aspect:")) {
+                String aspectFromTagName = tag.getTagName().substring(7).trim();
+
+                if (StringUtils.equals(aspect, aspectFromTagName)) {
+                    TemplateQuery templateQuery = (TemplateQuery) 
+                        p.getSavedTemplates().get(tag.getObjectIdentifier());
+                    if (templateQuery != null) {
+                        List nodes = templateQuery.getEditableNodes();
+                        for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+                            PathNode node = (PathNode) iterator.next();
+                            String name = null;
+                            if (node.getParentType() != null) {
+                                name = TypeUtil.unqualifiedName(node.getParentType());
+                                if (ClassKeyHelper.isKeyField((Map) context.getAttribute(
+                                                Constants.CLASS_KEYS), 
+                                                node.getParentType(), node.getFieldName())) {
+                                    if (type.equals(name)) {
+                                        templates.put(templateQuery.getName(), templateQuery);
+                                        fieldExprsOut.put(templateQuery, name);
+                                        break;
+                                    }
+                                }
+                            }
+                       }
+                    }
+                }
+            }
+        }
+        
+        List retList = new ArrayList(templates.values());
+
+        return retList;
     }
 }

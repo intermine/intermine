@@ -10,10 +10,11 @@ package org.intermine.web.results;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -25,26 +26,21 @@ import org.apache.log4j.Logger;
  */
 public abstract class PagedTable
 {
-    protected static final Logger LOG = Logger.getLogger(PagedTable.class);
+    private static final Logger LOG = Logger.getLogger(PagedTable.class);
 
-    protected List columns = new ArrayList();
-    protected List rows;
-    protected int startRow = 0;
-    protected int pageSize = 10;
-    protected boolean summary = true;
+    private List columns = new ArrayList();
+    private List columnNames = null;
+    private List rows;
+    private int startRow = 0;
+    private int pageSize = 10;
+    private boolean summary = true;
 
     /**
      * Construct a PagedTable with a list of column names
      * @param columnNames the column headings
      */
-    public PagedTable(List columnNames) {
-        for (int i = 0; i < columnNames.size(); i++) {
-            Column column = new Column();
-            column.setName((String) columnNames.get(i));
-            column.setIndex(i);
-            column.setVisible(true);
-            columns.add(column);
-        }
+    public PagedTable(List columns) {
+        this.columns = columns;
     }
 
     /**
@@ -53,8 +49,8 @@ public abstract class PagedTable
      * @param columnNames the column headings
      * @param summary the format for displaying cells
      */
-    public PagedTable(List columnNames, boolean summary) {
-        this(columnNames);
+    public PagedTable(List columns, boolean summary) {
+        this(columns);
         this.summary = summary;
     }
 
@@ -73,6 +69,22 @@ public abstract class PagedTable
      */
     public List getColumns() {
         return Collections.unmodifiableList(columns);
+    }
+
+
+    /**
+     * @return
+     */
+    public List getColumnNames() {
+        if (columnNames == null) {
+            columnNames = new ArrayList();
+            Iterator iter = columns.iterator();
+            while (iter.hasNext()) {
+                String columnName = ((Column) iter.next()).getPath().toString();
+                columnNames.add(columnName);
+            }
+        }
+        return columnNames;
     }
 
     /**
@@ -271,6 +283,14 @@ public abstract class PagedTable
     public List getRows() {
         return rows;
     }
+
+    /**
+     * Set the currently visible rows
+     * @param rows the new rows
+     */
+    protected void setRows(List rows) {
+        this.rows = rows;
+    }    
 
     /**
      * Return all the rows of the table as a List of Lists.

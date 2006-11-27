@@ -31,9 +31,6 @@
     <form-bean name="mainForm"
                type="org.intermine.web.MainForm"/>
 
-    <form-bean name="iqlQueryForm"
-               type="org.intermine.web.IqlQueryForm"/>
-
     <form-bean name="queryClassSelectForm"
                type="org.intermine.web.QueryClassSelectForm"/>
 
@@ -78,6 +75,9 @@
     
     <form-bean name="changePasswordForm" 
                type="org.intermine.web.account.ChangePasswordForm"/>
+    		   
+    <form-bean name="modifyBagDetailsForm" 
+    		   type="org.intermine.web.bag.ModifyBagDetailsForm"/>
   </form-beans>
 
   <!-- ========== Exceptions Configuration ================================ -->
@@ -101,9 +101,6 @@
 
     <!-- Actions that just forward elsewhere - only used by jsps -->
     
-    <action path="/iqlQuery"
-            forward="iqlQuery.page"/>
-
     <action path="/bag"
             forward="bag.page"/>
     
@@ -172,6 +169,9 @@
     
     <action path="/changePassword"
             forward="changePassword.page"/>
+            
+    <action path="/bagDetails"
+            forward="bagDetails.page"/>
 
     <!-- Actions that provide downloads -->
 
@@ -226,11 +226,6 @@
     
     <action path="/collectionDetails"
             type="org.intermine.web.results.CollectionDetailsAction">
-      <forward name="results" path="/results.do" redirect="true"/>
-    </action>
-
-    <action path="/bagDetails"
-            type="org.intermine.web.results.BagDetailsAction">
       <forward name="results" path="/results.do" redirect="true"/>
     </action>
 
@@ -502,15 +497,6 @@
       <forward name="query" path="/query.do" redirect="true"/>
     </action>
 
-    <action path="/iqlQueryAction"
-            type="org.intermine.web.IqlQueryAction"
-            name="iqlQueryForm"
-            input="iqlQuery"
-            parameter="action">
-      <forward name="iqlQuery" path="iqlQuery.page"/>
-      <forward name="results" path="/results.do" redirect="true"/>
-    </action>
-
     <action path="/loginAction"
             type="org.intermine.web.LoginAction"
             name="loginForm"
@@ -549,6 +535,13 @@
             input="changePassword">
       <forward name="changePassword" path="changePassword.page"/>
       <forward name="mymine" path="mymine.page"/>
+    </action>
+    
+    <action path="/modifyBagDetailsAction"
+    		type="org.intermine.web.bag.ModifyBagDetailsAction"
+    		name="modifyBagDetailsForm"
+    		input="bagDetails">
+      <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
     </action>
 
     <!-- Other actions -->
@@ -589,10 +582,6 @@
     <action path="/initMymine"
             type="org.intermine.web.history.MyMineController"/>
 
-    <action path="/initIqlQuery"
-            type="org.intermine.web.IqlQueryController"
-            name="iqlQueryForm"/>
-
     <action path="/initObjectView"
             type="org.intermine.web.results.ObjectViewController"/>
     
@@ -611,9 +600,6 @@
 
     <action path="/initObjectDetailsAspect"
             type="org.intermine.web.results.ObjectDetailsAspectController"/>
-
-    <action path="/initBagDetails"
-            type="org.intermine.web.results.BagDetailsController"/>
 
     <action path="/initOneField"
             type="org.intermine.web.results.OneFieldController"/>
@@ -644,6 +630,9 @@
 
     <action path="/precomputeTemplate"
             type="org.intermine.web.PrecomputeTemplateController"/>
+            
+    <action path="/initBagDetails"
+            type="org.intermine.web.bag.BagDetailsController"/>
 
     <action path="/initExternalLinks" type="org.intermine.web.results.ExternalLinksController"/>
 

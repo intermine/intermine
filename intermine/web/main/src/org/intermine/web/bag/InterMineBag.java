@@ -10,41 +10,49 @@ package org.intermine.web.bag;
  *
  */
 
-import java.io.StringReader;
-import java.lang.ref.SoftReference;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.web.results.ResultElement;
+
+import java.io.StringReader;
+import java.lang.ref.SoftReference;
+
+import org.apache.log4j.Logger;
 
 /**
- * A LinkedHashSet with a getSize() method.
- *
+ * A Set that retains information about the order and number of objects (and Lists) that are added.
+ * eg. if 1, 2, 3 and the List (2, 3, 4, 5) are added, the iterator() method will return
+ * (1,2,3,4,5) but asListOfLists() will return ((1), (2), (3), (2,3,4,5)).
  * @author Kim Rutherford
  * @author Matthew Wakeling
  */
 
-public abstract class InterMineBag extends AbstractSet
+public class InterMineBag extends AbstractSet
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
 
@@ -54,92 +62,191 @@ public abstract class InterMineBag extends AbstractSet
     private String name;
     /** Bag size, used to provide this info without having to fetch the entire bag contents. */
     private int size;
-    /** ObjectStore used for storing and retrieving. */
+    /** User profile ObjectStore used for storing and retrieving BagElemts */
+    protected ObjectStore uos;
+    /** ObjectStore used for storing and retrieving InterMine Objects*/
     protected ObjectStore os;
     /** SoftReference to a materialised version of the bag. If this holds a reference to a valid
-     * LinkedHashSet, then the Set is cached data that does not need to be stored, and set will
+     * List, then the List   is cached data that does not need to be stored, and list will
      * be null. */
-    private SoftReference setReference;
-    /** Strong reference to a materialised version of the bag. If this holds a LinkedHashSet, then
-     * the Set is data that needs to be stored, and setReference will be null. */
-    private LinkedHashSet set;
+    private SoftReference listReference;
+    /**
+     * Strong reference to a materialised version of the bag. If this holds a List, then
+     * the List is data that needs to be stored, and listReference will be null.
+     */
+    private List list;
+    private Set set;
+    private Integer id;
+
+    private String type;
+    private Map idFieldMap = new HashMap();
 
     /**
-     * Constructs a new InterMineBag to be lazily-loaded from the userprofile database.
+     * Constructs a new InterMineIdBag to be lazily-loaded from the userprofile database.
      *
      * @param userId the id of the user, matching the userprofile database
      * @param name the name of the bag, matching the userprofile database
+     * @param type the class of objects stored in the bag
      * @param size the size of the bag
      * @param os the ObjectStore to use to retrieve the contents of the bag
      */
-    public InterMineBag(Integer userId, String name, int size, ObjectStore os) {
-        setReference = null;
-        set = null;
+    public InterMineBag(Integer userId, String name, String type, int size, ObjectStore uos, ObjectStore os) {
+        listReference = null;
+        list = null;
         this.userId = userId;
         this.name = name;
+        this.type = type;
         this.size = size;
-        this.os = os;
-    }
+        this.uos = uos;
+        this.os= os;
+   }
 
     /**
-     * Constructs a new InterMineBag with certain contents.
+     * Constructs a new InterMineIdBag with certain contents.
      *
      * @param userId the id of the user, to be saved in the userprofile database
      * @param name the name of the bag, to be saved in the userprofile database
+     * @param type the class of objects stored in the bag
      * @param os the ObjectStore to use to store the contents of the bag
      * @param c the new bag contents
      */
-    public InterMineBag(Integer userId, String name, ObjectStore os, Collection c) {
-        setReference = null;
-        set = new LinkedHashSet(c);
+    public InterMineBag(Integer userId, String name, String type, ObjectStore uos, ObjectStore os, Collection c) {
+        listReference = null;
+        list = new ArrayList(c);
         this.userId = userId;
         this.name = name;
+        this.type = type;
         this.size = -1;
-        this.os = os;
+        this.uos = uos;
+        this.os= os;
+    }
+    
+    private Set asSet() {
+        if (set == null) {
+            set = new LinkedHashSet() {
+                public Iterator iterator() {
+                    final Iterator setIter = super.iterator();
+                    return new Iterator() {
+                        public boolean hasNext() {
+                            return setIter.hasNext();
+                        }
+                        public Object next() {
+                            return setIter.next();
+                        }
+                        public void remove() {
+                            throw new RuntimeException("cannot modify InterMineIdBag " 
+                                                       + "using iterator");
+                        }
+                    };
+                }
+            };
+            
+            Iterator elementsIter = getRealList().iterator();
+
+            while (elementsIter.hasNext()) {
+                Object thisObject = elementsIter.next();
+                
+                if (thisObject instanceof Collection) {
+                    Collection subList = (Collection) thisObject;
+                    Iterator subListIter = subList.iterator();
+                    
+                    while (subListIter.hasNext()) {
+                        set.add(subListIter.next());
+                    }
+                } else {
+                    set.add(thisObject);
+                }
+            }
+            
+        }
+        
+        return set;
     }
 
     /**
-     * @see AbstractSet#size
+     * Return the width of this Bag - ie. the maximum size of any InterMineIdList object in this
+     * bag.
+     * @return the bag width
+     */
+    public int width() {
+        int width = 1;
+        
+        Iterator iter = getRealList().iterator();
+        
+        while (iter.hasNext()) {
+            Object thisObject = iter.next();
+            if (thisObject instanceof List) {
+                List row = (List) thisObject;
+                if (row.size() > width) {
+                    width = row.size();
+                }
+            }
+        }
+        
+        return width;
+    }
+
+    /**
+     * Return the Objects that have been added to this InterMineIdBag as a list of lists.  Single
+     * objects are returned in the List as single element Lists.  Any Lists that were add()ed to
+     * this InterMineIdBag are returned as themselves.
+     * @return the orginal objects and list that were added
+     */
+    public List asListOfLists() {
+        List retList = new ArrayList();
+        
+        Iterator iter = getRealList().iterator();
+        
+        while (iter.hasNext()) {
+            Object thisObject = iter.next();
+            if (thisObject instanceof List) {
+                retList.add(thisObject);
+            } else {
+                retList.add(Collections.singletonList(thisObject));
+            }
+        }
+        
+        return retList;
+    }
+
+    /**
+     * @see AbstractSet#size()
      */
     public synchronized int size() {
-        if (set != null) {
-            return set.size();
+        if (list != null) {
+            return asSet().size();
         } else {
             return size;
         }
     }
-
+    
     /**
-     * Bean method to get size
-     *
-     * @return the size
+     * @see AbstractSet#size()
+     * @return the size of this bag
      */
     public int getSize() {
         return size();
     }
-
-    /**
-     * Get the real set of Bag Elements
-     * @return a LinkedHashSet containing the bag elements
-     */
-    protected synchronized LinkedHashSet getRealSet() {
-        if (set != null) {
-            return set;
+    
+    private synchronized List getRealList() {
+        // TODO Return Id's out of ResultElement
+        if (list != null) {
+            return list;
         }
-        if (setReference != null) {
-            LinkedHashSet retval = (LinkedHashSet) setReference.get();
+        if (listReference != null) {
+            List retval = (List) listReference.get();
             if (retval != null) {
                 return retval;
             }
         }
         if (size == 0) {
-            return new LinkedHashSet();
+            return new ArrayList();
         }
         try {
             Query q = new Query();
             QueryClass qc = new QueryClass(SavedBag.class);
             q.addFrom(qc);
-            q.addToSelect(new QueryField(qc, "bag"));
+            q.addToSelect(qc);
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
             cs.addConstraint(new SimpleConstraint(new QueryField(qc, "name"),
                         ConstraintOp.EQUALS, new QueryValue(name)));
@@ -147,65 +254,86 @@ public abstract class InterMineBag extends AbstractSet
                         ConstraintOp.CONTAINS, new ProxyReference(null, userId,
                                                                   UserProfile.class)));
             q.setConstraint(cs);
-            Results res = os.execute(q);
-            String bagText = (String) ((List) res.get(0)).get(0);
-            Map unmarshalled = InterMineBagBinding.unmarshal(new StringReader(bagText), os,
+            Results res = uos.execute(q);
+            SavedBag savedBag = (SavedBag) ((List) res.get(0)).get(0);
+            setSavedBagId(savedBag.getId());
+            
+            String bagText = (String) savedBag.getBag();
+            Map unmarshalled = InterMineBagBinding.unmarshal(new StringReader(bagText), uos, os,
                     IdUpgrader.ERROR_UPGRADER, userId);
             InterMineBag un = (InterMineBag) unmarshalled.get(name);
-            setReference = new SoftReference(un.set);
-            return un.set;
+            listReference = new SoftReference(un.list);
+            return un.list;
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Get the real set for writting to it (add, remove, clear)
-     * @return a LinkedHasSet
-     */
-    private synchronized LinkedHashSet getRealSetForWrite() {
-        if (set == null) {
-            set = getRealSet();
+    private synchronized List getRealListForWrite() {
+        if (list == null) {
+            list = getRealList();
         }
-        return set;
+        return list;
+    }
+    
+    /**
+     * Get the list of ids of the objects contained in the bag
+     * @return a Collection of Ids
+     */
+    public synchronized Collection getListOfIds() {
+        Collection ids = new ArrayList();
+        for (Iterator iter = getRealList().iterator(); iter.hasNext();) {
+            BagElement element = (BagElement) iter.next();
+            ids.add(element.getId());
+        }
+        return ids;
+    }
+    
+    public synchronized List getInterMineObjects() throws ObjectStoreException{
+        Collection ids = getListOfIds();
+        return (os.getObjectsByIds(ids));
     }
 
     /**
-     * Tells if the bag needs to written to the database
-     * @return a boolean
+     * Return true if and only if this bag needs to be written to the userprofile.
+     * @return true iff the bag have been modified since the last save
      */
     public synchronized boolean needsWrite() {
-        return set != null;
+        return list != null;
     }
 
     /**
-     * Resets to the database
+     * Arrange for needsWrite() to return false next time it's called.
      */
     public synchronized void resetToDatabase() {
-        setReference = new SoftReference(set);
-        size = set.size();
-        set = null;
+        listReference = new SoftReference(list);
+        size = asSet().size();
+        list = null;
     }
+    
+    // TODO write method in the other way...
 
     /**
      * @see AbstractSet#add
      */
     public boolean add(Object o) {
-        return getRealSetForWrite().add(o);
+        set = null;
+        return getRealListForWrite().add(o);
     }
-
+    
     /**
      * @see AbstractSet#clear
      */
     public void clear() {
-        getRealSetForWrite().clear();
+        set = null;
+        getRealListForWrite().clear();
     }
 
     /**
      * @see AbstractSet#contains
      */
     public boolean contains(Object o) {
-        return getRealSet().contains(o);
+        return asSet().contains(o);
     }
 
     /**
@@ -220,23 +348,76 @@ public abstract class InterMineBag extends AbstractSet
      * @see AbstractSet#remove
      */
     public boolean remove(Object o) {
-        return getRealSetForWrite().remove(o);
+        set = null;
+        return getRealListForWrite().remove(o);
+    }
+    
+    /**
+     * Remove a bagElement from its id
+     * @param id the id
+     */
+    public void removeFromId(Integer id) {
+        remove(getBagElementFromId(id));
+    }
+    
+    /**
+     * Get the BagElement for the given id
+     * @param id the id
+     * @return a BagElement
+     */
+    public BagElement getBagElementFromId(Integer id) {
+        List list = getRealListForWrite();
+        for (Iterator i = list.iterator(); i.hasNext(); ) {
+            BagElement bagElement = (BagElement) i.next();
+            if (bagElement.getId().equals(id)) {
+                return bagElement;
+            }
+        }
+        return null;
     }
 
     /**
-     * Return a collection of actual objects represented by this bag rather than any
-     * intermediate form (such as intermine object id numbers).
-     * @return collection of objects
+     * @see java.util.Set#isEmpty()
      */
-    public abstract Collection toObjectCollection();
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 
+    /**
+     * @see java.util.Set#toArray()
+     */
+    public Object[] toArray() {
+       Object[] retArray = new Object[asSet().size()];
+       Iterator iter = asSet().iterator();
+
+       int i = 0;
+       while (iter.hasNext()) {
+           retArray[i++] = iter.next();
+       }
+       return retArray;
+    }
+
+    /**
+     * @see java.util.Set#toArray(java.lang.Object[])
+     */
+    public Object[] toArray(Object[] arg0) {
+        return toArray();
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        return asSet().equals(o);
+    }
+    
     private class BagIterator implements Iterator
     {
-        private LinkedHashSet iterSet;
+        private Set iterSet;
         private Iterator iter;
 
-        public BagIterator() {
-            iterSet = getRealSet();
+        BagIterator() {
+            iterSet = asSet();
             iter = iterSet.iterator();
         }
 
@@ -249,18 +430,124 @@ public abstract class InterMineBag extends AbstractSet
         }
 
         public void remove() {
-            if (set == null) {
-                set = iterSet;
-            }
-            iter.remove();
+            throw new UnsupportedOperationException("remove() not available when iterating over "
+                                                    + "an InterMineIdBag");
         }
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return asSet().hashCode();
     }
     
     /**
-     * Set the userId for this bag
-     * @param userId the userId from the profile as an Integer
+     * @see java.lang.Object#toString()
      */
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public String toString() {
+        return asSet().toString();
     }
+
+    /**
+     * Returns the value of name
+     * @return the name of the bag
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the value of name
+     * @param name the bag name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * Get the value of savedBagId
+     * @return an Integer
+     */
+    public Integer getSavedBagId() {
+        return id;
+    }
+
+    /**
+     * Set the value of savedBagId
+     * @param id the saved bag id
+     */
+    public void setSavedBagId(Integer id) {
+        this.id = id;
+    }
+   
+    /**
+     * Add a ResultElement.
+     * @param resultElement the ResultElement
+     * @return a boolean
+     */
+    public boolean add(ResultElement resultElement) {
+        idFieldMap.put(resultElement.getId(), resultElement.getField());
+        return super.add(resultElement);
+    }
+
+    /**
+     * Remove an id.
+     * @param id an intermine id
+     */
+    public void remove(int id) {
+        remove(new Integer(id));
+    }
+
+    /**
+     * Get the type of this bag (a class from InterMine model)
+     * @return the type of object in this bag
+     */
+    public String getType() {
+        return type;
+    }
+    
+    /**
+     * Set the type of this bag (a class from InterMine model)
+     * @param type the type of objects in this bag
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    /**
+     * Return a collection of InterMineObjects corresponding to the ids in the bag.
+     *
+     * @return collection of InterMineObjects
+     */
+    public Collection toObjectCollection() {
+        List list = new ArrayList();
+        for (Iterator iter = iterator(); iter.hasNext(); ) {
+            Integer id = (Integer) iter.next();
+            try {
+                list.add(uos.getObjectById(id));
+            } catch (ObjectStoreException err) {
+                LOG.error("Failed to load object by id " + id);
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * For a given intermine id, return the field
+     * saved in the bag
+     * @param id the object id
+     * @return the field as a generic Object
+     */
+    public Object getFieldForId(Integer id) {
+        return (Object) idFieldMap.get(id);
+    }
+
+   /**
+    * Set the userId for this bag
+    * @param userId the userId from the profile as an Integer
+    */
+   public void setUserId(Integer userId) {
+       this.userId = userId;
+   }
 }

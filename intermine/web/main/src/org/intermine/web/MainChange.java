@@ -17,20 +17,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.path.Path;
+import org.intermine.web.config.FieldConfig;
+import org.intermine.web.config.FieldConfigHelper;
+import org.intermine.web.config.WebConfig;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -286,7 +290,7 @@ public class MainChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
-        path = toPath(prefix, path);
+        path = MainHelper.toPath(prefix, path);
         
         // Figure out which path to delete if user cancels operation
         String bits[] = StringUtils.split(path, '.');
@@ -397,14 +401,37 @@ public class MainChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        List view = SessionMethods.getEditingView(session);
+        String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
-        String path = request.getParameter("path");
+        String fullPathName = MainHelper.toPath(prefix, pathName);
 
-        List view = SessionMethods.getEditingView(session);
-        view.add(toPath(prefix, path));
+        Path path = MainHelper.makePath(model, query, fullPathName);
+        // If an object has been selected, select its fields instead
+        if (path.getEndFieldDescriptor() == null || path.endIsReference()) {
+            ClassDescriptor cld = path.getEndClassDescriptor();
+            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+            Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
+            while (cldFieldConfigIter.hasNext()) {
+                FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+                String pathToAdd = pathName + "." + fc.getFieldExpr();
+                if(!view.contains(pathToAdd)) {
+                    view.add(pathToAdd);
+                }
+            }
+        } else {
+            view.add(MainHelper.toPath(prefix, pathName));
+        }
 
-        return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
+        
+        ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));
+        fp.addAnchor(pathName);
+        return new ForwardParameters(mapping.findForward("query")).addAnchor(pathName).forward();
     }
     
     /**
@@ -527,23 +554,6 @@ public class MainChange extends DispatchAction
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
 
-    /**
-     * Convert a path and prefix to a path
-     * @param prefix the prefix (eg null or Department.company)
-     * @param path the path (eg Company, Company.departments)
-     * @return the new path
-     */
-    protected static String toPath(String prefix, String path) {
-        if (prefix != null) {
-            if (path.indexOf(".") == -1) {
-                path = prefix;
-            } else {
-                path = prefix + "." + path.substring(path.indexOf(".") + 1);
-            }
-        }
-        return path;
-    }
-    
     /**
      * AJAX request - expand
      * @param mapping The ActionMapping used to select this instance

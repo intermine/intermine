@@ -16,13 +16,12 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.model.userprofile.Tag;
+import org.intermine.util.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.intermine.model.userprofile.Tag;
-import org.intermine.util.SAXParser;
 
 /**
  * Convert Tags from the Profile to and from XML

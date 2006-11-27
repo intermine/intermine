@@ -10,7 +10,14 @@ package org.intermine.web.bag;
  *
  */
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 
 /**
  * Helper methods for bags.
@@ -39,5 +46,26 @@ public class BagHelper
                 return testName;
             }
         }
+    }
+    
+    /**
+     * For a given InterMineObject and an InterMineIdBag return true if
+     * the types correspond
+     * 
+     * @param bag the InterMineIdBag
+     * @param o the InterMineObject
+     * @param os the ObjectStore
+     * @return a boolean
+     */
+    public static boolean isOfBagType (InterMineBag bag, InterMineObject o, ObjectStore os) {
+        Set classDescriptors = os.getModel().getClassDescriptorsForClass(o.getClass());
+        for (Iterator iter = classDescriptors.iterator(); iter.hasNext();) {
+            ClassDescriptor cld = (ClassDescriptor) iter.next();
+            String className = cld.getName();
+            if (TypeUtil.unqualifiedName(className).equals(bag.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

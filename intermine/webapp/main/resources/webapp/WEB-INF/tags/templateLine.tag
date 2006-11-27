@@ -5,6 +5,7 @@
 <%@ attribute name="className" required="false" type="java.lang.String" %>
 <%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
 <%@ attribute name="desc" required="false" type="java.lang.String" %>
+<%@ attribute name="bagName" required="false" type="java.lang.String" %>
 
 <%@ include file="/shared/taglibs.jsp" %>
 
@@ -26,6 +27,9 @@
           <c:set var="fieldValue" value="${interMineObject[fieldName]}"/>
           <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
         </c:forEach>
+      </c:if>
+      <c:if test="${!empty bagName}">
+          <c:set var="extra" value="${extra}&amp;bagName=${bagName}" />
       </c:if>
       <tiles:insert name="starTemplate.tile">
         <tiles:put name="templateName" value="${templateQuery.name}"/>

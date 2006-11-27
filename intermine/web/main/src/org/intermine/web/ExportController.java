@@ -74,6 +74,8 @@ public class ExportController extends TilesAction
 
             if (tableExporter.canExport(pt)) {
                 usableExporters.put(exporterId, tableExportConfig);
+            } else {
+                usableExporters.put(exporterId, null);
             }
         }
 

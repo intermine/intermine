@@ -1,9 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <bag-list>
-  <bag name="primitives">
-    <element type="java.lang.Integer" value="10"/>
-    <element type="java.lang.String" value="ten"/>
-  </bag>
-  <bag name="objects">
-    <element type="org.intermine.model.InterMineObject" value="1"/>
+  <bag name="objects" type="Gene">
+      <bagElement type="Gene" id="10" />
+      <bagElement type="Gene" id="20" />
+      <bagElement type="Gene" id="30" />
   </bag>
 </bag-list>

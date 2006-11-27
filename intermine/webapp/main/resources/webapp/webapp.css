@@ -179,6 +179,7 @@ table td {
   padding: 3px;
   margin-bottom: 10px;
   border-bottom: 1px solid #888;
+  white-space: nowrap;
 }
 .links .menu-item {
   padding-right: 5px;

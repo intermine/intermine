@@ -10,7 +10,9 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -81,7 +83,12 @@ public class ChangeTableSizeActionTest extends MockStrutsTestCase
         os.addRow(row);
 
         Model model = Model.getInstanceByName("testmodel");
-        pr = new PagedResults(results, model);
+        List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
+                                        add("Company");
+                                        add("Department");
+        }};
+        WebResults webResults = new WebResults(view, results, model, Collections.EMPTY_MAP, context);
+        pr = new PagedResults(webResults);
         pr.setPageSize(5);
     }
 
