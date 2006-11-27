@@ -117,7 +117,11 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         Gene gene = ((Gene) bioEntity);
                         identifier = gene.getOrganismDbId();
                         if (identifier == null) {
-                            identifier = gene.getAccession();
+                            try {
+                                identifier = (String) TypeUtil.getFieldValue(gene, "accession");
+                            } catch (RuntimeException e) {
+                                // ignore
+                            }
                             if (identifier == null) {
                                 identifier = "[no_identifier]";
                             }
