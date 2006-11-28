@@ -13,6 +13,7 @@ package org.intermine.bio.gbrowse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,21 +33,23 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
+import org.intermine.bio.postprocess.PostProcessTask;
+import org.intermine.bio.postprocess.PostProcessUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.Analysis;
-import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.ChromosomeBand;
 import org.flymine.model.genomic.ComputationalAnalysis;
 import org.flymine.model.genomic.ComputationalResult;
 import org.flymine.model.genomic.Evidence;
-import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
@@ -56,7 +59,6 @@ import org.flymine.model.genomic.NcRNA;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
-import org.intermine.bio.postprocess.PostProcessUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -189,6 +191,10 @@ public class WriteGFFTask extends Task
                 continue;
             }
             
+            if (feature.getChromosome().getIdentifier() == null) {
+                continue;
+            }
+            
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
@@ -202,7 +208,22 @@ public class WriteGFFTask extends Task
 
                 currentChr = (Chromosome) os.getObjectById(resultChrId);
 
-                if (!currentChr.getIdentifier().endsWith("_random")
+                if (currentChr == null) {
+                    throw new RuntimeException("get null from getObjectById()");
+                }
+                
+                if (currentChr.getIdentifier() == null) {
+                    LOG.error("chromosome has no identifier: " + currentChr);
+                    continue;
+                }
+                
+                if (currentChr.getOrganism() == null) {
+                    LOG.error("chromosome has no organism: " + currentChr);
+                    continue;
+                }
+                
+                if (currentChr.getOrganism().getAbbreviation() == null
+                    || !currentChr.getIdentifier().endsWith("_random")
                     && !currentChr.getIdentifier().equals("M")
                     && !currentChr.getOrganism().getAbbreviation().equals("MM")
                     && !currentChr.getOrganism().getAbbreviation().equals("MD")
@@ -242,7 +263,8 @@ public class WriteGFFTask extends Task
                 seenTranscriptParts.put(feature, loc);
             }
 
-            if (!currentChr.getIdentifier().endsWith("_random")
+            if (currentChr.getOrganism().getAbbreviation() == null
+                || !currentChr.getIdentifier().endsWith("_random")
                 && !currentChr.getIdentifier().equals("M")
                 && !currentChr.getOrganism().getAbbreviation().equals("MM")
                 && !currentChr.getOrganism().getAbbreviation().equals("CF")
@@ -609,8 +631,9 @@ public class WriteGFFTask extends Task
      * @param os the ObjectStore to read from
      * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
      * @return a Map from id to synonym List
+     * @throws ObjectStoreException 
      */
-    private Map makeSynonymMap(ObjectStore os, Integer chromosomeId) {
+    private Map makeSynonymMap(ObjectStore os, Integer chromosomeId) throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
         QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
@@ -650,8 +673,13 @@ public class WriteGFFTask extends Task
 
         q.setConstraint(cs);
 
-        Results res = new Results(q, os, os.getSequence());
 
+        Set indexesToCreate = new HashSet();
+        indexesToCreate.add(qfEnt);
+        indexesToCreate.add(qfSyn);
+        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
+                                                   PostProcessTask.PRECOMPUTE_CATEGORY);
+        Results res = new Results(q, os, os.getSequence());        
         res.setBatchSize(50000);
 
         Iterator resIter = res.iterator();
@@ -682,8 +710,10 @@ public class WriteGFFTask extends Task
      * @param os the ObjectStore to read from
      * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
      * @return a Map from id to Evidence List
+     * @throws ObjectStoreException 
      */
-    private Map makeEvidenceMap(ObjectStore os, Integer chromosomeId) {
+    private Map makeEvidenceMap(ObjectStore os, Integer chromosomeId)
+        throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
         QueryClass qcEnt = new QueryClass(LocatedSequenceFeature.class);
@@ -721,7 +751,11 @@ public class WriteGFFTask extends Task
         cs.addConstraint(cc3);
 
         q.setConstraint(cs);
-
+        Set indexesToCreate = new HashSet();
+        indexesToCreate.add(qfEnt);
+        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
+                                                   PostProcessTask.PRECOMPUTE_CATEGORY);
+        
         Results res = new Results(q, os, os.getSequence());
 
         res.setBatchSize(50000);
