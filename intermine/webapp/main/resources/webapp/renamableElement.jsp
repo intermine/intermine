@@ -20,7 +20,7 @@
         <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
         <c:choose>
           <c:when test="${type == 'bag'}">
-            <html:link action="/modifyQueryChange?method=load&amp;name=${nameForURL}&type=${type}">
+            <html:link action="/bagDetails?bagName=${nameForURL}">
               <c:out value="${name}"/>
             </html:link>
           </c:when>
