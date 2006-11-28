@@ -44,7 +44,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
     private static final Logger LOG = Logger.getLogger(ModifyQueryChangeAction.class);
     
     /**
-     * Load a query or bag.
+     * Load a query.
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
