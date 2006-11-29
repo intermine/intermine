@@ -35,15 +35,18 @@ public class TemplateHelperTest extends TestCase
         Reader reader = new InputStreamReader(TemplateHelper.class.getClassLoader().getResourceAsStream("WEB-INF/classes/default-template-queries.xml"));
         templates = binding.unmarshal(reader);
     }
-
+    
     public void testPrecomputeQuery() throws Exception {
         Iterator i = templates.keySet().iterator();
         TemplateQuery t = (TemplateQuery) templates.get("employeeByName");
+        String expIql =
+            "SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
-        Query query = MainHelper.makeQuery(PathQuery.fromXml(queryXml), new HashMap(), pathToQueryNode);
+        MainHelper.makeQuery(PathQuery.fromXml(queryXml), new HashMap(), pathToQueryNode);
         List indexes = new ArrayList();
-        assertEquals(query.toString(), TemplateHelper.getPrecomputeQuery(t, indexes).toString());
+        String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
+        assertEquals(expIql, precomputeQuery);
         assertTrue(indexes.size() == 1);
         System.out.println("pathToQueryNode: " + pathToQueryNode);
         List expIndexes = new ArrayList(Collections.singleton(pathToQueryNode.get("Employee.name")));
@@ -79,7 +82,7 @@ public class TemplateHelperTest extends TestCase
         tf.setBagOp("1", "" + ConstraintOp.IN.getIndex());
         tf.setBag("1", "bag1");
         tf.parseAttributeValues(template, null, new ActionErrors(), false);
-        InterMineBag bag1 = new InterMineBag(new Integer(101), "bag1", "Employee", 1, null);
+        InterMineBag bag1 = new InterMineBag(new Integer(101), "bag1", "Employee", 1, null, null);
         Map savedBags = new HashMap();
         savedBags.put("bag1", bag1);
         
@@ -93,11 +96,7 @@ public class TemplateHelperTest extends TestCase
         expected.getNodes().remove(node.getPath());
         parent.getConstraints().add(cc);
         expected.setEdited(true);
-        
-        System.out.println("expected: " + expected.toXml());
-        
         TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, savedBags);
-        System.out.println("actual: " + actual.toXml());
         assertEquals(expected.toXml(), actual.toXml());
     }
 }
