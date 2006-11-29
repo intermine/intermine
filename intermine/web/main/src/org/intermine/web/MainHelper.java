@@ -35,7 +35,6 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.path.Path;
 
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -215,6 +214,37 @@ public class MainHelper
             andcs.addConstraint(rootcs);
         }
 
+        // Build a map to collapse nodes in loop queries
+
+        Map loops = new HashMap();
+
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            String path = node.getPath();
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                Constraint c = (Constraint) j.next();
+                if ((node.isReference() || node.isCollection())
+                        && c.getOp() == ConstraintOp.EQUALS) {
+                    String dest = (String) c.getValue();
+                    String finalDest = (String) loops.get(dest);
+                    if (finalDest == null) {
+                        finalDest = dest;
+                    }
+                    Map newLoops = new HashMap();
+                    newLoops.put(path, finalDest);
+                    for (Iterator k = loops.entrySet().iterator(); k.hasNext();) {
+                        Map.Entry entry = (Map.Entry) k.next();
+                        String entryDest = (String) entry.getValue();
+                        if (entryDest.equals(path)) {
+                            entryDest = finalDest;
+                        }
+                        newLoops.put(entry.getKey(), entryDest);
+                    }
+                    loops = newLoops;
+                }
+            }
+        }
+
         Map queryBits = new HashMap();
 
         //build the FROM and WHERE clauses
@@ -222,32 +252,36 @@ public class MainHelper
             PathNode node = (PathNode) i.next();
             String path = node.getPath();
             QueryReference qr = null;
+            String finalPath = (String) loops.get(path);
 
-            if (path.indexOf(".") == -1) {
-                QueryClass qc = new QueryClass(getClass(node.getType(), model));
-                q.addFrom(qc);
-                queryBits.put(path, qc);
-            } else {
-                String fieldName = node.getFieldName();
-                QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-
-                if (node.isAttribute()) {
-                    QueryField qf = new QueryField(parentQc, fieldName);
-                    queryBits.put(path, qf);
-                } else {
-                    if (node.isReference()) {
-                        qr = new QueryObjectReference(parentQc, fieldName);
-                    } else {
-                        qr = new QueryCollectionReference(parentQc, fieldName);
-                    }
+            if (finalPath == null) {           
+                if (path.indexOf(".") == -1) {
                     QueryClass qc = new QueryClass(getClass(node.getType(), model));
-                    andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
                     q.addFrom(qc);
                     queryBits.put(path, qc);
+                } else {
+                    String fieldName = node.getFieldName();
+                    QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
+
+                    if (node.isAttribute()) {
+                        QueryField qf = new QueryField(parentQc, fieldName);
+                        queryBits.put(path, qf);
+                    } else {
+                        if (node.isReference()) {
+                            qr = new QueryObjectReference(parentQc, fieldName);
+                        } else {
+                            qr = new QueryCollectionReference(parentQc, fieldName);
+                        }
+                        QueryClass qc = new QueryClass(getClass(node.getType(), model));
+                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                        q.addFrom(qc);
+                        queryBits.put(path, qc);
+                    }
                 }
+                finalPath = path;
             }
 
-            QueryNode qn = (QueryNode) queryBits.get(path);
+            QueryNode qn = (QueryNode) queryBits.get(finalPath);
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 String code = c.getCode();
@@ -289,32 +323,12 @@ public class MainHelper
             }
         }
 
-        // Now process loop constraints. The constraint parameter refers backwards and
-        // forwards in the query so we can't process these in the above loop.
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-            String path = node.getPath();
-            QueryNode qn = (QueryNode) queryBits.get(path);
-
-            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                Constraint c = (Constraint) j.next();
-                ConstraintSet cs = (ConstraintSet) codeToCS.get(c.getCode());
-                if (node.isReference() && c.getOp() != ConstraintOp.IS_NOT_NULL
-                    && c.getOp() != ConstraintOp.IS_NULL
-                    && !BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
-                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
-                }
-            }
-        }
-
         if (andcs.getConstraints().isEmpty()) {
             q.setConstraint(null);
         } else if (andcs.getConstraints().size() == 1) {
             q.setConstraint((org.intermine.objectstore.query.Constraint)
                     (andcs.getConstraints().iterator().next()));
         }
-
 
         //build the SELECT list
         for (Iterator i = view.iterator(); i.hasNext();) {
