@@ -136,6 +136,7 @@ public class AjaxServices
            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
                                           "max.bag.size.notloggedin",
                                           Constants.MAX_NOT_LOGGED_BAG_SIZE);
+           bag.setName(newName);
            profile.saveBag(newName, bag, maxNotLoggedSize);
         } else {
             return "Type unknown";
