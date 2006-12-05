@@ -2420,8 +2420,6 @@
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="CDS.gene" type="reference">
     </tag>
-    <tag name="aspect:Genomics" objectIdentifier="CDS.MRNAs" type="collection">
-    </tag>
     <tag name="aspect:Genomics" objectIdentifier="ProteinGeneLocation" type="template">
     </tag>
     <tag name="aspect:Genomics" objectIdentifier="three_prime_utrs" type="template">
