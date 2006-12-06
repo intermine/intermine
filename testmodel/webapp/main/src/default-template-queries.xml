@@ -47,23 +47,22 @@
         </node>
       </query>
     </template>
-
-    <template name="employeesOverACertainAgeFromDepartmentA" description="View all the employees of a certain age from a certain department" important="false">
-      <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
-        <node path="Employee" type="Employee">
-        </node>
-        <node path="Employee.age" type="int">
-          <constraint op="&gt;=" value="25" description="Age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Employee.department" type="Department">
-        </node>
-        <node path="Employee.department.name" type="String">
-          <constraint op="=" value="DepartmentA" description="" identifier="Employee.department.name" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
+<template name="employeesOverACertainAgeFromDepartmentA" title="View all the employees of a certain age from a certain department" longDescription="" comment="" important="false">
+  <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age Employee.department.name" constraintLogic="A and B">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.age" type="int">
+      <constraint op="&gt;=" value="25" description="Age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Employee.department" type="Department">
+    </node>
+    <node path="Employee.department.name" type="String">
+      <constraint op="=" value="DepartmentA" description="Department constraint" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
   </template-queries>
 
   <tags>
