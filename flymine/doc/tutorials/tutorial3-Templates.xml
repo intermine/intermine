@@ -23,12 +23,18 @@
       related to that data type.</para></listitem>
     </itemizedlist>
 
+    <para>Each template has a 'short' name and a longer
+    description. The short name is formatted as 'query starting
+    point(s) --> 'query output' and allows you to easily 'scan' the set
+    of templates available.  The longer description can be seen when
+    you access the template form.</para>
+
     <para>This tutorial will guide you through running a template
-    query. The template query 'Search for GO annotations for a
-    particular gene' will be used as an example. Here, this template
-    query will be accessed through the Gene Ontology aspect. Click on
-    the 'Gene Ontology' aspect to go to the Gene Ontology aspect
-    page.</para>
+    query. The template query 'Gene --> GO terms ('Search for GO
+    annotations for a particular gene') will be used as an
+    example. Here, this template query will be accessed through the
+    Gene Ontology aspect. Click on the 'Gene Ontology' aspect to go to
+    the Gene Ontology aspect page.</para>
 
        <mediaobject>
           <imageobject>
@@ -37,8 +43,7 @@
         </mediaobject>
     
     <para>Find the 'Related template queries' section and scroll down
-    to find the template 'Search for GO annotations for a particular
-    gene'.</para>
+    to find the template 'Gene --> GO terms'.</para>
 
        <mediaobject>
           <imageobject>
@@ -46,8 +51,11 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
     
-    <para>Clicking on the blue arrow next to a template query takes
+    <para>Clicking on the circled 't' next to a template query takes
     you to the template page.</para>
+
+    <para>Notice that the template short name and a longer description
+    is now displayed. </para>
 
     <para>This template query has two variables which can be changed
     (or left as the default, all template queries have default values
@@ -55,19 +63,17 @@
 
     <itemizedlist> 
 
-      <listitem><para>The first variable has a label 'Synonym value =
-      '.  This means that you can enter any type of gene identifier
-      supported by FlyMine (rather than being limited to a specific
-      type of identifier). For <emphasis>D. melanogaster</emphasis>
-      genes, therefore, you could enter an FBgn identifier, CG
-      identifier or a gene symbol. Change the default value for this
-      variable to 'zen'.</para></listitem>
+      <listitem><para>The first variable has a label 'Gene identifier
+      = '.  This means that you can enter any type of gene identifier
+      supported by FlyMine. For <emphasis>D. melanogaster</emphasis>
+      genes, therefore, you should enter a CGxxxx identifier. Change
+      the default value for this variable to
+      'CG1046'.</para></listitem>
 
-     <listitem><para>The second variable asks for an organism. The organism is
-     specified for this template because a gene symbol or name may be
-     used for genes in more than one organism. Notice that the
-     organism can be selected from a drop-down list. Leave the
-     organism name set to 'Drosophila melanogaster'.</para></listitem>
+     <listitem><para>The second variable asks for an organism. Notice
+     that the organism can be selected from a drop-down list. Leave
+     the organism name set to 'Drosophila
+     melanogaster'.</para></listitem>
 
     </itemizedlist> 
 
@@ -78,14 +84,13 @@
         </mediaobject>
 
      <para>At the bottom of each template form are two options: 
-     'View Query' and 'View Results'.</para>    
+     'Show Results' and 'Edit Query'.</para>    
  
     <itemizedlist>
-       <listitem><para>Pressing the 'View Results' button will take
-       you directly to the results page. Depending on the template,
-       your results will be either a table of simple objects, a table
-       of object details pages or a combination of both. The example
-       query shows a table of objects as result:</para></listitem>
+       <listitem><para>Pressing the 'Show Results' button will take
+       you directly to your results page, from where you will be able
+       to access more information about each object by following the
+       links.</para></listitem>
     </itemizedlist>
 
        <mediaobject>
@@ -94,7 +99,7 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
  
-    <itemizedlist> <listitem><para>The 'View Query' option allows you
+    <itemizedlist> <listitem><para>The 'Edit Query' option allows you
       to display the template in the FlyMine Query Builder. This
       option enables you to use a template query as a starting point
       for building a modified or more complex query, or to see how a
@@ -112,21 +117,18 @@
      <para>Other examples:</para>
      <itemizedlist>
 
-       <listitem><para>'Show the predicted orthologues between two
-       organisms'. (Comparative Genomics aspect) This template will
-       give you a table of object summaries and allow you to browse
-       the result.</para></listitem>
+       <listitem><para>'All genes organism1 --> Orthologues organism2'
+       (Show the predicted orthologues between two
+       organisms). (Comparative Genomics aspect).</para></listitem>
 
-       <listitem><para>'For a particular protein from Drosophila
-       melanogaster, show the proteins it has been shown to interact
-       with and that have an orthologue in C. elegans with an
-       associated RNAi phenotype'. (Protein Interactions, Comparative
-       Genomics, RNAi aspect). This template demonstrates how it is
-       possible to query different types of data at once in
-       FlyMine. Take a look at the results and try viewing the
-       structure. The results of this template provide an example of
-       how simple attributes and object summaries can be
-       combined.</para></listitem>
+       <listitem><para>'Protein [D. melanogaster] --> Interacting
+       proteins + C. elegans orthologues that have an RNAi
+       phenotype' (For a particular protein from Drosophila melanogaster,
+       show the proteins it has been shown to interact with and that
+       have an orthologue in C. elegans with an associated RNAi
+       phenotype). (Protein Interactions, Comparative Genomics, RNAi
+       aspect). This template demonstrates how it is possible to query
+       different types of data at once in FlyMine.</para></listitem>
 
        <listitem><para>Use the 'Search templates' option (top menu
        bar) with a keyword (e.g. GO term, protein). You will notice

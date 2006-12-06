@@ -17,10 +17,7 @@
       <listitem><para>Bags can be created from an external source:
       click on 'Create a bag of identifiers' on the top menu
       bar on any FlyMine page and type or past in a list of
-      identifiers, or upload a file containing the list. Do not mix up
-      different types of identifiers if you want to use your bag to
-      constrain a query - e.g. make a bag of gene symbols only or gene
-      identifiers only.</para></listitem>
+      identifiers, or upload a file containing the list.</para></listitem>
  
       <listitem><para>Data from previous queries can also be saved
       into a bag. To save your data to a bag select the required data
@@ -51,7 +48,7 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
-     <para>To make you bag:</para>
+     <para>To make your bag:</para>
  
    <orderedlist>
       <listitem><para>Either type or cut and paste in a list of
@@ -73,18 +70,18 @@
         </mediaobject>
 
     <para>Now we want to find all the orthologous genes in
-    <emphasis>D. pseudoobscura</emphasis> using an existing template. Find the
-    template 'For a particular gene, show predicted orthologues in one
-    particular organism' (Comparative Genomics aspect).</para>
+    <emphasis>D. pseudoobscura</emphasis> using an existing
+    template. Find the template 'Gene --> Orthologues in one specific
+    organism' (Comparative Genomics aspect).</para>
 
    <para>Any variable in a template query can be constrained to a bag
     (or 'not in' a bag) rather than a single value. Click on the
-    check-box below the template form to constrain the gene identifier
-    to be in a bag. If you have bags saved in your history the option
-    to constrain each variable to a bag will appear automatically. The
-    name of the bag you just created will appear in the drop-down
-    menu. Select the right organisms from the two other drop-down
-    menus and run the query.</para>
+    check-box below the Synonym value box to constrain the gene
+    synonym value to be in a bag. If you have bags saved in your
+    history the option to constrain each variable to a bag will appear
+    automatically. The name of the bag you just created will appear in
+    the drop-down menu. Select the right organisms from the two other
+    drop-down menus and run the query.</para>
 
         <mediaobject>
           <imageobject>
@@ -124,11 +121,12 @@
         </mediaobject>
 
     <para>Bags of data, as well as previously executed queries, can be
-    retrieved from your History page at the top menu bar on any
-    FlyMine page. Your history will remain available to you only for
-    the duration of a session unless you create and use a login. If
-    you log in (via button on top menu bar), your history will be
-    stored permanently. Click on 'History' in the top menu bar.</para>
+    retrieved from your My Mine page at the top menu bar on any
+    FlyMine page. Your bags and query history will remain available to
+    you only for the duration of a session unless you create and use a
+    login. If you log in (via button on top menu bar), your bags and
+    query history can be stored permanently. Click on 'My Mine' in the
+    top menu bar.</para>
 
    <mediaobject>
           <imageobject>
