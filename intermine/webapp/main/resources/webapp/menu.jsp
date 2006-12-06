@@ -36,8 +36,8 @@
     </c:choose>
   </span>
   <span class="menu-item">
-    <html:link action="/history.do">
-      <fmt:message key="menu.history"/>
+    <html:link action="/mymine.do">
+      <fmt:message key="menu.mymine"/>
     </html:link>
   </span>
   <span class="menu-item">
