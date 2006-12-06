@@ -90,7 +90,8 @@ public class InterMineBag extends AbstractSet
      * @param size the size of the bag
      * @param os the ObjectStore to use to retrieve the contents of the bag
      */
-    public InterMineBag(Integer userId, String name, String type, int size, ObjectStore uos, ObjectStore os) {
+    public InterMineBag(Integer userId, String name, String type, int size, ObjectStore uos,
+                        ObjectStore os) {
         listReference = null;
         list = null;
         this.userId = userId;
@@ -110,7 +111,8 @@ public class InterMineBag extends AbstractSet
      * @param os the ObjectStore to use to store the contents of the bag
      * @param c the new bag contents
      */
-    public InterMineBag(Integer userId, String name, String type, ObjectStore uos, ObjectStore os, Collection c) {
+    public InterMineBag(Integer userId, String name, String type, ObjectStore uos, ObjectStore os,
+                        Collection c) {
         listReference = null;
         list = new ArrayList(c);
         this.userId = userId;
@@ -501,10 +503,18 @@ public class InterMineBag extends AbstractSet
 
     /**
      * Get the type of this bag (a class from InterMine model)
-     * @return the type of object in this bag
+     * @return the type of objects in this bag
      */
     public String getType() {
         return type;
+    }
+    
+    /**
+     * Get the fully qualifie type of this bag
+     * @return the type of objects in this bag
+     */
+    public String getQualifiedType() {
+        return os.getModel().getPackageName() + "." + type;
     }
     
     /**
