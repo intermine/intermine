@@ -309,6 +309,9 @@ public class Path
             FieldDescriptor element = (FieldDescriptor) iter.next();
             String fieldName = element.getName();
             try {
+                if (current == null) {
+                    return null;
+                }
                 current = TypeUtil.getFieldValue(current, fieldName);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("IllegalAccessException while trying to get value of "
