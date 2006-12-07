@@ -26,6 +26,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
@@ -47,6 +48,9 @@ public class WebResultsTest extends TestCase
     private Department department1;
     private Department department2;
     private Department department3;
+    private Manager man1;
+    private Manager man2;
+    private Manager man3;
     private WebResults webResults;
     
     public WebResultsTest (String arg) {
@@ -57,7 +61,18 @@ public class WebResultsTest extends TestCase
         super.setUp();
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
-        IqlQuery fq = new IqlQuery("SELECT DISTINCT a1_, a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company AS a3_ WHERE (a1_.manager CONTAINS a2_ AND a2_.company CONTAINS a3_)", "org.intermine.model.testmodel");
+        IqlQuery fq =
+            new IqlQuery("SELECT DISTINCT a1_, a3_, a4_ FROM org.intermine.model.testmodel.Department AS a1_," +
+                    " org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company " +
+                    "AS a3_, org.intermine.model.testmodel.Manager AS a4_ " +
+                    "WHERE (a1_.manager CONTAINS a2_ AND a2_.company CONTAINS a3_ " +
+                    "AND a1_.employees CONTAINS a4_)", 
+                    "org.intermine.model.testmodel");
+/*        "SELECT DISTINCT a3_, a4_ FROM org.intermine.model.testmodel.Department AS a1_, " +
+        "org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company AS a3_, " +
+        "org.intermine.model.testmodel.Manager AS a4_ " +
+        "WHERE (a1_.manager CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.employees CONTAINS a4_)";
+*/
         Query query = fq.toQuery();
         results = os.execute(query);
 
@@ -85,18 +100,33 @@ public class WebResultsTest extends TestCase
         company3.setVatNumber(103);
         company3.setId(new Integer(3));
 
+        man1 = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        man1.setName("Manager1");
+        man1.setSeniority(new Integer(100));
+        man1.setId(new Integer(1));
+        man2 = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        man2.setName("Manager2");
+        man2.setSeniority(new Integer(200));
+        man2.setId(new Integer(2));
+        man3 = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        man3.setName("Manager3");
+        man3.setSeniority(new Integer(300));
+        man3.setId(new Integer(3));
 
         ResultsRow row = new ResultsRow();
         row.add(department1);
         row.add(company1);
+        row.add(man1);
         os.addRow(row);
         row = new ResultsRow();
         row.add(department2);
         row.add(company2);
+        row.add(man2);
         os.addRow(row);
         row = new ResultsRow();
         row.add(department3);
         row.add(company3);
+        row.add(man3);
         os.addRow(row);
 
         final Model model = Model.getInstanceByName("testmodel");
@@ -104,18 +134,24 @@ public class WebResultsTest extends TestCase
             add(new Path(model, "Department.name"));
             add(new Path(model, "Department.manager[CEO].company.name"));
             add(new Path(model, "Department.manager[CEO].company.vatNumber"));
+            add(new Path(model, "Department.employees[Manager].seniority"));
         }};
         Map pathToQueryNode = new HashMap();
         QueryClass deptQC = (QueryClass) query.getSelect().get(0);
         pathToQueryNode.put("Department", deptQC);
         QueryField deptNameQF = new QueryField(deptQC, "name");
         pathToQueryNode.put("Department.name", deptNameQF);
+        
         QueryClass compQC = (QueryClass) query.getSelect().get(1);
         pathToQueryNode.put("Department.manager.company", compQC);
         QueryField compNameQF = new QueryField(compQC, "name");
         pathToQueryNode.put("Department.manager.company.name", compNameQF );
         QueryField compVatNumQF = new QueryField(compQC, "vatNumber");
         pathToQueryNode.put("Department.manager.company.vatNumber", compVatNumQF);
+        
+        QueryClass manQC = (QueryClass) query.getSelect().get(2);
+        QueryField manSeniority = new QueryField(manQC, "seniority");
+        pathToQueryNode.put("Department.employees.seniority", manSeniority);
         
         Map classKeys = new HashMap();
         classKeys.put("Company", "name");
