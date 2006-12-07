@@ -24,6 +24,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
@@ -222,9 +223,9 @@ public class WebResults extends AbstractList
             InterMineObject o = (InterMineObject) resultsRow.get(columnIndex);
             String type;
             if (columnPath.getElements().size() >= 2) {
-                Object pathElement = columnPath.getElements().get(columnPath.getElements().size() - 2);
-                ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+                List elementCDs = columnPath.getElementClassDescriptors();
+                type = ((ClassDescriptor) elementCDs.get(elementCDs.size() - 1)).getName();
+                type = TypeUtil.unqualifiedName(type);
             } else {
                 type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
             }
