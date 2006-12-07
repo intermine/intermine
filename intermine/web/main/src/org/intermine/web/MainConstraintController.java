@@ -25,6 +25,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.util.TypeUtil;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -55,6 +56,7 @@ public class MainConstraintController extends TilesAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         
         //set up the node on which we are editing constraints
         if (session.getAttribute("editingNode") != null) {
@@ -71,7 +73,6 @@ public class MainConstraintController extends TilesAction
             } else {
                 // loop query arguments
                 ArrayList paths = new ArrayList();
-                Map displayPaths = new HashMap();
                 Iterator iter = query.getNodes().values().iterator();
                 while (iter.hasNext()) {
                     PathNode anode = (PathNode) iter.next();
@@ -84,8 +85,33 @@ public class MainConstraintController extends TilesAction
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
             }
-            if (profile.getSavedBags().size() > 0) {
-                request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
+            
+            // work out the parent class of node if it is a key field or the class
+            // of object/reference/collection
+            String nodeType;
+            boolean useBags;
+            if (node.isAttribute() && (node.getPath().indexOf('.')) >= 0) {
+                nodeType = ((PathNode) query.getNodes().get(
+                        node.getPath().substring(0,
+                        node.getPath().lastIndexOf(".")))).getType();
+                useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
+                        .getFieldName());
+            } else {
+            	if ((node.getPath().indexOf('.')) >= 0) {
+            		nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
+            					node.getPath(), query));
+            	}  else {
+            		nodeType = node.getType();
+            	}
+            	useBags = ClassKeyHelper.hasKeyFields(classKeys, nodeType);
+            }
+            
+            if (useBags) {
+            	Map bags = profile.getBagsOfType(nodeType, os.getModel());
+            	if (!bags.isEmpty()) {
+            		request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
+            		request.setAttribute("bags", bags);
+            	}
             }
         }
         return null;

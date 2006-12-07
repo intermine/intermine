@@ -132,7 +132,25 @@ public class ClassKeyHelper
         return false;
     }
     
-
+    /**
+     * For a given classreturn true if it has any identifying fields.i
+     * An identifying field is an attribute (not a reference or collection)
+     * of the class that is part of any key defined for that class.
+     * @param classKeys map of classname to set of keys
+     * @param clsName the class name to look up
+     * @return true if the class has any key fields
+     */
+    public static boolean hasKeyFields(Map classKeys, String clsName) {
+        if (clsName.indexOf('.') != -1) {
+            clsName = TypeUtil.unqualifiedName(clsName);
+        }
+        Set keys = (Set) classKeys.get(clsName);
+        if (keys != null && (keys.size() > 0)) {
+        	return true;
+        }
+        return false;
+    }
+    
     /**
      * For a given object/field return true if it is an 'identifying' field.
      * An identifying field is an attribute (not a reference or collection)
