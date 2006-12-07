@@ -171,13 +171,6 @@ public class TemplateHelper
                         //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
                         if (nodeCopy.getConstraints().size() == 1) {
                             queryCopy.getNodes().remove(nodeCopy.getPath());
-                        } else {
-                            // TODO sort out removing constraint from node, simply removing
-                            // could cause problems as operations based on list indexes.  Need
-                            // wait until finished dealing with node.
-
-                            // ?? get editable nodes and check if there are no longer constraints
-                            // ?? and node not in select list then remove?
                         }
                     } else {
                         nodeCopy.getConstraints().set(

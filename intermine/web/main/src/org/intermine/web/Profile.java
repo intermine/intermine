@@ -240,10 +240,9 @@ public class Profile
     /**
      * Returns all bags of a given type
      * @param type the type
-     * @return a Map containing the bags
+     * @return a Map of bag name to bag
      */
     public Map getBagsOfType(String type, Model model) {
-    // TODO this should deal with inheritance in model
         type = model.getPackageName() + "." + type;
         Set classAndSubs = new HashSet();
         classAndSubs.add(type);
