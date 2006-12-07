@@ -7,7 +7,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/xmlunit1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mockobjects-0.07-jdk1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mockobjects-0.07-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit.jar" sourcepath="/software/noarch/junit3.8.1/src.jar"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry kind="lib" path="/intermine-web-test/build/main"/>
