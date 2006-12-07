@@ -61,10 +61,10 @@
         starting from a particular name or identifier. This is very
         useful if you do not have a particular query you want to run
         and want to browse all the information or specific information
-        about a particular entry in the database. A Quick Search box is
-        available in the top menu bar on every FlyMine page. See <xref
-        linkend="manualQuickSearch"/>.
-       </para> </listitem>
+        about a particular entry in the database. A Quick Search box
+        is available on the FlyMine homepage and in the top menu bar
+        on every FlyMine page. See <xref
+        linkend="manualQuickSearch"/>.  </para> </listitem>
 
        <listitem>
          <para> Template queries: These predefined queries provide
@@ -109,7 +109,7 @@
           <para> Aspects: FlyMine presents data as 'aspects' with each
           aspect providing a view of the different types of data
           available. The FlyMine homepage shows all the aspects that
-          are available. Clicking on an Aspect icon will bring you to
+          are available. Clicking on an aspect icon will bring you to
           the aspect homepage. Each aspect provides details about
           data available for the particular data type, access to the
           Query Builder from starting points relevant to that data
@@ -166,7 +166,7 @@
     'Other details by aspect' has more detailed information divided
     into 'aspects'. The aspects correspond to categories of data shown
     on the FlyMine homepage. (See <ulink
-    url="tutorial1-QuickSearch.xml">Tutorial 1</ulink> for more
+    url="../tutorials/tutorial2-ObjectDetailPage.xml">Tutorial 2</ulink> for more
     information).</para>
 
    <sect1>
@@ -214,7 +214,7 @@
      <para> Entries in black text allow you to see the results of
       <link linkend="manualTemplateQueries">predefined template
       queries</link> run for the object ('templates' See <ulink
-      url="tutorial3-Templates.xml">Tutorial 3</ulink>).  Those shown
+      url="../tutorials/tutorial3-Templates.xml">Tutorial 3</ulink>).  Those shown
       in light grey did not return any results.</para>
      </listitem>
 
@@ -279,8 +279,8 @@
           one data type to more complex queries which incorporate data
           from other aspects.  The aspects allow researchers to easily
           focus on a particular type of data and, for instance, easily
-          identify relevant template queries. Currently, there are 13
-          different aspects in FlyMine </para>
+          identify relevant template queries. Currently, FlyMine
+          contains 13 different aspects. </para>
 
   </chapter>
 
@@ -304,17 +304,15 @@
     particularly powerful feature, enabling a large amount of data to
     be collected very quickly. Templates range from relatively simple
     queries to more complex queries, integrating two or more
-    datasets. Templates are created by biologists at FlyMine from
-    within the web interface. Further templates can be added at any
-    time. More template queries will be added as FlyMine
-    develops. Suggestions from the research community are
-    welcomed</para>
-
-    <para> In addition, users are able to select individual templates
+    datasets. Users are able to select individual templates
     and add them to a 'favourites' list available from their <link
-    linkend="manualMyMine">query history or 'My Mine'</link> page. To
+    linkend="manualMyMine">account or 'My Mine'</link> page. To
     set a template as a favourite, click on the star icon by the
-    template query. </para>
+    template query. Templates are created by biologists at FlyMine from
+    within the web interface. Further templates can be added at any
+    time and more template queries will be added as FlyMine
+    develops. Suggestions from the research community are
+    welcomed.</para>
 
     <para> Importantly, since template queries can (optionally) be
     displayed in the <link linkend="manualQueryBuilder">Query
@@ -332,7 +330,7 @@
     the query history and allows users to build their own library of
     useful functionality.  Templates can be <link
     linkend="manualImportExportQueries">exported and imported</link>
-    as xml, thus facilitating the sharing of templates between users.
+    as XML, thus facilitating the sharing of templates between users.
     </para>
 
    </sect1>
@@ -350,10 +348,10 @@
         'Public templates' to search predefined templates, 'My
         templates' to search templates you have created and saved
         yourself or 'Everything' to search all templates. The keyword
-        search facility uses the templates full descriptions rather
-        than its shortened title (see below). The results are graded
-        by similarity to the search terms. An option to view the full
-        list of all templates is also available. </para> </listitem>
+        search facility uses the template's shortened title (see
+        below). The results are graded by similarity to the search
+        terms. An option to view the full list of all templates is
+        also available. </para> </listitem>
 
       <listitem>
        <para> Using the 'Search templates' option on the top menu bar
@@ -378,27 +376,28 @@
        text will show the template page. </para>
 
        <para> Templates appear on aspect pages and Object details
-       pages with their title, e.g. GO term --> Genes, where the
-       part before the arrow refers to the query starting point, and
-       the part after the arrow to the query output. On the template
-       page itself, apart from the title, a more complete description
-       of what the template does is given: e.g. for the previous
-       example: 'Search for genes annotated with a particular GO term
-       (or any of its children)'. Templates range from relatively
-       simple queries, such as 'Gene --> Orthologues (Search for
-       predicted orthologues for a particular gene)' to more complex
-       queries, integrating two or more datasets: like 'Gene -->
-       Protein + Interacting Proteins + Pfam domain with predicted 3-D
-       structure (For the protein product of a particular gene, show
-       any proteins it has been shown to interact with and for these
-       proteins their Pfam domain content').</para>
+       pages with their title, e.g. 'GO term identifier --> Genes in
+       one specific organism', where the part before the arrow refers
+       to the query starting point, and the part after the arrow to
+       the query output. On the template page itself, apart from the
+       title, a more complete description of what the template does is
+       given: e.g. for the previous example: 'Search for genes
+       annotated with a particular GO term'. Templates range from
+       relatively simple queries, such as 'Gene --> Orthologues
+       (Search for predicted orthologues for a particular gene)' to
+       more complex queries, integrating two or more datasets: like
+       'Gene --> Protein + Interacting Proteins + Pfam domain with
+       predicted 3-D structure (For the protein product of a
+       particular gene, show any proteins it has been shown to
+       interact with and for these proteins their Pfam domain
+       content').</para>
  
   </sect1>
   
   <sect1 id="manualRunTemplates">
       <title>How to run a template query</title>
 
-    <para> For an example, see <ulink url="tutorial3-Templates.xml">Tutorial 3</ulink>. </para>
+    <para> For an example, see <ulink url="../tutorials/tutorial3-Templates.xml">Tutorial 3</ulink>. </para>
 
     <para> To run a template query: </para>
 
@@ -436,24 +435,30 @@
   <sect1 id="manualCreateTemplates">
     <title>Creating your own template queries</title>
 
-        <para> For an example, see <ulink url="tutorial7-buildtemplate.xml">Tutorial 7</ulink>. </para>
+        <para> For an example, see <ulink url="../tutorials/tutorial7-buildtemplate.xml">Tutorial 7</ulink>. </para>
 
         <para> Any query that has been built using the FlyMine <link
         linkend="manualQueryBuilder">Query Builder</link> can be saved
         as a template query, as long as it includes at least one
-        editable constraint. In order to build a template you need to
-        be <link linkend="manualLoggingIn">logged-in</link> into
-        FlyMine. Templates that you create yourself are saved to your
-        <link linkend="manualMyMine">account</link>. </para>
+        editable constraint.  Templates that you create yourself are
+        saved to your <link
+        linkend="manualMyMine">account</link>. </para>
 
     <orderedlist>
+      <listitem>
+        <para> In order to build a template you need to
+        be <link linkend="manualLoggingIn">logged-in</link> into
+        FlyMine.</para>
+      </listitem>
+
       <listitem>
         <para> The easiest way to start building a template is to
         start from an existing template. Alternatively, a starting
         point for the Query Builder can be selected from the FlyMine
         homepage ('List all classes') or from an aspect page ('Query
-        starting points') (see <xref
-        linkend="manualStartQB"/>).</para>
+        starting points') (see <xref linkend="manualStartQB"/>). In
+        either case, click on 'Start building a template query' on the
+        Query Builder page to get started. </para>
       </listitem>
 
       <listitem>
@@ -465,10 +470,10 @@
         constraint settings' will appear in the right column. Click in
         the check-box next to 'Editable'. At the same time, it is
         possible to add a label to the editable constraint (optional)
-        to clarify what it is by typing in a label in 'Constraint
-        label'. Click on the 'Update' button in this field. The label
-        will appear on the template page after creating the template
-        (see below). </para>
+        to clarify what it is, in the 'Constraint label' box. Click on
+        the 'Update' button in this field. The label will appear on
+        the template page after creating the template (see
+        below). </para>
 
         <para> An editable constraint will have an open lock in the
         constraint list, whereas the lock of a constraint that cannot
@@ -481,15 +486,15 @@
         constraint. Clicking on 'no label' allows you to add a
         label. Click on 'Update' to implement the change. The label
         you give will appear above the constraint box on the template
-        page and so should provide direction as to what the query is
+        page and should provide direction as to what the query is
         going to do. </para>
       </listitem>
 
       <listitem>
         <para> Each new template requires a name and a title. A
-        description and comment are optional. All will be appear in
-        your list of template queries, after creating the template
-        (see below). Only the title and description will appear on the
+        description and comment are optional. All will appear in your
+        list of template queries, after creating the template (see
+        below). Only the title and description will appear on the
         template page. Therefore, they should provide as much
         information as possible about what the template will do and
         make it distinguishable from other template queries. After
@@ -500,7 +505,7 @@
         <para> Before creating a template, preview the template using
         the black arrow next to 'Template preview' and make any
         changes, if necessary. To save this query as a template, click
-        on 'Create template'. </para>
+        on 'Save template'. </para>
       </listitem>
 
       <listitem>
@@ -508,18 +513,17 @@
         your 'My Mine' page <link linkend="manualMyMine">My Mine
         page</link>. Access your account via the 'My Mine' button in
         the top menu bar on every FlyMine page. Your templates will be
-        saved under 'Saved Template Queries'. To go to a template
-        page, click on the name of the template. A yellow star next to
-        the query name marks it as a favourite query. To mark a
-        template as a favourite, click on the star icon next to the
-        template name. As a result, the star will become yellow. Once
-        a template has been created, it can still be edited, by
-        clicking on 'Edit' in the 'Actions' column. The template
-        queries can also be <link
-        linkend="manualImportExportQueries">exported and imported
-        </link> in xml format. This feature allows you to pass a query
-        on to someone else. </para> </listitem> </orderedlist>
-        </sect1>
+        saved under 'Saved Templates'. To go to a template page, click
+        on 'Run' in the 'Actions' column. A yellow star next to the
+        query name marks it as a favourite query. To mark a template
+        as a favourite, click on the star icon next to the template
+        name. As a result, the star will become yellow. Once a
+        template has been created, it can still be edited, by clicking
+        on 'Edit' in the 'Actions' column. The template queries can
+        also be <link linkend="manualImportExportQueries">exported and
+        imported </link> in XML format. This feature allows you to
+        pass a query on to someone else. </para> </listitem>
+        </orderedlist> </sect1>
 
   </chapter>
 
@@ -531,15 +535,15 @@
       <title>Introduction</title>
 
 	<para> The FlyMine Query Builder allows you to construct
-        queries on the data in the FlyMine database. The query-builder
+        queries on the data in the FlyMine database. The Query Builder
         interface enables you to browse through classes and fields of
         the data model, selecting those that you wish to constrain and
         those that you wish to include in your results. </para>
 
 	<para> Different types of data in FlyMine are described by
         classes.  For example, information describing genes is 'held'
-        in the 'Gene' class.  A class contains fields to hold specific
-        information about the type of item it is describing.  For
+        in the 'Gene' class. A class contains fields to hold specific
+        information about the type of item it is describing. For
         example, the Gene class includes the fields 'name' and
         'identifier'. Each item within a class is called an
         object. For example the 'Notch' gene is an object that belongs
@@ -595,10 +599,10 @@
        that class. (See <xref linkend="manualDataModel"/> for an
        explanation of classes and fields and <xref
        linkend="manualExampleModelQB"/> therein for a specific
-       example). For each class and field within the model browser
-       there is a 'CONSTRAIN' option and a 'SHOW' option. These are
-       used to either constrain it in the constraints list or to
-       select a class or field to show in the results <link
+       example). Within the model browser, there are 'CONSTRAIN' and
+       'SHOW' options. These are used to either constrain a class or
+       a field it in the constraints list or to select a field to show
+       in the results <link
        linkend="manualRunQB">output</link>. </para>
 
      </sect2>
@@ -781,12 +785,12 @@
    <sect1 id ="manualRunQB">
      <title>Show query results</title> 
 
-     <para> To select a class or field to show in the results output,
-     press <inlinemediaobject><imageobject><imagedata
-     fileref="show.gif" /></imageobject></inlinemediaobject> next to
-     the class/field. Fields that have been selected for output will
-     appear in a blue box in the model browser and constraint
-     list. Fields can be deleted from the output fields list using the
+     <para> To select a field to show in the results output, press
+     <inlinemediaobject><imageobject><imagedata fileref="show.gif"
+     /></imageobject></inlinemediaobject> next to the field. Fields
+     that have been selected for output will appear in a blue box in
+     the model browser and constraint list. Fields can be deleted from
+     the output fields list using the
      <inlinemediaobject><imageobject><imagedata fileref="cross.gif"
      /></imageobject></inlinemediaobject>. The order of fields in the
      output fields list can be changed by clicking and dragging
@@ -806,15 +810,15 @@
    <sect1 id ="manualSaveExportQB">
      <title>Saving and exporting your query</title> 
 
-      <para> All queries that you run are saved to your <link
-      linkend="manualMyMine">account</link>. Your query will be named
-      query_x (where x increments for each query run). Saved queries
-      can be accessed from your account via the <link
-      linkend="manualMyMine">My Mine</link> button at the top of any
-      FlyMine page. This query history is available for the duration
-      of your session unless you <link linkend="manualLoggingIn">log
-      in</link> - in which case you can then save your queries
-      permanently. </para>
+      <para> All queries that you run are stored into the Query
+      History. Your query will be named query_x (where x increments
+      for each query run). When-logged in, you can save your query
+      permanently from the Query History page ('Save' in 'Actions'
+      column). Saved queries can be accessed from your account via the
+      <link linkend="manualMyMine">My Mine</link> button at the top of
+      any FlyMine page. This Query History is available for the
+      duration of your session unless you <link
+      linkend="manualLoggingIn">log in</link>. </para>
 
       <para> If you are logged-in, it is also possible to save a query
       configuration with a name that you choose directly from the
@@ -822,8 +826,8 @@
       Query Builder, a box at the bottom will become available for you
       to save your query with a specific name. </para>
 
-      <para> Queries can be exported as xml from the Query Builder
-      page.  Queries saved as xml can be imported into the FlyMine
+      <para> Queries can be exported as XML from the Query Builder
+      page. Queries saved as XML can be imported into the FlyMine
       Query Builder - see <xref
       linkend="manualImportExportQueries"/>. </para>
 
@@ -839,30 +843,33 @@
       linkend="manualObjectDetails">Object details page</link> which
       provides more information about one specific object, or a table. </para>
 
-      <para> The results table displays the results in alphabetic
-      order, based on the content in the first column.  The number of
-      items displayed can be changed by changing the number in the
-      'Page size' box.  You can scroll through the items using 'Next',
-      or go to the last 10 items using 'Last'. The total number of
-      items returned by your query is estimated. An estimate is given
-      because, for large queries, only a subset of the total number of
-      items is initially returned by the query. This is to improve
-      query run time for large queries. Clicking on 'Last' will give
-      you the exact number of items returned by your query.  The
-      column headers reflect the relationships between different
-      classes/attributes within the query.  A column can be moved to
+      <para> The number of items displayed in the results table is set
+      to 10 by default and can be changed by changing the number in
+      the 'Page size' box.  You can scroll through the items using
+      'Next', or go to the last 10 items using 'Last'. The total
+      number of items returned by your query is estimated. An estimate
+      is given because, for large queries, only a subset of the total
+      number of items is initially returned by the query. This is to
+      improve query run time for large queries. Clicking on 'Last'
+      will give you the exact number of items returned by your query.
+      The column headers reflect the relationships between different
+      classes/attributes within the query. A column can be moved to
       the right or to the left by clicking on the appropriate arrow on
       top of the column. Clicking on the smaller double arrow on top
       of a column will hide the column. The types of columns and their
       initial order are determined by the underlying Query Builder. To
       change the output, click on 'Query' in the trail at the top of
-      the result page or on 'Current query' in the top menu bar. Both
-      options will display the template page. Clicking on 'Edit Query'
-      will display the query in the Query Builder. To sort the results
-      based on a certain column different from the first one, you need
+      the result page or on 'Current query' in the top menu bar. If
+      the results originated from a template, both options will
+      display the template page. Clicking on 'Edit Query' will display
+      the query in the Query Builder. If the results originated from a
+      query, both options will display the query in the Query Builder
+      directly.  The results table displays the results in alphabetic
+      order, based on the content in the first column. To sort the
+      results based on a column different from the first one, you need
       to put that column first using the Query Builder (changing the
-      order on the result page using the arrows will not re-sort the
-      results). </para>
+      order on the result page using the arrows will currently not
+      re-sort the results). </para>
  
 
       <para> From the results page you can save your data to a <link
@@ -959,7 +966,7 @@
       new bag, using the boxes displayed underneath the
       results. Selecting the check boxes next to the column headings
       will select the entire column for saving. Alternatively,
-      individual items can be saved by selecting check boxes next to
+      individual items can be saved by selecting check-boxes next to
       the items. Currently, a bag can only contain one column.</para>
       </listitem>
 
@@ -1047,7 +1054,7 @@
       linkend="manualQueryBuilder">Query Builder</link>. Saved
       templates and previously executed queries can be viewed from
       your account or 'My Mine' page accessed at the top menu bar on
-      any FlyMine page. Your query history will remain available to
+      any FlyMine page. Your Query History will remain available to
       you only for the duration of a session unless you create and use
       a <link linkend="manualLoggingIn">login</link>. If you log in
       (via button on top menu bar), your queries and bags will be
@@ -1080,7 +1087,7 @@
       <orderedlist numeration="upperalpha">
        <listitem>
         <para> Query History - All queries that you run are saved in
-         your query history with the default name 'query_x' (where x
+         your Query History with the default name 'query_x' (where x
          increments for each query run). To change the name of the
          query, click on the pencil next to the query name.  It is
          possible to run the query again ('Actions - Run') or to
@@ -1138,22 +1145,20 @@
         clicking the 'Export' or 'Delete' buttons at the bottom of the
         page.  After pressing 'Delete' you will be asked to confirm
         that you really want to delete the selected queries.
-        Exporting a template will not delete it from your query
-        history.  This page also allows you to import templates by
-        using the 'Import template query' link at the bottom of the
-        page, if you are <link
-        linkend="manualLoggingIn">logged-in</link>. Enter queries in
-        XML format in the space provided and press 'Submit'. The
-        imported templates will be stored under 'Saved Templates'.
-        Existing templates with identical names will get an automatic
-        extension to make it unique, e.g. dmel-proteins-1,
-        dmel-proteins-2.  You can select templates to become
-        'favourite templates'.  To mark a template as a favourite,
-        click on the star next to the template name, which will then
-        become yellow.  The template will stay in this list but will
-        also appear in the 'Favourite Templates' list.  To unmark it,
-        go to 'Favourite Templates' (see below), select the template
-        and press 'Remove from Favourite List' at the bottom of the
+        Exporting a template will not delete it from your account.
+        This page also allows you to import templates by using the
+        'Import template query' link at the bottom of the page, if you
+        are <link linkend="manualLoggingIn">logged-in</link>. Enter
+        queries in XML format in the space provided and press
+        'Submit'. The imported templates will be stored under 'Saved
+        Templates'.  Existing templates with identical names will be
+        updated. You can select templates to become 'favourite
+        templates'. To mark a template as a favourite, click on the
+        star next to the template name, which will then become
+        yellow. The template will stay in this list but will also
+        appear in the 'Favourite Templates' list. To unmark it, go to
+        'Favourite Templates' (see below), select the template and
+        press 'Remove from favourites' at the bottom of the
         page. </para>
 
        </listitem>
@@ -1165,24 +1170,16 @@
         template will stay under 'Saved Queries' but will now also
         appear in the 'Favourite Templates' list.  To remove a
         template from the favourites list, select the template and
-        press 'Remove from Favourite List' at the bottom of the
-        'Favourite Templates' page. It is possible to rename the
-        template query (via pencil next to the template name), to run
-        it again ('Actions - Run') and to edit it in the Query Builder
+        press 'Remove from favourites' at the bottom of the 'Favourite
+        Templates' page. It is possible to rename the template query
+        (via pencil next to the template name), to run it again
+        ('Actions - Run') and to edit it in the Query Builder
         ('Actions- Edit').  Favourite templates can also be exported
         by selecting them individually using the check-boxes (or
         clicking on the check-box on top of the column to select all
         at once) and clicking the 'Export' button at the bottom of the
-        page. Exporting a template will not delete it from your query
-        history. This page also allows you to import templates by
-        using the 'Import template query' link at the bottom of the
-        page, if you are <link
-        linkend="manualLoggingIn">logged-in</link>.  Enter queries in
-        XML format in the space provided and press 'Submit'. The
-        imported templates will be stored under 'Saved
-        Templates'. Existing templates with identical names will get
-        an automatic extension to make it unique,
-        e.g. dmel-proteins-1, dmel-proteins-2. </para>
+        page. Exporting a template will not delete it from your
+        account. </para>
 
        </listitem>
 
@@ -1193,7 +1190,7 @@
     <sect1 id = "manualLoggingIn">
 	<title>Logging in</title>
 	    
-     <para> Your bags and query history will remain available to you
+     <para> Your bags and Query History will remain available to you
      only for the duration of a session unless you create and use a
      log in. If you log in, your bags and queries will be stored
      permanently. </para>
@@ -1220,64 +1217,63 @@
      someone else. </para>
 
     <sect1> 
-       <title>Exporting queries in xml format</title>
+       <title>Exporting queries in XML format</title>
 
-     <para> Queries can be exported as xml or IQL either from the
-     <link linkend="manualQueryBuilder">Query Builder</link> page
-     ('Actions - Export this query as XML or IQL').  Saved queries can
-     also be exported as xml from your 'Saved Queries' on your <link
-     linkend="manualMyMine">My Mine</link> page. Select the
-     templates individually using the check-boxes (or click on the
-     check-box on top of the column to select all at once) and click
-     the 'Export' button at the bottom of the page.  Exporting a
-     query will not delete it from your query history. </para>
-
-    </sect1> 
-
-    <sect1> 
-       <title>Importing queries in xml format</title>
-
-     <para> A single query saved as xml can be imported from the
-     FlyMine homepage. Click on 'Import a query from XML' at the
-     bottom of the homepage. Paste a query in XML format and press
-     'Submit' to load the query into the <link
-     linkend="manualQueryBuilder">Query Builder</link>. To save the
-     query permanently, you will need to log-in.  Multiple queries can
-     be imported at once from your <link linkend="manualMyMine">My
-     Mine</link>, if you are logged-in. The imported queries will be
-     stored under 'Saved Queries'. Existing queries with identical
-     names will get an automatic extension to make it unique,
-     e.g. dmel-proteins-1, dmel-proteins-2. </para>
-
-    </sect1> 
-
-    <sect1> 
-       <title>Exporting templates in xml format</title>
-
-     <para> Template queries can be exported as xml from your 'Saved
-     Queries' on your <link linkend="manualMyMine">My Mine</link>
-     page. Select the templates individually using the check-boxes (or
+     <para> Queries can be exported as XML or IQL from the <link
+     linkend="manualQueryBuilder">Query Builder</link> page ('Actions
+     - Export this query as XML or IQL'). A query can also be exported
+     from your Query History. Select queries using the check-boxes (or
      click on the check-box on top of the column to select all at
-     once) and click the 'Export' button at the bottom of the page.
-     Exporting a template will not delete it from your query
-     history. </para>
+     once) and click the 'Export' button at the bottom of the
+     page. Alternatively, one query can also be exported by clicking
+     on 'Export' in the 'Actions' column. Saved queries can also be
+     exported as XML from your 'Saved Queries' on your <link
+     linkend="manualMyMine">My Mine</link> page, in a similar way.
+     Exporting a query will not delete it from your account.. </para>
 
     </sect1> 
 
     <sect1> 
-      <title>Importing templates in xml format</title>
+       <title>Importing queries in XML format</title>
 
-     <para> A single template saved as xml can be imported from the
-     FlyMine homepage. Click on 'Import a template from XML' at the
-     bottom of the homepage. Paste a template in XML format and press
-     'Submit' to load the query into the Query Builder. To save the
-     template permanently, you will need to log-in. Multiple
-     templates can be imported at once from your <link
-     linkend="manualMyMine">Query History</link>, it you are
-     logged-in. The imported templates will be stored under 'Saved
-     Templates'. Existing templates with identical names will get an
-     automatic extension to make it unique, e.g. dmel-proteins-1,
+     <para> Queries saved as XML can be imported from the FlyMine
+     homepage. Click on 'Import a query from XML' at the bottom of the
+     homepage. Paste one or more queries in XML format and press
+     'Submit' to load the queries into the <link
+     linkend="manualQueryBuilder">Query Builder</link>. To save the
+     query permanently, you will need to log-in. Queries can also be
+     imported from your <link linkend="manualMyMine">My Mine</link>,
+     if you are logged-in. The imported queries will be stored under
+     'Saved Queries'. Existing queries with identical names will get
+     an automatic extension to make it unique, e.g. dmel-proteins-1,
      dmel-proteins-2. </para>
+
+    </sect1> 
+
+    <sect1> 
+       <title>Exporting templates in XML format</title>
+
+     <para> Template queries can be exported as XML from your 'Saved
+     Queries' on your <link linkend="manualMyMine">My Mine</link>
+     page. Select templates using the check-boxes (or click on the
+     check-box on top of the column to select all at once) and click
+     the 'Export' button at the bottom of the page. Alternatively, one
+     template query can also be exported by clicking on 'Export' in
+     the 'Actions' column. Exporting a template will not delete it
+     from your account.</para>
+
+    </sect1> 
+
+    <sect1> 
+      <title>Importing templates in XML format</title>
+
+     <para> In order to import a template, you need to be logged-in
+     into FlyMine. Go to 'Saved Templates' under 'My Mine' and click
+     on 'Import template queries...'. Paste one or more templates in
+     XML format and press 'Import Templates' to save the template(s)
+     to your account. The imported templates will be stored under
+     'Saved Templates'. Existing templates with identical names will
+     be updated.</para>
 
     </sect1> 
 
