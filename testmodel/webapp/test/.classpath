@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="lib" path="build/main"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/strutstest-2.1.3.jar" sourcepath="/home/kmr/extern/sources/strutstest-2.1.3/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -31,6 +30,7 @@
 	<classpathentry kind="lib" path="lib/tagsoup-0.9.7.jar"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="/testmodel-webapp-main/resources/webapp"/>
-	<classpathentry kind="lib" path="/intermine-web-model/userprofile"/>
+	<classpathentry kind="lib" path="/testmodel-webapp-main/build/webapp"/>
+	<classpathentry kind="lib" path="build/main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

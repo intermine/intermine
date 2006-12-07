@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry kind="src" path="/userprofile"/>
+	<classpathentry exported="true" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry exported="true" kind="src" path="/userprofile"/>
 	<classpathentry exported="true" kind="lib" path="lib/standard-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/snowball-1.1-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-2.5-final-20040302.jar"/>
