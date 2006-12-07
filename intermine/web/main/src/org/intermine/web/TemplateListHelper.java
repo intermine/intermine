@@ -26,9 +26,11 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.bag.BagElement;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
 
@@ -215,11 +217,21 @@ public class TemplateListHelper
         String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
         Profile p = pm.getProfile(sup);
-        String type = bag.getType();
+        Class bagClass;
+        try {
+            bagClass = Class.forName(bag.getQualifiedType());
+        } catch (ClassNotFoundException e1) {
+            // give up
+            return Collections.EMPTY_LIST;
+        }
+        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        Set types = new HashSet();
 
-        Map templates = new TreeMap();
+        List templates = new ArrayList();
         List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
         
+      TAGS:
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
             if (tag.getTagName().startsWith("aspect:")) {
@@ -229,30 +241,84 @@ public class TemplateListHelper
                     TemplateQuery templateQuery = (TemplateQuery) 
                         p.getSavedTemplates().get(tag.getObjectIdentifier());
                     if (templateQuery != null) {
-                        List nodes = templateQuery.getEditableNodes();
-                        for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-                            PathNode node = (PathNode) iterator.next();
-                            String name = null;
-                            if (node.getParentType() != null) {
-                                name = TypeUtil.unqualifiedName(node.getParentType());
-                                if (ClassKeyHelper.isKeyField((Map) context.getAttribute(
-                                                Constants.CLASS_KEYS), 
-                                                node.getParentType(), node.getFieldName())) {
-                                    if (type.equals(name)) {
-                                        templates.put(templateQuery.getName(), templateQuery);
-                                        fieldExprsOut.put(templateQuery, name);
-                                        break;
-                                    }
-                                }
+                        List constraints = templateQuery.getAllConstraints();
+                        Iterator constraintIter = constraints.iterator();
+                        List fieldExprs = new ArrayList();
+                        while (constraintIter.hasNext()) {
+                            Constraint c = (Constraint) constraintIter.next();
+
+                            if (!c.isEditable()) {
+                                continue;
                             }
-                       }
+                            
+                            String constraintIdentifier = c.getIdentifier();
+                            String[] bits = constraintIdentifier.split("\\.");
+             
+                            if (bits.length != 2) {
+                                // we can't handle anything like "Department.company.name" yet so
+                                // ignore this template
+                                continue TAGS;
+                            }
+
+                            String className = model.getPackageName() + "." + bits[0];
+                            String fieldName = bits[1];
+                            String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
+
+                            if (allNull(os, bag, fieldName)) {
+                                // ignore this template because putting a null into a template isn't
+                                // a good idea
+                                continue TAGS;
+                            }
+                            Class identifierClass;
+                            try {
+                                identifierClass = Class.forName(className);
+                            } catch (ClassNotFoundException e) {
+                               continue TAGS;
+                            }
+                            
+                            if (identifierClass.isAssignableFrom(bagClass)
+                                && model.getClassDescriptorByName(className)
+                                   .getFieldDescriptorByName(fieldName) != null) {
+                                fieldExprs.add(fieldExpr);
+                            }
+                         }
+                        if (fieldExprs.size() > 0) {
+                            templates.add(templateQuery);
+                            fieldExprsOut.put(templateQuery, fieldExprs);
+                        }
+
                     }
                 }
             }
         }
         
-        List retList = new ArrayList(templates.values());
+        return templates;
+    }
 
-        return retList;
+    /**
+     * Return true if and only if the ba 
+     * @throws IllegalAccessException 
+     */
+    private static boolean allNull(ObjectStore os, InterMineBag bag, String fieldName) {
+
+        Iterator iter = bag.iterator();
+
+        while (iter.hasNext()) {
+            BagElement element = (BagElement) iter.next();
+
+            try {
+                if (TypeUtil.getFieldValue(os.getObjectById(element.getId()), fieldName) != null) {
+                    return false;
+                }
+            } catch (IllegalAccessException e) {
+                // give up
+                return true;
+            } catch (ObjectStoreException e) {
+                // give up
+                return true;
+            }
+        }
+
+        return true;
     }
 }
