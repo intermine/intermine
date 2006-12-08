@@ -869,6 +869,25 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
+     * Generate sql from a Query
+     *
+     * @param q the Query
+     * @return an SQL String
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public String generateSql(Query q) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            return generateSql(c, q, 0, Integer.MAX_VALUE);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Failed to get connection", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
      * Create temporary tables for the bag in the BagConstraints of the given Query, then call
      * SqlGenerator.generate().  Entries are placed in the bagConstraintTables Map, which is a
      * WeakHashMap from BagConstraint -&gt; table name. When the BagConstraint is garbage-

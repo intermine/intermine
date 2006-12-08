@@ -169,6 +169,7 @@
   <definition name="favourites.tile" path="/historyFavouritesView.jsp" controllerUrl="/initFavourites.do"/>
   <definition name="starTemplate.tile" path="/shared/starTemplate.jsp" controllerUrl="/starTemplate.do" />
   <definition name="precomputeTemplate.tile" path="precompute.jsp" controllerUrl="/precomputeTemplate.do" />
+  <definition name="summariseTemplate.tile" path="summarise.jsp" controllerUrl="/precomputeTemplate.do" />
   <definition name="externalLinks.tile" path="/externalLinks.jsp"
               controllerUrl="/initExternalLinks.do"/>
   <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />

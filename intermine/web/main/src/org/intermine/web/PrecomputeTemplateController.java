@@ -50,7 +50,7 @@ public class PrecomputeTemplateController extends TilesAction
         // we need to precompute without editable constraints - call method that
         // returns an ObjectStore query with them removed
         // TODO: can't currently create a template usind a saved bag
-        Query query = TemplateHelper.getPrecomputeQuery(template, new ArrayList());
+        Query query = TemplateHelper.getPrecomputeQuery(template, new ArrayList(), null);
 
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
@@ -65,6 +65,18 @@ public class PrecomputeTemplateController extends TilesAction
             precomputedMessage = "false";
         }
         request.setAttribute("isPrecomputed", precomputedMessage);
+
+        String summarisedMessage;
+        if ((session.getAttribute("summarising_" + templateName) != null)
+            && session.getAttribute("summarising_" + templateName).equals("true")) {
+            summarisedMessage = "summarising";
+        } else if (template.isSummarised()) {
+            summarisedMessage = "true";
+        } else {
+            summarisedMessage = "false";
+        }
+        request.setAttribute("isSummarised", summarisedMessage);
+
         return null;
     }
 }

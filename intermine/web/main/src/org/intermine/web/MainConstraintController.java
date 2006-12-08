@@ -69,7 +69,8 @@ public class MainConstraintController extends TilesAction
             MainHelper.moveToRequest("editingConstraintOperand", request);
             
             if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
-                request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss));
+                request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
+                            null));
             } else {
                 // loop query arguments
                 ArrayList paths = new ArrayList();

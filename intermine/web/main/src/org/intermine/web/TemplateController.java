@@ -156,14 +156,14 @@ public class TemplateController extends TilesAction
                     }
                     Constraint newC = new Constraint(c.getOp(), value, true,
                             c.getDescription(), c.getCode(), c.getIdentifier());
-                    displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);;
+                    displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);
                     c = newC;
                     if (selectedBagName != null) {
                         selectedBagNames.put(c, modC.getValue());
                     }
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, os
-                        .getModel(), oss));
+                        .getModel(), oss, template.getPossibleValues(node)));
                 
                 // create display name
                 PathNode parent;

@@ -13,7 +13,10 @@ package org.intermine.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.util.XmlUtil;
 
@@ -82,6 +85,18 @@ public class ExportQueryAction extends InterMineAction
             Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags());
             String iql = osQuery.toString();
             response.getWriter().println(iql);
+        } else if (request.getParameter("as").toLowerCase().equals("sql")) {
+            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags());
+            ServletContext servletContext = session.getServletContext();
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            if (os instanceof ObjectStoreInterMineImpl) {
+                String sql = ((ObjectStoreInterMineImpl) os).generateSql(osQuery);
+                response.getWriter().println(sql);
+            } else {
+                response.getWriter().println("Not an ObjectStoreInterMineImpl");
+            }
+        } else {
+            response.getWriter().println("Unknown export type: " + request.getParameter("as"));
         }
         
         return null;

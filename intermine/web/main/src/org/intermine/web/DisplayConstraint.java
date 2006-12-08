@@ -33,7 +33,7 @@ public class DisplayConstraint
     protected PathNode node;
     /** The related model. */
     protected Model model;
-    /** The list of valid opertors. */
+    /** The list of valid operators. */
     private Map validOps;
     /** List of fixed operator indices. */
     private List fixedOps;
@@ -41,18 +41,21 @@ public class DisplayConstraint
     private List optionsList;
     /** The object store summary. */
     protected ObjectStoreSummary oss;
-    
+
     /**
      * Creates a new instance of DisplayConstraint.
      *
      * @param node the node representing a class attribute
      * @param model the associated model
      * @param oss the object store summary
+     * @param optionsList a List of possible values, or null (to fall back to oss)
      */
-    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss) {
+    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss,
+        List optionsList) {
         this.node = node;
         this.model = model;
         this.oss = oss;
+        this.optionsList = optionsList;
     }
     
     /**
@@ -85,14 +88,14 @@ public class DisplayConstraint
         }
         
         fixedOps = new ArrayList();
-        optionsList = new ArrayList();
+        List newOptionsList = new ArrayList();
         
         String parentType = node.getParentType();
         if (parentType != null) {
             String parentClassName = MainHelper.getClass(parentType, model).getName();
             List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
             if (fieldNames != null && node.getType() != null) {
-                optionsList.addAll(fieldNames);
+                newOptionsList.addAll(fieldNames);
                 Class parentClass = MainHelper.getClass(node.getType());
                 Iterator iter = SimpleConstraint.fixedEnumOps(parentClass).iterator();
                 while (iter.hasNext()) {
@@ -101,6 +104,9 @@ public class DisplayConstraint
             }
         }
         
+        if (optionsList == null) {
+            optionsList = newOptionsList;
+        }
         return fixedOps;
     }
     
