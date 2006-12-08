@@ -131,7 +131,7 @@ public class PrecomputeTemplatesTask extends Task
             TemplateQuery template = (TemplateQuery) entry.getValue();
 
             List indexes = new ArrayList();
-            Query q = TemplateHelper.getPrecomputeQuery(template, indexes);
+            Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
             if (q.getConstraint() == null) {
                 // see ticket #255

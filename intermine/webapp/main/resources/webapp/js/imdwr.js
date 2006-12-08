@@ -14,6 +14,14 @@ function precomputeTemplate(templateName){
 	 });
 }
 
+function summariseTemplate(templateName){
+    document.getElementById('summarise_'+templateName).innerHTML="Summarising..";
+    AjaxServices.summarise(templateName,function(str) {
+        document.getElementById('summarise_'+templateName).style.color="#777";
+        document.getElementById('summarise_'+templateName).innerHTML="Summarised";
+    });
+}
+
 function editName(name){
   document.getElementById('form_'+name).style.display="block";
   document.getElementById('name_'+name).style.display="none";

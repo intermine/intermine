@@ -562,11 +562,14 @@ public class TemplateHelper
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
      * to create additional indexes on (i.e. those added to select list).  Original
      * template is left unaltered.
+     *
      * @param template to generate precompute query for
      * @param indexes any additional indexes to be created will be added to this list.
+     * @param groupByNode a PathNode to group by, for summary data, or null for a precompute query
      * @return the query to precompute
      */
-    public static Query getPrecomputeQuery(TemplateQuery template, List indexes) {
+    public static Query getPrecomputeQuery(TemplateQuery template, List indexes,
+            PathNode groupByNode) {
         // generate query with editable constraints removed
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
@@ -592,18 +595,23 @@ public class TemplateHelper
         }
 
         HashMap pathToQueryNode = new HashMap();
-        Query query =
-                MainHelper.makeQuery((PathQuery) templateClone, new HashMap(), pathToQueryNode);
-
-        // Queries only select objects, need to add editable constraints to select so they can
-        // be indexed in precomputed table.  Create additional indexes for fields.
-        Iterator indexIter = indexPaths.iterator();
-        while (indexIter.hasNext()) {
-            String path = (String) indexIter.next();
-            query.addToSelect((QueryNode) pathToQueryNode.get(path));
-            indexes.add(pathToQueryNode.get(path));
+        Query query = MainHelper.makeQuery((PathQuery) templateClone, new HashMap(),
+                pathToQueryNode);
+        if (groupByNode != null) {
+            query.clearSelect();
+            QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPath());
+            query.addToSelect(qn);
+            query.addToGroupBy(qn);
+        } else {
+            // Queries only select objects, need to add editable constraints to select so they can
+            // be indexed in precomputed table.  Create additional indexes for fields.
+            Iterator indexIter = indexPaths.iterator();
+            while (indexIter.hasNext()) {
+                String path = (String) indexIter.next();
+                query.addToSelect((QueryNode) pathToQueryNode.get(path));
+                indexes.add(pathToQueryNode.get(path));
+            }
         }
-
         return query;
     }
 }

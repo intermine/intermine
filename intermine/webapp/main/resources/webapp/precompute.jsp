@@ -7,7 +7,7 @@
 	<c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
 	
 	<span id="precompute_${templateName}">
-	<html:link  href="javascript:precomputeTemplate('${templateName}')" >
+	<html:link  href="javascript:precomputeTemplate('${templateName}');" >
 	   	  Precompute
 	    </html:link>
 	</span>

@@ -22,6 +22,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+
 /**
  * A template query, which consists of a PathQuery, description, category,
  * short name.
@@ -31,6 +37,8 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class TemplateQuery extends PathQuery
 {
+    private static final Logger LOG = Logger.getLogger(TemplateQuery.class);
+
     /** Template query name. */
     protected String name;
     /** Template query title. */
@@ -47,8 +55,10 @@ public class TemplateQuery extends PathQuery
     protected boolean important = false;
     /** Keywords set for this template. */
     protected String keywords = "";
-    /** Edited version of another template **/
+    /** Edited version of another template */
     protected boolean edited = false;
+    /** Map from editable constraints to Lists of possible values */
+    protected Map possibleValues = new HashMap();
 
     /**
      * Construct a new instance of TemplateQuery.
@@ -117,6 +127,7 @@ public class TemplateQuery extends PathQuery
      * Return a clone of this template query with all editable constraints
      * removed - i.e. a query that will return all possible results of executing
      * the template.  The original template is left unaltered.
+     *
      * @return a clone of the original tempate without editable constraints.
      */
     public TemplateQuery cloneWithoutEditableConstraints() {
@@ -141,6 +152,7 @@ public class TemplateQuery extends PathQuery
 
     /**
      * Return a List of all the Constraints of fields in this template query.
+     *
      * @return a List of all the Constraints of fields in this template query
      */
     public List getAllEditableConstraints() {
@@ -154,6 +166,7 @@ public class TemplateQuery extends PathQuery
 
     /**
      * Get the template title.
+     *
      * @return the title
      */
     public String getTitle() {
@@ -162,6 +175,7 @@ public class TemplateQuery extends PathQuery
     
     /**
      * Get the template description.
+     *
      * @return the description
      */
     public String getDescription() {
@@ -177,7 +191,8 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Get the nodes from the description, in order (eg. {Company.name})
+     * Get the nodes from the description, in order (eg. {Company.name}).
+     *
      * @return the nodes
      */
     public List getEditableNodes() {
@@ -194,6 +209,7 @@ public class TemplateQuery extends PathQuery
 
     /**
      * Get the query short name.
+     *
      * @return the query identifier string
      */
     public String getName() {
@@ -209,6 +225,7 @@ public class TemplateQuery extends PathQuery
 
     /**
      * Get the keywords.
+     *
      * @return template keywords
      */
     public String getKeywords() {
@@ -216,7 +233,52 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
+     * Returns a List of possible values for a node.
+     *
+     * @param node a PathNode
+     * @return a List, or null if possible values have not been computed
+     */
+    public List getPossibleValues(PathNode node) {
+        return (List) possibleValues.get(node);
+    }
+
+    /**
+     * Returns true if there is any possibleValues data at all.
+     *
+     * @return a boolean
+     */
+    public boolean isSummarised() {
+        return !possibleValues.isEmpty();
+    }
+
+    /**
+     * Populates the possibleValues data for this TemplateQuery from the os.
+     *
+     * @param os an ObjectStore
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void summarise(ObjectStore os) throws ObjectStoreException {
+        Iterator iter = getEditableNodes().iterator();
+        while (iter.hasNext()) {
+            PathNode node = (PathNode) iter.next();
+            Query q = TemplateHelper.getPrecomputeQuery(this, null, node);
+            LOG.error("Running query: " + q);
+            List results = os.execute(q, 0, 20, true, false, os.getSequence());
+            if (results.size() < 20) {
+                List values = new ArrayList();
+                Iterator resIter = results.iterator();
+                while (resIter.hasNext()) {
+                    values.add(((List) resIter.next()).get(0));
+                }
+                possibleValues.put(node, values);
+            }
+        }
+        LOG.error("New summary: " + possibleValues);
+    }
+
+    /**
      * Convert a template query to XML.
+     *
      * @return this template query as XML.
      */
     public String toXml() {
@@ -234,7 +296,8 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Clone this TemplateQuery
+     * Clone this TemplateQuery.
+     *
      * @return a TemplateQuery
      */
     public Object clone() {
@@ -246,7 +309,8 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Return the PathQuery part of the TemplateQuery
+     * Return the PathQuery part of the TemplateQuery.
+     *
      * @return a PathQuery
      */
     public PathQuery getPathQuery() {
@@ -254,9 +318,9 @@ public class TemplateQuery extends PathQuery
     }
     
     /**
-     * Returns true if the TemplateQuery has been edited
-     * by the user and is therefore saved only in the query
-     * history
+     * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
+     * the query history.
+     *
      * @return a boolean
      */
     public boolean isEdited() {
@@ -264,7 +328,8 @@ public class TemplateQuery extends PathQuery
     }
     
     /**
-     * Set the query as beeing edited
+     * Set the query as being edited.
+     *
      * @param edited whether the TemplateQuery has been modified by the user
      */
     public void setEdited(boolean edited) {

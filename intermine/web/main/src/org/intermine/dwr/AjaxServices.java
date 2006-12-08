@@ -67,7 +67,7 @@ public class AjaxServices
     }
 
     /**
-     * Precomputes the given templat query
+     * Precomputes the given template query
      * @param templateName the template query name
      * @return a String to guarantee the service ran properly
      */
@@ -81,20 +81,49 @@ public class AjaxServices
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
         List indexes = new ArrayList();
-        Query query = TemplateHelper.getPrecomputeQuery(template, indexes);
+        Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
         try {
             if (!os.isPrecomputed(query, "template")) {
                 session.setAttribute("precomputing_" + templateName, "true");
                 os.precompute(query, indexes, "template");
-                session.removeAttribute("precomputing_" + templateName);
             }
         } catch (ObjectStoreException e) {
             LOG.error(e);
+        } finally {
+            session.removeAttribute("precomputing_" + templateName);
         }
-        return ("precomputed");
+        return "precomputed";
     }
-    
+
+    /**
+     * Summarises the given template query.
+     *
+     * @param templateName the template query name
+     * @return a String to guarantee the service ran properly
+     */
+    public String summarise(String templateName) {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        ServletContext servletContext = ctx.getServletContext();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map templates = profile.getSavedTemplates();
+        TemplateQuery template = (TemplateQuery) templates.get(templateName);
+        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
+                .getAttribute(Constants.OBJECTSTORE);
+        try {
+            session.setAttribute("summarising_" + templateName, "true");
+            template.summarise(os);
+        } catch (ObjectStoreException e) {
+            LOG.error("Failed to summarise " + templateName, e);
+        } catch (NullPointerException e) {
+            throw new NullPointerException("No such template " + templateName);
+        } finally {
+            session.removeAttribute("summarising_" + templateName);
+        }
+        return "summarised";
+    }
+
     /**
      * Rename a element such as history, name, bag
      * @param name the name of the element

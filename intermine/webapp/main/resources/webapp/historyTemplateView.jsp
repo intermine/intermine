@@ -136,6 +136,9 @@
 	                <tiles:insert name="precomputeTemplate.tile">
 	                	<tiles:put name="templateName" value="${savedTemplate.value.name}"/>
 	                </tiles:insert>
+                    <tiles:insert name="summariseTemplate.tile">
+                        <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
+                    </tiles:insert>
                 </c:if>
               </td>
             </tr>
