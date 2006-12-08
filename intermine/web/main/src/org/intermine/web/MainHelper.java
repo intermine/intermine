@@ -52,7 +52,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineBag;
+
 
 /**
  * Helper methods for main controller and main action
@@ -330,7 +330,7 @@ public class MainHelper
                     (andcs.getConstraints().iterator().next()));
         }
 
-        //build the SELECT list
+        //build the SELECT list, put all elements in ORDER BY list
         for (Iterator i = view.iterator(); i.hasNext();) {
             PathNode pn = (PathNode) pathQuery.getNodes().get(i.next());
             QueryNode qn = null;
@@ -341,6 +341,10 @@ public class MainHelper
             }
             if (!q.getSelect().contains(qn)) {
                 q.addToSelect(qn);
+            }
+            QueryNode selectNode = ((QueryNode) queryBits.get(pn.getPath()));
+            if (!q.getOrderBy().contains(selectNode)) {
+            	q.addToOrderBy(selectNode);
             }
         }
 
