@@ -130,11 +130,6 @@ public class Path
             String thisPart = parts[i];
             currentPath.append(thisPart);
             FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
-            if (fld instanceof ReferenceDescriptor) {
-                ClassDescriptor classDescriptor = 
-                    ((ReferenceDescriptor) fld).getReferencedClassDescriptor();
-                elementClassDescriptors.add(classDescriptor);
-            }
             elements.add(fld);
             if (fld == null) {
                 throw new RuntimeException("Unable to resolve path '" + path + "': field '"
@@ -168,6 +163,7 @@ public class Path
                     String qualifiedClassName = model.getPackageName() + "." + constrainedClassName;
                     cld = model.getClassDescriptorByName(qualifiedClassName);
                 }
+                elementClassDescriptors.add(cld);
             } else {
                 this.endFld = fld;
             }
