@@ -26,8 +26,8 @@ sub add_field
   my $field = shift;
   push @{$self->{fields}}, $field;
 
-  if (!exists $self->{field_hash}{$field->name}) {
-    $self->{field_hash}{$field->name()} = $field;
+  if (!exists $self->{field_hash}{$field->field_name}) {
+    $self->{field_hash}{$field->field_name()} = $field;
   }
 
   if (ref $field eq 'InterMine::Model::Attribute') {
