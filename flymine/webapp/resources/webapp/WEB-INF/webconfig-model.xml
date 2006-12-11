@@ -126,7 +126,8 @@
                    showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/synonymDisplayer.jsp" />
+      <displayer src="/model/synonymDisplayer.jsp"/>
+      <displayer src="/model/flyExpressLink.jsp"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
