@@ -61,7 +61,9 @@ sub start_element
     } else {
       my $field;
       if ($args->{Name} eq "attribute") {
-        $field = InterMine::Model::Attribute->new(name => $nameattr);
+        my $type = $args->{Attributes}{type};
+        $field = InterMine::Model::Attribute->new(name => $nameattr,
+                                                  type => $type);
       } else {
         if ($args->{Name} eq "reference") {
           $field = InterMine::Model::Reference->new(name => $nameattr);
