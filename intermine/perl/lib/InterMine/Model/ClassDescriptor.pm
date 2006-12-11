@@ -37,13 +37,15 @@ sub add_field
       push @{$self->{references}}, $field;
     } else {
       if (ref $field eq 'InterMine::Model::Collection') {
-        push @{$self->{collectionns}}, $field;
+        push @{$self->{collections}}, $field;
       } else {
         die "unknown reference: ", $field, "\n";
       }
     }
   }
 }
+
+sub 
 
 sub name
 {
