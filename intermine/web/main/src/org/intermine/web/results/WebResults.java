@@ -125,8 +125,12 @@ public class WebResults extends AbstractList
             pathToType.put(columnPath.toStringNoConstraints(), type);
             column.setType(type);
             if (!types.contains(type)) {
-                column.setSelectable(true);
-                types.add(type);
+                String fieldName = columnPath.getEndFieldDescriptor().getName();
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
+                if (isKeyField) {
+                    column.setSelectable(true);
+                    types.add(type);
+                }
             }
             columns.add(column);
             i++;
