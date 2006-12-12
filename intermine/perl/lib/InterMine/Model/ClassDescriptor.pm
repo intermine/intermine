@@ -7,6 +7,7 @@ sub new
   my $class = shift;
   my %opts = @_;
   my $self = {%opts};
+  $self->{fields} = [];
   $self->{field_hash} = {};
 
   if (!exists $opts{name}) {
@@ -24,6 +25,9 @@ sub add_field
 {
   my $self = shift;
   my $field = shift;
+
+  return if defined $self->get_field_by_name($field->field_name());
+
   push @{$self->{fields}}, $field;
 
   if (!exists $self->{field_hash}{$field->field_name}) {
@@ -45,8 +49,6 @@ sub add_field
   }
 }
 
-sub 
-
 sub name
 {
   my $self = shift;
@@ -56,7 +58,7 @@ sub name
 sub extends
 {
   my $self = shift;
-  return $self->{extends};
+  return @{$self->{extends}};
 }
 
 sub get_field_by_name
@@ -64,19 +66,7 @@ sub get_field_by_name
   my $self = shift;
   my $field = shift;
 
-  if (defined $self->{field_hash}{$field}) {
-    return $self->{field_hash}{$field};
-  } else {
-    my $model = $self->{model};
-    for my $extendee (@{$self->{extends}}) {
-      my $ex_field = $model->get_classdescriptor_by_name($extendee)->get_field_by_name($field);
-      if (defined $ex_field) {
-        return $ex_field;
-      }
-    }
-  }
-
-  return undef;
+  return $self->{field_hash}{$field};
 }
 
 sub valid_field

@@ -6,18 +6,27 @@ BEGIN {
 
 use strict;
 
-BEGIN { $InterMine::model_file = '/home/kmr/svn/dev/flymine/dbmodel/build/model/genomic_model.xml'; }
+BEGIN { 
+  $InterMine::model_file = '/home/kmr/svn/dev/flymine/dbmodel/build/model/genomic_model.xml'; 
+}
 
 use InterMine qw(Gene);
+use InterMine qw(Organism);
 
-my $g = InterMine::Gene->new(id => 125000479);
+my $g = InterMine::Gene->new(id => 127000061);
 $g->load();
 
-use Data::Dumper;
+print $g->identifier(), "\n";
+print $g->organism()->taxonId(), "\n";
 
-#print Dumper($g);
-#print "\n";
+my $genes = 
+  InterMine::Gene::Manager->get_genes(
+                                      query =>
+                                      [
+                                       identifier => { like => 'CG1111%' },
+                                      ]
+                                     );
 
-print $g->organismDbId(), "\n";
-
-1;
+for my $gene (@$genes) {
+  print $gene->identifier, "\n";
+}

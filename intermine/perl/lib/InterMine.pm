@@ -90,30 +90,63 @@ sub import {
 
   my @classes = @_;
 
+  my @classes_to_import = ();
+
   for my $class (@classes) {
     my $cd = get_model()->get_classdescriptor_by_name($class);
 
-    my %setup_args = ();
-    my @fields = (id => { type => 'int', primary_key => 1 });
+    my %setup_args = (primary_key_columns => [ 'id' ]);
+    my @columns = (id => { type => 'int', primary_key => 1 });
+    my @relationships = ();
+    my @foreign_keys = ();
 
     for my $field ($cd->fields()) {
+
       if ($field->field_type() eq 'attribute') {
-        push @fields, $field->field_name(), {type => $field->attribute_type()}
+        push @columns, $field->field_name(), {type => $field->attribute_type()}
+      } else {
+        if ($field->field_type() eq 'reference') {
+          push @columns, $field->field_name() . 'id', {type => 'int'};
+          my $referenced_type_name = $field->referenced_type_name();
+          $referenced_type_name =~ s/.*\.(.*)/InterMine::$1/;
+          my $foreign_key_settings =
+            {
+             class => $referenced_type_name,
+             key_columns => {
+                             $field->field_name() . 'id',
+                             'id'
+                            }
+            };
+          push @foreign_keys, $field->field_name(), $foreign_key_settings;
+        } else {
+
+        }
       }
     }
 
     $setup_args{table} = $class;
-    $setup_args{columns} = \@fields;
+    $setup_args{columns} = \@columns;
+    $setup_args{foreign_keys} = \@foreign_keys;
 
-    eval "
+    my $lc_class = lc $class;
+
+    eval <<"EOF";
 package InterMine::$class;
 use base 'InterMine::DB::Object';
 __PACKAGE__->meta->setup(%setup_args);
 1;
-";
+
+package InterMine::$class\::Manager;
+
+use base 'Rose::DB::Object::Manager';
+
+sub object_class { 'InterMine::$class' }
+
+__PACKAGE__->make_manager_methods('${lc_class}s');
+1;
+EOF
 
     die $@ if $@;
-
   }
 }
 

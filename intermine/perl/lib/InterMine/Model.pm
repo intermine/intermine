@@ -17,6 +17,8 @@ sub new
   bless $self, $class;
   $self->_process($opts{file});
 
+  $self->_fix_class_descriptors();
+
   return $self;
 }
 
@@ -49,6 +51,7 @@ sub start_element
     $self->{modelname} = $nameattr;
     $self->{namespace} = $args->{Attributes}{namespace};
   } else {
+    my $model = $self->{model};
     if ($args->{Name} eq "class") {
       my @extends = ();
       if (exists $args->{Attributes}{extends}) {
@@ -56,20 +59,33 @@ sub start_element
         map { s/.*\.(.*)/$1/ } @extends;
       }
       $self->{current_class} =
-        new InterMine::Model::ClassDescriptor(model => $self->{model},
+        new InterMine::Model::ClassDescriptor(model => $model,
                                               name => $nameattr, extends => [@extends]);
     } else {
       my $field;
       if ($args->{Name} eq "attribute") {
         my $type = $args->{Attributes}{type};
         $field = InterMine::Model::Attribute->new(name => $nameattr,
-                                                  type => $type);
+                                                  type => $type,
+                                                  model => $model);
       } else {
+        my $referenced_type = $args->{Attributes}{'referenced-type'};
+        my $reverse_reference = $args->{Attributes}{'reverse-reference'};
         if ($args->{Name} eq "reference") {
-          $field = InterMine::Model::Reference->new(name => $nameattr);
+          $field = InterMine::Model::Reference->new(name => $nameattr,
+                                                    referenced_type_name =>
+                                                      $referenced_type,
+                                                    reverse_reference_name =>
+                                                      $reverse_reference,
+                                                    model => $model);
         } else {
           if ($args->{Name} eq "collection") {
-            $field = InterMine::Model::Collection->new(name => $nameattr);
+            $field = InterMine::Model::Collection->new(name => $nameattr,
+                                                       referenced_type_name =>
+                                                         $referenced_type,
+                                                       reverse_reference_name =>
+                                                         $reverse_reference,
+                                                       model => $model);
           } else {
             die "unexpected element: ", $args->{Name}, "\n";
           }
@@ -108,36 +124,100 @@ sub _process
 
   $self->{classes} = $handler->{classes};
 
+  my $package_name = _namespace_to_package_name($handler->{namespace});
+
   for my $class (@{$self->{classes}}) {
-    my $classname = $handler->{namespace} . ($class->name() =~ /.*\.(.*)/)[0];
+    my $classname = $class->name();
     $self->{class_hash}{$classname} = $class;
   }
 
-  $self->{namespace} = $handler->{namespace};
-  $self->{modelname} = $handler->{modelname};
+  $self->{name_space} = $handler->{namespace};
+  $self->{package_name} = $package_name;
+  $self->{model_name} = $handler->{modelname};
 }
+
+sub _namespace_to_package_name
+{
+  my $out_name = shift;
+
+  if ($out_name =~ m@http://(?:www\.)(.*?)/(.*)?/(.*)?\#@) {
+    my $domain = $1;
+    my @domain_bits = split /\./, $domain;
+    my $out_name = join '.', reverse @domain_bits;
+
+    if (defined $2) {
+      $out_name .= ".$2";
+    }
+    if (defined $3) {
+      $out_name .= ".$3";
+    }
+    return $out_name;
+  } else {
+    die "cannot understand namespace: $out_name\n";
+  }
+}
+
+# add fields from base classes to sub-classes so that $class_descriptor->fields()
+# returns fields from base classes too
+sub _fix_class_descriptors
+{
+  my $self = shift;
+
+  while (my ($class_name, $cd) = each %{$self->{class_hash}}){
+    my @fields = $self->_get_fields($cd);
+    for my $field (@fields) {
+      $cd->add_field($field);
+    }
+  }
+}
+
+sub _get_fields
+{
+  my $self = shift;
+  my $cd = shift;
+
+  my @fields = ();
+
+  for my $field ($cd->fields()) {
+    my $field_name = $field->field_name();
+    push @fields, $field;
+  }
+
+  my @extends = $cd->extends();
+
+  for my $extendee_name (@extends) {
+    my $extendee = $self->get_classdescriptor_by_name($extendee_name);
+
+    push @fields, $self->_get_fields($extendee);
+  }
+
+  return @fields;
+}
+
 
 sub get_classdescriptor_by_name
 {
   my $self = shift;
   my $classname = shift;
+
   if (exists $self->{class_hash}{$classname}) {
     return $self->{class_hash}{$classname};
   } else {
-    return $self->{class_hash}{$self->{namespace} . $classname}
+    my $full_classname = $self->{package_name} . '.' . $classname;
+    return $self->{class_hash}{$full_classname};
   }
 }
 
-sub namespace
+sub name_space
 {
   my $self = shift;
-  return $self->{namespace};
+  return $self->{name_space};
 }
 
-sub modelname
+sub model_name
 {
   my $self = shift;
-  return $self->{modelname};
+  return $self->{model_name};
 }
 
 1;
