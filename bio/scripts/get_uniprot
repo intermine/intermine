@@ -30,7 +30,7 @@ $ftp->login("anonymous",'-anonymous@')
 $ftp->cwd($uniprot_base_path)
   or die "Cannot change working directory ", $ftp->message;
 
-$ftp->type("binary");
+$ftp->binary();
 
 my $local_release_notes_copy = tmpnam;
 
@@ -83,3 +83,7 @@ if ((system "gzip -dr $download_dir") != 0) {
 }
 
 system "chmod -R a+r,g+w $download_dir";
+
+print "Setting uniprot/current link to $download_dir";
+system "ln -s $download_dir current"
+    or die "error setting uniprot/current link to $download_dir";
