@@ -11,8 +11,10 @@ package org.intermine.web.results;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -154,7 +157,10 @@ public class WebResultsTest extends TestCase
         pathToQueryNode.put("Department.employees.seniority", manSeniority);
         
         Map classKeys = new HashMap();
-        classKeys.put("Company", "name");
+        FieldDescriptor fd = model.getClassDescriptorByName("org.intermine.model.testmodel.Company").getFieldDescriptorByName("name");
+        HashSet keys = new HashSet();
+        keys.add(new HashSet(Arrays.asList(new Object[]{fd})));
+        classKeys.put("Company", keys);
         webResults = new WebResults(view, results, model, pathToQueryNode, classKeys);
     }
     
