@@ -23,8 +23,8 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
@@ -99,7 +99,7 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         ContainsConstraint cc = new ContainsConstraint(deptRef, ConstraintOp.CONTAINS, qcDept);
         cs.addConstraint(cc);
         QueryField qfName = new QueryField(qcDept, "name");
-        QueryFunction qf = new QueryFunction(qfName, QueryFunction.LOWER);
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfName);
         SimpleConstraint sc =
             new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("departmenta"));
         cs.addConstraint(sc);

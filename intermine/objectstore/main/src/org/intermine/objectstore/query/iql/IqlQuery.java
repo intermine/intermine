@@ -169,6 +169,10 @@ public class IqlQuery
             } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
                 return "INDEXOF(" + nodeToString(q, qe.getArg1()) + ", "
                     + nodeToString(q, qe.getArg2()) + ")";
+            } else if (qe.getOperation() == QueryExpression.UPPER) {
+                return "UPPER(" + nodeToString(q, qe.getArg1()) + ")";
+            } else if (qe.getOperation() == QueryExpression.LOWER) {
+                return "LOWER(" + nodeToString(q, qe.getArg1()) + ")";
             } else {
                 String retval = nodeToString(q, qe.getArg1());
                 switch (qe.getOperation()) {
@@ -210,11 +214,8 @@ public class IqlQuery
                     case QueryFunction.MAX:
                         retval = "MAX(";
                         break;
-                    case QueryFunction.LOWER:
-                        retval = "LOWER(";
-                        break;
-                    case QueryFunction.UPPER:
-                        retval = "UPPER(";
+                    case QueryFunction.STDDEV:
+                        retval = "STDDEV(";
                         break;
                     default:
                         throw (new IllegalArgumentException("Invalid QueryFunction operation: "

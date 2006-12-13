@@ -104,7 +104,8 @@ safe_function: #( SAFE_FUNCTION (
                 | "upper" abstract_value
                 | "strpos" abstract_value abstract_value
                 | "substr" abstract_value abstract_value (abstract_value)?
-                | "coalesce" abstract_value abstract_value ) ) ;
+                | "coalesce" abstract_value abstract_value
+                | "stddev" abstract_value ) ) ;
 
 unsafe_function: #( UNSAFE_FUNCTION abstract_value
             ( ( PLUS | PERCENT | ASTERISK | DIVIDE | POWER | MINUS ) abstract_value )+ ) ;
@@ -430,6 +431,7 @@ safe_function:
             | "strpos" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
             | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value (COMMA! abstract_value)? CLOSE_PAREN!
             | "coalesce" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "stddev" OPEN_PAREN! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;
