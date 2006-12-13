@@ -256,7 +256,7 @@ public class MainHelperTest extends TestCase {
         q.addToSelect(qc2);
         q.addFrom(qc2);
         QueryField qf1 = new QueryField(qc2, "name");
-        QueryFunction qFunc = new QueryFunction((QueryField) qf1, QueryFunction.LOWER);
+        QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
@@ -288,7 +288,7 @@ public class MainHelperTest extends TestCase {
         QueryClass qc2 = new QueryClass(Department.class);
         q.addFrom(qc2);
         QueryField qf1 = new QueryField(qc2, "name");
-        QueryFunction qFunc = new QueryFunction((QueryField) qf1, QueryFunction.LOWER);
+        QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
@@ -317,7 +317,7 @@ public class MainHelperTest extends TestCase {
         q.addToSelect(qc1);
         q.addFrom(qc1);
         QueryField qf1 = new QueryField(qc1, "name");
-        QueryFunction qFunc = new QueryFunction((QueryField) qf1, QueryFunction.LOWER);
+        QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("employeea1"));
         cs.addConstraint(sc1);
         QueryClass qc2 = new QueryClass(Department.class);

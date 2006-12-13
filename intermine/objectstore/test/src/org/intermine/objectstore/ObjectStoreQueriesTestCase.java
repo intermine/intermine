@@ -872,7 +872,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
-      select avg(company.vatNumber) + 20, department.name, department
+      select avg(company.vatNumber) + 20, stddev(company.vatNumber), department.name, department
       from Company, Department
       group by department
     */
@@ -887,7 +887,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addFrom(c2);
         QueryExpression e1 = new QueryExpression(new QueryFunction(f2, QueryFunction.AVERAGE),
                 QueryExpression.ADD, new QueryValue(new Integer(20)));
+        QueryFunction e2 = new QueryFunction(f2, QueryFunction.STDDEV);
         q1.addToSelect(e1);
+        q1.addToSelect(e2);
         q1.addToSelect(f3);
         q1.addToSelect(c2);
         q1.addToGroupBy(c2);
@@ -1350,7 +1352,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         QueryField f = new QueryField(qc, "name");
-        QueryFunction e = new QueryFunction(f, QueryFunction.LOWER);
+        QueryExpression e = new QueryExpression(QueryExpression.LOWER, f);
         q.addToSelect(e);
         return q;
     }
@@ -1364,7 +1366,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         QueryField f = new QueryField(qc, "name");
-        QueryFunction e = new QueryFunction(f, QueryFunction.UPPER);
+        QueryExpression e = new QueryExpression(QueryExpression.UPPER, f);
         q.addToSelect(e);
         return q;
     }

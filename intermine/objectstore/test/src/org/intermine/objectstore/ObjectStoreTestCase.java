@@ -172,9 +172,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("CompanyA"), data.get("DepartmentA1"), data.get("EmployeeA1"), ((Employee)data.get("EmployeeA1")).getAddress() } };
         results.put("MultiJoin", toList(r));
 
-        r = new Object[][] { { new BigDecimal("3476.0000000000000000"), "DepartmentA1", data.get("DepartmentA1") },
-                             { new BigDecimal("3476.0000000000000000"), "DepartmentB1", data.get("DepartmentB1") },
-                             { new BigDecimal("3476.0000000000000000"), "DepartmentB2", data.get("DepartmentB2") } };
+        r = new Object[][] { { new BigDecimal("3476.0000000000000000"), new BigDecimal("3142.382535593017"), "DepartmentA1", data.get("DepartmentA1") },
+                             { new BigDecimal("3476.0000000000000000"), new BigDecimal("3142.382535593017"), "DepartmentB1", data.get("DepartmentB1") },
+                             { new BigDecimal("3476.0000000000000000"), new BigDecimal("3142.382535593017"), "DepartmentB2", data.get("DepartmentB2") } };
         results.put("SelectComplex", toList(r));
 
         r = new Object[][] { { data.get("EmployeeA1") },

@@ -157,9 +157,13 @@ public class Query implements SQLStringable
 
             processSqlStatementAST(ast);
         } catch (antlr.RecognitionException e) {
-            throw (new IllegalArgumentException("Exception: " + e));
+            IllegalArgumentException e2 = new IllegalArgumentException();
+            e2.initCause(e);
+            throw e2;
         } catch (antlr.TokenStreamException e) {
-            throw (new IllegalArgumentException("Exception: " + e));
+            IllegalArgumentException e2 = new IllegalArgumentException();
+            e2.initCause(e);
+            throw e2;
         }
     }
 
@@ -1037,6 +1041,12 @@ public class Query implements SQLStringable
                 case SqlTokenTypes.LITERAL_coalesce:
                     if (!gotType) {
                         retval = new Function(Function.COALESCE);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_stddev:
+                    if (!gotType) {
+                        retval = new Function(Function.STDDEV);
                         gotType = true;
                     }
                     break;

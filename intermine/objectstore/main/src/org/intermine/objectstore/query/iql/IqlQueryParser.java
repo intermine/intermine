@@ -688,17 +688,20 @@ public class IqlQueryParser
                 case IqlTokenTypes.LITERAL_max:
                     type = QueryFunction.MAX;
                     break;
-                case IqlTokenTypes.LITERAL_lower:
-                    type = QueryFunction.LOWER;
-                    break;
-                case IqlTokenTypes.LITERAL_upper:
-                    type = QueryFunction.UPPER;
-                    break;
                 case IqlTokenTypes.LITERAL_substr:
                     type = -2;
                     break;
                 case IqlTokenTypes.LITERAL_indexof:
                     type = -3;
+                    break;
+                case IqlTokenTypes.LITERAL_lower:
+                    type = -4;
+                    break;
+                case IqlTokenTypes.LITERAL_upper:
+                    type = -5;
+                    break;
+                case IqlTokenTypes.LITERAL_stddev:
+                    type = QueryFunction.STDDEV;
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -722,6 +725,10 @@ public class IqlQueryParser
                 throw new IllegalArgumentException("Too few arguments for indexof function");
             }
             return new QueryExpression(firstObj, QueryExpression.INDEX_OF, secondObj);
+        } else if (type == -4) {
+            return new QueryExpression(QueryExpression.LOWER, firstObj);
+        } else if (type == -5) {
+            return new QueryExpression(QueryExpression.UPPER, firstObj);
         } else if (type == QueryFunction.COUNT) {
             return new QueryFunction();
         } else {

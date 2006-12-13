@@ -92,10 +92,14 @@ public class Function extends AbstractValue
      * UPPER operator - takes one operand
      */
     public static final int UPPER = 17;
+    /**
+     * STDDEV operator - takes one operand
+     */
+    public static final int STDDEV = 18;
     
     private static final String REPRESENTATIONS[] = {"", "COUNT(*)", "MAX(", "MIN(",
         "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % ", "::", "STRPOS(", "SUBSTR(",
-        "COALESCE(", "LOWER(", "UPPER("};
+        "COALESCE(", "LOWER(", "UPPER(", "STDDEV("};
     
     /**
      * Constructor for this Function object.
@@ -104,7 +108,7 @@ public class Function extends AbstractValue
      * @throws IllegalArgumentException if operation is not valid
      */
     public Function(int operation) {
-        if ((operation < 1) || (operation > 17)) {
+        if ((operation < 1) || (operation > 18)) {
             throw (new IllegalArgumentException("operation is not valid"));
         }
         this.operation = operation;
@@ -127,6 +131,7 @@ public class Function extends AbstractValue
             case AVG:
             case LOWER:
             case UPPER:
+            case STDDEV:
                 if (operands.size() >= 1) {
                     throw (new IllegalArgumentException("This function may only take one operand"));
                 }
@@ -171,6 +176,7 @@ public class Function extends AbstractValue
             case AVG:
             case LOWER:
             case UPPER:
+            case STDDEV:
                 if (operands.size() < 1) {
                     throw (new IllegalStateException("This function needs an operand"));
                 }

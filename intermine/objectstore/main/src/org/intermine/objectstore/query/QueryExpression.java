@@ -43,6 +43,14 @@ public class QueryExpression implements QueryEvaluable
      * Position of specified string in other specified string
      */
     public static final int INDEX_OF = 5;
+    /**
+     * Lower case version of the given string
+     */
+    public static final int LOWER = 6;
+    /**
+     * Upper case version of the given string
+     */
+    public static final int UPPER = 7;
     
     private QueryEvaluable arg1;
     private int op;
@@ -170,6 +178,28 @@ public class QueryExpression implements QueryEvaluable
         op = SUBSTRING;
         arg2 = pos;
         arg3 = len;
+        type = String.class;
+    }
+
+    /**
+     * Constructs a String QueryExpression to perform upper and lowercase conversions.
+     *
+     * @param op the required operation
+     * @param arg the String argument
+     * @throws IllegalArgumentException if there is a mismatch between the argument and operation
+     */
+    public QueryExpression(int op, QueryEvaluable arg) throws IllegalArgumentException {
+        if (!(op == UPPER || op == LOWER)) {
+            throw new IllegalArgumentException("Invalid operation for specified arguments");
+        }
+        if (arg.getType().equals(UnknownTypeValue.class)) {
+            arg.youAreType(String.class);
+        } else if (!arg.getType().equals(String.class)) {
+            throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
+                    + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
+        }
+        arg1 = arg;
+        this.op = op;
         type = String.class;
     }
     

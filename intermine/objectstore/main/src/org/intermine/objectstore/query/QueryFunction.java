@@ -20,33 +20,29 @@ package org.intermine.objectstore.query;
 public class QueryFunction implements QueryEvaluable
 {
     /**
-     * Sum of a number of QueryFields or QueryExpressions
+     * Sum of a number of rows
      */
     public static final int SUM = 0;
     /**
-     * Average of a number of QueryFields or QueryExpressions
+     * Average value of a number of rows
      */
     public static final int AVERAGE = 1;
     /**
-     * Mininum of a number of QueryFields or QueryExpressions
+     * Mininum value of a number of rows
      */
     public static final int MIN = 2;
     /**
-     * Maximum of a number of QueryFields or QueryExpressions
+     * Maximum value of a number of rows
      */
     public static final int MAX = 3;
     /**
-     * Count over a number of QueryClasses
+     * Count rows
      */
     public static final int COUNT = 4;
     /**
-     * Lower case version of the given string
+     * Sample standard deviation of a number of rows
      */
-    public static final int LOWER = 5;
-    /**
-     * Upper case version of the given string
-     */
-    public static final int UPPER = 6;
+    public static final int STDDEV = 5;
 
     private QueryEvaluable obj;
     private int op;
@@ -118,12 +114,11 @@ public class QueryFunction implements QueryEvaluable
     }
 
     private void constructNonCount(QueryEvaluable qe, int op) throws IllegalArgumentException {
-        if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == LOWER || op == UPPER)) {
+        if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == STDDEV)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");
         }
-        if (!(Number.class.isAssignableFrom(qe.getType())
-              || qe.getType().equals(UnknownTypeValue.class))
-            && !((op == LOWER || op == UPPER) && qe.getType().equals(String.class))) {
+        if (!(Number.class.isAssignableFrom(qe.getType()) 
+              || qe.getType().equals(UnknownTypeValue.class))) {
             throw new IllegalArgumentException("Invalid argument type for specified operation");
         }
         obj = qe;

@@ -181,6 +181,7 @@ safe_function:
             | "indexof" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
             | "lower" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "upper" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "stddev" OPEN_PAREN! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;

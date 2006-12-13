@@ -126,6 +126,10 @@ public class QueryCloner
                         cloneThing(origE.getArg1(), fromElementMap),
                         (QueryEvaluable) cloneThing(origE.getArg2(), fromElementMap),
                         (QueryEvaluable) cloneThing(origE.getArg3(), fromElementMap));
+            } else if ((origE.getOperation() == QueryExpression.LOWER) || (origE.getOperation()
+                    == QueryExpression.UPPER)) {
+                return new QueryExpression(origE.getOperation(),
+                        (QueryEvaluable) cloneThing(origE.getArg1(), fromElementMap));
             } else {
                 return new QueryExpression((QueryEvaluable)
                         cloneThing(origE.getArg1(), fromElementMap),

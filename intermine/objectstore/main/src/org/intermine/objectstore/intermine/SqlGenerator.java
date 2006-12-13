@@ -1370,6 +1370,14 @@ public class SqlGenerator
                 buffer.append(", ");
                 queryEvaluableToString(buffer, arg2, q, state);
                 buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.LOWER) {
+                buffer.append("LOWER(");
+                queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
+                buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.UPPER) {
+                buffer.append("UPPER(");
+                queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
+                buffer.append(")");
             } else {
                 QueryEvaluable arg1 = nodeE.getArg1();
                 QueryEvaluable arg2 = nodeE.getArg2();
@@ -1423,13 +1431,8 @@ public class SqlGenerator
                 queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;
-            case QueryFunction.LOWER:
-                buffer.append("LOWER(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                buffer.append(")");
-                break;
-            case QueryFunction.UPPER:
-                buffer.append("UPPER(");
+            case QueryFunction.STDDEV:
+                buffer.append("STDDEV(");
                 queryEvaluableToString(buffer, nodeF.getParam(), q, state);
                 buffer.append(")");
                 break;

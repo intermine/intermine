@@ -42,8 +42,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
@@ -303,8 +303,8 @@ public class MainHelper
                     } else {
                         if (qn.getType().equals(String.class)) {
                             // do a case-insensitive search
-                            QueryFunction qf = new QueryFunction((QueryField) qn,
-                                                                 QueryFunction.LOWER);
+                            QueryExpression qf = new QueryExpression(QueryExpression.LOWER,
+                                    (QueryField) qn);
                             String lowerCaseValue = ((String) c.getValue()).toLowerCase();
                             cs.addConstraint(new SimpleConstraint(qf, c.getOp(),
                                                                   new QueryValue(lowerCaseValue)));
