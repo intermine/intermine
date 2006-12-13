@@ -33,7 +33,8 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         PathNode node = query.addNode("Employee.name");
         
         dc = new DisplayConstraint(node, Model.getInstanceByName("testmodel"),
-                (ObjectStoreSummary) getActionServlet().getServletContext().getAttribute(Constants.OBJECT_STORE_SUMMARY));
+                (ObjectStoreSummary) getActionServlet().getServletContext().getAttribute(Constants.OBJECT_STORE_SUMMARY),
+                null);
     }
     
     public void testValidOps() throws Exception {        
