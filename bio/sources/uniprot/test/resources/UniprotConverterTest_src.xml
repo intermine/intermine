@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
+<entry dataset="Swiss-Prot" created="1988-01-01" modified="2006-12-12" version="77">
+  <accession>P06602</accession>
+  <accession>P07667</accession>
+  <accession>Q9V5E6</accession>
+  <name>EVE_DROME</name>
+  <protein>
+    <name>Segmentation protein even-skipped</name>
+  </protein>
+  <gene>
+    <name type="primary">eve</name>
+    <name type="ORF">CG2328</name>
+  </gene>
+  <organism key="1">
+    <name type="scientific">Drosophila melanogaster</name>
+    <name type="common">Fruit fly</name>
+    <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+    <lineage>
+      <taxon>Eukaryota</taxon>
+      <taxon>Metazoa</taxon>
+      <taxon>Arthropoda</taxon>
+      <taxon>Hexapoda</taxon>
+      <taxon>Insecta</taxon>
+      <taxon>Pterygota</taxon>
+      <taxon>Neoptera</taxon>
+      <taxon>Endopterygota</taxon>
+      <taxon>Diptera</taxon>
+      <taxon>Brachycera</taxon>
+      <taxon>Muscomorpha</taxon>
+      <taxon>Ephydroidea</taxon>
+      <taxon>Drosophilidae</taxon>
+      <taxon>Drosophila</taxon>
+    </lineage>
+  </organism>
+  <reference key="3">
+    <citation type="journal article" date="1986" name="Cell" volume="47" first="721" last="734">
+      <title>Isolation, structure, and expression of even-skipped: a second pair-rule gene of Drosophila containing a homeo box.</title>
+      <authorList>
+        <person name="McDonald P.M."/>
+        <person name="Ingham P."/>
+        <person name="Struhl G."/>
+      </authorList>
+      <dbReference type="PubMed" id="2877745" key="4"/>
+      <dbReference type="MEDLINE" id="87051744" key="5"/>
+      <dbReference type="DOI" id="10.1016/0092-8674(86)90515-5" key="6"/>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE [GENOMIC DNA].</scope>
+  </reference>
+  <reference key="14">
+    <citation type="journal article" date="2002" name="Genome Biol." volume="3" first="RESEARCH0083.1" last="RESEARCH0083.22">
+      <title>Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.</title>
+      <authorList>
+        <person name="Ashburner M."/>
+      </authorList>
+      <dbReference type="PubMed" id="12537572" key="15"/>
+      <dbReference type="MEDLINE" id="22426069" key="16"/>
+    </citation>
+    <scope>GENOME REANNOTATION.</scope>
+  </reference>
+  <comment type="function">
+    <text>May play a role in determining neuronal identity. May be directly involved in specifying identity of individual neurons. Pair-rule protein required for segmentation; involved in transforming the broad, spatial, aperiodic expression patterns of the gap genes into a system of precise periodic expression patterns of the pair-rule and segmentary polarity genes</text>
+  </comment>
+  <comment type="subcellular location">
+    <text>Nucleus</text>
+  </comment>
+  <comment type="similarity">
+    <text>Belongs to the even-skipped homeobox family</text>
+  </comment>
+  <comment type="similarity">
+    <text>Contains 1 homeobox DNA-binding domain</text>
+  </comment>
+  <dbReference type="EMBL" id="M14767" key="23">
+    <property type="protein sequence ID" value="AAA28522.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="X05138" key="24">
+    <property type="protein sequence ID" value="CAA28784.1"/>
+    <property type="molecule type" value="mRNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="AE003831" key="25">
+    <property type="protein sequence ID" value="AAF58865.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="U32087" key="26">
+    <property type="protein sequence ID" value="AAB05358.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="U32088" key="27">
+    <property type="protein sequence ID" value="AAB05359.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="U32089" key="28">
+    <property type="protein sequence ID" value="AAB05360.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="U32090" key="29">
+    <property type="protein sequence ID" value="AAB05361.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="U32091" key="30">
+    <property type="protein sequence ID" value="AAB05362.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="PIR" id="A26066" key="31">
+    <property type="entry name" value="A26066"/>
+  </dbReference>
+  <dbReference type="UniGene" id="Dm.18510" key="32"/>
+  <dbReference type="PDB" id="1JGG" key="33">
+    <property type="method" value="X-ray"/>
+    <property type="chains" value="A/B=70-129"/>
+  </dbReference>
+  <dbReference type="GermOnline" id="CG2328" key="34">
+    <property type="organism name" value="Drosophila melanogaster"/>
+  </dbReference>
+  <dbReference type="TRANSFAC" id="T00272" key="35"/>
+  <dbReference type="Ensembl" id="CG2328" key="36">
+    <property type="organism name" value="Drosophila melanogaster"/>
+  </dbReference>
+  <dbReference type="KEGG" id="dme:CG2328-PA" key="37"/>
+  <dbReference type="FlyBase" id="FBgn0000606" key="38">
+    <property type="gene designation" value="eve"/>
+  </dbReference>
+  <dbReference type="BioCyc" id="DMEL-XXX-02:DMEL-XXX-02-003750-MONOMER" key="39"/>
+  <dbReference type="GO" id="GO:0007350" key="40">
+    <property type="term" value="P:blastoderm segmentation"/>
+    <property type="evidence" value="TAS:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0001709" key="41">
+    <property type="term" value="P:cell fate determination"/>
+    <property type="evidence" value="NAS:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0007417" key="42">
+    <property type="term" value="P:central nervous system development"/>
+    <property type="evidence" value="NAS:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0007376" key="43">
+    <property type="term" value="P:cephalic furrow formation"/>
+    <property type="evidence" value="IMP:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0008595" key="44">
+    <property type="term" value="P:determination of anterior/posterior axis, e..."/>
+    <property type="evidence" value="NAS:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0007377" key="45">
+    <property type="term" value="P:germ-band extension"/>
+    <property type="evidence" value="IMP:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0007517" key="46">
+    <property type="term" value="P:muscle development"/>
+    <property type="evidence" value="TAS:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0009997" key="47">
+    <property type="term" value="P:negative regulation of cardioblast cell fat..."/>
+    <property type="evidence" value="IMP:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0007366" key="48">
+    <property type="term" value="P:periodic partitioning by pair rule gene"/>
+    <property type="evidence" value="TAS:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0050770" key="49">
+    <property type="term" value="P:regulation of axonogenesis"/>
+    <property type="evidence" value="IMP:FlyBase"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR001356" key="50">
+    <property type="entry name" value="Homeobox"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR012287" key="51">
+    <property type="entry name" value="Homeodomain-rel"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR009057" key="52">
+    <property type="entry name" value="Homeodomain_like"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR000047" key="53">
+    <property type="entry name" value="HTH_lambrepressr"/>
+  </dbReference>
+  <dbReference type="Gene3D" id="G3DSA:1.10.10.60" key="54">
+    <property type="entry name" value="Homeodomain-rel"/>
+    <property type="match count" value="1"/>
+  </dbReference>
+  <dbReference type="Pfam" id="PF00046" key="55">
+    <property type="entry name" value="Homeobox"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="PRINTS" id="PR00024" key="56">
+    <property type="entry name" value="HOMEOBOX"/>
+  </dbReference>
+  <dbReference type="PRINTS" id="PR00031" key="57">
+    <property type="entry name" value="HTHREPRESSR"/>
+  </dbReference>
+  <dbReference type="ProDom" id="PD000010" key="58">
+    <property type="entry name" value="Homeobox"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="SMART" id="SM00389" key="59">
+    <property type="entry name" value="HOX"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="PROSITE" id="PS00027" key="60">
+    <property type="entry name" value="HOMEOBOX_1"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="PROSITE" id="PS50071" key="61">
+    <property type="entry name" value="HOMEOBOX_2"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <keyword id="KW-0002">3D-structure</keyword>
+  <keyword id="KW-0181">Complete proteome</keyword>
+  <keyword id="KW-0217">Developmental protein</keyword>
+  <keyword id="KW-0238">DNA-binding</keyword>
+  <keyword id="KW-0371">Homeobox</keyword>
+  <keyword id="KW-0539">Nuclear protein</keyword>
+  <keyword id="KW-0562">Pair-rule protein</keyword>
+  <keyword id="KW-0804">Transcription</keyword>
+  <keyword id="KW-0805">Transcription regulation</keyword>
+  <feature type="chain" description="Segmentation protein even-skipped" id="PRO_0000049060">
+    <location>
+      <begin position="1"/>
+      <end position="376"/>
+    </location>
+  </feature>
+  <feature type="DNA-binding region" description="Homeobox">
+    <location>
+      <begin position="70"/>
+      <end position="129"/>
+    </location>
+  </feature>
+  <feature type="compositionally biased region" description="Ala-rich">
+    <location>
+      <begin position="165"/>
+      <end position="179"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="(in Ref. 1)" ref="3">
+    <original>L</original>
+    <variation>V</variation>
+    <location>
+      <position position="300"/>
+    </location>
+  </feature>
+  <feature type="helix">
+    <location>
+      <begin position="79"/>
+      <end position="91"/>
+    </location>
+  </feature>
+  <feature type="helix">
+    <location>
+      <begin position="97"/>
+      <end position="107"/>
+    </location>
+  </feature>
+  <feature type="turn">
+    <location>
+      <position position="108"/>
+    </location>
+  </feature>
+  <feature type="helix">
+    <location>
+      <begin position="111"/>
+      <end position="127"/>
+    </location>
+  </feature>
+  <sequence length="376" mass="39970" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
+MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLS
+SPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRR
+CELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASIL
+QAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQ
+MPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATG
+SSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSL
+SPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPAS
+DMSPPPTTTVIAEPKPKLFKPYKTEA
+</sequence>
+</entry>
+<entry dataset="Swiss-Prot" created="1993-10-01" modified="2006-12-12" version="46">
+  <accession>P32234</accession>
+  <accession>Q9V648</accession>
+  <name>128UP_DROME</name>
+  <protein>
+    <name>GTP-binding protein 128up</name>
+  </protein>
+  <gene>
+    <name type="primary">128up</name>
+    <name type="synonym">GTP-bp</name>
+    <name type="ORF">CG8340</name>
+  </gene>
+  <organism key="1">
+    <name type="scientific">Drosophila melanogaster</name>
+    <name type="common">Fruit fly</name>
+    <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
+    <lineage>
+      <taxon>Eukaryota</taxon>
+      <taxon>Metazoa</taxon>
+      <taxon>Arthropoda</taxon>
+      <taxon>Hexapoda</taxon>
+      <taxon>Insecta</taxon>
+      <taxon>Pterygota</taxon>
+      <taxon>Neoptera</taxon>
+      <taxon>Endopterygota</taxon>
+      <taxon>Diptera</taxon>
+      <taxon>Brachycera</taxon>
+      <taxon>Muscomorpha</taxon>
+      <taxon>Ephydroidea</taxon>
+      <taxon>Drosophilidae</taxon>
+      <taxon>Drosophila</taxon>
+    </lineage>
+  </organism>
+  <reference key="11">
+    <citation type="journal article" date="2002" name="Genome Biol." volume="3" first="RESEARCH0083.1" last="RESEARCH0083.22">
+      <title>Annotation of the Drosophila melanogaster euchromatic genome: a systematic review.</title>
+      <authorList>
+        <person name="Ashburner M."/>
+      </authorList>
+      <dbReference type="PubMed" id="12537572" key="12"/>
+      <dbReference type="MEDLINE" id="22426069" key="13"/>
+    </citation>
+    <scope>GENOME REANNOTATION.</scope>
+  </reference>
+  <comment type="function">
+    <text>Deformed (Dfd) is required to activate 1.28up in maxillary segment cells</text>
+  </comment>
+  <comment type="interaction">
+    <interactant intactId="EBI-163407"/>
+    <interactant intactId="EBI-111903">
+      <id>Q9VGZ4</id>
+      <label>CG6325</label>
+    </interactant>
+    <organismsDiffer>false</organismsDiffer>
+    <experiments>1</experiments>
+  </comment>
+  <comment type="interaction">
+    <interactant intactId="EBI-163407"/>
+    <interactant intactId="EBI-106556">
+      <id>P25724</id>
+      <label>nos</label>
+    </interactant>
+    <organismsDiffer>false</organismsDiffer>
+    <experiments>1</experiments>
+  </comment>
+  <comment type="interaction">
+    <interactant intactId="EBI-163407"/>
+    <interactant intactId="EBI-125222">
+      <id>Q9V3H7</id>
+      <label>Sr-CI</label>
+    </interactant>
+    <organismsDiffer>false</organismsDiffer>
+    <experiments>1</experiments>
+  </comment>
+  <comment type="tissue specificity">
+    <text>Expressed in posterior-lateral epidermis of the maxillary lobe</text>
+  </comment>
+  <comment type="developmental stage">
+    <text>Expressed in embryos and adults</text>
+  </comment>
+  <comment type="similarity">
+    <text>Belongs to the GTP1/OBG family</text>
+  </comment>
+  <dbReference type="EMBL" id="X71866" key="17">
+    <property type="protein sequence ID" value="CAA50701.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="AE003823" key="18">
+    <property type="protein sequence ID" value="AAF58591.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="AY069810" key="19">
+    <property type="protein sequence ID" value="AAL39955.1"/>
+    <property type="molecule type" value="mRNA"/>
+  </dbReference>
+  <dbReference type="PIR" id="S42582" key="20">
+    <property type="entry name" value="S42582"/>
+  </dbReference>
+  <dbReference type="UniGene" id="Dm.7739" key="21"/>
+  <dbReference type="HSSP" id="P20964" key="22">
+    <property type="pdb accession" value="1LNZ"/>
+  </dbReference>
+  <dbReference type="IntAct" id="P32234" key="23"/>
+  <dbReference type="GermOnline" id="CG8340" key="24">
+    <property type="organism name" value="Drosophila melanogaster"/>
+  </dbReference>
+  <dbReference type="Ensembl" id="CG8340" key="25">
+    <property type="organism name" value="Drosophila melanogaster"/>
+  </dbReference>
+  <dbReference type="KEGG" id="dme:CG8340-PA" key="26"/>
+  <dbReference type="FlyBase" id="FBgn0010339" key="27">
+    <property type="gene designation" value="128up"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0005525" key="28">
+    <property type="term" value="F:GTP binding"/>
+    <property type="evidence" value="IDA:FlyBase"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0005515" key="29">
+    <property type="term" value="F:protein binding"/>
+    <property type="evidence" value="IPI:IntAct"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR006074" key="30">
+    <property type="entry name" value="GTP1-OBG_dom"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR006073" key="31">
+    <property type="entry name" value="GTP1_OBG"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR002917" key="32">
+    <property type="entry name" value="MMR_HSR1_GTP_bd"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR005225" key="33">
+    <property type="entry name" value="Small_GTP_bd"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR004095" key="34">
+    <property type="entry name" value="TGS"/>
+  </dbReference>
+  <dbReference type="Pfam" id="PF01926" key="35">
+    <property type="entry name" value="MMR_HSR1"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="Pfam" id="PF02824" key="36">
+    <property type="entry name" value="TGS"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="PRINTS" id="PR00326" key="37">
+    <property type="entry name" value="GTP1OBG"/>
+  </dbReference>
+  <dbReference type="TIGRFAMs" id="TIGR00231" key="38">
+    <property type="entry name" value="small_GTP"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="PROSITE" id="PS00905" key="39">
+    <property type="entry name" value="GTP1_OBG"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <keyword id="KW-0181">Complete proteome</keyword>
+  <keyword id="KW-0342">GTP-binding</keyword>
+  <keyword id="KW-0547">Nucleotide-binding</keyword>
+  <feature type="chain" description="GTP-binding protein 128up" id="PRO_0000205430">
+    <location>
+      <begin position="1"/>
+      <end position="368"/>
+    </location>
+  </feature>
+  <feature type="nucleotide phosphate-binding region" description="GTP" status="by similarity">
+    <location>
+      <begin position="71"/>
+      <end position="78"/>
+    </location>
+  </feature>
+  <feature type="nucleotide phosphate-binding region" description="GTP" status="by similarity">
+    <location>
+      <begin position="117"/>
+      <end position="121"/>
+    </location>
+  </feature>
+  <feature type="nucleotide phosphate-binding region" description="GTP" status="by similarity">
+    <location>
+      <begin position="248"/>
+      <end position="251"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="(in Ref. 1)" ref="3">
+    <original>S</original>
+    <variation>I</variation>
+    <location>
+      <position position="2"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="(in Ref. 1)" ref="3">
+    <original>KL</original>
+    <variation>NV</variation>
+    <location>
+      <begin position="34"/>
+      <end position="35"/>
+    </location>
+  </feature>
+  <sequence length="368" mass="41132" checksum="5B38B09D0C0A92F2" modified="2005-03-29" version="2">
+MSTILEKISAIESEMARTQKNKATSAHLGLLKAKLAKLRRELISPKGGGG
+GTGEAGFEVAKTGDARVGFVGFPSVGKSTLLSNLAGVYSEVAAYEFTTLT
+TVPGCIKYKGAKIQLLDLPGIIEGAKDGKGRGRQVIAVARTCNLIFMVLD
+CLKPLGHKKLLEHELEGFGIRLNKKPPNIYYKRKDKGGINLNSMVPQSEL
+DTDLVKTILSEYKIHNADITLRYDATSDDLIDVIEGNRIYIPCIYLLNKI
+DQISIEELDVIYKIPHCVPISAHHHWNFDDLLELMWEYLRLQRIYTKPKG
+QLPDYNSPVVLHNERTSIEDFCNKLHRSIAKEFKYALVWGSSVKHQPQKV
+GIEHVLNDEDVVQIVKKV
+</sequence>
+</entry>
+</uniprot>
