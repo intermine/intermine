@@ -107,15 +107,6 @@ public class SaveBagAction extends InterMineAction
         ObjectStore userProfileOs = ((ProfileManager) servletContext.getAttribute(Constants
                     .PROFILE_MANAGER)).getUserProfileObjectStore();
 
-        int defaultMax = 10000;
-        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
-
-        // Create the right kind of bag
-        String selected = crf.getSelectedObjects()[0];
-        int index = selected.indexOf(",");
-        int col = Integer.parseInt(index == -1 ? selected : selected.substring(0, index));
-        Object type = ((Column) pt.getColumns().get(col)).getType();
-
         String bagName;
         if (request.getParameter("saveNewBag") != null) {
             bagName = crf.getNewBagName();
@@ -132,45 +123,44 @@ public class SaveBagAction extends InterMineAction
 
         for (int i = 0; i < crf.getSelectedObjects().length; i++) {
             String selectedObjectString = crf.getSelectedObjects()[i];
-            if (selectedObjectString.indexOf(",") == -1) {
+            if (selectedObjectString.indexOf(",") == selectedObjectString.lastIndexOf(",")) {
+                // there's just one comma eg. "1,Gene"
                 wholeColumnsToSave++;
             }
         }
 
-        List allRows = pt.getAllRows();
+        WebColumnTable allRows = pt.getAllRows();
 
-        if (allRows instanceof Results) {
-            Results results = (Results) allRows;
-
-            if (wholeColumnsToSave * results.size() > maxBagSize) {
-                ActionMessage actionMessage =
-                    new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                recordError(actionMessage, request);
-
-                return mapping.findForward("results");
+        if (allRows instanceof WebResults) {
+            try {
+                ((WebResults) allRows).goFaster();
+            } catch (ObjectStoreException e) {
+                // ignore and try to save slowly
             }
+        }
+        
+        try {
+            int rowCount = allRows.size();
 
             try {
-                // make a copy of the Results object with a larger batch size so the object
-                // store doesn't need to do lots of queries
-                // we copy because setBatchSize() throws an exception if size() has already
-                // been called
-                Results newResults;
-
-                if (maxBagSize < BIG_BATCH_SIZE) {
-                    newResults = WebUtil.changeResultBatchSize(results, maxBagSize);
-                } else {
-                    newResults = WebUtil.changeResultBatchSize(results, BIG_BATCH_SIZE);
+                /*
+                 * don't do for now because if the column contains duplicates then
+                 * wholeColumnsToSave * rowCount doesn't tell us the true final bag size 
+                 * 
+                ActionForward forward = checkBagSize(mapping, request, wholeColumnsToSave * rowCount);
+                
+                if (forward != null) {
+                    return forward;
                 }
-
-                // make sure we can get the first batch
+                 */
+                
+                // make sure we can get the first batch - catch any RunTimeExceptions and report
+                // them immediately
                 try {
-                    newResults.get(0);
+                    allRows.get(0);
                 } catch (IndexOutOfBoundsException e) {
                     // Ignore - that means there are NO rows in this results object.
                 }
-
-                allRows = newResults;
             } catch (RuntimeException e) {
                 if (e.getCause() instanceof ObjectStoreException) {
                     recordError(new ActionMessage("errors.query.objectstoreerror"),
@@ -178,127 +168,147 @@ public class SaveBagAction extends InterMineAction
                     return mapping.findForward("results");
                 }
                 throw e;
-            } catch (ObjectStoreException e) {
-                recordError(new ActionMessage("errors.query.objectstoreerror"),
-                            request, e, LOG);
+            }
+
+            // as we add objects from the selected column to the bag, add the indexes
+            // (ie. "2,3" - row 2, column 3) of the objects so we know not to add them twice
+            Set seenObjects = new HashSet();
+            ArrayList objectTypes = new ArrayList();
+
+            // save selected columns first
+            if (wholeColumnsToSave > 0) {
+                for (int i = 0; i < rowCount; i++) {
+                    List thisRow = allRows.getResultElements(i);
+                    List rowToSave = new ArrayList();
+
+                    // go through the selected items (checkboxes) and add to the bag-to-save
+                    for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
+                         itemIterator.hasNext();) {
+                        String selectedObjectID = (String) itemIterator.next();
+
+                        // renove the type information
+                        selectedObjectID = 
+                            selectedObjectID.substring(0, selectedObjectID.lastIndexOf(","));
+                        // selectedObject is now of the form "column,row" or "column"
+                        int commaIndex = selectedObjectID.indexOf(",");
+                        if (commaIndex == -1) {
+                            int column = Integer.parseInt(selectedObjectID);
+
+                            if (column < thisRow.size()) {
+                                ResultElement resCell = (ResultElement) thisRow.get(column);
+                                BagElement bagElement = new BagElement(resCell);
+                                rowToSave.add(bagElement);
+                                seenObjects.add(i + "," + column);
+                            }
+                        }
+                    }
+                    bag.add(rowToSave);
+
+                    ActionForward forward = checkBagSize(mapping, request, bag.size());
+                    
+                    if (forward != null) {
+                        return forward;
+                    }
+                    i++;
+                }
+            }
+
+            // now save individually selected items
+            for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
+            itemIterator.hasNext();) {
+                String selectedObject = (String) itemIterator.next();
+                // renove the type information
+                selectedObject = selectedObject.substring(0, selectedObject.lastIndexOf(","));
+                // selectedObject is of the form "column,row" or "column"
+                int commaIndex = selectedObject.indexOf(",");
+                if (commaIndex != -1) {
+                    // use the column,row to pick out the object from PagedTable
+                    int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
+                    int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
+                    if (seenObjects.contains(row + "," + column)) {
+                        continue;
+                    }
+                    Object value = ((List) pt.getRows().get(row)).get(column);
+                    ResultElement resCell = (ResultElement) value;
+                    BagElement bagElement = new BagElement(resCell);
+
+                    if (!objectTypes.contains(resCell.getType())) {
+                        objectTypes.add(resCell.getType());
+                    }
+
+                    bag.add(bagElement);
+
+                    ActionForward forward = checkBagSize(mapping, request, bag.size());
+                    
+                    if (forward != null) {
+                        return forward;
+                    }
+                }
+            }
+
+            if (objectTypes.size() > 1 || objectTypes == null) {
+                ActionMessage actionMessage =
+                    new ActionMessage("The bag contains more than one different type");
+                recordError(actionMessage, request);
                 return mapping.findForward("results");
             }
-        }
 
-        // as we add objects from the selected column to the bag, add the indexes
-        // (ie. "2,3" - row 2, column 3) of the objects so we know not to add them twice
-        Set seenObjects = new HashSet();
-        ArrayList objectTypes = new ArrayList();
+            bag.setType(objectTypes.get(0).toString());
 
-        // save selected columns first
-        // TODO check if this really is obsolete now with the new bag system
-//        if (wholeColumnsToSave > 0) {
-//            int rowCount = 0;
-//            for (Iterator rowIterator = allRows.iterator(); rowIterator.hasNext();) {
-//                List thisRow = (List) rowIterator.next();
-//
-//                List rowToSave = new ArrayList();
-//                
-//                // go through the selected items (checkboxes) and add to the bag-to-save
-//                for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
-//                     itemIterator.hasNext();) {
-//                    String selectedObject = (String) itemIterator.next();
-//                    // selectedObject is of the form "column,row" or "column"
-//                    int commaIndex = selectedObject.indexOf(",");
-//                    if (commaIndex == -1) {
-//                        int column = Integer.parseInt(selectedObject);
-//                        Object columnValue = null;
-//                        if (column < thisRow.size()) {
-//                            columnValue = thisRow.get(column);
-//                        }
-//                        rowToSave.add(columnValue);
-//                        seenObjects.add(rowCount + "," + column);
-//                    }
-//                }
-//                bag.add(rowToSave);
-//                if (bag.size() > maxBagSize) {
-//                    ActionMessage actionMessage =
-//                        new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-//                    recordError(actionMessage, request);
-//
-//                    return mapping.findForward("results");
-//                }
-//                rowCount++;
-//            }
-//        }
-
-        // now save individually selected items
-        for (Iterator itemIterator = Arrays.asList(crf.getSelectedObjects()).iterator();
-             itemIterator.hasNext();) {
-            String selectedObject = (String) itemIterator.next();
-            // renove the type information
-            selectedObject = selectedObject.substring(0, selectedObject.lastIndexOf(","));
-            // selectedObject is of the form "column,row" or "column"
-            int commaIndex = selectedObject.indexOf(",");
-            if (commaIndex != -1) {
-                // use the column,row to pick out the object from PagedTable
-                int column = Integer.parseInt(selectedObject.substring(0, commaIndex));
-                int row = Integer.parseInt(selectedObject.substring(commaIndex + 1));
-                if (seenObjects.contains(row + "," + column)) {
-                    continue;
-                }
-                Object value = ((List) pt.getRows().get(row)).get(column);
-                ResultElement resCell = (ResultElement) value;
-                BagElement bagElement = new BagElement(resCell);
-                
-                if (!objectTypes.contains(resCell.getType())) {
-                    objectTypes.add(resCell.getType());
-                }
-                
-                bag.add(bagElement);
-                if (bag.size() > maxBagSize) {
-                    ActionMessage actionMessage =
-                        new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-                    recordError(actionMessage, request);
-
+            InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
+            if (existingBag != null) {
+                if (!existingBag.getType().equals(bag.getType())) {
+                    recordError(new ActionMessage("bag.typesDontMatch"), request);
                     return mapping.findForward("results");
                 }
+                bag.addAll(existingBag);
+                bag.setSavedBagId(existingBag.getSavedBagId());
+                SessionMethods.invalidateBagTable(session, bagName);
             }
-        }
-        
-        if (objectTypes.size() > 1 || objectTypes == null) {
-            ActionMessage actionMessage =
-                new ActionMessage("The bag contains more than one different type");
-            recordError(actionMessage, request);
-            return mapping.findForward("results");
+            
+            ActionForward forward = checkBagSize(mapping, request, bag.size());
+            if (forward != null) {
+                return forward;
+            }
+
+            recordMessage(new ActionMessage("bag.saved", bagName), request);
+
+        } finally {
+            if (allRows instanceof WebResults) {
+                try {
+                    ((WebResults) allRows).releaseGoFaster();
+                } catch (ObjectStoreException e) {
+                    // ignore
+                }
+            }
         }
 
-        bag.setType(objectTypes.get(0).toString());
-        
-        InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
-        if (existingBag != null) {
-            if (!existingBag.getType().equals(bag.getType())) {
-                recordError(new ActionMessage("bag.typesDontMatch"), request);
-                return mapping.findForward("results");
-            }
-            bag.addAll(existingBag);
-            bag.setSavedBagId(existingBag.getSavedBagId());
-            SessionMethods.invalidateBagTable(session, bagName);
-        }
-        if (bag.size() > maxBagSize) {
+        return mapping.findForward("results");
+    }
+
+    private ActionForward checkBagSize(ActionMapping mapping, HttpServletRequest request, 
+                                       int bagSize) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        int defaultMax = 10000;
+        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
+
+        if (bagSize > maxBagSize) {
             ActionMessage actionMessage =
                 new ActionMessage("bag.tooBig", new Integer(maxBagSize));
             recordError(actionMessage, request);
 
             return mapping.findForward("results");
         }
-        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
-                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
-        try {
-            profile.saveBag(bagName, bag, maxNotLoggedSize);
-        } catch (InterMineException e) {
-            recordError(new ActionMessage(e.getMessage(), String.valueOf(maxNotLoggedSize)),
+        int maxNotLoggedSize = 
+            WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                          Constants.MAX_NOT_LOGGED_BAG_SIZE);
+        if (profile.getUsername() == null
+            && bagSize > maxNotLoggedSize) {
+            recordError(new ActionMessage("bag.bigNotLoggedIn", String.valueOf(maxNotLoggedSize)),
                         request);
             return mapping.findForward("results");
         }
-
-        recordMessage(new ActionMessage("bag.saved", bagName), request);
-
-        return mapping.findForward("results");
+        return null;
     }
 }

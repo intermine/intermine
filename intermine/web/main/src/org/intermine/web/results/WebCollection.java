@@ -37,7 +37,7 @@ import org.intermine.web.config.WebConfig;
  * @author kmr
  *
  */
-public class WebCollection extends AbstractList
+public class WebCollection extends AbstractList implements WebColumnTable
 {
     private List list;
     private Model model;
@@ -55,7 +55,9 @@ public class WebCollection extends AbstractList
      * ClassDescriptor object
      * @param columnName the String to use when displaying this collection - used as the column name 
      * for the single column of results
-     * @param classKeys 
+     * @param model the Model to use when making Path objects
+     * @param webConfig the WebConfig object the configures the columns in the view
+     * @param classKeys map of classname to set of keys
      */
     public WebCollection(ObjectStore os, String columnName, Collection collection, Model model, 
                          WebConfig webConfig, Map classKeys) {
@@ -80,25 +82,23 @@ public class WebCollection extends AbstractList
     }
 
     /**
-     * @param i
-     * @return
+     * Return a List containing a ResultElement object for each element in the given row.  The List
+     * will be the same length as the view List.
+     * @param index the row of the results to fetch
+     * @return the results row as ResultElement objects
      */
     public List getResultElements(int index) {
         return getElementsInternal(index, true);
     }
 
-
-    /* (non-Javadoc)
+    /**
+     * Return the given row as a List of primatives (rather than a List of ResultElement objects)
      * @see java.util.AbstractList#get(int)
      */
     public Object get(int index) {
         return getElementsInternal(index, false);
     }
 
-    /**
-     * @param index
-     * @return
-     */
     private List getElementsInternal(int index, boolean makeResultElements) {
         Object object = getList().get(index);
         InterMineObject o = null;
@@ -151,6 +151,11 @@ public class WebCollection extends AbstractList
     }
 
 
+    /**
+     * Return the List of Column objects for this WebCollection, configured by the WebConfig for
+     * the class of the collection we're showing
+     * @return the Column object List
+     */
     public List getColumns() {
         List columns = new ArrayList();
         Path path = new Path(model, columnName);

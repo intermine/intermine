@@ -297,7 +297,7 @@ public abstract class PagedTable
      *
      * @return all the rows of the table
      */
-    public abstract List getAllRows();
+    public abstract WebColumnTable getAllRows();
 
     /**
      * Get the (possibly estimated) number of rows of this table

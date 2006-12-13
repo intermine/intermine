@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  * selected for the view and the objects that are returned from the query.
  * @author Kim Rutherford
  */
-public class WebResults extends AbstractList
+public class WebResults extends AbstractList implements WebColumnTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List columnPaths;
@@ -208,10 +208,10 @@ public class WebResults extends AbstractList
     }
 
     /**
-     * Return a List containing a ResultElement object for each element given rows.  The List will
-     * be the same length as the view List.
+     * Return a List containing a ResultElement object for each element in the given row.  The List
+     * will be the same length as the view List.
      * @param index the row of the results to fetch
-     * @return the results row
+     * @return the results row as ResultElement objects
      */
     public List getResultElements(int index) {
         return getElementsInternal(index, true);
