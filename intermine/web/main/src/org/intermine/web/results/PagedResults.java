@@ -50,7 +50,7 @@ public class PagedResults extends PagedTable implements Serializable
     /**
      * @see PagedTable#getAllRows()
      */
-    public List getAllRows() {
+    public WebColumnTable getAllRows() {
         return results;
     }
 

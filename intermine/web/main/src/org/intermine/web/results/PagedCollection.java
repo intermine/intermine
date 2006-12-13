@@ -34,7 +34,7 @@ public class PagedCollection extends PagedTable
     /**
      * @see PagedTable#getAllRows
      */
-    public List getAllRows() {
+    public WebColumnTable getAllRows() {
         return webCollection;
     }
 
