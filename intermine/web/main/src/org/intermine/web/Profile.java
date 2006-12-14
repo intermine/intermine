@@ -264,22 +264,35 @@ public class Profile
         return map;
     
     }
+    
     /**
      * Save a bag
      * @param name the bag name
      * @param bag the bag
-     * @param maxNotLoggedSize the maximum bag size allowed when user not logged in
+     * @param maxNotLoggedSize the maximum bag size allowed when user not logged in, or -1 to allow
+     * any bag size
      * @exception InterMineException thrown when the bag size is to high
      */
     public void saveBag(String name, InterMineBag bag, int maxNotLoggedSize)
                     throws InterMineException {
-        if (StringUtils.isEmpty(username) && bag.getSize() > maxNotLoggedSize) {
+        if (maxNotLoggedSize != -1 && StringUtils.isEmpty(username)
+            && bag.getSize() > maxNotLoggedSize) {
             throw new InterMineException("bag.bigNotLoggedIn");
         }
         savedBags.put(name, bag);
         if (manager != null && !StringUtils.isEmpty(username)) {
             manager.saveProfile(this);
         }
+    }
+    
+    /**
+     * Save a bag without checking the bag size
+     * @param name the bag name
+     * @param bag the bag
+     * @exception InterMineException thrown when the bag size is to high
+     */
+    public void saveBag(String name, InterMineBag bag) throws InterMineException {
+        saveBag(name, bag, -1);
     }
 
     /**
