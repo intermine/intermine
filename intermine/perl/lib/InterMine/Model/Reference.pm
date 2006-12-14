@@ -28,12 +28,53 @@ sub reverse_reference
   my $self = shift;
   my $referenced_cd = $self->referenced_classdescriptor();
   my $reverse_reference_name = $self->reverse_reference_name();
+  return undef unless defined $reverse_reference_name;
   return $referenced_cd->get_field_by_name($reverse_reference_name);
 }
 
-sub is_m_n_relation
+sub has_reverse_reference
 {
   my $self = shift;
-  return $self->field_type() eq 'collection' &&
-         $self->reverse_reference()->field_type() eq 'collection';
+  return defined $self->reverse_reference();
+}
+
+sub is_many_to_many
+{
+  my $self = shift;
+  use Carp;
+  carp if !defined $self;
+
+  return ($self->field_type() eq 'collection' &&
+          $self->has_reverse_reference() &&
+          $self->reverse_reference()->field_type() eq 'collection');
+}
+
+sub is_many_to_one
+{
+  my $self = shift;
+  return ($self->field_type() eq 'reference' &&
+          defined $self->reverse_reference() &&
+          $self->reverse_reference()->field_type() eq 'collection');
+}
+
+sub is_many_to_0
+{
+  my $self = shift;
+  return ($self->field_type() eq 'collection' &&
+          !defined $self->reverse_reference());
+}
+
+sub is_one_to_many
+{
+  my $self = shift;
+  return ($self->field_type() eq 'collection' &&
+          defined $self->reverse_reference() &&
+          $self->reverse_reference()->field_type() eq 'reference');
+}
+
+sub is_one_to_0
+{
+  my $self = shift;
+  return ($self->field_type() eq 'reference' &&
+          !defined $self->reverse_reference());
 }

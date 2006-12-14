@@ -38,4 +38,15 @@ sub field_type
   return lc (((ref $self) =~ /.*::(.*)/)[0]);
 }
 
+# returns the ClassDescriptor of the (base) class that defines this field
+sub field_class
+{
+  my $self = shift;
+  if (@_ > 0) {
+    $self->{field_class} = shift;
+  } else {
+    return $self->{field_class};
+  }
+}
+
 1;
