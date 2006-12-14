@@ -788,8 +788,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long postExecute = System.currentTimeMillis();
             List objResults = ResultsConverter.convert(sqlResults, q, this, c);
             long postConvert = System.currentTimeMillis();
-            long permittedTime = (objResults.size() * 2) - 100 + start + (150 * q.getFrom().size())
-                    + (sql.length() / 20);
+            long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
+                    + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
             if (postExecute - preExecute > permittedTime) {
                 if (postExecute - preExecute > sql.length()) {
                     LOG.info(getModel().getName() + ": Executed SQL (time = "
