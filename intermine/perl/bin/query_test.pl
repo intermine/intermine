@@ -11,14 +11,18 @@ BEGIN {
 }
 
 use InterMine qw(Gene);
+use InterMine qw(Exon);
 use InterMine qw(LocatedSequenceFeature);
 use InterMine qw(Organism);
 
-my $g = InterMine::Gene->new(id => 127000061);
+my $g = InterMine::Gene->new(id => 122000038);
 $g->load();
 
 print $g->identifier(), "\n";
 print $g->organism()->taxonId(), "\n";
+for my $exon ($g->exons()) {
+  print $exon->identifier(), "\n";
+}
 
 # my $genes = 
 #   InterMine::Gene::Manager->get_genes(
