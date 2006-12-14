@@ -202,7 +202,7 @@ public class SaveBagAction extends InterMineAction
                             }
                         }
                     }
-                    bag.add(rowToSave);
+                    bag.addAll(rowToSave);
 
                     ActionForward forward = checkBagSize(mapping, request, bag.size());
                     
@@ -270,9 +270,14 @@ public class SaveBagAction extends InterMineAction
             if (forward != null) {
                 return forward;
             }
-
+            profile.saveBag(bagName, bag); 
             recordMessage(new ActionMessage("bag.saved", bagName), request);
 
+        } catch (InterMineException e) {
+            ActionMessage actionMessage =
+                new ActionMessage("An error occured while save the bag");
+            recordError(actionMessage, request);
+            return mapping.findForward("results");
         } finally {
             if (allRows instanceof WebResults) {
                 try {
