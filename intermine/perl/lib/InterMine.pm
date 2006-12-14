@@ -105,10 +105,10 @@ sub import {
       if ($field->field_type() eq 'attribute') {
         push @columns, $field->field_name(), {type => $field->attribute_type()}
       } else {
+        my $referenced_type_name = $field->referenced_type_name();
+        $referenced_type_name =~ s/.*\.(.*)/InterMine::$1/;
         if ($field->field_type() eq 'reference') {
           push @columns, $field->field_name() . 'id', {type => 'int'};
-          my $referenced_type_name = $field->referenced_type_name();
-          $referenced_type_name =~ s/.*\.(.*)/InterMine::$1/;
           my $foreign_key_settings =
             {
              class => $referenced_type_name,
@@ -119,11 +119,19 @@ sub import {
             };
           push @foreign_keys, $field->field_name(), $foreign_key_settings;
         } else {
-#           if ($field->is_many_to_one()) {
-            
-#           } else {
+           if ($field->is_one_to_many()) {
+             my $reverse_reference_field_name = 
+               $field->reverse_reference()->field_name();
+             my $relationship_settings =
+             {
+               type       => 'one to many',
+               class      => $referenced_type_name,
+               column_map => { id => $reverse_reference_field_name . 'id' },
+             };
+             push @relationships, $field->field_name(), $relationship_settings;
+           } else {
 #             _make_mapping_table($field)
-#           }
+           }
         }
       }
     }
@@ -131,6 +139,7 @@ sub import {
     $setup_args{table} = $class;
     $setup_args{columns} = \@columns;
     $setup_args{foreign_keys} = \@foreign_keys;
+    $setup_args{relationships} = \@relationships;
 
     my $lc_class = lc $class;
 
