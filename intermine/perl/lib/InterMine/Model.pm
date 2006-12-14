@@ -92,6 +92,8 @@ sub start_element
         }
       }
 
+      $field->field_class($self->{current_class});
+
       $self->{current_class}->add_field($field);
     }
   }
@@ -207,6 +209,13 @@ sub get_classdescriptor_by_name
     return $self->{class_hash}{$full_classname};
   }
 }
+
+sub get_all_classdescriptors
+{
+  my $self = shift;
+  return values %{$self->{class_hash}};
+}
+
 
 sub name_space
 {
