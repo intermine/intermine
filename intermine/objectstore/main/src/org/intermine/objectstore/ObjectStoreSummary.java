@@ -107,7 +107,7 @@ public class ObjectStoreSummary
         }
         // always empty references and collections
         LOG.info("Looking for empty collections and references...");
-	/*  Model model = os.getModel();
+        Model model = os.getModel();
         for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
             long startTime = System.currentTimeMillis();
             ClassDescriptor cld = (ClassDescriptor) iter.next();
@@ -116,7 +116,7 @@ public class ObjectStoreSummary
             emptyFieldsMap.put(cld.getName(), emptyFields);
             lookForEmptyThings(cld, emptyFields, os);
             LOG.info("\t" + (System.currentTimeMillis() - startTime) + " millis");
-	    }*/
+        }
     }
     
     /**
@@ -274,6 +274,7 @@ public class ObjectStoreSummary
         while (iter.hasNext()) {
             ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
             Query q = new Query();
+            q.setDistinct(false);
             
             QueryClass qc1 = new QueryClass(Class.forName(cld.getName()));
             QueryClass qc2 = new QueryClass(Class.forName(desc.getReferencedClassName()));
@@ -296,16 +297,17 @@ public class ObjectStoreSummary
             q.setConstraint(cs);
             
             Query q2 = new Query();
+            q2.setDistinct(false);
             q2.addToSelect(new QueryValue(new Integer(1)));
             
             ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
             cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
             q2.setConstraint(cs2);
             
-            int count = os.count(q2, os.getSequence());
-            
             Results results = os.execute(q2);
             results.setBatchSize(1);
+            results.setNoExplain();
+            results.setNoOptimise();
             if (results.iterator().hasNext()) {
                 LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
             } else {
