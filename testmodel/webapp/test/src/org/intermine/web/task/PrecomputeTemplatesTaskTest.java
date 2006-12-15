@@ -110,7 +110,7 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         System.out.println("query: " + q);
 
         List indexes = new ArrayList();
-        Query actualQ = TemplateHelper.getPrecomputeQuery(template, indexes);
+        Query actualQ = TemplateHelper.getPrecomputeQuery(template, indexes, null);
         assertEquals(q, actualQ);
         List expIndexes = new ArrayList(Collections.singleton(qfAge));
         assertEquals(expIndexes.toString(), indexes.toString());
