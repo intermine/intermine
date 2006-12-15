@@ -13,11 +13,13 @@ package org.intermine.objectstore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import org.intermine.metadata.ClassDescriptor;
@@ -55,6 +57,7 @@ public class ObjectStoreSummary
     private final Map classCountsMap = new HashMap();
     private final Map fieldValuesMap = new HashMap();
     private final Map emptyFieldsMap = new HashMap();
+    private final Map nonEmptyFieldsMap = new HashMap();
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
@@ -75,6 +78,7 @@ public class ObjectStoreSummary
         LOG.info("Collecting class counts...");
         for (Iterator i = os.getModel().getClassDescriptors().iterator(); i.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) i.next();
+            nonEmptyFieldsMap.put(cld.getName(), new HashSet());
             Query q = new Query();
             QueryClass qc = new QueryClass(Class.forName(cld.getName()));
             q.addToSelect(new QueryField(qc, "id"));
@@ -111,14 +115,10 @@ public class ObjectStoreSummary
         for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
             long startTime = System.currentTimeMillis();
             ClassDescriptor cld = (ClassDescriptor) iter.next();
-            LOG.info(cld.getName());
-            Set emptyFields = new TreeSet();
-            emptyFieldsMap.put(cld.getName(), emptyFields);
-            lookForEmptyThings(cld, emptyFields, os);
-            LOG.info("\t" + (System.currentTimeMillis() - startTime) + " millis");
+            lookForEmptyThings(cld, os);
         }
     }
-    
+
     /**
      * Construct a summary from a properties object
      * @param properties the properties
@@ -257,64 +257,106 @@ public class ObjectStoreSummary
         }
     }
     
-
+    /**
+     * Look for empty fields and collections on all instanceof of a particular class. This method
+     * will recurse into subclasses in order to improve performance.
+     *
+     * @param cld the class of objects to be examined
+     * @param os the ObjectStore
+     * @throws ObjectStoreException if an error occurs retrieving data
+     * @throws ClassNotFoundException if the class cannot be found
+     */
+    protected void lookForEmptyThings(ClassDescriptor cld, ObjectStore os) throws ObjectStoreException, ClassNotFoundException {
+        Set emptyFields = (Set) emptyFieldsMap.get(cld.getName());
+        if (emptyFields == null) {
+            Iterator subIter = cld.getSubDescriptors().iterator();
+            while (subIter.hasNext()) {
+                ClassDescriptor sub = (ClassDescriptor) subIter.next();
+                lookForEmptyThings(sub, os);
+            }
+            emptyFields = new TreeSet();
+            emptyFieldsMap.put(cld.getName(), emptyFields);
+            lookForEmptyThings(cld, emptyFields, (Set) nonEmptyFieldsMap.get(cld.getName()), os);
+        }
+    }
 
     /**
      * Look for empty fields and collections on all instances of a particular class.
      * @param cld the class of objects to be examined
      * @param nullFieldNames output set of null/empty references/collections
+     * @param nonNullFieldNames set of non-null/empty references/collections
      * @param os the objectstore
      * @throws ObjectStoreException if an error occurs retrieving data
      * @throws ClassNotFoundException if the class cannot be found
      */
-    protected void lookForEmptyThings(ClassDescriptor cld, Set nullFieldNames, ObjectStore os)
-        throws ObjectStoreException, ClassNotFoundException {
+    protected void lookForEmptyThings(ClassDescriptor cld, Set nullFieldNames,
+            Set nonNullFieldNames, ObjectStore os) throws ObjectStoreException,
+              ClassNotFoundException {
+        long startTime = System.currentTimeMillis();
+        int skipped = 0;
         Iterator iter = IteratorUtils.chainedIterator(cld.getAllCollectionDescriptors().iterator(),
                 cld.getAllReferenceDescriptors().iterator());
         while (iter.hasNext()) {
             ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
-            Query q = new Query();
-            q.setDistinct(false);
-            
-            QueryClass qc1 = new QueryClass(Class.forName(cld.getName()));
-            QueryClass qc2 = new QueryClass(Class.forName(desc.getReferencedClassName()));
-            
-            q.addFrom(qc1);
-            q.addFrom(qc2);
-            
-            q.addToSelect(qc2);
-            
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            QueryReference qd;
-            if (desc instanceof CollectionDescriptor) {
-                qd = new QueryCollectionReference(qc1, desc.getName());
+            if (nonNullFieldNames.contains(desc.getName())) {
+                skipped++;
             } else {
-                qd = new QueryObjectReference(qc1, desc.getName());
-            }
-            ContainsConstraint gdc = new ContainsConstraint(qd, ConstraintOp.CONTAINS, qc2);
-            cs.addConstraint(gdc);
-            
-            q.setConstraint(cs);
-            
-            Query q2 = new Query();
-            q2.setDistinct(false);
-            q2.addToSelect(new QueryValue(new Integer(1)));
-            
-            ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-            cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
-            q2.setConstraint(cs2);
-            
-            Results results = os.execute(q2);
-            results.setBatchSize(1);
-            results.setNoExplain();
-            results.setNoOptimise();
-            if (results.iterator().hasNext()) {
-                LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
-            } else {
-                LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + " - EMPTY");
-                nullFieldNames.add(desc.getName());
+                Query q = new Query();
+                q.setDistinct(false);
+                
+                QueryClass qc1 = new QueryClass(Class.forName(cld.getName()));
+                QueryClass qc2 = new QueryClass(Class.forName(desc.getReferencedClassName()));
+                
+                q.addFrom(qc1);
+                q.addFrom(qc2);
+                
+                q.addToSelect(qc2);
+                
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                QueryReference qd;
+                if (desc instanceof CollectionDescriptor) {
+                    qd = new QueryCollectionReference(qc1, desc.getName());
+                } else {
+                    qd = new QueryObjectReference(qc1, desc.getName());
+                }
+                ContainsConstraint gdc = new ContainsConstraint(qd, ConstraintOp.CONTAINS, qc2);
+                cs.addConstraint(gdc);
+                
+                q.setConstraint(cs);
+                
+                Query q2 = new Query();
+                q2.setDistinct(false);
+                q2.addToSelect(new QueryValue(new Integer(1)));
+                
+                ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
+                cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
+                q2.setConstraint(cs2);
+                
+                Results results = os.execute(q2);
+                results.setBatchSize(1);
+                results.setNoExplain();
+                results.setNoOptimise();
+                if (results.iterator().hasNext()) {
+                    LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
+                    Stack s = new Stack();
+                    s.push(cld);
+                    while (!s.empty()) {
+                        ClassDescriptor c = (ClassDescriptor) s.pop();
+                        Set nonNull = (Set) nonEmptyFieldsMap.get(c.getName());
+                        nonNull.add(desc.getName());
+                        Iterator superIter = c.getSuperDescriptors().iterator();
+                        while (superIter.hasNext()) {
+                            s.push(superIter.next());
+                        }
+                    }
+                } else {
+                    LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + " - EMPTY");
+                    nullFieldNames.add(desc.getName());
+                }
             }
         }
+        LOG.info(cld.getName() + " skipped " + skipped + " fields, took "
+                + (System.currentTimeMillis() - startTime) + " ms");
     }
 
 }
