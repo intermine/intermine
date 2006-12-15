@@ -443,6 +443,9 @@ public class ClassDescriptor
 
     /**
      * Get a set of ClassDescriptors for the interfaces superclasses that this class implements.
+     * The set contains all direct superclasses and interfaces, and may contain some indirect
+     * superclasses or interfaces.
+     *
      * @return a Set of ClassDescriptors
      * @throws IllegalStateException if the model is not set
      */
