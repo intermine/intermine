@@ -90,6 +90,10 @@ sub import {
 
   my @classes = @_;
 
+  if (grep /__ALL__/, @classes) {
+    @classes = map {($_->name() =~ m/.*\.(.*)/)} get_model()->get_all_classdescriptors();
+  }
+
   my @classes_to_import = ();
 
   for my $class (@classes) {
