@@ -6,6 +6,7 @@ my %type_map = (
                 'java.lang.String' => 'text',
                 'java.lang.Boolean' => 'boolean',
                 'java.lang.Float' => 'float',
+                'java.lang.Double' => 'float',
                 'java.lang.Integer' => 'int'
                );
 
