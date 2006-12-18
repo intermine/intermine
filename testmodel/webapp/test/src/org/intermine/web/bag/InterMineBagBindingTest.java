@@ -45,6 +45,7 @@ public class InterMineBagBindingTest extends TestCase
 
     public void testProcess() throws Exception {
         ObjectStore os = new ObjectStoreDummyImpl();
+        ObjectStore uos = new ObjectStoreDummyImpl();
         Department d1 = new Department();
         d1.setId(new Integer(1));
         os.cacheObjectById(new Integer(1), d1);
@@ -53,7 +54,7 @@ public class InterMineBagBindingTest extends TestCase
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("InterMineBagBindingTest.xml");
 
-        Map savedBags = InterMineBagBinding.unmarshal(new InputStreamReader(is), os,
+        Map savedBags = InterMineBagBinding.unmarshal(new InputStreamReader(is), uos, os,
                                                       new PkQueryIdUpgrader(), userId);
         Map expected = new LinkedHashMap();
 
@@ -64,7 +65,7 @@ public class InterMineBagBindingTest extends TestCase
         c.add(new BagElement(new Integer(10), "Gene"));
         c.add(new BagElement(new Integer(20), "Gene"));
         c.add(new BagElement(new Integer(30), "Gene"));
-        InterMineBag objects = new InterMineBag(userId, "bag2", "Gene", os, c);
+        InterMineBag objects = new InterMineBag(userId, "bag2", "Gene", uos, os, c);
         expected.put("objects", objects);
 
         assertEquals(expected, savedBags);

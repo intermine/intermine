@@ -555,8 +555,21 @@ public class TemplateHelper
     // return clone;
     // }
 
+    /**
+     * Get an ObjectStore query to precompute this template - remove editable constraints
+     * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
+     * to create additional indexes on (i.e. those added to select list).  Original
+     * template is left unaltered.
+     *
+     * @param template to generate precompute query for
+     * @param indexes any additional indexes to be created will be added to this list.
+     * @return the query to precompute
+     */
+    public static Query getPrecomputeQuery(TemplateQuery template, List indexes) {
+    	return TemplateHelper.getPrecomputeQuery(template, indexes, null);
+    }
 
-
+    	
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes

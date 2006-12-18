@@ -56,7 +56,7 @@ public class ObjectStoreSummary
     
     private final Map classCountsMap = new HashMap();
     private final Map fieldValuesMap = new HashMap();
-    private final Map emptyFieldsMap = new HashMap();
+    protected final Map emptyFieldsMap = new HashMap();
     private final Map nonEmptyFieldsMap = new HashMap();
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
