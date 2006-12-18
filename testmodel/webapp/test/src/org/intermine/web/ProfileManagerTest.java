@@ -108,7 +108,7 @@ public class ProfileManagerTest extends XMLTestCase
         String bobName = "bob";
 
         Set contents = new HashSet();
-        InterMineBag bag = new InterMineBag(bobId, "bag1", "Employee", os, contents);
+        InterMineBag bag = new InterMineBag(bobId, "bag1", "Employee", userProfileOS,os, contents);
         bag.add(new BagElement(new Integer(4), "Employee"));
         
         TemplateQuery template =
@@ -142,7 +142,7 @@ public class ProfileManagerTest extends XMLTestCase
         // primary key of the Department includes the company reference
         objectContents.add(new Integer(6));
 
-        InterMineBag objectBag = new InterMineBag(sallyId, "bag2", "Employee", os, contents);
+        InterMineBag objectBag = new InterMineBag(sallyId, "bag2", "Employee", userProfileOS, os, contents);
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")), true,

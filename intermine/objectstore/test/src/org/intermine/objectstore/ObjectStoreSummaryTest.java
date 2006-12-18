@@ -13,10 +13,11 @@ package org.intermine.objectstore;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
-
-import org.intermine.metadata.ClassDescriptor;
+import java.util.Set;
 
 import junit.framework.Test;
+
+import org.intermine.metadata.ClassDescriptor;
 
 public class ObjectStoreSummaryTest extends StoreDataTestCase
 {
@@ -77,20 +78,18 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
         ClassDescriptor cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.CEO");
         
-        HashSet empties = new HashSet();
-        oss.lookForEmptyThings(cld, empties, os);
+        oss.lookForEmptyThings(cld, os);
         
         HashSet expected = new HashSet();
         expected.add("secretarys");
         expected.add("address");
         expected.add("departmentThatRejectedMe");
         
-        assertEquals(expected, empties);
+        assertEquals(expected, (Set) oss.emptyFieldsMap.get(cld.getName()));
         
         cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        empties = new HashSet();
-        oss.lookForEmptyThings(cld, empties, os);
-        assertEquals(new HashSet(), empties);
+        oss.lookForEmptyThings(cld, os);
+        assertEquals(new HashSet(), (Set) oss.emptyFieldsMap.get(cld.getName()));
     }
     
     public void testToProperties() throws Exception {
