@@ -1,7 +1,10 @@
 package org.intermine.web.bag;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * Copyright (C) 2002-2006 FlyMine
@@ -21,14 +24,37 @@ import java.util.Map;
  * @author Richard Smith
  */
 public class BagQueryResult {
-
+	public static final String DUPLICATE = "DUPLICATE"; 
+	public static final String OTHER = "OTHER"; 
+	
+	private Map matches = new HashMap();
+	private Map issues = new HashMap();
+	private List unresolved = new ArrayList();
+	
+	public BagQueryResult() {
+		
+	}
 	/**
 	 * Get any results that require some user input before adding to the bag.
-	 * [issue type -> [query -> [input string -> InterMineObjects]]] 
+	 * [issue type -> [query -> [input string -> Set of InterMineObjects]]] 
 	 * @return a map from issues type to queries to input to possible objects
 	 */
 	public Map getIssues() {
-		return null;
+		return issues;
+	}
+	
+	public void addIssue(String type, String query, String input, Set objects) {
+		Map issuesOfType = (Map) issues.get(type);
+		if (issuesOfType == null) {
+			issuesOfType = new HashMap();
+			issues.put(type, issuesOfType);
+		}
+		Map queryIssues = (Map) issuesOfType.get(query);
+		if (queryIssues == null) {
+			queryIssues = new HashMap();
+			issuesOfType.put(query, queryIssues);
+		}
+		queryIssues.put(input, objects);
 	}
 	
 	/**
@@ -36,14 +62,22 @@ public class BagQueryResult {
 	 * @return a map from input String to matched object ids
 	 */
 	public Map getMatches() {
-		return null;
+		return matches;
 	}
 	
+	
+	public void addMatch(String input, Integer id) {
+		matches.put(input, id);
+	}
 	/**
 	 * Get a list of any input Strings for which objects could not be found.
 	 * @return a list of input strings not resolved to objects
 	 */
 	public List getUnresolved() {
-		return null;
+		return unresolved;
+	}
+	
+	public void setUnresolved(List unresolved) {
+		this.unresolved = unresolved;
 	}
 }

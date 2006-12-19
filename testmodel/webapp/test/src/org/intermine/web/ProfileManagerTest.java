@@ -177,7 +177,6 @@ public class ProfileManagerTest extends XMLTestCase
         osw.close();
 
         cleanUserProfile();
-
     }
 
     private void cleanUserProfile() throws ObjectStoreException {

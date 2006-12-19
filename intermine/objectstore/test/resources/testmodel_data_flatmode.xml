@@ -145,6 +145,7 @@
 <attribute name="age" value="60"/>
 <attribute name="end" value="6"/>
 <attribute name="fullTime" value="true"/>
+<attribute name="title" value="Mr."/>
 <attribute name="name" value="EmployeeB3"/>
 <attribute name="seniority" value="761231"/>
 <reference name="address" ref_id="20"/>

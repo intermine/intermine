@@ -296,11 +296,11 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)")); //TODO: Fix this (ticket #445)
         //results.put("ContainsConstraintNotMMCollectionRefObject", Collections.EMPTY_LIST);
 
-        r = new Object[][] { { data.get("EmployeeA1") },
-                             { data.get("EmployeeB3") } };
+        r = new Object[][] { { data.get("EmployeeA1") }};
         results.put("SimpleConstraintNull", toList(r));
 
-        r = new Object[][] { { data.get("EmployeeB1") } };
+        r = new Object[][] { { data.get("EmployeeB1") },
+                			 { data.get("EmployeeB3") } };
         results.put("SimpleConstraintNotNull", toList(r));
 
         r = new Object[][] { { "10" },

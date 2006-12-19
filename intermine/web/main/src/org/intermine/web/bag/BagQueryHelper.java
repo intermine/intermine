@@ -22,9 +22,9 @@ import org.intermine.web.ClassKeyHelper;
 public class BagQueryHelper {
 
 	
-	public static BagQuery createDefaultBagQuery(String type, Map classKeys, Model model, Set input) throws ClassNotFoundException {
+	public static BagQuery createDefaultBagQuery(String type, Map classKeys, 
+			Model model, Set input) throws ClassNotFoundException {
 		
-
 		Class cls = Class.forName(model.getPackageName() + "." + type);
 		if (!ClassKeyHelper.hasKeyFields(classKeys, type)) {
 			throw new IllegalArgumentException("Internal error - no key fields found for type: " + type + ".");
@@ -32,11 +32,11 @@ public class BagQueryHelper {
 		
 		Query q = new Query();
 		QueryClass qc = new QueryClass(cls);
+		q.addFrom(qc);
 		q.addToSelect(new QueryField(qc, "id"));
 		
 		ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
 		q.setConstraint(cs);
-		
 		
 		Collection keyFields = ClassKeyHelper.getKeyFields(classKeys, type);
 		
@@ -61,7 +61,7 @@ public class BagQueryHelper {
 			throw new IllegalArgumentException("Internal error - could not find any usable key fields for type: " + type + ".");
 		}
 
-		BagQuery bq = new BagQuery(q, "default bag query", true);
+		BagQuery bq = new BagQuery(q, "default", false);
 		return bq;
 	}
 }
