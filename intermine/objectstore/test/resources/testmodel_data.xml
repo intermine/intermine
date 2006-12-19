@@ -151,6 +151,7 @@
     <attribute name="fullTime" value="true"/>
     <attribute name="name" value="EmployeeB3"/>
     <attribute name="seniority" value="761231"/>
+    <attribute name="title" value="Mr."/>
     <reference name="address" ref_id="20"/>
     <reference name="department" ref_id="7"/>
   </item>
