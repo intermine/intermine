@@ -15,9 +15,9 @@
 
     <itemizedlist>
       <listitem><para>Bags can be created from an external source:
-      click on 'Create a bag of identifiers' on the top menu
-      bar on any FlyMine page and type or past in a list of
-      identifiers, or upload a file containing the list.</para></listitem>
+      click on 'Bags' on the top menu bar of any FlyMine page and type
+      or past in a list of identifiers, or upload a file containing
+      the list.</para></listitem>
  
       <listitem><para>Data from previous queries can also be saved
       into a bag. To save your data to a bag select the required data
@@ -38,9 +38,8 @@
       once. To find the orthologues of the
       <emphasis>D. melanogaster</emphasis> genes in
       <emphasis>D. pseudoobscura</emphasis>, we will first make a bag
-      of the <emphasis>D. melanogaster</emphasis> genes. Therefore,
-      click on 'Create a bag of identifiers' in the top menu
-      bar.</para>
+      of the <emphasis>D. melanogaster</emphasis> genes. Click on
+      'Bags' in the top menu bar.</para>
 
         <mediaobject>
           <imageobject>
@@ -78,7 +77,7 @@
     (or 'not in' a bag) rather than a single value. Click on the
     check-box below the Synonym value box to constrain the gene
     synonym value to be in a bag. If you have bags saved in your
-    history the option to constrain each variable to a bag will appear
+    'MyMine' the option to constrain each variable to a bag will appear
     automatically. The name of the bag you just created will appear in
     the drop-down menu. Select the right organisms from the two other
     drop-down menus and run the query.</para>
@@ -95,20 +94,17 @@
    the 5 <emphasis>D. melanogaster</emphasis> genes have orthologues
    in <emphasis>D. pseudoobscura</emphasis>.</para>
 
-       <mediaobject>
-          <imageobject>
-            <imagedata fileref="bag-template-results1.png" />
-          </imageobject><textobject><phrase> </phrase></textobject>
-        </mediaobject>
+    
 
    <para>Save the orthologous genes in a new bag:</para>
  
     <itemizedlist>
       <listitem><para>Click on the check-box in the title of column 4
-      which contains the gene identifiers for the orthologues. This
+      which contains the gene symbols for the orthologues. This
       selects all items in the column (on every result page, if more
       than one page). Alternatively, select individual items in the
       column.</para></listitem>
+
      <listitem><para>At the bottom of the page is an option to save
       the selected results in a new bag. Choose a new bag name
       e.g. 'eye-genes_dpse' and click 'Save'.</para></listitem>
@@ -116,13 +112,14 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="bag-template-results2.png" />
+            <imagedata fileref="bag-template-results.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
     <para>Bags of data, as well as previously executed queries, can be
     retrieved from your My Mine page at the top menu bar on any
-    FlyMine page. Your bags and query history will remain available to
+    FlyMine page (bags can also be directly accessed through the
+    'Bags' link). Your bags and query history will remain available to
     you only for the duration of a session unless you create and use a
     login. If you log in (via button on top menu bar), your bags and
     query history can be stored permanently. Click on 'My Mine' in the
@@ -130,11 +127,11 @@
 
    <mediaobject>
           <imageobject>
-            <imagedata fileref="history-homepage.png" />
+            <imagedata fileref="bag-MyMine.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject> 
  
-  <para>Find your bags back in 'Saved Bags'.</para>
+  <para>Find your bags back in 'Bags'.</para>
 
        <mediaobject>
           <imageobject>

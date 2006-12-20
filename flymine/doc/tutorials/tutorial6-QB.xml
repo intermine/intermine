@@ -20,13 +20,13 @@
 
     <para>This tutorial introduces the use of the QueryBuilder to
     alter an existing template. It will start with the template 'For
-    the following gene symbol, show its gene identifier' and alter it
-    to collect all gene identifiers from genes on the 4th chromosome
-    of <emphasis>D. melanogaster</emphasis>. Find the template 'For
-    the following gene symbol, show its gene identifier'
-    (e.g. Genomics aspect) and run the query for the default
-    <emphasis>Drosophila</emphasis> gene. Click on 'Current query' in
-    the top menu bar to view the underlying query.</para>
+    the following gene symbol, show its gene identifier' (Gene symbol
+    --> Gene identifier) and alter it to collect all gene identifiers
+    from genes on the 4th chromosome of
+    <emphasis>D. melanogaster</emphasis>. Find the template 'Gene
+    symbol --> Gene identifier' (Genomics aspect). Click on 'Edit
+    Query'.  This will display the underlying query in the query
+    builder. </para>
 
    <para>The main FlyMine QueryBuilder page is composed of 3 sections:</para>
     <itemizedlist>
@@ -40,9 +40,9 @@
       require. Within the model browser, classes that can be accessed
       from a parent class (i.e. are linked to the parent class through
       a reference) are shown as fields within that class.  For each
-      class and field within the model browser there is a 'SHOW' and a
+      field within the model browser there is a 'SHOW' and a
       'CONSTRAIN' option. These are used to either select a
-      class/field to show in the results output or to constrain in the
+      field to show in the results output or to constrain in the
       constraints list.</para></listitem>
 
       <listitem><para>The constraints list (right) allows you specify
