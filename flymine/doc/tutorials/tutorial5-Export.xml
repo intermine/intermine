@@ -12,12 +12,12 @@
 
     <para>This tutorial will illustrate how to export data from a
     results table and from a bag. As an example, run the template
-    'Search for GO annotations for a particular gene' (Gene Ontology
-    aspect) for the default value 'CG11348'. Currently, either the
-    entire results table or specific columns can be exported. If
-    nothing is selected, the entire data set will be exported. If you
-    do not wish to export certain columns, then hide these columns
-    using the 'hide' option in the column header.</para>
+    'gene --> GO terms' (Gene Ontology aspect) for the default value
+    'CG11348'. Currently, either the entire results table or specific
+    columns can be exported. If nothing is selected, the entire data
+    set will be exported. If you do not wish to export certain
+    columns, then hide these columns using the 'hide' option in the
+    column header.</para>
 
        <mediaobject>
           <imageobject>
@@ -25,21 +25,17 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
-   <para>To export a FASTA file of sequences you must create a query
-   which returns the object details for each object you want to export
-   (e.g. a set of Gene or Protein objects details, as opposed to
-   simple attributes such as the gene symbol or identifier).</para>
-
-   <para>Some template queries will return results suitable for
-   exporting FASTA files. Find the template 'Output genes from a
-   particular organism in a format suitable for creating a FASTA
-   database' (Genomics aspect).</para>
-
-   <para>The first column of the results table contains the object
-   details of the genes, including a link to the FASTA sequences. To
-   export the sequences, hide the columns which do not have any FASTA
-   links and click on 'Export in FASTA format' at the bottom of the
-   page. Only the sequences will be retrieved and downloaded.</para>
+   <para>If the results table contains a column with objects that have
+   a nucleotide or amino acid sequence, it is possible to export all
+   sequences from that column in FASTA format. Currently, the FASTA
+   export option will export the sequences belonging to objects in the
+   first visible (i.e. not hidden) column only. Therefore, if that
+   column does not contain any sequence-linked objects, the FASTA
+   export option will not be activated. Columns can be moved to the
+   first position by using the arrows in the header. If objects appear
+   more than once in the column, the sequence will only be exported
+   once.</para>
+  
 
         <mediaobject>
           <imageobject>
@@ -48,7 +44,7 @@
         </mediaobject>
 
     <para>Values stored in bags can also be exported. To export the
-    contents of a bag, click on the bag name on the 'history'
+    contents of a bag, click on the bag name on the 'Bags'
     page. This will display the contents of the bag as a results page
     - with the export options available at the bottom of the
     page. Currently, it is not possible to export single items from

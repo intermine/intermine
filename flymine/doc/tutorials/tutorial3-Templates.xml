@@ -57,25 +57,17 @@
     <para>Notice that the template short name and a longer description
     is now displayed. </para>
 
-    <para>This template query has two variables which can be changed
+    <para>This template query has one variable which can be changed
     (or left as the default, all template queries have default values
-    for variables).</para> 
+    for variables).  The variable has a label 'Gene identifier = '.
+    This means that you can enter any type of gene identifier
+    supported by FlyMine. For <emphasis>D. melanogaster</emphasis>
+    genes, therefore, you should enter a CGxxxx identifier. Change the
+    default value for this variable to 'CG1046'.</para>
 
-    <itemizedlist> 
+ 
 
-      <listitem><para>The first variable has a label 'Gene identifier
-      = '.  This means that you can enter any type of gene identifier
-      supported by FlyMine. For <emphasis>D. melanogaster</emphasis>
-      genes, therefore, you should enter a CGxxxx identifier. Change
-      the default value for this variable to
-      'CG1046'.</para></listitem>
 
-     <listitem><para>The second variable asks for an organism. Notice
-     that the organism can be selected from a drop-down list. Leave
-     the organism name set to 'Drosophila
-     melanogaster'.</para></listitem>
-
-    </itemizedlist> 
 
        <mediaobject>
           <imageobject>
@@ -86,12 +78,9 @@
      <para>At the bottom of each template form are two options: 
      'Show Results' and 'Edit Query'.</para>    
  
-    <itemizedlist>
-       <listitem><para>Pressing the 'Show Results' button will take
-       you directly to your results page, from where you will be able
-       to access more information about each object by following the
-       links.</para></listitem>
-    </itemizedlist>
+   <para>Pressing the 'Show Results' button will take you directly to
+       your results page, from where you will be able to access more
+       information about each object by following the links.</para>
 
        <mediaobject>
           <imageobject>
@@ -99,14 +88,14 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
  
-    <itemizedlist> <listitem><para>The 'Edit Query' option allows you
+   <para>The 'Edit Query' option allows you
       to display the template in the FlyMine Query Builder. This
       option enables you to use a template query as a starting point
       for building a modified or more complex query, or to see how a
       certain query may be constructed using the query builder (see
       <ulink url="tutorial6-QB.xml">Tutorial 6</ulink> for more
-      information).</para></listitem>
-    </itemizedlist>
+      information).</para>
+   
 
       <mediaobject>
           <imageobject>

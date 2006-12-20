@@ -15,9 +15,9 @@
 
     <para>Some example identifiers:</para>
       <itemizedlist>
-        <listitem><para>for <emphasis>Drosophila</emphasis> genes, use the symbol, full name,
-         <ulink url="http://www.flybase.org">FlyBase</ulink> ID or any synonym (eg. zen, zerknullt, FBgn0004053, 
-         CG1046, z1, zen1, BG:DS00276.9, zerknullt 1, zerknult, l(3)84Ad).</para></listitem>
+        <listitem><para>for <emphasis>Drosophila</emphasis> genes, use the symbol,
+         <ulink url="http://www.flybase.org">FlyBase</ulink> ID or any synonym (eg. zen, FBgn0004053, 
+         CG1046, z1, zen1, BG:DS00276.9, l(3)84Ad).</para></listitem>
         <listitem><para>for <emphasis>A. gambiae</emphasis> genes, use
          <ulink url="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</ulink> 
          identifiers (eg. ENSANGG00000001499).</para></listitem>
@@ -26,7 +26,7 @@
          identifiers (eg. ENSAPMG00000012500).</para></listitem>
         <listitem><para>for <emphasis>C. elegans</emphasis> genes, use the 
          <ulink url="http://www.wormbase.org/">WormBase</ulink>
-         identifiers or symbols (eg. M117.2, WBGene00003920, par-5, ftt-1).</para></listitem>
+         identifiers or symbols (eg. WBGene00003920, par-5, ftt-1).</para></listitem>
         <listitem><para>for proteins, use <ulink url="http://www.uniprot.org">UniProt</ulink> 
          identifiers or primary accessions (eg. 18C_DROME, P16909).</para></listitem>
         <listitem><para>for protein domains or families, use 
@@ -47,7 +47,7 @@
 
        <mediaobject>
           <imageobject>
-            <imagedata fileref="homepage.png" />
+            <imagedata fileref="quickSearchBox.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
@@ -62,14 +62,14 @@
     search. Enter 'zen*' into the search box and press 'Search'. This
     time the search term matches several items in the database and a
     summary list of these will be returned as your results. Each
-    summary includes a '[details...]' link to the object details page
+    summary includes links to the object details page
     for that item (see <ulink
     url="tutorial2-ObjectDetailPage.xml">Tutorial
     2</ulink>):</para>
 
        <mediaobject>
           <imageobject>
-            <imagedata fileref="wildcards.png" />
+            <imagedata fileref="quickSearchResults.png" />
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
     

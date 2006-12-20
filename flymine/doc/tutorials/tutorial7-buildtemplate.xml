@@ -9,8 +9,8 @@
     (see <ulink url="tutorial6-QB.xml">Tutorial 6</ulink>) can
     be saved as a template query, as long as it includes at least one
     editable constraint. In order to build a template you need to be
-    logged-in into FlyMine. Templates that you create yourself are
-    saved to your history.</para>
+    logged-in to FlyMine. Templates that you create yourself are
+    saved to your 'MyMine'.</para>
 
     <para>This tutorial will show you how to build a new template. As
     an example, we will make a template starting from the query
@@ -29,17 +29,16 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
-    <para>When building a query with the QueryBuilder, none of the
-    constraints will be editable. However, at least one constraint
-    needs to be editable in order to be able to save the query as a
-    template. To make a constraint editable, click on the lock next to
-    the constraint: A field with 'Template constraint settings' will
-    appear in the right column. Click in the tick-box next to
-    'Editable'. At the same time, it is possible to add a label to the
-    editable constraint (optional) to clarify what it is by typing in
-    a label in 'Constraint label'. Click on the 'Update' button in
-    this field. The label will appear on the template page after
-    creating the template (see below).</para>
+    <para>To save a query as a template there must be at least one
+    'editable' constraint in the query.  To make a constraint editable
+    within a template, click on the lock next to the constraint: A
+    field with 'Template constraint settings' will appear in the right
+    column. Click in the tick-box next to 'Editable'. At the same
+    time, it is possible to add a label to the editable constraint
+    (optional) to clarify what it is by typing in a label in
+    'Constraint label'. Click on the 'Update' button in this
+    field. The label will appear on the template page after creating
+    the template (see below).</para>
  
         <mediaobject>
           <imageobject>
@@ -87,7 +86,7 @@
 
     <para>Before creating a template, preview the template and make
     any changes, if necessary. To save this query as a template, click
-    on 'Create template'.</para>
+    on 'Save template'.</para>
 
        <mediaobject>
           <imageobject>
@@ -95,17 +94,15 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
-    <para>You will be able to view and run this template from your
-    history page. Access your history page via the 'History' button in
-    the top menu bar on every FlyMine page. Your templates will be
-    saved under 'Saved Template Queries'. To go to a template page,
-    click on the name of the template. A yellow star next to the query
-    name marks it as a favourite query. To mark a template as a
-    favourite, click on the star icon next to the template name. As a
-    result, the star will become yellow. Once a template has been
-    created, it can still be edited, by clicking on 'Edit' in the
-    'Actions' column. The templates can als be exported in xml
-    format.</para>
+    <para>You will be able to view and run this template from the
+    'Saved templates' tab of your 'MyMine'. Access your MyMine page
+    via the top menu bar on every FlyMine page.  For each template
+    there are a set of actions, 'Run', 'Edit' and 'Export'. 'Run' will
+    run the template query and give you a results paage.  'Edit'
+    allows you to edit the template query. 'Export' will export the
+    template in xml format.  In addition clicking on the star next to
+    a template name (so that it turns yellow) will add that template
+    to the 'Favourite templates' tab of your MyMine.</para>
 
        <mediaobject>
           <imageobject>
@@ -113,7 +110,8 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
  
-    <para>- The template page can be viewed and run from your History page.</para> 
+    <para>- The template page can be viewed and run from the 'Saved
+    Templates' tab of your MyMine page.</para>
 
         <mediaobject>
           <imageobject>
