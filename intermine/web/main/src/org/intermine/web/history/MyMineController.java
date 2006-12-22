@@ -10,11 +10,17 @@ package org.intermine.web.history;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.Profile;
@@ -65,6 +71,14 @@ public class MyMineController extends TilesAction
                 }
             }
         }
+        
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Collection qualifiedTypes = os.getModel().getClassNames();
+        ArrayList typeList = new ArrayList();
+        for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
+            typeList.add(TypeUtil.unqualifiedName((String)iter.next()));
+        }
+        request.setAttribute("typeList",typeList);
 
         return null;
     }
