@@ -12,6 +12,14 @@
       <br/>
       <fmt:message key="bagBuild.bagFromText2"/>
       <br/>
+      <p>
+      <html:select property="type">
+      	<c:forEach items="${typeList}" var="type">
+           <html:option value="${type}">${type}</html:option>
+      	</c:forEach>
+      </html:select>
+      </p>
+      <br/>
       <html:textarea property="text" rows="10" cols="40"/>
       <br/>
       <html:reset>

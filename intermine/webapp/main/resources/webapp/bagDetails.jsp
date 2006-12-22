@@ -22,10 +22,12 @@
     Bag Contents
 </div>
 
-<div class="body">
+<div class="body" >
 <p>The bag <b>${bag.name}</b> contains elements of type:<b>${bag.type}</b>.</p>
 <html:form action="/modifyBagDetailsAction?removeFromBag=true">
 <html:hidden property="bagName" value="${bag.name}"/>
+
+<table><tr><td width="50%">
 <table class="results" cellspacing="0">
   <tr>
   	<th>&nbsp;</th>
@@ -38,7 +40,6 @@
     </c:forEach>
   </tr>
  
-
   <c:forEach items="${pagedColl.rows}" var="row" varStatus="status">
     <c:set var="object" value="${row[0]}" scope="request"/>
        <c:set var="rowClass">
@@ -55,6 +56,8 @@
        <td>
         <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
           <c:choose>
+            <c:when test="${pagedColl.columnNames[column.index] == 'Gene.chromosomeLocation'}">
+           </c:when>
 	        <c:when test="${resultElement.keyField}">
 	          <html:link action="/objectDetails?id=${resultElement.id}">
 		        <c:out value="${resultElement.field}" />
@@ -69,15 +72,24 @@
     </tr>
   </c:forEach>
 </table>
+<br/>
 <html:submit property="remove">
     Remove
 </html:submit>
 </html:form>
+</td>
+
+<td valign="top" align="center" width="50%">
+<%--   <img src="bagGraphWidget.do?bagName=${bag.name}" map="#chart" />--%>
+<iframe src="bagGraphWidget.do?bagName=${bag.name}" width="450" height="350" frameborder="0"></iframe>
+</td>
+</tr></table>
 </div>
 
 <div class="heading">
-    Templates
+  Templates
 </div>
+
 <div class="body">
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect">

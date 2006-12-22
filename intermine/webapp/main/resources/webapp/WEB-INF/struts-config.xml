@@ -471,6 +471,7 @@
             parameter="action"
             input="buildBag">
       <forward name="buildBag" path="bag.page"/>
+      <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
 
     <action path="/templateSearch"
