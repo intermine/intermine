@@ -1,9 +1,14 @@
 package org.intermine.web.bag;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -13,17 +18,21 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.util.SAXParser;
 import org.intermine.web.ClassKeyHelper;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Richard Smith
  *
  */
 public class BagQueryHelper {
-
 	
 	public static BagQuery createDefaultBagQuery(String type, Map classKeys, 
-			Model model, Set input) throws ClassNotFoundException {
+			Model model, Collection input) throws ClassNotFoundException {
 		
 		Class cls = Class.forName(model.getPackageName() + "." + type);
 		if (!ClassKeyHelper.hasKeyFields(classKeys, type)) {
@@ -60,8 +69,15 @@ public class BagQueryHelper {
 		if (cs.getConstraints().size() == 0) {
 			throw new IllegalArgumentException("Internal error - could not find any usable key fields for type: " + type + ".");
 		}
-
 		BagQuery bq = new BagQuery(q, "default", false);
 		return bq;
 	}
+	
+	public static Map readBagQueries(Model model, InputStream is) throws Exception {
+		BagQueryHandler handler = new BagQueryHandler(model);
+		SAXParser.parse(new InputSource(is), handler);
+		return handler.getBagQueries();
+	}
+	
+
 }

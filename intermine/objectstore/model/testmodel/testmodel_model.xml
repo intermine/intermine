@@ -25,7 +25,7 @@
     <class name="org.intermine.model.testmodel.Employee" extends="org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress" is-interface="false">
         <attribute name="fullTime" type="boolean"/>
         <attribute name="age" type="int"/>
-        <attribute name="end" type="int"/>
+        <attribute name="end" type="java.lang.String"/>
         <reference name="department" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="employees"/>
         <reference name="departmentThatRejectedMe" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="rejectedEmployee"/>
     </class>

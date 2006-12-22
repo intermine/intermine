@@ -201,7 +201,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         e.setName("EmployeeA2");
         e.setAge(32);
-        e.setEnd(2);
+        e.setEnd("2");
         e.setFullTime(true);
         e.setDepartment(d);
         d.setName("DepartmentA1");
@@ -222,7 +222,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Employee re = (Employee) iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull("Object from db should not be null", re);
         assertEquals(32, re.getAge());
-        assertEquals(2, re.getEnd());
+        assertEquals("2", re.getEnd());
         assertTrue(re.getFullTime());
         assertNotNull(re.getAddress());
         assertNotNull(re.getDepartment());

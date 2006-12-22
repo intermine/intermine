@@ -40,7 +40,6 @@ public class NotXmlTest extends TestCase
 
         String expected = NotXmlRenderer.DELIM + "org.intermine.model.testmodel.Employee"
             + NotXmlRenderer.DELIM + "aage" + NotXmlRenderer.DELIM + "0"
-            + NotXmlRenderer.DELIM + "aend" + NotXmlRenderer.DELIM + "0"
             + NotXmlRenderer.DELIM + "afullTime" + NotXmlRenderer.DELIM + "false"
             + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "Employee1"
             + NotXmlRenderer.DELIM + "aid" + NotXmlRenderer.DELIM + "1234"

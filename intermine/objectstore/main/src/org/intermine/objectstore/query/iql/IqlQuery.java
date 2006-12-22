@@ -45,9 +45,10 @@ public class IqlQuery
      * @param queryString the string-based query
      * @param packageName the package name with which to qualify unqualified classnames. Note that
      * this can be null if every class name is fully qualified
+     * @param parameters values  to substitute for '?' in query text
      * @throws NullPointerException if queryString is null
      */
-    public IqlQuery(String queryString, String packageName) {
+    public IqlQuery(String queryString, String packageName, List parameters) {
         if (queryString == null) {
             throw new NullPointerException("queryString should not be null");
         }
@@ -59,9 +60,24 @@ public class IqlQuery
         }
         this.queryString = queryString;
         this.packageName = packageName;
+        if (parameters != null) {
+        	this.parameters = parameters;
+        }
     }
 
-
+    /**
+     * Construct an IQL query from a String.
+     * NOTE: The query string is not validated on construction
+     *
+     * @param queryString the string-based query
+     * @param packageName the package name with which to qualify unqualified classnames. Note that
+     * this can be null if every class name is fully qualified
+     * @throws NullPointerException if queryString is null
+     */
+    public IqlQuery(String queryString, String packageName) {
+    	this(queryString, packageName, null);
+    
+    }
     /**
      * Construct an IQL query from a Query object.
      *
