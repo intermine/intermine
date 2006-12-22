@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -68,7 +69,7 @@ public class BuildBagAction extends InterMineAction
                     .PROFILE_MANAGER)).getUserProfileObjectStore();
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys);
+        BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, new HashMap());
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 

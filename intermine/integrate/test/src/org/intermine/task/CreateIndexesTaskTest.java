@@ -31,7 +31,7 @@ public class CreateIndexesTaskTest extends TestCase
         m = Model.getInstanceByName("testmodel");
     }
 
-    //test defined keys and N-1 keys
+    //test defined keys and N-1 key
     public void testCreateStandardIndexes1() throws Exception {
         List expected = new ArrayList();
         expected.add("create index Department__key1 on Department(name, companyId, id)");
@@ -106,7 +106,8 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index CEO__title__nulls on CEO((title IS NULL))");
         expected.add("create index CEO__fullTime on CEO(fullTime)");
         expected.add("create index CEO__age on CEO(age)");
-        expected.add("create index CEO__end on CEO(intermine_end)");
+        expected.add("create index CEO__end on CEO(lower(intermine_end))");
+        expected.add("create index CEO__end on CEO((end IS NULL))");
         expected.add("create index CEO__name on CEO(lower(name))");
         expected.add("create index CEO__name__nulls on CEO((name IS NULL))");
         expected.add("create index CEO__seniority on CEO(seniority)");

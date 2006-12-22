@@ -99,10 +99,6 @@ public class FullRendererTest extends XMLTestCase
         atr3.setName("fullTime");
         atr3.setValue("false");
         exp1.addAttribute(atr3);
-        Attribute atr4 = new Attribute();
-        atr4.setName("end");
-        atr4.setValue("0");
-        exp1.addAttribute(atr4);
         Reference ref = new Reference();
         ref.setName("department");
         ref.setRefId("5678");
@@ -199,7 +195,6 @@ public class FullRendererTest extends XMLTestCase
 
         String expected = "<item id=\"1234\" class=\"http://www.intermine.org/model/testmodel#Employee\" implements=\"http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress\">" + ENDL
             + "<attribute name=\"age\" value=\"0\"/>" + ENDL
-            + "<attribute name=\"end\" value=\"0\"/>" + ENDL
             + "<attribute name=\"fullTime\" value=\"false\"/>" + ENDL
             + "<attribute name=\"name\" value=\"Employee1\"/>" + ENDL
             + "<reference name=\"department\" ref_id=\"5678\"/>" + ENDL

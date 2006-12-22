@@ -41,7 +41,6 @@ public class LiteRendererTest extends TestCase
             + "org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress"
             + LiteRenderer.DELIM + "aage" + LiteRenderer.DELIM + "0"
             + LiteRenderer.DELIM + "afullTime" + LiteRenderer.DELIM + "false"
-            + LiteRenderer.DELIM + "aend" + LiteRenderer.DELIM + "0"
             + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
             + LiteRenderer.DELIM + "aid" + LiteRenderer.DELIM + "1234"
             + LiteRenderer.DELIM + "rdepartment" + LiteRenderer.DELIM + "5678";
@@ -62,7 +61,6 @@ public class LiteRendererTest extends TestCase
         String expected = "<object class=\"org.intermine.model.testmodel.Employee\" implements=\"org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress\">"
             + "<field name=\"age\" value=\"0\"/>"
             + "<field name=\"fullTime\" value=\"false\"/>"
-            + "<field name=\"end\" value=\"0\"/>"
             + "<field name=\"name\" value=\"Employee1\"/>"
             + "<field name=\"id\" value=\"1234\"/>"
             + "<reference name=\"department\" value=\"5678\"/>"
@@ -87,9 +85,6 @@ public class LiteRendererTest extends TestCase
         Field f1 = new Field();
         f1.setName("age");
         f1.setValue("0");
-        Field f2 = new Field();
-        f2.setName("end");
-        f2.setValue("0");
         Field f3 = new Field();
         f3.setName("fullTime");
         f3.setValue("false");
@@ -100,7 +95,6 @@ public class LiteRendererTest extends TestCase
         f5.setName("id");
         f5.setValue("1234");
         exp.addField(f1);
-        exp.addField(f2);
         exp.addField(f3);
         exp.addField(f4);
         exp.addField(f5);
