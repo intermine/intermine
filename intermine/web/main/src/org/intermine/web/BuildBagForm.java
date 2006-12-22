@@ -33,6 +33,23 @@ public class BuildBagForm extends ActionForm
     protected String bagName;
     protected FormFile formFile;
     protected String text;
+    protected String type;
+
+    /**
+     * Get the bag type
+     * @return the bag type string
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Set the bag type
+     * @param type the bag type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * Set the query string
