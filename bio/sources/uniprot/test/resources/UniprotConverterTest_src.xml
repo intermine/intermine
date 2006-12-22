@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <uniprot xmlns="http://uniprot.org/uniprot"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">
@@ -7,8 +7,9 @@
   <accession>P07667</accession>
   <accession>Q9V5E6</accession>
   <name>EVE_DROME</name>
-  <protein>
+  <protein type="fragment">
     <name>Segmentation protein even-skipped</name>
+    <name>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Dummy Second Name xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</name>
   </protein>
   <gene>
     <name type="primary">eve</name>
@@ -206,6 +207,7 @@
     <property type="entry name" value="HOMEOBOX_2"/>
     <property type="match status" value="1"/>
   </dbReference>
+<dbReference type="EC" id="xxx EC 1.1.1.31 xxx" key="1"/>
   <keyword id="KW-0002">3D-structure</keyword>
   <keyword id="KW-0181">Complete proteome</keyword>
   <keyword id="KW-0217">Developmental protein</keyword>
@@ -278,7 +280,7 @@ DMSPPPTTTVIAEPKPKLFKPYKTEA
   <accession>P32234</accession>
   <accession>Q9V648</accession>
   <name>128UP_DROME</name>
-  <protein>
+  <protein evidence="EI1">
     <name>GTP-binding protein 128up</name>
   </protein>
   <gene>
