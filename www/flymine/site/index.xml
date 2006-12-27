@@ -19,7 +19,7 @@
       </para>
       
       <para style="color:#e00;"> 
-        FlyMine is now updated to version 6.0.  See <ulink url="release-notes.xml">release notes</ulink> for information on new content and an important note about saved bags of objects.
+        FlyMine is now updated to version 6.0. See <ulink url="release-notes.xml">release notes</ulink> for information on new content and an important note about saved bags of objects.
       </para> 
 
     </section>
@@ -65,6 +65,10 @@
     <title>
       Template search
     </title>
+    <para>Enter a keyword to find pre-defined template queries
+    relating to a certain type of data. Select 'Public templates' to
+    search pre-defined templates, 'My templates' to search templates
+    you have created yourself or 'Everything' to search all templates.</para>
     <para>
       <template-search/>
     </para>
@@ -76,7 +80,7 @@
       FlyMine QueryBuilder
     </title>
     <para>
-      Advanced users can use a flexible query interface to construct their own data mining queries.  See <ulink url="doc/manual">user manual</ulink> and <ulink url="doc/tutorials/">tutorials</ulink>.
+      Advanced users can use a flexible query interface to construct their own data mining queries. See <ulink url="doc/manual">user manual</ulink> and <ulink url="doc/tutorials/">tutorials</ulink>.
     </para>
     <para>
       <things-to-do/>
