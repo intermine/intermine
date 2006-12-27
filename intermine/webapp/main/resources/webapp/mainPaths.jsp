@@ -24,7 +24,8 @@
 </script>
 
 <div class="heading">
-  <fmt:message key="query.currentquery"/><im:helplink key="query.help.constraints"/>
+  <fmt:message key="query.currentquery"/>
+  <im:manualLink section="manualPageQB.shtml#manualModelBrowserQB"/>
 </div>
 <div class="body">
 <div>
