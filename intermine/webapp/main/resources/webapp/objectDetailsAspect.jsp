@@ -25,7 +25,7 @@
   <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
 
   <im:heading id="${placement}" topLeftTile="/objectDetailsAspectIcon.jsp">
-    ${aspect}<%--<im:helplink key="objectDetails.help.otherInfo"/>--%>
+    ${aspect}<%--<im:manualLink section="manualObjectDetails.shtml"/>--%>
   </im:heading>
     <im:body id="${placement}">
       <c:if test="${! empty displayObject}">

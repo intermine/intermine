@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
     <div class="heading">
-      <fmt:message key="view.actions"/><im:helplink key="view.help.actions"/>
+      <fmt:message key="view.actions"/><im:manualLink section="manualImportExportQueries.shtml"/>
     </div>
     <div class="body">
         <p>

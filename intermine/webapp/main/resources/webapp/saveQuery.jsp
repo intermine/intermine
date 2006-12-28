@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- saveQuery.jsp -->
 <html:xhtml/>
@@ -21,7 +22,7 @@
     <fmt:message key="begin.or"/>
     <html:link action="/exportQuery?as=iql">
       IQL
-    </html:link>
+    </html:link><im:manualLink section="manualImportExportQueries.shtml"/>
   </div>
 </c:if>
 <!-- /saveQuery.jsp -->

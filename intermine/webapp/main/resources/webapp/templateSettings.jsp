@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+
 <!-- templateSettings.jsp -->
 
 <html:xhtml/>
@@ -18,6 +19,7 @@
     </c:when>
     <c:otherwise>
       Building a new template query
+     <im:manualLink section="manualCreateTemplates.shtml"/>
     </c:otherwise>
   </c:choose>
   </im:heading>

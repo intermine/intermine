@@ -408,7 +408,7 @@
       <%-- Save bag controls --%>
       <c:if test="${resultsTable.size > 0}">
         <div class="heading">
-          <fmt:message key="results.save"/><im:helplink key="results.help.save"/>
+          <fmt:message key="results.save"/><im:manualLink section="manualResults.shtml"/>
         </div>
         <div class="body">
           <ul>
