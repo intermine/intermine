@@ -49,6 +49,9 @@
     <form-bean name="buildBagForm"
                type="org.intermine.web.BuildBagForm"/>
 
+    <form-bean name="bagUploadConfirmForm"
+               type="org.intermine.web.bag.BagUploadConfirmForm"/>
+
     <form-bean name="requestPasswordForm"
                type="org.intermine.web.RequestPasswordForm"/>
     
@@ -474,6 +477,15 @@
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
 
+    <action path="/bagUploadConfirm"
+            type="org.intermine.web.bag.BagUploadConfirmAction"
+            name="bagUploadConfirmForm"
+            parameter="action"
+            input="buildBag">
+      <forward name="back" path="bag.page"/>
+      <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
+    </action>
+
     <action path="/templateSearch"
             type="org.intermine.web.TemplateSearchAction"
             name="templateSearchForm"
@@ -616,6 +628,10 @@
 
     <action path="/initBag"
             type="org.intermine.web.BagController"
+            name="buildBagForm"/>
+
+    <action path="/initBagUploadConfirm"
+            type="org.intermine.web.bag.BagUploadConfirmController"
             name="buildBagForm"/>
 
     <action path="/initTemplate"

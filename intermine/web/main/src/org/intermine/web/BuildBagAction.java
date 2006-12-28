@@ -58,15 +58,11 @@ public class BuildBagAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception{
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BuildBagForm buildBagForm = (BuildBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String newBagName = buildBagForm.getBagName();
         String type = buildBagForm.getType();
-        
-        ObjectStore userProfileOs = ((ProfileManager) servletContext.getAttribute(Constants
-                    .PROFILE_MANAGER)).getUserProfileObjectStore();
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, new HashMap());
@@ -80,7 +76,7 @@ public class BuildBagAction extends InterMineAction
 
         if (trimmedText.length() == 0) {
             if (formFile == null
-                            || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
+                || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagToSave"), request);
                 return mapping.findForward("buildBag");
             } else {
@@ -88,7 +84,7 @@ public class BuildBagAction extends InterMineAction
             }
         } else {
             if (formFile == null
-                            || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
+                || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
                 reader = new BufferedReader(new StringReader(trimmedText));
             } else {
                 recordError(new ActionMessage("bagBuild.textAndFilePresent"), request);
@@ -99,16 +95,12 @@ public class BuildBagAction extends InterMineAction
         String thisLine;
         List list = new ArrayList();
         while ((thisLine = reader.readLine()) != null) {
-
             int elementCount = 0;
-
             StringTokenizer st = new StringTokenizer(thisLine, " \n\t,");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
                 list.add(token);
-
                 elementCount++;
-
                 if (elementCount > maxBagSize) {
                     ActionMessage actionMessage =
                         new ActionMessage("bag.tooBig", new Integer(maxBagSize));
@@ -117,19 +109,15 @@ public class BuildBagAction extends InterMineAction
                     return mapping.findForward("buildBag");
                 }
             }
-        }        
+        }
 
-        
-        
-        
         BagQueryResult bagQueryResult = bagRunner.searchForBag(type, list);
         request.setAttribute("matches", bagQueryResult.getMatches());
         request.setAttribute("issues", bagQueryResult.getIssues());
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
+        request.setAttribute("bagName", newBagName);
+        request.setAttribute("bagType", type);
         
-        return new ForwardParameters(mapping.findForward("bagUploadConfirm"))
-                .addParameter("bagName", newBagName)
-                .forward();
+        return mapping.findForward("bagUploadConfirm");
     }
-    
 }
