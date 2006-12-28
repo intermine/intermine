@@ -172,17 +172,18 @@
    <sect1>
      <title>Example: Object details page for your gene of choice.</title> 
 
-      <para> - The top left shows summary information for the gene -
-      identifier, name and chromosome coordinates. Use the '+' boxes
-      next to 'proteins', 'synonyms', etc. to open in-line tables with
-      more details. The 'FASTA' buttons retrieve sequences for any
-      feature they appear next to.</para>
 
-      <para> - The top right presents additional information for the
+       <para> A. The top left shows summary information for
+       the gene - identifier, name and chromosome coordinates. Use the
+       '+' boxes next to 'proteins', 'synonyms', etc. to open in-line
+       tables with more details. The 'FASTA' buttons retrieve
+       sequences for any feature they appear next
+       to.</para>
+
+      <para> B. The top right presents additional information for the
       object as well as links to external reports:</para>
 
-   <itemizedlist>
-
+     <itemizedlist>
      <listitem><para> A link to the gene report of the relevant model
      organism database.</para></listitem>
 
@@ -194,36 +195,31 @@
      <listitem><para> An image of the temporal expression of the gene according to Arbeitman et al.
       (2002), if available (e.g. CG3936).</para></listitem>
 
-     <listitem><para> A link to FlyExpress data, if available (e.g. CG2328).</para></listitem>
+    <listitem><para> A link to FlyExpress data, if available (e.g. CG2328).</para></listitem>
+     </itemizedlist>
 
-   </itemizedlist>
 
-     <para>Scroll down the page to see 'Other details by aspect': This
-     section has more detailed information about this gene divided
-     into 'aspects'. The aspects correspond to categories of data
-     shown on the FlyMine homepage.</para>
+     <para> C. Scroll down the page to see 'Other details by
+     aspect': This section has more detailed information about this
+     gene divided into 'aspects'. The aspects correspond to categories
+     of data shown on the FlyMine homepage.</para>
 
-   <itemizedlist>
+     <itemizedlist>
+     <listitem><para> Entries in green show fields directly related to the
+      object. Use '+' boxes to open summary tables.</para></listitem>
 
-     <listitem>
-      <para> Entries in green show fields directly related to the
-      object. Use '+' boxes to open summary tables.</para>
-    </listitem>
-
-    <listitem>
-     <para> Entries in black text allow you to see the results of
+     <listitem><para> Entries in black text allow you to see the results of
       <link linkend="manualTemplateQueries">predefined template
       queries</link> run for the object ('templates' See <ulink
-      url="../tutorials/tutorial3-Templates.xml">Tutorial 3</ulink>).  Those shown
-      in light grey did not return any results.</para>
-     </listitem>
+      url="../tutorials/tutorial3-Templates.xml">Tutorial 3</ulink>).
+      Those shown in light grey did not return any results.</para></listitem>
 
-    <listitem>
-     <para> '[details...]' links take you to Object details pages for
-     related database entries.</para>
-   </listitem>
 
-   </itemizedlist>
+     <listitem><para> - '[details...]' links take you to Object details pages
+     for related database entries.</para></listitem>
+     </itemizedlist>
+
+
 
  </sect1>
 
@@ -266,22 +262,44 @@
 
          <para> The FlyMine website presents the principle data types
           grouped together as different 'aspects', such as protein
-          interactions or gene expression. Each aspect provides
-          background information on the origin of particular source
-          datasets (e.g. literature references and links to source
-          databases), access to convenient derivative bulk datasets
-          for browsing or export in standard format, as well as
-          relevant <link linkend="manualTemplateQueries">predefined
-          template queries</link> and classes for use as starting
-          points in the <link linkend="manualQueryBuilder">Query
-          Builder</link>. The template queries available for a
+          interactions or gene expression. The aspects allow
+          researchers to easily focus on a particular type of data
+          and, for instance, easily identify relevant template
+          queries. Currently, FlyMine contains 13 different aspects. A
+          particular aspect can be accessed by clicking on the
+          corresponding icon on the FlyMine homepage, or by selecting
+          the aspect from the drop-down menu at the right side of any
+          FlyMine page: <inlinemediaobject><imageobject><imagedata
+          fileref="gotoaspect.gif"
+          /></imageobject></inlinemediaobject>. </para>
+
+          <para> Each aspect page lists: </para>
+
+       <itemizedlist>
+
+          <listitem><para> Current data: background information on the
+          origin of particular source datasets (e.g. literature
+          references and links to source databases),</para>
+          </listitem>
+
+          <listitem><para> Bulk download: access to convenient
+          derivative bulk datasets for browsing or export in standard
+          format,</para></listitem>
+
+          <listitem><para> Related template queries: relevant <link
+          linkend="manualTemplateQueries">predefined template
+          queries</link>. The template queries available for a
           particular aspect range from simple queries to retrieve just
           one data type to more complex queries which incorporate data
-          from other aspects.  The aspects allow researchers to easily
-          focus on a particular type of data and, for instance, easily
-          identify relevant template queries. Currently, FlyMine
-          contains 13 different aspects. </para>
+          from other aspects,</para></listitem>
 
+          <listitem><para> Query starting points: classes for use as
+          starting points in the <link
+          linkend="manualQueryBuilder">Query Builder</link>. </para>
+          </listitem>
+
+       </itemizedlist>
+ 
   </chapter>
 
   <chapter id="manualTemplateQueries">
@@ -629,11 +647,11 @@
    <orderedlist>
     <listitem>
      
-      <para> Constraints on the current query - This section lists the
-      constraints that have been added to particular classes and
-      attributes. Constraints can be added to a class or attribute
-      from the Model browser on the left by clicking on
-      <inlinemediaobject><imageobject><imagedata
+      <para id="manualConstrainListQB"> Constraints on the current
+      query - This section lists the constraints that have been added
+      to particular classes and attributes. Constraints can be added
+      to a class or attribute from the Model browser on the left by
+      clicking on <inlinemediaobject><imageobject><imagedata
       fileref="constrain.gif" /></imageobject></inlinemediaobject>
       next to the class/attribute.  Constraints can be removed using
       <inlinemediaobject><imageobject><imagedata fileref="cross.gif"
@@ -647,38 +665,40 @@
     </listitem>
 
     <listitem> 
- 
-      <para> Constrain - The 'Constrain' section provides boxes for
-      you to constrain a field or class. The type of constraint you
-      can add will depend on whether a class or an attribute (a field
-      with only one unique piece of information, like e.g. an
-      identifier, as opposed to a field that references to another
-      class) is selected. If you have selected an attribute either
-      specify a particular constraint using the box provided or set
-      the attribute to be 'Has no value' or 'Has a value'. Classes for
-      which there are subclasses (e.g. tRNA is a subclass of
-      Transcript) can be constrained to a particular subclass. If the
-      query already has one or more constraints, you can also define
-      the logic between them and the new constraint by selecting
-      either 'and' or 'or'. Once you have defined your constraint (and
-      its relationship with other constraints) press 'Add to
-      query'. The new constraint will appear in the 'Constraints on
-      the current query'.</para>
- 
+
+      <para id="manualConstrainLogicQB"> Constraint logic - This
+      section will be empty until there are at least two constraints
+      in the query.  Each constraint will then have a letter next to
+      it on the 'Constraints on the current query' list which will
+      allow you to change the relationship between the different
+      constraints.  Click on 'edit' to change the logic between the
+      constraints (and, or, grouping) and then on 'Update' to
+      incorporate the logic into the query again. </para>
+
     </listitem>
 
     <listitem> 
-
-      <para> Constraint logic - This section will be empty until
-      there are at least two constraints in the query.  Each
-      constraint will then have a letter next to it on the
-      'Constraints on the current query' list which will allow you to
-      change the relationship between the different constraints.
-      Click on 'edit' to change the logic between the constraints
-      (and, or, grouping) and then on 'Update' to incorporate the
-      logic into the query again. </para>
-
+ 
+      <para id="manualConstrainQB"> Constrain - The 'Constrain'
+      section provides boxes for you to constrain a field or
+      class. The type of constraint you can add will depend on whether
+      a class or an attribute (a field with only one unique piece of
+      information, like e.g. an identifier, as opposed to a field that
+      references to another class) is selected. If you have selected
+      an attribute either specify a particular constraint using the
+      box provided or set the attribute to be 'Has no value' or 'Has a
+      value'. Classes for which there are subclasses (e.g. tRNA is a
+      subclass of Transcript) can be constrained to a particular
+      subclass. If the query already has one or more constraints, you
+      can also define the logic between them and the new constraint by
+      selecting either 'and' or 'or'. Once you have defined your
+      constraint (and its relationship with other constraints) press
+      'Add to query'. The new constraint will appear in the
+      'Constraints on the current query'.</para>
+ 
     </listitem>
+
+
 
    </orderedlist>
 
@@ -837,11 +857,12 @@
 
 
   <chapter id="manualResults">
-    <title>Results</title>
+    <title>Query Results</title>
 
       <para> FlyMine results can be either an <link
       linkend="manualObjectDetails">Object details page</link> which
-      provides more information about one specific object, or a table. </para>
+      provides more information about one specific object, or a resuls
+      table. </para>
 
       <para> The number of items displayed in the results table is set
       to 10 by default and can be changed by changing the number in
@@ -1062,14 +1083,14 @@
 
      </sect1>
 
-     <sect1>
+     <sect1 id="manualMyMineTabs">
        <title>My Mine</title>
 
-      <para> Your query history, called 'My Mine', is divided into
-      five lists: <link linkend="manualBags">Bags</link>, Query
+      <para>Your FlyMine account, called 'My Mine', contains
+      different lists: <link linkend="manualBags">Bags</link>, Query
       History, Saved Queries, Saved Templates and Favourite Templates,
       plus a tab to allow you to change your password (only visible
-      when <link linkend="manualLoggingIn">logged-in</link>. If you
+      when <link linkend="manualLoggingIn">logged-in</link>). If you
       are not <link linkend="manualLoggingIn">logged-in</link>, only
       your Query History will be activated, the others will be
       greyed-out. After logging-in, you will be able to view your
@@ -1086,15 +1107,29 @@
 
       <orderedlist numeration="upperalpha">
        <listitem>
-        <para> Query History - All queries that you run are saved in
-         your Query History with the default name 'query_x' (where x
-         increments for each query run). To change the name of the
-         query, click on the pencil next to the query name.  It is
-         possible to run the query again ('Actions - Run') or to
-         change the query in the Query Builder ('Actions-
-         Edit'). These queries will only be saved during the time of
-         the current session.  To save queries permanently and to
-         import queries, you need to be <link
+        <para id="manualBagsMyMine"> Bags - Bags are holders for lists
+        of data, e.g. a list of gene identifiers. Bags can be created
+        from an external source or from results from previous
+        queries. Saved bags of data can be used to constrain queries
+        (either in a <link linkend="manualTemplateQueries">template
+        query</link> or in the <link
+        linkend="manualQueryBuilder">Query Builder</link>), perform
+        logical operations (union, intersect, subtract) and can be
+        exported. To save your bags permanently, you need to be <link
+        linkend="manualLoggingIn">logged-in</link>. For more
+        information on bags, see <xref linkend="manualBags"/>.</para>
+        </listitem>
+
+       <listitem>
+        <para id="manualQueryHistory"> Query History - All queries
+         that you run are saved in your Query History with the default
+         name 'query_x' (where x increments for each query run). To
+         change the name of the query, click on the pencil next to the
+         query name.  It is possible to run the query again ('Actions
+         - Run') or to change the query in the Query Builder
+         ('Actions- Edit'). These queries will only be saved during
+         the time of the current session.  To save queries permanently
+         and to import queries, you need to be <link
          linkend="manualLoggingIn">logged-in</link>. To save a query,
          select it by clicking on the check-boxes next to the name and
          press 'Save' in the 'Actions' column. A message will appear
@@ -1109,71 +1144,70 @@
          the page.  After pressing 'Delete' you will need to confirm
          that you really want to delete the selected
          queries. Exporting a query will not delete it from your query
-         history.</para>
-       </listitem>
+         history.</para> </listitem>
 
        <listitem>
-        <para> Saved Queries - lists all queries that you have saved
-        before. They will be saved permanently.  It is possible to
-        rename the query (via the pencil next to the query name), to
-        run it again ('Actions - Run') and to edit it in the Query
-        Builder ('Actions- Edit').  Queries can also be exported or
-        deleted by selecting them individually using the check-boxes
-        (or clicking on the check-box on top of the column to select
-        all at once) and clicking the 'Export' or 'Delete' buttons at
-        the bottom of the page. After pressing 'Delete' you will be
-        asked to confirm that you really want to delete the selected
-        queries.  Exporting a query will not delete it from your query
-        history.  This page also allows you to import queries by using
-        the 'Import query from XML' link at the bottom of the page, if
-        you are <link linkend="manualLoggingIn">logged-in</link>.
-        Enter queries in XML format in the space provided and press
-        'Submit'.  The imported queries will be stored under 'Saved
-        Queries'.  Existing queries with identical names will get an
-        automatic extension to make it unique, e.g. dmel-proteins-1,
-        dmel-proteins-2.</para> </listitem>
-       <listitem>
-
-        <para> Saved Templates - provides a list of all templates that
-        you created yourself or have imported. They will be saved
-        permanently. It is possible to rename the template query (via
-        pencil next to the template name), to run it again ('Actions -
+        <para id="manualSavedQueries"> Saved Queries - lists all
+        queries that you have saved before. They will be saved
+        permanently.  It is possible to rename the query (via the
+        pencil next to the query name), to run it again ('Actions -
         Run') and to edit it in the Query Builder ('Actions- Edit').
-        Templates can also be exported or deleted by selecting them
+        Queries can also be exported or deleted by selecting them
         individually using the check-boxes (or clicking on the
         check-box on top of the column to select all at once) and
         clicking the 'Export' or 'Delete' buttons at the bottom of the
-        page.  After pressing 'Delete' you will be asked to confirm
+        page. After pressing 'Delete' you will be asked to confirm
         that you really want to delete the selected queries.
-        Exporting a template will not delete it from your account.
-        This page also allows you to import templates by using the
-        'Import template query' link at the bottom of the page, if you
-        are <link linkend="manualLoggingIn">logged-in</link>. Enter
+        Exporting a query will not delete it from your query history.
+        This page also allows you to import queries by using the
+        'Import query from XML' link at the bottom of the page, if you
+        are <link linkend="manualLoggingIn">logged-in</link>.  Enter
         queries in XML format in the space provided and press
-        'Submit'. The imported templates will be stored under 'Saved
-        Templates'.  Existing templates with identical names will be
-        updated. You can select templates to become 'favourite
-        templates'. To mark a template as a favourite, click on the
-        star next to the template name, which will then become
-        yellow. The template will stay in this list but will also
-        appear in the 'Favourite Templates' list. To unmark it, go to
-        'Favourite Templates' (see below), select the template and
-        press 'Remove from favourites' at the bottom of the
-        page. </para>
+        'Submit'.  The imported queries will be stored under 'Saved
+        Queries'.  Existing queries with identical names will get an
+        automatic extension to make it unique, e.g. dmel-proteins-1,
+        dmel-proteins-2.</para> </listitem> <listitem>
+
+        <para id="manualSavedTemplates"> Saved Templates - provides a
+        list of all templates that you created yourself or have
+        imported. They will be saved permanently. It is possible to
+        rename the template query (via pencil next to the template
+        name), to run it again ('Actions - Run') and to edit it in the
+        Query Builder ('Actions- Edit').  Templates can also be
+        exported or deleted by selecting them individually using the
+        check-boxes (or clicking on the check-box on top of the column
+        to select all at once) and clicking the 'Export' or 'Delete'
+        buttons at the bottom of the page.  After pressing 'Delete'
+        you will be asked to confirm that you really want to delete
+        the selected queries.  Exporting a template will not delete it
+        from your account.  This page also allows you to import
+        templates by using the 'Import template query' link at the
+        bottom of the page, if you are <link
+        linkend="manualLoggingIn">logged-in</link>. Enter queries in
+        XML format in the space provided and press 'Submit'. The
+        imported templates will be stored under 'Saved Templates'.
+        Existing templates with identical names will be updated. You
+        can select templates to become 'favourite templates'. To mark
+        a template as a favourite, click on the star next to the
+        template name, which will then become yellow. The template
+        will stay in this list but will also appear in the 'Favourite
+        Templates' list. To unmark it, go to 'Favourite Templates'
+        (see below), select the template and press 'Remove from
+        favourites' at the bottom of the page. </para>
 
        </listitem>
 
        <listitem>
-        <para> Favourite Templates - lists your favourite templates.
-        To mark a template as a favourite, click on the star next to
-        the template title, which will then become yellow. The
-        template will stay under 'Saved Queries' but will now also
-        appear in the 'Favourite Templates' list.  To remove a
-        template from the favourites list, select the template and
-        press 'Remove from favourites' at the bottom of the 'Favourite
-        Templates' page. It is possible to rename the template query
-        (via pencil next to the template name), to run it again
-        ('Actions - Run') and to edit it in the Query Builder
+        <para id="manualFavTemplates"> Favourite Templates - lists
+        your favourite templates.  To mark a template as a favourite,
+        click on the star next to the template title, which will then
+        become yellow. The template will stay under 'Saved Queries'
+        but will now also appear in the 'Favourite Templates' list.
+        To remove a template from the favourites list, select the
+        template and press 'Remove from favourites' at the bottom of
+        the 'Favourite Templates' page. It is possible to rename the
+        template query (via pencil next to the template name), to run
+        it again ('Actions - Run') and to edit it in the Query Builder
         ('Actions- Edit').  Favourite templates can also be exported
         by selecting them individually using the check-boxes (or
         clicking on the check-box on top of the column to select all
@@ -1203,7 +1237,7 @@
      address for which you chose a password. If you forgot your
      password, click on 'forgotten password'. You will be asked to
      enter your email address. Click on 'Request password' and your
-     password will then be send to you again. </para>
+     password will then be sent to you again. </para>
 
     </sect1>    
 
