@@ -13,7 +13,7 @@
 <a name="showing"></a>
 
 <div class="heading">
-  <fmt:message key="view.notEmpty.description"/><im:helplink key="view.help.output"/>
+  <fmt:message key="view.notEmpty.description"/><im:manualLink section="manualPageQB.shtml#manualOutputListQB"/>
 </div>
 
 <c:choose>

@@ -18,9 +18,6 @@
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
 </script>
 
-<c:set var="helpUrl"
-       value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualObjectDetails.shtml"/>
-
 <%-- figure out whether we should show templates or not --%>
 <c:set var="showTemplatesFlag" value="false"/>
 <c:set var="showImportantTemplatesFlag" value="false"/>

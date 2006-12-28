@@ -5,6 +5,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+
+
 <!-- mainBrowser.jsp -->
 
 <html:xhtml/>
@@ -51,7 +53,7 @@
 </script>
 
 <div class="heading">
-  <fmt:message key="query.currentclass"/><im:helplink key="query.help.browser"/>
+  <fmt:message key="query.currentclass"/><im:manualLink section="manualPageQB.shtml#manualModelBrowserQB"/>
 </div>
 <div class="body">
   <div> 

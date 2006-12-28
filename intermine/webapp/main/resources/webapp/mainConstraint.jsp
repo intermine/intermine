@@ -24,7 +24,9 @@
 
   <c:if test="${!editingTemplateConstraint}">
 
-    <div class="heading"><fmt:message key="query.constrain"/><im:helplink key="query.help.constrain"/></div>
+    <div class="heading">
+      <fmt:message key="query.constrain"/><im:manualLink section="manualPageQB.shtml#manualConstrainQB"/>
+      </div>
     <div class="body">
 
       <c:if test="${editingConstraintIndex == null && fn:length(QUERY.allConstraints) > 0}">

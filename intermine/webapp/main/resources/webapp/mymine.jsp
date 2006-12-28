@@ -34,7 +34,9 @@
             </html:link>
           </c:otherwise>
         </c:choose>
+        <im:manualLink section="manualMyMineTabs.shtml#manualBagsMyMine"/>
       </td>
+
       <td width="1%" class="tab ${MYMINE_PAGE=='saved'?'selected':'not-selected'}" nowrap="true">
         <c:choose>
           <c:when test="${!loggedin}">
@@ -51,8 +53,11 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-      </td>
+        <im:manualLink section="manualMyMineTabs.shtml#manualSavedQueries"/>
+       </td>
+
       <td width="1%" class="tab ${MYMINE_PAGE=='templates'?'selected':'not-selected'}" nowrap="true">
+
         <c:choose>
           <c:when test="${!loggedin}">
             <span onclick="alert('You need to log in to save templates'); return false;">
@@ -68,7 +73,9 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-      </td>
+       <im:manualLink section="manualMyMineTabs.shtml#manualSavedTemplates"/>
+       </td>
+
       <td width="1%" class="tab ${MYMINE_PAGE=='favourites'?'selected':'not-selected'}" nowrap="true">
         <c:choose>
           <c:when test="${!loggedin}">
@@ -86,7 +93,8 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-      </td>
+       <im:manualLink section="manualMyMineTabs.shtml#manualFavTemplates"/>
+       </td>
 
       <c:if test="${loggedin}">
         <td width="1%" class="tab ${MYMINE_PAGE=='password'?'selected':'not-selected'}" 

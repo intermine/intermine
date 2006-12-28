@@ -25,7 +25,7 @@
 
 <div class="heading">
   <fmt:message key="query.currentquery"/>
-  <im:manualLink section="manualPageQB.shtml#manualModelBrowserQB"/>
+  <im:manualLink section="manualPageQB.shtml#manualConstrainListQB"/>
 </div>
 <div class="body">
 <div>
