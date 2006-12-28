@@ -12,7 +12,9 @@ package org.intermine.web.history;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
@@ -27,6 +29,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.event.ListSelectionEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -83,6 +86,7 @@ public class MyMineController extends TilesAction
                 typeList.add(unqualifiedName);
             }
         }
+        Collections.sort(typeList);
         request.setAttribute("typeList",typeList);
 
         return null;
