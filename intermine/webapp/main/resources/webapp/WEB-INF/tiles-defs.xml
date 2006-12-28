@@ -58,6 +58,10 @@
     <put name="body" value="bag.tile"/>
     <put name="pageName" value="bag"/>
   </definition>
+  <definition name="bagUploadConfirm.page" extends="layout.template">
+    <put name="body" value="bagUploadConfirm.tile"/>
+    <put name="pageName" value="bag"/>
+  </definition>
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.jsp"/>
     <put name="pageName" value="help"/>
@@ -162,6 +166,7 @@
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
+  <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>
   <definition name="objectDetailsAspect.tile" path="/objectDetailsAspect.jsp" controllerUrl="/initObjectDetailsAspect.do"/>
   <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
     <put name="preview" value="template.tile"/>
