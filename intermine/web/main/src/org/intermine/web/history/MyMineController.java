@@ -13,21 +13,22 @@ package org.intermine.web.history;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.ClassKeyHelper;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.Profile;
-import org.intermine.web.SessionMethods;
-
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -75,8 +76,12 @@ public class MyMineController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Collection qualifiedTypes = os.getModel().getClassNames();
         ArrayList typeList = new ArrayList();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
-            typeList.add(TypeUtil.unqualifiedName((String)iter.next()));
+            String unqualifiedName = TypeUtil.unqualifiedName((String)iter.next());
+            if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)) {
+                typeList.add(unqualifiedName);
+            }
         }
         request.setAttribute("typeList",typeList);
 
