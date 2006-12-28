@@ -31,9 +31,6 @@ public class BagQueryResult {
 	private Map issues = new HashMap();
 	private List unresolved = new ArrayList();
 	
-	public BagQueryResult() {
-		
-	}
 	/**
 	 * Get any results that require some user input before adding to the bag.
 	 * [issue type -> [query -> [input string -> Set of InterMineObjects]]] 
@@ -69,6 +66,7 @@ public class BagQueryResult {
 	public void addMatch(String input, Integer id) {
 		matches.put(input, id);
 	}
+    
 	/**
 	 * Get a list of any input Strings for which objects could not be found.
 	 * @return a list of input strings not resolved to objects
