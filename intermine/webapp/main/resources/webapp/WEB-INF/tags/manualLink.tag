@@ -8,8 +8,6 @@
 <%-- outputs a superscript question mark which, when clicked, pops up a
      section in the manual --%>
 
-<script type="text/javascript" src="js/manualLink.js"/>
-
 <c:set var="url" value="${WEB_PROPERTIES['project.helpLocation']}/${section}"/>
 
 <sup><html:link href="${url}" onclick="javascript:window.open('${url}','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">?</html:link></sup>
