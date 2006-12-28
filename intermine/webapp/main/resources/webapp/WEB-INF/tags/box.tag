@@ -37,7 +37,7 @@
         ${title}
         <c:if test="${!empty helpUrl}">
           <span class="help">
-            [<html:link href="${helpUrl}">
+            [<html:link href="${helpUrl}" onclick="javascript:window.open('${helpUrl}','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
               <fmt:message key="begin.link.help"/>
             </html:link>]
           </span>
