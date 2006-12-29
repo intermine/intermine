@@ -78,7 +78,7 @@ public class BuildBagAction extends InterMineAction
             if (formFile == null
                 || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagToSave"), request);
-                return mapping.findForward("buildBag");
+                return mapping.findForward("mymine");
             } else {
                 reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
             }
@@ -88,7 +88,7 @@ public class BuildBagAction extends InterMineAction
                 reader = new BufferedReader(new StringReader(trimmedText));
             } else {
                 recordError(new ActionMessage("bagBuild.textAndFilePresent"), request);
-                return mapping.findForward("buildBag");
+                return mapping.findForward("mymine");
             }
         }
 
@@ -106,7 +106,7 @@ public class BuildBagAction extends InterMineAction
                         new ActionMessage("bag.tooBig", new Integer(maxBagSize));
                     recordError(actionMessage, request);
 
-                    return mapping.findForward("buildBag");
+                    return mapping.findForward("mymine");
                 }
             }
         }
