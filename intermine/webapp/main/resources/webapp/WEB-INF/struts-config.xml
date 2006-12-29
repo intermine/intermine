@@ -472,8 +472,8 @@
             type="org.intermine.web.BuildBagAction"
             name="buildBagForm"
             parameter="action"
-            input="buildBag">
-      <forward name="buildBag" path="bag.page"/>
+            input="mymine">
+      <forward name="mymine" path="mymine.page"/>
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
 
