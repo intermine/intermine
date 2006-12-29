@@ -60,7 +60,7 @@
   </definition>
   <definition name="bagUploadConfirm.page" extends="layout.template">
     <put name="body" value="bagUploadConfirm.tile"/>
-    <put name="pageName" value="bag"/>
+    <put name="pageName" value="bagUploadConfirm"/>
   </definition>
   <definition name="help.page" extends="layout.template">
     <put name="body" value="help.jsp"/>
