@@ -43,7 +43,6 @@ public class BagUploadConfirmController extends TilesAction
             matchesStringBuffer.append(matchIDIter.next()).append(' ');
         }
         request.setAttribute("matchesString", matchesStringBuffer.toString());
-        request.setAttribute("matchesCount", new Integer(matches.size()));
         return null;
     }
 }
