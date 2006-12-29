@@ -57,9 +57,18 @@ public class BagQueryRunnerTest extends TestCase {
 		assertTrue(res.getIssues().isEmpty());
 		assertTrue(res.getUnresolved().isEmpty());
 	}
-	
+    
+    // test for the case when an identifier appears twice in the input - ignore duplicates
+    public void testSearchForBagDuplicates1() throws Exception {
+        List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2", "EmployeeA1"});
+        BagQueryResult res = runner.searchForBag("Employee", input);
+        assertEquals(2, res.getMatches().values().size());
+        assertTrue(res.getIssues().isEmpty());
+        assertTrue(res.getUnresolved().isEmpty());
+    }
+    
 	// expect to get two objects back for 'Mr.'
-	public void testSearchForBagDuplicates() throws Exception {
+	public void testSearchForBagDuplicates2() throws Exception {
 		List input = Arrays.asList(new Object[] {"Mr."});
 		BagQueryResult res = runner.searchForBag("Manager", input);		
 		assertEquals(0, res.getMatches().size());
