@@ -20,19 +20,26 @@
     <html:submit property="action">
       <fmt:message key="bagUploadConfirm.submitOK"/>
     </html:submit>
+    <c:if test="${fn:length(unresolved) == 0}">
+      <p>
+        You have no unresolved identifiers.
+      </p>
+    </c:if>
   </div>
-  <div class="heading">
-    <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
-  </div>
-  <div class="body">
-    <p>
-    ${fn:length(unresolved)} identifiers couldn't be found anywhere in the
-    database.  Please check that you didn't paste in your shopping list by
-    mistake.  The unresolved identifiers were:
-    </p>
-    <p style="font-weight: bold">
-    <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer} </c:forEach>
-    </p>
-  </div>
+  <c:if test="${fn:length(unresolved) > 0}">
+    <div class="heading">
+      <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
+    </div>
+    <div class="body">
+      <p>
+        ${fn:length(unresolved)}  identifiers couldn't be found anywhere in the
+        database.  Please check that you didn't paste in your shopping list by
+        mistake.  The unresolved identifiers were:
+      </p>
+      <p style="font-weight: bold">
+        <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer} </c:forEach>
+      </p>
+    </div>
+  </c:if>
 </html:form>
 <!-- /bagUploadConfirm.jsp -->
