@@ -10,6 +10,32 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>Service interruption</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        We apologise for the service interruption today.  Our server suffered
+        a hardware failure at 4pm GMT, which has now been fixed.
+      </description>  
+      <pubDate>Tue, 2nd Jan 2007 17:02 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 6.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 6.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 6.0 adds data from seven Dropsophila RNAi screens from the DRSC,
+          microarray-based gene expression data from FlyAtlas and Transcriptional cis-regulatory modules 
+          (CRMs) from REDfly.  Template queries have a new, succinct naming scheme and identifiers/names
+          in results tables are now links to object details pages.  Other data sources have been
+          updated/added and there are numerous interface improvements.
+      </description>
+      <pubDate>Fri, 24th Nov 2006 17:00 GMT</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine Workshop</title>
       <link>http://www.flymine.org/project/jobs</link>
       <description>
