@@ -11,19 +11,21 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.SetupDataTestCase;
+import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.ClassKeyHelper;
 
-public class BagQueryRunnerTest extends TestCase {
+public class BagQueryRunnerTest extends SetupDataTestCase {
 	private ObjectStore os;
 	private Map eIds;
 	private BagQueryRunner runner;
@@ -31,9 +33,8 @@ public class BagQueryRunnerTest extends TestCase {
 	public BagQueryRunnerTest(String arg0) {
 		super(arg0);
 	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
+    public void setUp() throws Exception {
+        super.setUp();
 		os = ObjectStoreFactory.getObjectStore("os.unittest");
 		Model model = os.getModel();
 		Properties props = new Properties();
@@ -41,14 +42,29 @@ public class BagQueryRunnerTest extends TestCase {
 		Map classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
 		eIds = getEmployeeIds();
 		
-
 		String iql = "SELECT DISTINCT a1_.id as a2_, a1_.end as a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.end IN ? ORDER BY a1_";
 		BagQuery bq = new BagQuery(iql, "employee end", model.getPackageName(), false);
 		Map bagQueries = new HashMap();
 		bagQueries.put("Employee", new ArrayList(Collections.singleton(bq)));
 		runner = new BagQueryRunner(os, classKeys, bagQueries);
-	}
+    }
 
+    public static void oneTimeSetUp() throws Exception {
+        StoreDataTestCase.oneTimeSetUp();
+    }
+
+    public void executeTest(String type) {
+
+    }
+
+    public static Test suite() {
+        return buildSuite(BagQueryRunnerTest.class);
+    }
+
+    public void testQueries() {
+    	// do nothing
+    }
+    
 	// expect each input string to match one object
 	public void testSearchForBagMatches() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
@@ -77,7 +93,7 @@ public class BagQueryRunnerTest extends TestCase {
 		Set ids = new HashSet(Arrays.asList(new Object[] {eIds.get("EmployeeB1"), eIds.get("EmployeeB3")}));
 		Map results = new HashMap();
 		results.put("Mr.", ids);
-		queries.put("default", results);
+		queries.put(BagQueryHelper.DEFAULT_MESSAGE, results);
 		expected.put(BagQueryResult.DUPLICATE, queries);
 		assertEquals(expected, res.getIssues());
 		assertTrue(res.getUnresolved().isEmpty());
@@ -114,7 +130,7 @@ public class BagQueryRunnerTest extends TestCase {
 		Set ids = new HashSet(Arrays.asList(new Object[] {eIds.get("EmployeeB1"), eIds.get("EmployeeB3")}));
 		Map results = new HashMap();
 		results.put("Mr.", ids);
-		queries.put("default", results);
+		queries.put(BagQueryHelper.DEFAULT_MESSAGE, results);
 		expected.put(BagQueryResult.DUPLICATE, queries);
 		assertEquals(expected, res.getIssues());
 		assertTrue(res.getUnresolved().isEmpty());
@@ -137,7 +153,6 @@ public class BagQueryRunnerTest extends TestCase {
 		assertTrue(res.getIssues().isEmpty());
 		assertTrue(res.getUnresolved().isEmpty());
 	}
-	
 	
 	
 	private Map getEmployeeIds() throws ObjectStoreException {
