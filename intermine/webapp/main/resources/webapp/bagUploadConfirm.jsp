@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
@@ -26,6 +27,21 @@
       </p>
     </c:if>
   </div>
+  <c:if test="${!empty issues['DUPLICATE']}">
+    <div class="heading">
+      <fmt:message key="bagUploadConfirm.duplicates"/>
+    </div>
+    <div class="body">
+      <c:forEach var="entry" items="${issues['DUPLICATE']}">
+        <c:set var="message" value="${entry.key}"/>
+        <c:set var="duplicates" value="${entry.value}"/>
+        <tiles:insert name="bagUploadConfirmDuplicates.tile">
+          <tiles:put name="message" value="${message}"/>
+          <tiles:put name="duplicates" beanName="duplicates"/>
+        </tiles:insert>
+      </c:forEach>
+    </div>
+  </c:if>
   <c:if test="${fn:length(unresolved) > 0}">
     <div class="heading">
       <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
