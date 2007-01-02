@@ -31,6 +31,12 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BagQueryHelper {
 	
+	
+	/**
+	 * Message associated with default bag query.
+	 */
+	public static final String DEFAULT_MESSAGE = "searching key fields";
+	
 	public static BagQuery createDefaultBagQuery(String type, Map classKeys, 
 			Model model, Collection input) throws ClassNotFoundException {
 		
@@ -69,7 +75,7 @@ public class BagQueryHelper {
 		if (cs.getConstraints().size() == 0) {
 			throw new IllegalArgumentException("Internal error - could not find any usable key fields for type: " + type + ".");
 		}
-		BagQuery bq = new BagQuery(q, "default", false);
+		BagQuery bq = new BagQuery(q, DEFAULT_MESSAGE, false);
 		return bq;
 	}
 	
