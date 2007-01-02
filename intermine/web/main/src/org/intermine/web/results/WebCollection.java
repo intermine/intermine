@@ -49,12 +49,10 @@ public class WebCollection extends AbstractList implements WebColumnTable
     /**
      * Create a new WebCollection object.
      * @param os the ObjectStore used to create ResultElement objects
+     * @param columnName the String to use when displaying this collection - used as the column name
+     * for the single column of results
      * @param collection the Collection, which can be a List of objects or a List of List of
      * objects (like a Results object)
-     * @param collectionType the class Object of the collection, either a Class object or a
-     * ClassDescriptor object
-     * @param columnName the String to use when displaying this collection - used as the column name 
-     * for the single column of results
      * @param model the Model to use when making Path objects
      * @param webConfig the WebConfig object the configures the columns in the view
      * @param classKeys map of classname to set of keys
@@ -102,7 +100,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
     private List getElementsInternal(int index, boolean makeResultElements) {
         Object object = getList().get(index);
         InterMineObject o = null;
-        if (object instanceof ResultsRow){
+        if (object instanceof ResultsRow) {
             ResultsRow resRow = (ResultsRow) object;
             o = (InterMineObject) resRow.get(0);
         } else if (object instanceof InterMineObject) {
@@ -143,13 +141,12 @@ public class WebCollection extends AbstractList implements WebColumnTable
         return list;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.util.AbstractCollection#size()
      */
     public int size() {
         return list.size();
     }
-
 
     /**
      * Return the List of Column objects for this WebCollection, configured by the WebConfig for
@@ -171,7 +168,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
                 Path colPath = new Path(model, newColumnName);
                 String type = null;
                 if (colPath.getElements().size() >= 2) {
-                    Object pathElement = colPath.getElements().get(colPath.getElements().size()-2);
+                    Object pathElement = colPath.getElements().get(colPath.getElements().size() - 2);
                     if (pathElement instanceof ReferenceDescriptor) {
                         ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
                         type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
@@ -179,11 +176,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
                 } else {
                     type = columnName;
                 }
-                Column column = new Column();
-                column.setPath(colPath);
-                column.setIndex(i);
-                column.setVisible(true);
-                column.setType(type);
+                Column column = new Column(colPath, i, type);
                 columns.add(column);
                 i++;
             }

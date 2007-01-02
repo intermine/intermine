@@ -10,8 +10,10 @@ package org.intermine.web;
  *
  */
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
@@ -22,6 +24,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
@@ -180,7 +183,7 @@ public class MainHelperTest extends TestCase {
 
     }
 
-    // Select Employee.name
+    // Select Employee
     public void testMakeQueryOneClass() throws Exception {
         Map queries = readQueries();
         PathQuery pq = (PathQuery) queries.get("employee");
@@ -189,6 +192,7 @@ public class MainHelperTest extends TestCase {
         QueryClass qc1 = new QueryClass(Employee.class);
         q.addToSelect(qc1);
         q.addFrom(qc1);
+        q.addToOrderBy(qc1);
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
@@ -202,11 +206,12 @@ public class MainHelperTest extends TestCase {
         QueryClass qc1 = new QueryClass(Employee.class);
         q.addToSelect(qc1);
         q.addFrom(qc1);
+        q.addToOrderBy(new QueryField(qc1, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
 
-    // Select Employee.name
+    // Select Employee, Employee.name
     public void testMakeQueryOneClassAndField() throws Exception {
         Map queries = readQueries();
         PathQuery pq = (PathQuery) queries.get("employeeAndName");
@@ -215,11 +220,13 @@ public class MainHelperTest extends TestCase {
         QueryClass qc1 = new QueryClass(Employee.class);
         q.addToSelect(qc1);
         q.addFrom(qc1);
+        q.addToOrderBy(qc1);
+        q.addToOrderBy(new QueryField(qc1, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
 
-    // Select Employee.name, Employee.departments.name
+    // Select Employee.name, Employee.department.name
     public void testMakeQueryTwoClasses() throws Exception {
         Map queries = readQueries();
         PathQuery pq = (PathQuery) queries.get("employeeDepartment");
@@ -234,6 +241,8 @@ public class MainHelperTest extends TestCase {
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         q.setConstraint(cc1);
+        q.addToOrderBy(new QueryField(qc1, "name"));
+        q.addToOrderBy(new QueryField(qc2, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
@@ -253,6 +262,8 @@ public class MainHelperTest extends TestCase {
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         q.setConstraint(cc1);
+        q.addToOrderBy(new QueryField(qc1, "name"));
+        q.addToOrderBy(qc2);
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
@@ -285,6 +296,9 @@ public class MainHelperTest extends TestCase {
         ContainsConstraint cc2 = new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qc3);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
+        q.addToOrderBy(new QueryField(qc1, "name"));
+        q.addToOrderBy(qf1);
+        q.addToOrderBy(new QueryField(qc3, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
@@ -317,6 +331,8 @@ public class MainHelperTest extends TestCase {
         ContainsConstraint cc2 = new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qc3);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
+        q.addToOrderBy(new QueryField(qc1, "name"));
+        q.addToOrderBy(new QueryField(qc3, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
@@ -349,8 +365,22 @@ public class MainHelperTest extends TestCase {
         ContainsConstraint cc2 = new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qc3);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
+        q.addToOrderBy(qf1);
+        q.addToOrderBy(new QueryField(qc2, "name"));
+        q.addToOrderBy(new QueryField(qc3, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
+
+        // Summarise Employee.department.name
+        q.clearSelect();
+        QueryField qf2 = new QueryField(qc2, "name");
+        q.addToGroupBy(qf2);
+        q.addToSelect(qf2);
+        q.addToSelect(new QueryFunction());
+
+        Map pathToQueryNode = new HashMap();
+        assertEquals(q.toString(), MainHelper.makeSummaryQuery(pq, new HashMap(), pathToQueryNode, "Employee.department.name").toString());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"Employee.department.name", "Occurrences"})), pathToQueryNode.keySet());
     }
 
     private Map readQueries() throws Exception {
@@ -359,32 +389,32 @@ public class MainHelperTest extends TestCase {
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_");
     }
 
     public void test2() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.age >= 10");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.age >= 10 ORDER BY a1_");
     }
 
     public void test3() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"A and B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 AND a1_.fullTime = true)");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 AND a1_.fullTime = true) ORDER BY a1_");
     }
     
     public void test4() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"A or B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 OR a1_.fullTime = true)");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 OR a1_.fullTime = true) ORDER BY a1_");
     }
 
     public void test5() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"(A or B) and C\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.name\" type=\"String\"><constraint op=\"=\" value=\"EmployeeA2\" description=\"\" identifier=\"\" code=\"C\"></constraint></node></query>",
-                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ((a1_.age >= 10 OR a1_.fullTime = true) AND LOWER(a1_.name) = 'employeea2')");
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE ((a1_.age >= 10 OR a1_.fullTime = true) AND LOWER(a1_.name) = 'employeea2') ORDER BY a1_");
     }
 
     public void test7() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee Employee.department\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.employees\" type=\"Employee\"><constraint op=\"=\" value=\"Employee\"></constraint></node></query>",
-                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.department CONTAINS a2_");
+                "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.department CONTAINS a2_ ORDER BY a1_, a2_");
     }
                                                                                                                 
     public void doQuery(String web, String iql) throws Exception {

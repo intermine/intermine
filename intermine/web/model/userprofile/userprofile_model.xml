@@ -22,11 +22,16 @@
   <class name="org.intermine.model.userprofile.SavedTemplateQuery" is-interface="false">
     <attribute name="templateQuery" type="java.lang.String"/>
     <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedTemplateQuerys"/>
+    <collection name="summaries" referenced-type="org.intermine.model.userprofile.TemplateSummary" reverse-reference="template"/>
   </class>
   <class name="org.intermine.model.userprofile.Tag" is-interface="false">
     <attribute name="tagName" type="java.lang.String"/>
     <attribute name="objectIdentifier" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
     <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="tags"/>
+  </class>
+  <class name="org.intermine.model.userprofile.TemplateSummary" is-interface="false">
+    <attribute name="summary" type="java.lang.String"/>
+    <reference name="template" referenced-type="org.intermine.model.userprofile.SavedTemplateQuery" reverse-reference="summaries"/>
   </class>
 </model>

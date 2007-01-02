@@ -31,6 +31,7 @@ import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -53,6 +54,8 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.tagging.TagTypes;
+
+import net.sourceforge.iharder.Base64;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -236,12 +239,22 @@ public class ProfileManager
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                savedTemplates.putAll(templateBinding.unmarshal(sr));
+                Map templateMap = templateBinding.unmarshal(sr);
+                String templateName = (String) templateMap.keySet().iterator().next();
+                TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
+                templateQuery.setSavedTemplateQuery(template);
+                savedTemplates.put(templateName, templateQuery);
+                Iterator summaryIter = template.getSummaries().iterator();
+                if (summaryIter.hasNext()) {
+                    TemplateSummary summary = (TemplateSummary) summaryIter.next();
+                    templateQuery.setPossibleValues((HashMap) Base64.decodeToObject(summary
+                                .getSummary()));
+                }
             } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
                 LOG.warn("Failed to unmarshal saved template query: "
-                         + template.getTemplateQuery());
+                         + template.getTemplateQuery(), err);
             }
         }
         convertTemplateKeywordsToTags(savedTemplates, username);
@@ -376,6 +389,7 @@ public class ProfileManager
                     savedTemplate.setTemplateQuery(templateBinding.marshal(template));
                     savedTemplate.setUserProfile(userProfile);
                     osw.store(savedTemplate);
+                    template.setSavedTemplateQuery(savedTemplate);
                 } catch (Exception e) {
                     LOG.error("Failed to marshal and save template: " + template, e);
                 }
@@ -388,7 +402,11 @@ public class ProfileManager
         }
     }
 
-
+    /**
+     * Creates a profile in the userprofile database.
+     *
+     * @param profile a Profile object
+     */
     public void createProfile(Profile profile) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());

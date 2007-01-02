@@ -45,7 +45,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.results.InlineTemplateTable;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.WebResults;
@@ -566,10 +565,10 @@ public class TemplateHelper
      * @return the query to precompute
      */
     public static Query getPrecomputeQuery(TemplateQuery template, List indexes) {
-    	return TemplateHelper.getPrecomputeQuery(template, indexes, null);
+        return TemplateHelper.getPrecomputeQuery(template, indexes, null);
     }
 
-    	
+
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
@@ -610,6 +609,7 @@ public class TemplateHelper
         HashMap pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery((PathQuery) templateClone, new HashMap(),
                 pathToQueryNode);
+        query.clearOrderBy();
         if (groupByNode != null) {
             query.clearSelect();
             QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPath());

@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
  * selected for the view and the objects that are returned from the query.
+ *
  * @author Kim Rutherford
  */
 public class WebResults extends AbstractList implements WebColumnTable
@@ -57,6 +58,7 @@ public class WebResults extends AbstractList implements WebColumnTable
     
     /**
      * Create a new WebResults object.
+     *
      * @param columnPaths the Path objects representing the view
      * @param results the underlying Results object
      * @param model the Model
@@ -68,22 +70,22 @@ public class WebResults extends AbstractList implements WebColumnTable
                       Map classKeys) {
         this.osResults = results;
         this.model = model;
-        this.columnPaths= columnPaths;
+        this.columnPaths = columnPaths;
         this.classKeys = classKeys;
         
         pathToIndex = getPathToIndex(pathToQueryNode);
         setColumns(columnPaths);
     }
  
-    private LinkedHashMap getPathToIndex(Map pathToQueryNode){
+    private LinkedHashMap getPathToIndex(Map pathToQueryNode) {
         LinkedHashMap returnMap =  new LinkedHashMap();
         for (Iterator iter = pathToQueryNode.keySet().iterator(); iter.hasNext();) {
             String path = (String) iter.next();
             QueryNode queryNode = (QueryNode) pathToQueryNode.get(path);
-            if (queryNode instanceof QueryClass){
+            if (queryNode instanceof QueryClass) {
                 returnMap.put(path, new Integer(osResults.getQuery().getSelect()
                                 .indexOf(queryNode)));
-            } else if (queryNode instanceof QueryField){
+            } else if (queryNode instanceof QueryField) {
                 QueryField queryField = (QueryField) queryNode;
                 returnMap.put(path, new Integer(osResults.getQuery().getSelect()
                                 .indexOf(queryField.getFromElement())));
@@ -96,7 +98,8 @@ public class WebResults extends AbstractList implements WebColumnTable
 
 
     /**
-     * Return the names of the columns of the results
+     * Return the names of the columns of the results.
+     *
      * @return the column name
      */
     public List getColumnNames() {
@@ -107,44 +110,48 @@ public class WebResults extends AbstractList implements WebColumnTable
         List types = new ArrayList();
         int i = 0;
         for (Iterator iter = columnPaths.iterator(); iter.hasNext();) {
-            Path columnPath = (Path) iter.next();
-            Column column = new Column();
-            column.setPath(columnPath);
-            column.setIndex(i);
-            column.setVisible(true);
-            String type = null;
-            if (columnPath.getElements().size() >= 2) {
-                Object pathElement = columnPath.getElements().get(columnPath.getElements().size() - 2);
-                if (pathElement instanceof ReferenceDescriptor) {
-                    ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                    type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+            Object columnPathObject = iter.next();
+            if (columnPathObject instanceof Path) {
+                Path columnPath = (Path) columnPathObject;
+                String type = null;
+                if (columnPath.getElements().size() >= 2) {
+                    Object pathElement = columnPath.getElements().get(columnPath.getElements()
+                            .size() - 2);
+                    if (pathElement instanceof ReferenceDescriptor) {
+                        ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
+                        type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+                    }
+                } else {
+                    type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
                 }
-            } else {
-                type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
-            }
-            pathToType.put(columnPath.toStringNoConstraints(), type);
-            column.setType(type);
-            if (!types.contains(type)) {
-                String fieldName = columnPath.getEndFieldDescriptor().getName();
-                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
-                if (isKeyField) {
-                    column.setSelectable(true);
-                    types.add(type);
+                pathToType.put(columnPath.toStringNoConstraints(), type);
+                Column column = new Column(columnPath, i, type);
+                if (!types.contains(type)) {
+                    String fieldName = columnPath.getEndFieldDescriptor().getName();
+                    boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
+                    if (isKeyField) {
+                        column.setSelectable(true);
+                        types.add(type);
+                    }
                 }
+                columns.add(column);
+            } else if (columnPathObject instanceof String) {
+                String columnPath = (String) columnPathObject;
+                Column column = new Column(columnPath, i, null);
+                columns.add(column);
             }
-            columns.add(column);
             i++;
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.util.AbstractList#get(int)
      */
     public Object get(int index) {
         return getElementsInternal(index, false);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see java.util.AbstractCollection#size()
      */
     public int size() {
@@ -153,6 +160,7 @@ public class WebResults extends AbstractList implements WebColumnTable
 
     /**
      * Return the ResultsInfo object from the underlying Results object.
+     *
      * @return the ResultsInfo object
      * @throws ObjectStoreException if there is an exception while getting the info
      */
@@ -162,6 +170,7 @@ public class WebResults extends AbstractList implements WebColumnTable
 
     /**
      * Return the underlying results object.
+     *
      * @return the results
      */
     public Results getInterMineResults() {
@@ -175,8 +184,9 @@ public class WebResults extends AbstractList implements WebColumnTable
     public static final int BIG_BATCH_SIZE = 5000;
 
     /**
+     * Calls ObjectStore.goFaster.
+     *
      * @throws ObjectStoreException 
-     * 
      */
     public void goFaster() throws ObjectStoreException {
         osResults = WebUtil.changeResultBatchSize(osResults, BIG_BATCH_SIZE);
@@ -187,8 +197,9 @@ public class WebResults extends AbstractList implements WebColumnTable
     }
 
     /**
+     * Calls ObjectStore.releaseGoFaster.
+     *
      * @throws ObjectStoreException 
-     * 
      */
     public void releaseGoFaster() throws ObjectStoreException {
 
@@ -201,7 +212,9 @@ public class WebResults extends AbstractList implements WebColumnTable
 
 
     /**
-     * @return
+     * Returns the ObjectStore's maximum allowable offset.
+     *
+     * @return an int
      */
     public int getMaxRetrievableIndex() {
         return osResults.getObjectStore().getMaxOffset();
@@ -210,6 +223,7 @@ public class WebResults extends AbstractList implements WebColumnTable
     /**
      * Return a List containing a ResultElement object for each element in the given row.  The List
      * will be the same length as the view List.
+     *
      * @param index the row of the results to fetch
      * @return the results row as ResultElement objects
      */
@@ -256,6 +270,8 @@ public class WebResults extends AbstractList implements WebColumnTable
 
 
     /**
+     * Returns the columns for these results.
+     *
      * @return the columns
      */
     public List getColumns() {
