@@ -23,6 +23,7 @@ public class BagUploadConfirmForm extends ActionForm
     private String bagName;
     private String bagType;
     private String matchIDs;
+    private String[] selectedObjects;
     
     /**
      * Constructor
@@ -55,7 +56,22 @@ public class BagUploadConfirmForm extends ActionForm
        return bagName;
    }
 
-   
+
+   /**
+    * Sets the ids of the selected objects - ie. those that should be included in the new bag
+    * @param selectedObjects the selected objects
+    */
+   public void setSelectedObjects(String[] selectedObjects) {
+       this.selectedObjects = selectedObjects;
+   }
+
+   /**
+    * Gets the ids of the selected objects
+    * @return the selected objects
+    */
+   public String[] getSelectedObjects() {
+       return selectedObjects;
+   }
    
    /**
     * Get the encoded match ids (hidden form field).
@@ -74,7 +90,7 @@ public class BagUploadConfirmForm extends ActionForm
    }
 
    /**
-    * Get the bag type
+    * Get the bag type - hidden form value.
     * @return the bag type
     */
    public String getBagType() {

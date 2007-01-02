@@ -6,37 +6,35 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute name="message" ignore="false"/>
-<tiles:importAttribute name="classDuplicates" ignore="false"/>
+<tiles:importAttribute name="resultElementMap" ignore="false"/>
 
 <fmt:message key="bagUploadConfirm.duplicatesHeader">
   <fmt:param value="${message}"/>
 </fmt:message>
 
-<c:forEach var="duplicatesEntry" items="${classDuplicates}">
-  <c:set var="className" value="${duplicatesEntry.key}"/>
-  <c:set var="objectMap" value="${duplicatesEntry.value}"/>
+<table>
 
-  <p>
-    ${className}
-  </p>
+  <c:forEach var="resultElementEntry" items="${resultElementMap}">
+    <c:set var="identifier" value="${resultElementEntry.key}"/>
+    <c:set var="resultElementList" value="${resultElementEntry.value}"/>
 
-  <table>
-
-  <c:forEach var="entry" items="${objectMap}">
-    <c:set var="identifier" value="${entry.key}"/>
-    <c:set var="objects" value="${entry.value}"/>
-
-    <c:forEach var="object" items="${objects}" varStatus="status">
+    <c:forEach var="resultElement" items="${resultElementList}" varStatus="status">
       <tr>
         <c:if test="${status.index == 0}">
-          <td rowSpan="${fn:length(objects)}" valign="top">${identifier}</td>
+          <td rowSpan="${fn:length(resultElementList)}" valign="top">${identifier}</td>
         </c:if>
+
         <td>
           <c:set var="resultElement" value="${resultElement}" scope="request"/>
           <tiles:insert name="objectView.tile" />
         </td>
+        <td>
+          <html:multibox property="selectedObjects"
+                         styleId="selectedObject_${status.index}">
+            ${resultElement.id}
+          </html:multibox>
+        </td>
       </tr>
     </c:forEach>
   </c:forEach>
-  </table>
-</c:forEach>
+</table>

@@ -69,6 +69,11 @@ public class BagUploadConfirmAction extends InterMineAction
             int id = Integer.parseInt(idString);
             contents.add(new BagElement(new Integer(id), bagType));
         }
+        for (int i = 0; i < confirmForm.getSelectedObjects().length; i++) {
+            String idString = confirmForm.getSelectedObjects()[i];
+            int id = Integer.parseInt(idString);
+            contents.add(new BagElement(new Integer(id), bagType));
+        }
         ProfileManager profileManager =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStore profileOs = profileManager.getUserProfileObjectStore();
