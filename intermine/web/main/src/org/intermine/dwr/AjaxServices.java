@@ -17,6 +17,7 @@ import java.util.Map;
 import org.intermine.objectstore.query.Query;
 
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
@@ -111,13 +112,17 @@ public class AjaxServices
         TemplateQuery template = (TemplateQuery) templates.get(templateName);
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
+        ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
+                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         try {
             session.setAttribute("summarising_" + templateName, "true");
-            template.summarise(os);
+            template.summarise(os, osw);
         } catch (ObjectStoreException e) {
             LOG.error("Failed to summarise " + templateName, e);
         } catch (NullPointerException e) {
-            throw new NullPointerException("No such template " + templateName);
+            NullPointerException e2 = new NullPointerException("No such template " + templateName);
+            e2.initCause(e);
+            throw e2;
         } finally {
             session.removeAttribute("summarising_" + templateName);
         }

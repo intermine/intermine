@@ -1,7 +1,5 @@
 package org.intermine.web.results;
 
-import org.intermine.path.Path;
-
 /*
  * Copyright (C) 2002-2005 FlyMine
  *
@@ -12,6 +10,8 @@ import org.intermine.path.Path;
  *
  */
 
+import org.intermine.path.Path;
+
 /**
  * Configuration information for a column in a table
  *
@@ -19,11 +19,40 @@ import org.intermine.path.Path;
  */
 public class Column
 {
-    protected boolean visible;
+    protected boolean visible = true;
     protected int index;
     protected Object type;
-    protected boolean selectable;
+    protected boolean selectable = false;
     private Path path;
+    protected String name;
+
+    /**
+     * Constructor that takes a Path object.
+     *
+     * @param path a Path object
+     * @param index the number of the column
+     * @param type the type of the column (ClassDescriptor or Class)
+     */
+    public Column(Path path, int index, Object type) {
+        this.path = path;
+        this.name = path.toString();
+        this.index = index;
+        this.type = type;
+    }
+
+    /**
+     * Constructor that takes a String name.
+     *
+     * @param name a column name
+     * @param index the number of the column
+     * @param type the type of the column (ClassDescriptor or Class)
+     */
+    public Column(String name, int index, Object type) {
+        this.name = name;
+        this.index = index;
+        this.type = type;
+        this.path = null;
+    }
 
     /**
      * Gets the value of selectable
@@ -98,7 +127,7 @@ public class Column
      */
     public boolean equals(Object other) {
         if (other instanceof Column) {
-            return getPath().toString().equals(((Column) other).getPath().toString());
+            return getName().equals(((Column) other).getName());
         }
         return false;
     }
@@ -107,7 +136,7 @@ public class Column
      * @see Object#hashCode
      */
     public int hashCode() {
-        return getPath().toString().hashCode();
+        return getName().hashCode();
     }
 
     /**
@@ -131,5 +160,14 @@ public class Column
      */
     public Path getPath() {
         return path;
+    }
+    
+    /**
+     * Get the name (title) of the column.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 }

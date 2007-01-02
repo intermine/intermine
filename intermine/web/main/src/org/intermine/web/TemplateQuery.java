@@ -24,9 +24,18 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 
+import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryObjectReference;
+
+import net.sourceforge.iharder.Base64;
 
 /**
  * A template query, which consists of a PathQuery, description, category,
@@ -47,18 +56,20 @@ public class TemplateQuery extends PathQuery
     protected String description;
     /** The private comment for this query. */
     protected String comment;
-    /** Nodes with templated constraints */
+    /** Nodes with templated constraints. */
     protected List editableNodes = new ArrayList();
-    /** Map from node to editable constraint list */
+    /** Map from node to editable constraint list. */
     protected Map constraints = new HashMap();
     /** True if template is considered 'important' for a related class. */
     protected boolean important = false;
     /** Keywords set for this template. */
     protected String keywords = "";
-    /** Edited version of another template */
+    /** Edited version of another template. */
     protected boolean edited = false;
-    /** Map from editable constraints to Lists of possible values */
-    protected Map possibleValues = new HashMap();
+    /** Map from editable constraint path to Lists of possible values. */
+    protected HashMap possibleValues = new HashMap();
+    /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
+    protected SavedTemplateQuery savedTemplateQuery = null;
 
     /**
      * Construct a new instance of TemplateQuery.
@@ -100,12 +111,12 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Return all constrains for a given node or an empty list if none
+     * Return all constraints for a given node or an empty list if none.
      * For a Path with editable constraints, get all the editable
      * constraints as a List.
      *
-     * @param node  a PathNode with editable constraints
-     * @return      List of Constraints for Node
+     * @param path a String of a path with editable constraints
+     * @return List of Constraints for the path
      */
     public List getEditableConstraints(String path) {
         if (nodes.get(path) == null) {
@@ -239,7 +250,25 @@ public class TemplateQuery extends PathQuery
      * @return a List, or null if possible values have not been computed
      */
     public List getPossibleValues(PathNode node) {
-        return (List) possibleValues.get(node);
+        return (List) possibleValues.get(node.getPath());
+    }
+
+    /**
+     * Returns the entire possibleValues Map.
+     *
+     * @return possibleValues
+     */
+    public Map getPossibleValues() {
+        return possibleValues;
+    }
+
+    /**
+     * Sets the possibleValues Map.
+     *
+     * @param possibleValues a HashMap
+     */
+    public void setPossibleValues(HashMap possibleValues) {
+        this.possibleValues = possibleValues;
     }
 
     /**
@@ -252,12 +281,22 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
+     * Sets the saved template query object.
+     *
+     * @param savedTemplateQuery the database object
+     */
+    public void setSavedTemplateQuery(SavedTemplateQuery savedTemplateQuery) {
+        this.savedTemplateQuery = savedTemplateQuery;
+    }
+
+    /**
      * Populates the possibleValues data for this TemplateQuery from the os.
      *
-     * @param os an ObjectStore
+     * @param os the production ObjectStore
+     * @param osw the user profile ObjectStoreWriter
      * @throws ObjectStoreException if something goes wrong
      */
-    public void summarise(ObjectStore os) throws ObjectStoreException {
+    public void summarise(ObjectStore os, ObjectStoreWriter osw) throws ObjectStoreException {
         Iterator iter = getEditableNodes().iterator();
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
@@ -270,10 +309,39 @@ public class TemplateQuery extends PathQuery
                 while (resIter.hasNext()) {
                     values.add(((List) resIter.next()).get(0));
                 }
-                possibleValues.put(node, values);
+                possibleValues.put(node.getPath(), values);
             }
         }
         LOG.error("New summary: " + possibleValues);
+        // Now write the summary to the user profile database.
+        try {
+            osw.beginTransaction();
+            if (savedTemplateQuery != null) {
+                Query q = new Query();
+                QueryClass qc = new QueryClass(TemplateSummary.class);
+                q.addFrom(qc);
+                q.addToSelect(qc);
+                q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "template"),
+                            ConstraintOp.CONTAINS, savedTemplateQuery));
+                Iterator oldIter = osw.getObjectStore().execute(q).iterator();
+                while (oldIter.hasNext()) {
+                    osw.delete((TemplateSummary) oldIter.next());
+                }
+            }
+            TemplateSummary templateSummary = new TemplateSummary();
+            templateSummary.setTemplate(savedTemplateQuery);
+            templateSummary.setSummary(Base64.encodeObject(possibleValues));
+            osw.store(templateSummary);
+        } catch (ObjectStoreException e) {
+            if (osw.isInTransaction()) {
+                osw.abortTransaction();
+            }
+            throw e;
+        } finally {
+            if (osw.isInTransaction()) {
+                osw.commitTransaction();
+            }
+        }
     }
 
     /**

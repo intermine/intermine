@@ -44,6 +44,7 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
@@ -335,7 +336,10 @@ public class MainHelper
             PathNode pn = (PathNode) pathQuery.getNodes().get(i.next());
             QueryNode qn = null;
             if (pn.isAttribute()) {
-                qn = ((QueryNode) queryBits.get(pn.getPrefix()));
+                QueryClass qc = ((QueryClass) queryBits.get(pn.getPrefix()));
+                QueryField qf = new QueryField(qc, pn.getFieldName());
+                queryBits.put(pn.getPath(), qf);
+                qn = qc;
             } else {
                 qn = ((QueryNode) queryBits.get(pn.getPath()));
             }
@@ -344,7 +348,7 @@ public class MainHelper
             }
             QueryNode selectNode = ((QueryNode) queryBits.get(pn.getPath()));
             if (!q.getOrderBy().contains(selectNode)) {
-            	q.addToOrderBy(selectNode);
+                q.addToOrderBy(selectNode);
             }
         }
 
@@ -686,5 +690,55 @@ public class MainHelper
             }
         }
         return path;
+    }
+
+    /**
+     * Generate a query from a PathQuery, to summarise a particular column of results.
+     *
+     * @param pathQuery the PathQuery
+     * @param savedBags the current saved bags map
+     * @param pathToQueryNode Map, into which columns to display will be placed
+     * @param summaryPath a String path of the column to summarise
+     * @return an InterMine Query
+     */
+    public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags, Map pathToQueryNode,
+            String summaryPath) {
+        Map origPathToQueryNode = new HashMap();
+        Query q = makeQuery(pathQuery, savedBags, origPathToQueryNode);
+        q.clearSelect();
+        QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
+        if (qf == null) {
+            throw new NullPointerException("Error - path " + summaryPath + " is not in map "
+                    + origPathToQueryNode);
+        }
+        Class summaryType = qf.getType();
+        if ((summaryType == Long.class) || (summaryType == Integer.class)
+                || (summaryType == Short.class) || (summaryType == Byte.class)
+                || (summaryType == Float.class) || (summaryType == Double.class)
+                || (summaryType == BigDecimal.class)) {
+            QueryNode min = new QueryFunction(qf, QueryFunction.MIN);
+            QueryNode max = new QueryFunction(qf, QueryFunction.MAX);
+            QueryNode avg = new QueryFunction(qf, QueryFunction.AVERAGE);
+            QueryNode stddev = new QueryFunction(qf, QueryFunction.STDDEV);
+            q.addToSelect(min);
+            q.addToSelect(max);
+            q.addToSelect(avg);
+            q.addToSelect(stddev);
+            pathToQueryNode.put("Minimum", min);
+            pathToQueryNode.put("Maximum", max);
+            pathToQueryNode.put("Average", avg);
+            pathToQueryNode.put("Standard Deviation", stddev);
+        } else if ((summaryType == String.class) || (summaryType == Boolean.class)) {
+            q.addToSelect(qf);
+            q.addToGroupBy(qf);
+            QueryNode count = new QueryFunction();
+            q.addToSelect(count);
+            pathToQueryNode.put(summaryPath, qf);
+            pathToQueryNode.put("Occurrences", count);
+        } else {
+            // Probably Date
+            throw new IllegalArgumentException("Cannot summarise this column");
+        }
+        return q;
     }
 }

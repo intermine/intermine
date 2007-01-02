@@ -141,7 +141,7 @@
 
     <c:if test="${!empty templateQuery}">
 
-      <%-- show the discription only if we've run a query (rather than viewing
+      <%-- show the description only if we've run a query (rather than viewing
            a bag) - see #1031 --%>
       <c:if test="${(resultsTable.class.name == 'org.intermine.web.results.PagedResults')
                   && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
@@ -216,7 +216,7 @@
                   <th align="center" valign="top" >
                     
                     <div>              
-                      <c:out value="${fn:replace(column.path, '.', '&nbsp;> ')}" escapeXml="false"/>
+                      <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
                     </div>
                     <%-- put in left, right, hide and show buttons --%>
                     <table class="toolbox">
@@ -236,7 +236,7 @@
 	                    </c:when>
 	                    <c:otherwise>
 	                      <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
-	                        <fmt:param value="${column.path}"/>
+	                        <fmt:param value="${column.name}"/>
 	                      </fmt:message>
 	                      <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
 	                      <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
@@ -253,7 +253,7 @@
 	                  <c:if test="${fn:length(resultsTable.columns) > 1}">
 	                    <c:if test="${resultsTable.visibleColumnCount > 1}">
 	                      <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
-	                        <fmt:param value="${column.path}"/>
+	                        <fmt:param value="${column.name}"/>
 	                      </fmt:message>
 	                      <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
 	                                 title="${hideColumnTitle}">
@@ -276,7 +276,7 @@
                             </c:when>
 	                    <c:otherwise>
 	                      <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-	                        <fmt:param value="${column.path}"/>
+	                        <fmt:param value="${column.name}"/>
 	                      </fmt:message>
 	                      <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
 	                      <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
@@ -295,11 +295,11 @@
                 <c:otherwise>
                   <th>
                     <%-- <fmt:message key="results.showColumnHelp" var="showColumnTitle">
-                         <fmt:param value="${column.path}"/>
+                         <fmt:param value="${column.name}"/>
                          </fmt:message> --%>
                     <html:link action="/changeTable?table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
                                title="${showColumnTitle}">
-                      <img src="images/show-column.gif" title="${fn:replace(column.path, '.', '&nbsp;> ')}"/>
+                      <img src="images/show-column.gif" title="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
                     </html:link>
                   </th>
                 </c:otherwise>

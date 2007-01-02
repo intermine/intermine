@@ -93,7 +93,8 @@ public class Path
      * stringPath cannot contain class constraint annotation.  Either call the other constructor
      * like this: new Path(model, "Department.employees[Manager].seniority") or call this
      * constructor like this: new Path(model, "Department.employees.seniority", map) where the
-     * map contains: key "Department.employees" -> value: "Manager"
+     * map contains: key "Department.employees" -&gt; value: "Manager"
+     *
      * @param model the Model used to check ClassDescriptors and FieldDescriptors
      * @param stringPath a String of the form "Department.manager.name"
      * @param constraintMap a Map from paths as string to class names - use when parts of the path
@@ -169,6 +170,7 @@ public class Path
             }
         }
     }
+
     /**
      * Return true if and only if any part of the path is a collection.
      * @return the collections flag
