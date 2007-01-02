@@ -634,6 +634,9 @@
             type="org.intermine.web.bag.BagUploadConfirmController"
             name="buildBagForm"/>
 
+    <action path="/initBagUploadConfirmDuplicates"
+            type="org.intermine.web.bag.BagUploadConfirmDuplicatesController"/>
+
     <action path="/initTemplate"
             type="org.intermine.web.TemplateController"
             validate="false"
