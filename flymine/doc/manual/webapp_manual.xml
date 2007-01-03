@@ -1499,6 +1499,23 @@
  </chapter>
 
 
+  <chapter id="manualFeedback">
+    <title>FlyMine Feedback</title>
+
+    <para> FlyMine welcomes any types of feedback: suggestions for
+    data sets and new templates, help with improving and building new
+    queries, reports of broken links, etc. </para>
+
+    <para>A feedback form is available from the FlyMine query pages,
+    which can be used to ask for help with queries or to provide us
+    with comments or suggestions.  This feedback form will
+    automatically send us the query that the submitting user is
+    currently working on, making it easier to give an accurate
+    response. Fill in your email address and message. Name and subject
+    are optional. </para>
+
+ </chapter>
+
   <appendix id="docLicence" label="A">
     <title>
       GNU Free Documentation License
