@@ -38,6 +38,7 @@ public class BagUploadConfirmForm extends ActionForm
    public void initialise() {
         bagName = "";
         matchIDs = "";
+        selectedObjects = new String[] {};
     }
 
    /**
