@@ -7,14 +7,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Thing;
 import org.intermine.util.DynamicUtil;
-
-import junit.framework.TestCase;
 
 public class ClassKeyHelperTest extends TestCase {
     private Model model;
@@ -34,24 +35,37 @@ public class ClassKeyHelperTest extends TestCase {
         props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
 
         
+        
         Map expected = new HashMap();
+        ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
+        ClassDescriptor cldMan = model.getClassDescriptorByName(pkg + "Manager");
+        ClassDescriptor cldCEO = model.getClassDescriptorByName(pkg + "CEO");
+        ClassDescriptor cldCom = model.getClassDescriptorByName(pkg + "Company");
+        ClassDescriptor cldAdd = model.getClassDescriptorByName(pkg + "Address");
+        ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
+        ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
+        
         ClassKeyHelper.addKey(expected, "Employee", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "Employee").getFieldDescriptorByName("name")})));
+        		cldEmp.getFieldDescriptorByName("name")})));		
+        ClassKeyHelper.addKey(expected, "Employable", new HashSet(Arrays.asList(new Object[] {
+        		cldEmb.getFieldDescriptorByName("name")})));		
+        ClassKeyHelper.addKey(expected, "Contractor", new HashSet(Arrays.asList(new Object[] {
+        		cldCon.getFieldDescriptorByName("name")})));
+		ClassKeyHelper.addKey(expected, "Manager", new HashSet(Arrays.asList(new Object[] {
+                cldMan.getFieldDescriptorByName("name")})));                
+		ClassKeyHelper.addKey(expected, "CEO", new HashSet(Arrays.asList(new Object[] {
+                cldCEO.getFieldDescriptorByName("name")})));          
         ClassKeyHelper.addKey(expected, "Manager", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "Manager").getFieldDescriptorByName("name")})));                
+                cldMan.getFieldDescriptorByName("title")}))); 
         ClassKeyHelper.addKey(expected, "CEO", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "CEO").getFieldDescriptorByName("name")})));          
-        ClassKeyHelper.addKey(expected, "Manager", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "Manager").getFieldDescriptorByName("title")}))); 
-        ClassKeyHelper.addKey(expected, "CEO", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "CEO").getFieldDescriptorByName("title")})));
+                cldCEO.getFieldDescriptorByName("title")})));
+		ClassKeyHelper.addKey(expected, "Company", new HashSet(Arrays.asList(new Object[] {
+                cldCom.getFieldDescriptorByName("name"),
+                cldCom.getFieldDescriptorByName("address")})));
         ClassKeyHelper.addKey(expected, "Company", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "Company").getFieldDescriptorByName("name"),
-                model.getClassDescriptorByName(pkg + "Company").getFieldDescriptorByName("address")})));
-        ClassKeyHelper.addKey(expected, "Company", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "Company").getFieldDescriptorByName("vatNumber")})));
-        ClassKeyHelper.addKey(expected, "Address", new HashSet(Arrays.asList(new Object[] {
-                model.getClassDescriptorByName(pkg + "Address").getFieldDescriptorByName("address")})));
+                cldCom.getFieldDescriptorByName("vatNumber")})));
+		ClassKeyHelper.addKey(expected, "Address", new HashSet(Arrays.asList(new Object[] {
+                cldAdd.getFieldDescriptorByName("address")})));
         assertEquals(expected, ClassKeyHelper.readKeys(model, props));
     }
     

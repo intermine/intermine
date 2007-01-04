@@ -98,7 +98,7 @@ public class MainHelperTest extends TestCase {
         assertEquals("org.intermine.model.testmodel.Employee",
                      MainHelper.getTypeForPath("Employee", query));
 
-        assertEquals("int", MainHelper.getTypeForPath("Employee.end", query));
+        assertEquals("java.lang.String", MainHelper.getTypeForPath("Employee.end", query));
 
         assertEquals("int", MainHelper.getTypeForPath("Employee.age", query));
 

@@ -15,13 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -31,11 +25,13 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.util.XmlBinding;
-
-import java.io.InputStream;
-
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 
 /**
  *
@@ -43,14 +39,12 @@ import junit.framework.TestCase;
  */
 public class InitialiserPluginTest extends TestCase
 {
-    private Profile bobProfile, sallyProfile;
+    private Profile bobProfile;
     private ProfileManager pm;
     private ObjectStore os, userProfileOS;
     private ObjectStoreWriter osw, userProfileOSW;
     private Integer bobId = new Integer(101);
-    private Integer sallyId = new Integer(102);
     private String bobPass = "bob_pass";
-    private String sallyPass = "sally_pass";
 
     public InitialiserPluginTest(String arg) {
         super(arg);
@@ -65,21 +59,6 @@ public class InitialiserPluginTest extends TestCase
         userProfileOS = userProfileOSW.getObjectStore();
 
         pm = new NonCheckingProfileManager(os, userProfileOSW);
-        XmlBinding binding = new XmlBinding(osw.getModel());
-        InputStream is =
-            getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
-        List objects = (List) binding.unmarshal(is);
-
-        osw.beginTransaction();
-        Iterator iter = objects.iterator();
-        int i = 1;
-        while (iter.hasNext()) {
-            InterMineObject o = (InterMineObject) iter.next();
-            o.setId(new Integer(i++));
-            osw.store(o);
-        }
-        osw.commitTransaction();
-
     }
 
     private class NonCheckingProfileManager extends ProfileManager {
@@ -103,38 +82,17 @@ public class InitialiserPluginTest extends TestCase
 
     }
     private void setUpUserProfiles() throws Exception {
-
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
-
         // bob's details
         String bobName = "bob";
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
 
-        pm.saveProfile(bobProfile);
+        pm.createProfile(bobProfile);
     }
 
 
     public void tearDown() throws Exception {
-        if (osw.isInTransaction()) {
-            osw.abortTransaction();
-        }
-        Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
-        Iterator resIter = res.iterator();
-        osw.beginTransaction();
-        while (resIter.hasNext()) {
-            InterMineObject o = (InterMineObject) resIter.next();
-            osw.delete(o);
-        }
-        osw.commitTransaction();
-        osw.close();
-
         cleanUserProfile();
 
     }
@@ -186,6 +144,9 @@ public class InitialiserPluginTest extends TestCase
         pm.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
         pm.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
         pm.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
+        
+        List tags = pm.getTags(null, null, "class", null);
+        assertEquals(3, tags.size());
 
         // test that these go away
         pm.addTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
@@ -193,7 +154,7 @@ public class InitialiserPluginTest extends TestCase
 
         InitialiserPlugin.cleanTags(pm);
         
-        List tags = pm.getTags(null, null, "class", null);
+        tags = pm.getTags(null, null, "class", null);
         assertEquals(3, tags.size());
     }
 }

@@ -55,16 +55,27 @@ public class BagQueryResult {
 	}
 	
 	/**
-	 * Get any exact matches found by the queries [input string -> id].
-	 * @return a map from input String to matched object ids
+	 * Get any exact matches found by the queries [id -> [input strings].
+	 * If the same input string appears twice in the initial list it will
+	 * appear twice in the list of inputs matching the InterMineObject id.
+	 * @return a map from InterMineObject id to list of input strings
 	 */
 	public Map getMatches() {
 		return matches;
 	}
 	
-	
+	/**
+	 * Add a new match from an input string to an InterMineObject id.
+	 * @param input the original input string entered
+	 * @param id the id of an InterMineObject
+	 */
 	public void addMatch(String input, Integer id) {
-		matches.put(input, id);
+		List inputs = (List) matches.get(id);
+		if (inputs == null) {
+			inputs = new ArrayList();
+			matches.put(id, inputs);
+		}
+		inputs.add(input);
 	}
     
 	/**
