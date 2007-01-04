@@ -12,16 +12,22 @@
   <fmt:param value="${message}"/>
 </fmt:message>
 
-<table>
-
+<table class="collection">
   <c:forEach var="resultElementEntry" items="${resultElementMap}">
     <c:set var="identifier" value="${resultElementEntry.key}"/>
     <c:set var="resultElementList" value="${resultElementEntry.value}"/>
 
     <c:forEach var="resultElement" items="${resultElementList}" varStatus="status">
-      <tr>
+        <c:set var="rowClass">
+          <c:choose>
+            <c:when test="${status.count % 2 == 1}">odd</c:when>
+            <c:otherwise>even</c:otherwise>
+          </c:choose>
+        </c:set>
+
+      <tr class="${rowClass}"/>
         <c:if test="${status.index == 0}">
-          <td rowSpan="${fn:length(resultElementList)}" valign="top">${identifier}</td>
+          <td border="1" rowSpan="${fn:length(resultElementList)}" valign="top">${identifier}</td>
         </c:if>
 
         <td>

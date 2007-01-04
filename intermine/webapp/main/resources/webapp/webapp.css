@@ -269,6 +269,7 @@ table.query td.modelbrowse {
   border-right: 1px solid #888;
 }
 
+/* for displaying a results object in a table */
 table.results {
   border-left: solid 1px #666;
   border-top: solid 1px #666;
@@ -292,6 +293,34 @@ table.results td td {
 table.results {
   font-size: small;
 }
+
+/* for displaying a collection in a table */
+table.collection {
+  border-left: solid 1px #666;
+  border-top: solid 1px #666;
+}
+table.collection th, table.collection td {
+  padding: 4px;
+  border-right: solid 1px #666;
+  border-bottom: solid 1px #666;
+  background: #white;
+}
+table.collection th {
+  background: #eee;
+}
+table.collection th {
+  font-size: 12px;
+}
+table.collection td td {
+  border: none;
+}
+table.collection {
+  font-size: small;
+}
+table.collection tr.even {
+  background: #F5F0FF;
+}
+
 table.noborder, table.noborder td, table.noborder th {
   border: none;
 }
