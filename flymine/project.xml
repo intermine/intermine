@@ -27,7 +27,7 @@
     </source>
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 6239 7165 180454 7460 4932"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/8.9"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/9.3"/>
     </source>
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
