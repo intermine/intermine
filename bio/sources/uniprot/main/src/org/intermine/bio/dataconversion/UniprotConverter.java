@@ -48,7 +48,7 @@ public class UniprotConverter extends FileConverter
     private Map mapMaster = new HashMap();  // map of maps    
     //TODO: This should come from props files!!!!
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    private static final Logger LOG = Logger.getLogger(UniprotDataTranslator.class);
+    private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map pubMaster = new HashMap();
     private Map orgMaster = new HashMap();
     private Map dbMaster = new HashMap();
