@@ -12,28 +12,24 @@ package org.intermine.web.task;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.Test;
+import junit.framework.TestCase;
 
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.TemplateHelper;
 import org.intermine.web.TemplateQuery;
 
@@ -43,7 +39,8 @@ import org.intermine.web.TemplateQuery;
  * @author Kim Rutherford
  */
 
-public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
+//public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
+public class PrecomputeTemplatesTaskTest extends TestCase
 {
     public PrecomputeTemplatesTaskTest (String arg) {
         super(arg);
@@ -51,18 +48,6 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public void executeTest(String type) {
-
-    }
-
-    public static Test suite() {
-        return buildSuite(PrecomputeTemplatesTaskTest.class);
     }
 
     // test that correct query and list of indexes generate for pre-computing
@@ -84,7 +69,6 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
 
         Query q = new Query();
         q.setDistinct(true);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         QueryClass qcEmp = new QueryClass(Employee.class);
         QueryField qfAge = new QueryField(qcEmp, "age");
         q.addFrom(qcEmp);
@@ -92,28 +76,21 @@ public class PrecomputeTemplatesTaskTest extends StoreDataTestCase
         q.addFrom(qcDept);
         QueryObjectReference deptRef = new QueryObjectReference(qcEmp, "department");
         ContainsConstraint cc = new ContainsConstraint(deptRef, ConstraintOp.CONTAINS, qcDept);
-        cs.addConstraint(cc);
         QueryField qfName = new QueryField(qcDept, "name");
-        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, qfName);
-        SimpleConstraint sc =
-            new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("departmenta"));
-        cs.addConstraint(sc);
         q.addToSelect(qcEmp);
+        q.addToSelect(qcDept);
         q.addToSelect(qfAge);
-        q.setConstraint(cs);
+        q.addToSelect(qfName);
+        q.setConstraint(cc);
 
         System.out.println("query: " + q);
 
         List indexes = new ArrayList();
         Query actualQ = TemplateHelper.getPrecomputeQuery(template, indexes, null);
-        assertEquals(q, actualQ);
-        List expIndexes = new ArrayList(Collections.singleton(qfAge));
+        assertEquals(q.toString(), actualQ.toString());
+        List expIndexes = new ArrayList(Arrays.asList(new Object[] {qfAge, qfName}));
         assertEquals(expIndexes.toString(), indexes.toString());
 
         task.precompute(os, actualQ, indexes, "template");
-    }
-
-    public void testQueries() {
-
     }
 }

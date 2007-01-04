@@ -2,6 +2,7 @@ package org.intermine.web.bag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,21 +12,24 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.Test;
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.SetupDataTestCase;
-import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.ClassKeyHelper;
 
-public class BagQueryRunnerTest extends SetupDataTestCase {
+/*
+ * NOTE - this test depends on data being present in os.unittest which is
+ * currently inserted before running the testmodel webapp tests.  If this
+ * changes then this class will need to extend StoreDataTestCase.
+ */
+public class BagQueryRunnerTest extends TestCase {
 	private ObjectStore os;
 	private Map eIds;
 	private BagQueryRunner runner;
@@ -47,22 +51,6 @@ public class BagQueryRunnerTest extends SetupDataTestCase {
 		Map bagQueries = new HashMap();
 		bagQueries.put("Employee", new ArrayList(Collections.singleton(bq)));
 		runner = new BagQueryRunner(os, classKeys, bagQueries);
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public void executeTest(String type) {
-
-    }
-
-    public static Test suite() {
-        return buildSuite(BagQueryRunnerTest.class);
-    }
-
-    public void testQueries() {
-    	// do nothing
     }
     
 	// expect each input string to match one object
@@ -114,13 +102,13 @@ public class BagQueryRunnerTest extends SetupDataTestCase {
 	public void testSearchForBagDoubleInput1() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeB1", "Mr."});
 		BagQueryResult res = runner.searchForBag("CEO", input);		
-		assertEquals(2, res.getMatches().size());
-		assertEquals(1, new HashSet(res.getMatches().values()).size());
+		assertEquals(1, res.getMatches().size());
+		assertEquals(2, ((List) ((Collection) res.getMatches().values()).iterator().next()).size());
 		assertTrue(res.getIssues().isEmpty());
 		assertTrue(res.getUnresolved().isEmpty());
 	}
 	
-	// two identifiers for same object - once matches twice
+	// two identifiers for same object - one matches twice
 	public void testSearchForBagDoubleInput2() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeB1", "Mr."});
 		BagQueryResult res = runner.searchForBag("Manager", input);		

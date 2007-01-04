@@ -11,7 +11,6 @@ package org.intermine.objectstore;
  */
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +19,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
 
 public abstract class StoreDataTestCase extends SetupDataTestCase
@@ -54,8 +54,9 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         storeDataWriter = null;
     }
 
-    public static void storeData() throws Exception {
-        System.out.println("Storing data");
+    public static void storeData() throws Exception {    	
+    	checkIsEmpty();
+    	System.out.println("Storing data");
         if (storeDataWriter == null) {
             throw new NullPointerException("storeDataWriter must be set before trying to store data");
         }
@@ -72,7 +73,6 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 InterMineObject o = (InterMineObject) entry.getValue();
-                String oName = (String) entry.getKey();
                 storeDataWriter.store(o);
             }
             storeDataWriter.commitTransaction();
@@ -84,6 +84,19 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data");
     }
 
+    public static void checkIsEmpty() throws Exception {
+    	Query q = new Query();
+    	QueryClass qc = new QueryClass(InterMineObject.class);
+    	q.addToSelect(qc);
+    	q.addFrom(qc);
+    	ObjectStore os = storeDataWriter.getObjectStore();
+    	Results res = os.execute(q);
+    	Iterator resIter = res.iterator();
+    	if (resIter.hasNext()) {
+    		System.out.println("WARNING - database was not empty before storing data");
+    	}
+    }
+    
     public static void removeDataFromStore() throws Exception {
         System.out.println("Removing data");
         long start = new Date().getTime();
@@ -117,7 +130,6 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 InterMineObject o = (InterMineObject) entry.getValue();
-                String oName = (String) entry.getKey();
                 storeDataWriter.delete(o);
             }
             storeDataWriter.commitTransaction();

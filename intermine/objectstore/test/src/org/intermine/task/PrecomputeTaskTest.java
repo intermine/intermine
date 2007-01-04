@@ -12,39 +12,37 @@ package org.intermine.task;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Iterator;
 
-import junit.framework.Test;
+import junit.framework.TestCase;
 
-import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
-import org.intermine.objectstore.query.*;
-
-import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Manager;
-import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryObjectReference;
 
 /**
  * Tests for PrecomputeTask.
  *
+ * NOTE - this test depends on data being present in os.unittest which is
+ * currently inserted before running the testmodel webapp tests.  If this
+ * changes then this class will need to extend StoreDataTestCase.
  * @author Kim Rutherford
  */
 
-public class PrecomputeTaskTest extends StoreDataTestCase
+public class PrecomputeTaskTest extends TestCase
 {
     ObjectStore os;
 
@@ -56,18 +54,6 @@ public class PrecomputeTaskTest extends StoreDataTestCase
         super.setUp();
 
         os = ObjectStoreFactory.getObjectStore("os.unittest");
-    }
-
-    public static void oneTimeSetUp() throws Exception {
-        StoreDataTestCase.oneTimeSetUp();
-    }
-
-    public void executeTest(String type) {
-
-    }
-
-    public static Test suite() {
-        return buildSuite(PrecomputeTaskTest.class);
     }
 
     /**
@@ -131,11 +117,6 @@ public class PrecomputeTaskTest extends StoreDataTestCase
             assertEquals(expectedSql[i], generatedSql);
         }
     }
-
-    public void testQueries() {
-
-    }
-
  
     public void testConstructQueries() throws Exception {
         PrecomputeTask pt = new PrecomputeTask();

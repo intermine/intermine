@@ -1,14 +1,10 @@
 package org.intermine.web.bag;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -20,10 +16,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.util.SAXParser;
 import org.intermine.web.ClassKeyHelper;
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Richard Smith

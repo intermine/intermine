@@ -10,6 +10,10 @@ package org.intermine.web;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,14 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
@@ -34,23 +36,17 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.XmlBinding;
 import org.intermine.web.bag.BagElement;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.PkQueryIdUpgrader;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * Tests for the Profile class.
@@ -80,22 +76,6 @@ public class ProfileManagerTest extends XMLTestCase
         userProfileOS = userProfileOSW.getObjectStore();
 
         pm = new ProfileManager(os, userProfileOSW);
-
-        XmlBinding binding = new XmlBinding(osw.getModel());
-        InputStream is =
-            getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
-        List objects = (List) binding.unmarshal(is);
-
-        osw.beginTransaction();
-        Iterator iter = objects.iterator();
-        int i = 1;
-        while (iter.hasNext()) {
-            InterMineObject o = (InterMineObject) iter.next();
-            o.setId(new Integer(i++));
-            osw.store(o);
-        }
-        osw.commitTransaction();
-
     }
 
     private void setUpUserProfiles() throws Exception {
@@ -123,7 +103,6 @@ public class ProfileManagerTest extends XMLTestCase
 
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         contents = new HashSet();
-        Set otherContents = new HashSet();
         sq = new SavedQuery("query1", date, query);
 
         // sally details
@@ -158,24 +137,6 @@ public class ProfileManagerTest extends XMLTestCase
 
 
     public void tearDown() throws Exception {
-        if (osw.isInTransaction()) {
-            osw.abortTransaction();
-        }
-        Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
-        Iterator resIter = res.iterator();
-        osw.beginTransaction();
-        while (resIter.hasNext()) {
-            InterMineObject o = (InterMineObject) resIter.next();
-            osw.delete(o);
-        }
-        osw.commitTransaction();
-        osw.close();
-
         cleanUserProfile();
     }
 
@@ -272,7 +233,6 @@ public class ProfileManagerTest extends XMLTestCase
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
-        Profile bobProfile = pm.getProfile("bob", bobPass);
         Profile sallyProfile = pm.getProfile("sally", sallyPass);
 
         Set expectedIDs = new HashSet();

@@ -11,27 +11,17 @@ package org.intermine.web.bag;
  */
 
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
+import junit.framework.TestCase;
 
-import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.XmlBinding;
-
-import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the InterMineBagHandler class.
@@ -51,49 +41,6 @@ public class InterMineBagHandlerTest extends TestCase
         super.setUp();
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
-
-
-        XmlBinding binding = new XmlBinding(osw.getModel());
-
-        InputStream is =
-            getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
-
-        List objects = (List) binding.unmarshal(is);
-
-        osw.beginTransaction();
-        Iterator iter = objects.iterator();
-        int i = 1;
-        while (iter.hasNext()) {
-            InterMineObject o = (InterMineObject) iter.next();
-            o.setId(new Integer(i++));
-        }
-        iter = objects.iterator();
-        while (iter.hasNext()) {
-            InterMineObject o = (InterMineObject) iter.next();
-            osw.store(o);
-        }
-        osw.commitTransaction();
-        osw.close();
-
-    }
-
-    public void tearDown() throws Exception {
-        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
-        Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
-        Iterator resIter = res.iterator();
-        osw.beginTransaction();
-        while (resIter.hasNext()) {
-            InterMineObject o = (InterMineObject) resIter.next();
-            osw.delete(o);
-        }
-        osw.commitTransaction();
-        osw.close();
     }
 
     public void testNoNewObject() throws Exception {
