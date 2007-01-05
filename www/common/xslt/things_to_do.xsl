@@ -16,11 +16,6 @@
           Browse model...
         </a>
       </li>
-      <li>
-        <a href="{xsl:concat($webappprefix,'/importQuery.do')}">
-          Import a query from XML...
-        </a>
-      </li>
     </ul>
   </xsl:template>
   
