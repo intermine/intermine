@@ -1,10 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- bagBuild.jsp -->
 <html:xhtml/>
-<h2>Create a new bag</h2>
+<h2>Create a new bag <im:manualLink section="manualMakingBags.shtml#manualNewBag"/> </h2>
 <div class="bagBuild">
   <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
     <p>
