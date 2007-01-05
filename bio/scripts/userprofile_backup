@@ -55,6 +55,7 @@ if ($max_version == -1) {
 }
 
 my $latest_db = $db_prefix . $max_version;
+$dump_file .= ".$max_version";
 
 my @params = ("-f", $dump_file, $latest_db);
 
