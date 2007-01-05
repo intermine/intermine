@@ -63,19 +63,21 @@
         and want to browse all the information or specific information
         about a particular entry in the database. A Quick Search box
         is available on the FlyMine homepage and in the top menu bar
-        on every FlyMine page. See <xref
-        linkend="manualQuickSearch"/>.  </para> </listitem>
+        on every FlyMine page. See <xref linkend="manualQuickSearch"/>
+        and <ulink
+        url="../tutorials/tutorial1-QuickSearch.xml">Tutorial
+        1</ulink>. </para> </listitem>
 
        <listitem>
          <para> Template queries: These predefined queries provide
-         quick and easy access to the data. A template query
-         basically consists of a form, in which you fill in the boxes
-         to define your query. Template queries range from fairly
-         simple queries to complex queries covering two or more
-         datasets or data aspects. See <xref linkend="manualTemplateQueries"/> 
-         and <xref linkend="manualAspects"/>.
-         </para>
-       </listitem>
+         quick and easy access to the data. A template query basically
+         consists of a form, in which you fill in the boxes to define
+         your query. Template queries range from fairly simple queries
+         to complex queries covering two or more datasets or data
+         aspects. See <xref linkend="manualTemplateQueries"/> and
+         <xref linkend="manualAspects"/> and <ulink
+         url="../tutorials/tutorial3-Templates.xml">Tutorial
+         3</ulink>.  </para> </listitem>
 
        <listitem>
           <para> The Query Builder: Advanced users can use a flexible
@@ -85,7 +87,9 @@
           queries. Access the FlyMine Query Builder via the <link
           linkend="manualFlyMineHome">FlyMine homepage</link>
           or choose a query starting point on an aspect
-          page. See <xref linkend="manualQueryBuilder"/>.</para>
+          page. See <xref linkend="manualQueryBuilder"/> and <ulink
+         url="../tutorials/tutorial6-QB.xml">Tutorial
+         6</ulink>.</para>
        </listitem>
 
       </orderedlist>
@@ -251,9 +255,11 @@
           i.e. all the Drosophila entries in Uniprot). Quick Search is
           case-insensitive.  In cases where more than one object is
           returned by your Quick Search, the results will provide a
-          list of objects which match the query. Clinking on any of
+          list of objects which match the query. Clicking on any of
           them will take you to the corresponding details pages for
-          each object. </para>
+          each object. For additional help, see also <ulink
+          url="../tutorials/tutorial1-QuickSearch.xml">Tutorial
+          1</ulink> </para>
 
   </chapter>
 
@@ -369,7 +375,8 @@
         search facility uses the template's shortened title (see
         below). The results are graded by similarity to the search
         terms. An option to view the full list of all templates is
-        also available. </para> </listitem>
+        also available by clicking on 'View all template
+        queries'. </para> </listitem>
 
       <listitem>
        <para> Using the 'Search templates' option on the top menu bar
@@ -830,15 +837,16 @@
    <sect1 id ="manualSaveExportQB">
      <title>Saving and exporting your query</title> 
 
-      <para> All queries that you run are stored into the Query
-      History. Your query will be named query_x (where x increments
-      for each query run). When-logged in, you can save your query
-      permanently from the Query History page ('Save' in 'Actions'
-      column). Saved queries can be accessed from your account via the
-      <link linkend="manualMyMine">My Mine</link> button at the top of
-      any FlyMine page. This Query History is available for the
-      duration of your session unless you <link
-      linkend="manualLoggingIn">log in</link>. </para>
+      <para> All queries that you run are stored into the <link
+      linkend="manualQueryHistory">Query History</link>. Your query
+      will be named query_x (where x increments for each query
+      run). This Query History is available for the duration of your
+      session unless you <link linkend="manualLoggingIn">log
+      in</link>. When-logged in, you can save your query permanently
+      from the Query History page ('Save' in 'Actions' column). <link
+      linkend="manualSavedQueries">Saved Queries</link> will be stored
+      in your <link linkend="manualMyMine">My Mine account</link>,
+      accessible via the top menu bar of any FlyMine page. </para>
 
       <para> If you are logged-in, it is also possible to save a query
       configuration with a name that you choose directly from the
@@ -861,7 +869,7 @@
 
       <para> FlyMine results can be either an <link
       linkend="manualObjectDetails">Object details page</link> which
-      provides more information about one specific object, or a resuls
+      provides more information about one specific object, or a results
       table. </para>
 
       <para> The number of items displayed in the results table is set
@@ -872,8 +880,9 @@
       is given because, for large queries, only a subset of the total
       number of items is initially returned by the query. This is to
       improve query run time for large queries. Clicking on 'Last'
-      will give you the exact number of items returned by your query.
-      The column headers reflect the relationships between different
+      will give you the exact number of items returned by your query.</para>
+      
+      <para> The column headers reflect the relationships between different
       classes/attributes within the query. A column can be moved to
       the right or to the left by clicking on the appropriate arrow on
       top of the column. Clicking on the smaller double arrow on top
@@ -885,7 +894,9 @@
       display the template page. Clicking on 'Edit Query' will display
       the query in the Query Builder. If the results originated from a
       query, both options will display the query in the Query Builder
-      directly.  The results table displays the results in alphabetic
+      directly.</para>
+
+      <para> The results table displays the results in alphabetic
       order, based on the content in the first column. To sort the
       results based on a column different from the first one, you need
       to put that column first using the Query Builder (changing the
@@ -968,10 +979,10 @@
     <itemizedlist>
      <listitem>
 
-      <para> Bags can be created from an external source: The
-      left-hand side 'My bags' on the bag page shows you the list of
-      your saved bags. The right-hand side 'Create a new bag' allows
-      you to type or past in a list of <link
+      <para id="manualNewBag"> Create a new bag: Bags can be created
+      from an external source. The left-hand side 'My bags' on the bag
+      page shows you the list of your saved bags. The right-hand side
+      'Create a new bag' allows you to type or past in a list of <link
       linkend="manualFlyMineIdentifiers">identifiers</link>, or upload
       a file containing the list. Do not mix up different types of
       identifiers if you want to use your bag to constrain a query -
@@ -981,15 +992,15 @@
      </listitem>
  
      <listitem>
-      <para> Data from previous queries can also be saved into a
-      bag. To save your data to a bag select the required data on a
-      result page and either add it to an existing bag or save it to a
-      new bag, using the boxes displayed underneath the
-      results. Selecting the check boxes next to the column headings
-      will select the entire column for saving. Alternatively,
-      individual items can be saved by selecting check-boxes next to
-      the items. Currently, a bag can only contain one column.</para>
-      </listitem>
+      <para id="manualResultBag"> Create a bag from results: Data from
+      previous queries can also be saved into a bag. To save your data
+      to a bag select the required data on a result page and either
+      add it to an existing bag or save it to a new bag, using the
+      boxes displayed underneath the results. Selecting the check
+      boxes next to the column headings will select the entire column
+      for saving. Alternatively, individual items can be saved by
+      selecting check-boxes next to the items. Currently, a bag can
+      only contain one column.</para> </listitem>
 
     </itemizedlist>
 
@@ -1162,11 +1173,12 @@
         This page also allows you to import queries by using the
         'Import query from XML' link at the bottom of the page, if you
         are <link linkend="manualLoggingIn">logged-in</link>.  Enter
-        queries in XML format in the space provided and press
-        'Submit'.  The imported queries will be stored under 'Saved
-        Queries'.  Existing queries with identical names will get an
-        automatic extension to make it unique, e.g. dmel-proteins-1,
-        dmel-proteins-2.</para> </listitem> <listitem>
+        query in XML format in the space provided and press
+        'Submit'. The imported queries will be stored under 'Saved
+        Queries'. Queries with names identical to existing queries
+        will get an automatic extension to make it unique,
+        e.g. dmel-proteins-1, dmel-proteins-2.</para> </listitem>
+        <listitem>
 
         <para id="manualSavedTemplates"> Saved Templates - provides a
         list of all templates that you created yourself or have
@@ -1183,17 +1195,19 @@
         from your account.  This page also allows you to import
         templates by using the 'Import template query' link at the
         bottom of the page, if you are <link
-        linkend="manualLoggingIn">logged-in</link>. Enter queries in
-        XML format in the space provided and press 'Submit'. The
-        imported templates will be stored under 'Saved Templates'.
-        Existing templates with identical names will be updated. You
-        can select templates to become 'favourite templates'. To mark
-        a template as a favourite, click on the star next to the
-        template name, which will then become yellow. The template
-        will stay in this list but will also appear in the 'Favourite
-        Templates' list. To unmark it, go to 'Favourite Templates'
-        (see below), select the template and press 'Remove from
-        favourites' at the bottom of the page. </para>
+        linkend="manualLoggingIn">logged-in</link>. Enter template
+        queries in XML format in the space provided and press
+        'Submit'. The imported templates will be stored under 'Saved
+        Templates'. Template queries with names identical to
+        existing queries will get an automatic extension to make it
+        unique, e.g. dmel-proteins-1, dmel-proteins-2. You can select
+        templates to become 'favourite templates'. To mark a template
+        as a favourite, click on the star next to the template name,
+        which will then become yellow. The template will stay in this
+        list but will also appear in the 'Favourite Templates'
+        list. To unmark it, go to 'Favourite Templates' (see below),
+        select the template and press 'Remove from favourites' at the
+        bottom of the page. </para>
 
        </listitem>
 
@@ -1248,7 +1262,14 @@
        <title>Exporting and importing (template) queries</title>
 
      <para> The export/import feature allows you to pass a query on to
-     someone else. </para>
+     someone else. To import and export <link
+     linkend="manualSavedQueries">Saved Queries</link> and <link
+     linkend="manualSavedTemplates">Saved Templates</link>, you need
+     to be <link linkend="manualLoggingIn">logged-in</link> into
+     FlyMine. To export a query form the <link
+     linkend="manualQueryHistory">Query History</link> page or from a
+     <link linkend="manualQueryBuilder">Query Builder</link> page,
+     logging-in is not required.</para>
 
     <sect1> 
        <title>Exporting queries in XML format</title>
@@ -1256,58 +1277,62 @@
      <para> Queries can be exported as XML or IQL from the <link
      linkend="manualQueryBuilder">Query Builder</link> page ('Actions
      - Export this query as XML or IQL'). A query can also be exported
-     from your Query History. Select queries using the check-boxes (or
-     click on the check-box on top of the column to select all at
-     once) and click the 'Export' button at the bottom of the
-     page. Alternatively, one query can also be exported by clicking
-     on 'Export' in the 'Actions' column. Saved queries can also be
-     exported as XML from your 'Saved Queries' on your <link
-     linkend="manualMyMine">My Mine</link> page, in a similar way.
-     Exporting a query will not delete it from your account.. </para>
+     from your <link linkend="manualQueryHistory">Query History</link>
+     page. Select queries using the check-boxes (or click on the
+     check-box on top of the column to select all at once) and click
+     the 'Export' button at the bottom of the page. Alternatively, one
+     query can also be exported by clicking on 'Export' in the
+     'Actions' column. Saved queries can also be exported as XML from
+     your <link linkend="manualSavedQueries">Saved Queries</link> on
+     your <link linkend="manualMyMine">My Mine</link> page, in a
+     similar way.  Exporting a query will not delete it from your
+     account. </para>
 
     </sect1> 
 
     <sect1> 
        <title>Importing queries in XML format</title>
 
-     <para> Queries saved as XML can be imported from the FlyMine
-     homepage. Click on 'Import a query from XML' at the bottom of the
-     homepage. Paste one or more queries in XML format and press
-     'Submit' to load the queries into the <link
-     linkend="manualQueryBuilder">Query Builder</link>. To save the
-     query permanently, you will need to log-in. Queries can also be
-     imported from your <link linkend="manualMyMine">My Mine</link>,
-     if you are logged-in. The imported queries will be stored under
-     'Saved Queries'. Existing queries with identical names will get
-     an automatic extension to make it unique, e.g. dmel-proteins-1,
-     dmel-proteins-2. </para>
+     <para> Queries can be imported from your <link
+     linkend="manualMyMine">Account</link>. To import a query, you
+     need to be <link linkend="manualLoggingIn">logged-in</link>. Once
+     logged-in, click on the 'Import query from XML' link at the
+     bottom of the page. Enter query in XML format in the space
+     provided and press 'Submit'. The imported queries will be stored
+     under 'Saved Queries'. Queries with names identical to existing
+     queries will get an automatic extension to make it unique,
+     e.g. dmel-proteins-1, dmel-proteins-2. </para>
 
     </sect1> 
 
     <sect1> 
        <title>Exporting templates in XML format</title>
 
-     <para> Template queries can be exported as XML from your 'Saved
-     Queries' on your <link linkend="manualMyMine">My Mine</link>
-     page. Select templates using the check-boxes (or click on the
-     check-box on top of the column to select all at once) and click
-     the 'Export' button at the bottom of the page. Alternatively, one
-     template query can also be exported by clicking on 'Export' in
-     the 'Actions' column. Exporting a template will not delete it
-     from your account.</para>
+     <para> Template queries can be exported as XML from your <link
+     linkend="manualSavedTemplates">Saved Templates</link> on your
+     <link linkend="manualMyMine">My Mine</link> page. Select
+     templates using the check-boxes (or click on the check-box on top
+     of the column to select all at once) and click the 'Export'
+     button at the bottom of the page. Alternatively, one template
+     query can also be exported by clicking on 'Export' in the
+     'Actions' column. Exporting a template will not delete it from
+     your account.</para>
 
     </sect1> 
 
     <sect1> 
       <title>Importing templates in XML format</title>
 
-     <para> In order to import a template, you need to be logged-in
-     into FlyMine. Go to 'Saved Templates' under 'My Mine' and click
-     on 'Import template queries...'. Paste one or more templates in
-     XML format and press 'Import Templates' to save the template(s)
-     to your account. The imported templates will be stored under
-     'Saved Templates'. Existing templates with identical names will
-     be updated.</para>
+     <para> In order to import a template, you need to be <link
+     linkend="manualLoggingIn">logged-in</link> into FlyMine. Go to
+     <link linkend="manualSavedTemplates">Saved Templates</link> on
+     your <link linkend="manualMyMine">My Mine</link> page and click
+     on 'Import template queries...'. Enter template in XML format and
+     press 'Submit' to save the template to your account. The imported
+     templates will be stored under 'Saved Templates'.  Template
+     queries with names identical to existing templates will get an
+     automatic extension to make it unique, e.g. dmel-proteins-1,
+     dmel-proteins-2.</para>
 
     </sect1> 
 
