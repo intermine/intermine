@@ -117,7 +117,8 @@
       
         <div id="feedbackFormDiv" style="display:none">
             <im:vspacer height="11"/>
-            <im:box title="${WEB_PROPERTIES['feedback.title']}">
+            <im:box title="${WEB_PROPERTIES['feedback.title']}"
+                    helpUrl="${WEB_PROPERTIES['project.helpLocation']}/manualFeedback.shtml">
               <tiles:get name="feedbackForm"/>
             </im:box>
         </div>
