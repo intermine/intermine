@@ -42,7 +42,6 @@ q<?xml version="1.0" encoding="utf-8"?>
   
   <item title="Related Projects">
     <item url="http://www.intermine.org" title="InterMine"/>
-    <item url="http://www.flymine.org/t1dmine" title="T1DMine"/>
     <item url="http://preview.stemcellmine.org" title="StemCellMine"/>
   </item>
   
