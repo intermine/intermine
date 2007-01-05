@@ -34,8 +34,8 @@ import org.intermine.web.config.FieldConfigHelper;
 import org.intermine.web.config.WebConfig;
 
 /**
+ * A wrapper for a collection that makes for easier rendering in the webapp.
  * @author kmr
- *
  */
 public class WebCollection extends AbstractList implements WebColumnTable
 {
