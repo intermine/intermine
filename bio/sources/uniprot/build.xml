@@ -17,8 +17,9 @@
   
   <target name="-retrieve-src-from-xml-file" if="have.file.custom.tgt">
     <convert-file      
-      model="${source.model}"
-      osName="osw.${common.os.prefix}-src-items">
+      model="${target.model}"
+	  clsName="${convertor.class}"
+      osName="osw.${common.os.prefix}-tgt-items">
       <fileset dir="${build.data.dir}" includes="*.xml"/>
     </convert-file>
   </target>
