@@ -37,7 +37,7 @@ public class BagUploadConfirmController extends TilesAction
             HttpServletResponse response) throws Exception {
         StringBuffer matchesStringBuffer = new StringBuffer();
         Map matches = (Map) request.getAttribute("matches");
-        Iterator matchIDIter = matches.values().iterator();
+        Iterator matchIDIter = matches.keySet().iterator();
         while (matchIDIter.hasNext()) {
             matchesStringBuffer.append(matchIDIter.next()).append(' ');
         }
