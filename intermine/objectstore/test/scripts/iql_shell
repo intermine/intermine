@@ -25,6 +25,10 @@ CP=$CP:$INTERMINE/objectstore/main/lib/cglib-full-2.0.1-patched.jar
 CP=$CP:$INTERMINE/objectstore/main/lib/libreadline-java.jar
 CP=$CP:$INTERMINE/objectstore/main/lib/log4j.jar
 CP=$CP:$INTERMINE/objectstore/main/lib/postgresql.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/torque-3.2-dev.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/torque-gen-3.2-dev.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/commons-lang-2.0.jar
+CP=$CP:$INTERMINE/objectstore/main/lib/commons-logging-1.0.jar
 CP=$CP:$INTERMINE/objectstore/test/resources:$INTERMINE/resources/runtime:~:$INTERMINE/flymine_stuff:$INTERMINE/flymine_stuff/resources
 
 if test -z "$LD_LIBRARY_PATH" ; then
