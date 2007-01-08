@@ -80,7 +80,6 @@ public class PathQueryCreator
         pathIter = paths.iterator();
         while (pathIter.hasNext()) {
             Path path = (Path) pathIter.next();
-            System.out.println(path);
 
             Iterator iter = path.getElements().iterator();
             while (iter.hasNext()) {
@@ -97,7 +96,8 @@ public class PathQueryCreator
                                                            .getType());
                         QueryObjectReference ref = new QueryObjectReference(qcCurrent,
                                                                             rfd.getName());
-                        ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcNew);
+                        ContainsConstraint cc =
+                            new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcNew);
                         cs.addConstraint(cc);
                         q.addFrom(qcNew);
                         qcCurrent = qcNew;

@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.Results;
-
 import org.intermine.web.Constants;
 
 import java.io.Serializable;
@@ -38,7 +36,6 @@ public class InlineTemplateTable implements Serializable
     /**
      * Construct a new InlineTemplateTable
      * @param pagedResults the Results of running the template query
-     * @param columnNames the names of each column in the Results object
      * @param webProperties the web properties from the session
      */
     public InlineTemplateTable(PagedResults pagedResults, Map webProperties) {

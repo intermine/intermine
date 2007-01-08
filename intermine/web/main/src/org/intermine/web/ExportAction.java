@@ -136,9 +136,10 @@ public class ExportAction extends InterMineAction
  
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
-     *
+     * @param mapping The ActionMapping used to select this instance
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
+     * @param pt the PagedTable to export
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
@@ -263,7 +264,7 @@ public class ExportAction extends InterMineAction
      *
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @param pt 
+     * @param pt the PagedTable to export
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
@@ -293,6 +294,7 @@ public class ExportAction extends InterMineAction
      *
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
+     * @param pt the PagedTable to export
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
@@ -323,7 +325,7 @@ public class ExportAction extends InterMineAction
     /**
      * Return an int array containing the real column indexes to use while writing the given
      * PagedTable.
-     * @param pt the PagedTable
+     * @param pt the PagedTable to export
      */
     private static int [] getOrder(PagedTable pt) {
         List columns = pt.getColumns();
@@ -339,7 +341,7 @@ public class ExportAction extends InterMineAction
 
     /**
      * Return an array containing the visibility of each column in the output
-     * @param pt the PagedTable
+     * @param pt the PagedTable to export
      */
     private static boolean [] getVisible(PagedTable pt) {
         List columns = pt.getColumns();

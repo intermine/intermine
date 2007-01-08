@@ -105,7 +105,7 @@ public class MainController extends TilesAction
                     while (cldFieldConfigIter.hasNext()) {
                         FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                         String pathFromField = pathName + "." + fc.getFieldExpr();
-                        if (! view.contains(pathFromField)) {
+                        if (!view.contains(pathFromField)) {
                             node.setSelected(false);
                             break;
                         }

@@ -207,7 +207,7 @@ public class ModifyBagAction extends InterMineAction
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag combined =
-            new InterMineBag(profile.getUserId(), name, type, profileOs, os,intersect);
+            new InterMineBag(profile.getUserId(), name, type, profileOs, os, intersect);
 
         int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
                                                              Constants.MAX_NOT_LOGGED_BAG_SIZE);

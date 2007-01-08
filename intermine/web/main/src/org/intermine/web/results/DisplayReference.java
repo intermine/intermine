@@ -40,6 +40,7 @@ public class DisplayReference extends DisplayField
      * @param ref metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
+     * @param classKeys Map of class name to set of keys
      * @throws Exception if an error occurs
      */
     public DisplayReference(ProxyReference proxy, ReferenceDescriptor ref,

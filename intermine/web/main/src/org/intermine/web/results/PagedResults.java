@@ -33,19 +33,13 @@ public class PagedResults extends PagedTable implements Serializable
      * Create a new PagedResults object from the given Results object.
      *
      * @param results the Results object
-     * @param columnNames the headings for the Results columns
-     * @param model the Model for the Results
-     * @param pathToQueryNode a mappping between  QueryPath
-     * @param servletContext the ServletContext used to get the WebConfig object and the classKeys 
-     *        Map.
      */
-    public PagedResults(WebResults results){
+    public PagedResults(WebResults results) {
         super(results.getColumns());
         this.results = results;
 
         updateRows();
     }
-    
 
     /**
      * @see PagedTable#getAllRows()
@@ -83,7 +77,7 @@ public class PagedResults extends PagedTable implements Serializable
         return results.size();
     }
 
-    
+
     /**
      * Return information about the results
      * @return the relevant ResultsInfo

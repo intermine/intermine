@@ -18,7 +18,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
-import org.intermine.web.results.PagedTable;
 import org.intermine.web.results.TableHelper;
 
 import org.apache.struts.action.ActionForm;

@@ -79,13 +79,13 @@ public class MyMineController extends TilesAction
         ArrayList typeList = new ArrayList();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
-            String unqualifiedName = TypeUtil.unqualifiedName((String)iter.next());
+            String unqualifiedName = TypeUtil.unqualifiedName((String) iter.next());
             if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)) {
                 typeList.add(unqualifiedName);
             }
         }
         Collections.sort(typeList);
-        request.setAttribute("typeList",typeList);
+        request.setAttribute("typeList", typeList);
 
         return null;
     }

@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Results;
-
 import org.intermine.InterMineException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -147,7 +145,8 @@ public class SaveBagAction extends InterMineAction
                  * don't do for now because if the column contains duplicates then
                  * wholeColumnsToSave * rowCount doesn't tell us the true final bag size 
                  * 
-                ActionForward forward = checkBagSize(mapping, request, wholeColumnsToSave * rowCount);
+                ActionForward forward =
+                   checkBagSize(mapping, request, wholeColumnsToSave * rowCount);
                 
                 if (forward != null) {
                     return forward;

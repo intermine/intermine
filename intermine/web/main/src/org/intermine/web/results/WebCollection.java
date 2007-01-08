@@ -168,7 +168,8 @@ public class WebCollection extends AbstractList implements WebColumnTable
                 Path colPath = new Path(model, newColumnName);
                 String type = null;
                 if (colPath.getElements().size() >= 2) {
-                    Object pathElement = colPath.getElements().get(colPath.getElements().size() - 2);
+                    Object pathElement =
+                        colPath.getElements().get(colPath.getElements().size() - 2);
                     if (pathElement instanceof ReferenceDescriptor) {
                         ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
                         type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());

@@ -262,7 +262,8 @@ public class TemplateListHelper
 
                             String className = model.getPackageName() + "." + bits[0];
                             String fieldName = bits[1];
-                            String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
+                            String fieldExpr =
+                                TypeUtil.unqualifiedName(className) + "." + fieldName;
 
                             if (allNull(os, bag, fieldName)) {
                                 // ignore this template because putting a null into a template isn't

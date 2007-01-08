@@ -19,11 +19,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.InterMineException;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,11 +27,10 @@ import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.bag.BagElement;
 import org.intermine.web.bag.BagHelper;
-import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 
 /**
- * 
+ * Action to save a single object o an existing bag.
  * @author Thomas Riley
  */
 public class AddToBagAction extends InterMineAction
@@ -62,19 +56,6 @@ public class AddToBagAction extends InterMineAction
         
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
-/*
-                try {
-                    int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
-                                                  "max.bag.size.notloggedin",
-                                                  Constants.MAX_NOT_LOGGED_BAG_SIZE);
-                    profile.saveBag(bagName, existingBag, maxNotLoggedSize);
-                } catch (InterMineException e) {
-                    recordError(new ActionMessage(e.getMessage()), request);
-                }
-                SessionMethods.invalidateBagTable(session, bagName);
-                recordMessage(new ActionMessage("bag.addedToBag", bagName), request);
-*/
-                
             try {
                 InterMineObject o = (InterMineObject) os.getObjectById(new Integer(id));
                 if (BagHelper.isOfBagType(existingBag, o, os)) {

@@ -111,7 +111,8 @@ public class InterMineBagBinding
      * @param userId an Integer
      * @return a Map from bag name to InterMineIdBag
      */
-    public static Map unmarshal(final Reader reader, final ObjectStore uos, final ObjectStore os, IdUpgrader idUpgrader,
+    public static Map unmarshal(final Reader reader, final ObjectStore uos, final ObjectStore os,
+                                IdUpgrader idUpgrader,
             Integer userId) {
         final Map bags = new LinkedHashMap();
         try {

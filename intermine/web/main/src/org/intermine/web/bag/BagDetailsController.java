@@ -55,7 +55,7 @@ public class BagDetailsController extends TilesAction
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         
-		WebCollection webCollection = 
+        WebCollection webCollection = 
             new WebCollection(os, imBag.getType(), imBag, model, webConfig, classKeys);
         PagedCollection pagedColl = new PagedCollection(webCollection);
         request.setAttribute("bag", imBag);

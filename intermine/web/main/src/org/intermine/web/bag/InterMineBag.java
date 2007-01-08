@@ -99,7 +99,7 @@ public class InterMineBag extends AbstractSet
         this.type = type;
         this.size = size;
         this.uos = uos;
-        this.os= os;
+        this.os = os;
    }
 
     /**
@@ -120,7 +120,7 @@ public class InterMineBag extends AbstractSet
         this.type = type;
         this.size = -1;
         this.uos = uos;
-        this.os= os;
+        this.os = os;
     }
     
     private Set asSet() {
@@ -291,7 +291,7 @@ public class InterMineBag extends AbstractSet
         return ids;
     }
     
-    public synchronized List getInterMineObjects() throws ObjectStoreException{
+    public synchronized List getInterMineObjects() throws ObjectStoreException {
         Collection ids = getListOfIds();
         return (os.getObjectsByIds(ids));
     }

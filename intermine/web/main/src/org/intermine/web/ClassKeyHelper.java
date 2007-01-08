@@ -33,7 +33,8 @@ import org.intermine.util.TypeUtil;
  * @author rns
  * 
  */
-public class ClassKeyHelper {
+public class ClassKeyHelper 
+{
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
 
     /**
@@ -206,7 +207,7 @@ public class ClassKeyHelper {
      * 
      * @param classKeys
      *            map of classname to set of keys
-     * @param othe
+     * @param o
      *            object to check
      * @param fieldName
      *            the field name to look up

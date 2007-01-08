@@ -11,7 +11,6 @@ package org.intermine.web.results;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,7 @@ public abstract class PagedTable
 
     /**
      * Construct a PagedTable with a list of column names
-     * @param columnNames the column headings
+     * @param columns the column headings
      */
     public PagedTable(List columns) {
         this.columns = columns;
@@ -46,7 +45,7 @@ public abstract class PagedTable
     /**
      * Construct a PagedTable with a list of column names and a parameter indicating whether this
      * table should display its cells in a summary or detailed format
-     * @param columnNames the column headings
+     * @param columns the column headings
      * @param summary the format for displaying cells
      */
     public PagedTable(List columns, boolean summary) {
@@ -73,7 +72,8 @@ public abstract class PagedTable
 
 
     /**
-     * @return
+     * Return the column names
+     * @return the column names
      */
     public List getColumnNames() {
         if (columnNames == null) {

@@ -420,8 +420,8 @@ public class MainChange extends DispatchAction
             while (cldFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                 Path pathToAdd = new Path(model, pathName + "." + fc.getFieldExpr());
-                if(pathToAdd.getEndClassDescriptor() == null
-                   && !view.contains(pathToAdd.toString())) {
+                if (pathToAdd.getEndClassDescriptor() == null
+                    && !view.contains(pathToAdd.toString())) {
                     view.add(pathToAdd.toString());
                 }
             }

@@ -61,7 +61,7 @@ public class IqlQuery
         this.queryString = queryString;
         this.packageName = packageName;
         if (parameters != null) {
-        	this.parameters = parameters;
+            this.parameters = parameters;
         }
     }
 
@@ -75,9 +75,9 @@ public class IqlQuery
      * @throws NullPointerException if queryString is null
      */
     public IqlQuery(String queryString, String packageName) {
-    	this(queryString, packageName, null);
-    
+        this(queryString, packageName, null);
     }
+
     /**
      * Construct an IQL query from a Query object.
      *
