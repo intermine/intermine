@@ -16,12 +16,11 @@
   </target>
   
   <target name="-retrieve-src-from-xml-file" if="have.file.custom.tgt">
-    <convert-xml-file
-      schema="${source.schema.file}"
+    <convert-file      
       model="${source.model}"
       osName="osw.${common.os.prefix}-src-items">
       <fileset dir="${build.data.dir}" includes="*.xml"/>
-    </convert-xml-file>
+    </convert-file>
   </target>
   
 </project>
