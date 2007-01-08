@@ -89,7 +89,7 @@ public class PollQueryAction extends InterMineAction
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             if (followSingleResult) {
                 List allRows = pr.getAllRows ();
-                if ((allRows instanceof WebResults) ) {
+                if ((allRows instanceof WebResults)) {
                     WebResults webResults = (WebResults) allRows;
                     // Query can have more than one column, forward from
                     // the first
@@ -108,7 +108,7 @@ public class PollQueryAction extends InterMineAction
                         }
                     }
 
-                    if (o != null && (o instanceof ResultElement) ) {
+                    if (o != null && (o instanceof ResultElement)) {
                         String url = "/objectDetails.do?id=" + ((ResultElement) o).getId()
                             + "&trail=_" + ((ResultElement) o).getId();
                         return new ActionForward(url, true);

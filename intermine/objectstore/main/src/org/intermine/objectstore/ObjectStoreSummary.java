@@ -266,7 +266,8 @@ public class ObjectStoreSummary
      * @throws ObjectStoreException if an error occurs retrieving data
      * @throws ClassNotFoundException if the class cannot be found
      */
-    protected void lookForEmptyThings(ClassDescriptor cld, ObjectStore os) throws ObjectStoreException, ClassNotFoundException {
+    protected void lookForEmptyThings(ClassDescriptor cld, ObjectStore os)
+        throws ObjectStoreException, ClassNotFoundException {
         Set emptyFields = (Set) emptyFieldsMap.get(cld.getName());
         if (emptyFields == null) {
             Iterator subIter = cld.getSubDescriptors().iterator();

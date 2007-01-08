@@ -31,6 +31,7 @@ public class DisplayCollection extends DisplayField
      * @param desc the descriptors for this collection
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
+     * @param classKeys Map of class name to set of keys
      * @throws Exception if an error occurs
      */
     public DisplayCollection(Collection collection, CollectionDescriptor desc,

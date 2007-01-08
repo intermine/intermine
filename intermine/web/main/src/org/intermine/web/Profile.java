@@ -30,9 +30,6 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
 
-import org.apache.commons.collections.map.ListOrderedMap;
-import org.apache.lucene.store.Directory;
-
 /**
  * Class to represent a user of the webapp
  *
@@ -240,6 +237,7 @@ public class Profile
     /**
      * Returns all bags of a given type
      * @param type the type
+     * @param model the Model
      * @return a Map of bag name to bag
      */
     public Map getBagsOfType(String type, Model model) {
@@ -256,8 +254,8 @@ public class Profile
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
             if (bag instanceof InterMineBag 
-                             && classAndSubs.contains(model.getPackageName() + "." 
-                                     +((InterMineBag) bag).getType())) {
+                && classAndSubs.contains(model.getPackageName() + "." 
+                                         + ((InterMineBag) bag).getType())) {
                 map.put(entry.getKey(), bag);
             }
         }

@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -98,21 +97,21 @@ public class MainConstraintController extends TilesAction
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
             } else {
-            	if ((node.getPath().indexOf('.')) >= 0) {
-            		nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
-            					node.getPath(), query));
-            	}  else {
-            		nodeType = node.getType();
-            	}
-            	useBags = ClassKeyHelper.hasKeyFields(classKeys, nodeType);
+                if ((node.getPath().indexOf('.')) >= 0) {
+                        nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
+                                                node.getPath(), query));
+                }  else {
+                        nodeType = node.getType();
+                }
+                useBags = ClassKeyHelper.hasKeyFields(classKeys, nodeType);
             }
             
             if (useBags) {
-            	Map bags = profile.getBagsOfType(nodeType, os.getModel());
-            	if (!bags.isEmpty()) {
-            		request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-            		request.setAttribute("bags", bags);
-            	}
+                Map bags = profile.getBagsOfType(nodeType, os.getModel());
+                if (!bags.isEmpty()) {
+                        request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
+                        request.setAttribute("bags", bags);
+                }
             }
         }
         return null;

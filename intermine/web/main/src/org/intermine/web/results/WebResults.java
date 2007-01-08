@@ -184,9 +184,9 @@ public class WebResults extends AbstractList implements WebColumnTable
     public static final int BIG_BATCH_SIZE = 5000;
 
     /**
-     * Calls ObjectStore.goFaster.
-     *
-     * @throws ObjectStoreException 
+     * Calls ObjectStore.goFaster() if this object wraps a Results object from an
+     * ObjectStoreInterMineImpl.
+     * @throws ObjectStoreException if ObjectStoreInterMineImpl.goFaster() throws the exception
      */
     public void goFaster() throws ObjectStoreException {
         osResults = WebUtil.changeResultBatchSize(osResults, BIG_BATCH_SIZE);
@@ -197,19 +197,17 @@ public class WebResults extends AbstractList implements WebColumnTable
     }
 
     /**
-     * Calls ObjectStore.releaseGoFaster.
-     *
-     * @throws ObjectStoreException 
+     * Calls ObjectStore.releaseGoFaster() if this object wraps a Results object from an
+     * ObjectStoreInterMineImpl.
+     * @throws ObjectStoreException if ObjectStoreInterMineImpl.releaseGoFaster() throws the
+     * exception 
      */
     public void releaseGoFaster() throws ObjectStoreException {
-
         ObjectStore os = osResults.getObjectStore();
         if (os instanceof ObjectStoreInterMineImpl) {
             ((ObjectStoreInterMineImpl) os).releaseGoFaster(osResults.getQuery());
         }
- 
     }
-
 
     /**
      * Returns the ObjectStore's maximum allowable offset.

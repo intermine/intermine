@@ -80,7 +80,6 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
      * @param dfc the configuration of which fields to set and which field to use as a key
      * @param file The file to read from
      * @throws BuildException if an ObjectStore method fails
-     * @throws ObjectStoreException if the there is an ObjectStore problem
      */
     void executeInternal(DelimitedFileConfiguration dfc, File file)
         throws BuildException {

@@ -69,7 +69,8 @@ public class InterMineBagHandler extends DefaultHandler
                 Integer id = new Integer(attrs.getValue("id"));
 
                 if (bag == null) {
-                    bag = new InterMineBag(userId, bagName, bagType, uos, os, Collections.EMPTY_SET);
+                    bag = new InterMineBag(userId, bagName, bagType, uos, os,
+                                           Collections.EMPTY_SET);
                 }
                 
 //                if (row == null) {

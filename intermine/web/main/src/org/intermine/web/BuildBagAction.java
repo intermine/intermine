@@ -48,15 +48,15 @@ public class BuildBagAction extends InterMineAction
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     *
      * @exception Exception if the application business logic throws
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception{
+                                 HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         BuildBagForm buildBagForm = (BuildBagForm) form;
         ServletContext servletContext = session.getServletContext();

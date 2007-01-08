@@ -58,7 +58,7 @@ public class InlineResultsTable
      * @param model the current Model 
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
-     * @param classKeys 
+     * @param classKeys Map of class name to set of keys
      * @param size the maximum number of rows to list from the collection, or -1 if we should
      *   display all rows
      */
@@ -159,9 +159,10 @@ public class InlineResultsTable
 
     /**
      * Create the tableRows, columnNames and subList Lists by looping over the first elements of the
-     * collection.  The names of all fields to be displayed are collected in the fieldConfigs List then
-     * and the fieldConfigs to display are collected in the tableRows List.  The fields of the rows
-     * in the tableRows List will always be in the same order as the elements of the fieldConfigs List.
+     * collection.  The names of all fields to be displayed are collected in the fieldConfigs List
+     * then and the fieldConfigs to display are collected in the tableRows List.  The fields of the
+     * rows in the tableRows List will always be in the same order as the elements of the
+     * fieldConfigs List.
      */
     protected void initialise() {
         fieldConfigs = new ArrayList(); 
