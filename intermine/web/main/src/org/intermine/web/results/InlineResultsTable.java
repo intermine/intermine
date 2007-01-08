@@ -10,25 +10,27 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.path.Path;
+import org.intermine.path.PathError;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.config.FieldConfig;
 import org.intermine.web.config.FieldConfigHelper;
 import org.intermine.web.config.WebConfig;
-import org.intermine.web.Constants;
-
-import org.apache.log4j.Logger;
 
 /**
  * An inline table created from a Collection
@@ -37,8 +39,6 @@ import org.apache.log4j.Logger;
  */
 public class InlineResultsTable
 {
-    protected static final Logger LOG = Logger.getLogger(InlineResultsTable.class);
-
     protected Collection results;
     protected List resultsAsList;
     // just those objects that we will display
@@ -50,22 +50,30 @@ public class InlineResultsTable
     protected int size = -1;
     protected WebConfig webConfig;
     protected Map webProperties;
+    private final Map classKeys;
 
     /**
      * Construct a new InlineResultsTable object
-     * @param results the underlying SingletonResults object
+     * @param results the List to display object
      * @param model the current Model 
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
+     * @param classKeys 
+     * @param size the maximum number of rows to list from the collection, or -1 if we should
+     *   display all rows
      */
     public InlineResultsTable(Collection results, Model model,
-                              WebConfig webConfig, Map webProperties) {
+                              WebConfig webConfig, Map webProperties, 
+                              Map classKeys, int size) {
         this.results = results;
+        this.classKeys = classKeys;
         if (results instanceof List) {
             resultsAsList = (List) results;
         } else {
             if (results instanceof LazyCollection) {
                 this.resultsAsList = ((LazyCollection) results).asList();
+            } else {
+                this.resultsAsList = new ArrayList(results);
             }
         }
         this.webConfig = webConfig;
@@ -114,7 +122,7 @@ public class InlineResultsTable
      */
     public List getTypes() {
         List types = new ArrayList();
-        for (Iterator i = resultsAsList.subList(0, getSize()).iterator(); i.hasNext();) {
+        for (Iterator i = getRowObjects().iterator(); i.hasNext();) {
             Object o = i.next();
             if (o instanceof ProxyReference) {
                 // special case for ProxyReference from DisplayReference objects
@@ -131,7 +139,7 @@ public class InlineResultsTable
      */
     public List getIds() {
         List ids = new ArrayList();
-        for (Iterator i = resultsAsList.subList(0, getSize()).iterator(); i.hasNext();) {
+        for (Iterator i = getRowObjects().iterator(); i.hasNext();) {
             ids.add(((InterMineObject) i.next()).getId());
         }
         return ids;
@@ -160,7 +168,12 @@ public class InlineResultsTable
         columnFullNames = new ArrayList();
         subList = new ArrayList();
         
-        Iterator resultsIter = resultsAsList.subList(0, getSize()).iterator();
+        Iterator resultsIter;
+        if (getSize() == -1) {
+            resultsIter = resultsAsList.iterator();
+        } else {
+            resultsIter = resultsAsList.subList(0, getSize()).iterator();
+        }
 
         while (resultsIter.hasNext()) {
             Object o = resultsIter.next();
@@ -193,11 +206,7 @@ public class InlineResultsTable
 
                     // only add full column names for simple fieldConfigs - ie. ones that specify a
                     // field in the current class
-                    if (theClass != null && expr.indexOf(".") == -1) {
-                        columnFullNames.add(theClass.getUnqualifiedName() + "." + expr);
-                    } else {
-                        columnFullNames.add(null);
-                    }
+                    columnFullNames.add(theClass.getUnqualifiedName() + "." + expr);
                 }
             }
         }
@@ -242,32 +251,12 @@ public class InlineResultsTable
     protected List getClassFieldConfigs(ClassDescriptor cd) {
         return FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
     }
-
+    
     /**
-     * Return the number of table rows or the INLINE_TABLE_SIZE whichever is smaller.
+     * Return the size that was passed to the constructor.
      */
     private int getSize() {
-        // default
-        int maxInlineTableSize = 30;
-
-        String maxInlineTableSizeString = (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
-
-        try {
-            maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
-        } catch (NumberFormatException e) {
-            LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
-                     + maxInlineTableSizeString);
-        }
-
-        size = maxInlineTableSize;
-
-        try {
-            resultsAsList.get(size);
-        } catch (IndexOutOfBoundsException e) {
-            size = results.size();
-        }
-
-        return size;
+       return size;
     }
 
     /**
@@ -276,5 +265,40 @@ public class InlineResultsTable
      */
     public List getFieldConfigs() {
         return fieldConfigs;
+    }
+
+    /**
+     * Return a List containing the ResultElements for a given row in the table.
+     * @param os The ObjectStore to pass to the Path constructor
+     * @param rowIndex the index of the row to create the List for
+     * @return a List of ResultElements, one for each column returned by getColumnFullNames().  If
+     *   a particular column isn't relavent for this row, that element of the List will be null.
+     */
+    public List getResultElementRow(ObjectStore os, int rowIndex) {
+        InterMineObject o = (InterMineObject) getRowObjects().get(rowIndex);
+        List retList = new ArrayList();
+        for (int i = 0; i < getColumnFullNames().size(); i++) {
+            Path path;
+            try {
+                path = new Path(model, (String) getColumnFullNames().get(i));
+                Class endType = path.getEndType();
+                if (endType == null) {
+                    // the end of the Path is not an attribute
+                    retList.add(null);
+                    continue;
+                }
+                String endTypeName = TypeUtil.unqualifiedName(endType.getName());
+                String lastFieldName = path.getEndFieldDescriptor().getName();
+                boolean isKeyField =
+                    ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
+                ResultElement resultElement = 
+                    new ResultElement(os, path.resolve(o), o.getId(), endTypeName, isKeyField);
+                retList.add(resultElement);
+            } catch (PathError e) {
+                // if the field can't be resolved then this Path doesn't make sense for this object
+                retList.add(null);
+            }
+        }
+        return retList;
     }
 }

@@ -53,8 +53,10 @@ public class Path
      * @param model the Model used to check ClassDescriptors and FieldDescriptors
      * @param path a String of the form "Department.manager.name" or
      * "Department.employees[Manager].seniority"
+     * @throws PathError thrown if there is a problem resolving the path eg. a reference doesn't
+     * exist in the model
      */
-     public Path(Model model, String path) {
+     public Path(Model model, String path) throws PathError {
         if (model == null) {
             throw new IllegalArgumentException("model argument is null");
         }
@@ -99,8 +101,10 @@ public class Path
      * @param stringPath a String of the form "Department.manager.name"
      * @param constraintMap a Map from paths as string to class names - use when parts of the path
      * are constrained to be sub-classes
-     */
-    public Path(Model model, String stringPath, Map constraintMap) {
+     * @throws PathError thrown if there is a problem resolving the path eg. a reference doesn't
+     * exist in the model
+      */
+    public Path(Model model, String stringPath, Map constraintMap) throws PathError {
         this.model = model;
         this.path = stringPath;
         this.subClassConstraintPaths = constraintMap;
@@ -111,7 +115,7 @@ public class Path
         initialise();
     }
 
-    private void initialise() {
+    private void initialise() throws PathError {
         elements = new ArrayList();
         elementClassDescriptors = new ArrayList();
         String[] parts = path.split("[.]");
@@ -120,8 +124,8 @@ public class Path
             model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
         this.startCld = cld;
         if (cld == null) {
-            throw new RuntimeException("Unable to resolve path '" + path + "': class '" + clsName
-                                       + "' not found in model '" + model.getName() + "'");
+            throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
+                                + "' not found in model '" + model.getName() + "'");
         }
         
         StringBuffer currentPath = new StringBuffer(parts[0]);
@@ -133,9 +137,9 @@ public class Path
             FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
             elements.add(fld);
             if (fld == null) {
-                throw new RuntimeException("Unable to resolve path '" + path + "': field '"
-                                           + thisPart + "' of class '" + cld.getName()
-                                           + "' not found in model '" + model.getName() + "'");
+                throw new PathError("Unable to resolve path '" + path + "': field '"
+                                    + thisPart + "' of class '" + cld.getName()
+                                    + "' not found in model '" + model.getName() + "'");
             }
             // if this is a collection then mark the whole path as containing collections
             if (fld.isCollection()) {
@@ -146,12 +150,12 @@ public class Path
 
                 // check if attribute and not at end of path
                 if (fld.isAttribute()) {
-                    throw new RuntimeException("Unable to resolve path '" + path + "': field '"
-                                               + thisPart + "' of class '"
-                                               + cld.getName()
-                                               + "' is not a reference/collection field in "
-                                               + "the model '"
-                                               + model.getName() + "'");
+                    throw new PathError("Unable to resolve path '" + path + "': field '"
+                                        + thisPart + "' of class '"
+                                        + cld.getName()
+                                        + "' is not a reference/collection field in "
+                                        + "the model '"
+                                        + model.getName() + "'");
                 }
                 
                 String constrainedClassName =
@@ -294,9 +298,9 @@ public class Path
     public Object resolve(InterMineObject o) {
         Set clds = model.getClassDescriptorsForClass(o.getClass());
         if (!clds.contains(getStartClassDescriptor())) {
-            throw new RuntimeException("ClassDescriptor from the start of path: " + path
-                                       + " is not a superclass of the class: " + o.getClass()
-                                       + " while resolving object: " + o);
+            throw new PathError("ClassDescriptor from the start of path: " + path
+                                + " is not a superclass of the class: " + o.getClass()
+                                + " while resolving object: " + o);
         }
 
         Iterator iter = elements.iterator();
@@ -313,7 +317,7 @@ public class Path
                 current = TypeUtil.getFieldValue(current, fieldName);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("IllegalAccessException while trying to get value of "
-                                           + "field \"" + fieldName + "\" in object: " + o);
+                                           + "field \"" + fieldName + "\" in object: " + o, e);
             }
         }
         
@@ -381,6 +385,10 @@ public class Path
         return elements;
     }
 
+    /**
+     * Return a List of the ClassDescriptor objects for each element of the path.
+     * @return the ClassDescriptors
+     */
     public List getElementClassDescriptors() {
         return elementClassDescriptors;
     }

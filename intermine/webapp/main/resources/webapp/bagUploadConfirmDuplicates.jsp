@@ -7,39 +7,70 @@
 
 <tiles:importAttribute name="message" ignore="false"/>
 <tiles:importAttribute name="resultElementMap" ignore="false"/>
+<tiles:importAttribute name="columnNames" ignore="false"/>
 
 <fmt:message key="bagUploadConfirm.duplicatesHeader">
   <fmt:param value="${message}"/>
 </fmt:message>
 
 <table class="collection">
+    <tr>
+      <td>
+        Identifier
+      </td>
+      <td width="10"> 
+        <fmt:message key="objectDetails.class"/>
+      </td>
+      <c:forEach items="${columnNames}" var="name"
+                 varStatus="status">
+        <td>
+          <span class="attributeField" style="white-space:nowrap">
+            ${name} <im:typehelp type="${columnNames[status.index]}"/>
+          </span>
+        </td>
+      </c:forEach>
+      <td width="10">
+        &nbsp;<%--for IE--%>
+      </td>
+    </tr>
   <c:forEach var="resultElementEntry" items="${resultElementMap}">
     <c:set var="identifier" value="${resultElementEntry.key}"/>
-    <c:set var="resultElementList" value="${resultElementEntry.value}"/>
+    <c:set var="resultElementRowList" value="${resultElementEntry.value}"/>
 
-    <c:forEach var="resultElement" items="${resultElementList}" varStatus="status">
-        <c:set var="rowClass">
-          <c:choose>
-            <c:when test="${status.count % 2 == 1}">odd</c:when>
-            <c:otherwise>even</c:otherwise>
-          </c:choose>
-        </c:set>
+    <c:forEach var="resultElementRow" items="${resultElementRowList}" varStatus="status">
+      <c:set var="rowClass">
+        <c:choose>
+          <c:when test="${status.count % 2 == 1}">odd</c:when>
+          <c:otherwise>even</c:otherwise>
+        </c:choose>
+      </c:set>
 
       <tr class="${rowClass}"/>
         <c:if test="${status.index == 0}">
-          <td border="1" rowSpan="${fn:length(resultElementList)}" valign="top">${identifier}</td>
+          <td border="1" rowSpan="${fn:length(resultElementRowList)}"
+              valign="top">${identifier}</td>
         </c:if>
 
-        <td>
-          <c:set var="resultElement" value="${resultElement}" scope="request"/>
-          <tiles:insert name="objectView.tile" />
-        </td>
-        <td>
-          <html:multibox property="selectedObjects"
-                         styleId="selectedObject_${status.index}">
-            ${resultElement.id}
-          </html:multibox>
-        </td>
+        <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
+          <td>
+            <c:choose>
+              <c:when test="${rowStatus.index == 0}">
+                <%-- special case: the first element is the class name --%>
+                ${resultElement}
+              </c:when>
+              <c:when test="${rowStatus.index == fn:length(resultElementRow) - 1}">
+                <%-- special case: the last element is the object id --%>
+                <html:multibox property="selectedObjects"
+                               styleId="selectedObject_${rowStatus.index}">
+                  ${resultElementRow[rowStatus.index]}
+                </html:multibox>
+              </c:when>
+              <c:otherwise>
+                ${resultElement.field}
+              </c:otherwise>
+            </c:choose>
+          </td>
+        </c:forEach>
       </tr>
     </c:forEach>
   </c:forEach>

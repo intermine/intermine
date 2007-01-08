@@ -34,8 +34,9 @@ public class DisplayCollection extends DisplayField
      * @throws Exception if an error occurs
      */
     public DisplayCollection(Collection collection, CollectionDescriptor desc,
-                             WebConfig webConfig, Map webProperties) throws Exception {
-        super(collection, desc, webConfig, webProperties);
+                             WebConfig webConfig, Map webProperties, Map classKeys) 
+        throws Exception {
+        super(collection, desc, webConfig, webProperties, classKeys);
         this.desc = desc;
     }
 

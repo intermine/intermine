@@ -64,6 +64,7 @@ public class DisplayObject
     //private Map classTemplateExprs = null;
     //private HttpSession session;
     private Map verbosity = new HashMap();
+    private final Map classKeys;
     
     /**
      * Create a new DisplayObject.
@@ -71,16 +72,19 @@ public class DisplayObject
      * @param model the metadata for the object
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
+     * @param classKeys map of classname to set of keys
      * @throws Exception if an error occurs
      */
     public DisplayObject(/*HttpSession session,*/ InterMineObject object, Model model,
                          WebConfig webConfig,
-                         Map webProperties) throws Exception {
+                         Map webProperties,
+                         Map classKeys) throws Exception {
         this.object = object;
         this.model = model;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
         //this.session = session;
+        this.classKeys = classKeys;
 
         //ServletContext servletContext = session.getServletContext();
         /*this.classTemplateExprs = 
@@ -429,7 +433,7 @@ public class DisplayObject
                         //if (proxy != null) {
                             DisplayReference newReference =
                                 new DisplayReference(proxy, ref,
-                                                     webConfig, webProperties);
+                                                     webConfig, webProperties, classKeys);
                             references.put(fd.getName(), newReference);
                         //}
 
@@ -437,7 +441,8 @@ public class DisplayObject
                         Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                         DisplayCollection newCollection =
                             new DisplayCollection((Collection) fieldValue,
-                                    (CollectionDescriptor) fd, webConfig, webProperties);
+                                    (CollectionDescriptor) fd, webConfig, webProperties,
+                                    classKeys);
                         //if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
                         //}

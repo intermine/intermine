@@ -14,10 +14,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.intermine.objectstore.query.Results;
+
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.web.Constants;
 import org.intermine.web.config.WebConfig;
+
+import org.apache.log4j.Logger;
 
 /**
  * Class to represent a field of an object for the webapp
@@ -32,7 +37,10 @@ public class DisplayField
     Collection collection = null;
     WebConfig webConfig = null;
     Map webProperties = null;
-
+    
+    protected static final Logger LOG = Logger.getLogger(DisplayField.class);
+    private final Map classKeys;
+    
     /**
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
@@ -42,11 +50,13 @@ public class DisplayField
      * @throws Exception if an error occurs
      */
     public DisplayField(Collection collection, FieldDescriptor fd,
-                        WebConfig webConfig, Map webProperties) throws Exception {
+                        WebConfig webConfig, Map webProperties,
+                        Map classKeys) throws Exception {
         this.collection = collection;
         this.fd = fd;
         this.webConfig = webConfig;
         this.webProperties = webProperties;
+        this.classKeys = classKeys;
     }
 
     /**
@@ -55,8 +65,31 @@ public class DisplayField
      */
     public InlineResultsTable getTable() {
         if (table == null && collection.size() > 0) {
+            // default
+            int maxInlineTableSize = 30;
+            String maxInlineTableSizeString = 
+                (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
+
+            try {
+                maxInlineTableSize = Integer.parseInt(maxInlineTableSizeString);
+            } catch (NumberFormatException e) {
+                LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
+                         + maxInlineTableSizeString);
+            }
+
+            int tableSize = maxInlineTableSize;
+
+            try {
+                if (collection instanceof Results) {
+                    ((Results) collection).get(tableSize);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                tableSize = collection.size();
+            }
+
+
             table = new InlineResultsTable(collection, fd.getClassDescriptor().getModel(),
-                                           webConfig, webProperties);
+                                           webConfig, webProperties, classKeys, tableSize);
         }
         return table;
     }
