@@ -229,7 +229,8 @@ public class ObjectDetailsController extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         return new DisplayObject(object, os.getModel(), webConfig,
-                                 webPropertiesMap);
+                                 webPropertiesMap, classKeys);
     }
 }

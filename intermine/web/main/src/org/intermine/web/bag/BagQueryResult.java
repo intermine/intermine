@@ -1,7 +1,7 @@
 package org.intermine.web.bag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,8 +27,8 @@ public class BagQueryResult {
 	public static final String DUPLICATE = "DUPLICATE"; 
 	public static final String OTHER = "OTHER"; 
 	
-	private Map matches = new HashMap();
-	private Map issues = new HashMap();
+	private Map matches = new LinkedHashMap();
+	private Map issues = new LinkedHashMap();
 	private List unresolved = new ArrayList();
 	
 	/**
@@ -40,15 +40,15 @@ public class BagQueryResult {
 		return issues;
 	}
 	
-	public void addIssue(String type, String query, String input, Set objects) {
+	public void addIssue(String type, String query, String input, List objects) {
 		Map issuesOfType = (Map) issues.get(type);
 		if (issuesOfType == null) {
-			issuesOfType = new HashMap();
+			issuesOfType = new LinkedHashMap();
 			issues.put(type, issuesOfType);
 		}
 		Map queryIssues = (Map) issuesOfType.get(query);
 		if (queryIssues == null) {
-			queryIssues = new HashMap();
+			queryIssues = new LinkedHashMap();
 			issuesOfType.put(query, queryIssues);
 		}
 		queryIssues.put(input, objects);

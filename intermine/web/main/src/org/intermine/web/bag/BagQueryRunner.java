@@ -105,22 +105,22 @@ public class BagQueryRunner
     			if (!bq.matchesAreIssues()) {
     				bqr.addMatch((String) o, (Integer) ids.iterator().next());
     			} else {
-    				Set objs = new HashSet();
+    				List objs = new ArrayList();
     				Iterator objIter = os.getObjectsByIds(ids).iterator();
     				while (objIter.hasNext()) {
     					objs.add(((List) objIter.next()).get(0));
     				}
     				bqr.addIssue(BagQueryResult.OTHER, bq.getMessage(), (String) o, 
-    						objs);
+    				             objs);
     			}
     		} else {
-    			Set objs = new HashSet();
+    			List objs = new ArrayList();
 				Iterator objIter = os.getObjectsByIds(ids).iterator();
 				while (objIter.hasNext()) {
 					objs.add(((List) objIter.next()).get(0));
 				}
     			bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), (String) entry.getKey(), 
-    					objs);
+    			             objs);
     		}
     		unresolved.remove(o);
     	}

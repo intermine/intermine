@@ -10,8 +10,6 @@ package org.intermine.web.bag;
  *
  */
 
-import java.lang.String;
-
 import org.apache.struts.action.ActionForm;
 
 /**
