@@ -15,7 +15,7 @@
     </filter-uniprot>
   </target>
   
-  <target name="-retrieve-src-from-xml-file" if="have.file.xml.src">
+  <target name="-retrieve-src-from-xml-file" if="have.file.custom.tgt">
     <convert-xml-file
       schema="${source.schema.file}"
       model="${source.model}"
@@ -25,4 +25,7 @@
   </target>
   
 </project>
+
+
+
 
