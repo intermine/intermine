@@ -16,7 +16,6 @@
         <pathelement location="../../bio/postprocess/main/src"/>
         <pathelement location="../../bio/sources/affy-probes/main/src"/>
         <pathelement location="../../bio/sources/biojava-flatfile/main/src"/>
-        <pathelement location="../../bio/sources/cdnaclone/main/src"/>
         <pathelement location="../../bio/sources/diseaseregion/main/src"/>
         <pathelement location="../../bio/sources/drosdel/main/src"/>
         <pathelement location="../../bio/sources/ensembl/main/src"/>
@@ -57,7 +56,6 @@
       <fileset dir="../../bio/postprocess/main/src"/>
       <fileset dir="../../bio/sources/affy-probes/main/src"/>
       <fileset dir="../../bio/sources/biojava-flatfile/main/src"/>
-      <fileset dir="../../bio/sources/cdnaclone/main/src"/>
       <fileset dir="../../bio/sources/diseaseregion/main/src"/>
       <fileset dir="../../bio/sources/drosdel/main/src"/>
       <fileset dir="../../bio/sources/ensembl/main/src"/>
