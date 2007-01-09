@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,14 +37,12 @@ import org.intermine.cache.ObjectCreator;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryNode;
-import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.results.InlineTemplateTable;
@@ -630,74 +627,5 @@ public class TemplateHelper
             }
         }
         return query;
-    }
-
-    /**
-     * Converts a List of objects from one type to another type using a TemplateQuery.
-     *
-     * @param servletContext the ServletContext
-     * @param typeA the type to convert from
-     * @param typeB the type to convert to
-     * @param objects a Collection of objects of type typeA
-     * @return a Map from original object to a List of converted objects
-     */
-    public Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
-            Collection objects) {
-        return new HashMap();
-    }
-
-    /**
-     * Return a TemplateQuery that will convert objects from one type to another. The TemplateQuery
-     * must be tagged with "converter", and must have an editable constraint that will take an
-     * object of type A, and have two columns as the output, of type A and type B. The template
-     * converts from type A to type B.
-     *
-     * @param servletContext the ServletContext
-     * @param typeA the type to convert from
-     * @param typeB the type to convert to
-     * @return a TemplateQuery, or null if one cannot be found
-     */
-    public TemplateQuery getConversionTemplate(ServletContext servletContext, Class typeA,
-            Class typeB) {
-        return (TemplateQuery) (getConversionTemplate(servletContext, typeA).get(typeB));
-    }
-
-    /**
-     * Return a Map from typeB to a TemplateQuery that will convert from typeA to typeB.
-     *
-     * @param servletContext the ServletContext
-     * @param typeA the type to convert from
-     * @return a Map from Class to TemplateQuery
-     */
-    public Map getConversionTemplate(ServletContext servletContext, Class typeA) {
-        String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        Profile p = pm.getProfile(sup);
-
-        List tags = pm.getTags("converter", null, TagTypes.TEMPLATE, sup);
-        Map retval = new HashMap();
-        Iterator iter = tags.iterator();
-        while (iter.hasNext()) {
-            Tag tag = (Tag) iter.next();
-            String oid = tag.getObjectIdentifier();
-            TemplateQuery tq = (TemplateQuery) p.getSavedTemplates().get(oid);
-            if (tq != null) {
-                // Find conversion types
-                List view = tq.getViewAsPaths();
-                if (view.size() == 2) {
-                    // Correct number of SELECT list items
-                    Path select1 = (Path) view.get(0);
-                    if (select1.getEndType().isAssignableFrom(typeA)) {
-                        // Correct typeA in SELECT list. Now check for editable constraint.
-                        if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
-                                && (tq.getAllEditableConstraints().size() == 1)) {
-                            // Editable constraint is okay.
-                            retval.put(((Path) view.get(1)).getEndType(), tq);
-                        }
-                    }
-                }
-            }
-        }
-        return retval;
     }
 }
