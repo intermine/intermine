@@ -59,6 +59,7 @@ sub new {
 
   $self->{_implements} = $implements_arg;
   $self->{_implements_classdescs} = [@implements_classdescs];
+  $self->{_classname} = $classname;
 
   bless $self, $class;
 
@@ -101,19 +102,34 @@ sub set
   if (ref $value) {
     if (ref $value eq 'ARRAY') {
       if (ref $field ne 'InterMine::Model::Collection') {
-        die "tried to set field '$name' in class '", $self->{_classname},
-            " to something other than type: ", $field->get_field_type(), "\n";
+        die "tried to set field '$name' in class '", $self->to_string(),
+            "' to something other than type: ", $field->field_type(), "\n";
+      }
+
+      # check the types of the elements in the collection and set the reverse
+      # references if necessary
+      my @items = @$value;
+      for my $other_item (@items) {
+        if ($other_item->instance_of($field->referenced_classdescriptor())) {
+          if ($field->is_one_to_many()) {
+            $other_item->set($field->reverse_reference_name(), $self);
+          }
+        } else {
+          die "collection '$name' in class '", $self->to_string(),
+            "' must contain items of type: ", $field->referenced_type_name(),
+            " not: ", $self->to_string();
+        }
       }
     } else {
       if (ref $field ne 'InterMine::Model::Reference') {
-        die "tried to set field '$name' in class '", $self->{_classname},
-           " to something other than type: ", $field->get_field_type(), "\n";
+        die "tried to set field '$name' in class '", $self->to_string(),
+           "' to something other than type: ", $field->field_type(), "\n";
       }
     }
   } else {
     if (ref $field ne 'InterMine::Model::Attribute') {
-      die "tried to set field '$name' in class '", $self->{_classname},
-          " to something other than type: ", $field->get_field_type(), "\n";
+      die "tried to set field '$name' in class '", $self->to_string(),
+          "' to something other than type: ", $field->field_type(), "\n";
     }
   }
 
@@ -177,6 +193,24 @@ sub valid_field
   }
 
   return 0;
+}
+
+sub instance_of
+{
+  my $self = shift;
+  1;
+}
+
+sub to_string
+{
+  my $self = shift;
+  my $implements = join (' ', $self->{_implements});
+  my $classname = $self->classname();
+  if (defined $classname and length $classname > 0) {
+    return "[classname: " . $classname . "  implements: $implements]";
+  } else {
+    return "[implements: $implements]";
+  }
 }
 
 sub as_xml
