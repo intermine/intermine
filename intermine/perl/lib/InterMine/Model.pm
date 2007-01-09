@@ -49,7 +49,7 @@ sub start_element
 
   if ($args->{Name} eq "model") {
     $self->{modelname} = $nameattr;
-    $self->{namespace} = $args->{Attributes}{namespace};
+    $self->{name_space} = $args->{Attributes}{namespace};
   } else {
     my $model = $self->{model};
     if ($args->{Name} eq "class") {
@@ -126,14 +126,14 @@ sub _process
 
   $self->{classes} = $handler->{classes};
 
-  my $package_name = _namespace_to_package_name($handler->{namespace});
+  my $package_name = _namespace_to_package_name($handler->{name_space});
 
   for my $class (@{$self->{classes}}) {
     my $classname = $class->name();
     $self->{class_hash}{$classname} = $class;
   }
 
-  $self->{name_space} = $handler->{namespace};
+  $self->{name_space} = $handler->{name_space};
   $self->{package_name} = $package_name;
   $self->{model_name} = $handler->{modelname};
 }
@@ -221,6 +221,12 @@ sub name_space
 {
   my $self = shift;
   return $self->{name_space};
+}
+
+sub package_name
+{
+  my $self = shift;
+  return $self->{package_name};
 }
 
 sub model_name

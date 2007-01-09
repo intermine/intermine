@@ -13,7 +13,7 @@ sub new
     die "-model argument missing in ItemFactory constructor\n";
   }
   my $model = $opts{model};
-  my $self = { id_counter => 0, %opts, namespace => $model->namespace() };
+  my $self = { id_counter => 0, %opts, name_space => $model->name_space() };
 
   bless $self, $class;
   return $self;
@@ -30,7 +30,7 @@ sub make_item
     if ($args{classname} =~ m;^http://;) {
       $classname = $args{classname};
     } else {
-      $classname = $self->{model}->namespace() . $args{classname};
+      $classname = $self->{model}->package_name() . '.' . $args{classname};
     }
   }
 
@@ -39,7 +39,7 @@ sub make_item
     if ($args{implements} =~ m;^http://;) {
       $implements = $args{implements};
     } else {
-      $implements = $self->{model}->namespace() . $args{implements};
+      $implements = $self->{model}->package_name() . '.' . $args{implements};
     }
   }
 
