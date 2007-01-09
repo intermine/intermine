@@ -99,6 +99,8 @@ sub set
     die "object ", $self->get('id'), " ($classes) cannot have a $name field\n";
   }
 
+  $self->{$name} = $value;
+
   if (ref $value) {
     if (ref $value eq 'ARRAY') {
       if (ref $field ne 'InterMine::Model::Collection') {
@@ -113,6 +115,14 @@ sub set
         if ($other_item->instance_of($field->referenced_classdescriptor())) {
           if ($field->is_one_to_many()) {
             $other_item->set($field->reverse_reference_name(), $self);
+          } else {
+            if ($field->is_many_to_many()) {
+              my @other_collection = @{$other_item->get($field->reverse_reference_name())};
+              if (!grep {$_ == $self} @other_collection) {
+                push @other_collection, $self;
+                $other_item->set($field->reverse_reference_name(), \@other_collection);
+              }
+            }
           }
         } else {
           die "collection '$name' in class '", $self->to_string(),
@@ -132,15 +142,24 @@ sub set
           "' to something other than type: ", $field->field_type(), "\n";
     }
   }
-
-  $self->{$name} = $value;
 }
 
 sub get
 {
   my $self = shift;
-  my $field = shift;
-  return $self->{$field};
+  my $fieldname = shift;
+  my $field = $self->get_object_field_by_name($fieldname);
+
+  my $retval = $self->{$fieldname};
+  if (defined $retval) {
+    return $retval;
+  } else {
+    if ($field->field_type() eq 'collection') {
+      return [];
+    } else {
+      return undef;
+    }
+  }
 }
 
 sub model
@@ -198,7 +217,14 @@ sub valid_field
 sub instance_of
 {
   my $self = shift;
-  1;
+  my $other_class_desc = shift;
+
+  for my $class_desc ($self->all_class_descriptors()) {
+    if ($class_desc->sub_class_of($other_class_desc)) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 sub to_string
