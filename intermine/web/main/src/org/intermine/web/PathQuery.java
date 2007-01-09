@@ -175,7 +175,7 @@ public class PathQuery
     
     /**
      * Sets the value of view
-     * @param view the value of view
+     * @param view a List of String paths
      */
     public void setView(List view) {
         this.view = view;
@@ -183,7 +183,7 @@ public class PathQuery
 
     /**
      * Gets the value of view
-     * @return the value of view
+     * @return a List of String paths
      */
     public List getView() {
         return view;
