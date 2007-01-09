@@ -24,12 +24,6 @@ my $item_factory = new InterMine::ItemFactory(model => $model);
 
 my @items_to_write = ();
 
-my $data_source_item = make_item('DataSource');
-$data_source_item->set('name', $data_source);
-
-my $data_set_item = make_item('DataSet');
-$data_set_item->set('title', "$data_source data set taxon id: $taxon_id");
-
 my $org_item = make_item('Organism');
 $org_item->set('taxonId', $taxon_id);
 
@@ -43,6 +37,12 @@ sub make_item
   }
   return $item;
 }
+
+my $data_source_item = make_item('DataSource');
+$data_source_item->set('name', $data_source);
+
+my $data_set_item = make_item('DataSet');
+$data_set_item->set('title', "$data_source data set taxon id: $taxon_id");
 
 # make a protein and add two publications to its evidence collection
 my $protein1_item = make_item('Protein');
