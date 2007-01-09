@@ -11,6 +11,7 @@ BEGIN {
 }
 
 use InterMine qw(Gene);
+use InterMine qw(Protein);
 use InterMine qw(Exon);
 use InterMine qw(LocatedSequenceFeature);
 use InterMine qw(Organism);
@@ -22,6 +23,9 @@ print $g->identifier(), "\n";
 print $g->organism()->taxonId(), "\n";
 for my $exon ($g->exons()) {
   print $exon->identifier(), "\n";
+}
+for my $prot ($g->proteins()) {
+  print $prot->identifier(), "\n";
 }
 
 # my $genes = 
