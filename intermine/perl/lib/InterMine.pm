@@ -124,7 +124,7 @@ sub import {
           push @foreign_keys, $field->field_name(), $foreign_key_settings;
         } else {
            if ($field->is_one_to_many()) {
-             my $reverse_reference_field_name = 
+             my $reverse_reference_field_name =
                $field->reverse_reference()->field_name();
              my $relationship_settings =
              {
@@ -134,7 +134,17 @@ sub import {
              };
              push @relationships, $field->field_name(), $relationship_settings;
            } else {
-#             _make_mapping_table($field)
+             if ($field->is_many_to_many()) {
+               my $map_class = _make_mapping_table($field);
+               my $relationship_settings =
+               {
+                type      => 'many to many',
+                map_class => $map_class,
+               };
+               push @relationships, $field->field_name(), $relationship_settings;
+             } else {
+               warn "unimplemented: ", $field->field_name(), "\n";
+             }
            }
         }
       }
@@ -146,6 +156,8 @@ sub import {
     $setup_args{relationships} = \@relationships;
 
     my $lc_class = lc $class;
+
+    $setup_args{table} = $class;
 
     eval <<"EOF";
 package InterMine::$class;
@@ -167,45 +179,52 @@ EOF
 
 sub _make_mapping_table
 {
-  my $class = shift;
   my $field = shift;
-  my $reverse_field = shift;
+  my $reverse_field = $field->reverse_reference();
   my $field_name = $field->field_name();
   my $reverse_field_name = $reverse_field->field_name();
 
-  eval <<"EOF"
-package InterMine::$class\::
+  my $lc_field_name = lc $field_name;
+  my $lc_reverse_field_name = lc $reverse_field_name;
 
-use base 'My::DB::Object';
+  my $field_class_name = $reverse_field->field_class()->unqualified_name();
+  my $reverse_field_class_name = $field->field_class()->unqualified_name();
+
+  my $map_class = 'InterMine::' . ucfirst $field_name . ucfirst $reverse_field_name . 'Map';
+
+  eval <<"EOF";
+package $map_class;
+
+use base 'InterMine::DB::Object';
 
 __PACKAGE__->meta->setup
 (
- table   => 'product_color_map',
+ table   => '${lc_reverse_field_name}${lc_field_name}',
  columns =>
  [
-  product_id => { type => 'int', not_null => 1 },
-  color_id   => { type => 'int', not_null => 1 },
+  ${lc_field_name} => { type => 'int', not_null => 1 },
+  ${lc_reverse_field_name} => { type => 'int', not_null => 1 },
  ],
 
- primary_key_columns => [ 'product_id', 'color_id' ],
+ primary_key_columns => [ '${lc_field_name}', '${lc_reverse_field_name}' ],
 
  foreign_keys =>
  [
-  product =>
+  ${lc_reverse_field_name} =>
   {
-   class       => 'Product',
-   key_columns => { product_id => 'id' },
+   class       => '$reverse_field_class_name',
+   key_columns => { ${lc_field_name} => 'id' },
   },
 
-  color =>
+  ${lc_reverse_field_name} =>
   {
-   class       => 'Color',
-   key_columns => { color_id => 'id' },
+   class       => '$field_class_name',
+   key_columns => { ${lc_reverse_field_name} => 'id' },
   },
  ],
 );
 EOF
-
+  return $map_class;
 }
 
 1;

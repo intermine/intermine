@@ -55,6 +55,12 @@ sub name
   return $self->{name};
 }
 
+sub unqualified_name
+{
+  my $self = shift;
+  return ($self->{name} =~ /.*\.(.*)/)[0];
+}
+
 sub extends
 {
   my $self = shift;
