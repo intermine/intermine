@@ -10,6 +10,8 @@ sub new
   $self->{fields} = [];
   $self->{field_hash} = {};
 
+  $self->{extends} = $opts{extends};
+
   if (!exists $opts{name}) {
     die "no name given to class constructor\n";
   }
@@ -67,6 +69,25 @@ sub extends
   return @{$self->{extends}};
 }
 
+sub extends_class_descriptors
+{
+  my $self = shift;
+
+  if (!defined $self->{extends_class_descriptors}) {
+    $self->{extends_class_descriptors} = [];
+    for my $extendee (@{$self->{extends}}) {
+      my $extendee_cd = $self->{model}->get_classdescriptor_by_name($extendee);
+
+      if (defined $extendee_cd) {
+        push @{$self->{extends_class_descriptors}}, $extendee_cd;
+      } else {
+        die "can't find $extendee in the model\n"
+      }
+    }
+  }
+  return @{$self->{extends_class_descriptors}};
+}
+
 sub get_field_by_name
 {
   my $self = shift;
@@ -104,6 +125,24 @@ sub collections
 {
   my $self = shift;
   return @{$self->{collections}}
+}
+
+sub sub_class_of
+{
+  my $self = shift;
+  my $other_class_desc = shift;
+
+  if ($self == $other_class_desc) {
+    return 1;
+  } else {
+    for my $extendee_class_desc ($self->extends_class_descriptors()) {
+      if ($extendee_class_desc->sub_class_of($other_class_desc)) {
+        return 1;
+      }
+    }
+  }
+
+  return 0;
 }
 
 1;

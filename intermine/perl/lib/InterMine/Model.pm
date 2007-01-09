@@ -48,8 +48,10 @@ sub start_element
   my $nameattr = $args->{Attributes}{name};
 
   if ($args->{Name} eq "model") {
-    $self->{modelname} = $nameattr;
-    $self->{name_space} = $args->{Attributes}{namespace};
+    $self->{model}{modelname} = $nameattr;
+    $self->{model}{name_space} = $args->{Attributes}{namespace};
+    my $package_name = InterMine::Model::_namespace_to_package_name($args->{Attributes}{namespace});
+    $self->{model}{package_name} = $package_name;
   } else {
     my $model = $self->{model};
     if ($args->{Name} eq "class") {
@@ -126,16 +128,10 @@ sub _process
 
   $self->{classes} = $handler->{classes};
 
-  my $package_name = _namespace_to_package_name($handler->{name_space});
-
   for my $class (@{$self->{classes}}) {
     my $classname = $class->name();
     $self->{class_hash}{$classname} = $class;
   }
-
-  $self->{name_space} = $handler->{name_space};
-  $self->{package_name} = $package_name;
-  $self->{model_name} = $handler->{modelname};
 }
 
 sub _namespace_to_package_name

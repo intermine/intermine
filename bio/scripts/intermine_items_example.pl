@@ -45,8 +45,20 @@ sub make_item
 }
 
 # make a protein and add two publications to its evidence collection
-my $protein_item = make_item('Protein');
-$protein_item->set('primaryAccession', 'Q8I5D2');
+my $protein1_item = make_item('Protein');
+$protein1_item->set('primaryAccession', 'Q8I5D2');
+
+my $protein2_item = make_item('Protein');
+$protein2_item->set('primaryAccession', 'Q8I4X0');
+
+my $gene1_item = make_item('Gene');
+$gene1_item->set('identifier', 'gene 1');
+
+my $gene2_item = make_item('Gene');
+$gene2_item->set('identifier', 'gene 2');
+
+$protein1_item->set('genes', [$gene1_item, $gene2_item]);
+$protein2_item->set('genes', [$gene1_item, $gene2_item]);
 
 my $pub1_item = make_item('Publication');
 $pub1_item->set('pubMedId', 12368864);
@@ -54,14 +66,15 @@ $pub1_item->set('pubMedId', 12368864);
 my $pub2_item = make_item('Publication');
 $pub2_item->set('pubMedId', 16248207);
 
-# set a collection
-$protein_item->set('evidence', [$pub1_item, $pub2_item]);
+# set a collection - no reverse reference
+$protein1_item->set('evidence', [$pub1_item, $pub2_item]);
 
 my $protein_region_item = make_item('ProteinRegion');
 $protein_region_item->set('curated', 'true');
 $protein_region_item->set('identifier', 'protein_region_1');
 
-$protein_item->set('regions', [$protein_region_item]);
+# set a collection and automatically set the reverse reference
+$protein1_item->set('regions', [$protein_region_item]);
 
 
 my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3);
