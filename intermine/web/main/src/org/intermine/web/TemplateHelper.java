@@ -48,7 +48,6 @@ import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.results.InlineTemplateTable;
 import org.intermine.web.results.PagedResults;
 import org.intermine.web.results.WebResults;
-import org.intermine.web.tagging.TagTypes;
 
 /**
  * Static helper routines related to templates.
