@@ -503,7 +503,7 @@ public class ProfileManager
      * @throws ObjectStoreException if something goes wrong
      */
     public synchronized Tag getTagById(int id) throws ObjectStoreException {
-        return (Tag) getUserProfileObjectStore().getObjectById(new Integer(id));
+        return (Tag) getUserProfileObjectStore().getObjectById(new Integer(id), Tag.class);
     }
 
     /**
