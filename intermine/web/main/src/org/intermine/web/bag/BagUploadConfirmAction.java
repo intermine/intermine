@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * Action class for saving a bag from the bagUploadConfirm page into the user profile.
@@ -66,6 +67,9 @@ public class BagUploadConfirmAction extends InterMineAction
         String bagType = confirmForm.getBagType();
         for (int i = 0; i < ids.length; i++) {
             String idString = ids[i];
+            if (idString.length() == 0) {
+                continue;
+            }
             int id = Integer.parseInt(idString);
             contents.add(new BagElement(new Integer(id), bagType));
         }
@@ -74,6 +78,12 @@ public class BagUploadConfirmAction extends InterMineAction
             int id = Integer.parseInt(idString);
             contents.add(new BagElement(new Integer(id), bagType));
         }
+        
+        if (contents.size() == 0) {
+            recordError(new ActionMessage("bagUploadConfirm.emptyBag"), request);
+            return mapping.findForward("error");
+        }
+        
         ProfileManager profileManager =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStore profileOs = profileManager.getUserProfileObjectStore();
