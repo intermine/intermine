@@ -48,6 +48,11 @@ public class MetadataManager
     public static final String KEY_DEFINITIONS = "keyDefs";
 
     /**
+     * The name of the key to use to store the class_keys.properties file.
+     */
+    public static final String CLASS_KEYS = "class_keys";
+
+    /**
      * Name of the key under which to store the serialized version of the class descriptions
      */
     //public static final String CLASS_DESCRIPTIONS = "classDescs";
@@ -139,6 +144,15 @@ public class MetadataManager
     }
 
     /**
+     * Load the class key / key field definitions.
+     * @param classKeys the prefix of the class_keys file.
+     * @return the class key definitions
+     */
+    public static Properties loadClassKeyDefinitions(String classKeys) {
+        return PropertiesUtil.loadProperties(getFilename(CLASS_KEYS, null));
+    }
+    
+    /**
      * Save the key definitions, in serialized form, to the specified directory
      * @param properties the key definitions
      * @param destDir the destination directory
@@ -150,6 +164,16 @@ public class MetadataManager
         write(properties, new File(destDir, getFilename(KEY_DEFINITIONS, modelName)));
     }
 
+    /**
+     * Save the class keys, in serialized form, to the specified directory
+     * @param properties the class keys
+     * @param destDir the destination
+     * @throws IOException if an error occurs
+     */
+    public static void saveClassKeys(String properties, File destDir) throws IOException {
+        write(properties, new File(destDir, getFilename(CLASS_KEYS, null)));
+    }
+    
     /**
      * Load the class descriptions file for the named model from the classpath
      * @param modelName the model name
@@ -178,10 +202,17 @@ public class MetadataManager
      * @return name of file
      */
     public static String getFilename(String key, String modelName) {
-        String filename = modelName + "_" + key;
+        String filename;
+        if (modelName == null) {
+            filename = key;
+        } else {
+            filename = modelName + "_" + key;
+        }
         if (MODEL.equals(key)) {
             return filename += ".xml";
-        } else if (KEY_DEFINITIONS.equals(key)/* || CLASS_DESCRIPTIONS.equals(key)*/) {
+        } else if (KEY_DEFINITIONS.equals(key)
+                   || CLASS_KEYS.equals(key)
+                   /* || CLASS_DESCRIPTIONS.equals(key)*/) {
             return filename += ".properties";
         }
         throw new IllegalArgumentException("Unrecognised key '" + key + "'");
