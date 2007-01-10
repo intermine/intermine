@@ -48,10 +48,18 @@ public class MetadataNode extends Node
         return button;
     }
 
+    /**
+     * Get the value of selected
+     * @return the value of selected as a boolean
+     */
     public boolean isSelected() {
         return selected;
     }
 
+    /**
+     * Sets the value of selected
+     * @param selected a boolean
+     */
     public void setSelected(boolean selected) {
         this.selected = selected;
     }

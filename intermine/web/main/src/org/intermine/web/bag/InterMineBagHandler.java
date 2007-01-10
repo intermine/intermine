@@ -39,7 +39,8 @@ public class InterMineBagHandler extends DefaultHandler
 
     /**
      * Create a new InterMineBagHandler object.
-     *
+     * @param uos
+     *            UserProfile ObjectStore
      * @param os
      *            ObjectStore used to resolve object ids
      * @param bags

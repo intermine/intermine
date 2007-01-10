@@ -10,6 +10,8 @@ package org.intermine.web.bag;
  *
  */
 
+import java.io.StringReader;
+import java.lang.ref.SoftReference;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.model.userprofile.SavedBag;
+import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -31,18 +39,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.web.results.ResultElement;
-
-import java.io.StringReader;
-import java.lang.ref.SoftReference;
-
-import org.apache.log4j.Logger;
 
 /**
  * A Set that retains information about the order and number of objects (and Lists) that are added.
@@ -109,6 +106,7 @@ public class InterMineBag extends AbstractSet
      * @param name the name of the bag, to be saved in the userprofile database
      * @param type the class of objects stored in the bag
      * @param os the ObjectStore to use to store the contents of the bag
+     * @param uos the UserProfile ObjectStore
      * @param c the new bag contents
      */
     public InterMineBag(Integer userId, String name, String type, ObjectStore uos, ObjectStore os,

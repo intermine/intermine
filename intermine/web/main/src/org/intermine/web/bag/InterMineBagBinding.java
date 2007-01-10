@@ -106,6 +106,7 @@ public class InterMineBagBinding
     /**
      * Parse saved queries from a Reader
      * @param reader the saved bags
+     * @param uos UserProfile ObjectStore
      * @param os ObjectStore used to resolve object ids
      * @param idUpgrader bag object id upgrader
      * @param userId an Integer
