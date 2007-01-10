@@ -37,6 +37,7 @@ public class Type
     private String className;
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
+    private ListOrderedSet graphDisplayers = new ListOrderedSet();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
 
@@ -103,6 +104,24 @@ public class Type
         }
     }
     
+    
+    /**
+     * Get the GraphDisplayers for thi type
+     * @return the List of GraphDisplayers
+     */
+    public ListOrderedSet getGraphDisplayers() {
+        return graphDisplayers;
+    }
+
+    /**
+     * Add a GraphDisplayer to the List oof GraphDisplayers
+     * for that type
+     * @param gdisp a GraphDisplayer
+     */
+    public void addGraphDisplayer(GraphDisplayer gdisp) {
+        graphDisplayers.add(gdisp);
+    }
+
     /**
      * Set the table displayer for this Type
      * @param disp the Displayer
