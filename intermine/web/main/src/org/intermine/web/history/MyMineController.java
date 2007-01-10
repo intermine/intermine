@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.Constants;
@@ -75,12 +76,16 @@ public class MyMineController extends TilesAction
         }
         
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
+        getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Collection qualifiedTypes = os.getModel().getClassNames();
         ArrayList typeList = new ArrayList();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
-            String unqualifiedName = TypeUtil.unqualifiedName((String) iter.next());
-            if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)) {
+            String className = (String) iter.next();
+            String unqualifiedName = TypeUtil.unqualifiedName(className);
+            if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
+                && oss.getClassCount(className) > 0) {
                 typeList.add(unqualifiedName);
             }
         }
