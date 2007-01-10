@@ -186,6 +186,9 @@
     
     <action path="/exportQuery"
             type="org.intermine.web.ExportQueryAction"/>
+            
+    <action path="/loadTmpImg"
+            type="org.intermine.web.widget.TempImageLoader"/>
 
     <!-- Actions invoked using links -->
     
@@ -313,6 +316,12 @@
             type="org.intermine.web.results.AddToBagAction">
       <forward name="objectDetails" path="/objectDetails.do" redirect="true"/>
     </action>
+    
+    <action path="/queryForGraphAction"
+            type="org.intermine.web.results.QueryForGraphAction">
+      <forward name="results" path="/results.do" redirect="true"/>
+    </action>
+    
     
     <!-- wait for a custom build query to run -->
     <action path="/pollQuery"
