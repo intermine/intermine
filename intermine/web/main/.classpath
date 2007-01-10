@@ -22,6 +22,9 @@
 	<classpathentry kind="lib" path="lib/lucene-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-highlighter-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/taglibs-string.jar"/>
+	<classpathentry kind="lib" path="lib/xalan.jar"/>
 	<classpathentry kind="lib" path="lib/base64.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

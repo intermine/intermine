@@ -87,6 +87,11 @@ public class WebConfig
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
 
+        digester.addObjectCreate("webconfig/class/graphdisplayers/graphdisplayer",
+                                 GraphDisplayer.class);
+        digester.addSetProperties("webconfig/class/graphdisplayers/graphdisplayer");
+        digester.addSetNext("webconfig/class/graphdisplayers/graphdisplayer", "addGraphDisplayer");
+        
         digester.addSetNext("webconfig/class", "addType");
         
         digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);
@@ -95,7 +100,7 @@ public class WebConfig
         digester.addSetProperties("webconfig/tableExportConfig", "className", "className");
 
         digester.addSetNext("webconfig/tableExportConfig", "addTableExportConfig");
-
+        
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
         webConfig.setSubClassConfig(model);
