@@ -80,11 +80,26 @@
 </td>
 
 <td valign="top" align="center" width="50%">
-<%--   <img src="bagGraphWidget.do?bagName=${bag.name}" map="#chart" />--%>
-<iframe src="bagGraphWidget.do?bagName=${bag.name}" width="450" height="350" frameborder="0"></iframe>
+<i>Here will be the bag description</i>
 </td>
 </tr></table>
 </div>
+
+<br/>
+
+<c:if test="${! empty graphDisplayerArray}">
+<div class="heading">
+  Widgets
+</div>
+<div class="body">
+  <c:forEach items="${graphDisplayerArray}" var="htmlContent">
+    <div class="widget">
+      <c:out value="${htmlContent[0]}" escapeXml="false"/>
+      <p><c:out value="${htmlContent[1]}"/></p>
+    </div>
+  </c:forEach>
+</div>
+</c:if>
 
 <div class="heading">
   Templates
