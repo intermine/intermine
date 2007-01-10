@@ -69,27 +69,25 @@ public class BuildBagAction extends InterMineAction
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
-        String trimmedText = buildBagForm.getText().trim();
-        FormFile formFile = buildBagForm.getFormFile();
-
         BufferedReader reader = null;
 
-        if (trimmedText.length() == 0) {
-            if (formFile == null
-                || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
-                recordError(new ActionMessage("bagBuild.noBagToSave"), request);
-                return mapping.findForward("mymine");
-            } else {
-                reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
-            }
-        } else {
-            if (formFile == null
-                || formFile.getFileName() == null || formFile.getFileName().length() == 0) {
-                reader = new BufferedReader(new StringReader(trimmedText));
-            } else {
-                recordError(new ActionMessage("bagBuild.textAndFilePresent"), request);
-                return mapping.findForward("mymine");
-            }
+        if (request.getParameter("paste") != null) {
+        	String trimmedText = buildBagForm.getText().trim();
+        	if (trimmedText.length() == 0) {
+        		recordError(new ActionMessage("bagBuild.noBagPaste"), request);
+        		return mapping.findForward("mymine");
+        	} else {
+        		reader = new BufferedReader(new StringReader(trimmedText));
+        	}
+        } else if (request.getParameter("file") != null) {
+        	FormFile formFile = buildBagForm.getFormFile();
+        	if (formFile == null
+        			|| formFile.getFileName() == null || formFile.getFileName().length() == 0) {
+        		recordError(new ActionMessage("bagBuild.noBagFile"), request);
+        		return mapping.findForward("mymine");
+        	} else {
+        		reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
+        	}
         }
 
         String thisLine;
