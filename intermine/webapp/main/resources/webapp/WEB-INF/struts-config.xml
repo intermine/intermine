@@ -483,6 +483,7 @@
             parameter="action"
             input="buildBag">
       <forward name="back" path="bag.page"/>
+      <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
     </action>
 
