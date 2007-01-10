@@ -2,6 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
 "http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
 <article>
+
   <section>
     <title>FlyMine version 6.0 - release notes</title>
 
@@ -16,7 +17,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
     </para>
 
     <para>
-   An upcoming release of FlyMine will introduce a new system for uploading and managing bags of data.  -- FlyMine,
+   An upcoming release of FlyMine will introduce a new system for uploading and managing bags of data.
     </para>
 
       <itemizedlist>
@@ -25,7 +26,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
         <itemizedlist>
     <listitem><para>NEW - Microarray-based gene expression data for <emphasis>D. melanogaster</emphasis> from FlyAtlas.</para></listitem>
     <listitem><para>NEW - High-throughput cell-based RNAi screens from the <emphasis>Drosophila</emphasis> RNAi Screening Center.</para></listitem>
-    <listitem><para>NEW - Transcriptional cis-regulatory modules (CRMs) for <emphasis>D.melanogaster</emphasis> from REDfly.</para></listitem>
+    <listitem><para>NEW - Transcriptional cis-regulatory modules (CRMs) for <emphasis>D. melanogaster</emphasis> from REDfly.</para></listitem>
     <listitem><para>NEW - Probe sets from the Affymetrix GeneChip Drosophila Genome 2.0 Array.</para></listitem>
     <listitem><para>NEW - Syntenic regions between <emphasis>D. melanogaster</emphasis> and <emphasis>D. pseudoobscura.</emphasis></para></listitem>
     <listitem><para>NEW - Orthologues and GO annotation for <emphasis>S. pombe</emphasis> and <emphasis>P. falciparum.</emphasis></para></listitem>
@@ -38,7 +39,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
     <listitem><para>UPDATE - Proteins now have a length (in amino acids) and molecularWeight (in Daltons).</para></listitem>
     <listitem><para>FIX - Protein interaction confidence scores restored.</para></listitem>
     <listitem><para>FIX - PCRProducts now reference the TilingPathSpan they create.</para></listitem>
-    <listitem><para>FIX - Some unpublished micorarry experiments have been removed.</para></listitem>
+    <listitem><para>FIX - Some unpublished microarray experiments have been removed.</para></listitem>
        </itemizedlist>
       </listitem>
 
@@ -51,7 +52,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
     <listitem><para>NEW - The trail now includes a 'Query' link back to the template or Query Builder, i.e. now 'Query -> Results'.</para></listitem>
     <listitem><para>UPDATE - It is no longer possible to create bags of objects from results or upload.</para></listitem>
     <listitem><para>UPDATE - Chromosomal locations are displayed in a more compact format (e.g. 2R:1598168-1676472).</para></listitem>
-    <listitem><para>UPDATE - 'History' had been renamed to 'My Mine' and the layout improved.</para>
+    <listitem><para>UPDATE - 'History' has been renamed to 'My Mine' and the layout improved.</para>
         <itemizedlist>
           <listitem><para>improved query and template XML import/export options.</para></listitem>
           <listitem><para>added a 'Change Password' tab.</para></listitem>
@@ -66,7 +67,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
       <listitem>
         <para>Tools</para>
         <itemizedlist>
-          <listitem><para>There are no changes to tools availale in release 6.0.</para></listitem>
+          <listitem><para>There are no changes to tools available in release 6.0.</para></listitem>
         </itemizedlist>
       </listitem>
 
@@ -78,6 +79,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
       </listitem>
     </itemizedlist>
   </section>
+
 
   <section>
     <title>FlyMine version 5.0 - release notes</title>
