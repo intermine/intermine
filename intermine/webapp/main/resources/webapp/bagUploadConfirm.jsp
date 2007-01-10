@@ -18,14 +18,6 @@
     <input type="hidden" name="bagType" value="${bagType}"/>
     <fmt:message key="bagUploadConfirm.bagName"/>: 
     <input type="text" name="bagName" value="${bagName}" size="20"/>
-    <html:submit property="action">
-      <fmt:message key="bagUploadConfirm.submitOK"/>
-    </html:submit>
-    <c:if test="${fn:length(unresolved) == 0}">
-      <p>
-        You have no unresolved identifiers.
-      </p>
-    </c:if>
   </div>
   <c:if test="${!empty issues['DUPLICATE']}">
     <div class="heading">
@@ -42,6 +34,11 @@
       </c:forEach>
     </div>
   </c:if>
+
+  <html:submit property="action">
+    <fmt:message key="bagUploadConfirm.submitOK"/>
+  </html:submit>
+
   <c:if test="${fn:length(unresolved) > 0}">
     <div class="heading">
       <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
