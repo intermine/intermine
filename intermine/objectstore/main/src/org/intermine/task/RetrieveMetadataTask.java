@@ -72,6 +72,7 @@ public class RetrieveMetadataTask extends Task
 
             String modelXml = MetadataManager.retrieve(db, MetadataManager.MODEL);
             String keyDefs = MetadataManager.retrieve(db, MetadataManager.KEY_DEFINITIONS);
+            String classKeys = MetadataManager.retrieve(db, MetadataManager.CLASS_KEYS);
             //String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
             
             Model model = new InterMineModelParser().process(new StringReader(modelXml));
@@ -80,6 +81,10 @@ public class RetrieveMetadataTask extends Task
             
             if (keyDefs != null) {
                 MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
+            }
+            
+            if (classKeys != null) {
+                MetadataManager.saveClassKeys(classKeys, destDir);
             }
             
             if (localModel.exists()

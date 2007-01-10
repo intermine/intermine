@@ -62,6 +62,7 @@ public class StoreMetadataTask extends Task
 
             Model model = MetadataManager.loadModel(modelName);
             MetadataManager.store(db, MetadataManager.MODEL, model.toString());
+            
             Properties keys = MetadataManager.loadKeyDefinitions(modelName);
             if (keys == null) {
                 throw new BuildException("no keys for " + modelName
@@ -70,6 +71,11 @@ public class StoreMetadataTask extends Task
             MetadataManager.store(db, MetadataManager.KEY_DEFINITIONS,
                                   PropertiesUtil.serialize(keys));
 
+            Properties classKeys = 
+                MetadataManager.loadClassKeyDefinitions(MetadataManager.CLASS_KEYS);
+            MetadataManager.store(db, MetadataManager.CLASS_KEYS, 
+                                  PropertiesUtil.serialize(classKeys));
+            
             /*Properties descriptions = MetadataManager.loadClassDescriptions(modelName);
             if (descriptions != null) {
                 MetadataManager.store(db, MetadataManager.CLASS_DESCRIPTIONS,
