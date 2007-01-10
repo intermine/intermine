@@ -10,7 +10,11 @@ package org.intermine.web.bag;
  *
  */
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -24,11 +28,16 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
+import org.intermine.web.config.GraphDisplayer;
+import org.intermine.web.config.Type;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.results.PagedCollection;
 import org.intermine.web.results.WebCollection;
+import org.intermine.web.widget.BagGraphWidget;
+import org.intermine.web.widget.DataSetLdr;
 
 /**
  * @author Xavier Watkins
@@ -54,12 +63,41 @@ public class BagDetailsController extends TilesAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        
-        WebCollection webCollection = 
-            new WebCollection(os, imBag.getType(), imBag, model, webConfig, classKeys);
+
+        Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
+        Set graphDisplayers = type.getGraphDisplayers();
+        ArrayList graphDisplayerArray = new ArrayList();
+        for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
+            GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
+            String dataSetLoader = graphDisplayer.getDataSetLoader();
+            Class clazz = TypeUtil.instantiate(dataSetLoader);
+            Constructor constr = clazz.getConstructor(new Class[]
+                {
+                    InterMineBag.class, ObjectStore.class
+                });
+            DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
+                {
+                    imBag, os
+                });
+            //TODO use caching here
+            //TODO check there is results as well!!!
+            BagGraphWidget bagGraphWidget = new BagGraphWidget(session, dataSetLdr.getDataSet(),
+                                                               dataSetLdr.getGeneCategoryArray(),
+                                                               bagName, graphDisplayer.getTitle(),
+                                                               graphDisplayer.getDomainLabel(),
+                                                               graphDisplayer.getRangeLabel(),
+                                                               graphDisplayer.getToolTipGen(),
+                                                               graphDisplayer.getUrlGen());
+            graphDisplayerArray.add(new String[] {bagGraphWidget.getHTML(), 
+                graphDisplayer.getDescription()});
+        }
+
+        WebCollection webCollection = new WebCollection(os, imBag.getType(), imBag, model,
+                                                        webConfig, classKeys);
         PagedCollection pagedColl = new PagedCollection(webCollection);
         request.setAttribute("bag", imBag);
         request.setAttribute("pagedColl", pagedColl);
+        request.setAttribute("graphDisplayerArray", graphDisplayerArray);
 
         return null;
     }
