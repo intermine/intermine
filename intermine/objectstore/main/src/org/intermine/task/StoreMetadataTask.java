@@ -71,10 +71,10 @@ public class StoreMetadataTask extends Task
             MetadataManager.store(db, MetadataManager.KEY_DEFINITIONS,
                                   PropertiesUtil.serialize(keys));
 
-            Properties classKeys = 
+            /*Properties classKeys = 
                 MetadataManager.loadClassKeyDefinitions(MetadataManager.CLASS_KEYS);
             MetadataManager.store(db, MetadataManager.CLASS_KEYS, 
-                                  PropertiesUtil.serialize(classKeys));
+                                  PropertiesUtil.serialize(classKeys));*/
             
             /*Properties descriptions = MetadataManager.loadClassDescriptions(modelName);
             if (descriptions != null) {
