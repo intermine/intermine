@@ -15,7 +15,7 @@
     </filter-uniprot>
   </target>
   
-  <target name="-retrieve-src-from-xml-file" if="have.file.custom.tgt">
+  <target name="-retrieve-tgt-from-custom-file" if="have.file.custom.tgt">
     <convert-file      
       model="${target.model}"
 	  clsName="${convertor.class}"
