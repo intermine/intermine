@@ -69,7 +69,13 @@ Couldn't find ${build.properties.file}
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
   </target>
 
-  <target name="do-jar" depends="-init-presetdef-war">
+
+  <target name="-retrieve-metadata" unless="temporary.webapp.project" depends="-init-task-xml">
+    <!-- retrieves class_keys.properties --> 
+    <retrieve-metadata osName="${objectstore.name}" destDir="${build.dir}/webapp/WEB-INF"/>
+  </target>
+
+  <target name="do-jar" depends="-init-presetdef-war, -retrieve-metadata">
     <appl:war/>
   </target>
 
