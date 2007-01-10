@@ -29,9 +29,7 @@
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/getopt.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/giny.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/glf.jar"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/jcommon-1.0.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/jdom.jar"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/jfreechart-1.0.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/jhall.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/jnlp.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/looks-1.1.3.jar"/>
@@ -45,8 +43,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-dbcp-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.0-rc1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="resources/webapp/model/JmolApplet.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-core-main"/>
