@@ -67,15 +67,12 @@ Couldn't find ${build.properties.file}
   <target name="-pre-jar" depends="-final-app-pre-jar, webapp.-pre-jar">
     <!-- Start with base intermine webapp war -->
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
+    <read-resource resource="class_keys.properties" property="class.keys" 
+                   classpathref="task.class.path"/>
+    <echo message="${class.keys}" file="${build.dir}/webapp/WEB-INF/class_keys.properties"/>
   </target>
 
-
-  <target name="-retrieve-metadata" unless="temporary.webapp.project" depends="-init-task-xml">
-    <!-- retrieves class_keys.properties --> 
-    <retrieve-metadata osName="${objectstore.name}" destDir="${build.dir}/webapp/WEB-INF"/>
-  </target>
-
-  <target name="do-jar" depends="-init-presetdef-war, -retrieve-metadata">
+  <target name="do-jar" depends="-init-presetdef-war">
     <appl:war/>
   </target>
 

@@ -90,8 +90,6 @@
           todir="${build.classes.dir}"/>
     <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
           todir="${build.classes.dir}"/>
-    <copy file="${build.model.dir}/class_keys.properties"
-          todir="${build.classes.dir}"/>
     <property name="regenerate.java" value="true"/>
   </target>
 
