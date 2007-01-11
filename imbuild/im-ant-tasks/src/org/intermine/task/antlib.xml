@@ -18,4 +18,7 @@
     <typedef
         name="postprocess"
     	classname="org.intermine.task.PostProcessTask"/>
+    <typedef
+        name="read-resource"
+    	classname="org.intermine.task.ReadResourceTask"/>
 </antlib>
