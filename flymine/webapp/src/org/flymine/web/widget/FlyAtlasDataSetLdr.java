@@ -41,7 +41,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class FlyAtlasDataSetLdr implements DataSetLdr
 {
     private DefaultCategoryDataset dataSet;
-
+    private Results results;
     private Object[] geneCategoryArray;
 
     /**
@@ -87,7 +87,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         maincs.addConstraint(cc2);
         q.setConstraint(maincs);
 
-        Results results = new Results(q, os, os.getSequence());
+        results = new Results(q, os, os.getSequence());
         Iterator iter = results.iterator();
         HashMap callTable = new HashMap();
         HashMap geneMap = new HashMap();
@@ -158,6 +158,13 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
      */
     public Object[] getGeneCategoryArray() {
         return geneCategoryArray;
+    }
+    
+    /**
+     * @see org.intermine.web.widget.DataSetLdr#getResultsSize()
+     */
+    public int getResultsSize(){
+        return results.size();
     }
 
 }
