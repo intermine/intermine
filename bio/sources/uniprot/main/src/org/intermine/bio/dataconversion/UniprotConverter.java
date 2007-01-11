@@ -141,7 +141,6 @@ public class UniprotConverter extends FileConverter
         private Item protein;
         private Item sequence;
         private Item comment;
-        //private Item synonym;
         private Map synonyms;
         private Map genes;
         private StringBuffer descr;
@@ -155,8 +154,8 @@ public class UniprotConverter extends FileConverter
         private ReferenceList geneCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
-        private Map gene_to_geneNameTypeToName;        
-        private Map gene_to_geneDesignations;
+        private Map geneTOgeneNameTypeToName;        
+        private Map geneTOgeneDesignations;
 
         // reset for each gene
         private Map geneNameTypeToName;     // ORF, primary, etc value for gene name
@@ -296,17 +295,6 @@ public class UniprotConverter extends FileConverter
                     // get relevant database for this organism
                     dbName = (String) taxIdToDb.get(taxonId);
                    
-                    // now that we know the taxonID, we can store the genes
-                    if (hasPrimary && !genes.isEmpty()) {
-
-                        Iterator i = genes.values().iterator();
-
-                        while (i.hasNext()) {
-                            Item gene = (Item) i.next();
-                            finaliseGene(gene, organism.getIdentifier());
-                        }
-                    }
-
                 // <entry><reference><citation><dbreference>
                 } else if (hasPrimary  && qName.equals("dbReference")
                            && stack.peek().equals("citation")
@@ -370,22 +358,21 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("dbReference")
                            && taxIdToDb.containsValue(attrs.getValue("type"))) {
 
-                    // could be identifiers but check next tag to see if this is a gene designation
+                    // could be identifier but check next tag to see if this is a gene designation
                     possibleGeneId = attrs.getValue("id");
                     possibleGeneIdSource = attrs.getValue("type");
-
-
+                    
                 // <dbreference><property type="gene designation" value="*">
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("gene designation")
                            && geneNames.contains(attrs.getValue("value"))) {
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // need to handle when there is no property
+                    // TODO need to handle when there is no property
                     // or there is only one name
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // Ensemble?
-                    if (possibleGeneIdSource != null && possibleGeneId != null)
+                    if (possibleGeneIdSource != null && possibleGeneId != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId)); 
+                    }
 
                 // <uniprot>
                 } else if (qName.equals("uniprot")) {
@@ -455,7 +442,18 @@ public class UniprotConverter extends FileConverter
 
                     // only store the protein if it has a primary accession value
                     if (hasPrimary) {
+                        
+                        // now that we know the taxonID, we can store the genes
+                        if (hasPrimary && !genes.isEmpty()) {
 
+                            Iterator i = genes.values().iterator();
+
+                            while (i.hasNext()) {
+                                Item gene = (Item) i.next();
+                                finaliseGene(gene, protein.getReference("organism").getRefId());
+                            }
+                        }
+                        
                         protein.setAttribute("description", descr.toString());
                         ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
                         protein.addCollection(evidenceColl);
@@ -467,8 +465,9 @@ public class UniprotConverter extends FileConverter
                                                  protein.getAttribute("identifier").getValue(),
                                                  datasource.getIdentifier());
 
-                        if (syn != null)
+                        if (syn != null) {
                             writer.store(ItemHelper.convert(syn));                    
+                        }
 
                     } else {
                        LOG.info("Entry " + protein.getAttribute("name")
@@ -480,6 +479,7 @@ public class UniprotConverter extends FileConverter
 
                     if (attName != null) {
                         sequence.setAttribute(attName, attValue.toString());
+                        protein.addReference(new Reference("sequence", sequence.getIdentifier()));
                         writer.store(ItemHelper.convert(sequence));
                     } else {
                         LOG.info("Sequence for " + protein.getAttribute("name")
@@ -504,8 +504,9 @@ public class UniprotConverter extends FileConverter
                     }
                     Item syn = createSynonym(protein.getIdentifier(), "name", proteinName,
                                   datasource.getIdentifier());
-                    if (syn != null)
+                    if (syn != null) {
                         writer.store(ItemHelper.convert(syn));
+                    }
                     
                 // <entry><comment><text>
                 } else if (hasPrimary && qName.equals("text") && attName != null) {
@@ -528,6 +529,8 @@ public class UniprotConverter extends FileConverter
                     String name = attValue.toString();
 
                     geneNames.add(new String(name));
+                    
+                    // genes can have more than one synonym, so use name as key for map
                     if (!type.equals("synonym")) {
                         geneNameTypeToName.put(type, name);
                     } else {
@@ -541,8 +544,8 @@ public class UniprotConverter extends FileConverter
                     genes.put(gene.getIdentifier(), gene);
 
                     // associate gene with lists
-                    gene_to_geneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
-                    gene_to_geneDesignations.put(gene.getIdentifier(), geneDesignations);
+                    geneTOgeneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
+                    geneTOgeneDesignations.put(gene.getIdentifier(), geneDesignations);
 
                 // <entry><name>
                 } else if (qName.equals("name")) {
@@ -574,7 +577,6 @@ public class UniprotConverter extends FileConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-
        }
 
         private void initData()
@@ -621,15 +623,14 @@ public class UniprotConverter extends FileConverter
             synonyms = new HashMap(); 
             descr = new StringBuffer();
             taxonId = null;
-            //synonym = null;
             dbName = null;
             comment = null;
             sequence = null;
             hasPrimary = false;
 
             // maps gene to that gene's lists
-            gene_to_geneNameTypeToName = new HashMap(); 
-            gene_to_geneDesignations = new HashMap();
+            geneTOgeneNameTypeToName = new HashMap(); 
+            geneTOgeneDesignations = new HashMap();
         }
 
 
@@ -684,15 +685,17 @@ public class UniprotConverter extends FileConverter
         private void finaliseGene(Item gene, String orgId)
             throws SAXException {
             try {
-
+                
                 // Gene.identifier = <entry><gene><name type="ORF">
                 String geneIdentifier = null;
                 // Gene.name = <entry><gene><name type="primary">
                 String primaryGeneName = null;
 
                 // get list for this gene
-                HashMap nameTypeToName = (HashMap) gene_to_geneNameTypeToName.get(gene.getIdentifier());
-                HashMap designations = (HashMap) gene_to_geneDesignations.get(gene.getIdentifier());
+                HashMap nameTypeToName = (HashMap) 
+                    geneTOgeneNameTypeToName.get(gene.getIdentifier());
+                HashMap designations = (HashMap) 
+                    geneTOgeneDesignations.get(gene.getIdentifier());
        
                 // loop through each name for this gene
                 String notCG = null;
@@ -705,7 +708,7 @@ public class UniprotConverter extends FileConverter
                     if (type.equals("primary")) {
                         primaryGeneName = name;      
                     } else if (type.equals("ORF")) {
-                        if (taxonId.equals("7227") && !name.startsWith("CG")) {                        
+                        if (taxonId.equals("7227") && !name.startsWith("CG")) {
                             notCG = name;
                         } else {
                             geneIdentifier = name;
@@ -722,20 +725,17 @@ public class UniprotConverter extends FileConverter
                     } else {
                         LOG.info("Found a Drosophila gene without a CG identifer: " + notCG);
                     }
-                }
-                
+                }                
                 // define a gene identifier we always expect to find that is unique to this gene
                 // is different for each organism
                 String uniqueGeneIdentifier = null;
                 // geneOrganismDbId = <entry><dbReference><type="FlyBase/WormBase/..">
                 //            where designation = primary gene name
                 String geneOrganismDbId = null;
-
                 if (taxonId.equals("7227")) { // D. melanogaster
                     // UniProt has duplicate pairings of CGxxx and FBgnxxx, just get one id
                     geneOrganismDbId = null;
                     uniqueGeneIdentifier = geneIdentifier;
-
                 } else if (taxonId.equals("6239")) { // C. elegans
                     // just get WBGeneXXX - ORF id is a gene *model* id,
                     // i.e. effectively a transcript
@@ -744,68 +744,52 @@ public class UniprotConverter extends FileConverter
                     geneOrganismDbId = (String) designations.get("WormBase");
                     uniqueGeneIdentifier = geneOrganismDbId;
                     geneIdentifier = null;
-
-                } else if (taxonId.equals("3702")) { // Arabidopsis thaliana
-                    
+                } else if (taxonId.equals("3702")) { // Arabidopsis thaliana                    
                     // may not have ordered locus?  what to do then?
                     geneOrganismDbId = (String) nameTypeToName.get("ordered locus");
                     if (geneOrganismDbId != null) {
                         geneOrganismDbId = geneOrganismDbId.toUpperCase();
                         uniqueGeneIdentifier = geneOrganismDbId;
                     }
-
                 } else if (taxonId.equals("4896")) {  // S. pombe
                     geneOrganismDbId = (String) nameTypeToName.get("ORF");
                     uniqueGeneIdentifier = geneOrganismDbId;
-
                 } else if (taxonId.equals("180454")) { // A. gambiae str. PEST
                     // no organismDbId and no specific dbxref to ensembl - assume that
                     // geneIdentifier is always ensembl gene stable id and set organismDbId
                     // to be identifier
                     uniqueGeneIdentifier = geneIdentifier;
-                    geneOrganismDbId = geneIdentifier;
-                
-                    // ~~~ put back once test data is verified? ~~~
-               //} else if (taxonId.equals("7165") || taxonId.equals("7460")) { // bees
-                    // Richard told me to do this.
-                    // uniqueGeneIdentifier = geneIdentifier;
-                    // geneOrganismDbId = geneIdentifier;
-                                        
+                    geneOrganismDbId = geneIdentifier;                               
+               } else if (taxonId.equals("7165") || taxonId.equals("7460")) { // bees
+                    uniqueGeneIdentifier = geneIdentifier;
+                    geneOrganismDbId = geneIdentifier;                                        
                 } else if (taxonId.equals("9606")) { // H. sapiens
                     //geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
                     geneOrganismDbId = (String) designations.get("Ensembl");
                     geneIdentifier = geneOrganismDbId;
                     uniqueGeneIdentifier = geneOrganismDbId;
-
-
                 } else if (taxonId.equals("4932")) { // S. cerevisiae
                     // need to set SGD identifier to be SGD accession, also set organismDbId
                     geneIdentifier = (String) designations.get("Ensembl");
                     geneOrganismDbId = (String) designations.get("SGD");
                     uniqueGeneIdentifier = geneOrganismDbId;
-
                 } else if (taxonId.equals("36329")) { // Malaria
                     geneOrganismDbId = geneIdentifier;
                     uniqueGeneIdentifier = geneIdentifier;
-
                 } else if (taxonId.equals("10090")) { // Mus musculus
-
                     geneIdentifier = (String) designations.get("Ensembl");
                     geneOrganismDbId = (String) designations.get("MGI");
                     uniqueGeneIdentifier = geneOrganismDbId;
-
                 } else if (taxonId.equals("10116")) { // Rattus norvegicus
-
                     geneIdentifier = (String) designations.get("Ensembl");
                     geneOrganismDbId = (String) designations.get("RGD");
-
                     // HACK in other places the RGD identifers start with 'RGD:'
                     if (geneOrganismDbId != null && !geneOrganismDbId.startsWith("RGD:")) {
                         geneOrganismDbId = "RGD:" + geneOrganismDbId;
                     }
                     uniqueGeneIdentifier = geneOrganismDbId;
                 }
-
+                
                 // uniprot data source has primary key of Gene.organismDbId
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
@@ -818,13 +802,11 @@ public class UniprotConverter extends FileConverter
 
                     // log problem genes
                     boolean isDuplicateIdentifier = false;
-
                     if ((geneItemId == null) && geneIdentifiers.contains(geneIdentifier)) {
                         LOG.warn("already created a gene for identifier: " + geneIdentifier
                                  + " with different organismDbId, discarding this one");
                         isDuplicateIdentifier = true;
-                    }
-                                      
+                    }                                      
                     if ((geneItemId == null) && !isDuplicateIdentifier) {
 
                         if (geneOrganismDbId != null) {
@@ -836,10 +818,10 @@ public class UniprotConverter extends FileConverter
                             Item syn = createSynonym(gene.getIdentifier(), "identifier", 
                                           geneOrganismDbId,
                                           getDataSource(dbName).getIdentifier());
-                            if (syn != null)
+                            if (syn != null) {
                                 writer.store(ItemHelper.convert(syn));
+                            }
                         }
-
                         if (geneIdentifier != null) {
                             gene.addAttribute(new Attribute("identifier", geneIdentifier));
                             // don't create duplicate synonym
@@ -848,35 +830,29 @@ public class UniprotConverter extends FileConverter
                                 Item syn = createSynonym(gene.getIdentifier(), "identifier", 
                                            geneIdentifier,
                                            getDataSource(dbName).getIdentifier());
-                                if (syn != null)
+                                if (syn != null) {
                                     writer.store(ItemHelper.convert(syn));
+                                }
                             }
                             // keep a track of non-null gene identifiers
                             geneIdentifiers.add(geneIdentifier);
-
                         }
                         // Problem with gene names for drosophila - ignore
                         if (primaryGeneName != null && !taxonId.equals("7227")) {
                             gene.addAttribute(new Attribute("symbol", primaryGeneName));
-                        }
-                        
-                        //geneMaster.put(geneIdentifier, gene.getIdentifier());
-                        geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
-                        
+                        }   
                         if (geneCollection == null) {
                             geneCollection = new ReferenceList("genes", new ArrayList());
                             protein.addCollection(geneCollection);
                         }
-                        
+                        geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
                         geneCollection.addRefId(gene.getIdentifier());
                         gene.setAttribute("identifier", uniqueGeneIdentifier);
-                                                
                         gene.setReference("organism", orgId);
                         ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
                         gene.addCollection(evidenceColl);
                         evidenceColl.addRefId(datasource.getIdentifier());
-                        writer.store(ItemHelper.convert(gene));
-                        
+                        writer.store(ItemHelper.convert(gene));                        
                         i = nameTypeToName.keySet().iterator();
                         while (i.hasNext()) {
                            
@@ -895,8 +871,9 @@ public class UniprotConverter extends FileConverter
                             if (!type.equals("ORF")) {
                                 Item syn = createSynonym(gene.getIdentifier(), synonymDescr, name,
                                               getDataSource(dbName).getIdentifier());
-                                if (syn != null)
-                                    writer.store(ItemHelper.convert(syn));                                
+                                if (syn != null) {
+                                    writer.store(ItemHelper.convert(syn));
+                                }
                             }
                         }
                     }
@@ -904,7 +881,6 @@ public class UniprotConverter extends FileConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-
         }
    
 
@@ -943,11 +919,7 @@ public class UniprotConverter extends FileConverter
             String nextIndex = "" + (nextClsId++);
             aliases.put(className, nextIndex);
             return nextIndex;
-        }
-
-    
+        }    
     }
-
-
 }
 
