@@ -135,11 +135,15 @@ sub import {
              push @relationships, $field->field_name(), $relationship_settings;
            } else {
              if ($field->is_many_to_many()) {
+               my $reverse_reference_field_name =
+                 $field->reverse_reference()->field_name();
                my $map_class = _make_mapping_table($field);
                my $relationship_settings =
                {
                 type      => 'many to many',
                 map_class => $map_class,
+                map_from  => lc $field->field_name() . "_key",
+                map_to    => lc $reverse_reference_field_name . "_key",
                };
                push @relationships, $field->field_name(), $relationship_settings;
              } else {
@@ -192,7 +196,7 @@ sub _make_mapping_table
 
   my $map_class = 'InterMine::' . ucfirst $field_name . ucfirst $reverse_field_name . 'Map';
 
-  eval <<"EOF";
+  my $eval_string = <<"EOF";
 package $map_class;
 
 use base 'InterMine::DB::Object';
@@ -210,20 +214,23 @@ __PACKAGE__->meta->setup
 
  foreign_keys =>
  [
-  ${lc_reverse_field_name} =>
+  ${lc_field_name}_key =>
   {
-   class       => '$reverse_field_class_name',
+   class       => 'InterMine::$reverse_field_class_name',
    key_columns => { ${lc_field_name} => 'id' },
   },
 
-  ${lc_reverse_field_name} =>
+  ${lc_reverse_field_name}_key =>
   {
-   class       => '$field_class_name',
+   class       => 'InterMine::$field_class_name',
    key_columns => { ${lc_reverse_field_name} => 'id' },
   },
  ],
 );
 EOF
+
+  eval $eval_string;
+
   return $map_class;
 }
 
