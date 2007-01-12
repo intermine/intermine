@@ -243,6 +243,7 @@
 
     <post-process name="set-collection-counts" dump="true"/>
     <post-process name="create-intron-features"/>
+    <post-process name="synonym-update"/>
 
     <!-- grant-db-production/
     TODO: Not really post processing but just has to be done sometime...

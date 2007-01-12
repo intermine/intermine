@@ -242,6 +242,9 @@ public class PostProcessTask extends Task
             } else if ("link-related-proteins-and-interactions".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 cr.linkProteinToProtenInteractionAndRelatedProteins();
+            } else if ("synonym-update".equals(operation)) {
+                SynonymUpdater synonymUpdater = new SynonymUpdater(getObjectStoreWriter());
+                synonymUpdater.update();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
