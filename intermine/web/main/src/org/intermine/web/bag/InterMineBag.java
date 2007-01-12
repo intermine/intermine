@@ -529,16 +529,16 @@ public class InterMineBag extends AbstractSet
      * @return collection of InterMineObjects
      */
     public Collection toObjectCollection() {
-        List list = new ArrayList();
+        List returnList = new ArrayList();
         for (Iterator iter = iterator(); iter.hasNext(); ) {
-            Integer id = (Integer) iter.next();
+            BagElement bagElement = (BagElement) iter.next();
             try {
-                list.add(uos.getObjectById(id));
+                returnList.add(os.getObjectById(bagElement.getId()));
             } catch (ObjectStoreException err) {
-                LOG.error("Failed to load object by id " + id);
+                LOG.error("Failed to load object by id " + bagElement.getId());
             }
         }
-        return list;
+        return returnList;
     }
     
     /**

@@ -24,7 +24,7 @@
 
 <div class="body" >
 <p>The bag <b>${bag.name}</b> contains elements of type:<b>${bag.type}</b>.</p>
-<html:form action="/modifyBagDetailsAction?removeFromBag=true">
+<html:form action="/modifyBagDetailsAction">
 <html:hidden property="bagName" value="${bag.name}"/>
 
 <table><tr><td width="50%">
@@ -76,6 +76,16 @@
 <html:submit property="remove">
     Remove
 </html:submit>
+
+<c:if test="${pagedColl.pageSize < pagedColl.size}">
+  <p>
+    Showing only the first ${pagedColl.pageSize} elements of the bag.
+  </p>
+  <html:submit property="showInResultsTable">
+    View whole bag
+  </html:submit>
+</c:if>
+
 </html:form>
 </td>
 
