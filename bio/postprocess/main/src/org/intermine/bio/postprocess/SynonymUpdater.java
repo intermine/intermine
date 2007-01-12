@@ -56,7 +56,7 @@ public class SynonymUpdater
      * @param osw an ObjectStore to write to
      */
     public SynonymUpdater (ObjectStoreWriter osw) {
-        this.osw = osw;
+        setObjectStoreWriter(osw);
     }
 
     /**
@@ -64,7 +64,6 @@ public class SynonymUpdater
      */
     public SynonymUpdater() {
         // empty
-        this.model = Model.getInstanceByName("genomic");
     }
     
     /**
@@ -167,5 +166,6 @@ public class SynonymUpdater
      */
     public void setObjectStoreWriter(ObjectStoreWriter osw) {
         this.osw = osw;
+        this.model = osw.getModel();
     }
 }
