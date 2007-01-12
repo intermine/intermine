@@ -181,6 +181,23 @@ EOF
   }
 }
 
+my %postgres_keywords = (
+                         translation => 1
+);
+
+sub _table_for_class
+{
+  my $class_name = lc shift;
+  warn "class_name: $class_name\n";
+
+  if (exists $postgres_keywords{$class_name}) {
+    return "intermine_$class_name";
+  } else {
+    return $class_name;
+  }
+}
+
+
 sub _make_mapping_table
 {
   my $field = shift;
