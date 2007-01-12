@@ -1295,9 +1295,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public String precomputeWithConnection(Connection c, Query q, Collection indexes,
             boolean allFields, String category) throws ObjectStoreException {
         QueryNode qn = null;
+        String sql = null;
         try {
             int tableNumber = getUniqueInteger(c);
-            String sql = null;
             if (allFields) {
                 sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP,
                         Collections.EMPTY_MAP);
@@ -1342,6 +1342,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                            + " the SELECT list of query " + q, e);
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
+        } catch (RuntimeException e) {
+            throw new ObjectStoreException("Query SQL cannot be parsed, so cannot be precomputed: "
+                    + sql + ", IQL: " + q);
         }
     }
 

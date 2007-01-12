@@ -153,6 +153,9 @@ public class TemplateQuery extends PathQuery
             while (citer.hasNext()) {
                 Constraint c = (Constraint) citer.next();
                 if (c.isEditable()) {
+                    if (clone.constraintLogic != null) {
+                        clone.constraintLogic.removeVariable(c.getCode());
+                    }
                     citer.remove();
                 }
             }
