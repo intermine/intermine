@@ -149,7 +149,7 @@ public class TemplateHelper
                 if (tf.getUseBagConstraint(key)) {
                     // Replace constraint with bag constraint
                     ConstraintOp constraintOp = ConstraintOp.
-                    getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
+                        getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
                     Object constraintValue = tf.getBag(key);
                     // if using an id bag need to swap for a constraint on id
                     InterMineBag bag;
