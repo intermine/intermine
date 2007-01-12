@@ -39,9 +39,16 @@
          </c:if>
       >
       <a name="${node.object.name}"/>
-      <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
-        <im:unqualify className="${node.object.name}" var="name"/>${name}
-      </html:link>
+      <c:choose>
+        <c:when test="${node.object.name == 'org.intermine.model.InterMineObject'}">
+          <im:unqualify className="${node.object.name}" var="name"/>${name}
+        </c:when>
+        <c:otherwise>
+          <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
+            <im:unqualify className="${node.object.name}" var="name"/>${name}
+          </html:link>
+        </c:otherwise>
+      </c:choose>
       <im:typehelp type="${name}"/>
       </span>
       </span>
