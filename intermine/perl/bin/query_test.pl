@@ -7,6 +7,7 @@ BEGIN {
 use strict;
 
 BEGIN { 
+  # hard coded path at the moment - needs fixing
   $InterMine::model_file = '/tmp/genomic_model.xml';
 }
 
@@ -33,8 +34,8 @@ for my $prot ($test_gene->proteins()) {
   print $prot->identifier(), "\n";
 }
 
-# find the genes that have identifier starting with CG321, sort by
-# their symbols and return the first 20
+# find the genes that have identifier starting with "CG321", sort the
+# list by their symbols
 my $genes = 
   InterMine::Gene::Manager->get_genes(
                                       query =>
@@ -47,6 +48,7 @@ my $genes =
 
 print "there are ", scalar(@$genes), " genes with identifier starting with CG321\n";
 
+# print identifier and taxon IDs
 for my $gene (@$genes) {
   print $gene->identifier, "\n";
   if (defined $gene->organism) {
@@ -55,7 +57,7 @@ for my $gene (@$genes) {
 }
 
 # find the genes that have identifier starting with CG321, sort by
-# their symbols and return an object that will iterate over the first 20
+# their symbols and return an object that will iterate over them
 my $iterator = 
   InterMine::Gene::Manager->get_genes_iterator(
                                                query =>
@@ -68,8 +70,7 @@ my $iterator =
 
 my $total_len = 0;
 
-# iterate over the genes, print the taxon id of the organism of each gene and 
-# add up the lengths
+# iterate over the genes, print the taxon id and add up the lengths
 while (my $gene = $iterator->next) {
   print $gene->identifier, "\n";
   if (defined $gene->organism) {
