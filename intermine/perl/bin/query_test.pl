@@ -7,78 +7,90 @@ BEGIN {
 use strict;
 
 BEGIN { 
-  $InterMine::model_file = '/home/kmr/svn/dev/flymine/dbmodel/build/model/genomic_model.xml'; 
+  $InterMine::model_file = '/tmp/genomic_model.xml';
 }
 
-use InterMine qw(Gene);
-use InterMine qw(Protein);
-use InterMine qw(Exon);
-use InterMine qw(LocatedSequenceFeature);
-use InterMine qw(Organism);
+# specify which classes will be used
+use InterMine qw(Gene Protein Exon Transcript LocatedSequenceFeature Organism);
 
-my $g = InterMine::Gene->new(id => 122000038);
-$g->load();
+# find a Gene with the given ID
+my $test_gene = InterMine::Gene->new(id => 122000038);
+$test_gene->load();
 
-print $g->identifier(), "\n";
-print $g->organism()->taxonId(), "\n";
-for my $exon ($g->exons()) {
+# print its identifier
+print $test_gene->identifier(), "\n";
+
+# print the taxon id
+print $test_gene->organism()->taxonId(), "\n";
+
+# print the ids of its exons
+for my $exon ($test_gene->exons()) {
   print $exon->identifier(), "\n";
 }
-for my $prot ($g->proteins()) {
+
+# ... and proteins
+for my $prot ($test_gene->proteins()) {
   print $prot->identifier(), "\n";
 }
 
-# my $genes = 
-#   InterMine::Gene::Manager->get_genes(
-#                                       query =>
-#                                       [
-#                                        identifier => { like => 'C%' },
-#                                       ],
-#                                       sort_by => 'symbol',
-#                                       with_objects => 'organism'
-#                                      );
+# find the genes that have identifier starting with CG321, sort by
+# their symbols and return the first 20
+my $genes = 
+  InterMine::Gene::Manager->get_genes(
+                                      query =>
+                                      [
+                                       identifier => { like => 'CG321%' },
+                                      ],
+                                      sort_by => 'symbol',
+                                      with_objects => 'organism'
+                                     );
 
-# print scalar(@$genes), "\n";
+print "there are ", scalar(@$genes), " genes with identifier starting with CG321\n";
 
-# for my $gene (@$genes) {
-#   $gene->identifier, "\n";
-#   if (defined $gene->organism) {
-#     $gene->organism->taxonId(), "\n";
-#   }
-# }
+for my $gene (@$genes) {
+  print $gene->identifier, "\n";
+  if (defined $gene->organism) {
+    print $gene->organism->taxonId(), "\n";
+  }
+}
 
-# my $iterator = 
-# InterMine::Gene::Manager->get_genes_iterator(
-#                                              query =>
-#                                              [
-#                                               identifier => { like => 'C%' },
-#                                              ],
-#                                              sort_by => 'symbol',
-#                                              with_objects => 'organism'
-#                                             );
-
-# while (my $gene = $iterator->next) {
-#   $gene->identifier, "\n";
-#   if (defined $gene->organism) {
-#     $gene->organism->taxonId(), "\n";
-#   }
-# }
-
+# find the genes that have identifier starting with CG321, sort by
+# their symbols and return an object that will iterate over the first 20
 my $iterator = 
-  InterMine::LocatedSequenceFeature::Manager->get_locatedsequencefeatures_iterator();
+  InterMine::Gene::Manager->get_genes_iterator(
+                                               query =>
+                                               [
+                                                identifier => { like => 'CG321%' },
+                                               ],
+                                               sort_by => 'symbol',
+                                               with_objects => 'organism'
+                                              );
 
-my $i = 0;
 my $total_len = 0;
 
-while (my $lsf = $iterator->next) {
-#  print $lsf->identifier, "\n";
-  my $len = $lsf->length();
+# iterate over the genes, print the taxon id of the organism of each gene and 
+# add up the lengths
+while (my $gene = $iterator->next) {
+  print $gene->identifier, "\n";
+  if (defined $gene->organism) {
+    print $gene->organism->taxonId(), "\n";
+  }
+
+  my $len = $gene->length();
   if (defined $len) {
     $total_len += $len;
   }
-
-  last;
 }
 
 
-print $total_len, "\n";
+print "total gene length: ", $total_len, "\n";
+
+my $gene_count = 
+  InterMine::Gene::Manager->get_genes_count(
+                                             query =>
+                                             [
+                                              identifier => { like => 'CG321%' },
+                                             ]
+                                            );
+
+print "average length of genes starting with 'CG321': ", $total_len / $gene_count, "\n";
