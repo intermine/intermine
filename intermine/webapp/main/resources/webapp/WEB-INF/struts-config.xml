@@ -565,6 +565,12 @@
     		name="modifyBagDetailsForm"
     		input="bagDetails">
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
+      <forward name="bagResultsTable" path="/bagResultsTable.do" redirect="true"/>
+    </action>
+
+    <action path="/bagResultsTable"
+            type="org.intermine.web.results.BagDetailsAction">
+      <forward name="results" path="/results.do" redirect="true"/>
     </action>
 
     <!-- Other actions -->

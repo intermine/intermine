@@ -54,8 +54,12 @@ public class ModifyBagDetailsAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-        if (request.getParameter("removeFromBag") != null) {
+        if (request.getParameter("remove") != null) {
             removeFromBag(mbdf.getBagName(), profile, pm, mbdf, session);
+        } else {
+            if (request.getParameter("showInResultsTable") != null) {
+                return showBagInResultsTable(mbdf.getBagName(), mapping, session);
+            }
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();
@@ -86,4 +90,9 @@ public class ModifyBagDetailsAction extends InterMineAction
        pm.saveProfile(profile);
    }
 
+    private ActionForward showBagInResultsTable(String bagName, ActionMapping mapping,
+                                                HttpSession session) {
+        return new ForwardParameters(mapping.findForward("bagResultsTable"))
+            .addParameter("bagName", bagName).forward();
+    }
 }
