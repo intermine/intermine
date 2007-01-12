@@ -14,8 +14,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.4.2"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jfreechart-1.0.3.jar"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>
