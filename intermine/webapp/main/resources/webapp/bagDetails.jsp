@@ -74,12 +74,12 @@
 </table>
 <br/>
 <html:submit property="remove">
-    Remove
+  Remove selected
 </html:submit>
 
 <c:if test="${pagedColl.pageSize < pagedColl.size}">
   <p>
-    Showing only the first ${pagedColl.pageSize} elements of the bag.
+    Only showing the first ${pagedColl.pageSize} elements of the bag.
   </p>
   <html:submit property="showInResultsTable">
     View whole bag
