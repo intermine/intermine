@@ -73,6 +73,9 @@ under the same terms as Perl itself.
 use InterMine::Model;
 
 our $model_file;
+our $properties_file;
+our $db_prefix;
+
 our $model;
 
 sub get_model {
