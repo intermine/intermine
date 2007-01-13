@@ -9,6 +9,8 @@ use strict;
 BEGIN { 
   # hard coded path at the moment - needs fixing
   $InterMine::model_file = '/tmp/genomic_model.xml';
+  $InterMine::properties_file = "$ENV{HOME}/flymine.properties";
+  $InterMine::db_prefix = 'db.production';
 }
 
 # specify which classes will be used
