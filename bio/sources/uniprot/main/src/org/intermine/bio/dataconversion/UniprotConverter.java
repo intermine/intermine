@@ -363,7 +363,9 @@ public class UniprotConverter extends FileConverter
                     possibleGeneIdSource = attrs.getValue("type");
                     
                     // TODO remove me
-                    geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId)); 
+                    if(possibleGeneId != null && possibleGeneIdSource != null) {
+                        geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
+                    }
                     
                 // TODO reenable this  
                 //    <dbreference><property type="gene designation" value="*">
