@@ -1,4 +1,4 @@
-package org.intermine.util;
+package org.intermine.objectstore.query;
 
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -7,15 +7,9 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.StoreDataTestCase;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.task.PrecomputeTaskTest;
+import org.intermine.util.AlwaysMap;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,11 +37,13 @@ public class PathQueryUtilTest extends StoreDataTestCase {
     }
 
     public void executeTest(String type) {
+    }
 
+    public void testQueries() throws Throwable {
     }
 
     public static Test suite() {
-        return buildSuite(PrecomputeTaskTest.class);
+        return buildSuite(PathQueryUtilTest.class);
     }
     public void testConstructQuerySingleRef() throws Exception {
         Query actual = PathQueryUtil.constructQuery(os.getModel(), "Employee department Department");

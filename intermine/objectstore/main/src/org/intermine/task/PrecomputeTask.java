@@ -21,6 +21,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
@@ -30,12 +35,6 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.util.PathQueryUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

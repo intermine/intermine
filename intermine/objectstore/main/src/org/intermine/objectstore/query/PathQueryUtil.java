@@ -1,4 +1,4 @@
-package org.intermine.util;
+package org.intermine.objectstore.query;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -10,19 +10,11 @@ package org.intermine.util;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryHelper;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryReference;
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.util.TypeUtil;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
