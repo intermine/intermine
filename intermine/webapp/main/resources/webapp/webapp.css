@@ -866,3 +866,33 @@ img.objectDetailsAspectIcon {
     width: 450px;
     background-color: #F5F0FF;
 }
+
+#bagDescriptionDiv{
+	background-color: #F5F0FF;
+	height:150px;
+	width:70%;
+	text-align:left;
+	padding:10px;
+}
+#bagDescriptionDiv:hover{
+	background-color: #E6FFB3;
+}
+
+#emptyDesc{
+	text-align:center;
+	width:100%;
+	margin-top: 70px;
+	font-style: italic;
+}
+
+#bagDescriptionTextarea{
+	display: none;
+	text-align: center;
+}
+
+#textarea {
+	width:70%;
+	height:150px;
+	background-color: #F5F0FF;
+	padding:10px;
+}

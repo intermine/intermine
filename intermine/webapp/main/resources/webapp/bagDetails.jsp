@@ -89,8 +89,26 @@
 </html:form>
 </td>
 
-<td valign="top" align="center" width="50%">
-<i>Here will be the bag description</i>
+<td valign="top" width="50%" align="center">
+<div id="bagDescriptionDiv" onclick="swapDivs('bagDescriptionDiv','bagDescriptionTextarea')">
+  <c:choose>
+    <c:when test="${! empty bag.description}">
+      <c:out value="${bag.description}" escapeXml="false" />
+    </c:when>
+    <c:otherwise>
+      <div id="emptyDesc">Click here to enter a bag description</div>
+    </c:otherwise>
+  </c:choose>
+</div>
+<div id="bagDescriptionTextarea">
+<textarea id="textarea">
+<c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if>
+</textarea>
+ <div align="right">
+  <button onclick="swapDivs('bagDescriptionTextarea','bagDescriptionDiv'); return false;">Cancel</button>
+  <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
+ </div>
+</div>
 </td>
 </tr></table>
 </div>

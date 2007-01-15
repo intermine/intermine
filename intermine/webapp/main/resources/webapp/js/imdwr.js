@@ -36,3 +36,18 @@ function renameElement(name, type, index){
 		document.getElementById('selected_' + type + '_' + index).value=str;
 	});
 }
+
+function saveBagDescription(bagName){
+    var textarea = document.getElementById('textarea').value;
+	textarea = textarea.replace(/[\n\r]+/g, "\n\r<br/>");
+	document.getElementById('bagDescriptionDiv').innerHTML = '<i>Saving...</i>';
+	AjaxServices.saveBagDescription(bagName,textarea, function(str){
+		document.getElementById('bagDescriptionDiv').innerHTML = str;
+	});
+	swapDivs('bagDescriptionTextarea','bagDescriptionDiv');
+}
+
+function swapDivs(div1,div2){
+	document.getElementById(div1).style.display = 'none';
+	document.getElementById(div2).style.display = 'block';
+}

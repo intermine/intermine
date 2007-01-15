@@ -77,7 +77,8 @@ public class InterMineBag extends AbstractSet
 
     private String type;
     private Map idFieldMap = new HashMap();
-
+    private String description;
+    
     /**
      * Constructs a new InterMineIdBag to be lazily-loaded from the userprofile database.
      *
@@ -86,6 +87,7 @@ public class InterMineBag extends AbstractSet
      * @param type the class of objects stored in the bag
      * @param size the size of the bag
      * @param os the ObjectStore to use to retrieve the contents of the bag
+     * @param uos the UserProfile ObjectStore
      */
     public InterMineBag(Integer userId, String name, String type, int size, ObjectStore uos,
                         ObjectStore os) {
@@ -289,6 +291,11 @@ public class InterMineBag extends AbstractSet
         return ids;
     }
     
+    /**
+     * Get the list of InterMineObjects stored in the bag
+     * @return a List of InterMineObjects
+     * @throws ObjectStoreException an ObjectStoreException
+     */
     public synchronized List getInterMineObjects() throws ObjectStoreException {
         Collection ids = getListOfIds();
         return (os.getObjectsByIds(ids));
@@ -465,6 +472,20 @@ public class InterMineBag extends AbstractSet
         this.name = name;
     }
     
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     /**
      * Get the value of savedBagId
      * @return an Integer

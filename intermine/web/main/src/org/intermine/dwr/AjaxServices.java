@@ -14,11 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.Query;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.intermine.InterMineException;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
@@ -29,13 +35,6 @@ import org.intermine.web.TemplateQuery;
 import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import uk.ltd.getahead.dwr.WebContext;
 import uk.ltd.getahead.dwr.WebContextFactory;
@@ -176,5 +175,24 @@ public class AjaxServices
             return "Type unknown";
         }
         return newName;
+    }
+    
+    /**
+     * For a given bag, set its description
+     * @param bagName the bag
+     * @param description the desciprion as entered by the user
+     * @return the description for display on the jsp page
+     * @throws Exception
+     */
+    public String saveBagDescription(String bagName, String description) throws Exception {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new InterMineException("Bag \"" + bagName + "\" not found.");
+        }
+        bag.setDescription(description);
+        return description;
     }
 }
