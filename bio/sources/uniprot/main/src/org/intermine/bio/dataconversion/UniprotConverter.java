@@ -362,8 +362,12 @@ public class UniprotConverter extends FileConverter
                     possibleGeneId = attrs.getValue("id");
                     possibleGeneIdSource = attrs.getValue("type");
                     
-                // <dbreference><property type="gene designation" value="*">
-                } else if (qName.equals("property") && stack.peek().equals("dbReference")
+                    // TODO remove me
+                    geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId)); 
+                    
+                // TODO reenable this  
+                //    <dbreference><property type="gene designation" value="*">
+                } else if (1 == 2 && qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("gene designation")) {
                            //&& geneNames.contains(attrs.getValue("value"))) {
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
