@@ -364,12 +364,12 @@ public class UniprotConverter extends FileConverter
                     
                 // <dbreference><property type="gene designation" value="*">
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
-                           && attrs.getValue("type").equals("gene designation")
-                           && geneNames.contains(attrs.getValue("value"))) {
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                           && attrs.getValue("type").equals("gene designation")) {
+                           //&& geneNames.contains(attrs.getValue("value"))) {
+                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // TODO need to handle when there is no property
                     // or there is only one name
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     if (possibleGeneIdSource != null && possibleGeneId != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId)); 
                     }
