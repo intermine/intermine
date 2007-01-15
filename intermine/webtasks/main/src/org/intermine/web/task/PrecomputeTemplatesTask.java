@@ -184,8 +184,8 @@ public class PrecomputeTemplatesTask extends Task
                  LOG.info("Skipping template " + name + " - already precomputed.");
             }
          } catch (ObjectStoreException e) {
-            throw new BuildException("Exception while precomputing query: " + name
-                                     + ", " + query + " with indexes " + indexes, e);
+            LOG.error("Exception while precomputing query: " + name + ", " + query
+                    + " with indexes " + indexes, e);
         }
 
         LOG.info("precompute(indexes) of took "
