@@ -237,19 +237,12 @@ public class WebResults extends AbstractList implements WebColumnTable
             String columnName = columnPath.toStringNoConstraints();
             int columnIndex = ((Integer) pathToIndex.get(columnName)).intValue();
             InterMineObject o = (InterMineObject) resultsRow.get(columnIndex);
-            String type;
-            if (columnPath.getElements().size() >= 2) {
-                List elementCDs = columnPath.getElementClassDescriptors();
-                type = ((ClassDescriptor) elementCDs.get(elementCDs.size() - 1)).getName();
-                type = TypeUtil.unqualifiedName(type);
-            } else {
-                type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
-            }
+            String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
             String fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
             Path path = new Path(model, type + '.' + fieldName);
             Object fieldValue = path.resolve(o);
             if (makeResultElements) {
-                String fieldCDName = path.getLastClassDescriptor().getName();
+                String fieldCDName = path.getEndFieldDescriptor().getClassDescriptor().getName();
                 String unqualifiedFeldCD = TypeUtil.unqualifiedName(fieldCDName);
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFeldCD,
                                                                fieldName);
