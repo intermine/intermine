@@ -67,6 +67,7 @@ public class InterMineBagBinding
             writer.writeStartElement("bag");
             writer.writeAttribute("name", bagName);
             writer.writeAttribute("type", bag.getType());
+            writer.writeAttribute("description", bag.getDescription());
 
             if (bag.width() == 1) {
                 for (Iterator j = bag.iterator(); j.hasNext();) {

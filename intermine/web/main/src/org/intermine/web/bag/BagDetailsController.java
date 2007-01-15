@@ -80,16 +80,22 @@ public class BagDetailsController extends TilesAction
                     imBag, os
                 });
             //TODO use caching here
-            //TODO check there is results as well!!!
-            BagGraphWidget bagGraphWidget = new BagGraphWidget(session, dataSetLdr.getDataSet(),
-                                                               dataSetLdr.getGeneCategoryArray(),
-                                                               bagName, graphDisplayer.getTitle(),
-                                                               graphDisplayer.getDomainLabel(),
-                                                               graphDisplayer.getRangeLabel(),
-                                                               graphDisplayer.getToolTipGen(),
-                                                               graphDisplayer.getUrlGen());
-            graphDisplayerArray.add(new String[] {bagGraphWidget.getHTML(), 
-                graphDisplayer.getDescription()});
+            if (dataSetLdr.getResultsSize() > 0) {
+                BagGraphWidget bagGraphWidget = new BagGraphWidget(session,
+                                                                   dataSetLdr.getDataSet(),
+                                                                   dataSetLdr
+                                                                       .getGeneCategoryArray(),
+                                                                   bagName, graphDisplayer
+                                                                       .getTitle(), graphDisplayer
+                                                                       .getDomainLabel(),
+                                                                   graphDisplayer.getRangeLabel(),
+                                                                   graphDisplayer.getToolTipGen(),
+                                                                   graphDisplayer.getUrlGen());
+                graphDisplayerArray.add(new String[]
+                    {
+                        bagGraphWidget.getHTML(), graphDisplayer.getDescription()
+                    });
+            }
         }
 
         WebCollection webCollection = new WebCollection(os, imBag.getType(), imBag, model,

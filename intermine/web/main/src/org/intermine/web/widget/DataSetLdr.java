@@ -36,4 +36,11 @@ public interface DataSetLdr
      * @return an Object[]
      */
     public Object[] getGeneCategoryArray();
+    
+    /**
+     * Get the results size
+     * 
+     * @return the results size
+     */
+    public int getResultsSize();
 }

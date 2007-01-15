@@ -34,6 +34,7 @@ public class InterMineBagHandler extends DefaultHandler
 
     private String bagName;
     private String bagType;
+    private String bagDescription;
     private InterMineBag bag;
 //    private List row;
 
@@ -63,6 +64,7 @@ public class InterMineBagHandler extends DefaultHandler
             if (qName.equals("bag")) {
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
+                bagDescription = attrs.getValue("description");
             }
 
             if (qName.equals("bagElement")) {
@@ -72,6 +74,7 @@ public class InterMineBagHandler extends DefaultHandler
                 if (bag == null) {
                     bag = new InterMineBag(userId, bagName, bagType, uos, os,
                                            Collections.EMPTY_SET);
+                    bag.setDescription(bagDescription);
                 }
                 
 //                if (row == null) {
