@@ -158,7 +158,7 @@ public class TemplateHelper
                     } else {
                         bag = (InterMineBag) savedBags.get(constraintValue);
                     }
-                    if (bag instanceof InterMineBag) {
+                    if (bag != null) {
                         // constrain parent object of this node to be in bag
                         PathNode parent = (PathNode) queryCopy.getNodes()
                             .get(nodeCopy.getParent().getPath());

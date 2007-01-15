@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +20,9 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.web.tagging.TagTypes;
 
@@ -40,7 +44,38 @@ public class TypeConverter
      */
     public static Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
             Collection objects) {
-        return new HashMap();
+        TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
+        if (tq == null) {
+            throw new IllegalStateException("No template query available for conversion from "
+                    + typeA + " to " + typeB);
+        }
+        tq = (TemplateQuery) tq.clone();
+        // We can be reckless here because all this is checked by getConversionTemplate
+        PathNode node = (PathNode) tq.getEditableNodes().iterator().next();
+        Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
+        // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
+        // want to constraint. Just because our query builder has been crippled to only allow that.
+        PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPath());
+        tq.getNodes().remove(node.getPath());
+        Constraint newC = new Constraint(ConstraintOp.IN, objects, false, "", c.getCode(), null);
+
+        Query q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Results r = os.execute(q);
+        Map retval = new HashMap();
+        Iterator iter = r.iterator();
+        while (iter.hasNext()) {
+            List row = (List) iter.next();
+            InterMineObject orig = (InterMineObject) row.get(0);
+            InterMineObject derived = (InterMineObject) row.get(1);
+            List ders = (List) retval.get(orig);
+            if (ders == null) {
+                ders = new ArrayList();
+                retval.put(orig, ders);
+            }
+            ders.add(derived);
+        }
+        return retval;
     }
 
     /**
@@ -84,7 +119,7 @@ public class TypeConverter
                 if (view.size() == 2) {
                     // Correct number of SELECT list items
                     Path select1 = (Path) view.get(0);
-                    if (select1.getEndType().isAssignableFrom(typeA)) {
+                    if (select1.getLastClassDescriptor().getType().isAssignableFrom(typeA)) {
                         // Correct typeA in SELECT list. Now check for editable constraint.
                         if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
                                 && (tq.getAllEditableConstraints().size() == 1)) {

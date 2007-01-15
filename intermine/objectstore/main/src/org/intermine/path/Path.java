@@ -122,6 +122,7 @@ public class Path
         String clsName = parts[0];
         ClassDescriptor cld =
             model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
+        elementClassDescriptors.add(cld);
         this.startCld = cld;
         if (cld == null) {
             throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
@@ -157,7 +158,10 @@ public class Path
                                         + "the model '"
                                         + model.getName() + "'");
                 }
-                
+            } else {
+                this.endFld = fld; 
+            }
+            if (!fld.isAttribute()) {
                 String constrainedClassName =
                     (String) subClassConstraintPaths.get(currentPath.toString());
                 if (constrainedClassName == null) {
@@ -169,8 +173,6 @@ public class Path
                     cld = model.getClassDescriptorByName(qualifiedClassName);
                 }
                 elementClassDescriptors.add(cld);
-            } else {
-                this.endFld = fld;
             }
         }
     }
@@ -276,18 +278,18 @@ public class Path
     }
 
     /**
-     * If the path ends with an attribute, return the ClassDescriptor that contains that field,
-     * otherwise return the ClassDescriptor referred to by the reference or collection at the end
-     * of the path.
+     * Returns the last ClassDescriptor in the path. If the last element is an attribute, then the
+     * class before it in the path is returned. Otherwise, class of the last element is returned.
+     * The class of an element is the referenced type of the FieldDescriptor (modified by the class
+     * constraint), or simply the class if it is the first element in the path. For example, if the
+     * path is "Department.manager.name" then this method will return Manager. If the path is
+     * "Department.manager[CEO].name" then this method will return CEO.
+     *
      * @return the ClassDescriptor
      */
     public ClassDescriptor getLastClassDescriptor() {
-        FieldDescriptor endFD = getEndFieldDescriptor();
-        if (endFD.isAttribute()) {
-            return endFD.getClassDescriptor();
-        } else {
-            return ((ReferenceDescriptor) endFD).getReferencedClassDescriptor();
-        }
+        List l = getElementClassDescriptors();
+        return (ClassDescriptor) l.get(l.size() - 1);
     }
     
     /**

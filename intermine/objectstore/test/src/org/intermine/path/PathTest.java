@@ -219,6 +219,9 @@ public class PathTest extends TestCase
         assertEquals("Department.manager.company.departments.employees.seniority",
                      path.toStringNoConstraints());
     }
+
+    public void testGetLastClassDescriptor() {
+        Path path = new Path(model, "Department.manager.name");
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getLastClassDescriptor());
+    }
 }
-
-

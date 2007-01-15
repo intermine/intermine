@@ -412,13 +412,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             if (column.isVisible()) {
                 Path columnPath = column.getPath();
                 if (columnPath.endIsAttribute()) {
-                    List elementCDs = columnPath.getElementClassDescriptors();
-                    ClassDescriptor columnCD;
-                    if (elementCDs.size() == 0) {
-                        columnCD = columnPath.getStartClassDescriptor();
-                    } else {
-                        columnCD = (ClassDescriptor) elementCDs.get(elementCDs.size() - 1);
-                    }
+                    ClassDescriptor columnCD = columnPath.getLastClassDescriptor();
                     if (validType(columnCD.getName())) {
                         if (returnColumn == null) {
                             returnColumn = column;
