@@ -363,7 +363,8 @@ public class UniprotConverter extends FileConverter
                     possibleGeneIdSource = attrs.getValue("type");
                     
                     // TODO remove me
-                    if(possibleGeneId != null && possibleGeneIdSource != null) {
+                    if(geneDesignations != null 
+                                    && possibleGeneId != null && possibleGeneIdSource != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
                     
