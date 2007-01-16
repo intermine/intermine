@@ -413,20 +413,20 @@ public class MainChange extends DispatchAction
 
         Path path = MainHelper.makePath(model, query, fullPathName);
         // If an object has been selected, select its fields instead
-        if (path.getEndFieldDescriptor() == null || path.endIsReference()) {
+        if (path.getEndFieldDescriptor() == null || path.endIsReference() || path.endIsCollection()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
             List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
             Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
             while (cldFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-                Path pathToAdd = new Path(model, pathName + "." + fc.getFieldExpr());
+                Path pathToAdd = new Path(model, fullPathName + "."  + fc.getFieldExpr());
                 if (pathToAdd.getEndClassDescriptor() == null
                     && !view.contains(pathToAdd.toString())) {
                     view.add(pathToAdd.toString());
                 }
             }
         } else {
-            view.add(MainHelper.toPath(prefix, pathName));
+            view.add(fullPathName);
         }
 
         

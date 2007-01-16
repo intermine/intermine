@@ -98,7 +98,7 @@ public class MainController extends TilesAction
             } else {
             Path path = new Path(model, pathName);
             // If an object has been selected, select its fields instead
-            if (path.getEndFieldDescriptor() == null || path.endIsReference()) {
+            if (path.getEndFieldDescriptor() == null || path.endIsReference() || path.endIsCollection()) {
                     ClassDescriptor cld = path.getEndClassDescriptor();
                     List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
                     Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
