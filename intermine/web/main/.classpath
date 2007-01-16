@@ -13,7 +13,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry exported="true" kind="lib" path="lib/servlet-api.jar" sourcepath="/home/kmr/extern/sources/jakarta-tomcat-5.0.24-src/jakarta-servletapi-5/jsr154/src/share"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
 	<classpathentry kind="lib" path="lib/highlighter-dev.jar"/>
