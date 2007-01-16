@@ -7,7 +7,7 @@ export PATH
 
 dumps_dir=/export/flymine/dumps/userprofile
 
-/software/noarch/bin/userprofile_backup -p 5433 $dumps_dir/userprofile_backup gollum > $HOME/.userprofile_backup.output.new 2>&1
+/software/noarch/bio_scripts/userprofile_backup -p 5433 $dumps_dir/userprofile_backup gollum > $HOME/.userprofile_backup.output.new 2>&1
 
 dest_file=userprofile-release-`date +'%Y%m%d-%H%M'`
 
