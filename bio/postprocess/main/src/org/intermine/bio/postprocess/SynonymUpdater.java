@@ -133,7 +133,7 @@ public class SynonymUpdater
                     Set parts = (Set) keyFieldIter.next();
                     String fieldName = ((FieldDescriptor) parts.iterator().next()).getName();
                     Object fieldValue = TypeUtil.getFieldValue(bioEntity, fieldName);
-                    if (fieldValue.equals(synonymValue)) {
+                    if (fieldValue != null && fieldValue.equals(synonymValue)) {
                         isPrimary = true;
                         break CLASSES;
                     }
