@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.io.Serializable;
 import java.util.*;
 
 import junit.framework.TestCase;
@@ -18,6 +19,7 @@ import junit.framework.TestCase;
  * Tests for the CollectionUtil class.
  *
  * @author Kim Rutherford
+ * @author Matthew Wakeling
  */
 
 public class CollectionUtilTest extends TestCase
@@ -142,5 +144,43 @@ public class CollectionUtilTest extends TestCase
                                                            "value4"}));
                                                        
         assertEquals(expectedValues, new HashSet(newMap.values()));
+    }
+
+    public void testGroupByClass() throws Exception {
+        Collection c = new ArrayList();
+        c.add(new Integer(5));
+        c.add(new Integer(6));
+        c.add(new Integer(7));
+        c.add(new Float(3.5F));
+        c.add("hello");
+
+        Map expected = new HashMap();
+        List lInts = new ArrayList();
+        lInts.add(new Integer(5));
+        lInts.add(new Integer(6));
+        lInts.add(new Integer(7));
+        List lFloat = new ArrayList();
+        lFloat.add(new Float(3.5F));
+        List lString = new ArrayList();
+        lString.add("hello");
+        List lNumbers = new ArrayList();
+        lNumbers.addAll(lInts);
+        lNumbers.addAll(lFloat);
+        List lSerialisables = new ArrayList();
+        lSerialisables.addAll(lNumbers);
+        lSerialisables.addAll(lString);
+
+        expected.put(Integer.class, lInts);
+        expected.put(Float.class, lFloat);
+        expected.put(String.class, lString);
+
+        assertEquals(expected, CollectionUtil.groupByClass(c, false));
+
+        expected.put(CharSequence.class, lString);
+        expected.put(Number.class, lNumbers);
+        expected.put(Serializable.class, lSerialisables);
+        expected.put(Comparable.class, lSerialisables);
+
+        assertEquals(expected, CollectionUtil.groupByClass(c, true));
     }
 }

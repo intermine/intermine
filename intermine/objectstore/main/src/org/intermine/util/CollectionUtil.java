@@ -10,20 +10,29 @@ package org.intermine.util;
  *
  */
 
-import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Utilities for Collections.
  *
  * @author Kim Rutherford
+ * @author Matthew Wakeling
  */
 
 public class CollectionUtil
 {
     /**
      * Return a copy of the given map with the object inserted at the given index.
+     *
      * @param map the LinkedHashMap to copy
      * @param prevKey the newKey,newValue pair are added after this key.  If null the
      * newKey,newValue pair is added first
@@ -66,5 +75,53 @@ public class CollectionUtil
         }
 
         return newMap;
+    }
+
+    /**
+     * Sorts objects in the given collection into different types by Class.
+     *
+     * @param objects a Collection of objects
+     * @param inherit if true, objects are put into all their class's superclasses as well, except
+     * Object - the original Collection can be used in that case
+     * @return a Map from Class to List of objects in that class
+     */
+    public static Map groupByClass(Collection objects, boolean inherit) {
+        Map retval = new HashMap();
+        Iterator iter = objects.iterator();
+        while (iter.hasNext()) {
+            Object o = iter.next();
+            Class c = o.getClass();
+            if (inherit) {
+                Set done = new HashSet();
+                done.add(Object.class);
+                Stack todo = new Stack();
+                todo.push(c);
+                while (!todo.empty()) {
+                    c = (Class) todo.pop();
+                    if ((c != null) && !done.contains(c)) {
+                        done.add(c);
+                        List l = (List) retval.get(c);
+                        if (l == null) {
+                            l = new ArrayList();
+                            retval.put(c, l);
+                        }
+                        l.add(o);
+                        todo.push(c.getSuperclass());
+                        Class classes[] = c.getInterfaces();
+                        for (int i = 0; i < classes.length; i++) {
+                            todo.push(classes[i]);
+                        }
+                    }
+                }
+            } else {
+                List l = (List) retval.get(c);
+                if (l == null) {
+                    l = new ArrayList();
+                    retval.put(c, l);
+                }
+                l.add(o);
+            }
+        }
+        return retval;
     }
 }
