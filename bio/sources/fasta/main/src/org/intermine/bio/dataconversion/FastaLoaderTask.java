@@ -153,8 +153,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
+            System.err. println ("reading " + sequenceType + " sequence from: " + file);
+
             SequenceIterator iter =
                     (SequenceIterator) SeqIOTools.fileToBiojava("fasta", sequenceType, reader);
+
+            if (!iter.hasNext()) {
+                System.err. println ("no fasta sequences found - exiting");
+                return;
+            }
 
             while (iter.hasNext()) {
                 setSequence(org, iter.nextSequence());
