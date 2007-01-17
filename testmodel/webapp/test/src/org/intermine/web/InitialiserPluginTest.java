@@ -105,6 +105,7 @@ public class InitialiserPluginTest extends TestCase
         QueryClass qc = new QueryClass(Tag.class);
         q.addFrom(qc);
         q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "tagName"), ConstraintOp.MATCHES, new QueryValue("test%")));
         SingletonResults res = new SingletonResults(q, userProfileOS,
                                                     userProfileOS.getSequence());
         Iterator resIter = res.iterator();

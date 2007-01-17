@@ -55,7 +55,7 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
     }
 
     public static void storeData() throws Exception {    	
-    	checkIsEmpty();
+    	//checkIsEmpty();
     	System.out.println("Storing data");
         if (storeDataWriter == null) {
             throw new NullPointerException("storeDataWriter must be set before trying to store data");
