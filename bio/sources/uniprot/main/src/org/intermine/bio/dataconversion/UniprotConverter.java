@@ -141,6 +141,7 @@ public class UniprotConverter extends FileConverter
         private Item protein;
         private Item sequence;
         private Item comment;
+        private Item feature;
         private Map synonyms;
         private Map genes;
         private StringBuffer descr;
@@ -151,6 +152,7 @@ public class UniprotConverter extends FileConverter
 
         private ReferenceList pubCollection;
         private ReferenceList commentCollection;
+        private ReferenceList keywordCollection;
         private ReferenceList geneCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
@@ -269,6 +271,34 @@ public class UniprotConverter extends FileConverter
                         protein.setAttribute("molecularWeight", strMass);
                     }
 
+                // <entry><feature>
+                } else if (qName.equals("feature")) {
+
+                    String strType = attrs.getValue("type");
+                    String strDescr = attrs.getValue("description");
+
+                    feature = createItem("UniprotFeature");                    
+                    feature.addReference(new Reference("protein", protein.getIdentifier()));
+                    
+                    if (strType != null) {
+                        feature.setAttribute("type", strType);
+                        Item go = createItem("OntologyTerm");
+                        go.setAttribute("name", strType);
+                        feature.addReference(new Reference("feature", go.getIdentifier()));
+                        writer.store(ItemHelper.convert(go));
+                    }
+                    
+                    if (strDescr != null) {
+                        feature.setAttribute("description", strDescr);
+                    }    
+                    attName = "feature";
+                    
+                // <entry><feature><location><begin||end>
+                } else if ((qName.equals("begin") || qName.equals("end")) 
+                                && stack.peek().equals("location")) {
+                    
+                    feature.setAttribute(qName, attrs.getValue("position"));
+                    
                 // <entry><organism><dbreference>
                 } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
 
@@ -335,6 +365,11 @@ public class UniprotConverter extends FileConverter
 
                     attName = "text";
 
+                // <entry><keyword>
+                } else if (qName.equals("keyword")) {
+                    
+                    attName = "keyword";                  
+                    
                 // <entry><gene>
                 } else if (qName.equals("gene")) {
 
@@ -361,18 +396,11 @@ public class UniprotConverter extends FileConverter
                     // could be identifier but check next tag to see if this is a gene designation
                     possibleGeneId = attrs.getValue("id");
                     possibleGeneIdSource = attrs.getValue("type");
-                    
-                    // TODO remove me
-                    if(geneDesignations != null 
-                                    && possibleGeneId != null && possibleGeneIdSource != null) {
-                        geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
-                    }
-                    
-                // TODO reenable this  
+                                
                 //    <dbreference><property type="gene designation" value="*">
                 } else if (1 == 2 && qName.equals("property") && stack.peek().equals("dbReference")
-                           && attrs.getValue("type").equals("gene designation")) {
-                           //&& geneNames.contains(attrs.getValue("value"))) {
+                           && attrs.getValue("type").equals("gene designation") 
+                           && geneNames.contains(attrs.getValue("value"))) {
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // TODO need to handle when there is no property
                     // or there is only one name
@@ -553,7 +581,26 @@ public class UniprotConverter extends FileConverter
                     // associate gene with lists
                     geneTOgeneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
                     geneTOgeneDesignations.put(gene.getIdentifier(), geneDesignations);
+              
+                // <entry><keyword>
+                } else if (qName.equals("keyword")) {
 
+                    if (attName != null) {
+
+                        Item keyword = createItem("OntologyTerm");                        
+                        keyword.setAttribute("name", attValue.toString());
+                        if (keywordCollection.getRefIds().isEmpty()) {
+                            protein.addCollection(keywordCollection);
+                        }
+                        keywordCollection.addRefId(keyword.getIdentifier());
+                        writer.store(ItemHelper.convert(keyword));
+                    }
+                    
+                // <entry><feature>
+                } else if (qName.equals("feature")) {
+                    if (attName != null) {
+                        writer.store(ItemHelper.convert(feature));
+                    }
                 // <entry><name>
                 } else if (qName.equals("name")) {
 
@@ -622,6 +669,7 @@ public class UniprotConverter extends FileConverter
           
             protein = createItem("Protein");
 
+            keywordCollection = new ReferenceList("keywords", new ArrayList());
             commentCollection = new ReferenceList("comments", new ArrayList());
             pubCollection = new ReferenceList("publications", new ArrayList());
             geneCollection = null;
@@ -632,6 +680,7 @@ public class UniprotConverter extends FileConverter
             taxonId = null;
             dbName = null;
             comment = null;
+            feature = null;
             sequence = null;
             hasPrimary = false;
 
