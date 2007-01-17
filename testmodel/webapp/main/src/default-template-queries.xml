@@ -63,6 +63,14 @@
     </node>
   </query>
 </template>
+<template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" important="false">
+  <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.name Employee.address.address">
+    <node path="Employee" type="Employee"></node>
+    <node path="Employee.name" type="String">
+      <constraint op="=" value="Fred" description="name" identifier="" editable="true" code="A"></constraint></node>
+    <node path="Employee.address" type="Address"></node>
+  </query>
+</template>
   </template-queries>
 
   <tags>
@@ -89,6 +97,8 @@
     <tag name="aspect:People" objectIdentifier="employeeByName" type="template">
     </tag>
     <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template">
+    </tag>
+    <tag name="converter" objectIdentifier="convertEmployeesToAddresses" type="template">
     </tag>
   </tags>
 </userprofile>

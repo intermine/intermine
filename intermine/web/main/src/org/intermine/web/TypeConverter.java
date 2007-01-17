@@ -28,6 +28,8 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
+import org.intermine.web.bag.BagElement;
+import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.tagging.TagTypes;
 
 /**
@@ -45,6 +47,7 @@ public class TypeConverter
      * @param typeB the type to convert to
      * @param objects a Collection of objects of type typeA
      * @return a Map from original object to a List of converted objects
+     * @throws ObjectStoreException if an error occurs
      */
     public static Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
             Collection objects) throws ObjectStoreException {
@@ -61,7 +64,15 @@ public class TypeConverter
         // want to constraint. Just because our query builder has been crippled to only allow that.
         PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPath());
         tq.getNodes().remove(node.getPath());
-        Constraint newC = new Constraint(ConstraintOp.IN, objects, false, "", c.getCode(), null);
+        Collection bagElements = new ArrayList();
+        Iterator objIter = objects.iterator();
+        while (objIter.hasNext()) {
+            InterMineObject object = (InterMineObject) objIter.next();
+            bagElements.add(new BagElement(object.getId(), object.getClass().getName()));
+        }
+        Constraint newC = new Constraint(ConstraintOp.IN, new InterMineBag(null, null, null, null, 
+                    null, bagElements), false, "", c.getCode(), null);
+        parent.getConstraints().add(newC);
 
         Query q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -128,7 +139,7 @@ public class TypeConverter
                         if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
                                 && (tq.getAllEditableConstraints().size() == 1)) {
                             // Editable constraint is okay.
-                            retval.put(((Path) view.get(1)).getEndType(), tq);
+                            retval.put(((Path) view.get(1)).getLastClassDescriptor().getType(), tq);
                         }
                     }
                 }
