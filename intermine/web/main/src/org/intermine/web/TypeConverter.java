@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +20,11 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
@@ -43,7 +47,7 @@ public class TypeConverter
      * @return a Map from original object to a List of converted objects
      */
     public static Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
-            Collection objects) {
+            Collection objects) throws ObjectStoreException {
         TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
         if (tq == null) {
             throw new IllegalStateException("No template query available for conversion from "
