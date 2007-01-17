@@ -293,8 +293,8 @@ public class UniprotConverter extends FileConverter
                     }    
                     attName = "feature";
                     
-                // <entry><feature><location><begin||end>
-                } else if ((qName.equals("begin") || qName.equals("end")) 
+                // <entry><feature><location><start||end>
+                } else if ((qName.equals("start") || qName.equals("end")) 
                                 && stack.peek().equals("location")) {
                     
                     feature.setAttribute(qName, attrs.getValue("position"));
