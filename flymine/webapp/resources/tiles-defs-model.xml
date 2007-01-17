@@ -1,4 +1,5 @@
-  <definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" controllerUrl="/initGeneMicroArrayDisplayer.do"/>
+  <definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" 
+  	controllerUrl="/initGeneMicroArrayDisplayer.do"/>
 
   <definition name="flymineQuickStart.tile" path="/model/flymineQuickStart.jsp" />
 
@@ -6,3 +7,6 @@
     <put name="body" value="flymineQuickStart.tile"/>
     <put name="pageName" value="flymineQuickStart"/>
   </definition>
+
+  <definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
+  	controllerUrl="/initOrthologueDisplayer.do"/>
