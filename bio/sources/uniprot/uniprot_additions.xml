@@ -12,8 +12,8 @@
 <class name="org.flymine.model.genomic.UniProtFeature" is-interface="true">
     <attribute name="type" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
-    <attribute name="start" type="java.lang.int"/>
-	<attribute name="end" type="java.lang.int"/>
+    <attribute name="start" type="java.lang.Integer"/>
+	<attribute name="end" type="java.lang.Integer"/>
 	<reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
 	<reference name="feature" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
 </class>
