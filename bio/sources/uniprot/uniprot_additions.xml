@@ -6,5 +6,15 @@
     <attribute name="ecNumber" type="java.lang.String"/>
     <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
     <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+    <collection name="keywords" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
   </class>
+  
+<class name="org.flymine.model.genomic.UniProtFeature" is-interface="true">
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="start" type="java.lang.int"/>
+	<attribute name="end" type="java.lang.int"/>
+	<reference name="protein" type="org.flymine.model.genomic.Protein"/>
+	<reference name="feature" type="org.flymine.model.genomic.OntologyTerm"/>
+</class>
 </classes>
