@@ -277,7 +277,7 @@ public class UniprotConverter extends FileConverter
                     String strType = attrs.getValue("type");
                     String strDescr = attrs.getValue("description");
 
-                    feature = createItem("UniprotFeature");                    
+                    feature = createItem("UniProtFeature");                    
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
                     
                     if (strType != null) {
