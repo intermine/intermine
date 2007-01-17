@@ -294,10 +294,17 @@ public class UniprotConverter extends FileConverter
                     attName = "feature";
                     
                 // <entry><feature><location><start||end>
-                } else if ((qName.equals("start") || qName.equals("end")) 
-                                && stack.peek().equals("location")) {
-                    
-                    feature.setAttribute(qName, attrs.getValue("position"));
+                } else if ((qName.equals("begin") || qName.equals("end") 
+                                || qName.equals("position")) 
+                                && stack.peek().equals("location")
+                                && attrs.getValue("position") != null) {
+                        
+                        if (qName.equals("begin") || qName.equals("end")) {
+                            feature.setAttribute(qName, attrs.getValue("position"));
+                        } else {
+                            feature.setAttribute("begin", attrs.getValue("position"));
+                            feature.setAttribute("end", attrs.getValue("position"));
+                        }
                     
                 // <entry><organism><dbreference>
                 } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
