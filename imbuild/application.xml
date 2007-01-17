@@ -80,6 +80,8 @@ Couldn't find ${build.properties.file}
 
   <target name="-init-build-db" depends="init, -init-deps, -init-task-xml"/>
   
+  <target name="create-db-userprofile" depends="-do-build-db-userprofile"/>
+
   <target name="build-db-userprofile" depends="-do-build-db-userprofile, -load-default-templates"/>
   
   <target name="-do-build-db-userprofile" depends="-init-app-properties, -init-build-db">
