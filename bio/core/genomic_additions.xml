@@ -22,7 +22,8 @@
     </class>
 
     <class name="org.flymine.model.genomic.Gene" is-interface="true">
-        <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR"
+       <attribute name="ncbiGeneNumber" type="java.lang.String"/>
+       <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR"
                     reverse-reference="gene" ordered="true"/>
         <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS"
                     reverse-reference="gene" ordered="true"/>
