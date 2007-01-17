@@ -97,6 +97,7 @@ public class ProfileManagerTest extends XMLTestCase
                               false, "");
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
+        pm.createProfile(bobProfile);
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
         bobProfile.saveTemplate("template", template);
@@ -129,6 +130,7 @@ public class ProfileManagerTest extends XMLTestCase
 
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap());
+        pm.createProfile(sallyProfile);
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", objectBag);
 
