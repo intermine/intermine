@@ -237,6 +237,19 @@
   <im:box helpUrl="${helpUrl}"
           titleKey="objectDetails.heading.byaspect">
 
+	<%-- Orthologues --%>
+	<c:choose>
+		<c:when test="${cld.unqualifiedName == 'Gene'}">
+			<div class="heading">
+  				Orthologues
+			</div>
+			<div class="body">
+				<tiles:get name="orthologueDisplayer.tile"/>
+			</div>
+			<br/>
+		</c:when>
+	</c:choose>
+
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect">
       <tiles:insert name="objectDetailsAspect.tile">

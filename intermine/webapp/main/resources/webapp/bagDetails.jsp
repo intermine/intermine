@@ -115,6 +115,15 @@
 
 <br/>
 
+<div class="heading">
+  Orthologues
+</div>
+<div class="body">
+	<tiles:get name="orthologueDisplayer.tile"/>
+</div>
+
+<br/>
+
 <c:if test="${! empty graphDisplayerArray}">
 <div class="heading">
   Widgets

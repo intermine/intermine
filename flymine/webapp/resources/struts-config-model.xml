@@ -15,4 +15,11 @@
     <action path="/proteinInteractionRenderer"
             type="org.flymine.web.ProteinInteractionImgRenderer"/>
     
-            
+	<action path="/initOrthologueDisplayer" 
+		type="org.flymine.web.OrthologueDisplayerController"/>
+		
+    <action path="/orthologueAction"
+            type="org.flymine.web.OrthologueAction">
+      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="details" path="/objectDetails.do" redirect="true"/>
+    </action>
