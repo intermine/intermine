@@ -7,22 +7,6 @@
   </articleinfo>
 
   <section>
-    <title>Download</title>
-
-    <itemizedlist>
-      <listitem>
-        <para><ulink url="http://download.flymine.org/releases/">Latest
-        release</ulink></para>
-      </listitem>
-
-      <listitem>
-        <para><ulink url="http://download.flymine.org/nightly/">Nightly
-        build</ulink></para>
-      </listitem>
-    </itemizedlist>
-  </section>
-
-  <section>
     <title>Subversion access</title>
 
     <itemizedlist>

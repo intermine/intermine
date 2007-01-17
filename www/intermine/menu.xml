@@ -11,8 +11,6 @@
         <item url="/doc/contribute/index.xml" title="Contribute"/>
     </item>
     <item title="Download Software">
-        <item url="http://download.flymine.org/releases/" title="Latest release"/>
-        <item url="http://download.flymine.org/nightly/" title="Nightly build"/>
         <item url="http://subversion.flymine.org/" title="Browse source"/>
         <item url="/download/index.xml" title="SVN checkout"/>
     </item>
