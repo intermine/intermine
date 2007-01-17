@@ -123,7 +123,7 @@ class ProfileManagerHandler extends DefaultHandler
         super.endElement(uri, localName, qName);
         if (qName.equals("userprofile")) {
             Profile profile = profileHandler.getProfile();
-            profileManager.saveProfile(profile);
+            profileManager.createProfile(profile);
             Iterator tagIter = profileHandler.getTags().iterator();
             while (tagIter.hasNext()) {
                 Tag tag = (Tag) tagIter.next();
