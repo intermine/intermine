@@ -297,12 +297,12 @@ public class UniprotConverter extends FileConverter
                 } else if ((qName.equals("begin") || qName.equals("end") 
                                 || qName.equals("position")) 
                                 && stack.peek().equals("location")
-                                && attrs.getValue("position") != null) {
+                                && attrs.getValue("position") != null
+                                && feature != null) {
                         
                         if (qName.equals("begin") || qName.equals("end")) {
                             feature.setAttribute(qName, attrs.getValue("position"));
-                        } else {
-                            System.out.println(" ~~~ " + attrs.getValue("position"));
+                        } else {                            
                             feature.setAttribute("begin", attrs.getValue("position"));
                             feature.setAttribute("end", attrs.getValue("position"));
                         }
