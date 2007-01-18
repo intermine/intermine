@@ -276,12 +276,10 @@ public class UniprotConverter extends FileConverter
 
                     String strType = attrs.getValue("type");
                     String strDescr = attrs.getValue("description");
-                    
-
-                    
+                                        
                     feature = createItem("UniProtFeature");                    
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
-                    System.out.println(" ~~~ featureID " + feature.getIdentifier());
+
                     if (strType != null) {
                         feature.setAttribute("type", strType);
                         Item go = createItem("OntologyTerm");
@@ -408,9 +406,10 @@ public class UniprotConverter extends FileConverter
                     possibleGeneIdSource = attrs.getValue("type");
                                 
                 //    <dbreference><property type="gene designation" value="*">
-                } else if (1 == 2 && qName.equals("property") && stack.peek().equals("dbReference")
+                } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("gene designation") 
                            && geneNames.contains(attrs.getValue("value"))) {
+                    
                     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // TODO need to handle when there is no property
                     // or there is only one name
@@ -608,9 +607,9 @@ public class UniprotConverter extends FileConverter
                     
                 // <entry><feature>
                 } else if (qName.equals("feature")) {
-                    
-                        writer.store(ItemHelper.convert(feature));
-                  
+
+                    writer.store(ItemHelper.convert(feature));
+
                 // <entry><name>
                 } else if (qName.equals("name")) {
 
@@ -751,7 +750,7 @@ public class UniprotConverter extends FileConverter
         private void finaliseGene(Item gene, String orgId)
             throws SAXException {
             try {
-                
+               
                 // Gene.identifier = <entry><gene><name type="ORF">
                 String geneIdentifier = null;
                 // Gene.name = <entry><gene><name type="primary">
@@ -810,6 +809,7 @@ public class UniprotConverter extends FileConverter
                     geneOrganismDbId = (String) designations.get("WormBase");
                     uniqueGeneIdentifier = geneOrganismDbId;
                     geneIdentifier = null;
+                    
                 } else if (taxonId.equals("3702")) { // Arabidopsis thaliana                    
                     // may not have ordered locus?  what to do then?
                     geneOrganismDbId = (String) nameTypeToName.get("ordered locus");
@@ -859,7 +859,7 @@ public class UniprotConverter extends FileConverter
                 // uniprot data source has primary key of Gene.organismDbId
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
-
+                                        
                     String geneItemId = (String) geneMaster.get(uniqueGeneIdentifier);
 
                     // UniProt sometimes has same identifier paired with two organismDbIds
