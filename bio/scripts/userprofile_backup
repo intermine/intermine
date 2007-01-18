@@ -62,7 +62,7 @@ my @params = ("-f", $dump_file, $latest_db);
 my $version_file = "$ENV{HOME}/.userprofile_latest_version";
 my $db_ver_handle;
 open $db_ver_handle, '>', $version_file or die "can't open $version_file for writing\n";
-print $db_ver_handle "$latest_db";
+print $db_ver_handle "$max_version";
 close $db_ver_handle;
 
 print "dumping with: @dump_command @params\n";
