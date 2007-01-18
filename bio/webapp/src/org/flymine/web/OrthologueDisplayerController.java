@@ -229,7 +229,7 @@ public class OrthologueDisplayerController extends TilesAction
                     cs.addConstraint(bc);
                    
                 }
-                
+             
                 // make sure organism matches this one in this loop
                 SimpleConstraint cc4 = new 
                 SimpleConstraint(new QueryField(organismQC, "taxonId"), 

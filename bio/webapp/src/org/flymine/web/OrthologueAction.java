@@ -81,7 +81,7 @@ public class OrthologueAction extends InterMineAction
         String bagName = request.getParameter("bagName");
         String queryString = request.getParameter("query");
         String id = request.getParameter("id");
-                
+        String columnName = "Gene";
         // if we have an ID, we don't need to rebuild query, just move along to the details page
         if (id != null && id.length() > 0) {
             return new ForwardParameters(mapping.findForward("details"))
@@ -96,26 +96,28 @@ public class OrthologueAction extends InterMineAction
         InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
         Set queryFrom = query.getFrom();
         QueryClass queryClass = null;
-        for (Iterator iter = queryFrom.iterator(); iter.hasNext();) {
-            FromElement fromElt = (FromElement) iter.next();
-            if ((fromElt instanceof QueryClass)
-                            && (((QueryClass) fromElt).getType().isAssignableFrom((Class
-                                            .forName(os.getModel().getPackageName() 
-                                                     + "." + bag.getType()))))) {
-                queryClass = (QueryClass) fromElt;
+        if (bag != null && !bag.isEmpty()) {
+            for (Iterator iter = queryFrom.iterator(); iter.hasNext();) {
+                FromElement fromElt = (FromElement) iter.next();
+                if ((fromElt instanceof QueryClass)
+                                && (((QueryClass) fromElt).getType().isAssignableFrom((Class
+                                                .forName(os.getModel().getPackageName() 
+                                                         + "." + bag.getType()))))) {
+                    queryClass = (QueryClass) fromElt;
+                }
             }
+            QueryField qf = new QueryField(queryClass, "id");
+            ((ConstraintSet) query.getConstraint())
+            .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds()));
+            columnName = bag.getType();
         }
-        QueryField qf = new QueryField(queryClass, "id");
-        ((ConstraintSet) query.getConstraint())
-        .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds()));
-        
         Results results = new Results(query, os, os.getSequence());
 
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         WebCollection webCollection = 
-                new WebCollection(os, bag.getType(), results, model, webConfig, classKeys);
+                new WebCollection(os, columnName, results, model, webConfig, classKeys);
         PagedCollection pagedColl = new PagedCollection(webCollection);
         String identifier = "qid" + index++;
         SessionMethods.setResultsTable(session, identifier, pagedColl);
