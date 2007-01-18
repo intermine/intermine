@@ -220,6 +220,16 @@ public class OrthologueDisplayerController extends TilesAction
                 cs.addConstraint(cc2);
                 cs.addConstraint(cc3);
 
+                if (bag == null || bag.isEmpty()) {
+                    String s = request.getParameter("id");
+                    int n = Integer.parseInt(s);
+                    Integer nn = new Integer(n);
+                    SimpleConstraint bc = new SimpleConstraint(new QueryField(objectGeneQC, "id"), 
+                                          ConstraintOp.EQUALS, new QueryValue(nn));    
+                    cs.addConstraint(bc);
+                   
+                }
+                
                 // make sure organism matches this one in this loop
                 SimpleConstraint cc4 = new 
                 SimpleConstraint(new QueryField(organismQC, "taxonId"), 
