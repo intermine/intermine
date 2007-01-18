@@ -276,14 +276,16 @@ public class UniprotConverter extends FileConverter
 
                     String strType = attrs.getValue("type");
                     String strDescr = attrs.getValue("description");
+                    
 
+                    
                     feature = createItem("UniProtFeature");                    
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
-                    
+                    System.out.println(" ~~~ featureID " + feature.getIdentifier());
                     if (strType != null) {
                         feature.setAttribute("type", strType);
                         Item go = createItem("OntologyTerm");
-                        go.setAttribute("name", strType);
+                        go.setAttribute("description", strType);
                         feature.addReference(new Reference("feature", go.getIdentifier()));
                         writer.store(ItemHelper.convert(go));
                     }
@@ -596,7 +598,7 @@ public class UniprotConverter extends FileConverter
                     if (attName != null) {
 
                         Item keyword = createItem("OntologyTerm");                        
-                        keyword.setAttribute("name", attValue.toString());
+                        keyword.setAttribute("description", attValue.toString());
                         if (keywordCollection.getRefIds().isEmpty()) {
                             protein.addCollection(keywordCollection);
                         }
@@ -606,9 +608,9 @@ public class UniprotConverter extends FileConverter
                     
                 // <entry><feature>
                 } else if (qName.equals("feature")) {
-                    if (attName != null) {
+                    
                         writer.store(ItemHelper.convert(feature));
-                    }
+                  
                 // <entry><name>
                 } else if (qName.equals("name")) {
 
