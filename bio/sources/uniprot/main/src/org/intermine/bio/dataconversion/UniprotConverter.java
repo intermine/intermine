@@ -302,6 +302,7 @@ public class UniprotConverter extends FileConverter
                         if (qName.equals("begin") || qName.equals("end")) {
                             feature.setAttribute(qName, attrs.getValue("position"));
                         } else {
+                            System.out.println(" ~~~ " + attrs.getValue("position"));
                             feature.setAttribute("begin", attrs.getValue("position"));
                             feature.setAttribute("end", attrs.getValue("position"));
                         }
