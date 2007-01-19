@@ -12,12 +12,12 @@
   </div>
   <div class="body">
     <p>
-    Found ${fn:length(matches)} matches of type ${bagType}. 
+    Found ${matchCount} matches of type ${bagType}.
     </p>
-    <input type="hidden" name="matchIDs" value="${matchesString}"/>
-    <input type="hidden" name="bagType" value="${bagType}"/>
+    <html:hidden property="matchIDs"/>
+    <html:hidden property="bagType"/>
     <fmt:message key="bagUploadConfirm.bagName"/>: 
-    <input type="text" name="bagName" value="${bagName}" size="20"/>
+    <html:text property="bagName" size="20"/>
   </div>
   <c:if test="${!empty issues['DUPLICATE']}">
     <div class="heading">
