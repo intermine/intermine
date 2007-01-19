@@ -1259,7 +1259,7 @@
 
 
    <chapter id="manualImportExportQueries">
-       <title>Exporting and importing (template) queries</title>
+       <title>Exporting and importing templates and queries</title>
 
      <para> The export/import feature allows you to pass a query on to
      someone else. To import and export <link
