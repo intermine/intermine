@@ -119,9 +119,7 @@ public class InitialiserPlugin implements PlugIn
      * @param servletContext the servlet cnotext
      * @param os the main objectstore
      */
-    private void loadAspectsConfig(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
-        Map dataSets = new LinkedHashMap();
+    private void loadAspectsConfig(ServletContext servletContext, ObjectStore os) {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
@@ -298,8 +296,7 @@ public class InitialiserPlugin implements PlugIn
      *
      * @param servetContext  servlet context in which to place attribute
      */
-    private void loadSuperUserDetails(ServletContext servletContext)
-        throws ServletException {
+    private void loadSuperUserDetails(ServletContext servletContext) {
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String superuser = (String) props.get("superuser.account");
         servletContext.setAttribute(Constants.SUPERUSER_ACCOUNT, superuser);
@@ -310,8 +307,7 @@ public class InitialiserPlugin implements PlugIn
      * @param servletContext the servlet cnotext
      * @param os the main objectstore
      */
-    private void makeCache(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
+    private void makeCache(ServletContext servletContext, ObjectStore os) {
         InterMineCache cache = new InterMineCache();
         TemplateHelper.registerTemplateTableCreator(cache, servletContext);
         servletContext.setAttribute(Constants.GLOBAL_CACHE, cache);
@@ -380,7 +376,6 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Create the profile manager and place it into to the servlet context.
-     * @return 
      */
     private ProfileManager createProfileManager(ServletContext servletContext, ObjectStore os)
         throws ServletException {

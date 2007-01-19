@@ -80,7 +80,7 @@ public class SessionMethods
         protected boolean isError() {
             return error;
         }
-    };
+    }
     
     /**
      * Executes current query and sets session attributes QUERY_RESULTS and RESULTS_TABLE. If the
@@ -231,7 +231,7 @@ public class SessionMethods
         // Depending on the class, load PathQuery or TemplateQuery
         if (query instanceof TemplateQuery) {
             TemplateQuery template = (TemplateQuery) query;
-            session.setAttribute(Constants.QUERY, (TemplateQuery) template.clone());
+            session.setAttribute(Constants.QUERY, template.clone());
             session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
         } else {
             // at the moment we can only load queries that have saved using the
@@ -391,7 +391,9 @@ public class SessionMethods
     }
     
     /**
-     * @see SessionMethods#recordMessage
+     * @see SessionMethods#recordMessage()
+     * @param error The error to store
+     * @param session The Session object in which to store the message
      */
     public static void recordError(String error, HttpSession session) {
         recordMessage(error, Constants.ERRORS, session);

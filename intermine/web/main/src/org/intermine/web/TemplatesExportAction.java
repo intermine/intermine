@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.XmlUtil;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +33,8 @@ import org.apache.commons.lang.StringUtils;
 public class TemplatesExportAction extends InterMineAction
 {
     /**
-     * @see Action#execute
+     * @see InterMineAction#execute(ActionMapping, ActionForm, HttpServletRequest,
+     *  HttpServletResponse)
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -43,7 +43,6 @@ public class TemplatesExportAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String type = request.getParameter("type");
         Map templates = null;

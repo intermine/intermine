@@ -226,8 +226,6 @@ public class TemplateListHelper
         }
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
-        Set types = new HashSet();
-
         List templates = new ArrayList();
         List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
         

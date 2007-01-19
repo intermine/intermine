@@ -76,7 +76,7 @@ public class TemplateAction extends InterMineAction
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                 templateName, templateType);
-        Map savedBags = (Map) ((Profile) session.getAttribute(Constants.PROFILE)).getSavedBags();
+        Map savedBags = ((Profile) session.getAttribute(Constants.PROFILE)).getSavedBags();
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
             TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 

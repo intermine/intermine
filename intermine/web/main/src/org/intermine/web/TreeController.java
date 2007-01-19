@@ -65,7 +65,7 @@ public class TreeController extends TilesAction
         }
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
+        Model model = os.getModel();
         ClassDescriptor root =
             model.getClassDescriptorByName(rootClass);
         Map classCounts = (Map) servletContext.getAttribute("classCounts");

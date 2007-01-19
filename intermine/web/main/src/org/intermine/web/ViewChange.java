@@ -48,7 +48,6 @@ public class ViewChange extends DispatchAction
                                         HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
         List view = SessionMethods.getEditingView(session);
@@ -73,7 +72,6 @@ public class ViewChange extends DispatchAction
                                   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         int index = Integer.parseInt(request.getParameter("index"));
 
         List view = SessionMethods.getEditingView(session);
@@ -100,7 +98,6 @@ public class ViewChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         int index = Integer.parseInt(request.getParameter("index"));
 
         List view = SessionMethods.getEditingView(session);
@@ -127,8 +124,6 @@ public class ViewChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        
         LOG.info(request.getParameterMap());
         String newOrder[] = request.getParameterValues("viewDivs[]");
         String oldOrder[] = request.getParameterValues("oldOrder[]");

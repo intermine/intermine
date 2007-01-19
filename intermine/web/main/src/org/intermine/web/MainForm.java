@@ -10,17 +10,18 @@ package org.intermine.web;
  *
  */
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.servlet.ServletContext;
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.util.TypeUtil;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.TypeUtil;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
@@ -284,7 +285,6 @@ public class MainForm extends ActionForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
@@ -339,9 +339,7 @@ public class MainForm extends ActionForm
             if (value.length() == 0) {
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.like"));
             } else {
-                if (value instanceof String) {
-                    value = ((String) value).trim();
-                }
+                value = value.trim();
                 parsedValue = WebUtil.wildcardUserToSql(value);
             }
         } else {

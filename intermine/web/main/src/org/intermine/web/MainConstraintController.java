@@ -51,7 +51,7 @@ public class MainConstraintController extends TilesAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
+        Model model = os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);

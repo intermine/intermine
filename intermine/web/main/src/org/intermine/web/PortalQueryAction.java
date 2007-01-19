@@ -14,12 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.intermine.objectstore.query.ConstraintOp;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -27,8 +28,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * The portal query action handles links into flymine from external sites.
@@ -42,8 +41,6 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 public class PortalQueryAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
-
     /**
      * Link-ins from other sites end up here (after some redirection).
      *
@@ -63,8 +60,6 @@ public class PortalQueryAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
         String extId = request.getParameter("externalid");
         String origin = request.getParameter("origin");
 

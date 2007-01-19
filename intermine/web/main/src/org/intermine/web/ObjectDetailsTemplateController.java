@@ -10,21 +10,20 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.results.DisplayObject;
+import org.intermine.web.results.InlineTemplateTable;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.results.DisplayObject;
-import org.intermine.web.results.InlineTemplateTable;
 
 /**
  * Controller for an inline table created by running a template on an object details page.
@@ -32,8 +31,6 @@ import org.intermine.web.results.InlineTemplateTable;
  */
 public class ObjectDetailsTemplateController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(ObjectDetailsTemplateController.class);
-
     /**
      * @see TilesAction#execute(ComponentContext context, ActionMapping mapping, ActionForm form,
      *                          HttpServletRequest request, HttpServletResponse response) 
@@ -46,8 +43,6 @@ public class ObjectDetailsTemplateController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
         DisplayObject displayObject = (DisplayObject) context.getAttribute("displayObject");
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
