@@ -12,19 +12,19 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-validator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry exported="true" kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
-	<classpathentry kind="lib" path="lib/highlighter-dev.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/struts.jar" sourcepath="/home/kmr/extern/sources/jakarta-struts-1.2.4-src/src/share"/>
+	<classpathentry exported="true" kind="lib" path="lib/highlighter-dev.jar"/>
 	<classpathentry kind="src" path="build/gen/src"/>
-	<classpathentry kind="lib" path="lib/dwr.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-highlighter-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/dwr.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/lucene-core-2.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/lucene-highlighter-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/taglibs-string.jar"/>
-	<classpathentry kind="lib" path="lib/xalan.jar"/>
-	<classpathentry kind="lib" path="lib/base64.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/jcommon-1.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xalan.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/base64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
