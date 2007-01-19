@@ -1280,7 +1280,7 @@
      from your <link linkend="manualQueryHistory">Query History</link>
      page. Select queries using the check-boxes (or click on the
      check-box on top of the column to select all at once) and click
-     the 'Export' button at the bottom of the page. Alternatively, one
+     the 'Export' button at the bottom of the MyMine page. Alternatively, one
      query can also be exported by clicking on 'Export' in the
      'Actions' column. Saved queries can also be exported as XML from
      your <link linkend="manualSavedQueries">Saved Queries</link> on
@@ -1297,7 +1297,7 @@
      linkend="manualMyMine">Account</link>. To import a query, you
      need to be <link linkend="manualLoggingIn">logged-in</link>. Once
      logged-in, click on the 'Import query from XML' link at the
-     bottom of the page. Enter query in XML format in the space
+     bottom of the MyMine page. Enter query in XML format in the space
      provided and press 'Submit'. The imported queries will be stored
      under 'Saved Queries'. Queries with names identical to existing
      queries will get an automatic extension to make it unique,
