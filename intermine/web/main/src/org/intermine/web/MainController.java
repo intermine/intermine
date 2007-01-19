@@ -75,7 +75,7 @@ public class MainController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
+        Model model = os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         
         // constraint display values
@@ -92,7 +92,7 @@ public class MainController extends TilesAction
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes
-            String pathName = (String) node.getPath();
+            String pathName = node.getPath();
             if (view.contains(pathName)) {
                 node.setSelected(true);
             } else {

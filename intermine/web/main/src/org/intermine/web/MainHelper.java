@@ -360,6 +360,8 @@ public class MainHelper
         return q;
     }
 
+    /*
+     ** currently unused
     private static Collection lowerCaseBag(Collection bag) {
         List retList = new ArrayList();
         Iterator iter = bag.iterator();
@@ -373,7 +375,8 @@ public class MainHelper
         }
         return retList;
     }
-
+     */
+    
     /**
      * Given a LogicExpression, generate a tree of ConstraintSets that reflects the
      * expression and add entries to the codeToConstraintSet Map from map from

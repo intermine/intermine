@@ -450,7 +450,7 @@ public class TemplateHelper
                                                         + templateName + "\"");
                     }
 
-                InterMineObject object;
+//                InterMineObject object;
 //                try {
 //                    object = os.getObjectById(id);
 //                } catch (ObjectStoreException e) {
@@ -458,7 +458,7 @@ public class TemplateHelper
 //                }
                 return makeInlineTemplateTable(servletContext, template, /*viewName,*/ null,
                                                interMineIdBag);
-            };
+            }
             public Serializable create(String templateName, /*String viewName,*/
                                        Integer id, String userName) {
                 if (userName.equals(NO_USERNAME_STRING)) {
@@ -607,7 +607,7 @@ public class TemplateHelper
         }
 
         HashMap pathToQueryNode = new HashMap();
-        Query query = MainHelper.makeQuery((PathQuery) templateClone, new HashMap(),
+        Query query = MainHelper.makeQuery(templateClone, new HashMap(),
                 pathToQueryNode);
         query.clearOrderBy();
         if (groupByNode != null) {

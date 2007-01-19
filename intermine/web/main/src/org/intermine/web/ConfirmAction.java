@@ -10,14 +10,12 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 
 /**
  * This action shows the user a confirmation page resulting in submission to
@@ -43,12 +41,8 @@ public class ConfirmAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        
         request.setAttribute("confirmAction", request.getParameter("confirmAction"));
         request.setAttribute("cancelAction", request.getParameter("cancelAction"));
-        
-        MessageResources strings = getResources(request);
         request.setAttribute("message", request.getParameter("message"));    
         
         return mapping.findForward("confirm");

@@ -701,7 +701,7 @@ public class ProfileManager
     }
 
     protected Map makeTagCheckers(final Model model) {
-        Map tagCheckers = new HashMap();
+        Map newTagCheckers = new HashMap();
         TagChecker fieldChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
                          UserProfile userProfile) {
@@ -738,9 +738,9 @@ public class ProfileManager
                 }
             }
         };
-        tagCheckers.put("collection", fieldChecker);
-        tagCheckers.put("reference", fieldChecker);
-        tagCheckers.put("attribute", fieldChecker);
+        newTagCheckers.put("collection", fieldChecker);
+        newTagCheckers.put("reference", fieldChecker);
+        newTagCheckers.put("attribute", fieldChecker);
 
         TagChecker templateChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
@@ -748,7 +748,7 @@ public class ProfileManager
                 // OK
             }
         };
-        tagCheckers.put("template", templateChecker);
+        newTagCheckers.put("template", templateChecker);
 
         TagChecker classChecker = new TagChecker() {
             void isValid(String tagName, String objectIdentifier, String type,
@@ -761,8 +761,8 @@ public class ProfileManager
                 }
             }
         };
-        tagCheckers.put("class", classChecker);
-        return tagCheckers;
+        newTagCheckers.put("class", classChecker);
+        return newTagCheckers;
     }
 }
 

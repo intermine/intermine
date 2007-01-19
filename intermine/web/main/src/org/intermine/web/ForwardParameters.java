@@ -73,11 +73,11 @@ public class ForwardParameters
     /**
      * Add an anchor to the path.
      * 
-     * @param anchor  anchor name
+     * @param newAnchor  anchor name
      * @return        this ForwardParameters object
      */
-    public ForwardParameters addAnchor(String anchor) {
-        this.anchor = anchor;
+    public ForwardParameters addAnchor(String newAnchor) {
+        this.anchor = newAnchor;
         return this;
     }
     

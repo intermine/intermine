@@ -12,7 +12,6 @@ package org.intermine.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
@@ -23,8 +22,6 @@ import org.apache.struts.action.ActionMapping;
  */
 public class TemplateSearchForm extends ActionForm
 {
-    private static final Logger LOG = Logger.getLogger(FeedbackForm.class);
-    
     private String queryString;
     private String type;
     

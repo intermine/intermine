@@ -141,8 +141,7 @@ public class Profile
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
         if (manager != null) {
-            List favourites = (List) manager
-                    .getTags("favourite", name, TagTypes.TEMPLATE, username);
+            List favourites = manager.getTags("favourite", name, TagTypes.TEMPLATE, username);
             for (Iterator iter = favourites.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
                 manager.deleteTag(tag);
@@ -253,9 +252,7 @@ public class Profile
         for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
-            if (bag instanceof InterMineBag 
-                && classAndSubs.contains(model.getPackageName() + "." 
-                                         + ((InterMineBag) bag).getType())) {
+            if (classAndSubs.contains(model.getPackageName() + "." + bag.getType())) {
                 map.put(entry.getKey(), bag);
             }
         }

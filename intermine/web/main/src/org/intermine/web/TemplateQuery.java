@@ -56,8 +56,6 @@ public class TemplateQuery extends PathQuery
     protected String description;
     /** The private comment for this query. */
     protected String comment;
-    /** Nodes with templated constraints. */
-    protected List editableNodes = new ArrayList();
     /** Map from node to editable constraint list. */
     protected Map constraints = new HashMap();
     /** True if template is considered 'important' for a related class. */
@@ -210,15 +208,15 @@ public class TemplateQuery extends PathQuery
      * @return the nodes
      */
     public List getEditableNodes() {
-        List editableNodes = new ArrayList();
+        List newEditableNodes = new ArrayList();
         Iterator nodeIter = nodes.values().iterator();
         while (nodeIter.hasNext()) {
             PathNode node = (PathNode) nodeIter.next();
             if (!(getEditableConstraints(node).isEmpty())) {
-                editableNodes.add(node);
+                newEditableNodes.add(node);
             }
         }
-        return editableNodes;
+        return newEditableNodes;
     }
 
     /**

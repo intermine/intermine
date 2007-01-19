@@ -10,14 +10,11 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
+import org.intermine.objectstore.query.ConstraintOp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.bag.InterMineBag;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -103,17 +100,6 @@ public class MainAction extends InterMineAction
         if (request.getParameter("bag") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf.getBagOp()));
             Object constraintValue = mf.getBagValue();
-            InterMineBag bag = null;
-            Map savedBags =
-                (Map) ((Profile) session.getAttribute(Constants.PROFILE)).getSavedBags();
-         
-            // TODO - is this needed?  For bag details page?
-            if (constraintValue instanceof InterMineBag) {
-                bag = (InterMineBag) constraintValue;
-            } else {
-                bag = (InterMineBag) savedBags.get(constraintValue);
-            }
-            
             // constrain parent object of this node to be in bag or node
             // itself if an object or reference/collection
             PathNode parent;

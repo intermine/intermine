@@ -105,7 +105,7 @@ public class TreeAction extends DispatchAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        String className = (String) request.getParameter("node");
+        String className = request.getParameter("node");
 
         QueryClassSelectAction.newQuery(className, session);
 

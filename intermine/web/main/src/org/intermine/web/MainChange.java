@@ -63,8 +63,6 @@ public class MainChange extends DispatchAction
                                     HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
@@ -450,7 +448,6 @@ public class MainChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String name = request.getParameter("name");
 
         session.setAttribute(Constants.EDITING_VIEW, name);
@@ -473,8 +470,6 @@ public class MainChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-
         session.removeAttribute(Constants.EDITING_VIEW);
 
         return new ForwardParameters(mapping.findForward("query")).forward();

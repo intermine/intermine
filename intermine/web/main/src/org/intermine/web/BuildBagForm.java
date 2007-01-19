@@ -10,17 +10,8 @@ package org.intermine.web;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import java.util.Map;
-
-import org.apache.struts.upload.FormFile;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 
 /**
  * Form bean to represent the inputs needed to create a bag from user input.
