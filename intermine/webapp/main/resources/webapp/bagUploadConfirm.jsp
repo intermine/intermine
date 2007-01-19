@@ -12,11 +12,11 @@
   </div>
   <div class="body">
     <p>
-    Found ${matchCount} matches of type ${bagType}.
+    Found ${matchCount} matches of type ${bagUploadConfirmForm.bagType}.
     </p>
     <html:hidden property="matchIDs"/>
     <html:hidden property="bagType"/>
-    <fmt:message key="bagUploadConfirm.bagName"/>: 
+    <fmt:message key="bagUploadConfirm.bagName"/>:
     <html:text property="bagName" size="20"/>
   </div>
   <c:if test="${!empty issues['DUPLICATE']}">
@@ -35,9 +35,16 @@
     </div>
   </c:if>
 
-  <html:submit property="action">
-    <fmt:message key="bagUploadConfirm.submitOK"/>
-  </html:submit>
+  <div class="body">
+    <html:submit property="goBack">
+      <fmt:message key="bagUploadConfirm.goBack"/>
+    </html:submit>
+    <c:if test="${matchCount > 0}">
+      <html:submit property="submit">
+        <fmt:message key="bagUploadConfirm.submitOK"/>
+      </html:submit>
+    </c:if>
+  </div>
 
   <c:if test="${fn:length(unresolved) > 0}">
     <div class="heading">

@@ -115,7 +115,7 @@ public class BagUploadConfirmForm extends ActionForm
     */
    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
        ActionErrors errors = new ActionErrors();
-       if (bagName.equals("")) {
+       if (bagName.equals("") && request.getParameter("goBack") == null) {
            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.savebag.blank"));
        }
        return errors;

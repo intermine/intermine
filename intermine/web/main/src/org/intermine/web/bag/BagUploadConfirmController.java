@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -36,21 +37,35 @@ public class BagUploadConfirmController extends TilesAction
     public ActionForward execute(ComponentContext context,
             ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
+        request.setAttribute("matches", bagQueryResult.getMatches());
+        request.setAttribute("issues", bagQueryResult.getIssues());
+        request.setAttribute("unresolved", bagQueryResult.getUnresolved());
+
         StringBuffer matchesStringBuffer = new StringBuffer();
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
-        Map matches = (Map) request.getAttribute("matches");
+        Map matches = bagQueryResult.getMatches();
         // matches will be null if we get here if the form.validate() method fails
         if (matches != null) {
             Iterator matchIDIter = matches.keySet().iterator();
             while (matchIDIter.hasNext()) {
                 matchesStringBuffer.append(matchIDIter.next()).append(' ');
             }
-
-            bagUploadConfirmForm.setBagType((String) request.getAttribute("bagType"));
             bagUploadConfirmForm.setMatchIDs(matchesStringBuffer.toString().trim());
         }
-        int spaceCount = StringUtils.countMatches(bagUploadConfirmForm.getMatchIDs().trim(), " ");
-        request.setAttribute("matchCount", new Integer(spaceCount + 1));
+        if (request.getAttribute("bagType") != null) {
+            bagUploadConfirmForm.setBagType((String) request.getAttribute("bagType"));
+        }
+        String trimmedIds = bagUploadConfirmForm.getMatchIDs().trim();
+        int matchCount;
+        if (trimmedIds.length() > 0) {
+            int spaceCount = StringUtils.countMatches(trimmedIds, " ");
+            matchCount = spaceCount + 1;
+        } else {
+            matchCount = 0;
+        }
+        request.setAttribute("matchCount", new Integer(matchCount));
         return null;
     }
 }

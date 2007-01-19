@@ -53,6 +53,9 @@ public class BagUploadConfirmAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        if (request.getParameter("goBack") != null) {
+            return mapping.findForward("back");
+        }
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
@@ -102,6 +105,8 @@ public class BagUploadConfirmAction extends InterMineAction
                                                              defaultMaxNotLoggedSize);
         profile.saveBag(bagName, bag, maxNotLoggedSize);
 
+        session.removeAttribute("bagQueryResult");
+        
         ForwardParameters forwardParameters = 
             new ForwardParameters(mapping.findForward("bagDetails"));
         return forwardParameters.addParameter("bagName", bagName).forward();

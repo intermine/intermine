@@ -110,9 +110,7 @@ public class BuildBagAction extends InterMineAction
         }
 
         BagQueryResult bagQueryResult = bagRunner.searchForBag(type, list);
-        request.setAttribute("matches", bagQueryResult.getMatches());
-        request.setAttribute("issues", bagQueryResult.getIssues());
-        request.setAttribute("unresolved", bagQueryResult.getUnresolved());
+        session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagName", newBagName);
         request.setAttribute("bagType", type);
         
