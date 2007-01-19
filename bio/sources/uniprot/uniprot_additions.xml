@@ -1,14 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.Protein" is-interface="true">
-    <attribute name="isFragment" type="java.lang.Boolean"/>
-    <attribute name="description" type="java.lang.String"/>
-    <attribute name="ecNumber" type="java.lang.String"/>
-    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
-    <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
-    <collection name="keywords" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
-  </class>
-  
+
 	<class name="org.flymine.model.genomic.UniProtFeature" is-interface="true">
    	 <attribute name="type" type="java.lang.String"/>
    	 <attribute name="description" type="java.lang.String"/>
@@ -17,4 +9,16 @@
 	 <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
 	 <reference name="feature" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
 	</class>
+	
+  <class name="org.flymine.model.genomic.Protein" is-interface="true">
+    <attribute name="isFragment" type="java.lang.Boolean"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="ecNumber" type="java.lang.String"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
+    <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+    <collection name="keywords" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
+    <collection name="features" referenced-type="org.flymine.model.genomic.UniProtFeature" ordered="true"/>
+  </class>
+  
+
 </classes>

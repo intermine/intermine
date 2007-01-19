@@ -154,6 +154,7 @@ public class UniprotConverter extends FileConverter
         private ReferenceList pubCollection;
         private ReferenceList commentCollection;
         private ReferenceList keywordCollection;
+        private ReferenceList featureCollection;
         private ReferenceList geneCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
@@ -282,7 +283,12 @@ public class UniprotConverter extends FileConverter
                                         
                     feature = createItem("UniProtFeature");                    
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
-
+                     
+                    if (featureCollection.getRefIds().isEmpty()) {
+                        protein.addCollection(featureCollection);
+                    }
+                    featureCollection.addRefId(feature.getIdentifier()); 
+                    
                     if (strType != null) {
                         feature.setAttribute("type", strType);
                         Item keyword = getKeyword(strType);
@@ -607,6 +613,7 @@ public class UniprotConverter extends FileConverter
                 // <entry><feature>
                 } else if (qName.equals("feature")) {
 
+
                     writer.store(ItemHelper.convert(feature));
 
                 // <entry><name>
@@ -676,7 +683,7 @@ public class UniprotConverter extends FileConverter
         private void initProtein() {
           
             protein = createItem("Protein");
-
+            featureCollection = new ReferenceList("features", new ArrayList());
             keywordCollection = new ReferenceList("keywords", new ArrayList());
             commentCollection = new ReferenceList("comments", new ArrayList());
             pubCollection = new ReferenceList("publications", new ArrayList());
