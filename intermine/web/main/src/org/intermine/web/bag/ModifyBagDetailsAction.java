@@ -72,7 +72,6 @@ public class ModifyBagDetailsAction extends InterMineAction
     * @param form The optional ActionForm bean for this request (if any)
     * @param request The HTTP request we are processing
     * @param response The HTTP response we are creating
-    * @return an ActionForward object defining where control goes next
     * @exception Exception if the application business logic throws
     *  an exception
     */
@@ -80,14 +79,16 @@ public class ModifyBagDetailsAction extends InterMineAction
                               ModifyBagDetailsForm mbdf, 
                               HttpSession session)
        throws Exception {
-       Map savedBags = (Map) profile.getSavedBags();
+       Map savedBags = profile.getSavedBags();
        InterMineBag interMineIdBag = (InterMineBag) savedBags.get(bagName);
        for (int i = 0; i < mbdf.getSelectedElements().length; i++) {
            interMineIdBag.removeFromId(new Integer(mbdf.selectedElements[i]));
        }
        SessionMethods.invalidateBagTable(session, bagName);
        profile.saveBag(bagName, interMineIdBag, Constants.MAX_NOT_LOGGED_BAG_SIZE);
-       pm.saveProfile(profile);
+       if (profile.getUserId() != null) {
+           pm.saveProfile(profile);
+       }
    }
 
     private ActionForward showBagInResultsTable(String bagName, ActionMapping mapping,
