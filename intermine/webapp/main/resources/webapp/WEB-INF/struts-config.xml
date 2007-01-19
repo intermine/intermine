@@ -492,7 +492,7 @@
             validate="true"
             parameter="action"
             input="error">
-      <forward name="back" path="bag.page"/>
+      <forward name="back" path="mymine.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
     </action>
