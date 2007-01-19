@@ -58,7 +58,7 @@ public class UniprotConverter extends FileConverter
     private Set geneIdentifiers = new HashSet();
     private Map ids = new HashMap();
     private Map aliases = new HashMap();
-    
+    private Map keyMaster = new HashMap();
     
     /**
      * Constructor
@@ -98,6 +98,7 @@ public class UniprotConverter extends FileConverter
         mapMaster.put("geneIdentifiers", geneIdentifiers);
         mapMaster.put("ids", ids);
         mapMaster.put("aliases", aliases);
+        mapMaster.put("keyMaster", keyMaster);
     }
     
     // makes map so we know which datasource to use for each organism
@@ -179,6 +180,7 @@ public class UniprotConverter extends FileConverter
         private Set geneIdentifiers;  // all gene identifiers
         private Map ids;
         private Map aliases;
+        private Map keyMaster;
         
         private ItemWriter writer;       
         
@@ -205,6 +207,7 @@ public class UniprotConverter extends FileConverter
             this.geneIdentifiers = (Set) mapMaster.get("geneIdentifiers");
             this.ids = (Map) mapMaster.get("ids");
             this.aliases = (Map) mapMaster.get("aliases");
+            this.keyMaster = (Map) mapMaster.get("keyMaster");
         }
 
         
@@ -282,10 +285,8 @@ public class UniprotConverter extends FileConverter
 
                     if (strType != null) {
                         feature.setAttribute("type", strType);
-                        Item go = createItem("OntologyTerm");
-                        go.setAttribute("description", strType);
-                        feature.addReference(new Reference("feature", go.getIdentifier()));
-                        writer.store(ItemHelper.convert(go));
+                        Item keyword = getKeyword(strType);
+                        feature.addReference(new Reference("feature", keyword.getIdentifier()));                     
                     }
                     
                     if (strDescr != null) {
@@ -596,13 +597,11 @@ public class UniprotConverter extends FileConverter
 
                     if (attName != null) {
 
-                        Item keyword = createItem("OntologyTerm");                        
-                        keyword.setAttribute("description", attValue.toString());
+                        Item keyword = getKeyword(attValue.toString());
                         if (keywordCollection.getRefIds().isEmpty()) {
                             protein.addCollection(keywordCollection);
                         }
-                        keywordCollection.addRefId(keyword.getIdentifier());
-                        writer.store(ItemHelper.convert(keyword));
+                        keywordCollection.addRefId(keyword.getIdentifier());                        
                     }
                     
                 // <entry><feature>
@@ -728,7 +727,24 @@ public class UniprotConverter extends FileConverter
             return database;
         }
                 
+        private Item getKeyword(String title)
+        throws SAXException {
+            Item keyword = (Item) keyMaster.get(title);
+            try {
 
+                if (keyword == null) {
+                    keyword = createItem("OntologyTerm");
+                    keyword.addAttribute(new Attribute("description", title));
+                    keyMaster.put(title, keyword);
+                    writer.store(ItemHelper.convert(keyword));
+                }
+
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return keyword;
+        }
+        
         private Item getDataSet(String title)
             throws SAXException {
             Item ds = (Item) dsMaster.get(title);
