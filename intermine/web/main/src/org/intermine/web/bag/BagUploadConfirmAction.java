@@ -59,6 +59,12 @@ public class BagUploadConfirmAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
+        String bagName = confirmForm.getBagName();
+        if (profile.getSavedBags().get(bagName) != null) {
+            recordError(new ActionMessage("errors.savebag.existing"), request);
+            return mapping.findForward("error");
+        }
+        
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");
 
@@ -88,7 +94,6 @@ public class BagUploadConfirmAction extends InterMineAction
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStore profileOs = profileManager.getUserProfileObjectStore();
                                                                       
-        String bagName = confirmForm.getBagName();
         InterMineBag bag =
             new InterMineBag(profile.getUserId(), bagName, bagType, profileOs, os, contents);
         

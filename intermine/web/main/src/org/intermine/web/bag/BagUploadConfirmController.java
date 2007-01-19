@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -36,12 +37,20 @@ public class BagUploadConfirmController extends TilesAction
             ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         StringBuffer matchesStringBuffer = new StringBuffer();
+        BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
         Map matches = (Map) request.getAttribute("matches");
-        Iterator matchIDIter = matches.keySet().iterator();
-        while (matchIDIter.hasNext()) {
-            matchesStringBuffer.append(matchIDIter.next()).append(' ');
+        // matches will be null if we get here if the form.validate() method fails
+        if (matches != null) {
+            Iterator matchIDIter = matches.keySet().iterator();
+            while (matchIDIter.hasNext()) {
+                matchesStringBuffer.append(matchIDIter.next()).append(' ');
+            }
+
+            bagUploadConfirmForm.setBagType((String) request.getAttribute("bagType"));
+            bagUploadConfirmForm.setMatchIDs(matchesStringBuffer.toString().trim());
         }
-        request.setAttribute("matchesString", matchesStringBuffer.toString());
+        int spaceCount = StringUtils.countMatches(bagUploadConfirmForm.getMatchIDs().trim(), " ");
+        request.setAttribute("matchCount", new Integer(spaceCount + 1));
         return null;
     }
 }

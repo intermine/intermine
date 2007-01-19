@@ -10,7 +10,13 @@ package org.intermine.web.bag;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Form for the bagUploadConfirm page.
@@ -102,5 +108,16 @@ public class BagUploadConfirmForm extends ActionForm
     */
    public void setBagType(String bagType) {
        this.bagType = bagType;
+   }
+   
+   /**
+    * @see ActionForm#validate(ActionMapping, HttpServletRequest)
+    */
+   public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+       ActionErrors errors = new ActionErrors();
+       if (bagName.equals("")) {
+           errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.savebag.blank"));
+       }
+       return errors;
    }
 }

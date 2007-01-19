@@ -94,13 +94,4 @@ public class BuildBagForm extends ActionForm
         return bagName;
     }
 
-    /**
-     * @see ActionForm#validate
-     */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
- 
-        ActionErrors errors = null;
-
-        return errors;
-    }
 }

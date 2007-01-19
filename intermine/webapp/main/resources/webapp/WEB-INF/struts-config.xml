@@ -489,8 +489,9 @@
     <action path="/bagUploadConfirm"
             type="org.intermine.web.bag.BagUploadConfirmAction"
             name="bagUploadConfirmForm"
+            validate="true"
             parameter="action"
-            input="buildBag">
+            input="error">
       <forward name="back" path="bag.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
@@ -648,7 +649,8 @@
 
     <action path="/initBagUploadConfirm"
             type="org.intermine.web.bag.BagUploadConfirmController"
-            name="buildBagForm"/>
+            validate="false"
+            name="bagUploadConfirmForm"/>
 
     <action path="/initBagUploadConfirmDuplicates"
             type="org.intermine.web.bag.BagUploadConfirmDuplicatesController"/>
