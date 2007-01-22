@@ -957,17 +957,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     if (bag.size () < minBagTableSize) {
                         continue;
                     }
-
-                    Class type = bagConstraint.getQueryNode().getType();
-                    String tableName =
-                        TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger(c);
-                    DatabaseUtil.createBagTable(db, c, tableName, bag, type);
-                    bagConstraintTables.put(bagConstraint, tableName);
-                    LOG.info("Creating temporary table "
-                            + (wasNotInTransaction ? "" : "in transaction ") + tableName);
-                    BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
-                            bagTablesToRemove);
-                    bagTablesInDatabase.add(bagTableToRemove);
+                    createTempBagTable(c, bagConstraint, true);
                 }
             }
             if (wasNotInTransaction) {
@@ -989,6 +979,29 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
+     * Creates a temporary bag table for the given BagConstraint.
+     *
+     * @param c a Connection
+     * @param bagConstraint a BagConstraint
+     * @param log true to log this action
+     */
+    protected BagTableToRemove createTempBagTable(Connection c, BagConstraint bagConstraint,
+            boolean log) throws SQLException {
+        Class type = bagConstraint.getQueryNode().getType();
+        String tableName =
+            TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger(c);
+        if (log) {
+            LOG.info("Creating temporary table " + tableName);
+        }
+        DatabaseUtil.createBagTable(db, c, tableName, bagConstraint.getBag(), type);
+        bagConstraintTables.put(bagConstraint, tableName);
+        BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
+                bagTablesToRemove);
+        bagTablesInDatabase.add(bagTableToRemove);
+        return bagTableToRemove;
+    }
+
+    /**
      * Removes any temporary bag tables that are no longer reachable.
      *
      * @param c the Connection to use
@@ -997,16 +1010,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         BagTableToRemove bttr = (BagTableToRemove) bagTablesToRemove.poll();
         while (bttr != null) {
             if (bagTablesInDatabase.contains(bttr)) {
-                try {
-                    c.createStatement().execute(bttr.getDropSql());
-                } catch (SQLException e) {
-                    LOG.error("Failed to drop temporary bag table: " + bttr.getDropSql()
-                            + ", continuing");
-                }
-                bagTablesInDatabase.remove(bttr);
+                removeTempBagTable(c, bttr);
                 LOG.info("Dropped unreachable temporary table: " + bttr.getDropSql());
             }
             bttr = (BagTableToRemove) bagTablesToRemove.poll();
+        }
+    }
+
+    /**
+     * Removes a temporary bag table, given a BagTableToRemove object.
+     *
+     * @param c the Connection to use
+     * @param bttr the BagTableToRemove object
+     */
+    protected synchronized void removeTempBagTable(Connection c, BagTableToRemove bttr) {
+        if (bagTablesInDatabase.contains(bttr)) {
+            try {
+                c.createStatement().execute(bttr.getDropSql());
+            } catch (SQLException e) {
+                LOG.error("Failed to drop temporary bag table: " + bttr.getDropSql()
+                        + ", continuing");
+            }
+            bagTablesInDatabase.remove(bttr);
         }
     }
 
@@ -1468,7 +1493,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         return r.getInt(1);
     }
 
-    private class BagTableToRemove extends WeakReference
+    protected class BagTableToRemove extends WeakReference
     {
         String dropSql;
 

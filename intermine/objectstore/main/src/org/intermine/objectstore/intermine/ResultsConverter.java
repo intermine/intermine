@@ -159,11 +159,19 @@ public class ResultsConverter
                 QueryClass qc = new QueryClass(InterMineObject.class);
                 q2.addFrom(qc);
                 q2.addToSelect(qc);
-                q2.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
-                            idsToFetch));
+                BagConstraint bc = new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
+                            idsToFetch);
+                q2.setConstraint(bc);
                 q2.setDistinct(false);
+                ObjectStoreInterMineImpl.BagTableToRemove bttr = null;
+                if (idsToFetch.size() >= os.getMinBagTableSize()) {
+                    bttr = os.createTempBagTable(c, bc, false);
+                }
                 Iterator iter = os.executeWithConnection(c, q2, 0, Integer.MAX_VALUE, false, false,
                         os.getSequence()).iterator();
+                if (bttr != null) {
+                    os.removeTempBagTable(c, bttr);
+                }
                 HashMap fetched = new HashMap();
                 while (iter.hasNext()) {
                     ResultsRow fetchedObjectRow = (ResultsRow) iter.next();
