@@ -65,11 +65,12 @@ public abstract class OverlapUtil
      * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
      * same class
      * @param osw the ObjectStoreWriter to use to write to the database
+     * @param summary a Map, to which summary data will be added
      * @throws ObjectStoreException if an error occurs while writing
      * @throws ClassNotFoundException if there is an ObjectStore problem
      */
     public static void createOverlaps(final ObjectStore os, LocatedSequenceFeature subject,
-            List classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw)
+            List classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw, Map summary)
         throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
 
@@ -123,97 +124,107 @@ public abstract class OverlapUtil
                 subject);
         cs.addConstraint(subjectIdConstraint);
 
-        if (subject instanceof Chromosome) {
+        /*if (subject instanceof Chromosome) {
             // improve the speed by adding an extra contain for locations on chromosomes
             QueryObjectReference objChromosomeRef = new QueryObjectReference(qcObj, "chromosome");
             ContainsConstraint chromosomeConstraint =
                 new ContainsConstraint(objChromosomeRef, ConstraintOp.CONTAINS, subject);
 
             cs.addConstraint(chromosomeConstraint);
-        }
+        }*/
 
         q.addToOrderBy(new QueryField(qcLoc, "start"));
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
+        try {
+            ((ObjectStoreInterMineImpl) os).goFaster(q);
 
-        Results results = os.execute(q);
+            Results results = os.execute(q);
 
-        // A Map from Location to the corresponding LocatedSequenceFeature
-        Map currentLocations = new HashMap();
+            // A Map from Location to the corresponding LocatedSequenceFeature
+            Map currentLocations = new HashMap();
 
-        int count = 0;
-        HashMap summary = new HashMap();
-        Iterator resIter = results.iterator();
+            int count = 0;
+            Iterator resIter = results.iterator();
 
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            while (resIter.hasNext()) {
+                ResultsRow rr = (ResultsRow) resIter.next();
 
-            Location location = (Location) rr.get(0);
+                Location location = (Location) rr.get(0);
 
-            if (location.getStart() == null || location.getEnd() == null) {
-                continue;
-            }
+                if (location.getStart() == null || location.getEnd() == null) {
+                    continue;
+                }
 
-            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+                LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
 
-            if (isAClassToIgnore(classesToIgnore, lsf.getClass())) {
-                continue;
-            }
+                if (isAClassToIgnore(classesToIgnore, lsf.getClass())) {
+                    continue;
+                }
 
-            int start = location.getStart().intValue();
+                int start = location.getStart().intValue();
 
-            // Okay, first we compare this location to all the currentLocations.
-            Iterator currIter = currentLocations.entrySet().iterator();
-            while (currIter.hasNext()) {
-                Map.Entry currEntry = (Map.Entry) currIter.next();
-                Location currLoc = (Location) currEntry.getKey();
-                LocatedSequenceFeature currLsf = (LocatedSequenceFeature) currEntry.getValue();
-                if (currLoc.getEnd().intValue() < start) {
-                    currIter.remove();
-                } else {
-                    // They overlap, so check to see if we have configured them out.
-                    if ((!ignoreSelfMatches) || (!lsf.getClass().equals(currLsf.getClass()))) {
-                        if (!(ignoreCombination(classesToIgnore, lsf.getClass(), currLsf.getClass())
-                                || ignoreCombination(classesToIgnore, currLsf.getClass(),
-                                    lsf.getClass()))) {
-                            OverlapRelation overlapRelation = (OverlapRelation)
-                                DynamicUtil.createObject(Collections.singleton(
-                                            OverlapRelation.class));
-                            Set bioEntityCollection = overlapRelation.getBioEntities();
-                            bioEntityCollection.add(lsf);
-                            bioEntityCollection.add(currLsf);
+                // Okay, first we compare this location to all the currentLocations.
+                Iterator currIter = currentLocations.entrySet().iterator();
+                while (currIter.hasNext()) {
+                    Map.Entry currEntry = (Map.Entry) currIter.next();
+                    Location currLoc = (Location) currEntry.getKey();
+                    LocatedSequenceFeature currLsf = (LocatedSequenceFeature) currEntry
+                        .getValue();
+                    if (currLoc.getEnd().intValue() < start) {
+                        currIter.remove();
+                    } else {
+                        // They overlap, so check to see if we have configured them out.
+                        if ((!ignoreSelfMatches)
+                                || (!lsf.getClass().equals(currLsf.getClass()))) {
+                            if (!(ignoreCombination(classesToIgnore, lsf.getClass(),
+                                            currLsf.getClass())
+                                    || ignoreCombination(classesToIgnore, currLsf.getClass(),
+                                        lsf.getClass()))) {
+                                OverlapRelation overlapRelation = (OverlapRelation)
+                                    DynamicUtil.createObject(Collections.singleton(
+                                                OverlapRelation.class));
+                                Set bioEntityCollection = overlapRelation.getBioEntities();
+                                bioEntityCollection.add(lsf);
+                                bioEntityCollection.add(currLsf);
 
-                            ++count;
+                                ++count;
 
-                            osw.store(overlapRelation);
-                            osw.addToCollection(lsf.getId(), LocatedSequenceFeature.class,
-                                    "overlappingFeatures", currLsf.getId());
-                            osw.addToCollection(currLsf.getId(), LocatedSequenceFeature.class,
-                                    "overlappingFeatures", lsf.getId());
+                                osw.store(overlapRelation);
+                                osw.addToCollection(lsf.getId(), LocatedSequenceFeature.class,
+                                        "overlappingFeatures", currLsf.getId());
+                                osw.addToCollection(currLsf.getId(),
+                                        LocatedSequenceFeature.class,
+                                        "overlappingFeatures", lsf.getId());
 
-                            // Log it, for the summary.
-                            String classname1 = DynamicUtil.getFriendlyName(lsf.getClass());
-                            String classname2 = DynamicUtil.getFriendlyName(currLsf.getClass());
+                                // Log it, for the summary.
+                                String classname1 = DynamicUtil.getFriendlyName(lsf.getClass());
+                                String classname2 = DynamicUtil.getFriendlyName(currLsf
+                                        .getClass());
 
-                            String summaryLine = classname1.compareTo(classname2) == 1
-                                ? classname2 + " - " + classname1 : classname1 + " - " + classname2;
-                            Integer summaryCount = (Integer) summary.get(summaryLine);
-                            if (summaryCount == null) {
-                                summaryCount = new Integer(0);
+                                String summaryLine = classname1.compareTo(classname2) > 0
+                                    ? classname2 + " - " + classname1 : classname1 + " - "
+                                    + classname2;
+                                Integer summaryCount = (Integer) summary.get(summaryLine);
+                                if (summaryCount == null) {
+                                    summaryCount = new Integer(0);
+                                }
+                                summary.put(summaryLine, new Integer(summaryCount.intValue()
+                                            + 1));
                             }
-                            summary.put(summaryLine, new Integer(summaryCount.intValue() + 1));
                         }
                     }
                 }
+                currentLocations.put(location, lsf);
             }
-            currentLocations.put(location, lsf);
-        }
-        LOG.info("Stored " + count + " overlaps for " + subject + ", identifier: "
-                 + subject.getIdentifier());
-        Iterator summaryIter = summary.entrySet().iterator();
-        while (summaryIter.hasNext()) {
-            Map.Entry summaryEntry = (Map.Entry) summaryIter.next();
-            LOG.info(summaryEntry.getValue() + " overlaps for " + summaryEntry.getKey());
+            LOG.info("Stored " + count + " overlaps for id " + subject.getId() + ", identifier: "
+                     + subject.getIdentifier());
+            Integer summaryCount = (Integer) summary.get("total");
+            if (summaryCount == null) {
+                summaryCount = new Integer(0);
+            }
+            summary.put("total", new Integer(summaryCount.intValue() + count));
+        } finally {
+            ((ObjectStoreInterMineImpl) os).releaseGoFaster(q);
         }
     }
 

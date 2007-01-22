@@ -249,8 +249,10 @@ public class PostProcessTask extends Task
                 throw new BuildException("unknown operation: " + operation);
             }
         } catch (BuildException e) {
+            LOG.error("Failed postprocess. Operation was: " + operation, e);
             throw e;
         } catch (Exception e) {
+            LOG.error("Failed postprocess. Operation was: " + operation, e);
             throw new BuildException("Operation was:" + operation, e);
         } finally {
             try {

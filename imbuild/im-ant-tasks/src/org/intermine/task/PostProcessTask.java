@@ -151,7 +151,7 @@ public class PostProcessTask extends Task
 
             pp.getClass().getMethod("execute", new Class[0]).invoke(pp, new Object[0]);
         } catch (Exception err) {
-            throw new BuildException("error setting operation on PostProcessTask (name: "
+            throw new BuildException("error running PostProcessTask (action: "
                     + postProcessName + ")", err);
         }
     }

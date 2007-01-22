@@ -9,23 +9,24 @@ package org.intermine.bio.postprocess;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.*;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.objectstore.query.iql.IqlQuery;
 
 import org.intermine.model.InterMineObject;
 import org.flymine.model.genomic.*;
@@ -405,36 +406,78 @@ public class CalculateLocations
      * entry can be of the form class=class, which specifies that the particular combination should
      * be ignored. Hence an entry of the form class is equivalent to class=InterMineObject
      * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
-     * same class.
+     * same class
      * @throws Exception if anything goes wrong
      */
     public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
          throws Exception {
         osw.beginTransaction();
+        Map summary = new HashMap();
         Map chromosomeMap = makeChromosomeMap();
         Iterator chromosomeIdIter = chromosomeMap.keySet().iterator();
         while (chromosomeIdIter.hasNext()) {
             Integer id = (Integer) chromosomeIdIter.next();
             createSubjectOverlapRelations((Chromosome) chromosomeMap.get(id), classNamesToIgnore,
-                                          ignoreSelfMatches);
+                    ignoreSelfMatches, summary);
         }
         osw.commitTransaction();
+        LOG.info("Stored a total of " + summary.remove("total") + " overlaps");
+        List sortList = new ArrayList();
+        Iterator summaryIter = summary.entrySet().iterator();
+        while (summaryIter.hasNext()) {
+            Map.Entry summaryEntry = (Map.Entry) summaryIter.next();
+            sortList.add(new SortElement((String) summaryEntry.getKey(),
+                        ((Integer) summaryEntry.getValue()).intValue()));
+        }
+        Collections.sort(sortList);
+        summaryIter = sortList.iterator();
+        while (summaryIter.hasNext()) {
+            LOG.info(((SortElement) summaryIter.next()).toString());
+        }
+    }
+
+    private class SortElement implements Comparable
+    {
+        String text;
+        int number;
+
+        public SortElement(String text, int number) {
+            this.text = text;
+            this.number = number;
+        }
+
+        public int compareTo(Object o) {
+            int retval = ((SortElement) o).number - number;
+            if (retval == 0) {
+                retval = ((SortElement) o).text.compareTo(text);
+            }
+            return retval;
+        }
+
+        public String toString() {
+            return number + " overlap" + (number == 1 ? "" : "s") + " for " + text;
+        }
     }
 
     /**
      * Create OverlapRelation objects for locations that have the given subject.
-     * @param classNamesToIgnore a comma separated list of the names of those classes that should be
-     * ignored when searching for overlaps.  Sub classes to these classes are ignored too
+     *
+     * @param subject a Chromosome object on which to create the overlaps
+     * @param classNamesToIgnore a List of the names of those classes that should be ignored when
+     * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
+     * entry can be of the form class=class, which specifies that the particular combination should
+     * be ignored. Hence an entry of the form class is equivalent to class=InterMineObject
      * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
-     * same class.
+     * same class
+     * @param summary a Map to which summary data will be added
      */
     private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore,
-                                               boolean ignoreSelfMatches)
-        throws Exception {
-        LOG.info("Creating overlaps for " + subject + ", identifier: "
+            boolean ignoreSelfMatches, Map summary) throws Exception {
+        LOG.info("Creating overlaps for id " + subject.getId() + ", identifier: "
                  + subject.getIdentifier());
 
-        OverlapUtil.createOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches, osw);
+        OverlapUtil.createOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches, osw,
+                summary);
     }
 
     /**
