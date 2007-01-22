@@ -292,8 +292,8 @@ public class InlineResultsTable
                 String lastFieldName = path.getEndFieldDescriptor().getName();
                 boolean isKeyField =
                     ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
-                ResultElement resultElement = 
-                    new ResultElement(os, path.resolve(o), o.getId(), endTypeName, isKeyField);
+                ResultElement resultElement = new ResultElement(os, path.resolve(o), o.getId(),
+                                                                endTypeName, path, isKeyField);
                 retList.add(resultElement);
             } catch (PathError e) {
                 // if the field can't be resolved then this Path doesn't make sense for this object

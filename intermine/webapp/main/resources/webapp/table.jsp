@@ -12,125 +12,21 @@
 
 <tiles:get name="objectTrail.tile"/><im:vspacer height="3"/>
 
+<script type="text/javascript" src="js/table.js" ></script>
 <script type="text/javascript">
-  <!--//<![CDATA[
-    function selectColumnCheckbox(column, dataType, bagType) {
-      setBagType(bagType);
-      selectColumnCheckboxes(column + dataType , bagType);
-      disableAllOthers(dataType);
-      if (isClear()) {
-        enableAll();
-      }
+<!--//<![CDATA[
+  function changePageSize() {
+    var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
+    var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
+    var page = ${resultsTable.startRow}/pagesize;
+    url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
+    if ('${param.trail}' != '') {
+    	url += '&trail=${param.trail}';
     }
-    function disableAllOthers(dataType) {
-      if (dataType == 'primitive') {
-        disableAllOfType('object');
-      } else {
-        disableAllOfType('primitive');
-      }
-    }
-    function disableAllOfType(dataType) {
-      with(document.saveBagForm) {
-        for(i=0;i < elements.length;i++) {
-          thiselm = elements[i];
-          if(thiselm.id.indexOf('selectedObjects_') != -1 && thiselm.id.indexOf(dataType) != -1) {
-            thiselm.disabled = true;
-          }
-        }
-      }
-    }
-    function enableAll() {
-      with(document.saveBagForm) {
-        for(i=0;i < elements.length;i++) {
-          thiselm = elements[i];
-          if(thiselm.id.indexOf('selectedObjects_') != -1) {
-            thiselm.disabled = false;
-          }
-        }
-      }
-    }
-    function isClear() {
-      with(document.saveBagForm) {
-        for(i=0;i < elements.length;i++) {
-          thiselm = elements[i];
-          if(thiselm.id.indexOf('selectedObjects_') != -1 && thiselm.checked) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-    function selectColumnCheckboxes(column, bagType) {
-      var columnCheckBox = 'selectedObjects_' + column;
-      with(document.saveBagForm) {
-      for(i=0;i < elements.length;i++) {
-        thiselm = elements[i];
-        var testString = 'selectedObjects_' + column + '_';
-        if(thiselm.id.indexOf(testString) != -1)
-          thiselm.checked = document.getElementById(columnCheckBox).checked;
-        }
-      }
-      elements = document.getElementsByTagName('td');
-      for (var i = 0; i < elements.length; i++) {
-		var id = elements.item(i).id;
-		if (id.indexOf('cell') != -1
-			&& id.indexOf(bagType) != -1){
-			if (document.getElementById(columnCheckBox).checked){
-				elements.item(i).className = 'highlightCell';
-			} else {
-				elements.item(i).className = '';
-			}
-		 }
-      }
-    }
-    function itemChecked(row, column, dataType, bagType, checkbox) {
-      setBagType(bagType)
-      unselectColumnCheckbox('' + column + dataType);
-      disableAllOthers(dataType);
-      if (isClear()) {
-        enableAll();
-      }
-      var elements = document.getElementsByTagName('td');
-      for (var i = 0; i < elements.length; i++) {
-		var id = elements.item(i).id;
-		if (id.indexOf('cell') != -1
-			&& id.indexOf(bagType) != -1
-			&& id.split(',')[2] == row){
-			if (checkbox.checked){
-				elements.item(i).className = 'highlightCell';
-			} else {
-				elements.item(i).className = '';
-			}
-		 }
-      }
-    }
-    function setBagType(bagType){
-      with(document.saveBagForm) {
-	      for(i=0;i < elements.length;i++) {
-	        thiselm = elements[i];
-	        if(thiselm.id.indexOf('selectedObjects_') != -1 
-	        		&& thiselm.value.indexOf(bagType) == -1) {
-	          thiselm.disabled = 'true';
-			}
-		  }
-	  }
-    }
-    function unselectColumnCheckbox(column) {
-      document.getElementById('selectedObjects_' + column).checked = false;
-    }
-    function changePageSize() {
-      var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
-      var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
-      var page = ${resultsTable.startRow}/pagesize;
-      url += 'table=${param.table}' + '&page=' + Math.floor(page) + '&size=' + pagesize;
-      if ('${param.trail}' != '') {
-      	url += '&trail=${param.trail}';
-      }
-      document.location.href=url;
-    }
-    //]]>-->
+    document.location.href=url;
+  }
+//]]>-->  
 </script>
-
 <c:choose>
   <c:when test="${resultsTable.size == 0}">
     <div class="body">
@@ -194,21 +90,14 @@
           <tr>
             <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
               
-              <c:set var="dataType">
-                <c:choose>
-                  <c:when test="${column.type.class.name == 'org.intermine.metadata.ClassDescriptor'}">object</c:when>
-                  <c:otherwise>primitive</c:otherwise>
-                </c:choose>
-              </c:set>
-              
               <c:choose>
                 <c:when test="${column.visible}">
                   <c:if test="${column.selectable}">
                     <th align="center" class="checkbox">
-                      <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}${dataType}"
-                                     onclick="selectColumnCheckbox(${status.index}, '${dataType}','${column.type}')"
+                      <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
+                                     onclick="selectColumnCheckbox(${status.index}, '${column.columnId}')"
                                      disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
-                        <c:out value="${status.index},${column.type}"/>
+                        <c:out value="${status.index},${column.columnId}"/>
                       </html:multibox>
                     </th>
                   </c:if>
@@ -323,26 +212,19 @@
               <tr class="<c:out value="${rowClass}"/>">
                 <c:forEach var="column" items="${resultsTable.columns}" varStatus="status2">
                   
-                  <c:set var="dataType">
-                    <c:choose>
-                      <c:when test="${column.type.class.name == 'org.intermine.metadata.ClassDescriptor'}">object</c:when>
-                      <c:otherwise>primitive</c:otherwise>
-                    </c:choose>
-                  </c:set>
-                  
                   <c:choose>
                     <c:when test="${column.visible}">
                       <%-- the checkbox to select this object --%>
                       <c:if test="${column.selectable}">
-                        <td align="center" class="checkbox" id="cell_checkbox,${status2.index},${status.index},${row[column.index].type}">
+                        <td align="center" class="checkbox" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
                           <html:multibox property="selectedObjects"
-                                         styleId="selectedObjects_${status2.index}${dataType}_${status.index}"
-                                         onclick="itemChecked(${status.index},${status2.index}, '${dataType}','${row[column.index].type}',this)">
-                            <c:out value="${status2.index},${status.index},${row[column.index].type}"/>
+                                         styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
+                                         onclick="itemChecked(${status.index},${status2.index}, '${row[column.index].htmlId}',this)">
+                            <c:out value="${status2.index},${status.index},${row[column.index].htmlId}"/>
                           </html:multibox>
                         </td>
                       </c:if>
-                      <td id="cell,${status2.index},${status.index},${row[column.index].type}">
+                      <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}">
                         <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
                         <tiles:insert name="objectView.tile" />
                       </td>
