@@ -72,22 +72,23 @@ public class BuildBagAction extends InterMineAction
         BufferedReader reader = null;
 
         if (request.getParameter("paste") != null) {
-        	String trimmedText = buildBagForm.getText().trim();
-        	if (trimmedText.length() == 0) {
-        		recordError(new ActionMessage("bagBuild.noBagPaste"), request);
-        		return mapping.findForward("mymine");
-        	} else {
-        		reader = new BufferedReader(new StringReader(trimmedText));
-        	}
-        } else if (request.getParameter("file") != null) {
-        	FormFile formFile = buildBagForm.getFormFile();
-        	if (formFile == null
-        			|| formFile.getFileName() == null || formFile.getFileName().length() == 0) {
-        		recordError(new ActionMessage("bagBuild.noBagFile"), request);
-        		return mapping.findForward("mymine");
-        	} else {
-        		reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
-        	}
+            String trimmedText = buildBagForm.getText().trim();
+            if (trimmedText.length() == 0) {
+                recordError(new ActionMessage("bagBuild.noBagPaste"), request);
+                return mapping.findForward("mymine");
+            } else {
+                reader = new BufferedReader(new StringReader(trimmedText));
+            }
+        } else
+            if (request.getParameter("file") != null) {
+                FormFile formFile = buildBagForm.getFormFile();
+                if (formFile == null || formFile.getFileName() == null
+                    || formFile.getFileName().length() == 0) {
+                    recordError(new ActionMessage("bagBuild.noBagFile"), request);
+                    return mapping.findForward("mymine");
+                } else {
+                    reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
+                }
         }
 
         String thisLine;

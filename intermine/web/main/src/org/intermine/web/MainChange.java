@@ -50,18 +50,22 @@ public class MainChange extends DispatchAction
 {
     /**
      * Remove all nodes under a given path
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward removeNode(ActionMapping mapping,
-                                    ActionForm form,
-                                    HttpServletRequest request,
-                                    HttpServletResponse response)
-        throws Exception {
+    public ActionForward removeNode(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -85,10 +89,13 @@ public class MainChange extends DispatchAction
 
     /**
      * Remove the PathNode specified by the given (constraint) path, and it's children, from the
-     * PathQuery.  Also remove any view nodes would be illegal because they depend on a type
+     * PathQuery. Also remove any view nodes would be illegal because they depend on a type
      * constraint that will be removed.
-     * @param pathQuery the PathQuery
-     * @param path the path of the PathNode that should be removed.
+     * 
+     * @param pathQuery
+     *            the PathQuery
+     * @param path
+     *            the path of the PathNode that should be removed.
      */
     protected static void removeNode(PathQuery pathQuery, String path) {
         // copy because we will be remove paths from the Map as we go
@@ -106,10 +113,13 @@ public class MainChange extends DispatchAction
 
     /**
      * Remove the PathNode specified by the given (constraint) path, but not it's children from the
-     * PathQuery.  Also remove any view nodes would be illegal because they depend on a type
+     * PathQuery. Also remove any view nodes would be illegal because they depend on a type
      * constraint that will be removed.
-     * @param pathQuery the PathQuery
-     * @param path the path of the PathNode that should be removed.
+     * 
+     * @param pathQuery
+     *            the PathQuery
+     * @param path
+     *            the path of the PathNode that should be removed.
      */
     protected static void removeOneNode(PathQuery pathQuery, String path) {
         // ensure removal of any view nodes that depend on a type constraint
@@ -133,10 +143,10 @@ public class MainChange extends DispatchAction
 
                 while (viewPathIter.hasNext()) {
                     String viewPath = (String) viewPathIter.next();
-                    
+
                     if (viewPath.startsWith(path) && !viewPath.equals(path)) {
                         String fieldName = viewPath.substring(path.length() + 1);
-                        
+
                         if (fieldName.indexOf(".") != -1) {
                             fieldName = fieldName.substring(0, fieldName.indexOf("."));
                         }
@@ -156,18 +166,22 @@ public class MainChange extends DispatchAction
 
     /**
      * Add a new constraint to this Node
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward addConstraint(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
-        throws Exception {
+    public ActionForward addConstraint(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -176,24 +190,28 @@ public class MainChange extends DispatchAction
         session.removeAttribute("editingConstraintIndex");
         session.removeAttribute("editingConstraintValue");
         session.removeAttribute("editingConstraintOperand");
-        
+
         return mapping.findForward("query");
     }
 
     /**
      * Remove a constraint (identified by index) from a Node
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward removeConstraint(ActionMapping mapping,
-                                          ActionForm form,
-                                          HttpServletRequest request,
-                                          HttpServletResponse response)
-        throws Exception {
+    public ActionForward removeConstraint(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -204,21 +222,25 @@ public class MainChange extends DispatchAction
 
         return mapping.findForward("query");
     }
-    
+
     /**
      * Edit a constraint (identified by index) from a Node
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward editConstraint(ActionMapping mapping,
-                                        ActionForm form,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response)
-        throws Exception {
+    public ActionForward editConstraint(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -226,11 +248,11 @@ public class MainChange extends DispatchAction
 
         session.setAttribute("editingNode", query.getNodes().get(path));
         session.setAttribute("editingConstraintIndex", new Integer(index));
-        
+
         PathNode pn = (PathNode) query.getNodes().get(path);
         Constraint c = (Constraint) pn.getConstraints().get(index);
         ConstraintOp op = c.getOp();
-        
+
         if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL
             && op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
             session.setAttribute("editingConstraintValue", c.getDisplayValue());
@@ -239,24 +261,28 @@ public class MainChange extends DispatchAction
             session.removeAttribute("editingConstraintValue");
             session.removeAttribute("editingConstraintOperand");
         }
-        
+
         return mapping.findForward("query");
     }
-    
+
     /**
      * Edit a constraint's template settings (identified by index) from a Node
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward editTemplateConstraint(ActionMapping mapping,
-                                        ActionForm form,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response)
-        throws Exception {
+    public ActionForward editTemplateConstraint(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -265,31 +291,35 @@ public class MainChange extends DispatchAction
         session.setAttribute("editingNode", query.getNodes().get(path));
         session.setAttribute("editingConstraintIndex", new Integer(index));
         session.setAttribute("editingTemplateConstraint", Boolean.TRUE);
-        
+
         return mapping.findForward("query");
     }
-    
+
     /**
      * Add a Node to the query
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward addPath(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+    public ActionForward addPath(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
         path = MainHelper.toPath(prefix, path);
-        
+
         // Figure out which path to delete if user cancels operation
         String bits[] = StringUtils.split(path, '.');
         String partialPath = bits[0], deletePath = "";
@@ -300,38 +330,42 @@ public class MainChange extends DispatchAction
                 break;
             }
         }
-        
+
         Node node = (Node) query.getNodes().get(path);
         if (node == null) {
             node = query.addNode(path);
         }
-        //automatically start editing node
+        // automatically start editing node
         session.setAttribute("editingNode", node);
         session.removeAttribute("editingConstraintIndex");
         session.removeAttribute("editingConstraintValue");
         session.removeAttribute("editingConstraintOperand");
-        
+
         request.setAttribute("deletePath", deletePath); // for ajax
-        
-        return new ForwardParameters(mapping.findForward("query"))
-            .addParameter("deletePath", deletePath)
+
+        return new ForwardParameters(mapping.findForward("query")).addParameter("deletePath",
+                                                                                deletePath)
             .addAnchor("constraint-editor").forward();
     }
 
     /**
      * Change the currently active metadata Node
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward changePath(ActionMapping mapping,
-                                    ActionForm form,
-                                    HttpServletRequest request,
-                                    HttpServletResponse response)
-        throws Exception {
+    public ActionForward changePath(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
         String prefix = request.getParameter("prefix");
@@ -340,44 +374,52 @@ public class MainChange extends DispatchAction
         if (prefix != null) {
             session.setAttribute("prefix", prefix);
         }
-        
+
         return new ForwardParameters(mapping.findForward("query")).addAnchor(path).forward();
     }
-    
+
     /**
      * Put query builder in template building mode.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward startTemplateBuild(ActionMapping mapping,
-                                            ActionForm form,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response)
-        throws Exception {
+    public ActionForward startTemplateBuild(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState());
         return mapping.findForward("query");
     }
-    
+
     /**
-     * Being the query builder out of template building mode and discard
-     * any unfinished template building.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * Being the query builder out of template building mode and discard any unfinished template
+     * building.
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward stopTemplateBuild(ActionMapping mapping,
-                                           ActionForm form,
-                                           HttpServletRequest request,
-                                           HttpServletResponse response)
-        throws Exception {
+    public ActionForward stopTemplateBuild(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         session.removeAttribute(Constants.EDITING_VIEW);
@@ -386,18 +428,22 @@ public class MainChange extends DispatchAction
 
     /**
      * Add a Node to the results view
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward addToView(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward addToView(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -417,7 +463,7 @@ public class MainChange extends DispatchAction
             Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
             while (cldFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-                Path pathToAdd = new Path(model, fullPathName + "."  + fc.getFieldExpr());
+                Path pathToAdd = new Path(model, fullPathName + "." + fc.getFieldExpr());
                 if (pathToAdd.getEndClassDescriptor() == null
                     && !view.contains(pathToAdd.toString())) {
                     view.add(pathToAdd.toString());
@@ -427,26 +473,29 @@ public class MainChange extends DispatchAction
             view.add(fullPathName);
         }
 
-        
         ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));
         fp.addAnchor(pathName);
         return new ForwardParameters(mapping.findForward("query")).addAnchor(pathName).forward();
     }
-    
+
     /**
      * Select a different view to edit.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward selectView(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward selectView(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         String name = request.getParameter("name");
 
@@ -454,46 +503,54 @@ public class MainChange extends DispatchAction
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-    
+
     /**
      * Select the default view to edit.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward selectDefaultView(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward selectDefaultView(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.EDITING_VIEW);
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-    
+
     /**
      * Select the default view to edit.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward renameView(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward renameView(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String oldName = request.getParameter("oldName");
         String newName = request.getParameter("newName");
-        
+
         List view = query.getAlternativeView(oldName);
         query.removeAlternativeView(oldName);
         query.addAlternativeView(newName, view);
@@ -501,49 +558,57 @@ public class MainChange extends DispatchAction
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-    
+
     /**
      * Delete an alternative view.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward deleteView(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward deleteView(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String name = request.getParameter("name");
-        
+
         query.removeAlternativeView(name);
         session.removeAttribute(Constants.EDITING_VIEW);
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-    
+
     /**
      * Delete an alternative view.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward newView(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward newView(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String name = request.getParameter("name");
-        
+
         query.addAlternativeView(name, new ArrayList());
         session.setAttribute(Constants.EDITING_VIEW, name);
 
@@ -552,26 +617,30 @@ public class MainChange extends DispatchAction
 
     /**
      * AJAX request - expand
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward ajaxExpand(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward ajaxExpand(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         changePath(mapping, form, request, response);
         MainController.populateRequest(request, response);
-        
+
         // Please improve me - only build relevant Nodes in first place
-        
+
         List newNodes = new ArrayList();
         Collection nodes = (Collection) request.getAttribute("nodes");
-        for (Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             Node node = (Node) iter.next();
             if (node.getPath().startsWith(request.getParameter("path") + ".")) {
                 newNodes.add(node);
@@ -581,77 +650,93 @@ public class MainChange extends DispatchAction
         request.setAttribute("noTreeIds", Boolean.TRUE);
         return mapping.findForward("browserLines");
     }
-    
+
     /**
      * AJAX request - collapse
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward ajaxCollapse(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward ajaxCollapse(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         changePath(mapping, form, request, response);
         return null;
     }
-    
+
     /**
      * AJAX request - show constraint panel
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward ajaxNewConstraint(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward ajaxNewConstraint(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         addPath(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }
-    
+
     /**
      * AJAX request - edit an existing constraint
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward ajaxEditConstraint(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward ajaxEditConstraint(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         editConstraint(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }
-    
+
     /**
      * AJAX request - render query paths
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * 
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
+     * @exception Exception
+     *                if the application business logic throws
      */
-    public ActionForward ajaxRenderPaths(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
+    public ActionForward ajaxRenderPaths(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         MainController.populateRequest(request, response);
         return mapping.findForward("queryPaths");
     }
-    
+
 }

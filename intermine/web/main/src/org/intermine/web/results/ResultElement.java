@@ -10,11 +10,12 @@ package org.intermine.web.results;
  *
  */
 
+import java.io.Serializable;
+
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-
-import java.io.Serializable;
+import org.intermine.path.Path;
 
 /**
  * Cell of results table containing information
@@ -27,24 +28,30 @@ public class ResultElement implements Serializable
     protected Object field;
     protected String type;
     protected Integer id;
+    protected String htmlId;
     private final boolean keyField;
     private final ObjectStore os;
+    private final Path path;
     
+
     /**
      * Constructs a new ResultCell object
      * @param os the ObjectStore to use in getInterMineObject()
      * @param value the value of the field from the results table
      * @param id the id of the InterMineObject this field belongs to
      * @param type the Class of the InterMineObject this field belongs to
+     * @param path the Path
      * @param isKeyField should be true if this is an identifying field
      */
     public ResultElement(ObjectStore os, Object value, Integer id, String type,
-                         boolean isKeyField) {
+                         Path path, boolean isKeyField) {
         this.os = os;
         this.field = value;
         this.id = id;
         this.type = type;
         this.keyField = isKeyField;
+        this.path = path;
+        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_" + type);
     }
     
     /**
@@ -105,6 +112,28 @@ public class ResultElement implements Serializable
         this.id = id;
     }
     
+    /**
+     * @return the path
+     */
+    public Path getPath() {
+        return path;
+    }
+
+    
+    /**
+     * @return the htmlId
+     */
+    public String getHtmlId() {
+        return htmlId;
+    }
+
+    /**
+     * @param htmlId the htmlId to set
+     */
+    public void setHtmlId(String htmlId) {
+        this.htmlId = htmlId;
+    }
+
     /**
      * Return the InterMineObject that contains this result element.
      * @return the InterMineObject

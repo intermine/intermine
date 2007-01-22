@@ -17,26 +17,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.ClassDescriptor;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.WebUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -126,12 +123,12 @@ public class WebResults extends AbstractList implements WebColumnTable
                 }
                 pathToType.put(columnPath.toStringNoConstraints(), type);
                 Column column = new Column(columnPath, i, type);
-                if (!types.contains(type)) {
+                if (!types.contains(column.getColumnId())) {
                     String fieldName = columnPath.getEndFieldDescriptor().getName();
                     boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
                     if (isKeyField) {
                         column.setSelectable(true);
-                        types.add(type);
+                        types.add(column.getColumnId());
                     }
                 }
                 columns.add(column);
@@ -250,7 +247,7 @@ public class WebResults extends AbstractList implements WebColumnTable
                     TypeUtil.unqualifiedName(path.getStartClassDescriptor().getName());
                 ResultElement resultElement = 
                     new ResultElement(osResults.getObjectStore(), 
-                                      fieldValue, o.getId(), className, isKeyField);
+                                      fieldValue, o.getId(), className, columnPath, isKeyField);
                 rowCells.add(resultElement);
             } else {
                 rowCells.add(fieldValue);

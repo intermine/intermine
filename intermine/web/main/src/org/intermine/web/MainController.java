@@ -41,8 +41,8 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * Controller for the main query builder tile. Generally, request attributes that are
- * required by multiple tiles on the query builder are synthesized here.
+ * Controller for the main query builder tile. Generally, request attributes that are required by
+ * multiple tiles on the query builder are synthesized here.
  * 
  * @author Mark Woodbridge
  * @author Thomas Riley
@@ -54,21 +54,21 @@ public class MainController extends TilesAction
     /**
      * @see TilesAction#execute
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
         populateRequest(request, response);
         return null;
     }
-    
+
     /**
-     * Populate the request with the necessary attributes to render the query builder page.
-     * This method is static so that it can be called from the AJAX actions in MainChange.java
-     * @param request the current request
-     * @param response the current response
+     * Populate the request with the necessary attributes to render the query builder page. This
+     * method is static so that it can be called from the AJAX actions in MainChange.java
+     * 
+     * @param request
+     *            the current request
+     * @param response
+     *            the current response
      * @see MainChange
      */
     public static void populateRequest(HttpServletRequest request, HttpServletResponse response) {
@@ -77,7 +77,7 @@ public class MainController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        
+
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         List view = SessionMethods.getEditingView(session);
@@ -85,7 +85,7 @@ public class MainController extends TilesAction
         request.setAttribute("viewPaths", listToMap(view));
         request.setAttribute("viewPathOrder", createIndexMap(view));
         request.setAttribute("viewPathTypes", getPathTypes(view, query));
-        
+
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Collection nodes = MainHelper.makeNodes((String) session.getAttribute("path"), model);
@@ -96,9 +96,10 @@ public class MainController extends TilesAction
             if (view.contains(pathName)) {
                 node.setSelected(true);
             } else {
-            Path path = new Path(model, pathName);
-            // If an object has been selected, select its fields instead
-            if (path.getEndFieldDescriptor() == null || path.endIsReference() || path.endIsCollection()) {
+                Path path = new Path(model, pathName);
+                // If an object has been selected, select its fields instead
+                if (path.getEndFieldDescriptor() == null || path.endIsReference()
+                    || path.endIsCollection()) {
                     ClassDescriptor cld = path.getEndClassDescriptor();
                     List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
                     Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
@@ -115,11 +116,11 @@ public class MainController extends TilesAction
             }
         }
         request.setAttribute("nodes", nodes);
-        
+
         Map prefixes = getViewPathLinkPaths(query);
         request.setAttribute("viewPathLinkPrefixes", prefixes);
         request.setAttribute("viewPathLinkPaths", getPathTypes(prefixes.values(), query));
-        
+
         // set up the navigation links (eg. Department > employees > department)
         String prefix = (String) session.getAttribute("prefix");
         String current = null;
@@ -130,18 +131,19 @@ public class MainController extends TilesAction
                 String token = st.nextToken();
                 current = (current == null ? token : current + "." + token);
                 navigation.put(token, current);
-                navigationPaths.put(token,
-                        TypeUtil.unqualifiedName(MainHelper.getTypeForPath(current, query)));
+                navigationPaths.put(token, TypeUtil.unqualifiedName(MainHelper
+                    .getTypeForPath(current, query)));
             }
         }
         request.setAttribute("navigation", navigation);
         request.setAttribute("navigationPaths", navigationPaths);
     }
-    
+
     /**
      * Given a input List, return a Map from list element value to list index.
      * 
-     * @param list a List
+     * @param list
+     *            a List
      * @return Map from list element values to list index Integer
      */
     protected static Map createIndexMap(List list) {
@@ -153,11 +155,12 @@ public class MainController extends TilesAction
     }
 
     /**
-     * Get a list of paths that should not be removed from the query by the
-     * user. This is usually because they are involved in a loop query constraint.
-     *
-     * @param pathquery  the PathQuery containing the paths
-     * @return           list of paths (as Strings) that cannot be removed by the user
+     * Get a list of paths that should not be removed from the query by the user. This is usually
+     * because they are involved in a loop query constraint.
+     * 
+     * @param pathquery
+     *            the PathQuery containing the paths
+     * @return list of paths (as Strings) that cannot be removed by the user
      */
     protected static List findLockedPaths(PathQuery pathquery) {
         ArrayList paths = new ArrayList();
@@ -187,8 +190,11 @@ public class MainController extends TilesAction
 
     /**
      * Return a Map from path to unqualified type name.
-     * @param paths collection of paths
-     * @param pathquery related PathQuery
+     * 
+     * @param paths
+     *            collection of paths
+     * @param pathquery
+     *            related PathQuery
      * @return Map from path to type
      */
     protected static Map getPathTypes(Collection paths, PathQuery pathquery) {
@@ -198,20 +204,21 @@ public class MainController extends TilesAction
 
         while (iter.hasNext()) {
             String path = (String) iter.next();
-            String unqualifiedName =
-                TypeUtil.unqualifiedName(MainHelper.getTypeForPath(path, pathquery));
+            String unqualifiedName = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(path,
+                                                                                        pathquery));
             viewPathTypes.put(path, unqualifiedName);
         }
 
         return viewPathTypes;
     }
-    
+
     /**
-     * Return a Map from path to path/subpath pointing to the nearest not attribute for each
-     * path on the select list.
-     * practise this results in the same path or the path with an attribute name chopped off
-     * the end.
-     * @param pathquery the path query
+     * Return a Map from path to path/subpath pointing to the nearest not attribute for each path on
+     * the select list. practise this results in the same path or the path with an attribute name
+     * chopped off the end.
+     * 
+     * @param pathquery
+     *            the path query
      * @return mapping from select list path to non-attribute path
      */
     protected static Map getViewPathLinkPaths(PathQuery pathquery) {
@@ -226,15 +233,16 @@ public class MainController extends TilesAction
                 linkPaths.put(path, path);
             }
         }
-        
+
         return linkPaths;
     }
 
     /**
      * Returns a map where every item in <code>list</code> maps to Boolean TRUE.
-     *
-     * @param list  the list of map keys
-     * @return      a map that maps every item in list to Boolean.TRUE
+     * 
+     * @param list
+     *            the list of map keys
+     * @return a map that maps every item in list to Boolean.TRUE
      */
     protected static Map listToMap(List list) {
         Map map = new HashMap();

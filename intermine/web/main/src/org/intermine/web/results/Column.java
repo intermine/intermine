@@ -25,6 +25,21 @@ public class Column
     protected boolean selectable = false;
     private Path path;
     protected String name;
+    protected String columnId;
+
+    /**
+     * @return the columnId
+     */
+    public String getColumnId() {
+        return columnId;
+    }
+
+    /**
+     * @param columnId the columnId to set
+     */
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
 
     /**
      * Constructor that takes a Path object.
@@ -38,6 +53,8 @@ public class Column
         this.name = path.toString();
         this.index = index;
         this.type = type;
+        setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
+                    + type.toString());
     }
 
     /**
@@ -52,6 +69,8 @@ public class Column
         this.index = index;
         this.type = type;
         this.path = null;
+        setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
+                    + type.toString());
     }
 
     /**

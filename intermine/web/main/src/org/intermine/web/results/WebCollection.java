@@ -127,9 +127,10 @@ public class WebCollection extends AbstractList implements WebColumnTable
                 }
                 String unqualifiedClassName = TypeUtil.unqualifiedName(type);
                 String fieldName = path.getEndFieldDescriptor().getName();
-                boolean isKeyField =
-                    ClassKeyHelper.isKeyField(classKeys, unqualifiedClassName, fieldName);
-                rowCells.add(new ResultElement(os, fieldValue, o.getId(), type, isKeyField));
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedClassName,
+                                                               fieldName);
+                rowCells.add(new ResultElement(os, fieldValue, o.getId(), unqualifiedClassName,
+                                               path, isKeyField));
             } else {
                 rowCells.add(fieldValue);
             }
@@ -156,6 +157,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
     public List getColumns() {
         List columns = new ArrayList();
         Path path = new Path(model, columnName);
+        List types = new ArrayList();
         int i = 0;
         if (path.getEndFieldDescriptor() == null || path.endIsReference()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
@@ -178,6 +180,14 @@ public class WebCollection extends AbstractList implements WebColumnTable
                     type = columnName;
                 }
                 Column column = new Column(colPath, i, type);
+                if (!types.contains(column.getColumnId())) {
+                    String fieldName = colPath.getEndFieldDescriptor().getName();
+                    boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
+                    if (isKeyField) {
+                        column.setSelectable(true);
+                        types.add(column.getColumnId());
+                    }
+                }
                 columns.add(column);
                 i++;
             }
