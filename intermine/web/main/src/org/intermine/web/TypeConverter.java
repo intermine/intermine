@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
@@ -50,7 +51,7 @@ public class TypeConverter
      * @throws ObjectStoreException if an error occurs
      */
     public static Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
-            Collection objects) throws ObjectStoreException {
+            Collection objects) throws ObjectStoreException, InterMineException {
         TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
         if (tq == null) {
             throw new IllegalStateException("No template query available for conversion from "
@@ -76,19 +77,24 @@ public class TypeConverter
 
         Query q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Results r = os.execute(q);
+        Results r;
         Map retval = new HashMap();
-        Iterator iter = r.iterator();
-        while (iter.hasNext()) {
-            List row = (List) iter.next();
-            InterMineObject orig = (InterMineObject) row.get(0);
-            InterMineObject derived = (InterMineObject) row.get(1);
-            List ders = (List) retval.get(orig);
-            if (ders == null) {
-                ders = new ArrayList();
-                retval.put(orig, ders);
+        try {
+            r = os.execute(q);
+            Iterator iter = r.iterator();
+            while (iter.hasNext()) {
+                List row = (List) iter.next();
+                InterMineObject orig = (InterMineObject) row.get(0);
+                InterMineObject derived = (InterMineObject) row.get(1);
+                List ders = (List) retval.get(orig);
+                if (ders == null) {
+                    ders = new ArrayList();
+                    retval.put(orig, ders);
+                }
+                ders.add(derived);
             }
-            ders.add(derived);
+        } catch (ObjectStoreException e) {
+            throw new InterMineException("Error executing query: " + q.toString() + e.getMessage());
         }
         return retval;
     }
