@@ -182,7 +182,7 @@ public class AjaxServices
      * @param bagName the bag
      * @param description the desciprion as entered by the user
      * @return the description for display on the jsp page
-     * @throws Exception
+     * @throws Exception an exception
      */
     public String saveBagDescription(String bagName, String description) throws Exception {
         WebContext ctx = WebContextFactory.get();
