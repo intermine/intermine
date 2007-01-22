@@ -1,6 +1,9 @@
 #!/usr/bin/perl -w
+
 #creates a tab delimited file of ncbi gene numbers paired with either the identifier 
 #or the organismDbId
+#Final txt files should be copied to /shared/data/pubmed/uploadFiles/
+
 use strict;
 
 #define organism ids
