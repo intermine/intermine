@@ -80,6 +80,7 @@ public class InlineResultsTable
         this.webProperties = webProperties;
 
         this.model = model;
+        this.size = size;
     }
 
     /**
@@ -188,11 +189,7 @@ public class InlineResultsTable
 
             Set clds = DisplayObject.getLeafClds(o.getClass(), model);
 
-            ClassDescriptor theClass = null;
-            
-            if (clds.size() == 1) {
-                theClass = (ClassDescriptor) clds.iterator().next();
-            }
+            ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
             List objectFieldConfigs = getRowFieldConfigs(o);
             Iterator objectFieldConfigIter = objectFieldConfigs.iterator();
