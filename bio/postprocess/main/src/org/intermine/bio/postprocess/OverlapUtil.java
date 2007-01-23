@@ -124,15 +124,6 @@ public abstract class OverlapUtil
                 subject);
         cs.addConstraint(subjectIdConstraint);
 
-        /*if (subject instanceof Chromosome) {
-            // improve the speed by adding an extra contain for locations on chromosomes
-            QueryObjectReference objChromosomeRef = new QueryObjectReference(qcObj, "chromosome");
-            ContainsConstraint chromosomeConstraint =
-                new ContainsConstraint(objChromosomeRef, ConstraintOp.CONTAINS, subject);
-
-            cs.addConstraint(chromosomeConstraint);
-        }*/
-
         q.addToOrderBy(new QueryField(qcLoc, "start"));
 
         try {
@@ -216,7 +207,8 @@ public abstract class OverlapUtil
                 }
                 currentLocations.put(location, lsf);
             }
-            LOG.info("Stored " + count + " overlaps for id " + subject.getId() + ", identifier: "
+            LOG.info("Stored " + count + " overlaps for " + results.size()
+                    + " features on feature id " + subject.getId() + ", identifier: "
                      + subject.getIdentifier());
             Integer summaryCount = (Integer) summary.get("total");
             if (summaryCount == null) {
