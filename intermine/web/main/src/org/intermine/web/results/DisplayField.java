@@ -81,8 +81,13 @@ public class DisplayField
             int tableSize = maxInlineTableSize;
 
             try {
+                // don't call size unless we have to - it's slow
                 if (collection instanceof Results) {
                     ((Results) collection).get(tableSize);
+                } else {
+                    if (collection.size() < tableSize) {
+                        tableSize = collection.size();
+                    }
                 }
             } catch (IndexOutOfBoundsException e) {
                 tableSize = collection.size();
