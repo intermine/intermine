@@ -11,13 +11,15 @@ BEGIN {
   $InterMine::model_file = '/tmp/genomic_model.xml';
   $InterMine::properties_file = "$ENV{HOME}/flymine.properties";
   $InterMine::db_prefix = 'db.production';
+  $InterMine::class_keys = "$ENV{HOME}/svn/dev/bio/core/props/resources/class_keys.properties";
+  $Rose::DB::Object::QueryBuilder::Debug = 1;
 }
 
 # specify which classes will be used
 use InterMine qw(Gene Protein Exon Transcript LocatedSequenceFeature Organism);
 
 # find a Gene with the given ID
-my $test_gene = InterMine::Gene->new(id => 122000038);
+my $test_gene = InterMine::Gene->new(identifier => 'CG8024');
 $test_gene->load();
 
 # print its identifier
@@ -28,7 +30,7 @@ print $test_gene->organism()->taxonId(), "\n";
 
 # print the ids of its exons
 for my $exon ($test_gene->exons()) {
-  print $exon->identifier(), "\n";
+  print 'exon identifier: ', $exon->identifier(), "\n";
 }
 
 # ... and proteins

@@ -5,7 +5,9 @@ use strict;
 use base qw(Rose::DB);
 use Config::Properties;
 
-open PROPS, "<$InterMine::properties_file"
+die "\$InterMine::properties_file is not set\n" unless defined $InterMine::properties_file;
+
+open PROPS, '<', $InterMine::properties_file
   or die "unable to open configuration file: $InterMine::properties_file";
 
 my $properties = new Config::Properties();
