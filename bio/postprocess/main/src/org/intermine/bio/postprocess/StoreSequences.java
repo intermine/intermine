@@ -44,11 +44,8 @@ public class StoreSequences
      * Create a new StoreSequences object from the given ObjectStoreWriter
      * @param osw writer on genomic ObjectStore
      * @param db database
-     * @throws SQLException if there are any problems with getting db
-     * @throws ClassNotFoundException if no db class be found
      */
-    public StoreSequences (ObjectStoreWriter osw, Database db)
-          throws SQLException, ClassNotFoundException {
+    public StoreSequences (ObjectStoreWriter osw, Database db) {
           this.osw = osw;
           this.db = db;
     }

@@ -19,33 +19,32 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.util.DynamicUtil;
 
+import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Intron;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Synonym;
+import org.flymine.model.genomic.Transcript;
+
+import org.apache.log4j.Logger;
 
 /**
  * Methods for creating feature for introns.
@@ -83,10 +82,9 @@ public class IntronUtil
     /**
      * Create Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
-     * @throws IllegalAccessException if there is an ObjectStore problem
      */
     public void createIntronFeatures()
-        throws ObjectStoreException, IllegalAccessException {
+        throws ObjectStoreException {
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
         dataSet.setTitle("FlyMine introns");
@@ -95,7 +93,6 @@ public class IntronUtil
         dataSet.setUrl("http://www.flymine.org");
         dataSet.setDataSource(dataSource);
 
-        int exonCounts;
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         QueryClass qcTran = new QueryClass(Transcript.class);
@@ -194,7 +191,8 @@ public class IntronUtil
      * in the locationSet argument.  The caller must call ObjectStoreWriter.store() on the
      * Intron, its chromosomeLocation and the synonym in the synonyms collection.
      * @param locationSet a set of Locations for the exonss on a particular transcript
-     * @param transcriptId the ID of the Transcript that the Locations refer to
+     * @param transcript Transcript that the Locations refer to
+     * @param tranLoc The Location of the Transcript
      * @return a set of Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */

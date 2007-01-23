@@ -598,22 +598,17 @@ public class CreateReferences
             // generate a new ID
             tempAnnotation.setId(null);
             tempAnnotation.setSubject(thisGene);
-            Gene tempGene =
-                (Gene) PostProcessUtil.cloneInterMineObject(thisGene);
-
             if (lastGene != null && !(lastGene.equals(thisGene))) {
-                if (lastGene != null) {
-                    TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
-                    TypeUtil.setFieldValue(lastGene, "goAnnotation", goCollection);
-                    LOG.debug("store gene " + lastGene.getIdentifier() + " with "
-                              + lastGene.getAllGoAnnotation().size() + " allGO and "
-                              + lastGene.getGoAnnotation().size() + " GO.");
-                    osw.store(lastGene);
+                TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
+                TypeUtil.setFieldValue(lastGene, "goAnnotation", goCollection);
+                LOG.debug("store gene " + lastGene.getIdentifier() + " with "
+                          + lastGene.getAllGoAnnotation().size() + " allGO and "
+                          + lastGene.getGoAnnotation().size() + " GO.");
+                osw.store(lastGene);
 
-                    lastGene = thisGene;
-                    allGoCollection = new HashSet();
-                    goCollection = new HashSet();
-                }
+                lastGene = thisGene;
+                allGoCollection = new HashSet();
+                goCollection = new HashSet();
             }
             allGoCollection.add(tempAnnotation);
             if (tempAnnotation.getIsPrimaryAssignment().equals(Boolean.TRUE)) {
