@@ -280,6 +280,29 @@ public class MainHelper
                     }
                 }
                 finalPath = path;
+            } else {
+                if (finalPath.indexOf(".") != -1) {
+                    String fieldName = node.getFieldName();
+                    QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
+                    if (!node.isAttribute()) {
+                        if (node.isReference()) {
+                            qr = new QueryObjectReference(parentQc, fieldName);
+                        } else {
+                            qr = new QueryCollectionReference(parentQc, fieldName);
+                        }
+                        QueryClass qc = (QueryClass) queryBits.get(path);
+                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                    }
+                }
+                queryBits.put(finalPath, queryBits.get(path));
+            }
+
+            // Fill in queryBits to contain loops.
+            for (Iterator j = loops.entrySet().iterator(); j.hasNext();) {
+                Map.Entry entry = (Map.Entry) j.next();
+                String from = (String) entry.getKey();
+                String to = (String) entry.getValue();
+                queryBits.put(from, queryBits.get(to));
             }
 
             QueryNode qn = (QueryNode) queryBits.get(finalPath);
