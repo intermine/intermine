@@ -2,8 +2,8 @@
 
 queue = [];
 
-function queueInlineTemplateQuery(placement, templateName, id) {
-  queue.push([placement, templateName, id]);
+function queueInlineTemplateQuery(placement, templateName, id, trail) {
+    queue.push([placement, templateName, id, trail]);
 }
 
 /* Called onload */
@@ -19,12 +19,13 @@ function loadInlineTemplate(i) {
   var placement = queue[i][0];
   var templateName = queue[i][1];
   var id = queue[i][2];
+  var trail = queue[i][3];
   var uid = placement.replace(/ /, '_') + '_' + templateName;
 
   Element.show('table_'+uid+'_int');
   $('table_'+uid+'_int').innerHTML = placement + templateName + id;
   new Ajax.Updater('table_'+uid+'_int', modifyDetailsURL, {
-    parameters:'method=ajaxTemplateCount&template='+templateName+'&id='+id+'&type=global&placement='+placement+'&detailsType='+detailsType, asynchronous:true,
+    parameters:'method=ajaxTemplateCount&template='+templateName+'&id='+id+'&type=global&placement='+placement+'&detailsType='+detailsType+'&trail='+trail, asynchronous:true,
     onComplete: function() {
       var count = $('count_'+uid).innerHTML;
       if (count == '0')

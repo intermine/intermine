@@ -91,7 +91,7 @@
       <script type="text/javascript">
         <!--//<![CDATA[
           $('img_${uid}').src='images/spinner.gif';
-          queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}');
+          queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}', '${param.trail}');
         //]]>-->
       </script>
     </c:when>
@@ -99,7 +99,7 @@
       <script type="text/javascript">
         <!--//<![CDATA[
           $('img_${uid}').src='images/spinner.gif';
-          queueInlineTemplateQuery('${placement}', '${templateName}', '${interMineIdBag.name}');
+          queueInlineTemplateQuery('${placement}', '${templateName}', '${interMineIdBag.name}', '${param.trail}');
         //]]>-->
       </script>
     </c:when>
