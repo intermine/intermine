@@ -140,12 +140,24 @@ public class TypeConverter
                 if (view.size() == 2) {
                     // Correct number of SELECT list items
                     Path select1 = (Path) view.get(0);
-                    if (select1.getLastClassDescriptor().getType().isAssignableFrom(typeA)) {
+                    Class tqTypeA = select1.getLastClassDescriptor().getType();
+                    if (tqTypeA.isAssignableFrom(typeA)) {
                         // Correct typeA in SELECT list. Now check for editable constraint.
                         if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
                                 && (tq.getAllEditableConstraints().size() == 1)) {
                             // Editable constraint is okay.
-                            retval.put(((Path) view.get(1)).getLastClassDescriptor().getType(), tq);
+                            Class typeB = ((Path) view.get(1)).getLastClassDescriptor().getType();
+                            TemplateQuery prevTq = (TemplateQuery) retval.get(typeB);
+                            if (prevTq != null) {
+                                Class prevTypeA = ((Path) prevTq.getViewAsPaths().get(0))
+                                    .getLastClassDescriptor().getType();
+                                if (prevTypeA.isAssignableFrom(tqTypeA)) {
+                                    // This tq is more specific
+                                    retval.put(typeB, tq);
+                                }
+                            } else {
+                                retval.put(typeB, tq);
+                            }
                         }
                     }
                 }
