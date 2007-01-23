@@ -37,7 +37,8 @@ public class DefaultAssayHandler implements AssayHandler
     /**
      * @see AssayHandler#process
      */
-    public void process(Item assay) throws ObjectStoreException {
+    public void process(Item assay) {
+        // empty
     }
 
     /**
@@ -45,9 +46,8 @@ public class DefaultAssayHandler implements AssayHandler
      * a particular experiment.  By default order by the assay name attribute.
      * @param assay the assay item to get orderable field for
      * @return an object that can be used for ordering
-     * @throws ObjectStoreException if problem running queries
      */
-    public Object getAssayOrderable(Item assay) throws ObjectStoreException {
+    public Object getAssayOrderable(Item assay) {
         return assay.getAttribute("name").getValue();
     }
 }
