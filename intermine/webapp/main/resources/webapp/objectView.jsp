@@ -23,7 +23,7 @@
           <im:abbreviate value="${object}" length="${maxLength}"/>
         </c:when>
         <c:when test="${resultElement.keyField}">
-          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${prepend}${param.trail}_${resultElement.id}">
+          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}_${resultElement.id}">
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
         </c:when>
