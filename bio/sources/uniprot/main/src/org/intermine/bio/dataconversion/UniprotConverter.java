@@ -54,7 +54,7 @@ public class UniprotConverter extends FileConverter
     private Map dbMaster = new HashMap();
     private Map dsMaster = new HashMap();
     private Map taxIdToDb = new HashMap();
-    private Map featNameToDescr = new HashMap();
+    private Map featureTypes = new HashMap();
     private Map geneMaster = new HashMap();
     private Set geneIdentifiers = new HashSet();
     private Map ids = new HashMap();
@@ -95,7 +95,7 @@ public class UniprotConverter extends FileConverter
         mapMaster.put("orgMaster", orgMaster);
         mapMaster.put("dbMaster", dbMaster);
         mapMaster.put("taxIdToDb", taxIdToDb);
-        mapMaster.put("featNameToDescr", featNameToDescr);
+        mapMaster.put("featureTypes", featureTypes);
         mapMaster.put("dsMaster", dsMaster);
         mapMaster.put("geneMaster", geneMaster);
         mapMaster.put("geneIdentifiers", geneIdentifiers);
@@ -135,25 +135,25 @@ public class UniprotConverter extends FileConverter
     
     private void mapFeatures() {
     
-        featNameToDescr.put("INIT_MET", "initiator methionine");    // VDAC_DROME
-        featNameToDescr.put("SIGNAL", "signal peptide");            // AMYA_DROME
-        featNameToDescr.put("PROPEP", "propeptide");                // ACES_DROME
-        featNameToDescr.put("MOTIF", "short sequence motif");       // A4_DROME
-        featNameToDescr.put("TRANSIT", "transit peptide");          // MMSA_DROME
-        featNameToDescr.put("CHAIN", "chain");                      // ADCY2_DROME
-        featNameToDescr.put("PEPTIDE", "peptide");                  // CCAP_DROME
-        featNameToDescr.put("TOPO_DOM", "topological domain");      // 5HT2A_DROME
-        featNameToDescr.put("TRANSMEM", "transmembrane region");    // 5HT2A_DROME
-        featNameToDescr.put("ACT_SITE", "active site");             // AMYA_DROME
-        featNameToDescr.put("METAL", "metal ion-binding site");     // ADCY2_DROME
-        featNameToDescr.put("BINDING", "binding site");             // MMSA_DROME
-        featNameToDescr.put("SITE", "site");                        // VDAC_DROME
-        featNameToDescr.put("MOD_RES", "modified residue");         // AMYA_DROME
-        featNameToDescr.put("LIPID", "lipid moiety-binding region");// ACES_DROME
-        featNameToDescr.put("CARBOHYD", "glycosylation site");      // 5HT2A_DROME
-        featNameToDescr.put("VAR_SEQ", "splice variant");           // zen        
-        featNameToDescr.put("VARIANT", "sequence variant");         // AMYA_DROME
-        featNameToDescr.put("UNSURE", "unsure residue");            // none
+        featureTypes.put("INIT_MET", "initiator methionine");    // VDAC_DROME
+        featureTypes.put("SIGNAL", "signal peptide");            // AMYA_DROME
+        featureTypes.put("PROPEP", "propeptide");                // ACES_DROME
+        featureTypes.put("MOTIF", "short sequence motif");       // A4_DROME
+        featureTypes.put("TRANSIT", "transit peptide");          // MMSA_DROME
+        featureTypes.put("CHAIN", "chain");                      // ADCY2_DROME
+        featureTypes.put("PEPTIDE", "peptide");                  // CCAP_DROME
+        featureTypes.put("TOPO_DOM", "topological domain");      // 5HT2A_DROME
+        featureTypes.put("TRANSMEM", "transmembrane region");    // 5HT2A_DROME
+        featureTypes.put("ACT_SITE", "active site");             // AMYA_DROME
+        featureTypes.put("METAL", "metal ion-binding site");     // ADCY2_DROME
+        featureTypes.put("BINDING", "binding site");             // MMSA_DROME
+        featureTypes.put("SITE", "site");                        // VDAC_DROME
+        featureTypes.put("MOD_RES", "modified residue");         // AMYA_DROME
+        featureTypes.put("LIPID", "lipid moiety-binding region"); // ACES_DROME
+        featureTypes.put("CARBOHYD", "glycosylation site");      // 5HT2A_DROME
+        featureTypes.put("VAR_SEQ", "splice variant");           // zen        
+        featureTypes.put("VARIANT", "sequence variant");         // AMYA_DROME
+        featureTypes.put("UNSURE", "unsure residue");            // none
 
     }
     /**
@@ -201,7 +201,7 @@ public class UniprotConverter extends FileConverter
         private Map dbMaster;
         private Map dsMaster;
         private Map taxIdToDb;        // which database to use for which organism
-        private Map featNameToDescr;
+        private Map featureTypes;
         private Item datasource;             
         private Item dataset;          
         private Map geneMaster;       // itemID to gene
@@ -231,7 +231,7 @@ public class UniprotConverter extends FileConverter
             this.dbMaster = (Map) mapMaster.get("dbMaster");
             this.dsMaster = (Map) mapMaster.get("dsMaster");
             this.taxIdToDb = (Map) mapMaster.get("taxIdToDb");
-            this.featNameToDescr = (Map) mapMaster.get("featNameToDescr");
+            this.featureTypes = (Map) mapMaster.get("featureTypes");
             this.geneMaster = (Map) mapMaster.get("geneMaster");
             this.geneIdentifiers = (Set) mapMaster.get("geneIdentifiers");
             this.ids = (Map) mapMaster.get("ids");
@@ -306,27 +306,30 @@ public class UniprotConverter extends FileConverter
                 // <entry><feature>
                 } else if (qName.equals("feature")
                                 && attrs.getValue("type") != null
-                                && featNameToDescr.containsValue(attrs.getValue("type"))) {
+                                && featureTypes.containsValue(attrs.getValue("type"))) {
                     
                     String strType = attrs.getValue("type");
-                    String strDescr = attrs.getValue("description");
-                                        
-                    feature = createItem("UniProtFeature");                    
+                    String strName = attrs.getValue("description");
+                    String strStatus = null;            
+                    feature = createItem("UniProtFeature");
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
-                     
                     if (featureCollection.getRefIds().isEmpty()) {
                         protein.addCollection(featureCollection);
                     }
-                    featureCollection.addRefId(feature.getIdentifier()); 
-                    
+                    featureCollection.addRefId(feature.getIdentifier());                     
                     feature.setAttribute("type", strType);
-                    Item keyword = getKeyword(strType);
-                    feature.addReference(new Reference("feature", keyword.getIdentifier()));                     
-                    
-                    if (strDescr != null) {
-                        feature.setAttribute("description", strDescr);
+                    Item keyword = getKeyword(strName);
+                    feature.addReference(new Reference("feature", keyword.getIdentifier()));
+                    if (attrs.getValue("status") != null) {
+                        strStatus = attrs.getValue("status");
                     }
-                                     
+                    if (strStatus != null) {
+                        strName += " (" + strStatus + ")";
+                    }                    
+                    if (strName != null) {                                                
+                        feature.setAttribute("name", strName);
+                    }      
+                    
                 // <entry><feature><location><start||end>
                 } else if ((qName.equals("begin") || qName.equals("end") 
                                 || qName.equals("position")) 
@@ -767,7 +770,7 @@ public class UniprotConverter extends FileConverter
 
                 if (keyword == null) {
                     keyword = createItem("OntologyTerm");
-                    keyword.addAttribute(new Attribute("description", title));
+                    keyword.addAttribute(new Attribute("name", title));
                     keyMaster.put(title, keyword);
                     writer.store(ItemHelper.convert(keyword));
                 }
