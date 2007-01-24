@@ -46,8 +46,9 @@ public class DefaultAssayHandler implements AssayHandler
      * a particular experiment.  By default order by the assay name attribute.
      * @param assay the assay item to get orderable field for
      * @return an object that can be used for ordering
+     * @throws ObjectStoreException if problem running queries
      */
-    public Object getAssayOrderable(Item assay) {
+    public Object getAssayOrderable(Item assay) throws ObjectStoreException {
         return assay.getAttribute("name").getValue();
     }
 }
