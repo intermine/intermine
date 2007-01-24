@@ -1,5 +1,6 @@
 package org.intermine.web.bag;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,16 +41,13 @@ public class BagQueryRunnerTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
 		os = ObjectStoreFactory.getObjectStore("os.unittest");
-		Model model = os.getModel();
 		Properties props = new Properties();
 		props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
 		Map classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
 		eIds = getEmployeeIds();
 		
-		String iql = "SELECT DISTINCT a1_.id as a2_, a1_.end as a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.end IN ? ORDER BY a1_";
-		BagQuery bq = new BagQuery(iql, "employee end", model.getPackageName(), false);
-		Map bagQueries = new HashMap();
-		bagQueries.put("Employee", new ArrayList(Collections.singleton(bq)));
+		InputStream is = getClass().getClassLoader().getResourceAsStream("WEB-INF/bag-queries.xml");
+		Map bagQueries = BagQueryHelper.readBagQueries(os.getModel(), is);
 		runner = new BagQueryRunner(os, classKeys, bagQueries);
     }
     
@@ -78,7 +76,7 @@ public class BagQueryRunnerTest extends TestCase {
 		assertEquals(0, res.getMatches().size());
 		Map expected = new HashMap();
 		Map queries = new HashMap();
-		Set ids = new HashSet(Arrays.asList(new Object[] {eIds.get("EmployeeB1"), eIds.get("EmployeeB3")}));
+		List ids = new ArrayList(Arrays.asList(new Object[] {eIds.get("EmployeeB1"), eIds.get("EmployeeB3")}));
 		Map results = new HashMap();
 		results.put("Mr.", ids);
 		queries.put(BagQueryHelper.DEFAULT_MESSAGE, results);
@@ -115,7 +113,7 @@ public class BagQueryRunnerTest extends TestCase {
 		assertEquals(1, res.getMatches().size());
 		Map expected = new HashMap();
 		Map queries = new HashMap();
-		Set ids = new HashSet(Arrays.asList(new Object[] {eIds.get("EmployeeB1"), eIds.get("EmployeeB3")}));
+		List ids = new ArrayList(Arrays.asList(new Object[] {eIds.get("EmployeeB1"), eIds.get("EmployeeB3")}));
 		Map results = new HashMap();
 		results.put("Mr.", ids);
 		queries.put(BagQueryHelper.DEFAULT_MESSAGE, results);
@@ -125,23 +123,23 @@ public class BagQueryRunnerTest extends TestCase {
 	}
 	
 	// match nothing from first query, match both from second
-	public void testSecondQuery1() throws Exception {
-		List input = Arrays.asList(new Object[] {"1", "2"});
+	public void testSecondQueryIssue() throws Exception {
+		List input = Arrays.asList(new Object[] {"1"});
 		BagQueryResult res = runner.searchForBag("Employee", input);
-		assertEquals(2, res.getMatches().values().size());
-		assertTrue(res.getIssues().isEmpty());
+		assertEquals(0, res.getMatches().values().size());
+		Map expected = new HashMap();
+		Map queries = new HashMap();
+		List ids = new ArrayList(Arrays.asList(new Object[] {eIds.get("EmployeeA1")}));
+		Map results = new HashMap();
+		results.put("1", ids);
+		queries.put("employee end", results);
+		expected.put(BagQueryResult.OTHER, queries);
+		assertEquals(expected, res.getIssues());
 		assertTrue(res.getUnresolved().isEmpty());
 	}
 
-	// match nothing one from first query, match one from second
-	public void testSecondQuery2() throws Exception {
-		List input = Arrays.asList(new Object[] {"1", "2"});
-		BagQueryResult res = runner.searchForBag("Employee", input);
-		assertEquals(2, res.getMatches().values().size());
-		assertTrue(res.getIssues().isEmpty());
-		assertTrue(res.getUnresolved().isEmpty());
-	}
-	
+	// we need to test a query that matches a different type.  Probably 
+	// need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml
 	
 	private Map getEmployeeIds() throws ObjectStoreException {
 		Map employees = new HashMap();

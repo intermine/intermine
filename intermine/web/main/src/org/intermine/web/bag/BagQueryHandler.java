@@ -12,10 +12,14 @@ package org.intermine.web.bag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,10 +32,12 @@ public class BagQueryHandler extends DefaultHandler
     private Boolean matchesAreIssues;
     private Model model;
     private StringBuffer sb;
+    private String pkg = null;
 
     public BagQueryHandler(Model model) {
         super();
         this.model = model;
+        this.pkg = model.getPackageName();
     }
 
     public Map getBagQueries() {
@@ -45,7 +51,7 @@ public class BagQueryHandler extends DefaultHandler
         throws SAXException {
         if (qName.equals("bag-type")) {
             type = attrs.getValue("type");
-            if (!model.hasClassDescriptor(model.getPackageName() + "." + type)) {
+            if (!model.hasClassDescriptor(pkg + "." + type)) {
                 throw new SAXException("Type was not found in model: " + type);
             }
             queryList = new ArrayList();
@@ -96,7 +102,7 @@ public class BagQueryHandler extends DefaultHandler
         if (qName.equals("query")) {
             queryString = sb.toString();
             if (queryString != null && message != null && matchesAreIssues != null) {
-                BagQuery bq = new BagQuery(queryString, message, model.getPackageName(),
+                BagQuery bq = new BagQuery(queryString, message, pkg,
                                            matchesAreIssues.booleanValue());
                 queryList.add(bq);
             }
@@ -104,8 +110,23 @@ public class BagQueryHandler extends DefaultHandler
             matchesAreIssues = null;
             message = null;
         }
+        
+        // add bag query to map for specified class and all subclasses
         if (qName.equals("bag-type")) {
-            bagQueries.put(type, queryList);
+        	ClassDescriptor cld = model.getClassDescriptorByName(pkg + "." + type);
+        	Set clds = model.getAllSubs(cld);
+        	clds.add(cld);
+        	Iterator cldIter = clds.iterator();
+        	while (cldIter.hasNext()) {
+        		ClassDescriptor nextCld = (ClassDescriptor) cldIter.next();
+        		String clsName  = TypeUtil.unqualifiedName(nextCld.getName());
+        		List typeQueries = (List) bagQueries.get(clsName);
+        		if (typeQueries == null) {
+        			typeQueries = new ArrayList();
+        			bagQueries.put(clsName, typeQueries);
+        		}
+        		typeQueries.addAll(queryList);
+        	}
         }
     }
 }

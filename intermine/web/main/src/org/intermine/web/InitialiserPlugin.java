@@ -40,6 +40,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.aspects.AspectBinding;
+import org.intermine.web.bag.BagQueryHelper;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.results.DisplayObject;
 
@@ -109,6 +110,8 @@ public class InitialiserPlugin implements PlugIn
 
         // load class keys
         loadClassKeys(servletContext, os);
+        // load custom bag queries
+        loadBagQueries(servletContext, os);
         makeCache(servletContext, os);
         
         cleanTags(pm);
@@ -178,6 +181,26 @@ public class InitialiserPlugin implements PlugIn
         }
         Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
         servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+    }
+   
+    /**
+     * Load keys that describe how objects should be uniquely identified
+     */
+    private void loadBagQueries(ServletContext servletContext, ObjectStore os)
+        throws ServletException {
+        
+    	InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
+        if (is != null) {
+        	try {
+        		Map bagQueries = BagQueryHelper.readBagQueries(os.getModel(), is);
+        		servletContext.setAttribute(Constants.BAG_QUERIES, bagQueries);
+        	} catch (Exception e) {
+        		throw new ServletException("Error loading class bag queries", e);
+        	}
+        } else {
+        	// can used defaults so just log a warning
+        	LOG.warn("No custom bag queries found - using default query");
+        }
     }
     
     /**

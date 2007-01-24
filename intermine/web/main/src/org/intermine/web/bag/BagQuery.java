@@ -45,7 +45,7 @@ public class BagQuery
     public Query getQuery(Collection bag) {
         if (query == null) {
             IqlQuery q = new IqlQuery(queryString, pkg, new ArrayList(Collections.singleton(bag)));
-            query = q.toQuery();
+            return q.toQuery();
         }
         return query;
     }
