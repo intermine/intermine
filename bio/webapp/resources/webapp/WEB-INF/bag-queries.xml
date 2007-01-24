@@ -1,0 +1,12 @@
+<bag-queries>
+	<bag-type type="BioEntity">
+		<query message="searching key fields for all types" matchesAreIssues="true">
+		SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.flymine.model.genomic.BioEntity AS a1_, 
+org.flymine.model.genomic.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.isPrimary = true and a2_.value in ?)
+		</query>
+		<query message="searching synonyms for all types" matchesAreIssues="true">
+                SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.flymine.model.genomic.BioEntity AS a1_, 
+org.flymine.model.genomic.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.isPrimary = false and a2_.value in ?)
+		</query>
+	</bag-type>
+</bag-queries>
