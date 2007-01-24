@@ -160,7 +160,11 @@ public class PrecomputeTemplatesTask extends Task
                 LOG.info("precomputing template " + entry.getKey());
                 precompute(os, q, indexes, template.getName());
             }
-            template.summarise(os, userProfileOS);
+            try {
+                template.summarise(os, userProfileOS);
+            } catch (ObjectStoreException e) {
+                LOG.error("Exception while summarising template " + template.getName(), e);
+            }
         }
     }
 
