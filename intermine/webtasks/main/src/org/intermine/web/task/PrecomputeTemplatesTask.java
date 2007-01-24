@@ -54,6 +54,7 @@ public class PrecomputeTemplatesTask extends Task
     protected int minRows = -1;
     protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
+    protected ObjectStoreWriter userProfileOS = null;
     protected String userProfileAlias;
     protected String username;
 
@@ -159,6 +160,7 @@ public class PrecomputeTemplatesTask extends Task
                 LOG.info("precomputing template " + entry.getKey());
                 precompute(os, q, indexes, template.getName());
             }
+            template.summarise(os, userProfileOS);
         }
     }
 
@@ -201,7 +203,6 @@ public class PrecomputeTemplatesTask extends Task
     protected Map getPrecomputeTemplateQueries() throws BuildException {
         ObjectStore os;
         ProfileManager pm;
-        ObjectStoreWriter userProfileOS;
         try {
             os = ObjectStoreFactory.getObjectStore(alias);
             userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);

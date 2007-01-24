@@ -609,8 +609,8 @@ public class TemplateHelper
         HashMap pathToQueryNode = new HashMap();
         Query query = MainHelper.makeQuery(templateClone, new HashMap(),
                 pathToQueryNode);
-        query.clearOrderBy();
         if (groupByNode != null) {
+            query.clearOrderBy();
             query.clearSelect();
             QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPath());
             query.addToSelect(qn);
