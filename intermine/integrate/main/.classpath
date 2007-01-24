@@ -5,6 +5,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="src" path="/fulldata"/>
 	<classpathentry exported="true" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
