@@ -12,6 +12,7 @@ package org.intermine.web.bag;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -91,6 +92,4 @@ public class BagQueryHelper
         SAXParser.parse(new InputSource(is), handler);
         return handler.getBagQueries();
     }
-
-
 }

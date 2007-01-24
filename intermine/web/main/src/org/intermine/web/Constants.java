@@ -223,4 +223,9 @@ public interface Constants
      * Servlet attribute.  Map from class name to set of defined keys. 
      */
     public static final String CLASS_KEYS = "CLASS_KEYS";
+    
+    /**
+     * Servlet attribute.  Map from class name to custom bag query.
+     */
+    public static final String BAG_QUERIES = "BAG_QUERIES";
 }

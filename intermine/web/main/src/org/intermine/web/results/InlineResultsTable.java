@@ -189,6 +189,7 @@ public class InlineResultsTable
 
             Set clds = DisplayObject.getLeafClds(o.getClass(), model);
 
+            // TODO this doesn't cope properly with dynamic classes
             ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
             List objectFieldConfigs = getRowFieldConfigs(o);
