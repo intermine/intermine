@@ -173,8 +173,15 @@ public class CreateIndexesTask extends Task
                 createIndex(indexName, indexStatement);
             }
         } catch (Exception e) {
-            String message = "Error creating indexes for " + indexStatement.getCld().getType()
-                + ", table master = " + indexStatement.getTableMaster().getType();
+            String message = "Error creating indexes";
+            if (indexStatement != null) {
+                ClassDescriptor errCld = indexStatement.getCld();
+                ClassDescriptor errTableMaster = indexStatement.getTableMaster();
+                if ((errCld != null) && (errTableMaster != null)) {
+                    message = "Error creating indexes for " + errCld.getType()
+                        + ", table master = " + errTableMaster.getType();
+                }
+            }
             throw new BuildException(message, e);
         } finally {
             if (c != null) {
