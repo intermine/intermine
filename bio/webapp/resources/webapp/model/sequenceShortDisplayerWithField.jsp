@@ -12,7 +12,7 @@
     &nbsp;
   </c:when>
   <c:otherwise>
-    <b><im:value>${outVal}</im:value></b>
+    <im:value>${outVal}</im:value>
     <c:if test="${!empty interMineObject.sequence}">
       <html:link action="sequenceExporter?object=${interMineObject.id}">
         <html:img styleClass="fasta" src="model/fasta.gif"/>
