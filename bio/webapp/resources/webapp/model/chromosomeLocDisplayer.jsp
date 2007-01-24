@@ -9,11 +9,8 @@
 <html:xhtml/>
 <c:choose>
   <c:when test="${!empty interMineObject.chromosome}">
-    <b>
-      ${interMineObject.chromosome.identifier}<c:if test="${!empty interMineObject.chromosomeLocation && !empty interMineObject.chromosomeLocation.start}">
-        : ${interMineObject.chromosomeLocation.start}-${interMineObject.chromosomeLocation.end}
-      </c:if>
-    </b>
+    ${interMineObject.chromosome.identifier}<c:if test="${!empty interMineObject.chromosomeLocation && !empty interMineObject.chromosomeLocation.start}">: ${interMineObject.chromosomeLocation.start}-${interMineObject.chromosomeLocation.end}
+    </c:if>
   </c:when>
   <c:otherwise>
     [unknown]

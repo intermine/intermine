@@ -67,9 +67,11 @@
                 </td>
                 <td nowrap>
                   <c:set var="interMineObject" value="${object.object}" scope="request"/>
-                  <tiles:insert page="${object.fieldConfigMap[expr].displayer}">
-                    <tiles:put name="expr" value="${expr}" />
-                  </tiles:insert>
+                  <b> <span class="value">
+                      <tiles:insert page="${object.fieldConfigMap[expr].displayer}">
+                        <tiles:put name="expr" value="${expr}" />
+                      </tiles:insert>
+                  </span> </b>
               	</td>
               </tr>
               </c:when>

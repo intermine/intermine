@@ -66,9 +66,11 @@
                  <c:choose>
                   <c:when test="${!empty fieldConfig && !empty fieldConfig.displayer}">
                     <c:set var="interMineObject" value="${thisRowObject}" scope="request"/>
-                    <tiles:insert page="${fieldConfig.displayer}">
-                      <tiles:put name="expr" value="${fieldConfig.fieldExpr}" />
-                    </tiles:insert>
+                    <span class="value">
+                      <tiles:insert page="${fieldConfig.displayer}">
+                        <tiles:put name="expr" value="${fieldConfig.fieldExpr}" />
+                      </tiles:insert>
+                    </span>
                   </c:when>
                   <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
                     <im:eval evalExpression="thisRowObject.${fieldConfig.fieldExpr}"
