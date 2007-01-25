@@ -3,7 +3,7 @@
 
 	<class name="org.flymine.model.genomic.UniProtFeature" is-interface="true">
    	 <attribute name="type" type="java.lang.String"/>
-   	 <attribute name="name" type="java.lang.String"/>
+   	 <attribute name="description" type="java.lang.String"/>
    	 <attribute name="begin" type="java.lang.Integer"/>
 	 <attribute name="end" type="java.lang.Integer"/>
 	 <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
