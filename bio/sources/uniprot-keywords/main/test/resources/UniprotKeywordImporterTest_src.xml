@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keywordList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="keyword.xsd">
+  <keyword id="KW-0001">
+    <name>2Fe-2S</name>
+    <description>Protein which contains at least one 2Fe-2S iron-sulfur cluster: 2 iron
+atoms complexed to 2 inorganic sulfides and 4 sulfur atoms of
+cysteines from the protein.</description>
+  </keyword>
+  <keyword id="KW-0002">
+    <name>3D-structure</name>
+    <description>Protein, or part of a protein, whose three-dimensional structure has
+been resolved experimentally (for example by X-ray crystallography or
+NMR spectroscopy) and whose coordinates are available in the PDB
+database. Can also be used for theoretical models.</description>
+  </keyword>
+  <keyword id="KW-0003">
+    <name>3Fe-4S</name>
+    <description>Protein which contains at least one 3Fe-4S iron-sulfur cluster: 3 iron
+atoms complexed to 4 inorganic sulfides and 3 sulfur atoms of
+cysteines from the protein. In a number of iron-sulfur proteins, the
+4Fe-4S cluster can be reversibly converted by oxidation and loss of
+one iron ion to a 3Fe-4S cluster.</description>
+  </keyword>
+  <keyword id="KW-0004">
+    <name>4Fe-4S</name>
+    <description>Protein which contains at least one 4Fe-4S iron-sulfur cluster: 4 iron
+atoms complexed to 4 inorganic sulfides and 4 sulfur atoms of
+cysteines from the protein. In a number of iron-sulfur proteins, the
+4Fe-4S cluster can be reversibly converted by oxidation and loss of
+one iron ion to a 3Fe-4S cluster.</description>
+  </keyword>
+  <keyword id="KW-0005">
+    <name>Acetoin biosynthesis</name>
+    <description>Protein involved in the synthesis of acetoin (3-hydroxy-2-butanone).
+Acetoin is a component of the butanediol cycle (butanediol
+fermentation) in microorganisms.</description>
+    <go id="GO:0045151"/>
+  </keyword>
+  <keyword id="KW-0006">
+    <name>Acetoin catabolism</name>
+    <name>Acetoin degradation</name>
+    <description>Protein involved in the degradation of acetoin (3-hydroxy-2-butanone).
+Acetoin is a component of the butanediol cycle (butanediol
+fermentation) in microorganisms.</description>
+    <go id="GO:0045150"/>
+  </keyword>
+  <keyword id="KW-0007">
+    <name>Acetylation</name>
+    <description>Protein which is posttranslationally modified by the attachment of at
+least one acetyl group; generally at the N-terminus.</description>
+  </keyword>
+  <keyword id="KW-0008">
+    <name>Acetylcholine receptor inhibitor</name>
+    <description>Protein that inhibits both nicotinic (nAChR) and muscarinic (mAChR)
+acetylcholine receptors. The nAChR is a postsynaptic membrane protein
+that, after binding acetylcholine, responds by an extensive change in
+conformation, which leads to opening of an ion-conducting channel
+across the plasma membrane. The mAChR is a membrane protein that
+acts through G proteins and mediates various cellular responses,
+including inhibition of adenylate cyclase, breakdown of
+phosphoinositides and modulation of potassium channels through the
+action of G proteins.</description>
+    <go id="GO:0030550"/>
+  </keyword>
+  <keyword id="KW-0009">
+    <name>Actin-binding</name>
+    <description>Protein which binds to actin, and thereby can modulate the properties
+and/or functions of the actin filament.</description>
+    <go id="GO:0003779"/>
+  </keyword>
+  <keyword id="KW-0010">
+    <name>Activator</name>
+    <description>Protein that positively regulates either the transcription of one or
+more genes, or the translation of mRNA.</description>
+  </keyword>
+  <keyword id="KW-0011">
+    <name>Acute phase</name>
+    <description>Protein involved in acute phase, a response of the vertebrate body to
+insults, infections, immunological reactions or inflammatory
+processes; characterised by redness (rubor), heat (calor), swelling
+(tumor), pain (dolor) and sometimes loss of function.</description>
+    <go id="GO:0006953"/>
+  </keyword>
+  <keyword id="KW-0012">
+    <name>Acyltransferase</name>
+    <description>Enzyme catalyzing the transfer of acyl- (RCO-) groups.</description>
+    <go id="GO:0008415"/>
+  </keyword>
+  <keyword id="KW-0013">
+    <name>ADP-ribosylation</name>
+    <description>Protein which is posttranslationally modified by the attachment of
+at least one ADP-ribosyl group.</description>
+  </keyword>
+  <keyword id="KW-0014">
+    <name>AIDS</name>
+    <name>Acquired immunodeficiency syndrome</name>
+    <description>Protein encoded by the human immunodeficiency viruses HIV-1 or HIV-
+2, which are the cause of acquired immunodeficiency syndrome (AIDS).
+This disease is characterized by a severe defect of cell-mediated
+immunity which is often accompanied by cancers such as Kaposi&apos;s
+sarcoma, as well as secondary infections such as tuberculosis.</description>
+  </keyword>
+  <keyword id="KW-0015">
+    <name>Albinism</name>
+    <description>Protein which, if defective, causes albinism, a genetically determined
+or environmentally induced absence of pigmentation in animals normally
+pigmented. This can lead for example to lack of pigmentation in hair,
+skin and eyes.</description>
+  </keyword>
+  <keyword id="KW-0016">
+    <name>Alginate biosynthesis</name>
+    <description>Protein involved in the synthesis of alginate. Alginate is an
+exopolysaccharide in the cell walls of brown algae and in the capsular
+material of certain strains of Pseudomonas and Azotobacter, in which
+it provides a protective barrier against host immune defenses and
+antibiotics.</description>
+    <go id="GO:0042121"/>
+  </keyword>
+  <keyword id="KW-0017">
+    <name>Alkaloid metabolism</name>
+    <description>Protein involved in a biochemical reaction with alkaloids, a group of
+nitrogenous organic molecules usually found in plants. Various alkaloids have
+toxic or medical properties, such as caffeine, morphine and nicotine.</description>
+    <go id="GO:0009820"/>
+  </keyword>
+  <keyword id="KW-0019">
+    <name>Alkylphosphonate uptake</name>
+    <description>Protein involved in alkylphosphonate uptake. Certain bacteria such as
+Escherichia coli can use alkylphosphonates as a phosphorus source.</description>
+    <go id="GO:0015716"/>
+  </keyword>
+  <keyword id="KW-0020">
+    <name>Allergen</name>
+    <description>Protein that stimulates the production of, and reacts with, antibodies
+(IgE) thus creating an allergic reaction (immediate-type
+hypersensitivity). Examples are pollen allergens from plants, venom
+allergens from insects, dust-mite allergens, and animal hair allergens.</description>
+    <go id="GO:0016068"/>
+  </keyword>
+  <keyword id="KW-0021">
+    <name>Allosteric enzyme</name>
+    <description>Enzyme whose activity is modified by the noncovalent binding of an
+allosteric effector at a site other than the active site. This binding
+mediates conformational changes, altering its catalytic or binding
+properties.</description>
+    <go id="GO:0003824"/>
+  </keyword>
+  <keyword id="KW-0022">
+    <name>Alpha-amylase inhibitor</name>
+    <description>Protein that inhibits alpha-amylase, an enzyme that catalyzes the
+endohydrolysis of 1,4-alpha-glucosidic linkages in oligosaccharides
+and polysaccharides.</description>
+    <go id="GO:0015066"/>
+  </keyword>
+  <keyword id="KW-0023">
+    <name>Alport syndrome</name>
+    <description>Protein which, if defective, causes Alport syndrome, an hereditary
+disorder characterized by a progressive glomerulonephritis leading to
+end-stage renal disease, often associated with sensorineural hearing
+loss and ocular abnormalities.</description>
+  </keyword>
+  <keyword id="KW-0024">
+    <name>Alternative initiation</name>
+    <description>Protein for which at least two isoforms exist due to the usage of
+alternative initiation codons in the same mRNA (the resulting isoforms
+differ in their N-terminus).</description>
+  </keyword>
+  <keyword id="KW-0025">
+    <name>Alternative splicing</name>
+    <description>Protein for which at least two isoforms exist due to distinct pre-mRNA
+splicing events.</description>
+  </keyword>
+  <keyword id="KW-0026">
+    <name>Alzheimer disease</name>
+    <name>Alzheimer&apos;s disease</name>
+    <description>Protein which, if defective, causes Alzheimer&apos;s disease. This
+neurological disorder is often observed in elderly people and involves
+atrophy of neurones in the cerebral cortex leading to progressive
+dementia.</description>
+  </keyword>
+  <keyword id="KW-0027">
+    <name>Amidation</name>
+    <description>Peptide which is posttranslationally modified by C-terminal
+amidation. The amino acid to be modified is followed by a glycine,
+which provides the amide group. In a first reaction step the glycine
+is oxidized to form alpha-hydroxy-glycine. Then the modified glycine
+is converted into the C-terminally amidated peptide and a glyoxylate.
+C-terminal amidation is essential to the biological activity of many
+neuropeptides and hormones.</description>
+  </keyword>
+  <keyword id="KW-0028">
+    <name>Amino-acid biosynthesis</name>
+    <name>Amino acid biosynthesis</name>
+    <description>Protein involved in the synthesis of naturally-occuring amino acids.
+In addition to their use for protein biosynthesis, they are the
+precursors of many molecules such as purines, pyrimidines, histamines,
+adrenaline and melanin.</description>
+    <go id="GO:0008652"/>
+  </keyword>
+  <keyword id="KW-0029">
+    <name>Amino-acid transport</name>
+    <name>Amino acid transport</name>
+    <description>Protein involved in the transport of amino acids.</description>
+    <go id="GO:0015171"/>
+    <go id="GO:0006865"/>
+  </keyword>
+  <keyword id="KW-0030">
+    <name>Aminoacyl-tRNA synthetase</name>
+    <name>Aminoacyl-tRNA synthase</name>
+    <name>Aminoacyl-tRNA ligase</name>
+    <name>Amino acid translase</name>
+    <description>Enzyme that activates an amino acid for translation by forming an
+aminoacyladenylate intermediate and then links this activated amino
+acid to the corresponding tRNA molecule (amino acid-tRNA, aminoacyl-
+tRNA). In general, a specific aminoacyl-tRNA synthase is available for
+each amino acid.</description>
+    <go id="GO:0004812"/>
+  </keyword>
+  </keywordList>

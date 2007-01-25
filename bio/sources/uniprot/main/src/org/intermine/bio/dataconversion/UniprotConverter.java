@@ -313,16 +313,16 @@ public class UniprotConverter extends FileConverter
                     String strStatus = null;            
                     feature = createItem("UniProtFeature");
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
+                    
                     if (featureCollection.getRefIds().isEmpty()) {
                         protein.addCollection(featureCollection);
                     }
+                    
                     featureCollection.addRefId(feature.getIdentifier());                     
                     feature.setAttribute("type", strType);
-                    
-                    if (strName != null) {
-                        Item keyword = getKeyword(strName);
-                        feature.addReference(new Reference("feature", keyword.getIdentifier()));
-                    }                    
+                    Item keyword = getKeyword(strType);
+                    feature.addReference(new Reference("feature", keyword.getIdentifier()));
+                                        
                     if (attrs.getValue("status") != null) {
                         strStatus = attrs.getValue("status");
 

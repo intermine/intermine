@@ -1,0 +1,58 @@
+<items>
+<item id="0_6" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Viral protein involved in host immune evasion thereby optimizing viralgrowth and dissemination. Viral immune evasion strategies are typicalof viruses which persist in their host throughout life. For example:Herpesviridae, Adenoviridae, Poxviridae and Retroviridae havedeveloped subversions of the MHC class I antigen-presentation pathway.In order to reduce the effectiveness of cytotoxic T-lymphocytesimmunity, they express proteins that either down-modulate MHC class Iexpression (degradation or mislocalization) or interfere with theantigen binding/presentation process (down-regulation of the expressionof the transporter associated with antigen processing TAP). Someproteins of these virus families also down-regulate other moleculesinvolved in immune recognition."/>
+<attribute name="name" value="Immunoevasin"/>
+</item>
+<item id="0_12" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in a system responding to environmental changescharacterized usually by a sensor kinase in the cell membrane thatphosphorylates itself in response to a signal and a response regulatorto which the phosphoryl group is transferred. The responder istypically a DNA-binding protein that regulates transcription. Severalof these systems are quite complex, involving many proteins in asignaling cascade orcontributing to several responses simultaneously.They are involved in a variety processes such as chemotaxis,osmoregulation, magnesium transport, pH tolerance, sporulation, orresponse of virulent species to host cell's environments."/>
+<attribute name="name" value="Phospho-relay system"/>
+</item>
+<item id="0_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Viral protein involved in host immune evasion thereby optimizing viralgrowth and dissemination. Viral immune evasion strategies are typicalof viruses which persist in their host throughout life. For example:Herpesviridae, Adenoviridae, Poxviridae and Retroviridae havedeveloped subversions of the MHC class I antigen-presentation pathway.In order to reduce the effectiveness of cytotoxic T-lymphocytesimmunity, they express proteins that either down-modulate MHC class Iexpression (degradation or mislocalization) or interfere with theantigen binding/presentation process (down-regulation of the expressionof the transporter associated with antigen processing TAP). Someproteins of these virus families also down-regulate other moleculesinvolved in immune recognition."/>
+<attribute name="name" value="Viral immunoevasion"/>
+</item>
+<item id="0_7" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein which, if defective, causes a congenital disorder ofglycosilation. In the endoplasmic reticulum (ER) of eukaryotes, N-linked glycans are first assembled on the lipid carrier dolichylpyrophosphate. The GlcNAc(2)Man(9)Glc(3) oligosaccharide istransferred to selected asparagine residues of nascent polypeptides.Defects along the biosynthetic pathway of N-glycans are associatedwith severe multisystemic syndromes called congenital disorders ofglycosylation (CDG). The characteristic biochemical feature of CDG isdefective glycosylation of glycoproteins due to mutations in genesrequired for the biosynthesis of N-linked oligosaccharides. Defects ofthe assembly of dolichyl-linked oligosaccharides or their transfer onto nascent glycoproteins form type I forms of CDG, whereas CDG type IIcomprises all defects of the trimming and elongation of N-linkedoligosaccharides."/>
+<attribute name="name" value="Congenital disorder of glycosylation"/>
+</item>
+<item id="0_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Viral protein involved in host immune evasion thereby optimizing viralgrowth and dissemination. Viral immune evasion strategies are typicalof viruses which persist in their host throughout life. For example:Herpesviridae, Adenoviridae, Poxviridae and Retroviridae havedeveloped subversions of the MHC class I antigen-presentation pathway.In order to reduce the effectiveness of cytotoxic T-lymphocytesimmunity, they express proteins that either down-modulate MHC class Iexpression (degradation or mislocalization) or interfere with theantigen binding/presentation process (down-regulation of the expressionof the transporter associated with antigen processing TAP). Someproteins of these virus families also down-regulate other moleculesinvolved in immune recognition."/>
+<attribute name="name" value="Viral host defense evasion"/>
+</item>
+<item id="0_5" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Viral protein involved in host immune evasion thereby optimizing viralgrowth and dissemination. Viral immune evasion strategies are typicalof viruses which persist in their host throughout life. For example:Herpesviridae, Adenoviridae, Poxviridae and Retroviridae havedeveloped subversions of the MHC class I antigen-presentation pathway.In order to reduce the effectiveness of cytotoxic T-lymphocytesimmunity, they express proteins that either down-modulate MHC class Iexpression (degradation or mislocalization) or interfere with theantigen binding/presentation process (down-regulation of the expressionof the transporter associated with antigen processing TAP). Someproteins of these virus families also down-regulate other moleculesinvolved in immune recognition."/>
+<attribute name="name" value="Viral immune evasion"/>
+</item>
+<item id="0_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein which, if defective, causes cataract, a partial or completeocular opacity that affects the crystalline lens or its capsule,leading to impaired vision or blindness. The many types of cataractare classified by their morphology (size, shape, location) oretiology (cause and time of occurrence). Cataracts may occur as anisolated anomaly, as part of generalized ocular developmental defects,or as a component of a multisystem disorder."/>
+<attribute name="name" value="Cataract"/>
+</item>
+<item id="0_10" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in a system responding to environmental changescharacterized usually by a sensor kinase in the cell membrane thatphosphorylates itself in response to a signal and a response regulatorto which the phosphoryl group is transferred. The responder istypically a DNA-binding protein that regulates transcription. Severalof these systems are quite complex, involving many proteins in asignaling cascade orcontributing to several responses simultaneously.They are involved in a variety processes such as chemotaxis,osmoregulation, magnesium transport, pH tolerance, sporulation, orresponse of virulent species to host cell's environments."/>
+<attribute name="name" value="Two-component system"/>
+</item>
+<item id="0_9" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in a system responding to environmental changescharacterized usually by a sensor kinase in the cell membrane thatphosphorylates itself in response to a signal and a response regulatorto which the phosphoryl group is transferred. The responder istypically a DNA-binding protein that regulates transcription. Severalof these systems are quite complex, involving many proteins in asignaling cascade orcontributing to several responses simultaneously.They are involved in a variety processes such as chemotaxis,osmoregulation, magnesium transport, pH tolerance, sporulation, orresponse of virulent species to host cell's environments."/>
+<attribute name="name" value="Two-component regulatory system"/>
+</item>
+<item id="0_14" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in a system responding to environmental changescharacterized usually by a sensor kinase in the cell membrane thatphosphorylates itself in response to a signal and a response regulatorto which the phosphoryl group is transferred. The responder istypically a DNA-binding protein that regulates transcription. Severalof these systems are quite complex, involving many proteins in asignaling cascade orcontributing to several responses simultaneously.They are involved in a variety processes such as chemotaxis,osmoregulation, magnesium transport, pH tolerance, sporulation, orresponse of virulent species to host cell's environments."/>
+<attribute name="name" value="Two-component signal transduction system"/>
+</item>
+<item id="0_13" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in a system responding to environmental changescharacterized usually by a sensor kinase in the cell membrane thatphosphorylates itself in response to a signal and a response regulatorto which the phosphoryl group is transferred. The responder istypically a DNA-binding protein that regulates transcription. Severalof these systems are quite complex, involving many proteins in asignaling cascade orcontributing to several responses simultaneously.They are involved in a variety processes such as chemotaxis,osmoregulation, magnesium transport, pH tolerance, sporulation, orresponse of virulent species to host cell's environments."/>
+<attribute name="name" value="Two-component sensory transduction system"/>
+</item>
+<item id="0_11" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in a system responding to environmental changescharacterized usually by a sensor kinase in the cell membrane thatphosphorylates itself in response to a signal and a response regulatorto which the phosphoryl group is transferred. The responder istypically a DNA-binding protein that regulates transcription. Severalof these systems are quite complex, involving many proteins in asignaling cascade orcontributing to several responses simultaneously.They are involved in a variety processes such as chemotaxis,osmoregulation, magnesium transport, pH tolerance, sporulation, orresponse of virulent species to host cell's environments."/>
+<attribute name="name" value="Phosphorelay system"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein which contains at least one 2Fe-2S iron-sulfur cluster: 2 ironatoms complexed to 2 inorganic sulfides and 4 sulfur atoms ofcysteines from the protein."/>
+<attribute name="name" value="2Fe-2S"/>
+</item>
+<item id="0_8" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein which, if defective, causes Leber congenital amaurosis, aclinically and genetically heterogeneous type of blindness transmittedas an autosomal recessive trait and occurring at or shortly afterbirth. It is associated with an atypical form of diffuse pigmentationand commonly with optic atrophy and attenuation of the retinalvessels."/>
+<attribute name="name" value="Leber congenital amaurosis"/>
+</item>
+</items>
