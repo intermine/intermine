@@ -11,6 +11,7 @@ package org.intermine.web.bag;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class BagQueryResult
 
     private Map matches = new LinkedHashMap();
     private Map issues = new LinkedHashMap();
-    private List unresolved = new ArrayList();
+    private Map unresolved = new HashMap();
 
     /**
      * Get any results that require some user input before adding to the bag.
@@ -79,14 +80,21 @@ public class BagQueryResult
     }
 
     /**
-     * Get a list of any input Strings for which objects could not be found.
-     * @return a list of input strings not resolved to objects
+     * Get a Map of any input Strings for which objects of the right type could not be found.  
+     * @return a Map of from input string to null/object - null when the input doesn't match any 
+     * object of any type, otherwise a reference to a Set of the objects that matched
      */
-    public List getUnresolved() {
+    public Map getUnresolved() {
         return unresolved;
     }
 
-    public void setUnresolved(List unresolved) {
+    /**
+     * Set the Map of unresolved input strings.  It is Map from input string to null/object - null
+     * when the input doesn't match any object of any type, otherwise a reference to the object
+     * that matched.
+     * @param unresolved the new unresolved Map
+     */
+    public void setUnresolved(Map unresolved) {
         this.unresolved = unresolved;
     }
 }

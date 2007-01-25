@@ -11,7 +11,6 @@ package org.intermine.web.bag;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,16 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.InitialiserPlugin;
+
+import org.apache.log4j.Logger;
 
 /**
  * For a given list of input strings search for objects using default and configured
@@ -114,9 +113,10 @@ public class BagQueryRunner
     /**
      * Add results from resMap to a a BagQueryResults object.
      */
-    private void addResults(Map resMap, List unresolved, BagQueryResult bqr, BagQuery bq, Class type)
+    private void addResults(Map resMap, List unresolved, BagQueryResult bqr, BagQuery bq,
+                            Class type)
         throws ObjectStoreException {
-    	Set objsOfWrongType = new HashSet();
+    	Map objsOfWrongType = new HashMap();
         Iterator mapIter = resMap.entrySet().iterator();
         while (mapIter.hasNext()) {
             Map.Entry entry = (Map.Entry) mapIter.next();
@@ -128,7 +128,7 @@ public class BagQueryRunner
             	
             	// if matches are not issues then each entry will be a match or a duplicate
             	if (ids.size() == 1) {
-            		bqr.addMatch((String) input, (Integer) ids.iterator().next());
+            		bqr.addMatch(input, (Integer) ids.iterator().next());
             	} else {
             		List objs = new ArrayList();
             		Iterator objIter = os.getObjectsByIds(ids).iterator();
@@ -136,11 +136,11 @@ public class BagQueryRunner
             			objs.add(((List) objIter.next()).get(0));
             		}
             		bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), (String) entry.getKey(),
-            				objs);                
+            		             objs);                
             	}
             } else {
             	List objs = new ArrayList();
-            	List localObjsOfWrongType = new ArrayList();
+            	Set localObjsOfWrongType = new HashSet();
             	Iterator objIter = os.getObjectsByIds(ids).iterator();
             	
             	// we have a list of objects that result from some query, divide into any that
@@ -160,11 +160,15 @@ public class BagQueryRunner
             	if (!objs.isEmpty()) {
             		// we have a list of objects, if any match the type then add to bqr as an issue
             		// discard objects that matched a different type
-            		bqr.addIssue(BagQueryResult.OTHER, bq.getMessage(), (String) input, objs);
+            	    if (objs.size() == 1) {
+                        bqr.addIssue(BagQueryResult.OTHER, bq.getMessage(), input, objs);   
+                    } else {
+                        bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), input, objs);
+                    }
             	} else {
             		// all wrong, allow conversion attempts
             		resolved = false;
-            		objsOfWrongType.addAll(localObjsOfWrongType);
+            		objsOfWrongType.put(input, localObjsOfWrongType);
             	}
             }
             if (resolved) {
@@ -174,30 +178,38 @@ public class BagQueryRunner
         
         // now objsOfWrongType contains all wrong types found for this query, try converting
         if (!objsOfWrongType.isEmpty()) {
-        	// group objects by class
-            Map objTypes = CollectionUtil.groupByClass(objsOfWrongType, true);
-            LOG.info("objTypes = " + objTypes);
+            // group objects by class
+ //           Map objTypes = CollectionUtil.groupByClass(objsOfWrongType, true);
+//            LOG.info("objTypes = " + objTypes);
             // objects of the correct type are issues (for whatever reason)
 
             // find type converters for type - this will find the most specific first
             // I think TypeConverter needs a new method that will list all classes that
             // can be converted to the target type, then just object of those types
             // out objTypes maps
-            
+
             // try to convert objects to target type
-            
+
             // match up objects with original input identifiers
-            
+
             // add with message = ' found by converting from x'
             //bqr.addIssue(BagQueryResult.OTHER, bq.getMessage(), (String) o,
             //			objs);
-            
-            
-            // remove identifiers from unresolved list
-           }
 
+
+            // remove identifiers from unresolved list
+        }
+
+        Map unresolvedMap = new HashMap();
+        Iterator iter = unresolved.iterator();
+        while (iter.hasNext()) {
+            unresolvedMap.put(iter.next(), null);
+        }
+        unresolvedMap.putAll(objsOfWrongType);
+
+        
         // unresolved list will be used for next query
-        bqr.setUnresolved(unresolved);
+        bqr.setUnresolved(unresolvedMap);
     }
 
     // temporary method - will be replaced by BagQueryHelper method

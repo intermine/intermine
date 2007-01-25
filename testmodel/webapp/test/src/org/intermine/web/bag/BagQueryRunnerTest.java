@@ -16,6 +16,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -137,6 +138,33 @@ public class BagQueryRunnerTest extends TestCase {
 		assertEquals(expected, res.getIssues());
 		assertTrue(res.getUnresolved().isEmpty());
 	}
+    
+    // test searching for an input string that doesn't match any object
+    public void testObjectNotFound() throws Exception {
+        String nonMatchingString = "non_matching_string";
+        List input = Arrays.asList(new Object[] {nonMatchingString});
+        BagQueryResult res = runner.searchForBag("Employee", input);
+        assertEquals(0, res.getMatches().values().size());
+        Map resUnresolved = res.getUnresolved();
+        assertTrue(resUnresolved.size() == 1);
+        assertTrue(resUnresolved.containsKey(nonMatchingString));
+        assertNull(resUnresolved.get(nonMatchingString));
+    }
+    
+    // test searching for an input string that only matches an object of the wrong type and can't
+    // be converted
+    public void testObjectWrongType() throws Exception {
+        String contractorName = "ContractorA";
+        List input = Arrays.asList(new Object[] {contractorName});
+        BagQueryResult res = runner.searchForBag("Employee", input);
+        assertEquals(0, res.getMatches().values().size());
+        Map resUnresolved = res.getUnresolved();
+        assertTrue(resUnresolved.size() == 1);
+        assertTrue(resUnresolved.containsKey(contractorName));
+        Set contractors = (Set) resUnresolved.get(contractorName);
+        assertEquals(contractorName, ((Contractor) contractors.iterator().next()).getName());
+    }
+    
 
 	// we need to test a query that matches a different type.  Probably 
 	// need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml
