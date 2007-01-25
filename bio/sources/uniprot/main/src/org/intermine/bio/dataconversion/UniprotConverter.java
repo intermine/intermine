@@ -318,16 +318,22 @@ public class UniprotConverter extends FileConverter
                     }
                     featureCollection.addRefId(feature.getIdentifier());                     
                     feature.setAttribute("type", strType);
-                    Item keyword = getKeyword(strName);
-                    feature.addReference(new Reference("feature", keyword.getIdentifier()));
+                    
+                    if (strName != null) {
+                        Item keyword = getKeyword(strName);
+                        feature.addReference(new Reference("feature", keyword.getIdentifier()));
+                    }                    
                     if (attrs.getValue("status") != null) {
                         strStatus = attrs.getValue("status");
+
+                        if (strName != null) {
+                            strName += " (" + strStatus + ")";
+                        } else {
+                            strName = strStatus;
+                        }                    
                     }
-                    if (strStatus != null) {
-                        strName += " (" + strStatus + ")";
-                    }                    
                     if (strName != null) {                                                
-                        feature.setAttribute("name", strName);
+                        feature.setAttribute("description", strName);
                     }      
                     
                 // <entry><feature><location><start||end>
@@ -644,7 +650,8 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("feature") && feature != null) {
                     
                     writer.store(ItemHelper.convert(feature));
-
+                    feature = null;
+                    
                 // <entry><name>
                 } else if (qName.equals("name")) {
 
