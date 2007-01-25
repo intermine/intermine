@@ -1,0 +1,5 @@
+<project name="uniprot-keywords-tasks" default="default" basedir=".">
+  <description>build uniprot keywords tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
+

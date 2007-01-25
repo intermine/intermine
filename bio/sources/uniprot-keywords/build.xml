@@ -1,0 +1,13 @@
+
+<project name="uniprot-keywords" default="default" basedir=".">
+  <description>load uniprot keyword descriptions</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+
+  
+</project>
+
+
+
+
