@@ -41,7 +41,7 @@ import org.intermine.objectstore.query.QueryFieldPathExpression;
 import org.intermine.objectstore.query.QueryPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 

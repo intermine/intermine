@@ -65,9 +65,9 @@ import org.intermine.objectstore.query.UnknownTypeValue;
 import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.AlwaysMap;
 import org.intermine.util.CombinedIterator;
-import org.intermine.util.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;

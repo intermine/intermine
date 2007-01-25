@@ -37,7 +37,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.DatabaseSchema;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.SynchronisedIterator;
 

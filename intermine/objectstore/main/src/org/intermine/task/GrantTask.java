@@ -15,7 +15,7 @@ import org.apache.tools.ant.Task;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 
 /**
  * Task to grant permissions on all tables in a database to a given user.

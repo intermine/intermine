@@ -31,7 +31,7 @@ import java.sql.SQLException;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 

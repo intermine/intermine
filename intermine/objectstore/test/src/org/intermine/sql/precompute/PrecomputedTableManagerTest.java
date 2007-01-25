@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.*;
-import org.intermine.util.DatabaseUtil;
 import org.intermine.util.Util;
 
 public class PrecomputedTableManagerTest extends TestCase
