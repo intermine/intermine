@@ -1,4 +1,4 @@
-package org.intermine.util;
+package org.intermine.sql;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -27,11 +27,12 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.sql.Database;
+import org.intermine.model.InterMineObject;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.sql.writebatch.FlushJob;
 import org.intermine.sql.writebatch.TableBatch;
-import org.intermine.model.InterMineObject;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 

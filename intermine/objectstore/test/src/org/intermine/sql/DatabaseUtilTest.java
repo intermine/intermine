@@ -1,4 +1,4 @@
-package org.intermine.util;
+package org.intermine.sql;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -25,17 +25,15 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.sql.Database;
-
 import org.intermine.model.testmodel.*;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 
 public class DatabaseUtilTest extends TestCase
 {

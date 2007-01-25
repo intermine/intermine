@@ -26,7 +26,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.*;
 

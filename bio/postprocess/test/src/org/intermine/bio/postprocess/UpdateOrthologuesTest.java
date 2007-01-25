@@ -36,7 +36,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.Database;
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 

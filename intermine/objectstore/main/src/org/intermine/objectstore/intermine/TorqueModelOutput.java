@@ -18,16 +18,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.intermine.util.DatabaseUtil;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.MetadataManager;
-import org.intermine.objectstore.ObjectStoreException;
-
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.sql.DatabaseUtil;
 
 import org.apache.log4j.Logger;
 

@@ -13,7 +13,7 @@ package org.intermine.dataconversion;
 import java.util.Map;
 import java.util.List;
 
-import org.intermine.util.DatabaseUtil;
+import org.intermine.sql.DatabaseUtil;
 
 /**
  * An object designed to represent a batch of a read from an SQL database.
