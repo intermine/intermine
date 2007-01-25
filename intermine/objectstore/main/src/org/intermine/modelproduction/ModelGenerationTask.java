@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileReader;
 
+import org.intermine.metadata.Model;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.modelproduction.uml.XmiParser;
 import org.intermine.modelproduction.xmlschema.XmlSchemaParser;
-import org.intermine.metadata.MetadataManager;
-import org.intermine.metadata.Model;
 
 /**
  * Ant task that calls a parser to build a InterMine model from an external source

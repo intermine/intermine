@@ -1,4 +1,4 @@
-package org.intermine.metadata;
+package org.intermine.modelproduction;
 
 /*
  * Copyright (C) 2002-2005 FlyMine
@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.intermine.metadata.Model;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;

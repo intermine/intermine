@@ -23,8 +23,8 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.metadata.MetadataManager;
 import org.intermine.model.InterMineObject;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.DatabaseUtil;
 

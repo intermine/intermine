@@ -18,8 +18,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;

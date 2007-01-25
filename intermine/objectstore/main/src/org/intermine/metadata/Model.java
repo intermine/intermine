@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.XmlUtil;
 

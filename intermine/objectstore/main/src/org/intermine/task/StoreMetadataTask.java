@@ -12,8 +12,8 @@ package org.intermine.task;
 
 import java.util.Properties;
 
-import org.intermine.metadata.MetadataManager;
 import org.intermine.metadata.Model;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.PropertiesUtil;
