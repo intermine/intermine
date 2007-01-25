@@ -17,7 +17,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +39,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.DatabaseUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.SynchronisedIterator;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -68,6 +71,7 @@ public class CreateIndexesTask extends Task
     private Map tableIndexesDone = new HashMap();
     private Set indexesMade = new HashSet();
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
+    private int extraThreads = 3;
 
     // incremented after each index add to the internal map and used to make index names unique
     private int indexCount = 0;
@@ -87,6 +91,16 @@ public class CreateIndexesTask extends Task
      */
     public void setAttributeIndexes(boolean attributeIndexes) {
         this.attributeIndexes = attributeIndexes;
+    }
+
+    /**
+     * Set the number of extra worker threads. If the database server is multi-CPU, it might help to
+     * have multiple threads hitting it.
+     *
+     * @param extraThreads number of extra threads apart from the main thread
+     */
+    public void setExtraThreads(int extraThreads) {
+        this.extraThreads = extraThreads;
     }
 
     /**
@@ -125,7 +139,7 @@ public class CreateIndexesTask extends Task
     public void execute() throws BuildException {
         setUp();
         Model m = schema.getModel();
-        Map statements = new HashMap();
+        Map statements = new TreeMap();
 
         ClassDescriptor cld = null;
         try {
@@ -165,31 +179,93 @@ public class CreateIndexesTask extends Task
                 dropIndex(indexName);
             }
 
-            statementsIter = statements.keySet().iterator();
+            statementsIter = new SynchronisedIterator(statements.keySet().iterator());
+            Set threads = new HashSet();
 
-            while (statementsIter.hasNext()) {
-                String indexName = (String) statementsIter.next();
-                indexStatement = (IndexStatement) statements.get(indexName);
-                createIndex(indexName, indexStatement);
+            synchronized (threads) {
+                for (int i = 1; i <= extraThreads; i++) {
+                    Thread worker = new Thread(new Worker(threads, statementsIter, statements, i));
+                    threads.add(new Integer(i));
+                    worker.start();
+                }
             }
+
+            try {
+                while (statementsIter.hasNext()) {
+                    String indexName = (String) statementsIter.next();
+                    indexStatement = (IndexStatement) statements.get(indexName);
+                    createIndex(c, indexName, indexStatement, 0);
+                }
+            } catch (NoSuchElementException e) {
+                // This is fine - just a consequence of concurrent access to the iterator. It means
+                // the end of the iterator has been reached, so there is no more work to do.
+            }
+            synchronized (threads) {
+                while (threads.size() != 0) {
+                    LOG.info(threads.size() + " threads left");
+                    threads.wait();
+                }
+            }
+            LOG.info("All threads finished");
         } catch (Exception e) {
             String message = "Error creating indexes";
             if (indexStatement != null) {
-                ClassDescriptor errCld = indexStatement.getCld();
-                ClassDescriptor errTableMaster = indexStatement.getTableMaster();
-                if ((errCld != null) && (errTableMaster != null)) {
-                    message = "Error creating indexes for " + errCld.getType()
-                        + ", table master = " + errTableMaster.getType();
-                }
+                message = "Error creating indexes for " + indexStatement.getTableName() + "("
+                    + indexStatement.getColumnNames() + ")";
             }
             throw new BuildException(message, e);
         } finally {
             if (c != null) {
                 try {
                     c.close();
-                } catch (Exception e) {
+                } catch (SQLException e) {
                     // empty
                 }
+            }
+        }
+    }
+
+    private class Worker implements Runnable
+    {
+        private int threadNo;
+        private Set threads;
+        private Map statements;
+        private Iterator statementsIter;
+
+        public Worker(Set threads, Iterator statementsIter, Map statements, int threadNo) {
+            this.threads = threads;
+            this.statementsIter = statementsIter;
+            this.statements = statements;
+            this.threadNo = threadNo;
+        }
+
+        public void run() {
+            Connection conn = null;
+            try {
+                try {
+                    conn = database.getConnection();
+                    conn.setAutoCommit(true);
+                    while (statementsIter.hasNext()) {
+                        String indexName = (String) statementsIter.next();
+                        IndexStatement st = (IndexStatement) statements.get(indexName);
+                        createIndex(conn, indexName, st, threadNo);
+                    }
+                } catch (NoSuchElementException e) {
+                } finally {
+                    try {
+                        if (conn != null) {
+                            conn.close();
+                        }
+                    } finally {
+                        synchronized (threads) {
+                            threads.remove(new Integer(threadNo));
+                            threads.notify();
+                        }
+                    }
+                }
+                LOG.info("Thread " + threadNo + " finished");
+            } catch (SQLException e) {
+                LOG.error("Thread " + threadNo + " failed", e);
             }
         }
     }
@@ -407,7 +483,6 @@ public class CreateIndexesTask extends Task
                 }
 
                 String indexName = tableName + "__"  + att.getName();
-                LOG.info("creating index: " + indexName);
                 if (att.getType().equals("java.lang.String")) {
                     addStatement(statements, indexName, tableName, "lower(" + fieldName + ")",
                                  cld, null);
@@ -459,7 +534,7 @@ public class CreateIndexesTask extends Task
     protected void dropIndex(String indexName) {
         try {
             if (!indexesMade.contains(indexName)) {
-                execute("drop index " + indexName);
+                execute(c, "drop index " + indexName);
             }
         } catch (SQLException e) {
             // ignore because the exception is probably because the index doesn't exist
@@ -467,14 +542,17 @@ public class CreateIndexesTask extends Task
     }
 
     /**
-     * Create an named index on the specified columns of a table
+     * Create an named index on the specified columns of a table.
+     *
+     * @param conn a Connection
      * @param indexName the index name
      * @param indexStatement the IndexStatement
-     * @throws SQLException if an error occurs
+     * @param threadNo the number of the calling thread
      */
-    protected void createIndex(String indexName, IndexStatement indexStatement)
-        throws SQLException {
+    protected void createIndex(Connection conn, String indexName, IndexStatement indexStatement,
+            int threadNo) {
         String tableName = indexStatement.getTableName();
+        LOG.info("Thread " + threadNo + " creating index: " + indexName);
         Set indexesForTable = (Set) tableIndexesDone.get(tableName);
         if (indexesForTable == null) {
             indexesForTable = new HashSet();
@@ -482,16 +560,12 @@ public class CreateIndexesTask extends Task
         }
         if (!indexesForTable.contains(indexStatement.getColumnNames())) {
             try {
-                execute(indexStatement.getStatementString(indexName));
+                execute(conn, indexStatement.getStatementString(indexName));
             } catch (SQLException e) {
-                if (e.getMessage().matches("ERROR: index row requires \\d+ bytes, "
-                                           + "maximum size is 8191")) {
-                    // ignore - we just don't create this index
-                    LOG.error("failed to create index for "
-                              + tableName + "(" + indexStatement.getColumnNames() + ")");
-                } else {
-                    throw e;
-                }
+                // ignore - we just don't create this index
+                LOG.error("failed to create index " + indexName + " for " + tableName + "("
+                        + indexStatement.getColumnNames() + ")", e);
+                System.err .println("Failed to create index " + indexName);
             }
         }
         indexesForTable.add(indexStatement.getColumnNames());
@@ -499,12 +573,14 @@ public class CreateIndexesTask extends Task
     }
 
     /**
-     * Execute an sql statement
+     * Execute an sql statement.
+     *
+     * @param conn a Connection
      * @param sql the sql string for the statement to execute
      * @throws SQLException if an error occurs
      */
-    protected void execute(String sql) throws SQLException {
-        c.createStatement().execute(sql);
+    protected void execute(Connection conn, String sql) throws SQLException {
+        conn.createStatement().execute(sql);
     }
 }
 
