@@ -113,7 +113,9 @@ public class UniprotKeywordConverter extends FileConverter
                 attName = "description";
                 
             } else if (qName.equals("keywordList")) {
+                
                 ontology = setOnto("UniProtKeyword");
+                
             } 
             
             super.startElement(uri, localName, qName, attrs);
@@ -203,19 +205,19 @@ public class UniprotKeywordConverter extends FileConverter
         private Item setOnto(String title) 
         throws SAXException {
 
-            Item ontology = (Item) ontoMaster.get(title);
+            Item o = (Item) ontoMaster.get(title);
             try {
-                if (ontology == null) {
-                    ontology = createItem("Ontology");
-                    ontology.addAttribute(new Attribute("title", title));
-                    ontoMaster.put(title, ontology);
-                    writer.store(ItemHelper.convert(ontology));
+                if (o == null) {
+                    o = createItem("Ontology");
+                    o.addAttribute(new Attribute("title", title));
+                    ontoMaster.put(title, o);
+                    writer.store(ItemHelper.convert(o));
                 }
 
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-            return ontology;
+            return o;
         }
         
         /**
