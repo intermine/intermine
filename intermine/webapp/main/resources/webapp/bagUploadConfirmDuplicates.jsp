@@ -13,7 +13,7 @@
   <fmt:param value="${message}"/>
 </fmt:message>
 
-<table class="collection">
+<table class="collection" cellspacing="0">
     <tr>
       <td>
         Identifier
@@ -45,14 +45,14 @@
         </c:choose>
       </c:set>
 
-      <tr class="${rowClass}"/>
+      <tr class="${rowClass}" id="tr_${identifier}"/>
         <c:if test="${status.index == 0}">
           <td border="1" rowSpan="${fn:length(resultElementRowList)}"
-              valign="top">${identifier}</td>
+              valign="top" id="td_${identifier}">${identifier}</td>
         </c:if>
 
         <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
-          <td>
+          <td id="row_${status.count}">
             <c:choose>
               <c:when test="${rowStatus.index == 0}">
                 <%-- special case: the first element is the class name --%>
@@ -60,10 +60,13 @@
               </c:when>
               <c:when test="${rowStatus.index == fn:length(resultElementRow) - 1}">
                 <%-- special case: the last element is the object id --%>
-                <html:multibox property="selectedObjects"
+                <span id="add_${resultElementRow[rowStatus.index]}" onclick="addId2Bag('${resultElementRow[rowStatus.index]}','${status.count}','${identifier}');" class="fakelink">Add</span>
+                &nbsp;&nbsp;
+                <span id="rem_${resultElementRow[rowStatus.index]}" onclick="removeIdFromBag('${resultElementRow[rowStatus.index]}','${status.count}','${identifier}');">Remove</span>
+                <!-- <html:multibox property="selectedObjects"
                                styleId="selectedObject_${rowStatus.index}">
                   ${resultElementRow[rowStatus.index]}
-                </html:multibox>
+                </html:multibox>-->
               </c:when>
               <c:otherwise>
                 ${resultElement.field}
