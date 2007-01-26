@@ -311,7 +311,7 @@ table.collection th {
 table.collection th {
   font-size: 12px;
 }
-table.collection td td {
+table.collection t td {
   border: none;
 }
 table.collection {
@@ -895,4 +895,29 @@ img.objectDetailsAspectIcon {
 	height:150px;
 	background-color: #F5F0FF;
 	padding:10px;
+}
+
+#uploadConfirmMessage {
+	text-align:center;
+	font-size: 140%;
+}
+
+.blueBg {
+	background-color:#F5F0FF;
+	text-align:center;
+	padding: 20px;
+	margin:20px;
+	width:350px;
+}
+.fakelink{
+	color:#049;
+	cursor: pointer;
+}
+.fakelink:hover{
+	color:#CF4D23; 
+	text-decoration:underline;
+}
+.fakelink:active { 
+	color:#58e; 
+	text-decoration:none 
 }

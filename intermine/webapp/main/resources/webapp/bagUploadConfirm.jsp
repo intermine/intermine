@@ -7,17 +7,24 @@
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
 <html:form action="/bagUploadConfirm" focus="text" method="post" enctype="multipart/form-data">
-  <div class="heading">
-    <fmt:message key="bagUploadConfirm.matchesDesc"/>
-  </div>
-  <div class="body">
-    <p>
-    Found ${matchCount} matches of type ${bagUploadConfirmForm.bagType}.
-    </p>
-    <html:hidden property="matchIDs"/>
-    <html:hidden property="bagType"/>
-    <fmt:message key="bagUploadConfirm.bagName"/>:
-    <html:text property="bagName" size="20"/>
+<html:hidden property="matchIDs" styleId="matchIDs"/>
+<html:hidden property="bagType"/>
+<script type="text/javascript" src="js/baguploadconfirm.js"></script>
+  <div class="body" align="center">
+    <div id="uploadConfirmMessage">
+      <strong><span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)</strong> currently in your bag.<br/>
+	  <strong><span id="duplicateCount">${fn:length(issues)}</span> duplicate(s)</strong> and <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
+    </div>
+    <div class="blueBg">
+       <p>Only <strong><span id="matchCount">${matchCount}</span></strong> of the <strong>${fn:length(issues) + matchCount + fn:length(unresolved)}</strong> identifier(s) you provided will be saved in your bag.</p>        
+       <c:if test="${matchCount > 0}">
+          <fmt:message key="bagUploadConfirm.bagName"/>:
+          <html:text property="bagName" size="20"/>
+          <html:submit property="submit">
+            <fmt:message key="bagUploadConfirm.submitOK"/>
+          </html:submit>
+        </c:if>
+    </div>
   </div>
   <c:if test="${!empty issues['DUPLICATE']}">
     <div class="heading">
@@ -39,11 +46,6 @@
     <html:submit property="goBack">
       <fmt:message key="bagUploadConfirm.goBack"/>
     </html:submit>
-    <c:if test="${matchCount > 0}">
-      <html:submit property="submit">
-        <fmt:message key="bagUploadConfirm.submitOK"/>
-      </html:submit>
-    </c:if>
   </div>
 
   <c:if test="${fn:length(unresolved) > 0}">
