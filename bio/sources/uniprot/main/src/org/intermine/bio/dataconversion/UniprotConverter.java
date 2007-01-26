@@ -645,8 +645,7 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("keyword")) {
 
                     if (attName != null) {
-
-                        Item keyword = getKeyword(attValue.toString());
+                        Item keyword = getKeyword(attValue.toString());                   
                         if (keywordCollection.getRefIds().isEmpty()) {
                             protein.addCollection(keywordCollection);
                         }
@@ -703,7 +702,6 @@ public class UniprotConverter extends FileConverter
             }
                 
         }
-
 
         // if synonym new, create and put in synonyms map for this <entry>
         private Item createSynonym(String subjectId, String type, String value, String dbId) {
@@ -786,6 +784,8 @@ public class UniprotConverter extends FileConverter
                 if (keyword == null) {
                     keyword = createItem("OntologyTerm");
                     keyword.addAttribute(new Attribute("name", title));
+                    Item ontology = (Item) ontoMaster.get("UniProtKeyword");
+                    keyword.addReference(new Reference("ontology", ontology.getIdentifier()));
                     keyMaster.put(title, keyword);
                     writer.store(ItemHelper.convert(keyword));
                 }
