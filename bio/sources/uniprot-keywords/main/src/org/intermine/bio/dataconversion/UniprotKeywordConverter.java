@@ -37,13 +37,15 @@ public class UniprotKeywordConverter extends FileConverter
    
     //TODO: This should come from props files
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-   
+    private Map ontoMap = new HashMap();
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      */
     public UniprotKeywordConverter(ItemWriter writer) {
         super(writer);
+        
     }
 
 
@@ -51,8 +53,8 @@ public class UniprotKeywordConverter extends FileConverter
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-
-        UniprotHandler handler = new UniprotHandler(writer);
+       
+        UniprotHandler handler = new UniprotHandler(writer, ontoMap);
                 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -77,17 +79,17 @@ public class UniprotKeywordConverter extends FileConverter
         private Map keywords = new HashMap();
         private String attName = null;
         private StringBuffer attValue = null;
-
+        private Map ontoMap;
         
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          */
-        public UniprotHandler(ItemWriter writer) {
+        public UniprotHandler(ItemWriter writer, Map ontoMap) {
             
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;         
-       
+            this.ontoMap = ontoMap;
         }
 
         
@@ -106,7 +108,7 @@ public class UniprotKeywordConverter extends FileConverter
                 attName = "description";
                 
             } else if (qName.equals("keywordList")) {
-                createOnto();
+                setOnto("UniProtKeyword");
             } 
             
             super.startElement(uri, localName, qName, attrs);
@@ -189,20 +191,27 @@ public class UniprotKeywordConverter extends FileConverter
                 throw new SAXException(e);
             }
        }
-        
-        
-        private Item createOnto() throws SAXException {
+            
 
-            Item ontology = createItem("Ontology");
-            ontology.addAttribute(new Attribute("title", "UniProtKeyword"));
+
+        private Item setOnto(String title) 
+        throws SAXException {
+
+            Item ontology = (Item) ontoMaster.get(title);
             try {
-                writer.store(ItemHelper.convert(ontology));
+                if (ontology == null) {
+                    ontology = createItem("Ontology");
+                    ontology.addAttribute(new Attribute("title", title));
+                    ontoMaster.put(title, ontology);
+                    writer.store(ItemHelper.convert(ontology));
+                }
+
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
             return ontology;
         }
-
+        
         /**
          * Convenience method for creating a new Item
          * @param className the name of the class
