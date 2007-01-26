@@ -80,7 +80,7 @@ public class UniprotConverter extends FileConverter
         mapDatabases();
         mapFeatures();
         UniprotHandler handler = new UniprotHandler(writer, mapMaster);
-       
+      
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -89,6 +89,8 @@ public class UniprotConverter extends FileConverter
         }
     }
 
+
+    
     private void mapMaps() {
         
         mapMaster.put("pubMaster", pubMaster);
@@ -237,6 +239,7 @@ public class UniprotConverter extends FileConverter
             this.ids = (Map) mapMaster.get("ids");
             this.aliases = (Map) mapMaster.get("aliases");
             this.keyMaster = (Map) mapMaster.get("keyMaster");
+                       
         }
 
         
@@ -690,6 +693,7 @@ public class UniprotConverter extends FileConverter
                 // TODO: the dataset name shouldn't be hard coded:
                 datasource = getDataSource("UniProt");
                 dataset = getDataSet("Uniprot data set");
+                createOnto();
             } catch (Exception e) {
                 throw new SAXException(e);
             }
@@ -1008,6 +1012,18 @@ public class UniprotConverter extends FileConverter
             }
         }
    
+
+        private Item createOnto() throws SAXException {
+            
+            Item ontology = createItem("Ontology");
+            ontology.addAttribute(new Attribute("title", "UniProtKeyword"));
+            try {
+                writer.store(ItemHelper.convert(ontology));
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return ontology;
+        }
 
         /**
          * Convenience method for creating a new Item
