@@ -84,6 +84,7 @@ public class UniprotKeywordConverter extends FileConverter
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
+         * @param ontoMap Holds the ontology variable that's used as 1/2 the key
          */
         public UniprotHandler(ItemWriter writer, Map ontoMap) {
             
@@ -197,12 +198,12 @@ public class UniprotKeywordConverter extends FileConverter
         private Item setOnto(String title) 
         throws SAXException {
 
-            Item ontology = (Item) ontoMaster.get(title);
+            Item ontology = (Item) ontoMap.get(title);
             try {
                 if (ontology == null) {
                     ontology = createItem("Ontology");
                     ontology.addAttribute(new Attribute("title", title));
-                    ontoMaster.put(title, ontology);
+                    ontoMap.put(title, ontology);
                     writer.store(ItemHelper.convert(ontology));
                 }
 
