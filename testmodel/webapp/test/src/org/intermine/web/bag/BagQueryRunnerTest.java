@@ -1,37 +1,36 @@
 package org.intermine.web.bag;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.ClassKeyHelper;
+
+import java.io.InputStream;
+
+import servletunit.struts.MockStrutsTestCase;
 
 /*
  * NOTE - this test depends on data being present in os.unittest which is
  * currently inserted before running the testmodel webapp tests.  If this
  * changes then this class will need to extend StoreDataTestCase.
  */
-public class BagQueryRunnerTest extends TestCase {
+public class BagQueryRunnerTest extends MockStrutsTestCase {
 	private ObjectStore os;
 	private Map eIds;
 	private BagQueryRunner runner;
@@ -39,6 +38,7 @@ public class BagQueryRunnerTest extends TestCase {
 	public BagQueryRunnerTest(String arg0) {
 		super(arg0);
 	}
+
     public void setUp() throws Exception {
         super.setUp();
 		os = ObjectStoreFactory.getObjectStore("os.unittest");
@@ -49,7 +49,9 @@ public class BagQueryRunnerTest extends TestCase {
 		
 		InputStream is = getClass().getClassLoader().getResourceAsStream("WEB-INF/bag-queries.xml");
 		Map bagQueries = BagQueryHelper.readBagQueries(os.getModel(), is);
-		runner = new BagQueryRunner(os, classKeys, bagQueries);
+		runner = new BagQueryRunner(os, classKeys, bagQueries, 
+                                    getActionServlet().getServletContext());
+   
     }
     
 	// expect each input string to match one object
@@ -165,6 +167,18 @@ public class BagQueryRunnerTest extends TestCase {
         assertEquals(contractorName, ((Contractor) contractors.iterator().next()).getName());
     }
     
+    // test searching for an input string that has to be converted
+    public void testTypeConverted() throws Exception {
+        String empName = "EmployeeA2";
+        List input = Arrays.asList(new Object[] {empName});
+        BagQueryResult res = runner.searchForBag("Manager", input);
+        assertEquals(0, res.getMatches().values().size());
+        Map issues = res.getIssues();
+        Map translated = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
+        assertEquals(1, translated.values().size());
+        Map resUnresolved = res.getUnresolved();
+        assertTrue(resUnresolved.size() == 0);
+    }
 
 	// we need to test a query that matches a different type.  Probably 
 	// need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml

@@ -66,7 +66,7 @@ public class BuildBagAction extends InterMineAction
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map bagQueries = (Map) servletContext.getAttribute(Constants.BAG_QUERIES);
-        BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, bagQueries);
+        BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, bagQueries, servletContext);
         
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
