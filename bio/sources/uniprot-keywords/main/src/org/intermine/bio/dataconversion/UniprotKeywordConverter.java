@@ -22,6 +22,8 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
+
 import java.io.Reader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -37,7 +39,7 @@ public class UniprotKeywordConverter extends FileConverter
    
     //TODO: This should come from props files
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    private Map ontoMap = new HashMap();
+    private Map ontoMaster = new HashMap();
     
     /**
      * Constructor
@@ -53,8 +55,8 @@ public class UniprotKeywordConverter extends FileConverter
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-       
-        UniprotHandler handler = new UniprotHandler(writer, ontoMap);
+     
+        UniprotHandler handler = new UniprotHandler(writer, ontoMaster);
                 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -79,18 +81,20 @@ public class UniprotKeywordConverter extends FileConverter
         private Map keywords = new HashMap();
         private String attName = null;
         private StringBuffer attValue = null;
-        private Map ontoMap;
+        private Map ontoMaster;
+        private Item ontology;
         
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
-         * @param ontoMap Holds the ontology variable that's used as 1/2 the key
+         * @param ontoMaster Holds the ontology variable that's used as 1/2 the key
          */
-        public UniprotHandler(ItemWriter writer, Map ontoMap) {
+        public UniprotHandler(ItemWriter writer, Map ontoMaster) {
             
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;         
-            this.ontoMap = ontoMap;
+            this.ontoMaster = ontoMaster;
+          
         }
 
         
@@ -109,7 +113,7 @@ public class UniprotKeywordConverter extends FileConverter
                 attName = "description";
                 
             } else if (qName.equals("keywordList")) {
-                setOnto("UniProtKeyword");
+                ontology = setOnto("UniProtKeyword");
             } 
             
             super.startElement(uri, localName, qName, attrs);
@@ -168,7 +172,7 @@ public class UniprotKeywordConverter extends FileConverter
                     
                     String name = attValue.toString();
                     Item keyword = createItem("OntologyTerm");
-                    keyword.addAttribute(new Attribute("name", name));                    
+                    keyword.addAttribute(new Attribute("name", name));   
                     keywords.put(name, keyword);
           
                 } else if (qName.equals("description")) {
@@ -180,6 +184,7 @@ public class UniprotKeywordConverter extends FileConverter
                         String name = (String) i.next();
                         Item keyword = (Item) keywords.get(name);
                         keyword.addAttribute(new Attribute("description", descr));
+                        keyword.addReference(new Reference("ontology", ontology.getIdentifier()));
                         writer.store(ItemHelper.convert(keyword));
                         
                     }  
@@ -198,12 +203,12 @@ public class UniprotKeywordConverter extends FileConverter
         private Item setOnto(String title) 
         throws SAXException {
 
-            Item ontology = (Item) ontoMap.get(title);
+            Item ontology = (Item) ontoMaster.get(title);
             try {
                 if (ontology == null) {
                     ontology = createItem("Ontology");
                     ontology.addAttribute(new Attribute("title", title));
-                    ontoMap.put(title, ontology);
+                    ontoMaster.put(title, ontology);
                     writer.store(ItemHelper.convert(ontology));
                 }
 
