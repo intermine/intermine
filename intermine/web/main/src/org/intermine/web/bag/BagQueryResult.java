@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Class to hold the results of querying for a bag of objects.  Makes
  * available the matched objects, results that require some user input
@@ -24,9 +25,23 @@ import java.util.Map;
  * @author Richard Smith
  */
 public class BagQueryResult
-{
+{ 
+    /**
+     * Key of the Map returned by getIssues() when the query for the input string found more than
+     * one object.
+     */
     public static final String DUPLICATE = "DUPLICATE";
+    
+    /**
+     * Key of the Map returned by getIssues() when the input string 
+     */ 
     public static final String OTHER = "OTHER";
+     
+    /**
+     * Key of the Map returned by getIssues() when the object found when querying using input string 
+     * needed to be translated.
+     */ 
+    public static final String TYPE_CONVERTED = "TYPE_TRANSLATED";
 
     private Map matches = new LinkedHashMap();
     private Map issues = new LinkedHashMap();
@@ -34,7 +49,8 @@ public class BagQueryResult
 
     /**
      * Get any results that require some user input before adding to the bag.
-     * [issue type -> [query -> [input string -> Set of InterMineObjects]]]
+     * [issue type -> [query -> [input string -> List of InterMineObjects]]] or for issue type of
+     * "TYPE_TRANSLATED": [issue type -> [query -> [input string -> List of ConvertedObjectPair]]
      * @return a map from issues type to queries to input to possible objects
      */
     public Map getIssues() {

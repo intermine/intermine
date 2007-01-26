@@ -64,11 +64,22 @@
   </query>
 </template>
 <template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" important="false">
-  <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.name Employee.address.address">
-    <node path="Employee" type="Employee"></node>
-    <node path="Employee.name" type="String">
-      <constraint op="=" value="Fred" description="name" identifier="" editable="true" code="A"></constraint></node>
-    <node path="Employee.address" type="Address"></node>
+  <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.id Employee.address.id">
+    <node path="Employee" type="Employee"/>
+    <node path="Employee.id" type="Integer">
+      <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
+    </node>
+    <node path="Employee.address.id" type="Integer"/>
+  </query>
+</template>
+<template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="" important="false">
+  <query name="convertEmployeeToManager" model="testmodel" view="Employee.id Employee.department.manager.id">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.id" type="Integer">
+      <constraint op="=" value="0" description="id" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
   </query>
 </template>
   </template-queries>

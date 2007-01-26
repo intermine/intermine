@@ -47,15 +47,15 @@ public class TypeConverter
      * @param typeA the type to convert from
      * @param typeB the type to convert to
      * @param objects a Collection of objects of type typeA
-     * @return a Map from original object to a List of converted objects
-     * @throws ObjectStoreException if an error occurs
+     * @return a Map from original object to a List of converted objects, or null if conversion is
+     * possible (because no suitable template is available)
+     * @throws InterMineException if an error occurs
      */
     public static Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
-            Collection objects) throws ObjectStoreException, InterMineException {
+                                     Collection objects) throws InterMineException {
         TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
         if (tq == null) {
-            throw new IllegalStateException("No template query available for conversion from "
-                    + typeA + " to " + typeB);
+            return null;
         }
         tq = (TemplateQuery) tq.clone();
         // We can be reckless here because all this is checked by getConversionTemplate
@@ -94,7 +94,7 @@ public class TypeConverter
                 ders.add(derived);
             }
         } catch (ObjectStoreException e) {
-            throw new InterMineException("Error executing query: " + q.toString() + e.getMessage());
+            throw new InterMineException("Error executing query: " + q.toString(), e);
         }
         return retval;
     }
