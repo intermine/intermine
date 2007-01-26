@@ -105,7 +105,7 @@ public class UniprotKeywordConverter extends FileConverter
 
                 attName = "description";
                 
-            } else if (qName.equals("keywordlist")) {
+            } else if (qName.equals("keywordList")) {
                 createOnto();
             } 
             
