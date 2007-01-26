@@ -53,6 +53,7 @@ public class UniprotConverter extends FileConverter
     private Map orgMaster = new HashMap();
     private Map dbMaster = new HashMap();
     private Map dsMaster = new HashMap();
+    private Map ontoMaster = new HashMap();
     private Map taxIdToDb = new HashMap();
     private Map featureTypes = new HashMap();
     private Map geneMaster = new HashMap();
@@ -99,6 +100,7 @@ public class UniprotConverter extends FileConverter
         mapMaster.put("taxIdToDb", taxIdToDb);
         mapMaster.put("featureTypes", featureTypes);
         mapMaster.put("dsMaster", dsMaster);
+        mapMaster.put("ontoMaster", ontoMaster);        
         mapMaster.put("geneMaster", geneMaster);
         mapMaster.put("geneIdentifiers", geneIdentifiers);
         mapMaster.put("ids", ids);
@@ -202,6 +204,7 @@ public class UniprotConverter extends FileConverter
         private Map orgMaster;
         private Map dbMaster;
         private Map dsMaster;
+        private Map ontoMaster;
         private Map taxIdToDb;        // which database to use for which organism
         private Map featureTypes;
         private Item datasource;             
@@ -232,6 +235,7 @@ public class UniprotConverter extends FileConverter
             this.orgMaster = (Map) mapMaster.get("orgMaster");
             this.dbMaster = (Map) mapMaster.get("dbMaster");
             this.dsMaster = (Map) mapMaster.get("dsMaster");
+            this.ontoMaster = (Map) mapMaster.get("ontoMaster");
             this.taxIdToDb = (Map) mapMaster.get("taxIdToDb");
             this.featureTypes = (Map) mapMaster.get("featureTypes");
             this.geneMaster = (Map) mapMaster.get("geneMaster");
@@ -693,7 +697,7 @@ public class UniprotConverter extends FileConverter
                 // TODO: the dataset name shouldn't be hard coded:
                 datasource = getDataSource("UniProt");
                 dataset = getDataSet("Uniprot data set");
-                createOnto();
+                setOnto("UniProtKeyword");
             } catch (Exception e) {
                 throw new SAXException(e);
             }
@@ -809,6 +813,24 @@ public class UniprotConverter extends FileConverter
             }
             return ds;
         }   
+        
+        private Item setOnto(String title) 
+        throws SAXException {
+
+            Item ontology = (Item) ontoMaster.get(title);
+            try {
+                if (ontology == null) {
+                    ontology = createItem("Ontology");
+                    ontology.addAttribute(new Attribute("title", title));
+                    ontoMaster.put(title, ontology);
+                    writer.store(ItemHelper.convert(ontology));
+                }
+
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return ontology;
+        }
         
         private void finaliseGene(Item gene, String orgId)
             throws SAXException {
@@ -1013,17 +1035,7 @@ public class UniprotConverter extends FileConverter
         }
    
 
-        private Item createOnto() throws SAXException {
-            
-            Item ontology = createItem("Ontology");
-            ontology.addAttribute(new Attribute("title", "UniProtKeyword"));
-            try {
-                writer.store(ItemHelper.convert(ontology));
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-            return ontology;
-        }
+
 
         /**
          * Convenience method for creating a new Item
