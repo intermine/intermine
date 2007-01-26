@@ -78,9 +78,10 @@ public class MainHelper
      * Given a path, render a set of metadata Nodes to the relevant depth
      * @param path of form Gene.organism.name
      * @param model the model used to resolve class names
+     * @param isSuperUser true if the user is the superuser
      * @return an ordered Set of nodes
      */
-    public static Collection makeNodes(String path, Model model) {
+    public static Collection makeNodes(String path, Model model, boolean isSuperUser) {
         String className, subPath;
         if (path.indexOf(".") == -1) {
             className = path;
@@ -91,7 +92,7 @@ public class MainHelper
         }
         Map nodes = new LinkedHashMap();
         nodes.put(className, new MetadataNode(className));
-        makeNodes(getClassDescriptor(className, model), subPath, className, nodes);
+        makeNodes(getClassDescriptor(className, model), subPath, className, nodes, isSuperUser);
         return nodes.values();
     }
 
@@ -101,9 +102,10 @@ public class MainHelper
      * @param path current path prefix (eg Gene)
      * @param currentPath current path suffix (eg organism.name)
      * @param nodes the current Node set
+     * @param isSuperUser true if the user is the superuser
      */
     protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
-                                    Map nodes) {
+                                    Map nodes, boolean isSuperUser) {
         List sortedNodes = new ArrayList();
 
         // compare FieldDescriptors by name
@@ -133,7 +135,7 @@ public class MainHelper
             FieldDescriptor fd = (FieldDescriptor) i.next();
             String fieldName = fd.getName();
 
-            if (fieldName.equals("id")) {
+            if (fieldName.equals("id") && !isSuperUser) {
                 continue;
             }
 
@@ -162,7 +164,7 @@ public class MainHelper
             nodes.put(node.getPath(), node);
             if (fieldName.equals(head)) {
                 ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                makeNodes(refCld, tail, currentPath + "." + head, nodes);
+                makeNodes(refCld, tail, currentPath + "." + head, nodes, isSuperUser);
             }
         }
     }

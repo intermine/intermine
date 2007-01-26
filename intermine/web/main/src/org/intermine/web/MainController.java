@@ -88,7 +88,15 @@ public class MainController extends TilesAction
 
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Collection nodes = MainHelper.makeNodes((String) session.getAttribute("path"), model);
+        boolean isSuperUser;
+        Boolean superUserAttribute = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+        if (superUserAttribute != null && superUserAttribute.equals(Boolean.TRUE)) {
+            isSuperUser = true;
+        } else {
+            isSuperUser = false;
+        }
+        Collection nodes = 
+            MainHelper.makeNodes((String) session.getAttribute("path"), model, isSuperUser);
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes
