@@ -53,7 +53,7 @@ public class UniprotKeywordConverter extends FileConverter
     public void process(Reader reader) throws Exception {
 
         UniprotHandler handler = new UniprotHandler(writer);
-       
+                
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -63,6 +63,7 @@ public class UniprotKeywordConverter extends FileConverter
     }
 
 
+    
     /**
      * Extension of PathQueryHandler to handle parsing TemplateQueries
      */
@@ -77,6 +78,7 @@ public class UniprotKeywordConverter extends FileConverter
         private String attName = null;
         private StringBuffer attValue = null;
 
+        
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -85,7 +87,7 @@ public class UniprotKeywordConverter extends FileConverter
             
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;         
-
+       
         }
 
         
@@ -94,9 +96,7 @@ public class UniprotKeywordConverter extends FileConverter
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
-           
-          
-   
+             
             if (qName.equals("name")) {
 
                 attName = "name";
@@ -104,7 +104,9 @@ public class UniprotKeywordConverter extends FileConverter
             } else if (qName.equals("description")) {
 
                 attName = "description";
-
+                
+            } else if (qName.equals("keywordlist")) {
+                createOnto();
             } 
             
             super.startElement(uri, localName, qName, attrs);
@@ -187,7 +189,19 @@ public class UniprotKeywordConverter extends FileConverter
                 throw new SAXException(e);
             }
        }
+        
+        
+        private Item createOnto() throws SAXException {
 
+            Item ontology = createItem("Ontology");
+            ontology.addAttribute(new Attribute("title", "UniProtKeyword"));
+            try {
+                writer.store(ItemHelper.convert(ontology));
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            return ontology;
+        }
 
         /**
          * Convenience method for creating a new Item
