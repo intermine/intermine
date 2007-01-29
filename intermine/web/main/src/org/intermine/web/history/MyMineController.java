@@ -14,16 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.ClassKeyHelper;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +28,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.ClassKeyHelper;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.SessionMethods;
 
 /**
  * Tiles controller for history tile (page).
@@ -80,17 +81,27 @@ public class MyMineController extends TilesAction
         getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Collection qualifiedTypes = os.getModel().getClassNames();
         ArrayList typeList = new ArrayList();
+        ArrayList preferedTypeList = new ArrayList();
+        String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
+
+        List tags = pm.getTags("preferedBagType", null, "class", superUserName);
+        for (Iterator iter = tags.iterator(); iter.hasNext();) {
+            Tag tag = (Tag) iter.next();
+            preferedTypeList.add(TypeUtil.unqualifiedName((String) tag.getObjectIdentifier()));
+        }
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
             String className = (String) iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
             if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
-                && oss.getClassCount(className) > 0) {
+                && oss.getClassCount(className) > 0
+                && !preferedTypeList.contains(unqualifiedName)) {
                 typeList.add(unqualifiedName);
             }
         }
         Collections.sort(typeList);
         request.setAttribute("typeList", typeList);
+        request.setAttribute("preferedTypeList", preferedTypeList);
 
         return null;
     }
