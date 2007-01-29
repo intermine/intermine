@@ -222,7 +222,7 @@
   </target>
 
   <!--
-    Retrieve from an XML file in InterMine format into a tgt items db using
+    Retrieve from an XML file in InterMine format into a production db using
     ObjectStoreDataLoaderTask.
   -->
   <target name="-retrieve-tgt-from-xml-file" if="have.file.xml.tgt">
@@ -230,7 +230,7 @@
        integrationWriter="integration.production"
        xmlFile="${tgt.xml.file}"
        sourceName="${source.name}"
-       ignoreDuplicates="false"/>
+       ignoreDuplicates="${ignore.duplicates}"/>
   </target>
 
   <!--
