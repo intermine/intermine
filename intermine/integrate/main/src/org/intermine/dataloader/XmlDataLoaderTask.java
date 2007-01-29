@@ -17,6 +17,8 @@ import java.io.InputStream;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
+import org.apache.log4j.Logger;
+
 /**
  * Uses an IntegrationWriter to load data from XML format
  *
@@ -26,6 +28,7 @@ import org.apache.tools.ant.BuildException;
  */
 public class XmlDataLoaderTask extends Task
 {
+    private static final Logger LOG = Logger.getLogger(XmlDataLoaderTask.class);
     protected String integrationWriter;
     protected File xmlFile;
     protected String sourceName;
@@ -73,6 +76,7 @@ public class XmlDataLoaderTask extends Task
      */
     public void setIgnoreDuplicates(boolean ignoreDuplicates) {
         this.ignoreDuplicates = ignoreDuplicates;
+        LOG.info("Setting ignoreDuplicates to " + ignoreDuplicates);
     }
 
     /**
