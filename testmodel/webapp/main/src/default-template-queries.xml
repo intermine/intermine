@@ -111,5 +111,7 @@
     </tag>
     <tag name="converter" objectIdentifier="convertEmployeesToAddresses" type="template">
     </tag>
+    <tag name="converter" objectIdentifier="convertEmployeeToManager" type="template">
+    </tag>
   </tags>
 </userprofile>
