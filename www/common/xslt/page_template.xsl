@@ -93,7 +93,7 @@
             <img src="{xsl:concat($webappprefix,'/images/inspect.gif')}" width="12" height="11" alt="-&gt;"/>
           </span>
           <span class="menu-item">
-            <a href="{xsl:concat($webappprefix,'/bag.do')}">
+            <a href="{xsl:concat($webappprefix,'/mymine.do?page=bags')}">
               Bags
             </a>
           </span>
