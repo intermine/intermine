@@ -204,6 +204,20 @@ public class TemplateHelper
     }
 
     /**
+     * Make a Query from a TemplateQuery and the coresponding TemplateForm.
+     * @param tq the TemplateQuery
+     * @param tf the TemplateForm with values filled in for all editable constraints in tq
+     * @return a Query
+     */
+/* needs testing:
+    public Query queryFromTempateAndForm(TemplateQuery tq, TemplateForm tf) {
+        TemplateQuery filledInTemplate = 
+            templateFormToTemplateQuery(tf, tq, Collections.EMPTY_MAP);
+        Map pathToQueryNode = new HashMap();
+        return MainHelper.makeQuery(filledInTemplate, Collections.EMPTY_MAP, pathToQueryNode);
+    }
+*/    
+    /**
      * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
      * return a string containing each template seriaised as XML. The root element
      * will be a <code>template-list</code> element.
