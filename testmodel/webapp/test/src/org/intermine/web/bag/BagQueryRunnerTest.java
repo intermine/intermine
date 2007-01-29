@@ -16,6 +16,7 @@ import org.intermine.objectstore.query.Results;
 
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -176,6 +177,30 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         Map issues = res.getIssues();
         Map translated = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
         assertEquals(1, translated.values().size());
+        Map resUnresolved = res.getUnresolved();
+        assertTrue(resUnresolved.size() == 0);
+    }
+    
+    // test searching for an input string that has to be converted
+    public void testTypeConvertedAndNotConverted() throws Exception {
+        String empName1 = "EmployeeA1";
+        String empName2 = "EmployeeA2";
+        List input = Arrays.asList(new Object[] {empName1, empName2});
+        BagQueryResult res = runner.searchForBag("Manager", input);
+        assertEquals(1, res.getMatches().values().size());
+        assertEquals(empName1, ((List) res.getMatches().values().iterator().next()).get(0));
+        Map issues = res.getIssues();
+        Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
+        assertEquals(1, converted.values().size());
+        Map convertedInputToObjs = (Map) converted.values().iterator().next();
+        assertEquals(1, convertedInputToObjs.size());
+        assertEquals(empName2, convertedInputToObjs.keySet().iterator().next());
+        List convertedPairs = (List) convertedInputToObjs.values().iterator().next();
+        assertEquals(1, convertedPairs.size());
+        ConvertedObjectPair pair = (ConvertedObjectPair) convertedPairs.get(0);
+        assertEquals("org.intermine.model.testmodel.Manager", pair.getNewObject().getClass().getName());
+        assertEquals("EmployeeA2", ((Employee) pair.getOldObject()).getName());
+        assertEquals("EmployeeA1", ((Manager) pair.getNewObject()).getName());
         Map resUnresolved = res.getUnresolved();
         assertTrue(resUnresolved.size() == 0);
     }
