@@ -10,6 +10,7 @@ package org.intermine.dataloader;
  *
  */
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.io.InputStream;
@@ -18,6 +19,8 @@ import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
+
+import org.apache.log4j.Logger;
 
 /**
  * Provides a method for unmarshalling XML given source  into java
@@ -29,6 +32,7 @@ import org.intermine.util.XmlBinding;
 
 public class XmlDataLoader extends DataLoader
 {
+    private static final Logger LOG = Logger.getLogger(XmlDataLoader.class);
     private static int idCounter = 1;
     
     /**
@@ -50,21 +54,52 @@ public class XmlDataLoader extends DataLoader
     public void processXml(InputStream is, Source source, Source skelSource)
         throws InterMineException {
         try {
+            long times[] = new long[20];
+            for (int i = 0; i < 20; i++) {
+                times[i] = -1;
+            }
+            long opCount = 0;
+            long time = (new Date()).getTime();
+            long startTime = time;
+            LOG.info("Starting XmlDataLoader. Loading XML file.");
             XmlBinding binding = new XmlBinding(getIntegrationWriter().getObjectStore().getModel());
 
             List objects = (List) binding.unmarshal(is);
+            LOG.info("Loaded XML file to list of " + objects.size() + " objects");
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
                 InterMineObject o = (InterMineObject) iter.next();
                 o.setId(new Integer(idCounter++));
             }
-      
+
             getIntegrationWriter().beginTransaction();
             iter = objects.iterator();
             while (iter.hasNext()) {
                 getIntegrationWriter().store((InterMineObject) iter.next(), source, skelSource);
+                opCount++;
+                if (opCount % 1000 == 0) {
+                    long now = (new Date()).getTime();
+                    if (times[(int) ((opCount / 1000) % 20)] == -1) {
+                        LOG.info("Dataloaded " + opCount + " objects - running at "
+                                + (60000000 / (now - time)) + " (avg "
+                                + ((60000L * opCount) / (now - startTime))
+                                + ") objects per minute");
+                    } else {
+                        LOG.info("Dataloaded " + opCount + " objects - running at "
+                                + (60000000 / (now - time)) + " (20000 avg "
+                                + (1200000000 / (now - times[(int) ((opCount / 1000) % 20)]))
+                                + ") (avg = " + ((60000L * opCount) / (now - startTime))
+                                + ") objects per minute");
+                    }
+                    time = now;
+                    times[(int) ((opCount / 1000) % 20)] = now;
+                    getIntegrationWriter().commitTransaction();
+                    getIntegrationWriter().beginTransaction();
+                }
             }
+            LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
+                        / ((new Date()).getTime() - startTime)) + " object per minute");
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
         } catch (ObjectStoreException e) {
