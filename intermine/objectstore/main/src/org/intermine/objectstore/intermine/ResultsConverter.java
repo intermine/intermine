@@ -165,7 +165,7 @@ public class ResultsConverter
                 q2.setDistinct(false);
                 ObjectStoreInterMineImpl.BagTableToRemove bttr = null;
                 if (idsToFetch.size() >= os.getMinBagTableSize()) {
-                    bttr = os.createTempBagTable(c, bc, false);
+                    bttr = os.createTempBagTable(c, bc, false, null);
                 }
                 Iterator iter = os.executeWithConnection(c, q2, 0, Integer.MAX_VALUE, false, false,
                         os.getSequence()).iterator();
