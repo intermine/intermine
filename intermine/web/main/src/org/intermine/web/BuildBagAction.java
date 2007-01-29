@@ -10,14 +10,18 @@ package org.intermine.web;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.bag.BagQueryResult;
+import org.intermine.web.bag.BagQueryRunner;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +33,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.bag.BagQueryResult;
-import org.intermine.web.bag.BagQueryRunner;
 
 /**
  * An action that makes a bag from text.
@@ -63,11 +64,11 @@ public class BuildBagAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String newBagName = buildBagForm.getBagName();
         String type = buildBagForm.getType();
-        
+
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map bagQueries = (Map) servletContext.getAttribute(Constants.BAG_QUERIES);
         BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, bagQueries, servletContext);
-        
+
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
         BufferedReader reader = null;
@@ -77,19 +78,20 @@ public class BuildBagAction extends InterMineAction
             if (trimmedText.length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagPaste"), request);
                 return mapping.findForward("mymine");
-            } else {
-                reader = new BufferedReader(new StringReader(trimmedText));
             }
-        } else
+            reader = new BufferedReader(new StringReader(trimmedText));
+        } else {
             if (request.getParameter("file") != null) {
                 FormFile formFile = buildBagForm.getFormFile();
                 if (formFile == null || formFile.getFileName() == null
-                    || formFile.getFileName().length() == 0) {
+                                || formFile.getFileName().length() == 0) {
                     recordError(new ActionMessage("bagBuild.noBagFile"), request);
                     return mapping.findForward("mymine");
-                } else {
-                    reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
                 }
+                reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
+            } else {
+                throw new RuntimeException("unknown action type in BuildBagAction");
+            }
         }
 
         String thisLine;
@@ -115,7 +117,7 @@ public class BuildBagAction extends InterMineAction
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagName", newBagName);
         request.setAttribute("bagType", type);
-        
+
         return mapping.findForward("bagUploadConfirm");
     }
 }
