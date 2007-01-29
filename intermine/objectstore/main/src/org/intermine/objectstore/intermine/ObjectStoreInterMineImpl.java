@@ -954,10 +954,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (!bagConstraintTables.containsKey(bagConstraint)) {
                     Collection bag = bagConstraint.getBag();
 
-                    if (bag.size () < minBagTableSize) {
-                        continue;
+                    if (bag.size() >= getMinBagTableSize()) {
+                        createTempBagTable(c, bagConstraint, true,
+                                new IqlQuery(q).getQueryString());
                     }
-                    createTempBagTable(c, bagConstraint, true);
                 }
             }
             if (wasNotInTransaction) {
@@ -984,14 +984,16 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param c a Connection
      * @param bagConstraint a BagConstraint
      * @param log true to log this action
+     * @param text extra data to place in the log
      */
     protected BagTableToRemove createTempBagTable(Connection c, BagConstraint bagConstraint,
-            boolean log) throws SQLException {
+            boolean log, String text) throws SQLException {
         Class type = bagConstraint.getQueryNode().getType();
         String tableName =
             TypeUtil.unqualifiedName(type.getName()) + "_bag_" + getUniqueInteger(c);
         if (log) {
-            LOG.info("Creating temporary table " + tableName);
+            LOG.info("Creating temporary table " + tableName + " of size "
+                    + bagConstraint.getBag().size() + " for " + text);
         }
         DatabaseUtil.createBagTable(db, c, tableName, bagConstraint.getBag(), type);
         bagConstraintTables.put(bagConstraint, tableName);
