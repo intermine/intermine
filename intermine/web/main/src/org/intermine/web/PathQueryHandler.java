@@ -55,7 +55,7 @@ class PathQueryHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("alternative-view")) {
-            String name = attrs.getValue("name");
+            String name = validateName(attrs.getValue("name"));
             List view = StringUtil.tokenize(attrs.getValue("view"));
             alternativeViews.put(name, view);
         }
@@ -63,7 +63,7 @@ class PathQueryHandler extends DefaultHandler
             // reset things
             gencode = 'A';
             alternativeViews = new HashMap();
-            queryName = attrs.getValue("name");
+            queryName = validateName(attrs.getValue("name"));
             try {
                 model = Model.getInstanceByName(attrs.getValue("model"));
             } catch (Exception e) {
@@ -150,5 +150,30 @@ class PathQueryHandler extends DefaultHandler
             strings.add(i.next().toString());
         }
         return strings;
+    }
+    
+    /**
+     * Checks that the query has a name and that there's no name duplicates
+     * and appends a number to the name if there is.
+     * @param name the query name
+     * @return the validated query name
+     */
+    protected String validateName(String name) {
+        String validatedName = name;
+        if (name == null || name.length() == 0) {
+            validatedName = "unnamed_query";
+        }
+        if (queries.containsKey(validatedName)) {
+            int i = 1;
+            while (true) {
+                String testName = validatedName + "_" + i;
+                if (!queries.containsKey((testName))) {
+                    return testName;
+                }
+                i++;
+            }
+        } else {
+            return validatedName;
+        }
     }
 }
