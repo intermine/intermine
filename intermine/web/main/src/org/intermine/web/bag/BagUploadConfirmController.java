@@ -10,9 +10,13 @@ package org.intermine.web.bag;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +51,7 @@ public class BagUploadConfirmController extends TilesAction
 
         // get all of the "low quality" matches ie. those found by queries other than matching 
         // class keys
-        Map lowQualityMatches = new HashMap();
+        Map lowQualityMatches = new LinkedHashMap();
         Map otherMatchMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.OTHER);
         if (otherMatchMap != null) {
             Iterator otherMatchesIter = otherMatchMap.values().iterator();
@@ -58,6 +62,42 @@ public class BagUploadConfirmController extends TilesAction
         }
         request.setAttribute("lowQualityMatches", lowQualityMatches);
         
+        // find all input strings that match more than one object
+        Map duplicates = new LinkedHashMap();
+        Map duplicateMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
+        if (duplicateMap != null) {
+            Iterator duplicateMapIter = duplicateMap.values().iterator();
+            while (duplicateMapIter.hasNext()) {
+                Map inputToObjectsMap = (Map) duplicateMapIter.next();
+                duplicates.putAll(inputToObjectsMap);
+            }
+        }
+        request.setAttribute("duplicates", duplicates);
+
+        // make a List of [input string, ConvertedObjectPair]
+        List convertedObjects = new ArrayList();
+        Map convertedMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
+        if (convertedMap != null) {
+            Iterator convertedMapIter = convertedMap.values().iterator();
+            while (convertedMapIter.hasNext()) {
+                Map inputToObjectsMap = (Map) convertedMapIter.next();
+                Iterator inputToObjectsMapIter = inputToObjectsMap.entrySet().iterator();
+                Entry entry = (Entry) inputToObjectsMapIter.next();
+                String input = (String) entry.getKey();
+                List pairs = (List) entry.getValue();
+                Iterator pairIter = pairs.iterator();
+                while (pairIter.hasNext()) {
+                    List row = new ArrayList();
+                    row.add(input);
+                    ConvertedObjectPair pair = (ConvertedObjectPair) pairIter.next();
+                    row.add(pair.getOldObject());
+                    row.add(pair.getNewObject());
+                    convertedObjects.add(pair);
+                }
+            }
+        }
+        request.setAttribute("convertedObjects", convertedObjects);
+
         // create a string containing the ids of the high-quality matches
         StringBuffer matchesStringBuffer = new StringBuffer();
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
