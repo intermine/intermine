@@ -87,8 +87,6 @@ unlink ("$filepath")|| die "Cannot rm $filepath: $!";
 
 #write xml file
 my $output1 = new IO::File(">ncbiID_pubmedID.xml");
-my $writer1 = new XML::Writer(OUTPUT => $output1, NEWLINES => 1);
-
 my $writer = new XML::Writer(OUTPUT => $output1, DATA_MODE => 1, DATA_INDENT => 3);
 $writer->startTag('items');
 for my $item (@items_to_write) {
