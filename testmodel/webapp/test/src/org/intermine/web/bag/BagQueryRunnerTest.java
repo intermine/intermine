@@ -205,6 +205,22 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         assertTrue(resUnresolved.size() == 0);
     }
 
+    // test a type conversion that has many results for an input identifier
+    public void testTypeConvertedMultipleResults() throws Exception {
+        String managerName = "ContractorA";
+        List input = Arrays.asList(new Object[] {managerName});
+        BagQueryResult res = runner.searchForBag("Employee", input);
+        assertEquals(0, res.getMatches().values().size());
+        Map issues = res.getIssues();
+        Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
+        assertEquals(1, converted.size());
+        Map convertedObjectMap = 
+            (Map) converted.get("Employable by name found by converting from x");
+        assertEquals(1, convertedObjectMap.size());
+        List emps = (List) convertedObjectMap.get(managerName);
+        assertEquals(4, emps.size());
+    }
+    
 	// we need to test a query that matches a different type.  Probably 
 	// need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml
 	
