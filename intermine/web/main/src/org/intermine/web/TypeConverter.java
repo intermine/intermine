@@ -41,6 +41,11 @@ import org.intermine.web.tagging.TagTypes;
 public class TypeConverter
 {
     /**
+     * String used to tag converter templates in the webapp.
+     */
+    public static final String CONVERTER = "im:converter";
+
+    /**
      * Converts a List of objects from one type to another type using a TemplateQuery.
      *
      * @param servletContext the ServletContext
@@ -127,7 +132,7 @@ public class TypeConverter
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         Profile p = pm.getProfile(sup);
 
-        List tags = pm.getTags("converter", null, TagTypes.TEMPLATE, sup);
+        List tags = pm.getTags(CONVERTER, null, TagTypes.TEMPLATE, sup);
         Map retval = new HashMap();
         Iterator iter = tags.iterator();
         while (iter.hasNext()) {
