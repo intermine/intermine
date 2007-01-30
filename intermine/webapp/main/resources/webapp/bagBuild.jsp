@@ -31,7 +31,7 @@
       <br/>
       <fmt:message key="bagBuild.bagType"/>
       <html:select property="type">
-    	<c:forEach items="${preferedTypeList}" var="type">
+    	<c:forEach items="${preferredTypeList}" var="type">
          <html:option value="${type}" style="font-weight:bold">${type}</html:option>
     	</c:forEach>
         <html:option value="" style="text-align:center">----------------</html:option>
