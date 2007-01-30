@@ -10,6 +10,7 @@ package org.intermine.web.bag;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -40,9 +41,24 @@ public class BagUploadConfirmController extends TilesAction
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
         request.setAttribute("matches", bagQueryResult.getMatches());
-        request.setAttribute("issues", bagQueryResult.getIssues());
+        Map issues = bagQueryResult.getIssues();
+        request.setAttribute("issues", issues);
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
 
+        // get all of the "low quality" matches ie. those found by queries other than matching 
+        // class keys
+        Map lowQualityMatches = new HashMap();
+        Map otherMatchMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.OTHER);
+        if (otherMatchMap != null) {
+            Iterator otherMatchesIter = otherMatchMap.values().iterator();
+            while (otherMatchesIter.hasNext()) {
+                Map inputToObjectsMap = (Map) otherMatchesIter.next();
+                lowQualityMatches.putAll(inputToObjectsMap);
+            }
+        }
+        request.setAttribute("lowQualityMatches", lowQualityMatches);
+        
+        // create a string containing the ids of the high-quality matches
         StringBuffer matchesStringBuffer = new StringBuffer();
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
         Map matches = bagQueryResult.getMatches();
