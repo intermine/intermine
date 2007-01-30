@@ -249,6 +249,7 @@ public class MainHelper
         }
 
         Map queryBits = new HashMap();
+        Map containsConstraints = new LinkedHashMap();
 
         //build the FROM and WHERE clauses
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
@@ -276,7 +277,7 @@ public class MainHelper
                             qr = new QueryCollectionReference(parentQc, fieldName);
                         }
                         QueryClass qc = new QueryClass(getClass(node.getType(), model));
-                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                        containsConstraints.put(qr, path);
                         q.addFrom(qc);
                         queryBits.put(path, qc);
                     }
@@ -292,19 +293,10 @@ public class MainHelper
                         } else {
                             qr = new QueryCollectionReference(parentQc, fieldName);
                         }
-                        QueryClass qc = (QueryClass) queryBits.get(path);
-                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+                        containsConstraints.put(qr, finalPath);
                     }
                 }
-                queryBits.put(finalPath, queryBits.get(path));
-            }
-
-            // Fill in queryBits to contain loops.
-            for (Iterator j = loops.entrySet().iterator(); j.hasNext();) {
-                Map.Entry entry = (Map.Entry) j.next();
-                String from = (String) entry.getKey();
-                String to = (String) entry.getValue();
-                queryBits.put(from, queryBits.get(to));
+                queryBits.put(path, queryBits.get(finalPath));
             }
 
             QueryNode qn = (QueryNode) queryBits.get(finalPath);
@@ -347,6 +339,14 @@ public class MainHelper
                     }
                 }
             }
+        }
+
+        for (Iterator iter = containsConstraints.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            QueryReference qr = (QueryReference) entry.getKey();
+            String path = (String) entry.getValue();
+            QueryClass qc = (QueryClass) queryBits.get(path);
+            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
         }
 
         if (andcs.getConstraints().isEmpty()) {

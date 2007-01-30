@@ -285,10 +285,10 @@ public class MainHelperTest extends TestCase {
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
+        cs.addConstraint(sc1);
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc1);
-        cs.addConstraint(sc1);
         QueryClass qc3 = new QueryClass(Company.class);
         q.addToSelect(qc3);
         q.addFrom(qc3);
@@ -320,10 +320,10 @@ public class MainHelperTest extends TestCase {
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
+        cs.addConstraint(sc1);
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc1);
-        cs.addConstraint(sc1);
         QueryClass qc3 = new QueryClass(Company.class);
         q.addToSelect(qc3);
         q.addFrom(qc3);
@@ -420,6 +420,11 @@ public class MainHelperTest extends TestCase {
     public void test8() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Company.name Company.contractors.name\"><node path=\"Company\" type=\"Company\"></node><node path=\"Company.contractors\" type=\"Contractor\"></node><node path=\"Company.oldContracts\" type=\"Contractor\"><constraint op=\"=\" value=\"Company.contractors\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>",
                 "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Contractor AS a2_ WHERE (a1_.contractors CONTAINS a2_ AND a1_.oldContracts CONTAINS a2_) ORDER BY a1_.name, a2_.name");
+    }
+
+    public void test9() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
     }
                                                                                                                 
     public void doQuery(String web, String iql) throws Exception {
