@@ -82,6 +82,19 @@
     </node>
   </query>
 </template>
+    <template name="convertContractorToEmployees"
+              title="convert managers to employees" longDescription=""
+              comment="This isn't a very sensible query to do, but it's useful for testing the TypeConverter class"
+important="false">
+      <query name="convertContractorToEmployees" model="testmodel" view="Contractor.id Contractor.companys.departments.employees.id">
+        <node path="Contractor" type="Contractor">
+        </node>
+        <node path="Contractor.id" type="Integer">
+          <constraint op="=" value="0" description="Contractor.id" identifier="Contractor.id" editable="true" code="A">
+          </constraint>
+        </node>
+      </query>
+    </template>
   </template-queries>
 
   <tags>
@@ -109,9 +122,8 @@
     </tag>
     <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template">
     </tag>
-    <tag name="converter" objectIdentifier="convertEmployeesToAddresses" type="template">
-    </tag>
-    <tag name="converter" objectIdentifier="convertEmployeeToManager" type="template">
-    </tag>
+    <tag name="im:converter" objectIdentifier="convertEmployeesToAddresses" type="template"/>
+    <tag name="im:converter" objectIdentifier="convertContractorToEmployees" type="template"/>
+    <tag name="im:converter" objectIdentifier="convertEmployeeToManager" type="template"/>
   </tags>
 </userprofile>
