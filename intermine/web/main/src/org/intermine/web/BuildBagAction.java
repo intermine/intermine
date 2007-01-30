@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -65,6 +66,11 @@ public class BuildBagAction extends InterMineAction
         String newBagName = buildBagForm.getBagName();
         String type = buildBagForm.getType();
 
+        if (StringUtils.isEmpty(type)) {
+            recordError(new ActionMessage("bagBuild.typeNotSet"), request);
+            return mapping.findForward("mymine");
+        }
+        
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map bagQueries = (Map) servletContext.getAttribute(Constants.BAG_QUERIES);
         BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, bagQueries, servletContext);
