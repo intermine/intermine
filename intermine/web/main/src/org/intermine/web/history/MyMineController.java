@@ -40,13 +40,13 @@ import org.intermine.web.SessionMethods;
 
 /**
  * Tiles controller for history tile (page).
- * 
+ *
  * @author Thomas Riley
  */
 public class MyMineController extends TilesAction
 {
     /**
-     * 
+     *
      * @see TilesAction#execute
      */
     public ActionForward execute(ComponentContext context,
@@ -60,7 +60,6 @@ public class MyMineController extends TilesAction
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         String page = request.getParameter("page");
 
-        
         if (!StringUtils.isEmpty(page)) {
             session.setAttribute(Constants.MYMINE_PAGE, page);
         }
@@ -75,7 +74,7 @@ public class MyMineController extends TilesAction
                 }
             }
         }
-        
+
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
         getAttribute(Constants.OBJECT_STORE_SUMMARY);
@@ -84,7 +83,7 @@ public class MyMineController extends TilesAction
         ArrayList preferedTypeList = new ArrayList();
         String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
 
-        List tags = pm.getTags("preferedBagType", null, "class", superUserName);
+        List tags = pm.getTags("im:preferredBagType", null, "class", superUserName);
         for (Iterator iter = tags.iterator(); iter.hasNext();) {
             Tag tag = (Tag) iter.next();
             preferedTypeList.add(TypeUtil.unqualifiedName((String) tag.getObjectIdentifier()));
@@ -101,7 +100,7 @@ public class MyMineController extends TilesAction
         }
         Collections.sort(typeList);
         request.setAttribute("typeList", typeList);
-        request.setAttribute("preferedTypeList", preferedTypeList);
+        request.setAttribute("preferredTypeList", preferedTypeList);
 
         return null;
     }
