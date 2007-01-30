@@ -41,7 +41,7 @@ public class BagQueryResult
      * Key of the Map returned by getIssues() when the object found when querying using input string 
      * needed to be translated.
      */ 
-    public static final String TYPE_CONVERTED = "TYPE_TRANSLATED";
+    public static final String TYPE_CONVERTED = "TYPE_CONVERTED";
 
     private Map matches = new LinkedHashMap();
     private Map issues = new LinkedHashMap();
@@ -68,7 +68,12 @@ public class BagQueryResult
             queryIssues = new LinkedHashMap();
             issuesOfType.put(query, queryIssues);
         }
-        queryIssues.put(input, objects);
+        List queryObjects = (List) queryIssues.get(input);
+        if (queryObjects == null) {
+            queryObjects = new ArrayList();
+            queryIssues.put(input, queryObjects);
+        }
+        queryObjects.addAll(objects);
     }
 
     /**
