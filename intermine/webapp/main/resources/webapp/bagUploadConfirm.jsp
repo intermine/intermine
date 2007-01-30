@@ -12,18 +12,40 @@
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
   <div class="body" align="center">
     <div id="uploadConfirmMessage">
-      <strong><span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)</strong> currently in your bag.<br/>
-	  <strong><span id="duplicateCount">${fn:length(issues)}</span> duplicate(s)</strong> and <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
+      <strong>
+        <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
+      </strong>
+      currently in your bag.<br/>
+      <strong><span id="duplicateCount">${fn:length(duplicates)} duplicate(s)</span></strong>,
+      <strong>
+        <span id="lowQualityMatches">${fn:length(lowQualityMatches)}</span>
+        low quality matches
+      </strong>,
+      <strong>
+        <span id="convertedObjects">${fn:length(convertedObjects)}</span>
+        objects found by converting types
+      </strong>
+      and <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
     </div>
     <div class="blueBg">
-       <p>Only <strong><span id="matchCount">${matchCount}</span></strong> of the <strong>${fn:length(issues) + matchCount + fn:length(unresolved)}</strong> identifier(s) you provided will be saved in your bag.</p>        
-       <c:if test="${matchCount > 0}">
-          <fmt:message key="bagUploadConfirm.bagName"/>:
-          <html:text property="bagName" size="20"/>
-          <html:submit property="submit">
-            <fmt:message key="bagUploadConfirm.submitOK"/>
-          </html:submit>
-        </c:if>
+      <c:set var="totalObjects" value="${fn:length(issues) + matchCount + fn:length(unresolved)}"/>
+      <c:choose>
+        <c:when test="${matchCount < totalObjects}">
+          <p>
+            Only <strong><span id="matchCount">${matchCount}</span></strong>
+            of the <strong>${totalObjects}</strong>
+            identifier(s) you provided will be saved in your bag.
+          </p>
+        </c:when>
+        <c:otherwise>
+          Matches found for all identifiers
+        </c:otherwise>
+      </c:choose>
+      <fmt:message key="bagUploadConfirm.bagName"/>:
+      <html:text property="bagName" size="20"/>
+      <html:submit property="submit">
+        <fmt:message key="bagUploadConfirm.submitOK"/>
+      </html:submit>
     </div>
   </div>
   <c:if test="${!empty issues['DUPLICATE']}">
