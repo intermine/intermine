@@ -157,7 +157,7 @@ public class MainHelperTest extends TestCase {
     public void testMakeConstraintSets() {
         HashMap map = new HashMap();
         LogicExpression expr = new LogicExpression("a and b");
-        ConstraintSet set = MainHelper.makeConstraintSets(expr, map);
+        ConstraintSet set = MainHelper.makeConstraintSets(expr, map, new ConstraintSet(ConstraintOp.AND));
 
         assertEquals(2, map.size());
         assertEquals(ConstraintOp.AND, set.getOp());
@@ -168,7 +168,7 @@ public class MainHelperTest extends TestCase {
         assertEquals(expecting, map);
 
         expr = new LogicExpression("a and (b or c)");
-        set = MainHelper.makeConstraintSets(expr, map);
+        set = MainHelper.makeConstraintSets(expr, map, new ConstraintSet(ConstraintOp.AND));
 
         assertEquals(3, map.size());
         assertEquals(ConstraintOp.AND, set.getOp());
@@ -285,10 +285,10 @@ public class MainHelperTest extends TestCase {
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
-        cs.addConstraint(sc1);
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc1);
+        cs.addConstraint(sc1);
         QueryClass qc3 = new QueryClass(Company.class);
         q.addToSelect(qc3);
         q.addFrom(qc3);
@@ -320,10 +320,10 @@ public class MainHelperTest extends TestCase {
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
         SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("departmenta1"));
-        cs.addConstraint(sc1);
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
         cs.addConstraint(cc1);
+        cs.addConstraint(sc1);
         QueryClass qc3 = new QueryClass(Company.class);
         q.addToSelect(qc3);
         q.addFrom(qc3);
@@ -424,9 +424,29 @@ public class MainHelperTest extends TestCase {
 
     public void test9() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
-                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
     }
-                                                                                                                
+
+    public void test10() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"!=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
+                "SELECT DISTINCT a1_, a2_, a3_, a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_ AND a4_ != a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a5_.address");
+    }
+
+    public void test11() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+    }
+
+    public void test12() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\" constraintLogic=\"A or B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.name\"><constraint op=\"=\" value=\"EmployeeA1\" code=\"A\"></constraint></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node></query>",
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_, org.intermine.model.testmodel.Address AS a5_ WHERE ((LOWER(a1_.name) = 'employeea1' OR a4_ = a5_) AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a3_.address CONTAINS a4_ AND a1_.address CONTAINS a5_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+    }
+
+    public void test13() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime Employee.department.company.address.address\" constraintLogic=\"A and B and C\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.name\"><constraint op=\"=\" value=\"EmployeeA1\" code=\"A\"></constraint></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.company\" type=\"Company\"></node><node path=\"Employee.department.company.address\" type=\"Address\"><constraint op=\"=\" value=\"Employee.address\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Employee.address\" type=\"Address\"></node><node path=\"Employee.address.address\"><constraint op=\"!=\" value=\"fred\" code=\"C\"></constraint></node></query>",
+                "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
+    }
+
     public void doQuery(String web, String iql) throws Exception {
         Map parsed = PathQueryBinding.unmarshal(new StringReader(web));
         PathQuery pq = (PathQuery) parsed.get("test");

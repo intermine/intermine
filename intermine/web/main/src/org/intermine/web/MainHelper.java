@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.path.Path;
 
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -199,7 +201,7 @@ public class MainHelper
             Constraint c = (Constraint) pathQuery.getAllConstraints().get(0);
             codeToCS.put(c.getCode(), andcs);
         } else if (pathQuery.getAllConstraints().size() > 1) {
-            rootcs = makeConstraintSets(pathQuery.getLogic(), codeToCS);
+            rootcs = makeConstraintSets(pathQuery.getLogic(), codeToCS, andcs);
         }
 
         //first merge the query and the view
@@ -213,7 +215,7 @@ public class MainHelper
         //create the real query
         Query q = new Query();
         q.setConstraint(andcs);
-        if (rootcs != null) {
+        if ((rootcs != null) && (rootcs != andcs)) {
             andcs.addConstraint(rootcs);
         }
 
@@ -227,7 +229,8 @@ public class MainHelper
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 if ((node.isReference() || node.isCollection())
-                        && c.getOp() == ConstraintOp.EQUALS) {
+                        && (c.getOp() == ConstraintOp.EQUALS)
+                        && (codeToCS.get(c.getCode()) == andcs)) {
                     String dest = (String) c.getValue();
                     String finalDest = (String) loops.get(dest);
                     if (finalDest == null) {
@@ -250,10 +253,16 @@ public class MainHelper
 
         Map queryBits = new HashMap();
         Map containsConstraints = new LinkedHashMap();
+        LinkedList queue = new LinkedList();
 
         //build the FROM and WHERE clauses
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
+            queue.addLast(node);
+        }
+
+        while (!queue.isEmpty()) {
+            PathNode node = (PathNode) queue.removeFirst();
             String path = node.getPath();
             QueryReference qr = null;
             String finalPath = (String) loops.get(path);
@@ -266,6 +275,12 @@ public class MainHelper
                 } else {
                     String fieldName = node.getFieldName();
                     QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
+                    if (parentQc == null) {
+                        // We cannot process this QueryField yet. It depends on a parent QueryClass
+                        // that we have not yet processed. Put it to the back of the queue.
+                        queue.addLast(node);
+                        continue;
+                    }
 
                     if (node.isAttribute()) {
                         QueryField qf = new QueryField(parentQc, fieldName);
@@ -277,13 +292,19 @@ public class MainHelper
                             qr = new QueryCollectionReference(parentQc, fieldName);
                         }
                         QueryClass qc = new QueryClass(getClass(node.getType(), model));
-                        containsConstraints.put(qr, path);
+                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
                         q.addFrom(qc);
                         queryBits.put(path, qc);
                     }
                 }
                 finalPath = path;
             } else {
+                if (queryBits.get(finalPath) == null) {
+                    // We cannot process this node yet. It is looped onto another node that has not
+                    // been processed yet. Put it to the back of the queue.
+                    queue.addLast(node);
+                    continue;
+                }
                 if (finalPath.indexOf(".") != -1) {
                     String fieldName = node.getFieldName();
                     QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
@@ -293,7 +314,8 @@ public class MainHelper
                         } else {
                             qr = new QueryCollectionReference(parentQc, fieldName);
                         }
-                        containsConstraints.put(qr, finalPath);
+                        QueryClass qc = (QueryClass) queryBits.get(finalPath);
+                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
                     }
                 }
                 queryBits.put(path, queryBits.get(finalPath));
@@ -341,12 +363,28 @@ public class MainHelper
             }
         }
 
-        for (Iterator iter = containsConstraints.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            QueryReference qr = (QueryReference) entry.getKey();
-            String path = (String) entry.getValue();
-            QueryClass qc = (QueryClass) queryBits.get(path);
-            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
+        // Now process loop != constraints. The constraint parameter refers backwards and 
+        // forwards in the query so we can't process these in the above loop. 
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) { 
+            PathNode node = (PathNode) i.next(); 
+            String path = node.getPath(); 
+            QueryNode qn = (QueryNode) queryBits.get(path); 
+
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
+                Constraint c = (Constraint) j.next(); 
+                ConstraintSet cs = (ConstraintSet) codeToCS.get(c.getCode()); 
+                if (node.isReference() && ((c.getOp() == ConstraintOp.NOT_EQUALS)
+                            || ((c.getOp() == ConstraintOp.EQUALS)
+                                && (!loops.containsKey(path))
+                                && (!loops.containsKey(c.getValue()))))) { 
+                    QueryClass refQc = (QueryClass) queryBits.get(c.getValue()); 
+                    if (refQc == null) {
+                        throw new NullPointerException("Could not find QueryClass for "
+                                + c.getValue() + " in querybits: " + queryBits);
+                    }
+                    cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc)); 
+                } 
+            } 
         }
 
         if (andcs.getConstraints().isEmpty()) {
@@ -409,14 +447,15 @@ public class MainHelper
      *
      * @param logic the parsed logic expression
      * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
+     * @param andcs an AND ConstraintSet that could be used as the root
      * @return root ConstraintSet
      */
     protected static ConstraintSet makeConstraintSets(LogicExpression logic,
-            Map codeToConstraintSet) {
+            Map codeToConstraintSet, ConstraintSet andcs) {
         LogicExpression.Node node = logic.getRootNode();
         ConstraintSet root;
         if (node instanceof LogicExpression.And) {
-            root = new ConstraintSet(ConstraintOp.AND);
+            root = andcs;
             makeConstraintSets(node, root, codeToConstraintSet);
         } else if (node instanceof LogicExpression.Or) {
             root = new ConstraintSet(ConstraintOp.OR);
@@ -434,13 +473,21 @@ public class MainHelper
         while (iter.hasNext()) {
             LogicExpression.Node child = (LogicExpression.Node) iter.next();
             if (child instanceof LogicExpression.And) {
-                ConstraintSet childSet = new ConstraintSet(ConstraintOp.AND);
-                set.addConstraint(childSet);
-                makeConstraintSets(child, childSet, codeToConstraintSet);
+                if (set.getOp() == ConstraintOp.AND) {
+                    makeConstraintSets(child, set, codeToConstraintSet);
+                } else {
+                    ConstraintSet childSet = new ConstraintSet(ConstraintOp.AND);
+                    set.addConstraint(childSet);
+                    makeConstraintSets(child, childSet, codeToConstraintSet);
+                }
             } else if (child instanceof LogicExpression.Or) {
-                ConstraintSet childSet = new ConstraintSet(ConstraintOp.OR);
-                set.addConstraint(childSet);
-                makeConstraintSets(child, childSet, codeToConstraintSet);
+                if (set.getOp() == ConstraintOp.OR) {
+                    makeConstraintSets(child, set, codeToConstraintSet);
+                } else {
+                    ConstraintSet childSet = new ConstraintSet(ConstraintOp.OR);
+                    set.addConstraint(childSet);
+                    makeConstraintSets(child, childSet, codeToConstraintSet);
+                }
             } else {
                 // variable
                 codeToConstraintSet.put(((LogicExpression.Variable) child).getName(), set);
