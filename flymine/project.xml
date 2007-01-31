@@ -237,6 +237,7 @@
      <source name="ncbigene2pubmed" type="intermine-items-xml-file">
  <!-- source for adding pubmedId using the ncbiGeneNumber-->
       <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID.xml"/>
+      <property name="ignore.duplicates" value="true"/>
     </source>   
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the
