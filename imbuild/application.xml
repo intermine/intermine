@@ -134,21 +134,21 @@ Couldn't find ${build.properties.file}
   
   <!-- PRECOMPUTING -->
 
-  <target name="drop-precomputed-tables" depends="-init-build-db">
+  <target name="drop-precomputed-tables" depends="-init-build-db, -init-app-properties">
     <drop-precomputed-tables alias="${objectstore.name}"/>
   </target>
 
-  <target name="precompute-queries" depends="-init-build-db">
+  <target name="precompute-queries" depends="-init-build-db, -init-app-properties">
     <precompute-queries alias="${objectstore.name}"
                         minRows="0"/>
   </target>
 
-  <target name="precompute-queries-test" depends="-init-build-db">
+  <target name="precompute-queries-test" depends="-init-build-db, -init-app-properties">
     <precompute-queries alias="${objectstore.name}" testMode="true"
                         minRows="0"/>
   </target>
 
-  <target name="precompute-templates" depends="-init-build-db">
+  <target name="precompute-templates" depends="-init-build-db, -init-app-properties">
     <precompute-templates alias="${objectstore.name}" 
                           userProfileAlias="${userprofile.objectstorewriter.name}"
                           minRows="0" username="${superuser.account}"/>
