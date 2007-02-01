@@ -11,7 +11,6 @@ package org.intermine.util;
  */
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * An Iterator that passes through to an underlying Iterator, synchronising all calls.

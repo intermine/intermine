@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.MetadataManager;
 import org.intermine.modelproduction.uml.XmiParser;
 import org.intermine.modelproduction.xmlschema.XmlSchemaParser;
 

@@ -220,6 +220,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ForeignKey2", Collections.singleton("Company"));
         results.put("ScientificNumber", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
         results2.put("ScientificNumber", Collections.singleton("Types"));
+        results.put("LowerBag", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE LOWER(a1_.name) IN ('employeea1', 'employeea2', 'employeeb1') ORDER BY a1_.id");
+        results2.put("LowerBag", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() {

@@ -1028,10 +1028,10 @@ public class IqlQueryParser
                 }
             case IqlTokenTypes.BAG_CONSTRAINT:
                 subAST = ast.getFirstChild();
-                if (subAST.getType() != IqlTokenTypes.FIELD) {
-                    throw new IllegalArgumentException("Expected a QueryEvaluable or QueryClass "
-                            + "as the first argument of a BagConstraint");
-                }
+                //if (subAST.getType() != IqlTokenTypes.FIELD) {
+                //    throw new IllegalArgumentException("Expected a QueryEvaluable or QueryClass "
+                //            + "as the first argument of a BagConstraint");
+                //}
                 if (subAST.getNextSibling() != null) {
                     throw new IllegalArgumentException("Expected only one argument in "
                             + "BagConstraint AST");

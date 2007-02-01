@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -234,6 +235,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ForeignKey2", foreignKey2());
         queries.put("OrSubquery", orSubquery());
         queries.put("ScientificNumber", scientificNumber());
+        queries.put("LowerBag", lowerBag());
     }
 
     /*
@@ -1596,6 +1598,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.setConstraint(cs);
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "doubleType"), ConstraintOp.LESS_THAN, new QueryValue(new Double(1.3432E+24))));
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "floatType"), ConstraintOp.GREATER_THAN, new QueryValue(new Float(-8.56E-32))));
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee WHERE LOWER(a1_.name) IN ?
+     */
+    public static Query lowerBag() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setDistinct(false);
+        q.setConstraint(new BagConstraint(new QueryExpression(QueryExpression.LOWER, new QueryField(qc, "name")), ConstraintOp.IN, Arrays.asList(new String[] {"employeea1", "employeea2", "employeeb1"})));
         return q;
     }
 }

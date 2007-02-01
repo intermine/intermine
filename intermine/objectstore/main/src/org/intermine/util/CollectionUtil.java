@@ -92,37 +92,37 @@ public class CollectionUtil
             Object o = iter.next();
             Iterator clsIter = DynamicUtil.decomposeClass(o.getClass()).iterator();
             while (clsIter.hasNext()) {
-            	Class c = (Class) clsIter.next();
-            	if (inherit) {
-            		Set done = new HashSet();
-            		done.add(Object.class);
-            		Stack todo = new Stack();
-            		todo.push(c);
-            		while (!todo.empty()) {
-            			c = (Class) todo.pop();
-            			if ((c != null) && !done.contains(c)) {
-            				done.add(c);
-            				List l = (List) retval.get(c);
-            				if (l == null) {
-            					l = new ArrayList();
-            					retval.put(c, l);
-            				}
-            				l.add(o);
-            				todo.push(c.getSuperclass());
-            				Class classes[] = c.getInterfaces();
-            				for (int i = 0; i < classes.length; i++) {
-            					todo.push(classes[i]);
-            				}
-            			}
-            		}
-            	} else {
-            		List l = (List) retval.get(c);
-            		if (l == null) {
-            			l = new ArrayList();
-            			retval.put(c, l);
-            		}
-            		l.add(o);
-            	}
+                Class c = (Class) clsIter.next();
+                if (inherit) {
+                    Set done = new HashSet();
+                    done.add(Object.class);
+                    Stack todo = new Stack();
+                    todo.push(c);
+                    while (!todo.empty()) {
+                        c = (Class) todo.pop();
+                        if ((c != null) && !done.contains(c)) {
+                            done.add(c);
+                            List l = (List) retval.get(c);
+                            if (l == null) {
+                                l = new ArrayList();
+                                retval.put(c, l);
+                            }
+                            l.add(o);
+                            todo.push(c.getSuperclass());
+                            Class classes[] = c.getInterfaces();
+                            for (int i = 0; i < classes.length; i++) {
+                                todo.push(classes[i]);
+                            }
+                        }
+                    }
+                } else {
+                    List l = (List) retval.get(c);
+                    if (l == null) {
+                        l = new ArrayList();
+                        retval.put(c, l);
+                    }
+                    l.add(o);
+                }
             }
         }
         return retval;
