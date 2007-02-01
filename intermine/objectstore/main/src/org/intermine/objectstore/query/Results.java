@@ -328,9 +328,14 @@ public class Results extends AbstractList implements LazyCollection
         List resultList = null;
         try {
             resultList = range(index, index);
+        } catch (DataChangedException e) {
+            ConcurrentModificationException e2 = new ConcurrentModificationException("ObjectStore"
+                    + " error has occurred (in get) - data changed");
+            e2.initCause(e);
+            throw e2;
         } catch (ObjectStoreException e) {
             //LOG.debug("get - " + e);
-            throw new RuntimeException("ObjectStore error has occured (in get)", e);
+            throw new RuntimeException("ObjectStore error has occurred (in get)", e);
         }
         return resultList.get(0);
     }
@@ -345,6 +350,11 @@ public class Results extends AbstractList implements LazyCollection
         List ret = null;
         try {
             ret = range(start, end - 1);
+        } catch (DataChangedException e) {
+            ConcurrentModificationException e2 = new ConcurrentModificationException("ObjectStore"
+                    + " error has occurred (in subList) - data changed");
+            e2.initCause(e);
+            throw e2;
         } catch (ObjectStoreException e) {
             //LOG.debug("subList - " + e);
             throw new RuntimeException("ObjectStore error has occured (in subList)", e);
@@ -373,6 +383,11 @@ public class Results extends AbstractList implements LazyCollection
             // Do a count, because it will probably be a little faster.
             try {
                 maxSize = os.count(query, sequence);
+            } catch (DataChangedException e) {
+                ConcurrentModificationException e2 = new ConcurrentModificationException("Object"
+                        + "Store error has occurred (in size) - data changed");
+                e2.initCause(e);
+                throw e2;
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("ObjectStore error has occured (in size)", e);
             }

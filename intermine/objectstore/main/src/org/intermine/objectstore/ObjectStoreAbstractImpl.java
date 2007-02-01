@@ -306,17 +306,18 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public void checkSequence(int sequence, Query q, String message) throws DataChangedException {
         if (sequence != getSequence()) {
-            Exception e = new DataChangedException("Sequence numbers do not match - was given "
-                    + sequence + " but needed " + getSequence() + " for operation \""
+            DataChangedException e = new DataChangedException("Sequence numbers do not match - was "
+                    + "given " + sequence + " but needed " + getSequence() + " for operation \""
                     + message + q + "\"");
-            e.fillInStackTrace();
+            throw e;
+            /*e.fillInStackTrace();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.flush();
             String m = sw.toString();
             int index = m.indexOf("at junit.framework.TestCase.runBare");
-            LOG.warn(index < 0 ? m : m.substring(0, index));
+            LOG.warn(index < 0 ? m : m.substring(0, index));*/
         }
     }
 
