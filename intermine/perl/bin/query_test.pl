@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 BEGIN {
-  push @INC, "$ENV{HOME}/svn/dev/bio/perl/lib";
+  push @INC, "$ENV{HOME}/svn/dev/intermine/perl/lib";
 }
 
 use strict;
