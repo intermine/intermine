@@ -16,9 +16,9 @@
         <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
       </strong>
       currently in your bag.<br/>
-      <strong><span id="duplicateCount">${fn:length(duplicates)} duplicate(s)</span></strong>,
+      <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>,
       <strong>
-        <span id="lowQualityMatches">${fn:length(lowQualityMatches)}</span>
+        <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
         low quality matches
       </strong>,
       <strong>
@@ -48,19 +48,27 @@
       </html:submit>
     </div>
   </div>
-  <c:if test="${!empty issues['DUPLICATE']}">
+  <c:if test="${!empty duplicates || ! empty lowQualityMatches}">
     <div class="heading">
-      <fmt:message key="bagUploadConfirm.duplicates"/>
+      <fmt:message key="bagUploadConfirm.issues"/>
     </div>
     <div class="body">
-      <c:forEach var="entry" items="${issues['DUPLICATE']}">
-        <c:set var="message" value="${entry.key}"/>
-        <c:set var="duplicates" value="${entry.value}"/>
-        <tiles:insert name="bagUploadConfirmDuplicates.tile">
+    <p><fmt:message key="bagUploadConfirm.lowQ"  />
+        <c:set var="issueMap" value="${lowQualityMatches}"/>
+        <tiles:insert name="bagUploadConfirmIssue.tile">
           <tiles:put name="message" value="${message}"/>
-          <tiles:put name="duplicates" beanName="duplicates"/>
+          <tiles:put name="issueMap" beanName="issueMap"/>
+          <tiles:put name="issueType" value="lowQ"/>
         </tiles:insert>
-      </c:forEach>
+    </p>
+    <p><fmt:message key="bagUploadConfirm.duplicatesHeader"  />
+        <c:set var="issueMap" value="${duplicates}"/>
+        <tiles:insert name="bagUploadConfirmIssue.tile">
+          <tiles:put name="message" value="${message}"/>
+          <tiles:put name="issueMap" beanName="issueMap"/>
+          <tiles:put name="issueType" value="duplicate"/>
+        </tiles:insert>
+    </p>
     </div>
   </c:if>
 
@@ -81,7 +89,7 @@
         mistake.  The unresolved identifiers were:
       </p>
       <p style="font-weight: bold">
-        <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer} </c:forEach>
+        <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer.key} </c:forEach>
       </p>
     </div>
   </c:if>
