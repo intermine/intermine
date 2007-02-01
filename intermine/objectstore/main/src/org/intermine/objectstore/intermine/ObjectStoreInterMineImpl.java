@@ -984,6 +984,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param bagConstraint a BagConstraint
      * @param log true to log this action
      * @param text extra data to place in the log
+     * @return a BagTableToRemove object
+     * @throws SQLException if an error occurs
      */
     protected BagTableToRemove createTempBagTable(Connection c, BagConstraint bagConstraint,
             boolean log, String text) throws SQLException {
@@ -1494,19 +1496,31 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         return r.getInt(1);
     }
 
+    /**
+     * Class describing a temporary bag table, which can be removed. A bag table can be forcibly
+     * dropped by passing one of these objects to the removeTempBagTable method. Alternatively,
+     * the table will be automatically dropped after the table name is garbage collected.
+     *
+     * @author Matthew Wakeling
+     */
     protected class BagTableToRemove extends WeakReference
     {
         String dropSql;
 
-        public BagTableToRemove(String tableName, ReferenceQueue refQueue) {
+        private BagTableToRemove(String tableName, ReferenceQueue refQueue) {
             super(tableName, refQueue);
             dropSql = "DROP TABLE " + tableName;
         }
 
-        public String getDropSql() {
+        private String getDropSql() {
             return dropSql;
         }
 
+        /**
+         * Returns the SQL statement that will drop the table.
+         *
+         * @return a String
+         */
         public String toString() {
             return dropSql;
         }

@@ -221,6 +221,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("OrSubquery", NO_RESULT);
         results.put("ScientificNumber", "SELECT a1_.bigDecimalObjType AS a1_bigDecimalObjType, a1_.booleanObjType AS a1_booleanObjType, a1_.booleanType AS a1_booleanType, a1_.dateObjType AS a1_dateObjType, a1_.doubleObjType AS a1_doubleObjType, a1_.doubleType AS a1_doubleType, a1_.floatObjType AS a1_floatObjType, a1_.floatType AS a1_floatType, a1_.id AS a1_id, a1_.intObjType AS a1_intObjType, a1_.intType AS a1_intType, a1_.longObjType AS a1_longObjType, a1_.longType AS a1_longType, a1_.name AS a1_name, a1_.shortObjType AS a1_shortObjType, a1_.shortType AS a1_shortType, a1_.stringObjType AS a1_stringObjType FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
         results2.put("ScientificNumber", Collections.singleton("Types"));
+        results.put("LowerBag", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND LOWER(a1_.name) IN ('employeea1', 'employeea2', 'employeeb1') ORDER BY a1_.id");
+        results2.put("LowerBag", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

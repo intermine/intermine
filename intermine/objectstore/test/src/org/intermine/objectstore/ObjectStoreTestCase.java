@@ -473,6 +473,11 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
         r = new Object[][] { { data.get("Types1") } };
         results.put("ScientificNumber", toList(r));
+
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeB1") } };
+        results.put("LowerBag", toList(r));
     }
 
     /**
