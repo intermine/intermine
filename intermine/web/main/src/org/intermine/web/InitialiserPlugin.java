@@ -188,18 +188,17 @@ public class InitialiserPlugin implements PlugIn
      */
     private void loadBagQueries(ServletContext servletContext, ObjectStore os)
         throws ServletException {
-        
-    	InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
+        InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
-        	try {
-        		Map bagQueries = BagQueryHelper.readBagQueries(os.getModel(), is);
-        		servletContext.setAttribute(Constants.BAG_QUERIES, bagQueries);
-        	} catch (Exception e) {
-        		throw new ServletException("Error loading class bag queries", e);
-        	}
+            try {
+                Map bagQueries = BagQueryHelper.readBagQueries(os.getModel(), is);
+                servletContext.setAttribute(Constants.BAG_QUERIES, bagQueries);
+            } catch (Exception e) {
+                throw new ServletException("Error loading class bag queries", e);
+            }
         } else {
-        	// can used defaults so just log a warning
-        	LOG.warn("No custom bag queries found - using default query");
+            // can used defaults so just log a warning
+            LOG.warn("No custom bag queries found - using default query");
         }
     }
     

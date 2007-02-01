@@ -5,14 +5,11 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<tiles:importAttribute name="message" ignore="false"/>
 <tiles:importAttribute name="resultElementMap" ignore="false"/>
 <tiles:importAttribute name="columnNames" ignore="false"/>
+<tiles:importAttribute name="issueType" ignore="false"/>
 
-<fmt:message key="bagUploadConfirm.duplicatesHeader">
-  <fmt:param value="${message}"/>
-</fmt:message>
-
+<!-- bagUploadConfirmIssue.jsp -->
 <table class="collection" cellspacing="0">
     <tr>
       <td>
@@ -33,7 +30,8 @@
         &nbsp;<%--for IE--%>
       </td>
     </tr>
-  <c:forEach var="resultElementEntry" items="${resultElementMap}">
+  <c:set var="idcounter" value="0"/>
+  <c:forEach var="resultElementEntry" items="${resultElementMap}" >
     <c:set var="identifier" value="${resultElementEntry.key}"/>
     <c:set var="resultElementRowList" value="${resultElementEntry.value}"/>
 
@@ -48,11 +46,11 @@
       <tr class="${rowClass}" id="tr_${identifier}"/>
         <c:if test="${status.index == 0}">
           <td border="1" rowSpan="${fn:length(resultElementRowList)}"
-              valign="top" id="td_${identifier}">${identifier}</td>
+              valign="top" id="td_${issueType}_${identifier}">${identifier}</td>
         </c:if>
 
         <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
-          <td id="row_${status.count}">
+          <td id="row_${issueType}_${idcounter}">
             <c:choose>
               <c:when test="${rowStatus.index == 0}">
                 <%-- special case: the first element is the class name --%>
@@ -60,9 +58,9 @@
               </c:when>
               <c:when test="${rowStatus.index == fn:length(resultElementRow) - 1}">
                 <%-- special case: the last element is the object id --%>
-                <span id="add_${resultElementRow[rowStatus.index]}" onclick="addId2Bag('${resultElementRow[rowStatus.index]}','${status.count}','${identifier}');" class="fakelink">Add</span>
+                <span id="add_${issueType}_${resultElementRow[rowStatus.index]}" onclick="addId2Bag('${resultElementRow[rowStatus.index]}','${idcounter}','${identifier}','${issueType}');" class="fakelink">Add</span>
                 &nbsp;&nbsp;
-                <span id="rem_${resultElementRow[rowStatus.index]}" onclick="removeIdFromBag('${resultElementRow[rowStatus.index]}','${status.count}','${identifier}');">Remove</span>
+                <span id="rem_${issueType}_${resultElementRow[rowStatus.index]}" onclick="removeIdFromBag('${resultElementRow[rowStatus.index]}','${idcounter}','${identifier}','${issueType}');">Remove</span>
                 <!-- <html:multibox property="selectedObjects"
                                styleId="selectedObject_${rowStatus.index}">
                   ${resultElementRow[rowStatus.index]}
@@ -75,6 +73,9 @@
           </td>
         </c:forEach>
       </tr>
+      <c:set var="idcounter" value="${idcounter + 1}"/>
     </c:forEach>
   </c:forEach>
 </table>
+<!-- /bagUploadConfirmIssue.jsp -->
+

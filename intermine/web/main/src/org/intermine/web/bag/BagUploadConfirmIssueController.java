@@ -37,13 +37,14 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * Controller for the bagUploadConfirmDuplicates tile.
+ * Controller for the bagUploadConfirmIssue tile.
  * @author Kim Rutherford
+ * @author Xavier Watkins
  */
-public class BagUploadConfirmDuplicatesController extends TilesAction
+public class BagUploadConfirmIssueController extends TilesAction
 {
     /**
-     * Initialise attrobutes for the bagUploadConfirmDuplicates.
+     * Initialise attributes for the bagUploadConfirmIssue.
      * @see TilesAction#execute
      */
     public ActionForward execute(ComponentContext context,
@@ -52,13 +53,13 @@ public class BagUploadConfirmDuplicatesController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        Map duplicatesMap = (Map) context.getAttribute("duplicates");
+        Map issuesMap = (Map) context.getAttribute("issueMap");
         
         // Make a Map from identifier to a List of rows for display.  Each row will contain
         // information about one object.  The row List will contain (first) the class name, then
         // a ResultElement object for each field to display.
 
-        Map orderedDuplicateMap = new LinkedHashMap(duplicatesMap);
+        Map orderedIssuesMap = new LinkedHashMap(issuesMap);
         
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
         Map identifierResultElementMap = new LinkedHashMap();
@@ -66,11 +67,11 @@ public class BagUploadConfirmDuplicatesController extends TilesAction
         List objectList = new ArrayList();
         
         int objectListIndex = 0;
-        Iterator identifierIter = orderedDuplicateMap.keySet().iterator();
+        Iterator identifierIter = orderedIssuesMap.keySet().iterator();
         while (identifierIter.hasNext()) {
             String identifier = (String) identifierIter.next();
             identifierResultElementMap.put(identifier, new ArrayList());
-            List objectListPerIdentifierMap = (List) orderedDuplicateMap.get(identifier);
+            List objectListPerIdentifierMap = (List) orderedIssuesMap.get(identifier);
             for (int objIndex = 0; objIndex < objectListPerIdentifierMap.size(); objIndex++) {
                 objectList.add(objectListPerIdentifierMap.get(objIndex));
                 List objectListForIdentifierList = 

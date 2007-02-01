@@ -19,7 +19,8 @@ import org.intermine.model.InterMineObject;
  * ConvertedObjectPair objects]]].
  * @author Kim Rutherford
  */
-public class ConvertedObjectPair {
+public class ConvertedObjectPair 
+{
     private final InterMineObject oldObject;
     private final InterMineObject newObject;
 
