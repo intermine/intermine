@@ -293,7 +293,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("CompanyB") } };
         results.put("ContainsConstraintMMCollectionRefObject", toList(r));
 
-        results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)")); //TODO: Fix this (ticket #445)
+        results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)")); //TODO: Fix this (ticket #445)
         //results.put("ContainsConstraintNotMMCollectionRefObject", Collections.EMPTY_LIST);
 
         r = new Object[][] { { data.get("EmployeeA1") }};
@@ -343,7 +343,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB3") } };
         results.put("OrderByReference", toList(r));
 
-        results.put("FailDistinctOrder", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("FailDistinctOrder", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
 
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeB2") } };
@@ -411,9 +411,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA2") },
                              { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeA3") },
                              { ((Department) data.get("DepartmentB1")).getId(), data.get("EmployeeB3") } };
-        results.put("QueryClassBagNot", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("QueryClassBagNot", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
 
-        results.put("QueryClassBagNotMM", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("QueryClassBagNotMM", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
 
         results.put("QueryClassBagDynamic", Collections.EMPTY_LIST);
 
@@ -436,12 +436,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("QueryClassBagDouble", toList(r));
         results.put("QueryClassBagContainsObject", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
         results.put("QueryClassBagContainsObjectDouble", Collections.singletonList(Collections.singletonList(((Department) data.get("DepartmentA1")).getId())));
-        results.put("QueryClassBagNotContainsObject", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("QueryClassBagNotContainsObject", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
         results.put("ObjectContainsObject", Collections.singletonList(Collections.singletonList("hello")));
         results.put("ObjectContainsObject2", Collections.EMPTY_LIST);
         results.put("ObjectNotContainsObject", Collections.EMPTY_LIST);
-        results.put("QueryClassBagNotViaNand", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
-        results.put("QueryClassBagNotViaNor", new Failure(RuntimeException.class, "ObjectStore error has occured (in get)"));
+        results.put("QueryClassBagNotViaNand", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
+        results.put("QueryClassBagNotViaNor", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
         results.put("SubqueryExistsConstraint", Collections.singletonList(Collections.singletonList("hello")));
         results.put("NotSubqueryExistsConstraint", Collections.EMPTY_LIST);
         results.put("SubqueryExistsConstraintNeg", Collections.EMPTY_LIST);
