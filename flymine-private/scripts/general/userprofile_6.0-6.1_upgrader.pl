@@ -34,9 +34,16 @@ my $in_file_name = shift;
 
 my $parsed = $xs->XMLin($in_file_name);
 
+# open DUMP, '>parsed_userprofile' or die;
+# my $dumper = new Data::Dumper([$parsed]);
+# $dumper->Indent(1);
+# print DUMP $dumper->Dump();
+# close DUMP;
+
 my @userprofiles = @{$parsed->{userprofiles}[0]{userprofile}};
 
 my %user_bags = ();
+my %unknown_map = ();
 
 for my $userprofile (@userprofiles) {
   my $username = $userprofile->{username};
@@ -60,8 +67,40 @@ for my $userprofile (@userprofiles) {
 
       print '    unknown in this bag: ', scalar(@{$objects_by_type{UNKNOWN}}), "\n";
 
+      open UNK, '>>unknowns' or die;
+      for my $unknown (@{$objects_by_type{UNKNOWN}}) {
+        print UNK "$unknown\n";
+      }
+      close UNK;
+
       $user_bags{$username}{$bag_name} = \%objects_by_type;
+
+
+      for my $type (keys %objects_by_type) {
+        # %objects_by_type will always have at least 1 key: "UNKNOWN"
+        if ($type eq 'UNKNOWN') {
+          push @{$unknown_map{$username}{$bag_name}}, @{$objects_by_type{$type}};
+        } else {
+          my @obj_ids = @{$objects_by_type{$type}};
+          my $new_bag_name;
+          if (keys %objects_by_type == 2) {
+            # bag has only one type - just convert
+            $new_bag_name = $bag_name;
+          } else {
+            # bag needs splitting
+            $new_bag_name = "$bag_name ($type objects)";
+          }
+
+          push @new_bags, {
+                           name => $new_bag_name,
+                           type => $type,
+                           bagElement => [ map { { id => $_, type => $type } } @obj_ids ],
+                          };
+        }
+      }
     }
+
+    @{$userprofile->{bags}[0]{bag}} = @new_bags;
   }
 }
 
@@ -72,8 +111,15 @@ my $dumper = new Data::Dumper([\%user_bags]);
 $dumper->Indent(1);
 print DUMP $dumper->Dump();
 
-# open F, '>processed_userprofile.xml';
-# print F $xs->XMLout($parsed);
+use Data::Dumper;
+
+open DUMP, '>unknowns_perl_dump' or die;
+my $unknown_dumper = new Data::Dumper([\%unknown_map]);
+$unknown_dumper->Indent(1);
+print DUMP $unknown_dumper->Dump();
+
+open F, '>processed_userprofile.xml';
+print F $xs->XMLout($parsed);
 
 
 my %object_by_identifier_cache = ();
@@ -91,6 +137,9 @@ sub find_objects_by_type
     my $java_type = $element->{type};
     if ($java_type eq 'java.lang.String') {
       push @identifiers, $value;
+    } else {
+      warn "  found $java_type: $value - ignoring\n";
+      next;
     }
   }
 
