@@ -47,45 +47,45 @@
         </node>
       </query>
     </template>
-<template name="employeesOverACertainAgeFromDepartmentA" title="View all the employees of a certain age from a certain department" longDescription="" comment="" important="false">
-  <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age Employee.department.name" constraintLogic="A and B">
-    <node path="Employee" type="Employee">
-    </node>
-    <node path="Employee.age" type="int">
-      <constraint op="&gt;=" value="25" description="Age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Employee.department" type="Department">
-    </node>
-    <node path="Employee.department.name" type="String">
-      <constraint op="=" value="DepartmentA" description="Department constraint" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" important="false">
-  <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.id Employee.address.id">
-    <node path="Employee" type="Employee"/>
-    <node path="Employee.id" type="Integer">
-      <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
-    </node>
-    <node path="Employee.address.id" type="Integer"/>
-  </query>
-</template>
-<template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="" important="false">
-  <query name="convertEmployeeToManager" model="testmodel" view="Employee.id Employee.department.manager.id">
-    <node path="Employee" type="Employee">
-    </node>
-    <node path="Employee.id" type="Integer">
-      <constraint op="=" value="0" description="id" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
+    <template name="employeesOverACertainAgeFromDepartmentA" title="View all the employees of a certain age from a certain department" longDescription="" comment="" important="false">
+      <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age Employee.department.name" constraintLogic="A and B">
+        <node path="Employee" type="Employee">
+        </node>
+        <node path="Employee.age" type="int">
+          <constraint op="&gt;=" value="25" description="Age constraint" identifier="Employee.age.NOT_EQUALS.1" editable="true" code="A">
+          </constraint>
+        </node>
+        <node path="Employee.department" type="Department">
+        </node>
+        <node path="Employee.department.name" type="String">
+          <constraint op="=" value="DepartmentA" description="Department constraint" identifier="" editable="true" code="B">
+          </constraint>
+        </node>
+      </query>
+    </template>
+    <template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" important="false">
+      <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.id Employee.address.id">
+        <node path="Employee" type="Employee"/>
+        <node path="Employee.id" type="Integer">
+          <constraint op="=" value="0" description="id" identifier="" editable="true" code="A"/>
+        </node>
+        <node path="Employee.address.id" type="Integer"/>
+      </query>
+    </template>
+    <template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="" important="false">
+      <query name="convertEmployeeToManager" model="testmodel" view="Employee.id Employee.department.manager.id">
+        <node path="Employee" type="Employee">
+        </node>
+        <node path="Employee.id" type="Integer">
+          <constraint op="=" value="0" description="id" identifier="" editable="true" code="A">
+          </constraint>
+        </node>
+      </query>
+    </template>
     <template name="convertContractorToEmployees"
-              title="convert managers to employees" longDescription=""
+              title="convert contractors to employees" longDescription=""
               comment="This isn't a very sensible query to do, but it's useful for testing the TypeConverter class"
-important="false">
+              important="false">
       <query name="convertContractorToEmployees" model="testmodel" view="Contractor.id Contractor.companys.departments.employees.id">
         <node path="Contractor" type="Contractor">
         </node>
