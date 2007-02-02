@@ -79,7 +79,9 @@ for my $userprofile (@userprofiles) {
       for my $type (keys %objects_by_type) {
         # %objects_by_type will always have at least 1 key: "UNKNOWN"
         if ($type eq 'UNKNOWN') {
-          push @{$unknown_map{$username}{$bag_name}}, @{$objects_by_type{$type}};
+          if (@{$objects_by_type{$type}}) {
+            push @{$unknown_map{$username}{$bag_name}}, @{$objects_by_type{$type}};
+          }
         } else {
           my @obj_ids = @{$objects_by_type{$type}};
           my $new_bag_name;
