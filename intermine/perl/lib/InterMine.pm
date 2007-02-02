@@ -91,7 +91,7 @@ sub get_model {
   }
 }
 
-sub _get_class_keys
+sub get_class_keys
 {
   my $class_name = shift;
 
@@ -116,7 +116,7 @@ sub _get_class_keys
   }
   my $class_desc = get_model()->get_classdescriptor_by_name($class_name);
   for my $extendee_class_desc ($class_desc->extends_class_descriptors()) {
-    push @class_keys, _get_class_keys($extendee_class_desc->unqualified_name());
+    push @class_keys, get_class_keys($extendee_class_desc->unqualified_name());
   }
 
   return @class_keys;
@@ -195,7 +195,7 @@ sub import {
     $setup_args{columns} = \@columns;
     $setup_args{foreign_keys} = \@foreign_keys;
     $setup_args{relationships} = \@relationships;
-    my @unique_keys = _get_class_keys($class);
+    my @unique_keys = get_class_keys($class);
     $setup_args{unique_keys} = [@unique_keys];
 
     my $lc_class = lc $class;
