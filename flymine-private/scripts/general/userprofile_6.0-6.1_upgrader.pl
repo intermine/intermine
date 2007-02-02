@@ -16,7 +16,6 @@ BEGIN {
   $InterMine::properties_file = "$ENV{HOME}/flymine.properties";
   $InterMine::db_prefix = 'db.production';
   $InterMine::class_keys = "$ENV{HOME}/svn/dev/bio/core/props/resources/class_keys.properties";
-  $Rose::DB::Object::QueryBuilder::Debug = 1;
   @types = qw(Gene Protein Exon GOTerm Transcript Organism);
 }
 
@@ -26,6 +25,8 @@ use InterMine @types;
 use InterMine qw(Synonym);
 
 use XML::Simple qw(:strict);
+
+$Rose::DB::Object::QueryBuilder::Debug = 0;
 
 my $xs = new XML::Simple(ForceArray => 1, KeepRoot => 1, KeyAttr => []);
 
@@ -135,13 +136,14 @@ sub find_objects_by_type
 
         my $quoted_identifier = quotemeta $identifier;
 
-        my $eval_string = "
+        my $eval_string = <<"EOF";
           InterMine::${type}::Manager->get_${lc_type}s_iterator(
                  query =>
                       [
-                        '$class_key_field', { eq => '$quoted_identifier' },
+                        '$class_key_field', { ilike => "$quoted_identifier" },
                       ],
-                   );";
+                   );
+EOF
 
         my $iter = eval $eval_string;
         die $@ if $@;
