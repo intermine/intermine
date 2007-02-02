@@ -10,6 +10,8 @@ package org.intermine.web.bag;
  *
  */
 
+import org.intermine.web.WebUtil;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionErrors;
@@ -116,8 +118,15 @@ public class BagUploadConfirmForm extends ActionForm
    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
        ActionErrors errors = new ActionErrors();
        if (bagName.equals("") && request.getParameter("goBack") == null) {
+           
            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.savebag.blank"));
-       }
+           
+       } else if (!WebUtil.isValidName(bagName)) { 
+   
+           errors.add(ActionMessages.GLOBAL_MESSAGE,
+                      new ActionMessage("errors.badChars"));    
+           
+       } 
        return errors;
    }
 }

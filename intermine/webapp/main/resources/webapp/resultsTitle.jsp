@@ -16,3 +16,4 @@
 </c:otherwise>
 </c:choose>
 
+<!-- /resultsTitle.jsp -->

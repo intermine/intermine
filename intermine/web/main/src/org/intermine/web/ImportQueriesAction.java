@@ -68,13 +68,18 @@ public class ImportQueriesAction extends InterMineAction
     
     /**
      * Checks that the query name doesn't already exist and returns a numbered
-     * name if it does.
+     * name if it does.  
      * @param queryName the query name
      * @param profile the user profile
      * @return a validated name for the query
      */
     private String validateQueryName(String queryName, Profile profile) {
         String newQueryName = queryName;
+
+        if (!WebUtil.isValidName(queryName)) {   
+            newQueryName = WebUtil.replaceSpecialChars(newQueryName);
+        }
+        
         if (profile.getSavedQueries().containsKey(newQueryName)) {
             int i = 1;
             while (true) {
@@ -88,4 +93,7 @@ public class ImportQueriesAction extends InterMineAction
             return newQueryName;
         }
     }
+    
+
+
 }

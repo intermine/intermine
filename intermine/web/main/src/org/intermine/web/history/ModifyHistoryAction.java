@@ -10,21 +10,21 @@ package org.intermine.web.history;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.web.Constants;
 import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SavedQuery;
 import org.intermine.web.SessionMethods;
+import org.intermine.web.WebUtil;
 import org.intermine.web.bag.InterMineBag;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -86,10 +86,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
         ActionForward historyForward = mapping.findForward("history");
         SavedQuery sq;
         
-        if (name.equals(newName)) {
-            return historyForward;
-        }
-        
+
         if (StringUtils.isEmpty(newName)) {
             recordError(new ActionMessage("errors.required", "New name"), request);
             return editForward(historyForward, type, name);

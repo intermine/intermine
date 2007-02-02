@@ -80,7 +80,7 @@ public class TemplateController extends TilesAction
         if (queryName == null) {
             queryName = request.getParameter("templateName");
         }
-
+       
         // look for request attribute "previewTemplate" which is set while building a template
         template = (TemplateQuery) request.getAttribute("previewTemplate");
 

@@ -4,6 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+<!-- history.jsp -->
+
 <tiles:insert name="historyQueryView.jsp">
   <tiles:put name="type" value="history"/>
 </tiles:insert>
@@ -59,3 +61,5 @@
     }
     //]]>-->
 </script>
+
+<!-- /history.jsp -->

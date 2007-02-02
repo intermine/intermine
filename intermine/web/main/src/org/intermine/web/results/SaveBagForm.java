@@ -10,19 +10,20 @@ package org.intermine.web.results;
  *
  */
 
+import java.util.Map;
+
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.WebUtil;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import java.util.Map;
-
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.web.Profile;
-import org.intermine.web.Constants;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Form bean for the results table and bag creation form.
@@ -113,7 +114,6 @@ public class SaveBagForm extends ActionForm
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
         Map savedBags = profile.getSavedBags();
-
         ActionErrors errors = null;
         
         if ((request.getParameter("addToExistingBag") != null
@@ -129,6 +129,10 @@ public class SaveBagForm extends ActionForm
                 errors = new ActionErrors();
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
                            new ActionMessage("errors.savebag.blank"));
+            } else if (!WebUtil.isValidName(newBagName)) { 
+                errors = new ActionErrors();
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("errors.badChars"));
             } else if (savedBags != null && savedBags.containsKey(newBagName)) {
                 errors = new ActionErrors();
                 errors.add(ActionMessages.GLOBAL_MESSAGE,

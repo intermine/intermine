@@ -25,6 +25,9 @@
   </im:heading>
 
   <im:body>
+  
+  <fmt:message key="templateBuilder.save.msg"/>
+  
   <html:form action="/templateSettingsAction">
     <div align="center">
     <p>

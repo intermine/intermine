@@ -8,7 +8,7 @@
 <tiles:useAttribute id="type" name="type"/>
 <tiles:useAttribute id="index" name="index"/>
 
-<!-- historyElementName.jsp -->
+<!-- bagElementName.jsp -->
 <html:xhtml/>
     <td align="left" colspan="" nowrap class="noRightBorder">
       <span id="form_${name}" style="display:none;">
@@ -29,4 +29,4 @@
         <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
       </a>
     </td>
-<!-- /historyElementName.jsp -->
+<!-- /bagElementName.jsp -->
