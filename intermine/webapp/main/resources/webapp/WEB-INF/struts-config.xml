@@ -541,8 +541,9 @@
     <action path="/templateSettingsAction"
             type="org.intermine.web.TemplateSettingsAction"
             name="templateSettingsForm"
+            input="query"
             scope="request">
-      <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="query" path="/query.do" redirect="true"/>      
     </action>
     
     <action path="/createAccountAction"

@@ -293,6 +293,7 @@
           <fmt:message key="results.save"/><im:manualLink section="manualResults.shtml"/>
         </div>
         <div class="body">
+        <fmt:message key="bag.save.msg"/>
           <ul>
             <li>
               <fmt:message key="bag.new"/>

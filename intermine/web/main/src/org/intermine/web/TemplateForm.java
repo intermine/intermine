@@ -25,6 +25,8 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Form to handle input from the template page
@@ -242,9 +244,11 @@ public class TemplateForm extends ActionForm
         boolean appendWildcard = (request.getParameter("appendWildcard") != null 
                                   && !request.getParameter("appendWildcard").equals("no"));
         parseAttributeValues(template, session, errors, appendWildcard);
+               
+
         return errors;
     }
-    
+
     /**
      * For each value entered, parse the value into a format that can be
      * applied to the particular constraint.

@@ -103,8 +103,11 @@ public class CreateTemplateAction extends InterMineAction
         if (StringUtils.isEmpty(tbs.getName())) {
             recordError(new ActionMessage("errors.required", "Template name"), request);
             seenProblem = true;
+        } else if (!WebUtil.isValidName(tbs.getName())) { 
+            recordError(new ActionMessage("errors.badChars"), request);
+            seenProblem = true;
         }
-
+           
         // Ensure that we can actually execute the query
         if (!seenProblem) {
             try {

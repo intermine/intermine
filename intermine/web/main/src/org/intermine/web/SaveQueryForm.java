@@ -62,6 +62,13 @@ public class SaveQueryForm extends ActionForm
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.savequery.blank", queryName));
+            
+        } else if (!WebUtil.isValidName(queryName)) { 
+            
+            errors = new ActionErrors();
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.badChars"));            
+            
         } else if (savedQueries != null && savedQueries.containsKey(queryName)) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,

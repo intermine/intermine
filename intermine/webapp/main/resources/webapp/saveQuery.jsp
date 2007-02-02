@@ -7,6 +7,8 @@
 <html:xhtml/>
 <c:if test="${!empty QUERY}">
   <c:if test="${!empty PROFILE.username}">
+  
+  <fmt:message key="query.save.msg"/>
     <html:form action="/saveQuery">
       <html:text property="queryName"/>
       <html:submit property="action">

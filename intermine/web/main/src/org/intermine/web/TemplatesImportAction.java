@@ -45,7 +45,7 @@ public class TemplatesImportAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplatesImportForm tif = (TemplatesImportForm) form;
         Map templates = null;
-        int deleted = 0, imported = 0;
+        int deleted = 0, imported = 0, renamed = 0;
         
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml());
         
@@ -57,11 +57,18 @@ public class TemplatesImportAction extends InterMineAction
                 deleted++;
             }
         }
-        
+       
         Iterator iter = templates.values().iterator();
         while (iter.hasNext()) {
             TemplateQuery template = (TemplateQuery) iter.next();
-            profile.saveTemplate(template.getName(), template);
+            
+            String templateName = template.getName();
+             if (!WebUtil.isValidName(templateName)) {  
+                templateName = WebUtil.replaceSpecialChars(templateName);
+                template = renameTemplate(templateName, template);
+                renamed++;
+            }      
+            profile.saveTemplate(templateName, template);
             imported++;
         }
 
@@ -70,8 +77,24 @@ public class TemplatesImportAction extends InterMineAction
         //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
         
         recordMessage(new ActionMessage("importTemplates.done",
-                                        new Integer(deleted), new Integer(imported)), request);
+                                        new Integer(deleted), 
+                                        new Integer(imported), 
+                                        new Integer(renamed)), 
+                                        request);
         
         return mapping.findForward("mymine");
+    }
+    
+    // rebuild the template, but with the new special-character-free name
+    private TemplateQuery renameTemplate(String newName, TemplateQuery template) {
+     
+        TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(), 
+                                                      template.getDescription(), 
+                                                      template.getComment(), 
+                                                      template.getPathQuery(), 
+                                                      template.isImportant(),
+                                                      template.getKeywords());
+        
+        return newTemplate;
     }
 }

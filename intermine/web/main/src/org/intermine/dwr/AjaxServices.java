@@ -17,7 +17,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
@@ -145,6 +144,11 @@ public class AjaxServices
         SavedQuery sq;
         if (name.equals(newName) || StringUtils.isEmpty(newName)) {
             return name;
+        }
+        if (!WebUtil.isValidName(newName)) {       
+            String errorMsg = "<i>Invalid name.  Names may only contain letters, " +
+                    "numbers, and underscores.</i>";           
+            return errorMsg;
         }
         if (type.equals("history")) {
             if (profile.getHistory().get(newName) != null) {

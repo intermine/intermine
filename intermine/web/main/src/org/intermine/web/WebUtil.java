@@ -10,6 +10,10 @@ package org.intermine.web;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import org.intermine.objectstore.query.Results;
 
 import org.intermine.objectstore.ObjectStoreException;
@@ -17,10 +21,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-//import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -29,11 +29,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * Utility methods for the web package.
  *
  * @author Kim Rutherford
+ * @author Julie Sullivan
  */
 
 public abstract class WebUtil
@@ -218,4 +222,109 @@ public abstract class WebUtil
         newResults.setBatchSize(newBatchSize);
         return newResults;
     }
+    
+    /** 
+     * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and 
+     * dashes. 
+     * @param name Name of bag/query/template to be validated
+     * @return isValid Returns true if this name is correct, false if this name contains a bad char
+     */
+    public static boolean isValidName(String name) {
+       
+        boolean isValid = false;
+        if (name != null) {
+            //Pattern p = Pattern.compile("[^A-Za-z0-9_-]");
+            Pattern p = Pattern.compile("\\W");
+            Matcher m = p.matcher(name);
+            isValid = !m.find();
+
+        }
+        return isValid;
+    }
+    
+    /** 
+     * Returns the word value of special characters (ie returns _AMPERSAND_ for &, etc).  Used for 
+     * the forced renaming of queries/templates in the query/template import.
+     * @param specialCharacter The special character, ie &
+     * @return wordEquivalent The special character's name, ie AMPERSAND
+     */
+    public static String getSpecCharToText(String specialCharacter) {
+        
+        HashMap specCharToText = mapChars();
+        String wordEquivalent = (String) specCharToText.get(specialCharacter);
+        wordEquivalent = "_" + wordEquivalent + "_";
+        return wordEquivalent;
+        
+    }
+   
+    
+    /**
+     * Takes a string and replaces special characters with the text value, e.g. it would change
+     * "a&b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
+     * characters.
+     * @param name Name of query/template
+     * @param type Type of value - either template or query
+     * @return rebuiltName Name of query/template with the special characters removed
+     */
+    public static String replaceSpecialChars(String name) {
+        String tmp = name;
+        String rebuiltName = "";
+        
+        for(int i = 0; i < tmp.length(); i++) {
+
+            char c = tmp.charAt(i);
+            String str = String.valueOf(c);                
+             
+            if (!WebUtil.isValidName(str)) {           
+                rebuiltName += WebUtil.getSpecCharToText(str);                
+            } else {                
+                rebuiltName += str;                
+            }
+        }        
+        return rebuiltName;
+    }
+    
+    
+    private static HashMap mapChars() {
+     
+        HashMap specCharToText = new HashMap();
+        
+        specCharToText.put("‘", new String("QUOTE"));
+        specCharToText.put("’", new String("QUOTE"));
+        specCharToText.put("“", new String("QUOTE"));
+        specCharToText.put("”", new String("QUOTE"));
+        specCharToText.put("‹", new String("LESS_THAN_SIGN"));
+        specCharToText.put("›", new String("GREATER_THAN_SIGN"));
+        specCharToText.put("!", new String("EXCLAMATION_POINT"));
+        specCharToText.put("£", new String("POUND_SIGN"));        
+        specCharToText.put("$", new String("DOLLAR_SIGN"));
+        specCharToText.put("%", new String("PERCENT_SIGN"));
+        
+        specCharToText.put("^", new String("CARET"));
+        specCharToText.put("&", new String("AMPERSAND"));
+        specCharToText.put("(", new String("LEFT_PARENTHESIS"));
+        specCharToText.put(")", new String("RIGHT_PARENTHESIS"));
+        specCharToText.put("+", new String("PLUS_SIGN"));
+        specCharToText.put("=", new String("EQUALS_SIGN"));
+        specCharToText.put("{", new String("LEFT_BRACKET"));
+        specCharToText.put("}", new String("RIGHT_BRACKET"));
+        specCharToText.put("[", new String("LEFT_BRACKET"));        
+        specCharToText.put("]", new String("RIGHT_BRACKET"));
+        specCharToText.put(":", new String("COLON"));
+        
+        specCharToText.put(";", new String("SEMICOLON"));
+        specCharToText.put("@", new String("AT_SIGN"));
+        specCharToText.put(",", new String("COMMA"));
+        specCharToText.put("?", new String("QUESTION_MARK"));
+        specCharToText.put("~", new String("TILDE"));
+        specCharToText.put("#", new String("HASH"));
+        specCharToText.put("<", new String("LESS_THAN"));
+        specCharToText.put(">", new String("GREATER_THAN"));
+        specCharToText.put("'", new String("APOSTROPHE"));        
+        specCharToText.put("/", new String("FORWARD_SLASH"));
+        specCharToText.put("\\", new String("BACK_SLASH"));
+        
+        return specCharToText;
+    }
+   
 }

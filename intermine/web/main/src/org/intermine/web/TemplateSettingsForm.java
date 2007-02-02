@@ -11,9 +11,13 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Form used when building a template.
@@ -134,5 +138,23 @@ public class TemplateSettingsForm extends ActionForm
         setImportant(tbs.isImportant());
         setDescription(tbs.getDescription());
         setComment(tbs.getComment());
+    }
+    
+    /**
+     * @see ActionForm#validate
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+       
+        ActionErrors errors = null;
+
+        if (!WebUtil.isValidName(name)) { 
+            errors = new ActionErrors();
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.badChars"));
+
+        }
+        return errors;
     }
 }

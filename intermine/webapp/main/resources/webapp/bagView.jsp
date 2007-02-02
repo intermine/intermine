@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- historyBagView.jsp -->
+<!-- bagView.jsp -->
 <script type="text/javascript">
 <!--//<![CDATA[
   function selectColumnCheckbox(form, type) {
@@ -111,4 +111,4 @@
   </c:choose>
 
   
-<!-- /historyBagView.jsp -->
+<!-- /bagView.jsp -->

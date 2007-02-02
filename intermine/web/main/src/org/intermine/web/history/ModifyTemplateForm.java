@@ -10,13 +10,15 @@ package org.intermine.web.history;
  *
  */
 
+import org.intermine.web.WebUtil;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Form bean used on the saved template form.
@@ -67,8 +69,12 @@ public class ModifyTemplateForm extends ActionForm
         if (request.getParameter("rename") == null && selected.length == 0) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyQuery.none"));
-        }
+        } else if (!WebUtil.isValidName(request.getParameter("rename"))) { 
+            errors = new ActionErrors();
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.badChars", "template"));
 
+        }
         return errors;
     }
 
