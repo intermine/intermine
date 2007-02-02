@@ -188,7 +188,26 @@
         }
       }
     }
-	
+	function setDeleteDisabledness(form, type) { 
+	 	      var checkBoxPrefix = 'selected_' + type + '_'; 
+	 	      var deleteDisable = true; 
+	 	      var columnCheckBoxChecked = true; 
+	 	      with(form) { 
+	 	        for(var i=0;i < elements.length;i++) { 
+	 	          var thiselm = elements[i]; 
+	 	          if (thiselm.id.indexOf(checkBoxPrefix) != -1) { 
+	 	            if (thiselm.checked) { 
+	 	              deleteDisable = false; 
+	 	            } else { 
+	 	              columnCheckBoxChecked = false; 
+	 	            }                
+	 	          } 
+	 	        } 
+	 	      } 
+ 	      if (deleteButton != null) { 
+	 	        deleteButton.disabled = deleteDisable; 
+	 	      } 
+	 	      if (removeButton != null) { 
         removeButton.disabled = deleteDisable;
       }
       document.getElementById('export_button').disabled = deleteDisable;
