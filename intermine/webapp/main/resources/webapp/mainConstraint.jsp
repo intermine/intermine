@@ -22,20 +22,31 @@
     <tiles:insert page="constraintSettings.jsp"/>
   </c:if>
 
-  <c:if test="${!editingTemplateConstraint}">
+<c:if test="${!editingTemplateConstraint}">
 
     <div class="heading">
       <fmt:message key="query.constrain"/><im:manualLink section="manualPageQB.shtml#manualConstrainQB"/>
-      </div>
+    </div>
     <div class="body">
 
       <c:if test="${editingConstraintIndex == null && fn:length(QUERY.allConstraints) > 0}">
-        <div align="center">
+        <fmt:message key="query.andor"/><br>
+        <div align="center">        
         <html:radio property="operator" value="and"/>AND&nbsp;&nbsp;
         <html:radio property="operator" value="or"/>OR
         </div>
       </c:if>
 
+
+	  <!-- ATTRIBUTE TOGGLE -->
+      <h4>     
+        <a href="javascript:swapInputs('attribute');">
+          <img id='attributeToggle' src="images/disclosed.gif"/>
+          <fmt:message key="query.filterValue"/>
+        </a>
+      </h4>
+
+      <!-- field name -->
       <c:choose>
         <c:when test="${empty editingNode.fieldName}">
           <span class="type">
@@ -114,12 +125,14 @@
       //-->
       </script>
   
+  
+  	  <!-- input or radio buttons -->
       <c:choose>
         <c:when test="${editingNode.attribute}">
           <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" >
             <tr>
               <c:choose>
-                <c:when test="${editingNode.type == 'boolean'}">
+                <c:when test="${editingNode.type == 'Boolean'}">
                   <td valign="top">
                     <input type="hidden" name="attributeOp" value="0"/>
                     <input type="radio" name="attributeValue" value="true" checked /><fmt:message key="query.constraint.true"/>
@@ -168,7 +181,7 @@
                 </c:otherwise>
               </c:choose>
               <td valign="top">&nbsp;
-                <html:submit property="attribute">
+                <html:submit property="attribute"  styleId="attributeSubmit" disabled="false">
                   <fmt:message key="query.submitConstraint"/>
                 </html:submit>
               </td>
@@ -176,7 +189,21 @@
           </table>
         </c:when>
         <c:otherwise>
-          <c:if test="${editingNode.indentation != 0 && !empty SUBCLASSES[editingNode.type]}">
+        
+        
+        <c:if test="${editingNode.indentation != 0 && !empty SUBCLASSES[editingNode.type]}">
+         
+         
+        <!-- SUBCLASS -->
+		<fmt:message key="query.or"/>  <br>
+		
+		<h4>     
+        <a href="javascript:swapInputs('subclass');">
+          <img id='subclassToggle' src="images/undisclosed.gif"/>
+          <fmt:message key="query.filterSubclass"/>
+        </a>
+      	</h4>
+          
             <p style="text-align: left;">
               <fmt:message key="query.subclassConstraint"/>
               <html:select property="subclassValue">
@@ -186,12 +213,24 @@
                   </html:option>
                 </c:forEach>
               </html:select>
-              <html:submit property="subclass">
+              <html:submit property="subclass" styleId="subclassSubmit" disabled="true">
                 <fmt:message key="query.submitConstraint"/>
               </html:submit>
             </p>
-          </c:if>
-          <c:if test="${!empty loopQueryPaths && !empty loopQueryOps}">
+            
+            
+        </c:if>
+        <c:if test="${!empty loopQueryPaths && !empty loopQueryOps}">
+          
+          <!-- QUERY LOOP -->
+		<fmt:message key="query.or"/>  <br>
+		<h4>     
+        <a href="javascript:swapInputs('loop');">
+          <img id='loopToggle' src="images/undisclosed.gif"/>
+          <fmt:message key="query.filterLoop"/>
+        </a>
+      	</h4>
+          
             <p style="text-align: left;">
               <fmt:message key="query.loopQueryConstraint"/>
               <html:select property="loopQueryOp">
@@ -208,19 +247,27 @@
                   </html:option>
                 </c:forEach>
               </html:select>
-              <html:submit property="loop">
+              <html:submit property="loop" styleId="loopSubmit" disabled="true" >
                 <fmt:message key="query.submitConstraint"/>
               </html:submit>
             </p>
           </c:if>
         </c:otherwise>
       </c:choose>
-      <%-- Find the right set of bags --%>
-<%--      <c:if test="${editingNode.attribute}">
-        <c:set var="bags" value="${PROFILE.primitiveBags}"/>
-      </c:if>--%>
-      <%-- Display popup if bags exist --%>
+      
+    
       <c:if test="${!empty bags}">
+      
+      	<!-- BAGS -->
+      
+      	<fmt:message key="query.or"/>  <br>
+		<h4>     
+        <a href="javascript:swapInputs('bags');">
+          <img id='bagsToggle' src="images/undisclosed.gif"/>
+          <fmt:message key="query.filterBags"/>
+        </a>
+      	</h4>
+      
         <p style="text-align: left;">
           <fmt:message key="query.bagConstraint"/>
           <html:select property="bagOp">
@@ -237,18 +284,32 @@
               </html:option>
             </c:forEach>
           </html:select>
-          <html:submit property="bag">
+          <html:submit property="bag"  styleId="bagsSubmit" disabled="true">
             <fmt:message key="query.submitConstraint"/>
           </html:submit>
         </p>
       </c:if>
+            
+      
       <c:if test="${!editingNode.collection && !editingNode.reference &&
                     !empty editingNode.parent && editingNode.type != 'boolean'}">
+                    
+                    
+        <!-- NULL OR NOT -->            
+		<fmt:message key="query.or"/>  <br>
+		<h4>     
+        <a href="javascript:swapInputs('empty');">
+          <img id='emptyToggle' src="images/undisclosed.gif"/>
+          <fmt:message key="query.filterEmpty"/>
+        </a>
+      	</h4>
+                  
+                    
         <p style="text-align: left;">
           <html:radio property="nullConstraint" value="NULL"/><fmt:message key="query.constraint.null"/>
           <html:radio property="nullConstraint" value="NotNULL"/><fmt:message key="query.constraint.notnull"/>
           &nbsp;
-          <html:submit property="nullnotnull">
+          <html:submit property="nullnotnull" styleId="emptySubmit" disabled="true">
              <fmt:message key="query.submitConstraint"/>
           </html:submit>
         </p>
