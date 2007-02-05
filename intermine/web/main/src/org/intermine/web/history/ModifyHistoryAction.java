@@ -85,8 +85,10 @@ public abstract class ModifyHistoryAction extends InterMineAction
         String newName = request.getParameter("newName");
         ActionForward historyForward = mapping.findForward("history");
         SavedQuery sq;
-        
 
+        if (name.equals(newName)) { 
+            return historyForward; 
+        } 
         if (StringUtils.isEmpty(newName)) {
             recordError(new ActionMessage("errors.required", "New name"), request);
             return editForward(historyForward, type, name);
