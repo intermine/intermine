@@ -34,6 +34,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.SingletonResults;
 
 import net.sourceforge.iharder.Base64;
 
@@ -324,7 +325,8 @@ public class TemplateQuery extends PathQuery
                 q.addToSelect(qc);
                 q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "template"),
                             ConstraintOp.CONTAINS, savedTemplateQuery));
-                Iterator oldIter = osw.getObjectStore().execute(q).iterator();
+                Iterator oldIter = new SingletonResults(q, osw.getObjectStore(),
+                        osw.getObjectStore().getSequence()).iterator();
                 while (oldIter.hasNext()) {
                     osw.delete((TemplateSummary) oldIter.next());
                 }
