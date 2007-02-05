@@ -17,9 +17,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.intermine.util.NullFirstComparator;
 
 /**
  * A class representing all changes to be made to an SQL table.
@@ -67,7 +69,7 @@ public class TableBatch implements Table
     public int addRow(Object idValue, String colNames[], Object values[]) {
         if (this.colNames == null) {
             this.colNames = colNames;
-            idsToInsert = new LinkedHashMap();
+            idsToInsert = new TreeMap(NullFirstComparator.SINGLETON);
         } else {
             if (colNames != this.colNames) {
                 if (colNames.length != this.colNames.length) {
@@ -87,9 +89,9 @@ public class TableBatch implements Table
                 this.colNames = colNames;
             }
         }
-        if (idValue == null) {
-            idValue = this;
-        }
+        //if (idValue == null) {
+        //    idValue = this;
+        //}
         Object currentEntry = idsToInsert.get(idValue);
         if (currentEntry == null) {
             idsToInsert.put(idValue, values);
@@ -125,7 +127,7 @@ public class TableBatch implements Table
     public int deleteRow(String idField, Object idValue) {
         if (this.idField == null) {
             this.idField = idField;
-            idsToDelete = new TreeSet();
+            idsToDelete = new TreeSet(NullFirstComparator.SINGLETON);
         } else if (!this.idField.equals(idField)) {
             throw new IllegalStateException("Cannot change idField once it is set");
         }
