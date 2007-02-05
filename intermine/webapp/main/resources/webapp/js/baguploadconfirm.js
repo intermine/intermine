@@ -1,14 +1,14 @@
 var duplicateArray = new Array();
 var tdColorArray = new Array();
 
-function addId2Bag(id,row,parentId){
-    document.getElementById('add_'+id).className = '';
-    document.getElementById('rem_'+id).className = "fakelink";
+function addId2Bag(id,row,parentId,issueType){
+    document.getElementById('add_'+issueType+'_'+id).className = '';
+    document.getElementById('rem_'+issueType+'_'+id).className = "fakelink";
     var elements = document.getElementsByTagName('td');
     for (var i = 0; i < elements.length; i++) {
         var idtd = elements.item(i).id;
-        if(idtd == 'row_' + row) {
-            tdColorArray['row_'+row] = elements.item(i).style.backgroundColor;
+        if(idtd == 'row_'+issueType+'_' + row) {
+            tdColorArray['row_'+issueType+'_'+row] = elements.item(i).style.backgroundColor;
             elements.item(i).style.backgroundColor = "#CCCCCC";
         }
     }
@@ -23,22 +23,22 @@ function addId2Bag(id,row,parentId){
     var idArray = duplicateArray[parentId];
     if(idArray == null) {
         duplicateArray[parentId] = new Array(id);
-        document.getElementById('duplicateCount').innerHTML--;
-        document.getElementById("td_"+parentId).style.backgroundColor = '#CCCCCC';
+        document.getElementById(issueType+'Count').innerHTML--;
+        document.getElementById('td_'+issueType+'_'+parentId).style.backgroundColor = '#CCCCCC';
     } else {
         idArray[idArray.length] = id;
         duplicateArray[parentId] = idArray;
     }
 }
 
-function removeIdFromBag(id,row, parentId){
-    document.getElementById('rem_'+id).className = '';
-    document.getElementById('add_'+id).className = "fakelink";
+function removeIdFromBag(id,row, parentId, issueType){
+    document.getElementById('rem_'+issueType+'_'+id).className = '';
+    document.getElementById('add_'+issueType+'_'+id).className = "fakelink";
     var elements = document.getElementsByTagName('td');
     for (var i = 0; i < elements.length; i++) {
         var idtd = elements.item(i).id;
-        if(idtd == 'row_' + row) {
-            elements.item(i).style.backgroundColor = tdColorArray['row_'+row];
+        if(idtd == 'row_'+issueType+'_' + row) {
+            elements.item(i).style.backgroundColor = tdColorArray['row_'+issueType+'_'+row];
         }
     }
     var bagList = document.getElementById('matchIDs').value;
@@ -50,8 +50,8 @@ function removeIdFromBag(id,row, parentId){
     document.getElementById('matchCount').innerHTML--;
     var idArray = duplicateArray[parentId];
     if(idArray.length == 1){
-        document.getElementById('duplicateCount').innerHTML++;
-        document.getElementById("td_"+parentId).style.backgroundColor = '#FFFFFF';
+        document.getElementById(issueType+'Count').innerHTML++;
+        document.getElementById('td_'+issueType+'_'+parentId).style.backgroundColor = '#FFFFFF';
         duplicateArray[parentId] = null;
     } else {
         var idArrayCopy = new Array();
