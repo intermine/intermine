@@ -13,6 +13,8 @@ package org.intermine.web.bag;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.iql.IqlQuery;
@@ -43,8 +45,15 @@ public class BagQuery
     }
 
     public Query getQuery(Collection bag) {
+        List lowerCaseBag = new ArrayList();
+        Iterator inputIter = bag.iterator();
+        while (inputIter.hasNext()) {
+            lowerCaseBag.add(((String) inputIter.next()).toLowerCase());
+        }
+        
         if (query == null) {
-            IqlQuery q = new IqlQuery(queryString, pkg, new ArrayList(Collections.singleton(bag)));
+            IqlQuery q =
+                new IqlQuery(queryString, pkg, new ArrayList(Collections.singleton(lowerCaseBag)));
             return q.toQuery();
         }
         return query;
