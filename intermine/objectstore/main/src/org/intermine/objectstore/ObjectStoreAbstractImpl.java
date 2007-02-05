@@ -10,8 +10,8 @@ package org.intermine.objectstore;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+//import java.io.PrintWriter;
+//import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;

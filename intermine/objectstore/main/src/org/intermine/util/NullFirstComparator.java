@@ -21,11 +21,15 @@ import java.util.Comparator;
  */
 public class NullFirstComparator implements Comparator
 {
+    /** Publically-accessible instance */
     public static final NullFirstComparator SINGLETON = new NullFirstComparator();
 
     private NullFirstComparator() {
     }
 
+    /**
+     * @see Comparator#compare
+     */
     public int compare(Object o1, Object o2) {
         if (o1 == null) {
             if (o2 == null) {
