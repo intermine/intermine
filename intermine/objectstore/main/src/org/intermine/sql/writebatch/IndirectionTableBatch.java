@@ -10,8 +10,8 @@ package org.intermine.sql.writebatch;
  *
  */
 
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
@@ -38,8 +38,8 @@ public class IndirectionTableBatch implements Table
     public IndirectionTableBatch(String leftColName, String rightColName) {
         this.leftColName = leftColName;
         this.rightColName = rightColName;
-        rowsToDelete = new LinkedHashSet();
-        rowsToInsert = new LinkedHashSet();
+        rowsToDelete = new TreeSet();
+        rowsToInsert = new TreeSet();
     }
 
     /**
@@ -52,7 +52,7 @@ public class IndirectionTableBatch implements Table
     protected IndirectionTableBatch(String leftColName, String rightColName, Set toInsert) {
         this.leftColName = leftColName;
         this.rightColName = rightColName;
-        rowsToDelete = new LinkedHashSet();
+        rowsToDelete = new TreeSet();
         this.rowsToInsert = toInsert;
     }
 

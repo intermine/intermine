@@ -15,7 +15,7 @@ package org.intermine.sql.writebatch;
  *
  * @author Matthew Wakeling
  */
-public class Row
+public class Row implements Comparable
 {
     private int left, right;
 
@@ -63,5 +63,17 @@ public class Row
      */
     public int hashCode() {
         return left + (1013 * right);
+    }
+
+    /**
+     * @see Comparable#compareTo
+     */
+    public int compareTo(Object o) {
+        Row r = (Row) o;
+        int retval = left - r.left;
+        if (retval == 0) {
+            retval = right - r.right;
+        }
+        return retval;
     }
 }

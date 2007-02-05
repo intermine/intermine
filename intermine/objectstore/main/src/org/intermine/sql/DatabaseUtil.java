@@ -782,7 +782,7 @@ public class DatabaseUtil
                 } else if (o instanceof Date) {
                     o = new Long(((Date) o).getTime());
                 }
-                tableBatch.addRow(null, colNames, new Object[] {o});
+                tableBatch.addRow(o, colNames, new Object[] {o});
             }
         }
         List flushJobs = (new BatchWriterPostgresCopyImpl()).write(con, Collections
