@@ -8,6 +8,7 @@
 <tiles:importAttribute name="resultElementMap" ignore="false"/>
 <tiles:importAttribute name="columnNames" ignore="false"/>
 <tiles:importAttribute name="issueType" ignore="false"/>
+<tiles:importAttribute name="initialTypeMap" ignore="false"/>
 
 <!-- bagUploadConfirmIssue.jsp -->
 <table class="collection" cellspacing="0">
@@ -47,12 +48,15 @@
         <c:if test="${status.index == 0}">
           <td border="1" rowSpan="${fn:length(resultElementRowList)}"
               valign="top" id="td_${issueType}_${identifier}">${identifier}</td>
+          <c:if test="${issueType == 'converted' }">
+            <td border="1" rowSpan="${fn:length(resultElementRowList)}"
+                valign="top" id="td_${issueType}_${identifier}">${initialTypeMap[identifier]}</td>
+          </c:if>
         </c:if>
-
         <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
           <td id="row_${issueType}_${idcounter}">
             <c:choose>
-              <c:when test="${rowStatus.index == 0}">
+              <c:when test="${rowStatus.index == 0 && issueType != 'converted'}">
                 <%-- special case: the first element is the class name --%>
                 ${resultElement}
               </c:when>

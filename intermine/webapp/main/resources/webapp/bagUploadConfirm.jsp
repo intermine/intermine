@@ -22,7 +22,7 @@
         low quality matches
       </strong>,
       <strong>
-        <span id="convertedObjects">${fn:length(convertedObjects)}</span>
+        <span id="convertedCount">${fn:length(convertedObjects)}</span>
         objects found by converting types
       </strong>
       and <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
@@ -72,11 +72,22 @@
     </div>
   </c:if>
 
-  <div class="body">
-    <html:submit property="goBack">
-      <fmt:message key="bagUploadConfirm.goBack"/>
-    </html:submit>
+<c:if test="${!empty convertedObjects}">
+  <div class="heading">
+    <fmt:message key="bagUploadConfirm.issues"/>
   </div>
+  <div class="body">
+  <p><fmt:message key="bagUploadConfirm.lowQ"  />
+      <c:set var="issueMap" value="${convertedObjects}"/>
+      <tiles:insert name="bagUploadConfirmIssue.tile">
+        <tiles:put name="message" value="${message}"/>
+        <tiles:put name="issueMap" beanName="issueMap"/>
+        <tiles:put name="issueType" value="converted"/>
+      </tiles:insert>
+  </p>
+  </div>
+</c:if>
+
 
   <c:if test="${fn:length(unresolved) > 0}">
     <div class="heading">
@@ -91,6 +102,11 @@
       <p style="font-weight: bold">
         <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer.key} </c:forEach>
       </p>
+    </div>
+    <div class="body">
+      <html:submit property="goBack">
+        <fmt:message key="bagUploadConfirm.goBack"/>
+      </html:submit>
     </div>
   </c:if>
 </html:form>
