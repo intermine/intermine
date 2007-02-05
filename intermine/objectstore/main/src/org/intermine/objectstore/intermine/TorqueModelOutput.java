@@ -130,6 +130,22 @@ public class TorqueModelOutput
             .append(INDENT + INDENT + "<unique-column name=\"key\"/>" + ENDL)
             .append(INDENT + "</unique>" + ENDL)
             .append(INDENT + "</table>" + ENDL);
+        // Create the integer bag table
+        sb.append(INDENT + "<table name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + "\">"
+                + ENDL)
+            .append(generateColumn("bagId", "java.lang.Integer"))
+            .append(generateColumn("value", "java.lang.Integer"))
+            .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
+                    + "_index1\">" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\"bagId\"/>" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\"value\"/>" + ENDL)
+            .append(INDENT + INDENT + "</index>" + ENDL)
+            .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
+                    + "_index2\">" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\"value\"/>" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\"bagId\"/>" + ENDL)
+            .append(INDENT + INDENT + "</index>" + ENDL)
+            .append(INDENT + "</table>" + ENDL);
 
         sb.append("</database>" + ENDL);
         return sb.toString();
