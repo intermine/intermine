@@ -10,6 +10,9 @@
 <!-- main.jsp -->
 
 <html:xhtml/>
+
+<script type="text/javascript" src="js/queryBuilder.js" ></script>
+
 <table class="query" width="100%" cellspacing="0">
   <tr>
     <td rowspan="2" valign="top" width="50%" class="modelbrowse">
