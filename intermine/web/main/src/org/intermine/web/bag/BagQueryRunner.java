@@ -70,6 +70,12 @@ public class BagQueryRunner
      */
     public BagQueryResult searchForBag(String type, List input)
         throws ClassNotFoundException, ObjectStoreException, InterMineException {
+        
+        Set lowerCaseInput = new HashSet();
+        Iterator inputIter = input.iterator();
+        while (inputIter.hasNext()) {
+            lowerCaseInput.add(((String) inputIter.next()).toLowerCase());
+        }
     	
     	// TODO tidy up using type String and Class
     	
@@ -92,23 +98,38 @@ public class BagQueryRunner
                 ResultsRow row = (ResultsRow) resIter.next();
                 Integer id = (Integer) row.get(0);
                 for (int i = 1; i < row.size(); i++) {
-                    Object field = row.get(i);
-                    if (field != null && input.contains(field)) {
-                        Set ids = (Set) resMap.get(field);
-                        if (ids == null) {
-                            ids = new HashSet();
-                            resMap.put(field, ids);
+                    String field = (String) row.get(i);
+                    if (field != null) {
+                        String lowerField = field.toLowerCase();
+                        if (lowerCaseInput.contains(lowerField)) {
+                            Set ids = (Set) resMap.get(field);
+                            if (ids == null) {
+                                ids = new HashSet();
+                                resMap.put(field, ids);
+                            }
+                            // obj is an Integer
+                            ids.add(id);
+                            // remove any identifiers that are now resolved
+                            removeIgnoreCase(unresolved, lowerField);
                         }
-                        // obj is an Integer
-                        ids.add(id);
-                        // remove any identifiers that are now resolved
-                        unresolved.remove(field);
                     }
                 }
             }
             addResults(resMap, unresolved, bqr, bq, typeCls);
         }
         return bqr;
+    }
+
+    /**
+     * Remove the given String from a List while ignoring case.
+     */
+    private void removeIgnoreCase(List unresolved, String string) {
+        for (int i = 0; i < unresolved.size(); i++) {
+            if (((String) unresolved.get(i)).toLowerCase().equals(string)) {
+                unresolved.remove(i);
+                return;
+            }
+        }
     }
     
     /**
