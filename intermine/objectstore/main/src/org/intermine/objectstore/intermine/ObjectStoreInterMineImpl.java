@@ -123,6 +123,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * getUniqueInteger().
      */
     public static final String UNIQUE_INTEGER_SEQUENCE_NAME = "objectstore_unique_integer";
+    /**
+     * The name of the table that holds the integer ObjectStoreBag elements.
+     */
+    public static final String INT_BAG_TABLE_NAME = "osbag_int";
 
     /**
      * Constructs an ObjectStoreInterMineImpl.
