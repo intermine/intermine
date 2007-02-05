@@ -10,12 +10,9 @@ package org.intermine.web.bag;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,25 +71,13 @@ public class BagUploadConfirmController extends TilesAction
         request.setAttribute("duplicates", duplicates);
 
         // make a List of [input string, ConvertedObjectPair]
-        List convertedObjects = new ArrayList();
+        Map convertedObjects = new LinkedHashMap();
         Map convertedMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
         if (convertedMap != null) {
             Iterator convertedMapIter = convertedMap.values().iterator();
             while (convertedMapIter.hasNext()) {
                 Map inputToObjectsMap = (Map) convertedMapIter.next();
-                Iterator inputToObjectsMapIter = inputToObjectsMap.entrySet().iterator();
-                Entry entry = (Entry) inputToObjectsMapIter.next();
-                String input = (String) entry.getKey();
-                List pairs = (List) entry.getValue();
-                Iterator pairIter = pairs.iterator();
-                while (pairIter.hasNext()) {
-                    List row = new ArrayList();
-                    row.add(input);
-                    ConvertedObjectPair pair = (ConvertedObjectPair) pairIter.next();
-                    row.add(pair.getOldObject());
-                    row.add(pair.getNewObject());
-                    convertedObjects.add(pair);
-                }
+                convertedObjects.putAll(inputToObjectsMap);
             }
         }
         request.setAttribute("convertedObjects", convertedObjects);
