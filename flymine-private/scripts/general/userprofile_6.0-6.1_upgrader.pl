@@ -199,7 +199,7 @@ sub find_objects_by_type
       }
     }
 
-    warn "  NOT found\n";
+#    warn "  NOT found\n";
 
     push @{$objects_by_type{UNKNOWN}}, $identifier;
     $object_by_identifier_cache{$identifier} = "";
