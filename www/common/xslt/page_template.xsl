@@ -82,8 +82,22 @@
             </a>
           </span>
           <span class="menu-item">
-            <a href="{xsl:concat($webappprefix,'/history.do')}">
-              Query History
+            <script type="text/javascript">
+              if (readCookie('have-query-<xsl:value-of select="$releaseversion"/>') == 'true') {
+                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/query.do')"/>', 'Current query'));
+              } else {
+                document.write('Current query');
+              }
+            </script>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/mymine.do)}">
+              MyMine
+            </a>
+          </span>
+          <span class="menu-item">
+            <a href="{xsl:concat($webappprefix,'/mymine.do?page=bags')}">
+              Bags
             </a>
           </span>
           <span class="menu-item">
@@ -93,18 +107,9 @@
             <img src="{xsl:concat($webappprefix,'/images/inspect.gif')}" width="12" height="11" alt="-&gt;"/>
           </span>
           <span class="menu-item">
-            <a href="{xsl:concat($webappprefix,'/mymine.do?page=bags')}">
-              Bags
+            <a href="{xsl:concat($webappprefix,'/history.do')}">
+              Query History
             </a>
-          </span>
-          <span class="menu-item">
-            <script type="text/javascript">
-              if (readCookie('have-query-<xsl:value-of select="$releaseversion"/>') == 'true') {
-                document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/query.do')"/>', 'Current query'));
-              } else {
-                document.write('Current query');
-              }
-            </script>
           </span>
           <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/feedback.do')}">
