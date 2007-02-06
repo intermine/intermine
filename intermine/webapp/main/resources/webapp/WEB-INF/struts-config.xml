@@ -104,9 +104,6 @@
 
     <!-- Actions that just forward elsewhere - only used by jsps -->
     
-    <action path="/bag"
-            forward="bag.page"/>
-    
     <action path="/tree"
             forward="tree.page"/>
 
@@ -451,7 +448,7 @@
             parameter="action"
             scope="request"
             input="bag">
-      <forward name="bag" path="/bag.do" redirect="true"/>
+      <forward name="bag" path="/mymine.do?page=bags" redirect="true"/>
     </action>
 
     <action path="/modifyTemplate"
