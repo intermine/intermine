@@ -227,5 +227,5 @@ public interface Constants
     /**
      * Servlet attribute.  Map from class name to custom bag query.
      */
-    public static final String BAG_QUERIES = "BAG_QUERIES";
+    public static final String BAG_QUERY_CONFIG = "BAG_QUERY_CONFIG";
 }

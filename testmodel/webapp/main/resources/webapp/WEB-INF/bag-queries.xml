@@ -1,4 +1,5 @@
 <bag-queries>
+  <extra-bag-query-class connect-field="department" class-name="org.intermine.model.testmodel.Department" constrain-field="name"/>
   <bag-type type="Employee">
     <query message="employee end" matchesAreIssues="true">
       SELECT DISTINCT a1_.id as a2_, a1_.end as a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.end IN ? ORDER BY a1_

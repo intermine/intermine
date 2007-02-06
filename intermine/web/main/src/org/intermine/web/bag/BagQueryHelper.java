@@ -45,12 +45,24 @@ public class BagQueryHelper
      * Message associated with default bag query.
      */
     public static final String DEFAULT_MESSAGE = "searching key fields";
-
-    public static BagQuery createDefaultBagQuery(String type, Map classKeys,
-                                                 Model model, Collection input)
+    
+    /**
+     * Create a BagQuery that constrains the class key fields of the given type.
+     * @param type the class to query for
+     * @param bagQueryConfig The BagQueryConfig object used to get the extra class and field to 
+     * constrain when making the query (eg. constrain Bioentiry.organism.name = "something")
+     * @param classKeys the class keys map
+     * @param input the input strings/identifiers
+     * @param model the Model to pass to the BagQuery constructor
+     * @return a BagQuery that queries for objects of class given of type where any of the class 
+     * key fields match any of the input identifiers
+     * @throws ClassNotFoundException
+     */
+    public static BagQuery createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig, 
+                                                 Model model, Map classKeys, Collection input)
         throws ClassNotFoundException {
 
-        Class cls = Class.forName(model.getPackageName() + "." + type);
+        Class cls = Class.forName(type);
         if (!ClassKeyHelper.hasKeyFields(classKeys, type)) {
             throw new IllegalArgumentException("Internal error - no key fields found for type: "
                                                + type + ".");
@@ -97,20 +109,20 @@ public class BagQueryHelper
                 "Internal error - could not find any usable key fields for type: " + type + ".";
             throw new IllegalArgumentException(message);
         }
-        BagQuery bq = new BagQuery(q, DEFAULT_MESSAGE, false);
+        BagQuery bq = new BagQuery(bagQueryConfig, model, q, DEFAULT_MESSAGE, false);
         return bq;
     }
 
     /**
-     * Read the bag queries from the given stream.
+     * Read the bag query configuration from the given stream.
      * @param model the Model to use to check the bag types
      * @param is the InputStream
-     * @return a Map from type name to a List of BagQuerys to run for that type
+     * @return the BagQueryConfig object for this webapp
      * @throws Exception if there is a problem parsing the bag-queries.xml
      */
-    public static Map readBagQueries(Model model, InputStream is) throws Exception {
+    public static BagQueryConfig readBagQueryConfig(Model model, InputStream is) throws Exception {
         BagQueryHandler handler = new BagQueryHandler(model);
         SAXParser.parse(new InputSource(is), handler);
-        return handler.getBagQueries();
+        return handler.getBagQueryConfig();
     }
 }

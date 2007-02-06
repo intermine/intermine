@@ -40,6 +40,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.aspects.AspectBinding;
+import org.intermine.web.bag.BagQueryConfig;
 import org.intermine.web.bag.BagQueryHelper;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.results.DisplayObject;
@@ -191,8 +192,8 @@ public class InitialiserPlugin implements PlugIn
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
             try {
-                Map bagQueries = BagQueryHelper.readBagQueries(os.getModel(), is);
-                servletContext.setAttribute(Constants.BAG_QUERIES, bagQueries);
+                BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
+                servletContext.setAttribute(Constants.BAG_QUERY_CONFIG, bagQueryConfig);
             } catch (Exception e) {
                 throw new ServletException("Error loading class bag queries", e);
             }
