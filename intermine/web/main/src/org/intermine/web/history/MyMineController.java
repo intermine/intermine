@@ -17,6 +17,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.ClassKeyHelper;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.bag.BagQueryConfig;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,15 +46,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.ClassKeyHelper;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.SessionMethods;
 
 /**
  * Tiles controller for history tile (page).
@@ -76,17 +85,17 @@ public class MyMineController extends TilesAction
         }
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
-        getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        ObjectStoreSummary oss = 
+            (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Collection qualifiedTypes = os.getModel().getClassNames();
         ArrayList typeList = new ArrayList();
         ArrayList preferedTypeList = new ArrayList();
         String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
 
-        List tags = pm.getTags("im:preferredBagType", null, "class", superUserName);
-        for (Iterator iter = tags.iterator(); iter.hasNext();) {
+        List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
+        for (Iterator iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
             Tag tag = (Tag) iter.next();
-            preferedTypeList.add(TypeUtil.unqualifiedName((String) tag.getObjectIdentifier()));
+            preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
@@ -102,6 +111,46 @@ public class MyMineController extends TilesAction
         request.setAttribute("typeList", typeList);
         request.setAttribute("preferredTypeList", preferedTypeList);
 
+        BagQueryConfig bagQueryConfig =
+            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
+        request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
+        
+        List extraClassFieldValues =
+            getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
+        request.setAttribute("extraClassFieldValues", extraClassFieldValues);
+        
         return null;
+    }
+
+    private List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName, 
+                                String constrainField) {
+        List fieldValues = oss.getFieldValues(extraClassName, constrainField);
+        if (fieldValues == null) {
+            Query q = new Query();
+            q.setDistinct(true);
+            QueryClass qc;
+            try {
+                qc = new QueryClass(Class.forName(extraClassName));
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Can't find class for: " + extraClassName);
+            }
+            q.addToSelect(new QueryField(qc, constrainField));
+            q.addFrom(qc);
+            Results results;
+            try {
+                results = os.execute(q);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("problem querying values of: " + extraClassName + "." 
+                                           + constrainField);
+            }
+            fieldValues = new ArrayList();
+            for (Iterator j = results.iterator(); j.hasNext();) {
+                Object fieldValue = ((ResultsRow) j.next()).get(0);
+                fieldValues.add(fieldValue == null ? null : fieldValue.toString());
+            }
+        }
+        
+        return fieldValues;
     }
 }

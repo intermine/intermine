@@ -29,6 +29,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.TypeConverter;
 
 import javax.servlet.ServletContext;
@@ -43,18 +44,24 @@ public class BagQueryRunner
 {
 	private ObjectStore os;
     private Model model;
-    private Map classKeys, bagQueries;
+    private Map classKeys;
+    private BagQueryConfig bagQueryConfig;
     private ServletContext context;
 
     /**
      * Construct with configured bag queries and a map of type -> key fields.
+     * @param os the ObjectStore to run queries on
+     * @param classKeys the class keys Map
+     * @param bagQueryConfig the configuration for running queries
+     * @param context the ServletContext used by type conversion
      */
-    public BagQueryRunner(ObjectStore os, Map classKeys, Map bagQueries, ServletContext context) {
+    public BagQueryRunner(ObjectStore os, Map classKeys, BagQueryConfig bagQueryConfig,
+                          ServletContext context) {
         this.os = os;
         this.context = context;
         this.model = os.getModel();
         this.classKeys = classKeys;
-        this.bagQueries = bagQueries;
+        this.bagQueryConfig = bagQueryConfig;
     }
 
     /**
@@ -63,12 +70,16 @@ public class BagQueryRunner
      * the speified type.
      * @param type an unqualified class name to search for objects
      * @param input a list of strings to query
+     * @param extraFieldValue the value used when adding an extra constraint to the bag query,
+     * configured in BagQueryConfig (eg. if connectField is "organism", the extraClassName is
+     * "Organism" and the constrainField is "name", the extraFieldValue might be "Drosophila
+     * melanogaster")
      * @return the matches, issues and unresolved input
      * @throws ClassNotFoundException
      * @throws ObjectStoreException
      * @throws InterMineException 
      */
-    public BagQueryResult searchForBag(String type, List input)
+    public BagQueryResult searchForBag(String type, List input, String extraFieldValue)
         throws ClassNotFoundException, ObjectStoreException, InterMineException {
         
         Set lowerCaseInput = new HashSet();
@@ -84,7 +95,8 @@ public class BagQueryRunner
     	// or just leave as a list of identifiers and objects of the qrong type
     	// CollectionUtil.groupByClass will sort out the strings and types
     	Class typeCls = Class.forName(model.getPackageName() + "." + type);
-        List queries = getBagQueriesForType(bagQueries, type, input);
+        List queries = 
+            getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), input);
         List unresolved = new ArrayList(input);
         Iterator qIter = queries.iterator();
         BagQueryResult bqr = new BagQueryResult();
@@ -92,7 +104,7 @@ public class BagQueryRunner
             BagQuery bq = (BagQuery) qIter.next();
             Map resMap = new HashMap();
             // run the next query on identifiers not yet resolved
-            Results res = os.execute(bq.getQuery(unresolved));
+            Results res = os.execute(bq.getQuery(unresolved, extraFieldValue));
             Iterator resIter = res.iterator();
             while (resIter.hasNext()) {
                 ResultsRow row = (ResultsRow) resIter.next();
@@ -210,6 +222,25 @@ public class BagQueryRunner
         }
         
         // now objsOfWrongType contains all wrong types found for this query, try converting
+        convertObjects(bqr, bq, type, objsOfWrongType);
+
+        Map unresolvedMap = new HashMap();
+        Iterator iter = unresolved.iterator();
+        while (iter.hasNext()) {
+            unresolvedMap.put(iter.next(), null);
+        }
+        unresolvedMap.putAll(objsOfWrongType);
+        
+        // unresolved list will be used for next query
+        bqr.setUnresolved(unresolvedMap);
+    }
+
+    /**
+     * Find any objects in the objsOfWrongType Map that can be converted to the destination type,
+     * add them to bqr as TYPE_CONVERTED issues and remove them from objsOfWrongType.
+     */
+    void convertObjects(BagQueryResult bqr, BagQuery bq, Class type, Map objsOfWrongType)
+        throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
             Map objectToInput = new HashMap();
@@ -273,16 +304,6 @@ public class BagQueryRunner
                 }
             }
         }
-
-        Map unresolvedMap = new HashMap();
-        Iterator iter = unresolved.iterator();
-        while (iter.hasNext()) {
-            unresolvedMap.put(iter.next(), null);
-        }
-        unresolvedMap.putAll(objsOfWrongType);
-        
-        // unresolved list will be used for next query
-        bqr.setUnresolved(unresolvedMap);
     }
 
     // temporary method - will be replaced by BagQueryHelper method
@@ -290,14 +311,15 @@ public class BagQueryRunner
         throws ClassNotFoundException {
         List queries = new ArrayList();
         // create the default query and put it first in the list
-        BagQuery defaultQuery = BagQueryHelper.createDefaultBagQuery(type, classKeys, model, input);
+        BagQuery defaultQuery =
+            BagQueryHelper.createDefaultBagQuery(type, bagQueryConfig, model, classKeys, input);
         if (defaultQuery != null) {
             queries.add(defaultQuery);
         }
 
         
         // add any queries that are configured for this type
-        List bqs = (List) bagQueries.get(type);
+        List bqs = (List) bagQueries.get(TypeUtil.unqualifiedName(type));
         if (bqs != null) {
             queries.addAll(bqs);
         }

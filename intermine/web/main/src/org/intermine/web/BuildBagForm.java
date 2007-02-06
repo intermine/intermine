@@ -10,16 +10,7 @@ package org.intermine.web;
  *
  */
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.upload.FormFile;
 
 /**
@@ -30,10 +21,11 @@ import org.apache.struts.upload.FormFile;
 
 public class BuildBagForm extends ActionForm
 {
-    protected String bagName;
-    protected FormFile formFile;
-    protected String text;
-    protected String type;
+    private String bagName;
+    private FormFile formFile;
+    private String text;
+    private String type;
+    private String extraFieldValue;
 
     /**
      * Get the bag type
@@ -53,7 +45,6 @@ public class BuildBagForm extends ActionForm
 
     /**
      * Set the query string
-     *
      * @param text the query string
      */
     public void setText(String text) {
@@ -62,7 +53,6 @@ public class BuildBagForm extends ActionForm
 
     /**
      * Get the text string
-     *
      * @return the text string
      */
     public String getText() {
@@ -87,11 +77,26 @@ public class BuildBagForm extends ActionForm
 
     /**
      * Get the bag name (existing bags)
-     *
      * @return the bag name
      */
     public String getBagName() {
         return bagName;
     }
 
+    /**
+     * Get the value to use when creating an extra constraint on a BagQuery, configured in
+     * BagQueryConfig.
+     * @return the extra field value
+     */
+    public String getExtraFieldValue() {
+        return extraFieldValue;
+    }
+
+    /**
+     * Set the extra field value.
+     * @param extraFieldValue the extra field value
+     */
+    public void setExtraFieldValue(String extraFieldValue) {
+        this.extraFieldValue = extraFieldValue;
+    }
 }

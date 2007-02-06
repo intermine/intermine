@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.bag.BagQueryConfig;
 import org.intermine.web.bag.BagQueryResult;
 import org.intermine.web.bag.BagQueryRunner;
 
@@ -72,8 +73,10 @@ public class BuildBagAction extends InterMineAction
         }
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        Map bagQueries = (Map) servletContext.getAttribute(Constants.BAG_QUERIES);
-        BagQueryRunner bagRunner = new BagQueryRunner(os, classKeys, bagQueries, servletContext);
+        BagQueryConfig bagQueryConfig = 
+            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        BagQueryRunner bagRunner =
+            new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
 
@@ -119,7 +122,8 @@ public class BuildBagAction extends InterMineAction
             }
         }
 
-        BagQueryResult bagQueryResult = bagRunner.searchForBag(type, list);
+        BagQueryResult bagQueryResult = 
+            bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue());
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagName", newBagName);
         request.setAttribute("bagType", type);

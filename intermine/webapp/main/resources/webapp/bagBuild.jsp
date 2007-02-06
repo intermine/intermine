@@ -39,6 +39,19 @@
            <html:option value="${type}">${type}</html:option>
       	</c:forEach>
       </html:select>
+      <c:if test="${!empty extraBagQueryClass}">
+        <p>
+          <fmt:message key="bagBuild.extraConstraint">
+            <fmt:param value="${extraBagQueryClass}"/>
+          </fmt:message>
+          <html:select property="extraFieldValue">
+            <html:option value="" style="text-align:center">----------------</html:option>
+      	    <c:forEach items="${extraClassFieldValues}" var="value">
+              <html:option value="${value}">${value}</html:option>
+      	    </c:forEach>
+          </html:select>
+        </p>
+      </c:if>
       </p>
       <h4>     
         <a href="javascript:switchInputs('paste', 'file');">

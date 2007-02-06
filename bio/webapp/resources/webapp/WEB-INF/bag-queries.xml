@@ -1,4 +1,6 @@
 <bag-queries>
+  <extra-bag-query-class connect-field="organism" class-name="org.flymine.model.genomic.Organism" 
+                         constrain-field="shortName"/>
 	<bag-type type="BioEntity">
 		<query message="searching key fields for all types" matchesAreIssues="true">
 		SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM org.flymine.model.genomic.BioEntity AS a1_, 
