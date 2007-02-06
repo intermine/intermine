@@ -110,17 +110,17 @@ public class WebResults extends AbstractList implements WebColumnTable
             Object columnPathObject = iter.next();
             if (columnPathObject instanceof Path) {
                 Path columnPath = (Path) columnPathObject;
-                String type = null;
-                if (columnPath.getElements().size() >= 2) {
-                    Object pathElement = columnPath.getElements().get(columnPath.getElements()
-                            .size() - 2);
-                    if (pathElement instanceof ReferenceDescriptor) {
-                        ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                        type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
-                    }
-                } else {
-                    type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
-                }
+                String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
+//                if (columnPath.getElements().size() >= 2) {
+//                    Object pathElement = columnPath.getElements().get(columnPath.getElements()
+//                            .size() - 2);
+//                    if (pathElement instanceof ReferenceDescriptor) {
+//                        ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
+//                        type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+//                    }
+//                } else {
+//                    type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
+//                }
                 pathToType.put(columnPath.toStringNoConstraints(), type);
                 Column column = new Column(columnPath, i, type);
                 if (!types.contains(column.getColumnId())) {

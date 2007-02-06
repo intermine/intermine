@@ -114,22 +114,11 @@ public class WebCollection extends AbstractList implements WebColumnTable
             Path path = new Path(model, newColumnName);
             Object fieldValue = path.resolve(o);
             if (makeResultElements) {
-                String type = null;
-                if (path.getElements().size() >= 2) {
-                     Object pathElement = 
-                        path.getElements().get(path.getElements().size() - 2);
-                    if (pathElement instanceof ReferenceDescriptor) {
-                        ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                        type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
-                    }
-                } else {
-                    type = path.getStartClassDescriptor().getType().getName();
-                }
-                String unqualifiedClassName = TypeUtil.unqualifiedName(type);
+                String type = TypeUtil.unqualifiedName(path.getStartClassDescriptor().getName());
                 String fieldName = path.getEndFieldDescriptor().getName();
-                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedClassName,
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type,
                                                                fieldName);
-                rowCells.add(new ResultElement(os, fieldValue, o.getId(), unqualifiedClassName,
+                rowCells.add(new ResultElement(os, fieldValue, o.getId(), type,
                                                path, isKeyField));
             } else {
                 rowCells.add(fieldValue);
