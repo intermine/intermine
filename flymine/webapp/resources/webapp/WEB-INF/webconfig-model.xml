@@ -223,7 +223,6 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="length"/>
-      <fieldconfig fieldExpr="distance3Prime"/>
       <fieldconfig fieldExpr="tm"/>
     </fields>
     <longdisplayers>
