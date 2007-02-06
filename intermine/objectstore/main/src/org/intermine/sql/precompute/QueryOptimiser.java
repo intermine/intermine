@@ -304,7 +304,7 @@ public class QueryOptimiser
      * @throws BestQueryException if the BestQuery decides to cut short the search
      * @throws SQLException if a database error occurs
      */
-    protected static void recursiveOptimise(Set precomputedTables, Query query,
+    public static void recursiveOptimise(Set precomputedTables, Query query,
             BestQuery bestQuery, Query originalQuery) throws BestQueryException, SQLException {
         // This line creates a Map from PrecomputedTable objects to Sets of optimised Query objects.
         SortedMap map = mergeMultiple(precomputedTables, query, originalQuery);

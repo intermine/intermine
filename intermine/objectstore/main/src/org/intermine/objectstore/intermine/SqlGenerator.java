@@ -760,7 +760,7 @@ public class SqlGenerator
             containsConstraintToString(state, (ContainsConstraint) c, q, schema, safeness,
                     loseBrackets);
         } else if (c instanceof BagConstraint) {
-            bagConstraintToString(state, (BagConstraint) c, q, schema);
+            bagConstraintToString(state, (BagConstraint) c, q, schema, safeness);
         } else {
             throw (new ObjectStoreException("Unknown constraint type: " + c));
         }
@@ -1029,7 +1029,8 @@ public class SqlGenerator
                             fieldToAlias.put("id", arg2Alias);
                             bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
                                         (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema);
+                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema,
+                                    SAFENESS_UNSAFE); // TODO: Not really unsafe
                         }
                     } else {
                         state.addToWhere(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
@@ -1053,7 +1054,8 @@ public class SqlGenerator
                             fieldToAlias.put("id", arg2Alias);
                             bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
                                         (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema);
+                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema,
+                                    SAFENESS_UNSAFE); // TODO: Not really unsafe
                         }
                     } else {
                         state.addToWhere("" + arg1Obj.getId()
@@ -1087,7 +1089,8 @@ public class SqlGenerator
                         fieldToAlias.put("id", arg2Alias);
                         bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
                                     (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                     : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema);
+                                     : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema,
+                                SAFENESS_UNSAFE); // TODO: Not really unsafe
                     }
                 } else {
                     state.addToWhere(arg1Obj.getId() + " = " + arg2Alias);
@@ -1118,10 +1121,11 @@ public class SqlGenerator
      * @param c the BagConstraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
+     * @param safeness the constraint context safeness
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void bagConstraintToString(State state, BagConstraint c, Query q,
-                                                DatabaseSchema schema)
+            DatabaseSchema schema, int safeness)
         throws ObjectStoreException {
 
         Class type = c.getQueryNode().getType();
@@ -1129,11 +1133,11 @@ public class SqlGenerator
         if (c.getQueryNode() instanceof QueryEvaluable) {
             StringBuffer lhsBuffer = new StringBuffer();
             queryEvaluableToString(lhsBuffer, (QueryEvaluable) c.getQueryNode(), q, state);
-            leftHandSide = lhsBuffer.toString() + " IN (";
+            leftHandSide = lhsBuffer.toString();
         } else {
             StringBuffer lhsBuffer = new StringBuffer();
             queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, schema, ID_ONLY, state);
-            leftHandSide = lhsBuffer.toString() + " IN (";
+            leftHandSide = lhsBuffer.toString();
         }
         SortedSet filteredBag = new TreeSet();
         Iterator bagIter = c.getBag().iterator();
@@ -1150,17 +1154,17 @@ public class SqlGenerator
         if (filteredBag.isEmpty()) {
             state.addToWhere(c.getOp() == ConstraintOp.IN ? "false" : "true");
         } else {
-            if (filteredBag.size () < MAX_BAG_INLINE_SIZE
-                || state.getBagTableNames().get(c) == null) {
+            String bagTableName = (String) state.getBagTableNames().get(c);
+            if (filteredBag.size() < MAX_BAG_INLINE_SIZE || bagTableName == null) {
                 int needComma = 0;
                 Iterator orIter = filteredBag.iterator();
                 while (orIter.hasNext()) {
                     if (needComma == 0) {
                         state.addToWhere((c.getOp() == ConstraintOp.IN
                                     ? (filteredBag.size() > 9000 ? "(" : "")
-                                    : "(NOT (") + leftHandSide);
+                                    : "(NOT (") + leftHandSide + " IN (");
                     } else if (needComma % 9000 == 0) {
-                        state.addToWhere(") OR " + leftHandSide);
+                        state.addToWhere(") OR " + leftHandSide + " IN (");
                     } else {
                         state.addToWhere(", ");
                     }
@@ -1178,14 +1182,23 @@ public class SqlGenerator
                     state.addToWhere(leftHandSide);
                 }
 
-                state.addToWhere("SELECT value FROM ");
-
-                state.addToWhere((String) state.getBagTableNames().get(c));
-
-                if (c.getOp() == ConstraintOp.IN) {
-                    state.addToWhere(")");
+                if (((safeness == SAFENESS_SAFE) && (c.getOp() == ConstraintOp.IN))
+                        || ((safeness == SAFENESS_ANTISAFE)
+                            && (c.getOp() == ConstraintOp.NOT_IN))) {
+                    // We can move the temporary bag table to the FROM list.
+                    String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
+                    state.addToFrom(bagTableName + " AS " + indirectTableAlias);
+                    state.addToWhere(" = " + indirectTableAlias + ".value");
                 } else {
-                    state.addToWhere(")))");
+                    state.addToWhere(" IN (SELECT value FROM ");
+
+                    state.addToWhere(bagTableName);
+
+                    if (c.getOp() == ConstraintOp.IN) {
+                        state.addToWhere(")");
+                    } else {
+                        state.addToWhere(")))");
+                    }
                 }
             }
         }
