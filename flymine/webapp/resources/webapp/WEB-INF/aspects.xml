@@ -14,7 +14,7 @@
   </aspect>
 
   <aspect name="Gene Expression">
-    <subtitle>ArrayExpress</subtitle>
+    <subtitle></subtitle>
     <icon-image>model/marray.gif</icon-image>
     <large-image>model/marray.gif</large-image>
     <intro-text>
