@@ -30,7 +30,6 @@
 <table><tr><td width="50%">
 <table class="results" cellspacing="0">
   <tr>
-  	<th>&nbsp;</th>
     <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
       <th align="center" valign="top">
 	<div>              
@@ -49,9 +48,6 @@
        </c:choose>
     </c:set>
     <tr class="${rowClass}">
-     <td align="center" class="checkbox" >
-       <html:multibox property="selectedElements" value="${object.id}" />
-     </td>
      <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
        <td>
         <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
@@ -73,9 +69,6 @@
   </c:forEach>
 </table>
 <br/>
-<html:submit property="remove">
-  Remove selected
-</html:submit>
 
 <c:if test="${pagedColl.pageSize < pagedColl.size}">
   <p>
