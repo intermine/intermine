@@ -664,6 +664,9 @@
     <action path="/starTemplate"
             type="org.intermine.web.StarTemplateController"/>
 
+    <action path="/objectDetailsBags"
+            type="org.intermine.web.ObjectDetailsBagsController"/>
+
     <action path="/precomputeTemplate"
             type="org.intermine.web.PrecomputeTemplateController"/>
             

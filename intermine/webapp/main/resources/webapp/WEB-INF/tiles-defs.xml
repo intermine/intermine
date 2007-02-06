@@ -156,6 +156,9 @@
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition> 
+  
+   <definition name="objectDetailsBags.tile" path="/objectDetailsBags.jsp" controllerUrl="/objectDetailsBags.do"/>
+  
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="history.tile" path="/history.jsp" />
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>

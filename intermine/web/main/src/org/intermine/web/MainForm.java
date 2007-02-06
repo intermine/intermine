@@ -364,7 +364,7 @@ public class MainForm extends ActionForm
         bagOp = null;
         bagValue = null;
         attributeOp = null;
-        attributeValue = null;
+        attributeValue = null; // can be a checkbox
         subclassValue = null;
         path = null;
         nullConstraint = "NULL";
