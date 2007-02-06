@@ -147,7 +147,7 @@ public class AjaxServices
         }
         if (!WebUtil.isValidName(newName)) {       
             String errorMsg = "<i>Invalid name.  Names may only contain letters, " +
-                    "numbers, and underscores.</i>";           
+                    "numbers, spaces, and underscores.</i>";           
             return errorMsg;
         }
         if (type.equals("history")) {
