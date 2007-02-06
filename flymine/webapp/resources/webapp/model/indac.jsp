@@ -32,7 +32,7 @@
       </div>
     </td>
 
-    <<td width="40%" valign="top">
+    <td width="40%" valign="top">
       <div class="heading2">
         Bulk download
       </div>
