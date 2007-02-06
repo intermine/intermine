@@ -10,7 +10,9 @@ package org.intermine.objectstore;
  *
  */
 
+import java.util.Collection;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.ObjectStoreBag;
 
 /**
  * Store, update, and delete objects
@@ -80,6 +82,50 @@ public interface ObjectStoreWriter extends ObjectStore
         throws ObjectStoreException;
     
     /**
+     * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
+     *
+     * @return an ObjectStoreBag
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException;
+
+    /**
+     * Adds an element to an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param element an Integer to add to the bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException;
+
+    /**
+     * Adds a collection of elements to an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException;
+
+    /**
+     * Removes an element from an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param element an Integer to add to the bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException;
+
+    /**
+     * Removes a collection of elements from an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException;
+
+    /**
      * Gets an ID number which is unique in the database.
      *
      * @return an Integer
@@ -91,7 +137,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * Check whether the ObjectStoreWriter is performing a transaction
      *
      * @return true if in a transaction, false otherwise
-     * @throws ObjectStoreException if an error occurs the check
+     * @throws ObjectStoreException if an error occurs
      */
     public boolean isInTransaction() throws ObjectStoreException;
 

@@ -110,4 +110,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.delete(o);
         }
     }
+
+    public void testExceptionOutOfTransaction() throws Exception {
+    }
 }

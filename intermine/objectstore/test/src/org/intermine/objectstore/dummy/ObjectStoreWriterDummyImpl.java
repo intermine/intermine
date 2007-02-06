@@ -1,5 +1,6 @@
 package org.intermine.objectstore.dummy;
 
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -185,5 +186,59 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 
     public Map getStoredObjects() {
         return storedObjects;
+    }
+ 
+    /**
+     * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
+     *
+     * @return an ObjectStoreBag
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
+        throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * Adds an element to an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param element an Integer to add to the bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
+        throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * Adds a collection of elements to an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+        throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * Removes an element from an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param element an Integer to add to the bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
+        throw new RuntimeException("Not implemented");
+    }
+
+    /**
+     * Removes a collection of elements from an ObjectStoreBag.
+     *
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+        throw new RuntimeException("Not implemented");
     }
 }

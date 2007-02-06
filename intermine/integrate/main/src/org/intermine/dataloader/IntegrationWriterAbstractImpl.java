@@ -28,6 +28,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -440,6 +441,62 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void delete(InterMineObject o) throws ObjectStoreException {
         osw.delete(o);
+    }
+
+    /**
+     * Returns a new empty ObjectStoreBag for this ObjectStore, delegate to internal
+     * ObjectStoreWriter.
+     *
+     * @return an ObjectStoreBag
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
+        return osw.createObjectStoreBag();
+    }
+
+    /**
+     * Adds an element to an ObjectStoreBag, delegate to internal ObjectStoreWriter.
+     *
+     * @param osb an ObjectStoreBag
+     * @param element an Integer to add to the bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
+        osw.addToBag(osb, element);
+    }
+
+    /**
+     * Adds a collection of elements to an ObjectStoreBag, delegate to internal ObjectStoreWriter.
+     *
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+        osw.addAllToBag(osb, coll);
+    }
+
+    /**
+     * Removes an element from an ObjectStoreBag, delegate to internal ObjectStoreWriter.
+     *
+     * @param osb an ObjectStoreBag
+     * @param element an Integer to add to the bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
+        osw.removeFromBag(osb, element);
+    }
+
+    /**
+     * Removes a collection of elements from an ObjectStoreBag, delegate to internal
+     * ObjectStoreWriter.
+     *
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+        osw.removeAllFromBag(osb, coll);
     }
 
     /**
