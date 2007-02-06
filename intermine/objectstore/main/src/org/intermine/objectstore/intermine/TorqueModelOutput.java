@@ -133,17 +133,21 @@ public class TorqueModelOutput
         // Create the integer bag table
         sb.append(INDENT + "<table name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + "\">"
                 + ENDL)
-            .append(generateColumn("bagId", "java.lang.Integer"))
-            .append(generateColumn("value", "java.lang.Integer"))
+            .append(generateColumn(ObjectStoreInterMineImpl.BAGID_COLUMN, "java.lang.Integer"))
+            .append(generateColumn(ObjectStoreInterMineImpl.BAGVAL_COLUMN, "java.lang.Integer"))
             .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
                     + "_index1\">" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\"bagId\"/>" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\"value\"/>" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\""
+                    + ObjectStoreInterMineImpl.BAGID_COLUMN + "\"/>" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\""
+                    + ObjectStoreInterMineImpl.BAGVAL_COLUMN + "\"/>" + ENDL)
             .append(INDENT + INDENT + "</index>" + ENDL)
             .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
                     + "_index2\">" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\"value\"/>" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\"bagId\"/>" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\""
+                    + ObjectStoreInterMineImpl.BAGVAL_COLUMN + "\"/>" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\""
+                    + ObjectStoreInterMineImpl.BAGID_COLUMN + "\"/>" + ENDL)
             .append(INDENT + INDENT + "</index>" + ENDL)
             .append(INDENT + "</table>" + ENDL);
 

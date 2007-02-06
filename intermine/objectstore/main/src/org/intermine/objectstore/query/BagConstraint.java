@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Constraint a QueryClass or QueryEvaluable to be within a bag.
+ * Constrain a QueryClass or QueryEvaluable to be within a bag.
  *
  * @author Matthew Wakeling
  */

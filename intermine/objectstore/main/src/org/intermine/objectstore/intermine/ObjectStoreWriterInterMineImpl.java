@@ -37,6 +37,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.Lazy;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.writebatch.Batch;
@@ -575,10 +576,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             throw new ObjectStoreException("Error while storing", e);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException("Illegal access to value while storing", e);
-        }
-
-        if (!wasInTransaction) {
-            commitTransactionWithConnection(c);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(c);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
         }
     }
 
@@ -610,36 +616,50 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     protected void addToCollectionWithConnection(Connection c, Integer hasId, Class clazz,
             String fieldName, Integer hadId) throws ObjectStoreException {
-        FieldDescriptor field = (FieldDescriptor) model.getFieldDescriptorsForClass(clazz)
-            .get(fieldName);
-        if (field == null) {
-            throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
-                    + " does not exist in the model.");
+        boolean wasInTransaction = isInTransactionWithConnection(c);
+        if (!wasInTransaction) {
+            beginTransactionWithConnection(c);
         }
-        if (field.relationType() == FieldDescriptor.M_N_RELATION) {
-            invalidateObjectById(hasId);
-            invalidateObjectById(hadId);
-            CollectionDescriptor coll = (CollectionDescriptor) field;
-            String indirectTableName = DatabaseUtil.getIndirectionTableName(coll);
-            String inwardColumnName = DatabaseUtil.getInwardIndirectionColumnName(coll);
-            String outwardColumnName = DatabaseUtil.getOutwardIndirectionColumnName(coll);
-            boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
-            String indirColNames[] = (String []) tableToColNameArray.get(indirectTableName);
-            if (indirColNames == null) {
-                indirColNames = new String[2];
-                indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
-                indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
-                tableToColNameArray.put(indirectTableName, indirColNames);
+
+        try {
+            FieldDescriptor field = (FieldDescriptor) model.getFieldDescriptorsForClass(clazz)
+                .get(fieldName);
+            if (field == null) {
+                throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
+                        + " does not exist in the model.");
             }
-            try {
+            if (field.relationType() == FieldDescriptor.M_N_RELATION) {
+                invalidateObjectById(hasId);
+                invalidateObjectById(hadId);
+                CollectionDescriptor coll = (CollectionDescriptor) field;
+                String indirectTableName = DatabaseUtil.getIndirectionTableName(coll);
+                String inwardColumnName = DatabaseUtil.getInwardIndirectionColumnName(coll);
+                String outwardColumnName = DatabaseUtil.getOutwardIndirectionColumnName(coll);
+                boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
+                String indirColNames[] = (String []) tableToColNameArray.get(indirectTableName);
+                if (indirColNames == null) {
+                    indirColNames = new String[2];
+                    indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
+                    indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
+                    tableToColNameArray.put(indirectTableName, indirColNames);
+                }
                 batch.addRow(c, indirectTableName, indirColNames[0], indirColNames[1],
                              (swap ? hasId : hadId).intValue(), (swap ? hadId : hasId).intValue());
-            } catch (SQLException e) {
-                throw new ObjectStoreException("Error while storing", e);
+            } else {
+                throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
+                        + " is not a many-to-many collection.");
             }
-        } else {
-            throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
-                    + " is not a many-to-many collection.");
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error while storing", e);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(c);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
         }
     }
 
@@ -760,6 +780,136 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
+     * Creates a new empty ObjectStoreBag object that is valid for this ObjectStore.
+     *
+     * @return an ObjectStoreBag
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
+        return new ObjectStoreBag(getSerial().intValue());
+    }
+
+    /**
+     * @see ObjectStoreWriter#addToBag
+     */
+    public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
+        addAllToBag(osb, Collections.singleton(element));
+    }
+
+    /**
+     * @see ObjectStoreWriter#addAllToBag
+     */
+    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+        try {
+            Connection c = null;
+            try {
+                c = getConnection();
+                addAllToBagWithConnection(c, osb, coll);
+            } finally {
+                releaseConnection(c);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        }
+    }
+
+    /**
+     * Adds elements to the given bag.
+     *
+     * @param c a Connection
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if there is an error in the underlying database
+     */
+    protected void addAllToBagWithConnection(Connection c, ObjectStoreBag osb, Collection coll)
+    throws ObjectStoreException {
+        boolean wasInTransaction = isInTransactionWithConnection(c);
+        if (!wasInTransaction) {
+            beginTransactionWithConnection(c);
+        }
+
+        try {
+            Iterator iter = coll.iterator();
+            while (iter.hasNext()) {
+                Integer element = (Integer) iter.next();
+                batch.addRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
+                        element.intValue());
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error adding to bag", e);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(c);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /**
+     * @see ObjectStoreWriter#removeFromBag
+     */
+    public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
+        removeAllFromBag(osb, Collections.singleton(element));
+    }
+
+    /**
+     * @see ObjectStoreWriter#removeAllFromBag
+     */
+    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+        try {
+            Connection c = null;
+            try {
+                c = getConnection();
+                removeAllFromBagWithConnection(c, osb, coll);
+            } finally {
+                releaseConnection(c);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        }
+    }
+
+    /**
+     * Removes elements from the given bag.
+     *
+     * @param c a Connection
+     * @param osb an ObjectStoreBag
+     * @param coll a Collection of Integers
+     * @throws ObjectStoreException if there is an error in the underlying database
+     */
+    protected void removeAllFromBagWithConnection(Connection c, ObjectStoreBag osb, Collection coll)
+    throws ObjectStoreException {
+        boolean wasInTransaction = isInTransactionWithConnection(c);
+        if (!wasInTransaction) {
+            beginTransactionWithConnection(c);
+        }
+
+        try {
+            Iterator iter = coll.iterator();
+            while (iter.hasNext()) {
+                Integer element = (Integer) iter.next();
+                batch.deleteRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
+                        element.intValue());
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error removing from bag", e);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(c);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /**
      * Gets an ID number which is unique in the database.
      *
      * @return an Integer
@@ -857,15 +1007,20 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             invalidateObjectById(o.getId());
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while deleting", e);
-        }
-
-        if (!wasInTransaction) {
-            commitTransactionWithConnection(c);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(c);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
         }
     }
 
     /**
-     * @see ObjectStoreWriter#isInTransaction()
+     * @see ObjectStoreWriter#isInTransaction
      */
     public boolean isInTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -895,7 +1050,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#beginTransaction()
+     * @see ObjectStoreWriter#beginTransaction
      */
     public void beginTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -928,7 +1083,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#commitTransaction()
+     * @see ObjectStoreWriter#commitTransaction
      */
     public void commitTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -963,7 +1118,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#abortTransaction()
+     * @see ObjectStoreWriter#abortTransaction
      */
     public void abortTransaction() throws ObjectStoreException {
         Connection c = null;
