@@ -16,16 +16,25 @@
         <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
       </strong>
       currently in your bag.<br/>
-      <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>,
-      <strong>
-        <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
-        low quality matches
-      </strong>,
-      <strong>
-        <span id="convertedCount">${fn:length(convertedObjects)}</span>
-        objects found by converting types
-      </strong>
-      and <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
+      Also found&nbsp;
+      <c:if test="${fn:length(duplicates)>0}">
+        <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>
+      </c:if>
+      <c:if test="${fn:length(lowQualityMatches)>0}">
+        ,<strong>
+          <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
+          low quality matches
+        </strong>
+      </c:if>
+      <c:if test="${fn:length(convertedObjects)>0}">
+        ,<strong>
+          <span id="convertedCount">${fn:length(convertedObjects)}</span>
+          objects found by converting types
+        </strong>
+      </c:if>
+      <c:if test="${fn:length(unresolved)>0}">
+        ,<strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
+      </c:if>
     </div>
     <div class="blueBg">
       <c:set var="totalObjects" value="${fn:length(issues) + matchCount + fn:length(unresolved)}"/>
@@ -53,6 +62,7 @@
       <fmt:message key="bagUploadConfirm.issues"/>
     </div>
     <div class="body">
+    <c:if test="${! empty lowQualityMatches}">
     <p><fmt:message key="bagUploadConfirm.lowQ"  />
         <c:set var="issueMap" value="${lowQualityMatches}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
@@ -61,6 +71,8 @@
           <tiles:put name="issueType" value="lowQ"/>
         </tiles:insert>
     </p>
+    </c:if>
+    <c:if test="${! empty duplicates}">
     <p><fmt:message key="bagUploadConfirm.duplicatesHeader"  />
         <c:set var="issueMap" value="${duplicates}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
@@ -69,15 +81,18 @@
           <tiles:put name="issueType" value="duplicate"/>
         </tiles:insert>
     </p>
+    </c:if>
     </div>
   </c:if>
 
 <c:if test="${!empty convertedObjects}">
   <div class="heading">
-    <fmt:message key="bagUploadConfirm.issues"/>
+    <fmt:message key="bagUploadConfirm.convertedHeader"/>
   </div>
   <div class="body">
-  <p><fmt:message key="bagUploadConfirm.lowQ"  />
+  <p><fmt:message key="bagUploadConfirm.converted">
+        <fmt:param value="${bagUploadConfirmForm.bagType}"/>
+      </fmt:message>
       <c:set var="issueMap" value="${convertedObjects}"/>
       <tiles:insert name="bagUploadConfirmIssue.tile">
         <tiles:put name="message" value="${message}"/>
