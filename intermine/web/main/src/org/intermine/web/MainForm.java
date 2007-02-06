@@ -38,7 +38,7 @@ import org.apache.struts.action.ActionMessages;
 public class MainForm extends ActionForm
 {
     protected String bagOp, bagValue;
-    protected String attributeOp, attributeValue;
+    protected String attributeOp, attributeValue, attributeOptions;
     protected String subclassValue;
     protected String loopQueryOp, loopQueryValue;
 
@@ -149,6 +149,22 @@ public class MainForm extends ActionForm
         this.attributeValue = attributeValue;
     }
 
+    /**
+     * Gets the value of attributeValue
+     * @return the value of attributeValue
+     */
+    public String getAttributeOptions()  {
+        return attributeOptions;
+    }
+
+    /**
+     * Sets the value of attributeValue
+     * @param attributeValue value to assign to attributeValue
+     */
+    public void setAttributeOptions(String attributeOptions) {
+        this.attributeOptions = attributeOptions;
+    }
+    
     /**
      * Gets the value of subclassValue
      * @return the value of subclassValue

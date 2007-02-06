@@ -233,8 +233,8 @@ public abstract class WebUtil
        
         boolean isValid = false;
         if (name != null) {
-            //Pattern p = Pattern.compile("[^A-Za-z0-9_-]");
-            Pattern p = Pattern.compile("\\W");
+            Pattern p = Pattern.compile("[^\\w\\s]");
+            //Pattern p = Pattern.compile("\\W");
             Matcher m = p.matcher(name);
             isValid = !m.find();
 

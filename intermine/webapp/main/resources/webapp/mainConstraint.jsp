@@ -34,7 +34,8 @@
         
         <h3><fmt:message key="query.andorHeading"/></h3>
         
-        <fmt:message key="query.andor"/><br>
+        <fmt:message key="query.andor"/>
+        <br><br>
         <div align="center">        
         <html:radio property="operator" value="and"/>AND&nbsp;&nbsp;
         <html:radio property="operator" value="or"/>OR
