@@ -85,6 +85,7 @@ public class ModifyDetails extends DispatchAction
 
             name = TypeUtil.unqualifiedName(node.getParentType());
             
+            // object details page - fill in identified constraint with value from object
             if (bagName == null || bagName.length() == 0) {
                 for (int ci = 0; ci < node.getConstraints().size(); ci++) {
                     Constraint c = (Constraint) node.getConstraint(ci);
@@ -100,32 +101,34 @@ public class ModifyDetails extends DispatchAction
                         }
                     }
                 }
-            } else if (useBagNode != null && name.equals(useBagNode)) {
-                PathNode parent = (PathNode) query.getNodes()
-                .get(nodeCopy.getParent().getPath());
+            } else if (useBagNode != null) {// && name.equals(useBagNode)) {
+            	// bag details page - remove the identified constraint and constrain
+            	// its parent to be in the bag
+            	PathNode parent = (PathNode) query.getNodes()
+            	.get(nodeCopy.getParent().getPath());
+            	for (int ci = 0; ci < node.getConstraints().size(); ci++) {
+            		Constraint c = (Constraint) node.getConstraint(ci);
+            		if (c.getIdentifier() != null) {
+            			//Constraint c = (Constraint) node.getConstraint(0);
+            			ConstraintOp constraintOp = ConstraintOp.IN;
+            			Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            			InterMineBag interMineIdBag = (InterMineBag) profile.getSavedBags()
+            			.get(bagName);
+            			Constraint bagConstraint = new Constraint(constraintOp, interMineIdBag, true,
+            					c.getDescription(), c.getCode(),
+            					c.getIdentifier());
+            			parent.getConstraints().add(bagConstraint);
 
-                Constraint c = (Constraint) node.getConstraint(0);
-                ConstraintOp constraintOp = ConstraintOp.IN;
-                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-                InterMineBag interMineIdBag = (InterMineBag) profile.getSavedBags()
-                                                                        .get(bagName);
-                Constraint bagConstraint = new Constraint(constraintOp, interMineIdBag, true,
-                                                          c.getDescription(), c.getCode(),
-                                                          c.getIdentifier());
-                parent.getConstraints().add(bagConstraint);
-
-                // remove the constraint on this node, possibly remove node
-                // nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
-                if (nodeCopy.getConstraints().size() == 1) {
-                    query.getNodes().remove(nodeCopy.getPath());
-                } else {
-                    // TODO sort out removing constraint from node, simply removing
-                    // could cause problems as operations based on list indexes. Need
-                    // wait until finished dealing with node.
-                }
+            			// remove the constraint on this node, possibly remove node                
+            			if (nodeCopy.getConstraints().size() == 1) {
+            				query.getNodes().remove(nodeCopy.getPath());
+            			} else {
+            				nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
+            			}
+            		}
+            	}
             }
         }
-        
         SessionMethods.loadQuery(query, request.getSession(), response);
         QueryMonitorTimeout clientState
                 = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
