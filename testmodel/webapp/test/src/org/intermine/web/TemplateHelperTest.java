@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -48,9 +49,9 @@ public class TemplateHelperTest extends TestCase
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
         assertEquals(expIql, precomputeQuery);
-        assertTrue(indexes.size() == 1);
+        assertTrue(indexes.size() == 2);
         System.out.println("pathToQueryNode: " + pathToQueryNode);
-        List expIndexes = new ArrayList(Collections.singleton(pathToQueryNode.get("Employee.name")));
+        List expIndexes = Arrays.asList(new Object[] {pathToQueryNode.get("Employee"), pathToQueryNode.get("Employee.name")});
         assertEquals(expIndexes.toString(), indexes.toString());
     }
     

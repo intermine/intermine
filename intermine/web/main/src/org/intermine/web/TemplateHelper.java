@@ -636,8 +636,8 @@ public class TemplateHelper
             while (indexIter.hasNext()) {
                 String path = (String) indexIter.next();
                 query.addToSelect((QueryNode) pathToQueryNode.get(path));
-                indexes.add(pathToQueryNode.get(path));
             }
+            indexes.addAll(query.getSelect());
         }
         return query;
     }
