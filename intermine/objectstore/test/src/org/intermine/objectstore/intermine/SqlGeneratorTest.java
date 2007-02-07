@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.sql.Connection;
 
 import junit.framework.Test;
 
@@ -46,6 +47,10 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.precompute.BestQueryStorer;
+import org.intermine.sql.precompute.PrecomputedTable;
+import org.intermine.sql.precompute.PrecomputedTableManager;
+import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.testing.MustBeDifferentMap;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
@@ -255,7 +260,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("LargeBagNotConstraint", largeNotBagConstraintText);
         results2.put("LargeBagNotConstraint", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
 
-        results.put("LargeBagConstraintUsingTable", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
+        results.put("LargeBagConstraintUsingTable", "SELECT a1_.id AS a1_id FROM Employee AS a1_, " + LARGE_BAG_TABLE_NAME + " AS indirect0 WHERE a1_.name = indirect0.value ORDER BY a1_.id");
         results2.put("LargeBagConstraintUsingTable", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
 
         results.put("LargeBagNotConstraintUsingTable", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE (NOT (a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + "))) ORDER BY a1_.id");
@@ -382,6 +387,22 @@ public class SqlGeneratorTest extends SetupDataTestCase
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
+                if (!"LargeBagNotConstraintUsingTable".equals(type)) {
+                    // Also check to see that the optimiser doesn't barf on them.
+                    //PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+                    //assertFalse(ptm.getPrecomputedTables().isEmpty());
+                    String ptsql = "SELECT a1_.id AS id, a1_.name AS name FROM Employee AS a1_ ORDER BY a1_.id";
+                    Connection c = null;
+                    try {
+                        c = db.getConnection();
+                        PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(ptsql), ptsql, "fred", "bob", c);
+                        QueryOptimiser.recursiveOptimise(Collections.singleton(pt), sql, new BestQueryStorer(), sql);
+                    } finally {
+                        if (c != null) {
+                            c.close();
+                        }
+                    }
+                }
             }
         }
     }
