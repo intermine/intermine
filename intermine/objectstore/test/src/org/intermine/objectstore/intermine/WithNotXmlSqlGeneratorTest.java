@@ -178,7 +178,7 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results.put("LargeBagNotConstraint", largeNotBagConstraintText);
         results2.put("LargeBagNotConstraint", Collections.singleton("Employee"));
 
-        results.put("LargeBagConstraintUsingTable", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + ") ORDER BY a1_.id");
+        results.put("LargeBagConstraintUsingTable", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_, " + LARGE_BAG_TABLE_NAME + " AS indirect0 WHERE a1_.name = indirect0.value ORDER BY a1_.id");
         results2.put("LargeBagConstraintUsingTable", Collections.singleton("Employee"));
 
         results.put("LargeBagNotConstraintUsingTable", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE (NOT (a1_.name IN (SELECT value FROM " + LARGE_BAG_TABLE_NAME + "))) ORDER BY a1_.id");
