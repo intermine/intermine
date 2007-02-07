@@ -16,7 +16,7 @@ package org.intermine.objectstore.query;
  *
  * @author Matthew Wakeling
  */
-public class ObjectStoreBag
+public class ObjectStoreBag implements QuerySelectable
 {
     private final int bagId;
 
@@ -39,5 +39,12 @@ public class ObjectStoreBag
      */
     public int getBagId() {
         return bagId;
+    }
+
+    /**
+     * @see QuerySelectable#getType
+     */
+    public Class getType() {
+        return Integer.class;
     }
 }

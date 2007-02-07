@@ -15,6 +15,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,6 +39,7 @@ import org.intermine.objectstore.ObjectStoreQueriesTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
@@ -708,7 +712,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         }
     }
     
-    public void testIsPrecomputed() throws Exception{
+    public void testIsPrecomputed() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
         QueryField qf = new QueryField(qc,"age");
@@ -720,5 +724,33 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         ((ObjectStoreInterMineImpl)os).precompute(q, "template");
         assertTrue(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
         
+    }
+
+    public void testObjectStoreBag() throws Exception {
+        ObjectStoreBag osb = storeDataWriter.createObjectStoreBag();
+        ArrayList coll = new ArrayList();
+        coll.add(new Integer(3));
+        coll.add(new Integer(20));
+        coll.add(new Integer(23));
+        coll.add(new Integer(30));
+        storeDataWriter.beginTransaction();
+        storeDataWriter.addAllToBag(osb, coll);
+        Query q = new Query();
+        q.addToSelect(osb);
+        SingletonResults r = new SingletonResults(q, os, os.getSequence());
+        assertEquals(Collections.EMPTY_LIST, r);
+        q = new Query();
+        q.addToSelect(osb);
+        r = new SingletonResults(q, os, os.getSequence());
+        storeDataWriter.commitTransaction();
+        try {
+            assertEquals(Collections.EMPTY_LIST, r);
+            fail("Expected: ConcurrentModificationException");
+        } catch (ConcurrentModificationException e) {
+        }
+        q = new Query();
+        q.addToSelect(osb);
+        r = new SingletonResults(q, os, os.getSequence());
+        assertEquals(coll, r);
     }
 }

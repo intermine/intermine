@@ -99,7 +99,7 @@ public class IqlQuery
             }
             needComma = true;
             String nodeAlias = (String) q.getAliases().get(qn);
-            if (qn instanceof QueryClass) {
+            if ((qn instanceof QueryClass) || (qn instanceof ObjectStoreBag)) {
                 retval.append(nodeToString(q, qn));
             } else {
                 retval.append(nodeToString(q, qn))
@@ -264,6 +264,8 @@ public class IqlQuery
             }
             return q.getAliases().get(ref.getQueryClass()) + "." + ref.getReferenceName() + "."
                 + ref.getFieldName() + "(DEF " + objRepresentation + ")";
+        } else if (qn instanceof ObjectStoreBag) {
+            return "BAG(" + ((ObjectStoreBag) qn).getBagId() + ")";
         } else {
             throw new IllegalArgumentException("Invalid Object for nodeToString: " + qn.toString());
         }

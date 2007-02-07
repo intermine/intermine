@@ -847,24 +847,26 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                          + " ms, convert results: " + conTime + " ms, total: "
                          + (postConvert - preBagTableTime) + " ms");
             }
-            QueryOrderable firstOrderBy = null;
-            firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
-            if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
-                int colNo = q.getSelect().indexOf(firstOrderBy);
-                int rowNo = objResults.size() - 1;
-                Object lastObj = ((List) objResults.get(rowNo)).get(colNo);
-                rowNo--;
-                boolean done = false;
-                while ((!done) && (rowNo >= 0)) {
-                    Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
-                    if ((lastObj != null) && (thisObj != null) && !lastObj.equals(thisObj)) {
-                        done = true;
-                        Object value = (thisObj instanceof InterMineObject
-                                        ? ((InterMineObject) thisObj).getId() : thisObj);
-                        SqlGenerator.registerOffset(q, start + rowNo + 1, schema, db,
-                                                    value, bagConstraintTables);
-                    }
+            Object firstOrderByObject = q.getEffectiveOrderBy().iterator().next();
+            if (firstOrderByObject instanceof QueryOrderable) {
+                QueryOrderable firstOrderBy = (QueryOrderable) firstOrderByObject;
+                if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
+                    int colNo = q.getSelect().indexOf(firstOrderBy);
+                    int rowNo = objResults.size() - 1;
+                    Object lastObj = ((List) objResults.get(rowNo)).get(colNo);
                     rowNo--;
+                    boolean done = false;
+                    while ((!done) && (rowNo >= 0)) {
+                        Object thisObj = ((List) objResults.get(rowNo)).get(colNo);
+                        if ((lastObj != null) && (thisObj != null) && !lastObj.equals(thisObj)) {
+                            done = true;
+                            Object value = (thisObj instanceof InterMineObject
+                                            ? ((InterMineObject) thisObj).getId() : thisObj);
+                            SqlGenerator.registerOffset(q, start + rowNo + 1, schema, db,
+                                                        value, bagConstraintTables);
+                        }
+                        rowNo--;
+                    }
                 }
             }
             return objResults;
