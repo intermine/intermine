@@ -19,6 +19,7 @@ import org.flymine.model.genomic.FlyAtlasResult;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.MicroArrayAssay;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -67,25 +68,20 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.addToSelect(new QueryField(maa, "name"));
         q.addToSelect(new QueryField(gene, "identifier"));
 
-        ConstraintSet maincs = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        ConstraintSet orcs = new ConstraintSet(ConstraintOp.OR);
         QueryField qf = new QueryField(gene, "id");
-        for (Iterator iter = geneList.iterator(); iter.hasNext();) {
-            SimpleConstraint eid = new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                                                        new QueryValue((Integer) iter.next()));
-            orcs.addConstraint(eid);
-        }
+        BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, geneList); 
+        cs.addConstraint(bagC);
 
         QueryCollectionReference r = new QueryCollectionReference(far, "genes");
         ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, gene);
         QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");
         ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, maa);
 
-        maincs.addConstraint(orcs);
-        maincs.addConstraint(cc);
-        maincs.addConstraint(cc2);
-        q.setConstraint(maincs);
+        cs.addConstraint(cc);
+        cs.addConstraint(cc2);
+        q.setConstraint(cs);
 
         results = new Results(q, os, os.getSequence());
         Iterator iter = results.iterator();
