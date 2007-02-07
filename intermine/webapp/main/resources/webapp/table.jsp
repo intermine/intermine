@@ -226,6 +226,7 @@
                       </c:if>
                       <td id="cell,${status2.index},${status.index},${row[column.index].htmlId}">
                         <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
+                        <c:set var="columnType" value="${column.type}" scope="request"/>
                         <tiles:insert name="objectView.tile" />
                       </td>
                     </c:when>

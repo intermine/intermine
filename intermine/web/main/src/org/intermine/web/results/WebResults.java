@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
@@ -31,6 +32,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.WebUtil;
@@ -243,8 +245,8 @@ public class WebResults extends AbstractList implements WebColumnTable
                 String unqualifiedFeldCD = TypeUtil.unqualifiedName(fieldCDName);
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFeldCD,
                                                                fieldName);
-                String className =
-                    TypeUtil.unqualifiedName(path.getStartClassDescriptor().getName());
+                Set classes = DynamicUtil.decomposeClass(o.getClass());
+                String className = TypeUtil.unqualifiedName(((Class) classes.iterator().next()).getName());
                 ResultElement resultElement = 
                     new ResultElement(osResults.getObjectStore(), 
                                       fieldValue, o.getId(), className, columnPath, isKeyField);
