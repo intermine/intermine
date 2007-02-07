@@ -236,6 +236,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("OrSubquery", orSubquery());
         queries.put("ScientificNumber", scientificNumber());
         queries.put("LowerBag", lowerBag());
+        queries.put("FetchBag", fetchBag());
     }
 
     /*
@@ -1611,6 +1612,17 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc);
         q.setDistinct(false);
         q.setConstraint(new BagConstraint(new QueryExpression(QueryExpression.LOWER, new QueryField(qc, "name")), ConstraintOp.IN, Arrays.asList(new String[] {"employeea1", "employeea2", "employeeb1"})));
+        return q;
+    }
+
+    /*
+     * SELECT BAG(5)
+     */
+    public static Query fetchBag() throws Exception {
+        ObjectStoreBag osb = new ObjectStoreBag(5);
+        Query q = new Query();
+        q.addToSelect(osb);
+        q.setDistinct(false);
         return q;
     }
 }

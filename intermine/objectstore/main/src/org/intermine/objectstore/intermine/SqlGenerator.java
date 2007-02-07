@@ -42,6 +42,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
@@ -377,6 +378,15 @@ public class SqlGenerator
                                      Constraint offsetCon, int kind,
                                      Map bagTableNames) throws ObjectStoreException {
         State state = new State();
+        List selectList = q.getSelect();
+        if ((selectList.size() == 1) && (selectList.get(0) instanceof ObjectStoreBag)) {
+            // Special case - we are fetching the contents of an ObjectStoreBag.
+            return "SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AS a1_ FROM "
+                + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " WHERE "
+                + ObjectStoreInterMineImpl.BAGID_COLUMN + " = "
+                + ((ObjectStoreBag) selectList.get(0)).getBagId() + " ORDER BY "
+                + ObjectStoreInterMineImpl.BAGVAL_COLUMN;
+        }
         state.setDb(db);
         state.setBagTableNames(bagTableNames);
         buildFromComponent(state, q, schema, bagTableNames);
@@ -524,6 +534,8 @@ public class SqlGenerator
             } else if ((selectable instanceof QueryFieldPathExpression)
                     && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
                 // Do nothing
+            } else if (selectable instanceof ObjectStoreBag) {
+                tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "
                         + selectable.getClass());

@@ -337,13 +337,17 @@ public class IqlQueryParser
                 case IqlTokenTypes.FIELD_PATH_EXPRESSION:
                     node = processNewQueryFieldPathExpression(ast.getFirstChild(), q);
                     break;
+                case IqlTokenTypes.OBJECTSTOREBAG:
+                    node = processNewObjectStoreBag(ast.getFirstChild());
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        if ((nodeAlias == null) != (node instanceof QueryClass)) {
+        if ((nodeAlias == null) != ((node instanceof QueryClass)
+                    || node instanceof ObjectStoreBag)) {
             throw new IllegalArgumentException("No alias for item in SELECT list, or an alias "
                     + "present for a QueryClass");
         }
@@ -417,6 +421,17 @@ public class IqlQueryParser
             return new QueryValue(value.substring(1, value.length() - 1));
         }
         return new QueryValue(new UnknownTypeValue(value));
+    }
+
+    /**
+     * Process an AST node that describes an ObjectStoreBag.
+     *
+     * @param ast an AST node to process
+     * @return an ObjectStoreBag object
+     */
+    private static ObjectStoreBag processNewObjectStoreBag(AST ast) {
+        String value = unescape(ast.getText());
+        return new ObjectStoreBag(Integer.parseInt(value));
     }
 
     /**

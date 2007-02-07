@@ -219,6 +219,9 @@ public class QueryCloner
             return new HashSet((Set) orig);
         } else if (orig instanceof List) {
             return new ArrayList((List) orig);
+        } else if (orig instanceof ObjectStoreBag) {
+            // Immutable
+            return orig;
         }
         throw new IllegalArgumentException("Unknown object type: " + orig);
     }

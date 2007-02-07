@@ -69,6 +69,8 @@ public class QueryTestCase extends OneTimeTestCase
                     fail(msg + ": QueryNode does not match Subquery");
                 } else if (qc2 instanceof QueryClassBag) {
                     fail(msg + ": QueryNode does not match QueryClassBag");
+                } else if (qc2 instanceof ObjectStoreBag) {
+                    fail(msg + ": QueryNode does not match ObjectStoreBag");
                 } else {
                     fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
                 }
@@ -79,6 +81,8 @@ public class QueryTestCase extends OneTimeTestCase
                     assertEquals(msg + ": subquery", (Query) qc1, (Query) qc2);
                 } else if (qc2 instanceof QueryClassBag) {
                     fail(msg + ": Subquery does not match QueryClassBag");
+                } else if (qc2 instanceof ObjectStoreBag) {
+                    fail(msg + ": Subquery does not match ObjectStoreBag");
                 } else {
                     fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
                 }
@@ -89,6 +93,8 @@ public class QueryTestCase extends OneTimeTestCase
                     fail(msg + ": QueryClassBag does not match QueryNode");
                 } else if (qc2 instanceof Query) {
                     fail(msg + ": QueryClassBag does not match Subquery");
+                } else if (qc2 instanceof ObjectStoreBag) {
+                    fail(msg + ": QueryClassBag does not match ObjectStoreBag");
                 } else {
                     fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
                 }
@@ -111,6 +117,14 @@ public class QueryTestCase extends OneTimeTestCase
                     assertEquals(msg + ": QueryFieldPathExpression defaultValues are not equal", pe1.getDefaultValue(), pe2.getDefaultValue());
                 } else {
                     fail(msg + ": QueryFieldPathExpression does not match " + qc2.getClass().getName());
+                }
+            } else if (qc1 instanceof ObjectStoreBag) {
+                if (qc2 instanceof ObjectStoreBag) {
+                    if (((ObjectStoreBag) qc1).getBagId() != ((ObjectStoreBag) qc2).getBagId()) {
+                        fail(msg + ": ObjectStoreBag ids are not equal");
+                    }
+                } else {
+                    fail(msg + ": ObjectStoreBag does not match " + qc2.getClass().getName());
                 }
             } else {
                 fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());

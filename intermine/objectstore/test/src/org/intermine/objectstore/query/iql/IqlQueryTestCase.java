@@ -257,5 +257,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE LOWER(a1_.name) IN ?", null);
         fq.setParameters(Collections.singletonList(Arrays.asList(new Object[] {"employeea1", "employeea2", "employeeb1"})));
         results.put("LowerBag", fq);
+        results.put("FetchBag", new IqlQuery("SELECT BAG(5)", null));
     }
 }

@@ -42,6 +42,7 @@ tokens {
     BAG_CONSTRAINT;
     TYPECAST;
     FIELD_PATH_EXPRESSION;
+    OBJECTSTOREBAG;
 }
 
 
@@ -92,6 +93,7 @@ select_value:
             | constant "as"! field_alias
             | safe_function "as"! field_alias
             | paren_value "as"! field_alias
+            | objectstorebag
         )
         { #select_value = #([SELECT_VALUE, "SELECT_VALUE"], #select_value); }
     ;
@@ -113,6 +115,10 @@ typecast: (constant | thing | safe_function | paren_value) COLONTYPE! IDENTIFIER
     ;
 
 paren_value: OPEN_PAREN! abstract_value CLOSE_PAREN! ;
+
+objectstorebag: "BAG"! OPEN_PAREN! INTEGER CLOSE_PAREN!
+        { #objectstorebag = #([OBJECTSTOREBAG, "OBJECTSTOREBAG"], #objectstorebag); }
+    ;
 
 field_alias:
         IDENTIFIER
