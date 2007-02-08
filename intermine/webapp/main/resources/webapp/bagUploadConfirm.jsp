@@ -10,46 +10,54 @@
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
-  <div class="body" align="center">
+
+<c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>  <div class="body" align="center">
+
     <div id="uploadConfirmMessage">
       <strong>
         <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
       </strong>
       currently in your bag.<br/>
-      <c:if test="${! empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects || ! empty unresolved}">
+      <c:if test="${matchCount<totalIdCount}">
           Also found&nbsp;
       </c:if>
+      <c:set var="comCount" value="0"/>
       <c:if test="${fn:length(duplicates)>0}">
         <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>
+        <c:set var="comCount" value="${comCount+1}"/>
       </c:if>
       <c:if test="${fn:length(lowQualityMatches)>0}">
-        ,<strong>
+        <c:if test="${comCount>=1}">,</c:if>
+        <strong>
           <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
           low quality matches
         </strong>
+        <c:set var="comCount" value="${comCount+1}"/>
       </c:if>
       <c:if test="${fn:length(convertedObjects)>0}">
-        ,<strong>
+        <c:if test="${comCount>=1}">,</c:if>
+        <strong>
           <span id="convertedCount">${fn:length(convertedObjects)}</span>
           objects found by converting types
         </strong>
+        <c:set var="comCount" value="${comCount+1}"/>
       </c:if>
       <c:if test="${fn:length(unresolved)>0}">
-        ,<strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
+      <c:if test="${comCount>=1}">,</c:if>
+        <strong>${fn:length(unresolved)} unresolved</strong> identifier(s).
       </c:if>
     </div>
     <div class="blueBg">
-      <c:set var="totalObjects" value="${fn:length(issues) + matchCount + fn:length(unresolved)}"/>
       <c:choose>
-        <c:when test="${matchCount < totalObjects}">
+        <c:when test="${matchCount < totalIdCount}">
           <p>
-            Only <strong><span id="matchCount">${matchCount}</span></strong>
-            of the <strong>${totalObjects}</strong>
+            <strong><span id="initialIdCount">${matchCount}</span></strong>
+            of the <strong>${totalIdCount}</strong>
             identifier(s) you provided will be saved in your bag.
           </p>
         </c:when>
         <c:otherwise>
-          Matches found for all identifiers
+          <p>Matches found for all identifiers</p>
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:

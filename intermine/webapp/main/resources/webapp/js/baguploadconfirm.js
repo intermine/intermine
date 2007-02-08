@@ -26,6 +26,7 @@ function addId2Bag(id,row,parentId,issueType){
             duplicateArray[parentId] = new Array(id);
             document.getElementById(issueType+'Count').innerHTML--;
             document.getElementById('td_'+issueType+'_'+parentId).style.backgroundColor = '#CCCCCC';
+            document.getElementById('initialIdCount').innerHTML++;
         } else {
             idArray[idArray.length] = id;
             duplicateArray[parentId] = idArray;
@@ -55,6 +56,7 @@ function removeIdFromBag(id,row, parentId, issueType){
         if(idArray.length == 1){
             document.getElementById(issueType+'Count').innerHTML++;
             document.getElementById('td_'+issueType+'_'+parentId).style.backgroundColor = '#FFFFFF';
+            document.getElementById('initialIdCount').innerHTML--;
             duplicateArray[parentId] = null;
         } else {
             var idArrayCopy = new Array();
