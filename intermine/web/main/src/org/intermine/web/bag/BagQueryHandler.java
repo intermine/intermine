@@ -1,13 +1,9 @@
 package org.intermine.web.bag;
 
 /*
- * Copyright (C) 2002-2005 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
+ * Copyright (C) 2002-2005 FlyMine This code may be freely distributed and modified under the terms
+ * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
+ * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
  */
 
 import java.util.ArrayList;
@@ -26,25 +22,38 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Handler for bag-query.xml files.
+ * 
  * @author Richard Smith
  */
 public class BagQueryHandler extends DefaultHandler
 {
     private List queryList;
+
     private Map bagQueries = new HashMap();
+
     private String type, message, queryString;
+
     private Boolean matchesAreIssues;
+
     private Model model;
+
     private StringBuffer sb;
+
     private String pkg = null;
+
     private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries);
+
     private String connectField;
+
     private String className;
+
     private String constrainField;
 
     /**
      * Create a new BagQueryHandler object.
-     * @param model the Model to use when checking types
+     * 
+     * @param model
+     *            the Model to use when checking types
      */
     public BagQueryHandler(Model model) {
         super();
@@ -54,6 +63,7 @@ public class BagQueryHandler extends DefaultHandler
 
     /**
      * Return the bag queries from the XML file.
+     * 
      * @return a Map from class name to a List of BagQuery objects
      */
     public Map getBagQueries() {
@@ -64,7 +74,7 @@ public class BagQueryHandler extends DefaultHandler
      * @see DefaultHandler#startElement
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+                    throws SAXException {
         if (qName.equals("extra-bag-query-class")) {
             connectField = attrs.getValue("connect-field");
             className = attrs.getValue("class-name");
@@ -98,7 +108,7 @@ public class BagQueryHandler extends DefaultHandler
         // attribute content -> hold text & create attribute in endElement
         while (length > 0) {
             boolean whitespace = false;
-            switch(ch[start]) {
+            switch (ch[start]) {
             case ' ':
             case '\r':
             case '\n':
@@ -135,32 +145,32 @@ public class BagQueryHandler extends DefaultHandler
             matchesAreIssues = null;
             message = null;
         }
-        
+
         // add bag query to map for specified class and all subclasses
         if (qName.equals("bag-type")) {
-        	ClassDescriptor cld = model.getClassDescriptorByName(pkg + "." + type);
-        	Set clds = model.getAllSubs(cld);
-        	clds.add(cld);
-        	Iterator cldIter = clds.iterator();
-        	while (cldIter.hasNext()) {
-        		ClassDescriptor nextCld = (ClassDescriptor) cldIter.next();
-        		String clsName  = TypeUtil.unqualifiedName(nextCld.getName());
-        		List typeQueries = (List) bagQueries.get(clsName);
-        		if (typeQueries == null) {
-        			typeQueries = new ArrayList();
-        			bagQueries.put(clsName, typeQueries);
-        		}
-        		typeQueries.addAll(queryList);
-        	}
+            ClassDescriptor cld = model.getClassDescriptorByName(pkg + "." + type);
+            Set clds = model.getAllSubs(cld);
+            clds.add(cld);
+            Iterator cldIter = clds.iterator();
+            while (cldIter.hasNext()) {
+                ClassDescriptor nextCld = (ClassDescriptor) cldIter.next();
+                String clsName = TypeUtil.unqualifiedName(nextCld.getName());
+                List typeQueries = (List) bagQueries.get(clsName);
+                if (typeQueries == null) {
+                    typeQueries = new ArrayList();
+                    bagQueries.put(clsName, typeQueries);
+                }
+                typeQueries.addAll(queryList);
+            }
         }
     }
 
     /**
      * Return the BagQueryConfig created from the XML.
+     * 
      * @return the BagQueryConfig
      */
     public BagQueryConfig getBagQueryConfig() {
         return bagQueryConfig;
     }
 }
-
