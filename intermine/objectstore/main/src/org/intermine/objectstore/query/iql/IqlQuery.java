@@ -348,10 +348,10 @@ public class IqlQuery
             BagConstraint c = (BagConstraint) cc;
             Collection coll = c.getBag();
             if (coll == null) {
-                parameters.add(c.getOsb());
-            } else {
-                parameters.add(coll);
+                return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " BAG("
+                    + c.getOsb().getBagId() + ")";
             }
+            parameters.add(coll);
             return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " ?";
         } else if (cc instanceof SubqueryExistsConstraint) {
             IqlQuery subquery = new IqlQuery(((SubqueryExistsConstraint) cc).getQuery());

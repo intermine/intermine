@@ -263,7 +263,11 @@ subquery_exists_constraint: "exists"! OPEN_PAREN! iql_statement CLOSE_PAREN!
         { #subquery_exists_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([SUBQUERY_EXISTS_CONSTRAINT, "SUBQUERY_EXISTS_CONSTRAINT"], #subquery_exists_constraint)); }
     ;
 
-bag_constraint: (abstract_value "in" )=> abstract_value "in"! QUESTION_MARK!
+bag_constraint: (abstract_value "in" objectstorebag )=> abstract_value "in"! objectstorebag
+        { #bag_constraint = #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint); }
+        | (abstract_value "not" "in" objectstorebag )=> abstract_value "not"! "in"! objectstorebag
+        { #bag_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint)); }
+        | (abstract_value "in" )=> abstract_value "in"! QUESTION_MARK!
         { #bag_constraint = #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint); }
         | abstract_value "not"! "in"! QUESTION_MARK!
         { #bag_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([BAG_CONSTRAINT, "BAG_CONSTRAINT"], #bag_constraint)); }
