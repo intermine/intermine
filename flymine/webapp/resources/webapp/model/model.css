@@ -26,7 +26,40 @@ html, body
   border-top: 1px solid #888;
   border-bottom: 1px solid #888;
 }
+
 .highlightCell{
   background-color: #FFCBFF;
 }
 
+.widget {
+    padding:15px;
+    text-align: center;
+    width: 450px;
+    background-color: #F5F0FF;
+}
+
+#bagDescriptionDiv{
+	background-color: #F5F0FF;
+	height:150px;
+	width:70%;
+	text-align:left;
+	padding:10px;
+}
+#bagDescriptionDiv:hover{
+	background-color: #E6FFB3;
+}
+
+#textarea {
+	width:70%;
+	height:150px;
+	background-color: #F5F0FF;
+	padding:10px;
+}
+
+.blueBg {
+	background-color:#F5F0FF;
+	text-align:center;
+	padding: 20px;
+	margin:20px;
+	width:350px;
+}

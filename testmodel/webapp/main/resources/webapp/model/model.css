@@ -42,3 +42,36 @@ a
 .highlightCell{
   background-color: #D4D4D4;
 }
+
+.widget {
+    padding:15px;
+    text-align: center;
+    width: 450px;
+    background-color: #D4D4D4;
+}
+
+#bagDescriptionDiv{
+	background-color: #D4D4D4;
+	height:150px;
+	width:70%;
+	text-align:left;
+	padding:10px;
+}
+#bagDescriptionDiv:hover{
+	background-color: #D4D4D4;
+}
+
+#textarea {
+	width:70%;
+	height:150px;
+	background-color: #D4D4D4;
+	padding:10px;
+}
+
+.blueBg {
+	background-color:#D4D4D4;
+	text-align:center;
+	padding: 20px;
+	margin:20px;
+	width:350px;
+}
