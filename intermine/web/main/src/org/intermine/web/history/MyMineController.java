@@ -23,6 +23,11 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -55,7 +60,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class MyMineController extends TilesAction
 {
     /**
-     *
+     * Set up attributes for the myMine page.
      * @see TilesAction#execute
      */
     public ActionForward execute(ComponentContext context,
@@ -66,6 +71,7 @@ public class MyMineController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         String page = request.getParameter("page");
 
@@ -119,6 +125,22 @@ public class MyMineController extends TilesAction
         List extraClassFieldValues =
             getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
         request.setAttribute("extraClassFieldValues", extraClassFieldValues);
+
+        // find the types in typeList that contain a field with the name given by
+        // bagQueryConfig.getConnectField()
+        List typesWithConnectingField = new ArrayList();
+        Iterator typeListIterator = typeList.iterator();
+        while (typeListIterator.hasNext()) {
+            String connectFieldName = bagQueryConfig.getConnectField();
+            String typeName = (String) typeListIterator.next();
+            String qualifiedTypeName = model.getPackageName() + "." + typeName;
+            ClassDescriptor cd = model.getClassDescriptorByName(qualifiedTypeName);
+            FieldDescriptor fd = cd.getFieldDescriptorByName(connectFieldName);
+            if (fd != null && fd instanceof ReferenceDescriptor) {
+                typesWithConnectingField.add(typeName);
+            }
+        }
+        request.setAttribute("typesWithConnectingField", typesWithConnectingField);
         
         return null;
     }
