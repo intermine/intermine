@@ -217,7 +217,7 @@ public interface Constants
     /**
      * Maximum size a bag should have if the user is not logged in (to save memory)
      */
-    public static final int MAX_NOT_LOGGED_BAG_SIZE = 100;
+    public static final int MAX_NOT_LOGGED_BAG_SIZE = 500;
     
     /**
      * Servlet attribute.  Map from class name to set of defined keys. 
