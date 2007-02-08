@@ -77,8 +77,14 @@ public class BuildBagAction extends InterMineAction
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         BagQueryRunner bagRunner =
             new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
-
+        
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        if (profile == null || profile.getUsername() == null) {
+            int defaultMaxNotLoggedSize = 3;
+            maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
+                                                       defaultMaxNotLoggedSize);
+        }
 
         BufferedReader reader = null;
 
@@ -113,8 +119,13 @@ public class BuildBagAction extends InterMineAction
                 list.add(token);
                 elementCount++;
                 if (elementCount > maxBagSize) {
-                    ActionMessage actionMessage =
-                        new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                    ActionMessage actionMessage = null;
+                    if (profile == null || profile.getUsername() == null) {
+                        actionMessage = new ActionMessage("bag.bigNotLoggedIn",
+                                                          new Integer(maxBagSize));
+                    } else {
+                        actionMessage = new ActionMessage("bag.tooBig", new Integer(maxBagSize));
+                    }
                     recordError(actionMessage, request);
 
                     return mapping.findForward("mymine");

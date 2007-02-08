@@ -13,15 +13,6 @@ package org.intermine.web.bag;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.ForwardParameters;
-import org.intermine.web.InterMineAction;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.WebUtil;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +22,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.StringUtil;
+import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.Profile;
+import org.intermine.web.ProfileManager;
 
 /**
  * Action class for saving a bag from the bagUploadConfirm page into the user profile.
@@ -100,10 +98,7 @@ public class BagUploadConfirmAction extends InterMineAction
         InterMineBag bag =
             new InterMineBag(profile.getUserId(), bagName, bagType, profileOs, os, contents);
         
-        int defaultMaxNotLoggedSize = 3;
-        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
-                                                             defaultMaxNotLoggedSize);
-        profile.saveBag(bagName, bag, maxNotLoggedSize);
+        profile.saveBag(bagName, bag, -1);
 
         session.removeAttribute("bagQueryResult");
         
