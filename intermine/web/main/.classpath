@@ -15,7 +15,7 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry exported="true" kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
-	<classpathentry kind="lib" path="lib/struts.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/highlighter-dev.jar"/>
 	<classpathentry kind="src" path="build/gen/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/dwr.jar"/>
