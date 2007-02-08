@@ -330,7 +330,7 @@
     queries to more complex queries, integrating two or more
     datasets. Users are able to select individual templates
     and add them to a 'favourites' list available from their <link
-    linkend="manualMyMine">account or 'My Mine'</link> page. To
+    linkend="manualMyMine">account or 'MyMine'</link> page. To
     set a template as a favourite, click on the star icon by the
     template query. Templates are created by biologists at FlyMine from
     within the web interface. Further templates can be added at any
@@ -535,8 +535,8 @@
 
       <listitem>
         <para> You will be able to view and run this template from
-        your 'My Mine' page <link linkend="manualMyMine">My Mine
-        page</link>. Access your account via the 'My Mine' button in
+        your 'MyMine' page <link linkend="manualMyMine">MyMine
+        page</link>. Access your account via the 'MyMine' button in
         the top menu bar on every FlyMine page. Your templates will be
         saved under 'Saved Templates'. To go to a template page, click
         on 'Run' in the 'Actions' column. A yellow star next to the
@@ -845,7 +845,7 @@
       in</link>. When-logged in, you can save your query permanently
       from the Query History page ('Save' in 'Actions' column). <link
       linkend="manualSavedQueries">Saved Queries</link> will be stored
-      in your <link linkend="manualMyMine">My Mine account</link>,
+      in your <link linkend="manualMyMine">MyMine account</link>,
       accessible via the top menu bar of any FlyMine page. </para>
 
       <para> If you are logged-in, it is also possible to save a query
@@ -964,7 +964,7 @@
       perform logical operations (union, intersect, subtract) and can
       be exported.  </para>
 
-      <para> The 'Bag page' can be found under 'My Mine' or 'Bags',
+      <para> The 'Bag page' can be found under 'MyMine' or 'Bags',
       both in the top menu bar of every FlyMine page.</para>
 
       <para> To save your bags permanently, you need to be <link
@@ -1029,7 +1029,7 @@
 
        <para> Bags of data can be used to constrain queries in the
        Query Builder. If you have bags of saved data under <link
-       linkend="manualMyMine">'My Mine'</link> you will automatically
+       linkend="manualMyMine">'MyMine'</link> you will automatically
        be able to use these from within the Query Builder to constrain
        a query. When a field or class is selected for constraining a
        query using the Query Builder the constraint box in the right
@@ -1076,7 +1076,7 @@
 
 
   <chapter id="manualMyMine">
-    <title>Personal FlyMine account: My Mine</title>
+    <title>Personal FlyMine account: MyMine</title>
 
      <sect1>
         <title>Introduction</title>
@@ -1085,7 +1085,7 @@
       configuration, created in the <link
       linkend="manualQueryBuilder">Query Builder</link>. Saved
       templates and previously executed queries can be viewed from
-      your account or 'My Mine' page accessed at the top menu bar on
+      your account or 'MyMine' page accessed at the top menu bar on
       any FlyMine page. Your Query History will remain available to
       you only for the duration of a session unless you create and use
       a <link linkend="manualLoggingIn">login</link>. If you log in
@@ -1095,9 +1095,9 @@
      </sect1>
 
      <sect1 id="manualMyMineTabs">
-       <title>My Mine</title>
+       <title>MyMine</title>
 
-      <para>Your FlyMine account, called 'My Mine', contains
+      <para>Your FlyMine account, called 'MyMine', contains
       different lists: <link linkend="manualBags">Bags</link>, Query
       History, Saved Queries, Saved Templates and Favourite Templates,
       plus a tab to allow you to change your password (only visible
@@ -1244,7 +1244,7 @@
      permanently. </para>
  
      <para> To log in, click on the' Log in' link on the top menu bar
-     or at the bottom of a 'My Mine' page. If you have never logged in
+     or at the bottom of a 'MyMine' page. If you have never logged in
      before, go to '..or create an account'. Enter your email address,
      choose a password and confirm it and click on 'Create
      account'. You can then log in.  Your username is the email
@@ -1284,7 +1284,7 @@
      query can also be exported by clicking on 'Export' in the
      'Actions' column. Saved queries can also be exported as XML from
      your <link linkend="manualSavedQueries">Saved Queries</link> on
-     your <link linkend="manualMyMine">My Mine</link> page, in a
+     your <link linkend="manualMyMine">MyMine</link> page, in a
      similar way.  Exporting a query will not delete it from your
      account. </para>
 
@@ -1310,7 +1310,7 @@
 
      <para> Template queries can be exported as XML from your <link
      linkend="manualSavedTemplates">Saved Templates</link> on your
-     <link linkend="manualMyMine">My Mine</link> page. Select
+     <link linkend="manualMyMine">MyMine</link> page. Select
      templates using the check-boxes (or click on the check-box on top
      of the column to select all at once) and click the 'Export'
      button at the bottom of the page. Alternatively, one template
@@ -1326,7 +1326,7 @@
      <para> In order to import a template, you need to be <link
      linkend="manualLoggingIn">logged-in</link> into FlyMine. Go to
      <link linkend="manualSavedTemplates">Saved Templates</link> on
-     your <link linkend="manualMyMine">My Mine</link> page and click
+     your <link linkend="manualMyMine">MyMine</link> page and click
      on 'Import template queries...'. Enter template in XML format and
      press 'Submit' to save the template to your account. The imported
      templates will be stored under 'Saved Templates'.  Template
