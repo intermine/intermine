@@ -1047,16 +1047,24 @@ public class IqlQueryParser
                 //    throw new IllegalArgumentException("Expected a QueryEvaluable or QueryClass "
                 //            + "as the first argument of a BagConstraint");
                 //}
-                if (subAST.getNextSibling() != null) {
-                    throw new IllegalArgumentException("Expected only one argument in "
-                            + "BagConstraint AST");
-                }
                 QueryNode leftd = processNewQueryNode(subAST, q);
+                ObjectStoreBag osb = null;
+                if (subAST.getNextSibling() != null) {
+                    if (subAST.getNextSibling().getType() == IqlTokenTypes.OBJECTSTOREBAG) {
+                        osb = processNewObjectStoreBag(subAST.getNextSibling().getFirstChild());
+                        if (subAST.getNextSibling().getNextSibling() != null) {
+                            throw new IllegalArgumentException("Expected no further data after "
+                                    + "ObjectStoreBag");
+                        }
+                        return new BagConstraint(leftd, ConstraintOp.IN, osb);
+                    } else {
+                        throw new IllegalArgumentException("Invalid AST node for BagConstraint: "
+                                + subAST.getNextSibling().getText());
+                    }
+                }
                 Object nextParam = iterator.next();
                 if (nextParam instanceof Collection) {
                     return new BagConstraint(leftd, ConstraintOp.IN, (Collection) nextParam);
-                } else if (nextParam instanceof ObjectStoreBag) {
-                    return new BagConstraint(leftd, ConstraintOp.IN, (ObjectStoreBag) nextParam);
                 } else {
                     throw new ClassCastException("Parameter " + nextParam
                             + " not a Collection or ObjectStoreBag");
