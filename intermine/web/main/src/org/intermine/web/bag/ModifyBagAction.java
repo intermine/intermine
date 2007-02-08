@@ -204,15 +204,19 @@ public class ModifyBagAction extends InterMineAction
             intersect.retainAll((Collection) savedBags.get(selectedBags[i]));
         }
 
-        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
-        ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag combined =
-            new InterMineBag(profile.getUserId(), name, type, profileOs, os, intersect);
+        if (intersect.size() > 0) {
+            String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+            ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
+            InterMineBag combined =
+                new InterMineBag(profile.getUserId(), name, type, profileOs, os, intersect);
 
-        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
-                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
-        profile.saveBag(name, combined, maxNotLoggedSize);
-
+            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
+                                                                 "max.bag.size.notloggedin",
+                                                                 Constants.MAX_NOT_LOGGED_BAG_SIZE);
+            profile.saveBag(name, combined, maxNotLoggedSize);
+        } else {
+            recordError(new ActionMessage("bag.noIntersection"), request);
+        }
         return mapping.findForward("bag");
     }
 
@@ -272,14 +276,19 @@ public class ModifyBagAction extends InterMineAction
             }
         }
 
-        ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag resultBag =
-            new InterMineBag(profile.getUserId(), name, type, profileOs, os, subtract);
-        int defaultMaxNotLoggedSize = 3;
-        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
-                                                             defaultMaxNotLoggedSize);
-        profile.saveBag(name, resultBag, maxNotLoggedSize);
-
+        if (subtract.size() > 0) {
+            ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
+            InterMineBag resultBag =
+                new InterMineBag(profile.getUserId(), name, type, profileOs, os, subtract);
+            int defaultMaxNotLoggedSize = 3;
+            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, 
+                                                                 "max.bag.size.notloggedin",
+                                                                 defaultMaxNotLoggedSize);
+            profile.saveBag(name, resultBag, maxNotLoggedSize);
+        } else {
+            recordError(new ActionMessage("bag.emptySubtraction"), request);
+        }
+       
         return mapping.findForward("bag");
     }
 
