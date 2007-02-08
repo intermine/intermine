@@ -941,7 +941,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             public void apply(Constraint constraint) {
                 if (constraint instanceof BagConstraint) {
                     BagConstraint bagConstraint = (BagConstraint) constraint;
-                    bagConstraints.add(bagConstraint);
+                    if (bagConstraint.getBag() != null) {
+                        bagConstraints.add(bagConstraint);
+                    }
                 }
             }
         });

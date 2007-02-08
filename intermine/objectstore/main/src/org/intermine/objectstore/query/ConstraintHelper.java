@@ -394,6 +394,9 @@ public class ConstraintHelper
             right = ((SubqueryConstraint) constraint).getQuery();
         } else if (constraint instanceof BagConstraint) {
             right = ((BagConstraint) constraint).getBag();
+            if (right == null) {
+                right = ((BagConstraint) constraint).getOsb();
+            }
         } else {
             throw new IllegalArgumentException("Unknown Constraint type: "
                                                + constraint.getClass().getName());
