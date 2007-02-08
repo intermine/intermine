@@ -13,6 +13,7 @@ package org.intermine.web.bag;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -132,7 +133,7 @@ public class BagQuery
             return queryArg;
         }
         Query queryCopy = QueryCloner.cloneQuery(queryArg);
-        Set fromSet = queryCopy.getFrom();
+        Set fromSet = new HashSet(queryCopy.getFrom());
         Iterator fromIter = fromSet.iterator();
         while (fromIter.hasNext()) {
             FromElement fromElement = (FromElement) fromIter.next();
