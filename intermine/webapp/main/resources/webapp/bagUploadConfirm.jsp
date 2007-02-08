@@ -62,6 +62,9 @@
       <fmt:message key="bagUploadConfirm.issues"/>
     </div>
     <div class="body">
+    <p><fmt:message key="bagUploadConfirm.issuesHelp">
+         <fmt:param value="${bagUploadConfirmForm.bagType}"/>
+       </fmt:message></p>
     <c:if test="${! empty lowQualityMatches}">
     <p><fmt:message key="bagUploadConfirm.lowQ"  />
         <c:set var="issueMap" value="${lowQualityMatches}"/>
@@ -110,9 +113,10 @@
     </div>
     <div class="body">
       <p>
-        ${fn:length(unresolved)}  identifiers couldn't be found anywhere in the
-        database.  Please check that you didn't paste in your shopping list by
-        mistake.  The unresolved identifiers were:
+        <fmt:message key="bagUploadConfirm.unresolved">
+          <fmt:param value="${fn:length(unresolved)}"/>
+          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
+        </fmt:message>
       </p>
       <p style="font-weight: bold">
         <c:forEach items="${unresolved}" var="unresolvedIdentifer">${unresolvedIdentifer.key} </c:forEach>
