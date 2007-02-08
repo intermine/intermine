@@ -3,21 +3,43 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+
+
 <!-- bagBuild.jsp -->
 <html:xhtml/>
 
 <script language="javascript">
 <!--//<![CDATA[
-  
    function switchInputs(open, close) {
       document.getElementById(open + 'Input').disabled = false;
       document.getElementById(open + 'Submit').disabled = false;
       document.getElementById(open + 'Toggle').src = 'images/disclosed.gif';
-      
+
       document.getElementById(close + 'Input').disabled = true;
       document.getElementById(close + 'Submit').disabled = true;
       document.getElementById(close + 'Toggle').src = 'images/undisclosed.gif';
    }
+
+   var typeToEnable = {
+     <c:forEach items="${typesWithConnectingField}" var="type">
+       '${type}': 1,
+     </c:forEach>
+   };
+
+   function typeChanged() {
+     var type = document.getElementById('typeSelector').value;
+     var el = document.getElementById('extraConstraintSelect');
+     if (typeToEnable[type] == null){
+        el.disabled = true;
+     } else {
+        el.disabled = false;
+     }
+   }
+
+   window.onload = function() {
+     typeChanged();
+   }
+
 //]]>-->
 </script>
 
@@ -30,7 +52,7 @@
       <fmt:message key="bagBuild.bagFromText2"/>
       <br/>
       <fmt:message key="bagBuild.bagType"/>
-      <html:select property="type">
+      <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
     	<c:forEach items="${preferredTypeList}" var="type">
          <html:option value="${type}" style="font-weight:bold">${type}</html:option>
     	</c:forEach>
@@ -44,7 +66,7 @@
           <fmt:message key="bagBuild.extraConstraint">
             <fmt:param value="${extraBagQueryClass}"/>
           </fmt:message>
-          <html:select property="extraFieldValue">
+          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="true">
             <html:option value="" style="text-align:center">----------------</html:option>
       	    <c:forEach items="${extraClassFieldValues}" var="value">
               <html:option value="${value}">${value}</html:option>
@@ -53,7 +75,7 @@
         </p>
       </c:if>
       </p>
-      <h4>     
+      <h4>
         <a href="javascript:switchInputs('paste', 'file');">
           <img id='pasteToggle' src="images/disclosed.gif"/>
           <fmt:message key="bagBuild.bagPaste"/>
@@ -67,15 +89,15 @@
           <td align="right">
             <html:submit styleId="pasteSubmit" property="paste">
             <fmt:message key="bagBuild.makeBag"/>
-          </html:submit>      
+          </html:submit>
        </tr>
        <tr>
        <td>
        <p>
          <fmt:message key="bagBuild.or"/>
-       </p> 
-            
-       <h4>   
+       </p>
+
+       <h4>
          <a href="javascript:switchInputs('file', 'paste');">
           <img id='fileToggle' src="images/undisclosed.gif"/>
           <fmt:message key="bagBuild.bagFromFile"/>
@@ -83,7 +105,7 @@
        </h4>
        </td>
        </tr>
-        <tr><td>  
+        <tr><td>
           <fmt:message key="bagBuild.bagFromFile"/>:
           <br/>
           <html:file styleId="fileInput" property="formFile" disabled="true"/>
@@ -93,7 +115,7 @@
           <html:submit styleId="fileSubmit" property="file" disabled="true">
             <fmt:message key="bagBuild.makeBag"/>
           </html:submit>
-          </td>      
+          </td>
        </tr></table>
   </html:form>
 </div>
