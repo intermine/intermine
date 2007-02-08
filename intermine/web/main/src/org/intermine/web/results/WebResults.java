@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -112,17 +111,18 @@ public class WebResults extends AbstractList implements WebColumnTable
             Object columnPathObject = iter.next();
             if (columnPathObject instanceof Path) {
                 Path columnPath = (Path) columnPathObject;
-                String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
-//                if (columnPath.getElements().size() >= 2) {
-//                    Object pathElement = columnPath.getElements().get(columnPath.getElements()
-//                            .size() - 2);
-//                    if (pathElement instanceof ReferenceDescriptor) {
-//                        ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-//                        type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
-//                    }
-//                } else {
-//                    type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
-//                }
+                String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor()
+                    .getName());
+                // if (columnPath.getElements().size() >= 2) {
+                // Object pathElement = columnPath.getElements().get(columnPath.getElements()
+                // .size() - 2);
+                // if (pathElement instanceof ReferenceDescriptor) {
+                // ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
+                // type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+                // }
+                // } else {
+                // type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
+                //                }
                 pathToType.put(columnPath.toStringNoConstraints(), type);
                 Column column = new Column(columnPath, i, type);
                 if (!types.contains(column.getColumnId())) {
@@ -246,7 +246,8 @@ public class WebResults extends AbstractList implements WebColumnTable
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFeldCD,
                                                                fieldName);
                 Set classes = DynamicUtil.decomposeClass(o.getClass());
-                String className = TypeUtil.unqualifiedName(((Class) classes.iterator().next()).getName());
+                String className = TypeUtil.unqualifiedName(((Class) classes.iterator().next())
+                    .getName());
                 ResultElement resultElement = 
                     new ResultElement(osResults.getObjectStore(), 
                                       fieldValue, o.getId(), className, columnPath, isKeyField);

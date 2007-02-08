@@ -10,15 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import org.intermine.web.Constants;
-import org.intermine.web.ForwardParameters;
-import org.intermine.web.InterMineAction;
-import org.intermine.web.Profile;
-import org.intermine.web.SavedQuery;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.WebUtil;
-import org.intermine.web.bag.InterMineBag;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,6 +20,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
+import org.intermine.web.InterMineAction;
+import org.intermine.web.Profile;
+import org.intermine.web.SavedQuery;
+import org.intermine.web.SessionMethods;
+import org.intermine.web.bag.InterMineBag;
 
 /**
  * Actions for links on the history page. There are bag and query specific

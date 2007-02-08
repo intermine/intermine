@@ -192,7 +192,8 @@ public class InitialiserPlugin implements PlugIn
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
             try {
-                BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
+                BagQueryConfig bagQueryConfig = BagQueryHelper
+                    .readBagQueryConfig(os.getModel(), is);
                 servletContext.setAttribute(Constants.BAG_QUERY_CONFIG, bagQueryConfig);
             } catch (Exception e) {
                 throw new ServletException("Error loading class bag queries", e);

@@ -154,7 +154,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
             Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
             while (cldFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-                if(!fc.getShowInResults()) {
+                if (!fc.getShowInResults()) {
                     continue;
                 }
                 String fieldExpr = fc.getFieldExpr();

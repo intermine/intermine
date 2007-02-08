@@ -17,11 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.SavedQuery;
-import org.intermine.web.WebUtil;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -31,6 +26,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.web.Constants;
+import org.intermine.web.Profile;
+import org.intermine.web.SavedQuery;
 
 /**
  * Form bean to used in combining bags
