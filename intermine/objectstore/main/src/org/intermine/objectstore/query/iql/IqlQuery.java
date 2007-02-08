@@ -12,6 +12,7 @@ package org.intermine.objectstore.query.iql;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -345,7 +346,12 @@ public class IqlQuery
             return (disjunctive == negate ? "true" : "false");
         } else if (cc instanceof BagConstraint) {
             BagConstraint c = (BagConstraint) cc;
-            parameters.add(c.getBag());
+            Collection coll = c.getBag();
+            if (coll == null) {
+                parameters.add(c.getOsb());
+            } else {
+                parameters.add(coll);
+            }
             return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " ?";
         } else if (cc instanceof SubqueryExistsConstraint) {
             IqlQuery subquery = new IqlQuery(((SubqueryExistsConstraint) cc).getQuery());

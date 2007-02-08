@@ -1053,10 +1053,14 @@ public class IqlQueryParser
                 }
                 QueryNode leftd = processNewQueryNode(subAST, q);
                 Object nextParam = iterator.next();
-                if (!(nextParam instanceof Collection)) {
-                    throw new ClassCastException("Parameter " + nextParam + " not a Collection");
+                if (nextParam instanceof Collection) {
+                    return new BagConstraint(leftd, ConstraintOp.IN, (Collection) nextParam);
+                } else if (nextParam instanceof ObjectStoreBag) {
+                    return new BagConstraint(leftd, ConstraintOp.IN, (ObjectStoreBag) nextParam);
+                } else {
+                    throw new ClassCastException("Parameter " + nextParam
+                            + " not a Collection or ObjectStoreBag");
                 }
-                return new BagConstraint(leftd, ConstraintOp.IN, (Collection) nextParam);
             case IqlTokenTypes.NOT_CONSTRAINT:
                 subAST = ast.getFirstChild();
                 Constraint retval = processConstraint(subAST, q, modelPackage, iterator);

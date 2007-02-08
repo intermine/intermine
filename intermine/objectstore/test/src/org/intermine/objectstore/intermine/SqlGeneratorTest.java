@@ -337,6 +337,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("LowerBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("FetchBag", "SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AS a1_ FROM " + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " WHERE " + ObjectStoreInterMineImpl.BAGID_COLUMN + " = 5 ORDER BY " + ObjectStoreInterMineImpl.BAGVAL_COLUMN);
         results2.put("FetchBag", Collections.singleton(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME));
+        results.put("ObjectStoreBag", "SELECT a1_.id AS a1_id FROM Employee AS a1_, " + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " AS indirect0 WHERE a1_.id = indirect0." + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AND indirect0." + ObjectStoreInterMineImpl.BAGID_COLUMN + " = 5 ORDER BY a1_.id");
+        results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME})));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

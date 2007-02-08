@@ -13,6 +13,7 @@ package org.intermine.objectstore.query;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import org.intermine.util.Util;
 
 /**
  * Constrain a QueryClass or QueryEvaluable to be within a bag.
@@ -23,10 +24,11 @@ public class BagConstraint extends Constraint
 {
     protected QueryNode qn;
     protected Collection bag;
+    protected ObjectStoreBag osb;
 
     /**
-     * Construct a BagConstraint.  Note that the bag isn't copied so it should not be changed after
-     * the Query has been executed.
+     * Construct a BagConstraint from a Collection.  Note that the bag isn't copied so it should
+     * not be changed after the Query has been executed.
      *
      * @param qn the QueryNode to compare to the bag
      * @param op the operation
@@ -48,6 +50,33 @@ public class BagConstraint extends Constraint
         this.qn = qn;
         this.op = op;
         this.bag = bag;
+        this.osb = null;
+    }
+
+    /**
+     * Construct a BagConstraint from an ObjectStoreBag.
+     *
+     * @param qn the QueryNode to compare to the bag
+     * @param op the operation
+     * @param osb an ObjectStoreBag
+     */
+    public BagConstraint(QueryNode qn, ConstraintOp op, ObjectStoreBag osb) {
+        if (qn == null) {
+            throw new NullPointerException("qe cannot be null");
+        }
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
+        }
+        if (!VALID_OPS.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
+        }
+        if (osb == null) {
+            throw new NullPointerException("osb cannot be null");
+        }
+        this.qn = qn;
+        this.op = op;
+        this.osb = osb;
+        this.bag = null;
     }
 
     /**
@@ -60,7 +89,7 @@ public class BagConstraint extends Constraint
     }
 
     /**
-     * Get the bag.
+     * Get the bag Collection.
      *
      * @return a Set of objects in the bag
      */
@@ -69,13 +98,23 @@ public class BagConstraint extends Constraint
     }
 
     /**
+     * Get the ObjectStoreBag.
+     *
+     * @return an ObjectStoreBag
+     */
+    public ObjectStoreBag getOsb() {
+        return osb;
+    }
+
+    /**
      * @see Object#equals
      */
     public boolean equals(Object obj) {
         if (obj instanceof BagConstraint) {
             BagConstraint bc = (BagConstraint) obj;
-            return bag.equals(bc.bag)
-                && qn.equals(bc.qn);
+            return Util.equals(bag, bc.bag)
+                && qn.equals(bc.qn)
+                && Util.equals(osb, bc.osb);
         }
         return false;
     }
@@ -84,7 +123,7 @@ public class BagConstraint extends Constraint
      * @see Object#hashCode
      */
     public int hashCode() {
-        return bag.hashCode() + 5 * qn.hashCode();
+        return (bag == null ? osb.hashCode() : bag.hashCode()) + 5 * qn.hashCode();
     }
     
     /** List of possible operations */
