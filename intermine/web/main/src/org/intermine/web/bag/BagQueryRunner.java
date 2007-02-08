@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,12 +83,13 @@ public class BagQueryRunner
     public BagQueryResult searchForBag(String type, List input, String extraFieldValue)
         throws ClassNotFoundException, ObjectStoreException, InterMineException {
         
-        Set lowerCaseInput = new HashSet();
+        Map lowerCaseInput = new HashMap();
         Iterator inputIter = input.iterator();
         while (inputIter.hasNext()) {
-            lowerCaseInput.add(((String) inputIter.next()).toLowerCase());
+            String inputString = (String) inputIter.next();
+            lowerCaseInput.put(inputString.toLowerCase(), inputString);
         }
-    	
+        
     	// TODO tidy up using type String and Class
     	
     	// TODO BagQueryResult.getUnresolved() needs to return a map from input
@@ -97,7 +99,7 @@ public class BagQueryRunner
     	Class typeCls = Class.forName(model.getPackageName() + "." + type);
         List queries = 
             getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), input);
-        List unresolved = new ArrayList(input);
+        Set unresolved = new LinkedHashSet(input);
         Iterator qIter = queries.iterator();
         BagQueryResult bqr = new BagQueryResult();
         while (qIter.hasNext() && !unresolved.isEmpty()) {
@@ -113,7 +115,7 @@ public class BagQueryRunner
                     String field = (String) row.get(i);
                     if (field != null) {
                         String lowerField = field.toLowerCase();
-                        if (lowerCaseInput.contains(lowerField)) {
+                        if (lowerCaseInput.containsKey(lowerField)) {
                             Set ids = (Set) resMap.get(field);
                             if (ids == null) {
                                 ids = new HashSet();
@@ -122,7 +124,7 @@ public class BagQueryRunner
                             // obj is an Integer
                             ids.add(id);
                             // remove any identifiers that are now resolved
-                            removeIgnoreCase(unresolved, lowerField);
+                            unresolved.remove(lowerCaseInput.get(lowerField));
                         }
                     }
                 }
@@ -133,22 +135,10 @@ public class BagQueryRunner
     }
 
     /**
-     * Remove the given String from a List while ignoring case.
-     */
-    private void removeIgnoreCase(List unresolved, String string) {
-        for (int i = 0; i < unresolved.size(); i++) {
-            if (((String) unresolved.get(i)).toLowerCase().equals(string)) {
-                unresolved.remove(i);
-                return;
-            }
-        }
-    }
-    
-    /**
      * Add results from resMap to a a BagQueryResults object.
      * @throws InterMineException 
      */
-    private void addResults(Map resMap, List unresolved, BagQueryResult bqr, BagQuery bq,
+    private void addResults(Map resMap, Set unresolved, BagQueryResult bqr, BagQuery bq,
                             Class type)
         throws InterMineException {
     	Map objsOfWrongType = new HashMap();

@@ -21,6 +21,8 @@ import java.util.Set;
 import org.intermine.InterMineException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
@@ -116,18 +118,25 @@ public class SaveBagAction extends InterMineAction
         InterMineBag bag = new InterMineBag(profile.getUserId(), bagName, null, userProfileOs, os,
                                                      Collections.EMPTY_SET);
 
+        WebColumnTable allRows = pt.getAllRows();
+        ArrayList objectTypes = new ArrayList();
+        
         // the number of complete columns to save in the bag
         int wholeColumnsToSave = 0;
 
         for (int i = 0; i < crf.getSelectedObjects().length; i++) {
             String selectedObjectString = crf.getSelectedObjects()[i];
-            if (selectedObjectString.indexOf(",") == selectedObjectString.lastIndexOf(",")) {
+            int indexOfFirstComma = selectedObjectString.indexOf(",");
+            if (indexOfFirstComma == selectedObjectString.lastIndexOf(",")) {
                 // there's just one comma eg. "1,Gene"
                 wholeColumnsToSave++;
+                String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
+                int columnIndex = Integer.parseInt(columnIndexString);
+                Path columnPath = ((Column) allRows.getColumns().get(columnIndex)).getPath();
+                String columnType = columnPath.getLastClassDescriptor().getName();
+                objectTypes.add(TypeUtil.unqualifiedName(columnType));
             }
         }
-
-        WebColumnTable allRows = pt.getAllRows();
 
         if (allRows instanceof WebResults) {
             try {
@@ -172,7 +181,6 @@ public class SaveBagAction extends InterMineAction
             // as we add objects from the selected column to the bag, add the indexes
             // (ie. "2,3" - row 2, column 3) of the objects so we know not to add them twice
             Set seenObjects = new HashSet();
-            ArrayList objectTypes = new ArrayList();
 
             // save selected columns first
             if (wholeColumnsToSave > 0) {
@@ -208,7 +216,6 @@ public class SaveBagAction extends InterMineAction
                     if (forward != null) {
                         return forward;
                     }
-                    i++;
                 }
             }
 
@@ -245,9 +252,8 @@ public class SaveBagAction extends InterMineAction
                 }
             }
 
-            if (objectTypes.size() > 1 || objectTypes == null) {
-                ActionMessage actionMessage =
-                    new ActionMessage("The bag contains more than one different type");
+            if (objectTypes.size() > 1) {
+                ActionMessage actionMessage = new ActionMessage("bag.moreThanOneType");
                 recordError(actionMessage, request);
                 return mapping.findForward("results");
             }

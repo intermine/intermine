@@ -24,4 +24,10 @@ public interface WebColumnTable extends List
      * @return the results row
      */
     public List getResultElements(int index);
+    
+    /**
+     * Returns the Column objects for this table.
+     * @return the columns
+     */
+    public List getColumns();
 }
