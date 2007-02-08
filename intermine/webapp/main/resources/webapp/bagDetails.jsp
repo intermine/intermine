@@ -23,7 +23,7 @@
 </div>
 
 <div class="body" >
-<p>The bag <b>${bag.name}</b> contains elements of type:<b>${bag.type}</b>.</p>
+<p>The bag <b>${bag.name}</b> contains ${bag.size} elements of type: <b>${bag.type}</b>.</p>
 <html:form action="/modifyBagDetailsAction">
 <html:hidden property="bagName" value="${bag.name}"/>
 
