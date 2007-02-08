@@ -31,7 +31,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/nsuml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.1-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6-caching.jar"/>
-	<classpathentry kind="lib" path="lib/ant-1.6.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ant-1.6.5.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-3.0.17-ga-bin.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry kind="output" path="bin"/>
