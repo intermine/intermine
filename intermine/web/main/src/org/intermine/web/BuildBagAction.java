@@ -111,8 +111,8 @@ public class BuildBagAction extends InterMineAction
 
         String thisLine;
         List list = new ArrayList();
+        int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
-            int elementCount = 0;
             StringTokenizer st = new StringTokenizer(thisLine, " \n\t,");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
