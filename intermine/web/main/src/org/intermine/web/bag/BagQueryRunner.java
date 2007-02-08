@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -43,7 +45,7 @@ import javax.servlet.ServletContext;
  */
 public class BagQueryRunner
 {
-	private ObjectStore os;
+	private ObjectStoreInterMineImpl os;
     private Model model;
     private Map classKeys;
     private BagQueryConfig bagQueryConfig;
@@ -58,7 +60,7 @@ public class BagQueryRunner
      */
     public BagQueryRunner(ObjectStore os, Map classKeys, BagQueryConfig bagQueryConfig,
                           ServletContext context) {
-        this.os = os;
+        this.os = (ObjectStoreInterMineImpl) os;
         this.context = context;
         this.model = os.getModel();
         this.classKeys = classKeys;
@@ -84,10 +86,14 @@ public class BagQueryRunner
         throws ClassNotFoundException, ObjectStoreException, InterMineException {
         
         Map lowerCaseInput = new HashMap();
+        List cleanInput = new ArrayList();
         Iterator inputIter = input.iterator();
         while (inputIter.hasNext()) {
             String inputString = (String) inputIter.next();
-            lowerCaseInput.put(inputString.toLowerCase(), inputString);
+            if (!(inputString == null) && !(inputString.equals(""))) {
+            	cleanInput.add(inputString);
+            	lowerCaseInput.put(inputString.toLowerCase(), inputString);
+            }
         }
         
     	// TODO tidy up using type String and Class
@@ -98,15 +104,22 @@ public class BagQueryRunner
     	// CollectionUtil.groupByClass will sort out the strings and types
     	Class typeCls = Class.forName(model.getPackageName() + "." + type);
         List queries = 
-            getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), input);
-        Set unresolved = new LinkedHashSet(input);
+            getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), cleanInput);
+        Set unresolved = new LinkedHashSet(cleanInput);
         Iterator qIter = queries.iterator();
         BagQueryResult bqr = new BagQueryResult();
         while (qIter.hasNext() && !unresolved.isEmpty()) {
             BagQuery bq = (BagQuery) qIter.next();
             Map resMap = new HashMap();
             // run the next query on identifiers not yet resolved
-            Results res = os.execute(bq.getQuery(unresolved, extraFieldValue));
+            Query q = bq.getQuery(unresolved, extraFieldValue);
+            // TODO this is hacky as default batch size is hard coded in the os
+            boolean faster = false;
+            if (unresolved.size() > 1000) {
+            	os.goFaster(q);
+            	faster = true;
+            }
+            Results res = os.execute(q);
             Iterator resIter = res.iterator();
             while (resIter.hasNext()) {
                 ResultsRow row = (ResultsRow) resIter.next();
@@ -128,6 +141,9 @@ public class BagQueryRunner
                         }
                     }
                 }
+            }
+            if (faster) {
+            	os.releaseGoFaster(q);
             }
             addResults(resMap, unresolved, bqr, bq, typeCls);
         }
