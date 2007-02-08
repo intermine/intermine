@@ -861,24 +861,6 @@ img.objectDetailsAspectIcon {
 	padding-left: 10px;
 }
 
-.widget {
-    padding:15px;
-    text-align: center;
-    width: 450px;
-    background-color: #F5F0FF;
-}
-
-#bagDescriptionDiv{
-	background-color: #F5F0FF;
-	height:150px;
-	width:70%;
-	text-align:left;
-	padding:10px;
-}
-#bagDescriptionDiv:hover{
-	background-color: #E6FFB3;
-}
-
 #emptyDesc{
 	text-align:center;
 	width:100%;
@@ -891,25 +873,11 @@ img.objectDetailsAspectIcon {
 	text-align: center;
 }
 
-#textarea {
-	width:70%;
-	height:150px;
-	background-color: #F5F0FF;
-	padding:10px;
-}
-
 #uploadConfirmMessage {
 	text-align:center;
 	font-size: 140%;
 }
 
-.blueBg {
-	background-color:#F5F0FF;
-	text-align:center;
-	padding: 20px;
-	margin:20px;
-	width:350px;
-}
 .fakelink{
 	color:#049;
 	cursor: pointer;
@@ -921,4 +889,7 @@ img.objectDetailsAspectIcon {
 .fakelink:active { 
 	color:#58e; 
 	text-decoration:none 
+}
+td.resBar {
+    background-image:url('model/res_bar_middle.gif');
 }

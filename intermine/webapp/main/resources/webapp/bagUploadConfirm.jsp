@@ -16,7 +16,9 @@
         <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
       </strong>
       currently in your bag.<br/>
-      Also found&nbsp;
+      <c:if test="${! empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects || ! empty unresolved}">
+          Also found&nbsp;
+      </c:if>
       <c:if test="${fn:length(duplicates)>0}">
         <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>
       </c:if>

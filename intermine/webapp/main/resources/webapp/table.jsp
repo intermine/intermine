@@ -56,29 +56,35 @@
         </div>
       </c:if>
     </c:if>
-
-    <html:form action="/changeTableSize">
-      <div class="body">
-        <%-- Page size controls --%>
-        <fmt:message key="results.changepagesize"/>
-        <html:select property="pageSize" onchange="changePageSize()">
-          <html:option value="10">10</html:option>
-          <html:option value="25">25</html:option>
-          <html:option value="50">50</html:option>
-          <html:option value="100">100</html:option>
-        </html:select>
-        <input type="hidden" name="table" value="${param.table}"/>
-        <input type="hidden" name="trail" value="${param.trail}"/>
-        <noscript>
-          <html:submit>
-            <fmt:message key="button.change"/>
-          </html:submit>
-        </noscript>
-      </div>
-    </html:form>
-    
+      
     <div class="body">
-      <p><tiles:insert page="/tablePageLinks.jsp"/></p>
+        <table cellpadding="0" cellspacing="0" > 
+            <tr>
+                <td><img src="model/res_bar_left.gif"></td>
+                <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
+                <td class="resBar"><img src="images/blank.gif" width="10px">|<img src="images/blank.gif" width="10px"></td>
+                <td class="resBar">
+                    <html:form action="/changeTableSize">
+                    <%-- Page size controls --%>
+                    <fmt:message key="results.changepagesize"/>
+                    <html:select property="pageSize" onchange="changePageSize()">
+                    <html:option value="10">10</html:option>
+                    <html:option value="25">25</html:option>
+                    <html:option value="50">50</html:option>
+                    <html:option value="100">100</html:option>
+                    </html:select>
+                    <input type="hidden" name="table" value="${param.table}"/>
+                    <input type="hidden" name="trail" value="${param.trail}"/>
+                    <noscript>
+                        <html:submit>
+                        <fmt:message key="button.change"/>
+                        </html:submit>
+                    </noscript>
+                    </html:form>
+                </td>
+                <td><img src="model/res_bar_right.gif"></td>
+            </tr>
+        </table>
     </div>
     
     <html:form action="/saveBag">
@@ -242,8 +248,15 @@
         </table>
 
         <c:if test="${resultsTable.size > 1}">
-          <%-- "Displaying xxx to xxx of xxx rows" messages --%>
           <br/>
+         <table cellpadding="0" cellspacing="0" > 
+            <tr>
+                <td><img src="model/res_bar_left.gif"></td>
+                <%-- Paging controls --%>
+                <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
+                <td class="resBar">&nbsp;|&nbsp;</td>
+                <td class="resBar">
+          <%-- "Displaying xxx to xxx of xxx rows" messages --%>
           <c:choose>
             <c:when test="${resultsTable.sizeEstimate}">
               <fmt:message key="results.pageinfo.estimate">
@@ -271,9 +284,10 @@
               </c:choose>
             </c:otherwise>
           </c:choose>
-          
-          <%-- Paging controls --%>
-          <p><tiles:insert page="/tablePageLinks.jsp"/></p>
+                </td>
+                <td><img src="model/res_bar_right.gif"></td>
+            </tr>
+         </table>
         </c:if>
 
         <%-- Return to main results link
