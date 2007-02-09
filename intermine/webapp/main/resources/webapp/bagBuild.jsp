@@ -20,11 +20,10 @@
       document.getElementById(close + 'Toggle').src = 'images/undisclosed.gif';
    }
 
-   var typeToEnable = {
-     <c:forEach items="${typesWithConnectingField}" var="type">
-       '${type}': 1,
-     </c:forEach>
-   };
+   var typeToEnable = new Array();
+   <c:forEach items="${typesWithConnectingField}" var="type">
+   typeToEnable['${type}'] = 1;
+   </c:forEach>
 
    function typeChanged() {
      var type = document.getElementById('typeSelector').value;
@@ -66,7 +65,7 @@
           <fmt:message key="bagBuild.extraConstraint">
             <fmt:param value="${extraBagQueryClass}"/>
           </fmt:message>
-          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="true">
+          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false">
             <html:option value="" style="text-align:center">----------------</html:option>
       	    <c:forEach items="${extraClassFieldValues}" var="value">
               <html:option value="${value}">${value}</html:option>
