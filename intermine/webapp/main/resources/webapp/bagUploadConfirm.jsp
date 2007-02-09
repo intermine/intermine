@@ -6,7 +6,7 @@
 
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
-<html:form action="/bagUploadConfirm" focus="text" method="post" enctype="multipart/form-data">
+<html:form action="/bagUploadConfirm" focus="bagName" method="post" enctype="multipart/form-data">
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
