@@ -191,8 +191,13 @@ public class IqlQueryParser
         String tableName = null;
         Set classes = new HashSet();
         boolean isBag = false;
+        ObjectStoreBag osb = null;
         if (ast.getType() == IqlTokenTypes.QUESTION_MARK) {
             isBag = true;
+            ast = ast.getNextSibling();
+        } else if (ast.getType() == IqlTokenTypes.OBJECTSTOREBAG) {
+            isBag = true;
+            osb = processNewObjectStoreBag(ast.getFirstChild());
             ast = ast.getNextSibling();
         }
         do {
@@ -245,8 +250,13 @@ public class IqlQueryParser
             }
         }
         if (isBag) {
-            QueryClassBag qcb = new QueryClassBag(classes, (Collection) iterator.next());
-            q.addFrom(qcb, tableAlias);
+            if (osb == null) {
+                QueryClassBag qcb = new QueryClassBag(classes, (Collection) iterator.next());
+                q.addFrom(qcb, tableAlias);
+            } else {
+                QueryClassBag qcb = new QueryClassBag(classes, osb);
+                q.addFrom(qcb, tableAlias);
+            }
         } else {
             QueryClass qc = new QueryClass(classes);
             q.addFrom(qc, tableAlias);

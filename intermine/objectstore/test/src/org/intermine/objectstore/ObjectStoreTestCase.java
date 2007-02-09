@@ -480,6 +480,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("LowerBag", toList(r));
         results.put("FetchBag", Collections.EMPTY_LIST);
         results.put("ObjectStoreBag", Collections.EMPTY_LIST);
+        results.put("ObjectStoreBagQueryClass", Collections.EMPTY_LIST);
     }
 
     /**

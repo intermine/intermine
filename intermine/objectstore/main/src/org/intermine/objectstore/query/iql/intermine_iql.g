@@ -148,10 +148,14 @@ table_name:
 query_class_bag:
         QUESTION_MARK COLONTYPE! table_name "as"! table_alias
         { #query_class_bag = #([TABLE, "TABLE"], #query_class_bag); }
+        | objectstorebag COLONTYPE! table_name "as"! table_alias
+        { #query_class_bag = #([TABLE, "TABLE"], #query_class_bag); }
     ;
 
 query_class_bag_multi:
         QUESTION_MARK COLONTYPE! OPEN_PAREN! table_name ( COMMA! table_name )* CLOSE_PAREN! "as"! table_alias
+        { #query_class_bag_multi = #([TABLE, "TABLE"], #query_class_bag_multi); }
+        | objectstorebag COLONTYPE! OPEN_PAREN! table_name ( COMMA! table_name )* CLOSE_PAREN! "as"! table_alias
         { #query_class_bag_multi = #([TABLE, "TABLE"], #query_class_bag_multi); }
     ;
 

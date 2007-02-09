@@ -238,6 +238,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("LowerBag", lowerBag());
         queries.put("FetchBag", fetchBag());
         queries.put("ObjectStoreBag", objectStoreBag());
+        queries.put("ObjectStoreBagQueryClass", objectStoreBagQueryClass());
     }
 
     /*
@@ -1638,6 +1639,23 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc);
         q.setDistinct(false);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
+        return q;
+    }
+
+    /*
+     * SELECT Department.id, Employee FROM Employee, BAG(5)::Department WHERE Department.employees CONTAINS Employee
+     */
+    public static Query objectStoreBagQueryClass() throws Exception {
+        ObjectStoreBag osb = new ObjectStoreBag(5);
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        QueryClassBag qcb = new QueryClassBag(Department.class, osb);
+        q.addFrom(qc);
+        q.addFrom(qcb);
+        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(qc);
+        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
+        q.setDistinct(false);
         return q;
     }
 }
