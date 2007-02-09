@@ -7,7 +7,7 @@ function swapInputs(open) {
     // different constraints available to the user
     var constraints = new Array("attribute","subclass","loopQuery","bag","empty");
     // field names, different fields will be visible for different constraints
-    const maxVariableCount = 7; // there are seven attribute variables
+    var maxVariableCount = 7; // there are seven attribute variables
 
     for (var i = 0; i < constraints.length; i++) {
 
