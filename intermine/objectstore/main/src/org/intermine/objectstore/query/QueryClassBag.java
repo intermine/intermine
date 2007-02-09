@@ -28,6 +28,7 @@ public class QueryClassBag implements FromElement
     private Class type;
     private Set ids;
     private Collection bag;
+    private ObjectStoreBag osb;
 
     /**
      * Constructs a QueryClassBag representing the specified Java class and bag of objects.
@@ -39,6 +40,7 @@ public class QueryClassBag implements FromElement
         this.type = type;
         this.bag = bag;
         ids = convertToIds(bag, this.type);
+        this.osb = null;
     }
 
     /**
@@ -55,6 +57,37 @@ public class QueryClassBag implements FromElement
         }
         this.bag = bag;
         ids = convertToIds(bag, this.type);
+        this.osb = null;
+    }
+
+    /**
+     * Constructs a QueryClassBag representing the specified Java class and ObjectStoreBag.
+     *
+     * @param type the Java class
+     * @param osb the ObjectStoreBag
+     */
+    public QueryClassBag(Class type, ObjectStoreBag osb) {
+        this.type = type;
+        this.osb = osb;
+        this.ids = null;
+        this.bag = null;
+    }
+
+    /**
+     * Constructs a QueryClass representing the specified set of classes and ObjectStoreBag.
+     *
+     * @param types the Set of classes
+     * @param osb the ObjectStoreBag
+     */
+    public QueryClassBag(Set types, ObjectStoreBag osb) {
+        if (types.size() == 1) {
+            this.type = (Class) types.iterator().next();
+        } else {
+            this.type = DynamicUtil.composeClass(types);
+        }
+        this.osb = osb;
+        this.ids = null;
+        this.bag = null;
     }
 
     private static Set convertToIds(Collection bag, Class type) {
@@ -88,6 +121,15 @@ public class QueryClassBag implements FromElement
     }
 
     /**
+     * Returns the ObjectStoreBag.
+     *
+     * @return an ObjectStoreBag
+     */
+    public ObjectStoreBag getOsb() {
+        return osb;
+    }
+
+    /**
      * Returns the Set of object IDs present in the bag that correspond to the type specified.
      *
      * @return a Set of Integers
@@ -97,25 +139,31 @@ public class QueryClassBag implements FromElement
     }
 
     /**
-     * Returns a String representation.
+     * Returns a String representation. This method is used by IqlQuery to generate iql, so don't
+     * change the output.
      *
      * @return a String
      */
     public String toString() {
         Set classes = DynamicUtil.decomposeClass(type);
+        StringBuffer retval = new StringBuffer();
+        if (bag == null) {
+            retval.append("BAG(" + osb.getBagId() + ")::");
+        } else {
+            retval.append("?::");
+        }
         if (classes.size() == 1) {
-            return "?::" + type.getName();
+            retval.append(type.getName());
         } else {
             boolean needComma = false;
-            StringBuffer retval = new StringBuffer("?::");
             Iterator classIter = classes.iterator();
             while (classIter.hasNext()) {
                 retval.append(needComma ? ", " : "(");
                 needComma = true;
-                Class cls = (Class) classIter.next();
-                retval.append(cls.getName());
+                retval.append(((Class) classIter.next()).getName());
             }
-            return retval.toString() + ")";
+            retval.append(")");
         }
+        return retval.toString();
     }
 }

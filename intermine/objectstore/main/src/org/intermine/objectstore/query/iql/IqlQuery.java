@@ -120,7 +120,10 @@ public class IqlQuery
             } else if (fe instanceof QueryClassBag) {
                 retval.append(fe.toString())
                     .append(classAlias == null ? "" : " AS " + classAlias);
-                parameters.add(((QueryClassBag) fe).getBag());
+                Collection coll = ((QueryClassBag) fe).getBag();
+                if (coll != null) {
+                    parameters.add(coll);
+                }
             } else {
                 retval.append("(")
                     .append(fe.toString())

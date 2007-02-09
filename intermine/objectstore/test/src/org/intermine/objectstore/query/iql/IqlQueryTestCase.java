@@ -260,5 +260,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("LowerBag", fq);
         results.put("FetchBag", new IqlQuery("SELECT BAG(5)", null));
         results.put("ObjectStoreBag", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_ IN BAG(5)", null));
+        results.put("ObjectStoreBagQueryClass", new IqlQuery("SELECT a2_.id AS a3_, a1_ FROM org.intermine.model.testmodel.Employee AS a1_, BAG(5)::org.intermine.model.testmodel.Department AS a2_ WHERE a2_.employees CONTAINS a1_", null));
     }
 }

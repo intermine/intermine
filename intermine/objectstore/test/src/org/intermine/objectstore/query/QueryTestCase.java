@@ -268,6 +268,7 @@ public class QueryTestCase extends OneTimeTestCase
             BagConstraint cc2 = (BagConstraint) c2;
             checkQueryNodes(msg + ": BagConstraint nodes are not equal", cc1.getQueryNode(), cc2.getQueryNode(), q1, q2);
             assertEquals(msg + ": Bags are not equal", cc1.getBag(), cc2.getBag());
+            assertEquals(msg + ": OSBs are not equal", cc1.getOsb(), cc2.getOsb());
         } else if (c1 instanceof SubqueryExistsConstraint) {
             SubqueryExistsConstraint cc1 = (SubqueryExistsConstraint) c1;
             SubqueryExistsConstraint cc2 = (SubqueryExistsConstraint) c2;
@@ -299,5 +300,6 @@ public class QueryTestCase extends OneTimeTestCase
         assertEquals(msg + ": QueryClassBags do not refer to the same class", qcb1.getType(), qcb2.getType());
         assertEquals(msg + ": QueryClassBags do not have the same alias", q1.getAliases().get(qcb1), q2.getAliases().get(qcb2));
         assertEquals(msg + ": QueryClassBags do not have the same bags", qcb1.getIds(), qcb2.getIds());
+        assertEquals(msg + ": QueryClassBags do not have the same osbs", qcb1.getOsb(), qcb2.getOsb());
     }
 }

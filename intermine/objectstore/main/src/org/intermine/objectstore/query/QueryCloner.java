@@ -46,8 +46,14 @@ public class QueryCloner
                 } else if (origFrom instanceof Query) {
                     newFrom = cloneQuery((Query) origFrom);
                 } else if (origFrom instanceof QueryClassBag) {
-                    newFrom = new QueryClassBag(((QueryClassBag) origFrom).getType(),
-                            (Collection) cloneThing(((QueryClassBag) origFrom).getBag(), null));
+                    Collection bag = ((QueryClassBag) origFrom).getBag();
+                    Class type = ((QueryClassBag) origFrom).getType();
+                    if (bag == null) {
+                        newFrom = new QueryClassBag(type, ((QueryClassBag) origFrom).getOsb());
+                    } else {
+                        newFrom = new QueryClassBag(type,
+                                (Collection) cloneThing(((QueryClassBag) origFrom).getBag(), null));
+                    }
                 } else {
                     throw new IllegalArgumentException("Unknown type of FromElement " + origFrom);
                 }

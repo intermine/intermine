@@ -335,10 +335,13 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ScientificNumber", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Types"})));
         results.put("LowerBag", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE LOWER(a1_.name) IN ('employeea1', 'employeea2', 'employeeb1') ORDER BY a1_.id");
         results2.put("LowerBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        results.put("FetchBag", "SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AS a1_ FROM " + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " WHERE " + ObjectStoreInterMineImpl.BAGID_COLUMN + " = 5 ORDER BY " + ObjectStoreInterMineImpl.BAGVAL_COLUMN);
-        results2.put("FetchBag", Collections.singleton(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME));
-        results.put("ObjectStoreBag", "SELECT a1_.id AS a1_id FROM Employee AS a1_, " + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " AS indirect0 WHERE a1_.id = indirect0." + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AND indirect0." + ObjectStoreInterMineImpl.BAGID_COLUMN + " = 5 ORDER BY a1_.id");
-        results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME})));
+        results.put("FetchBag", "SELECT value AS a1_ FROM osbag_int WHERE bagid = 5 ORDER BY value");
+        results2.put("FetchBag", Collections.singleton("osbag_int"));
+        results.put("ObjectStoreBag", "SELECT a1_.id AS a1_id FROM Employee AS a1_, osbag_int AS indirect0 WHERE a1_.id = indirect0.value AND indirect0.bagid = 5 ORDER BY a1_.id");
+        results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "osbag_int"})));
+        //results.put("ObjectStoreBagQueryClass", "SELECT a1_.departmentId AS a3_, a1_.id AS a1_id FROM Employee AS a1_, osbag_int AS indirect0 WHERE a1_.departmentId = indirect0.value AND indirect0.bagid = 5 ORDER BY a1_.departmentId, a1_.id");
+        //results2.put("ObjectStoreBagQueryClass", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "osbag_int"})));
+        results.put("ObjectStoreBagQueryClass", NO_RESULT);
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
