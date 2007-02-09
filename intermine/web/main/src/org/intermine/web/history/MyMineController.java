@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.iterators.IteratorChain;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -129,10 +130,11 @@ public class MyMineController extends TilesAction
         // find the types in typeList that contain a field with the name given by
         // bagQueryConfig.getConnectField()
         List typesWithConnectingField = new ArrayList();
-        Iterator typeListIterator = typeList.iterator();
-        while (typeListIterator.hasNext()) {
+        Iterator allTypesIterator = 
+            new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
+        while (allTypesIterator.hasNext()) {
             String connectFieldName = bagQueryConfig.getConnectField();
-            String typeName = (String) typeListIterator.next();
+            String typeName = (String) allTypesIterator.next();
             String qualifiedTypeName = model.getPackageName() + "." + typeName;
             ClassDescriptor cd = model.getClassDescriptorByName(qualifiedTypeName);
             FieldDescriptor fd = cd.getFieldDescriptorByName(connectFieldName);
