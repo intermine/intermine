@@ -22,7 +22,7 @@ my $goa_file_gz = "$goa_file.gz";
 
 # taxon IDs that should be grepped out of the $goa_file and the suffix to use
 # when creating the output file
-my %taxon_map =
+my %taxon_map = (
    180454 => {suffix => 'agp'},
    7460 => {suffix => 'am'},
    9606 => {suffix => 'hs'});
