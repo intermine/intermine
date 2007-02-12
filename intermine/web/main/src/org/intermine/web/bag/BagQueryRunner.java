@@ -155,6 +155,14 @@ public class BagQueryRunner
             }
             addResults(resMap, unresolved, bqr, bq, typeCls);
         }
+        
+        Map unresolvedMap = new HashMap();
+        Iterator iter = unresolved.iterator();
+        while (iter.hasNext()) {
+            unresolvedMap.put(iter.next(), null);
+        }
+        bqr.getUnresolved().putAll(unresolvedMap);
+        
         return bqr;
     }
 
@@ -238,15 +246,7 @@ public class BagQueryRunner
         // now objsOfWrongType contains all wrong types found for this query, try converting
         convertObjects(bqr, bq, type, objsOfWrongType);
 
-        Map unresolvedMap = new HashMap();
-        Iterator iter = unresolved.iterator();
-        while (iter.hasNext()) {
-            unresolvedMap.put(iter.next(), null);
-        }
-        unresolvedMap.putAll(objsOfWrongType);
-
-        // unresolved list will be used for next query
-        bqr.setUnresolved(unresolvedMap);
+        bqr.getUnresolved().putAll(objsOfWrongType);
     }
 
     /**
