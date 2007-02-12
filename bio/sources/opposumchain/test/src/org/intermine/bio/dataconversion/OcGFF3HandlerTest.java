@@ -51,7 +51,7 @@ public class OcGFF3HandlerTest extends TestCase
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new GFF3RecordHandler(tgtModel);
-        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle, 
+        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle,
                                       tgtModel, handler);
     }
 
@@ -68,9 +68,10 @@ public class OcGFF3HandlerTest extends TestCase
         converter.parse(srcReader);
         converter.store();
 
-        FileWriter writerSrc = new FileWriter(new File("opposum_items.xml"));
-        writerSrc.write(FullRenderer.render(writer.getItems()));
-        writerSrc.close();
+        // uncomment to write out a new target items file
+        //FileWriter writerSrc = new FileWriter(new File("opposum_items.xml"));
+        //writerSrc.write(FullRenderer.render(writer.getItems()));
+        //writerSrc.close();
 
         Set expected = new HashSet(getExpectedItems());
         String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, writer.getItems());

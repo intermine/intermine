@@ -61,9 +61,10 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        FileWriter writer = new FileWriter(new File("ensembl_tgt.xml"));
-        writer.write(FullRenderer.render(tgtIw.getItems()));
-        writer.close();
+        // uncomment to write out a new target items file
+        //FileWriter writer = new FileWriter(new File("ensembl_tgt.xml"));
+        //writer.write(FullRenderer.render(tgtIw.getItems()));
+        //writer.close();
 
         System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
