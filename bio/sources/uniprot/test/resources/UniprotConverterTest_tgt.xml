@@ -1,17 +1,182 @@
 <items>
-<item id="3_12" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_1" class="http://www.flymine.org/model/genomic#Sequence">
+<attribute name="length" value="376"/>
+<attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
+</item>
+<item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Dummy Second Name xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_1"/>
+</item>
+<item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="Q9V5E6"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_1"/>
+</item>
+<item id="9_6" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Nuclear protein"/>
+<reference name="ontology" ref_id="2_1"/>
+</item>
+<item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="Segmentation protein even-skipped"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_1"/>
+</item>
+<item id="8_1" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="May play a role in determining neuronal identity. May be directly involved in specifying identity of individual neurons. Pair-rule protein required for segmentation; involved in transforming the broad, spatial, aperiodic expression patterns of the gap genes into a system of precise periodic expression patterns of the pair-rule and segmentary polarity genes"/>
+<attribute name="type" value="function"/>
+<reference name="source" ref_id="1_1"/>
+</item>
+<item id="9_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Complete proteome"/>
+<reference name="ontology" ref_id="2_1"/>
+</item>
+<item id="10_2" class="http://www.flymine.org/model/genomic#UniProtFeature">
+<attribute name="begin" value="1"/>
+<attribute name="description" value="GTP-binding protein 128up"/>
+<attribute name="end" value="368"/>
+<attribute name="type" value="chain"/>
+<reference name="feature" ref_id="9_10"/>
+<reference name="protein" ref_id="3_2"/>
+</item>
+<item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="GTP-bp"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="5_2"/>
+</item>
+<item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="FlyBase"/>
+</item>
+<item id="11_2" class="http://www.flymine.org/model/genomic#Sequence">
+<attribute name="length" value="368"/>
+<attribute name="residues" value="MSTILEKISAIESEMARTQKNKATSAHLGLLKAKLAKLRRELISPKGGGGGTGEAGFEVAKTGDARVGFVGFPSVGKSTLLSNLAGVYSEVAAYEFTTLTTVPGCIKYKGAKIQLLDLPGIIEGAKDGKGRGRQVIAVARTCNLIFMVLDCLKPLGHKKLLEHELEGFGIRLNKKPPNIYYKRKDKGGINLNSMVPQSELDTDLVKTILSEYKIHNADITLRYDATSDDLIDVIEGNRIYIPCIYLLNKIDQISIEELDVIYKIPHCVPISAHHHWNFDDLLELMWEYLRLQRIYTKPKGQLPDYNSPVVLHNERTSIEDFCNKLHRSIAKEFKYALVWGSSVKHQPQKVGIEHVLNDEDVVQIVKKV"/>
+</item>
+<item id="4_12" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="CG8340"/>
 <reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="4_2"/>
+<reference name="subject" ref_id="5_2"/>
 </item>
-<item id="3_10" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="2_1" class="http://www.flymine.org/model/genomic#Ontology">
+<attribute name="title" value="UniProtKeyword"/>
+</item>
+<item id="8_3" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Belongs to the even-skipped homeobox family"/>
+<attribute name="type" value="similarity"/>
+<reference name="source" ref_id="1_1"/>
+</item>
+<item id="4_7" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="eve"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="5_1"/>
+</item>
+<item id="4_15" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="128UP_DROME"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_2"/>
+</item>
+<item id="4_11" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="GTP-binding protein 128up"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_2"/>
+</item>
+<item id="7_1" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="2877745"/>
+</item>
+<item id="8_11" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Belongs to the GTP1/OBG family"/>
+<attribute name="type" value="similarity"/>
+<reference name="source" ref_id="1_1"/>
+</item>
+<item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="P07667"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_1"/>
+</item>
+<item id="9_10" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="chain"/>
+<reference name="ontology" ref_id="2_1"/>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="CG2328"/>
+<reference name="organism" ref_id="6_1"/>
+<collection name="evidence"><reference ref_id="0_1"/></collection>
+</item>
+<item id="9_12" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Nucleotide-binding"/>
+<reference name="ontology" ref_id="2_1"/>
+</item>
+<item id="9_5" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Homeobox"/>
+<reference name="ontology" ref_id="2_1"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="description" value="GTP-binding protein 128up"/>
+<attribute name="identifier" value="128UP_DROME"/>
+<attribute name="isFragment" value="false"/>
+<attribute name="length" value="368"/>
+<attribute name="molecularWeight" value="41132"/>
+<attribute name="name" value="GTP-binding protein 128up"/>
+<attribute name="primaryAccession" value="P32234"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequence" ref_id="11_2"/>
+<collection name="comments"><reference ref_id="8_5"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/></collection>
+<collection name="evidence"><reference ref_id="0_1"/></collection>
+<collection name="features"><reference ref_id="10_2"/></collection>
+<collection name="genes"><reference ref_id="5_2"/></collection>
+<collection name="keywords"><reference ref_id="9_2"/><reference ref_id="9_11"/><reference ref_id="9_12"/></collection>
+<collection name="publications"><reference ref_id="7_2"/></collection>
+</item>
+<item id="4_13" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="128up"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="5_2"/>
+</item>
+<item id="9_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Developmental protein"/>
+<reference name="ontology" ref_id="2_1"/>
+</item>
+<item id="4_9" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="accession"/>
+<attribute name="value" value="P32234"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="3_2"/>
+</item>
+<item id="10_1" class="http://www.flymine.org/model/genomic#UniProtFeature">
+<attribute name="begin" value="1"/>
+<attribute name="description" value="Segmentation protein even-skipped"/>
+<attribute name="end" value="376"/>
+<attribute name="type" value="chain"/>
+<reference name="feature" ref_id="9_10"/>
+<reference name="protein" ref_id="3_1"/>
+</item>
+<item id="8_4" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Contains 1 homeobox DNA-binding domain"/>
+<attribute name="type" value="similarity"/>
+<reference name="source" ref_id="1_1"/>
+</item>
+<item id="4_6" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="CG2328"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="5_1"/>
+</item>
+<item id="4_10" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="Q9V648"/>
 <reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_2"/>
+<reference name="subject" ref_id="3_2"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Protein">
+<item id="3_1" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="description" value="Segmentation protein even-skipped (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Dummy Second Name xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)"/>
 <attribute name="ecNumber" value="xxx EC 1.1.1.31 xxx"/>
 <attribute name="identifier" value="EVE_DROME"/>
@@ -20,65 +185,28 @@
 <attribute name="molecularWeight" value="39970"/>
 <attribute name="name" value="Segmentation protein even-skipped"/>
 <attribute name="primaryAccession" value="P06602"/>
-<reference name="organism" ref_id="5_1"/>
-<collection name="comments"><reference ref_id="7_1"/><reference ref_id="7_2"/><reference ref_id="7_3"/><reference ref_id="7_4"/></collection>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequence" ref_id="11_1"/>
+<collection name="comments"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
 <collection name="evidence"><reference ref_id="0_1"/></collection>
-<collection name="genes"><reference ref_id="4_1"/></collection>
-<collection name="publications"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
+<collection name="features"><reference ref_id="10_1"/></collection>
+<collection name="genes"><reference ref_id="5_1"/></collection>
+<collection name="keywords"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/><reference ref_id="9_4"/><reference ref_id="9_5"/><reference ref_id="9_6"/><reference ref_id="9_7"/><reference ref_id="9_8"/><reference ref_id="9_9"/></collection>
+<collection name="publications"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
 </item>
-<item id="7_10" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Expressed in embryos and adults"/>
-<attribute name="type" value="developmental stage"/>
-<reference name="source" ref_id="1_1"/>
+<item id="9_11" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="GTP-binding"/>
+<reference name="ontology" ref_id="2_1"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="3_3" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="accession"/>
-<attribute name="value" value="Q9V5E6"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_1"/>
-</item>
-<item id="3_6" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="4_8" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="CG2328"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="4_1"/>
-</item>
-<item id="3_7" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="eve"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="4_1"/>
-</item>
-<item id="3_4" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
-<attribute name="value" value="Segmentation protein even-skipped"/>
+<attribute name="value" value="EVE_DROME"/>
 <reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_1"/>
+<reference name="subject" ref_id="3_1"/>
 </item>
-<item id="7_5" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Deformed (Dfd) is required to activate 1.28up in maxillary segment cells"/>
-<attribute name="type" value="function"/>
-<reference name="source" ref_id="1_1"/>
-</item>
-<item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
-<attribute name="name" value="FlyBase"/>
-</item>
-<item id="2_2" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="description" value="GTP-binding protein 128up"/>
-<attribute name="identifier" value="128UP_DROME"/>
-<attribute name="isFragment" value="false"/>
-<attribute name="length" value="368"/>
-<attribute name="molecularWeight" value="41132"/>
-<attribute name="name" value="GTP-binding protein 128up"/>
-<attribute name="primaryAccession" value="P32234"/>
-<reference name="organism" ref_id="5_1"/>
-<collection name="comments"><reference ref_id="7_5"/><reference ref_id="7_9"/><reference ref_id="7_10"/><reference ref_id="7_11"/></collection>
-<collection name="evidence"><reference ref_id="0_1"/></collection>
-<collection name="genes"><reference ref_id="4_2"/></collection>
-<collection name="publications"><reference ref_id="6_2"/></collection>
+<item id="9_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="DNA-binding"/>
+<reference name="ontology" ref_id="2_1"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="UniProt"/>
@@ -86,112 +214,57 @@
 <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="Uniprot data set"/>
 </item>
-<item id="3_11" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
-<attribute name="value" value="GTP-binding protein 128up"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_2"/>
+<item id="9_9" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Transcription regulation"/>
+<reference name="ontology" ref_id="2_1"/>
 </item>
-<item id="7_3" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Belongs to the even-skipped homeobox family"/>
-<attribute name="type" value="similarity"/>
-<reference name="source" ref_id="1_1"/>
-</item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="P06602"/>
 <reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_1"/>
+<reference name="subject" ref_id="3_1"/>
 </item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Nucleus"/>
-<attribute name="type" value="subcellular location"/>
-<reference name="source" ref_id="1_1"/>
-</item>
-<item id="3_13" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="128up"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="4_2"/>
-</item>
-<item id="7_9" class="http://www.flymine.org/model/genomic#Comment">
+<item id="8_9" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Expressed in posterior-lateral epidermis of the maxillary lobe"/>
 <attribute name="type" value="tissue specificity"/>
 <reference name="source" ref_id="1_1"/>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#Publication">
+<item id="7_2" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="12537572"/>
 </item>
-<item id="3_14" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="GTP-bp"/>
-<reference name="source" ref_id="0_2"/>
-<reference name="subject" ref_id="4_2"/>
+<item id="9_7" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Pair-rule protein"/>
+<reference name="ontology" ref_id="2_1"/>
 </item>
-<item id="7_11" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Belongs to the GTP1/OBG family"/>
-<attribute name="type" value="similarity"/>
-<reference name="source" ref_id="1_1"/>
-</item>
-<item id="3_2" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="accession"/>
-<attribute name="value" value="P07667"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_1"/>
-</item>
-<item id="3_9" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="accession"/>
-<attribute name="value" value="P32234"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_2"/>
-</item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG2328"/>
-<reference name="organism" ref_id="5_1"/>
-<collection name="evidence"><reference ref_id="0_1"/></collection>
-</item>
-<item id="3_8" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="EVE_DROME"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_1"/>
-</item>
-<item id="3_5" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="name"/>
-<attribute name="value" value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Dummy Second Name xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_1"/>
-</item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="May play a role in determining neuronal identity. May be directly involved in specifying identity of individual neurons. Pair-rule protein required for segmentation; involved in transforming the broad, spatial, aperiodic expression patterns of the gap genes into a system of precise periodic expression patterns of the pair-rule and segmentary polarity genes"/>
+<item id="8_5" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Deformed (Dfd) is required to activate 1.28up in maxillary segment cells"/>
 <attribute name="type" value="function"/>
 <reference name="source" ref_id="1_1"/>
 </item>
-<item id="7_4" class="http://www.flymine.org/model/genomic#Comment">
-<attribute name="text" value="Contains 1 homeobox DNA-binding domain"/>
-<attribute name="type" value="similarity"/>
-<reference name="source" ref_id="1_1"/>
+<item id="9_8" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="Transcription"/>
+<reference name="ontology" ref_id="2_1"/>
 </item>
-<item id="8_2" class="http://www.flymine.org/model/genomic#Sequence">
-<attribute name="length" value="368"/>
-<attribute name="residues" value="MSTILEKISAIESEMARTQKNKATSAHLGLLKAKLAKLRRELISPKGGGGGTGEAGFEVAKTGDARVGFVGFPSVGKSTLLSNLAGVYSEVAAYEFTTLTTVPGCIKYKGAKIQLLDLPGIIEGAKDGKGRGRQVIAVARTCNLIFMVLDCLKPLGHKKLLEHELEGFGIRLNKKPPNIYYKRKDKGGINLNSMVPQSELDTDLVKTILSEYKIHNADITLRYDATSDDLIDVIEGNRIYIPCIYLLNKIDQISIEELDVIYKIPHCVPISAHHHWNFDDLLELMWEYLRLQRIYTKPKGQLPDYNSPVVLHNERTSIEDFCNKLHRSIAKEFKYALVWGSSVKHQPQKVGIEHVLNDEDVVQIVKKV"/>
+<item id="9_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="name" value="3D-structure"/>
+<reference name="ontology" ref_id="2_1"/>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#Publication">
-<attribute name="pubMedId" value="2877745"/>
-</item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="identifier" value="CG8340"/>
-<reference name="organism" ref_id="5_1"/>
+<reference name="organism" ref_id="6_1"/>
 <collection name="evidence"><reference ref_id="0_1"/></collection>
 </item>
-<item id="8_1" class="http://www.flymine.org/model/genomic#Sequence">
-<attribute name="length" value="376"/>
-<attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
+<item id="6_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
-<item id="3_15" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="128UP_DROME"/>
-<reference name="source" ref_id="0_1"/>
-<reference name="subject" ref_id="2_2"/>
+<item id="8_10" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Expressed in embryos and adults"/>
+<attribute name="type" value="developmental stage"/>
+<reference name="source" ref_id="1_1"/>
+</item>
+<item id="8_2" class="http://www.flymine.org/model/genomic#Comment">
+<attribute name="text" value="Nucleus"/>
+<attribute name="type" value="subcellular location"/>
+<reference name="source" ref_id="1_1"/>
 </item>
 </items>
