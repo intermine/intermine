@@ -125,8 +125,6 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         addEvidence(getPublication(pubmedId));
 
-        addItem(createSynonym(feature, "name", name));
-
         feature.setAttribute("accession", REDFLY_PREFIX + redflyID);
         feature.setAttribute("identifier", name);
     }
