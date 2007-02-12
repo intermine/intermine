@@ -25,7 +25,7 @@
       <property name="src.data.dir" location="/shared/data/flyreg"/>
     </source>
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 6239 7165 180454 7460 4932"/>
+      <property name="uniprot.organisms" value="7227 6239 180454 7460 4932"/>
       <property name="src.data.dir" location="/shared/data/uniprot/9.3"/>
     </source>
    <source name="uniprot-keywords" type="uniprot-keywords">
@@ -119,7 +119,7 @@
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="interpro" type="interpro">
-      <property name="interpro.organism.taxid.list" value="6239,7165,7227,180454"/>
+      <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
     </source>
     <source name="flybase-dmel-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
