@@ -1,5 +1,5 @@
 <webconfig>
-  
+
   <class className="org.flymine.model.genomic.Disease">
     <fields>
       <fieldconfig fieldExpr="omimId"/>
@@ -9,7 +9,7 @@
       <displayer src="/model/diseaseLong.jsp"/>
     </longdisplayers>
   </class>
-  
+
   <class className="org.flymine.model.genomic.BlastMatch">
     <fields>
       <fieldconfig fieldExpr="object.identifier"/>
@@ -133,7 +133,7 @@
     </longdisplayers>
     <graphdisplayers>
       <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Number of Genes" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
-      toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator" 
+      toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
       description="For each tissue in the adult fly, the number of genes from my bag for which the levels or expression are significantly high (Up) or low (Down) according to AffyCall." />
     </graphdisplayers>
   </class>
@@ -305,14 +305,14 @@
       <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.OntologyTermSynonym">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
-  
+
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -497,6 +497,15 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.SyntenicRegion">
+    <fields>
+     <fieldconfig fieldExpr="identifier"/>
+     <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+     <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+     <fieldconfig fieldExpr="organism.name"/>
+     <fieldconfig fieldExpr="organism.taxonId"/>
+   </fields>
+  </class>
 
   <class className="org.flymine.model.genomic.RegulatoryRegion">
     <fields>
@@ -504,7 +513,7 @@
      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
    </fields>
   </class>
- 
+
   <class className="org.flymine.model.genomic.UniProtFeature">
     <fields>
      <fieldconfig fieldExpr="type"/>
