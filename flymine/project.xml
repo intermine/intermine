@@ -100,7 +100,7 @@
       <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/psi/intact/2006-10-13"/>
+      <property name="src.data.dir" location="/shared/data/psi/intact/2007-02-02"/>
       <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
