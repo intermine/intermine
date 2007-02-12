@@ -147,8 +147,10 @@ public class InparanoidConverter extends FileConverter
                 if (array[2].equals("ensCE")) {
                     organismDbId = geneId;
                 }
+            } else if (array[2].equals("modSP") || array[2].equals("sanPF")) {
+                // these should set Gene.identifier so do nothing
             } else {
-                // model organism db identifiers set as Gene.organismDbId
+                // other model organism db identifiers set as Gene.organismDbId
                 organismDbId = geneId;
             }
 
