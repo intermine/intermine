@@ -8,6 +8,7 @@
     <merge-additions file="bio/core/genomic_additions.xml"/>
     <merge-additions file="bio/sources/so/so_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
+    <merge-additions file="bio/sources/psi-mi-ontology/psi-mi-ontology_additions.xml"/>
     <merge-additions file="bio/sources/rnai/rnai_additions.xml"/>
     <merge-additions file="bio/sources/ensembl/ensembl_additions.xml"/>
     <merge-additions file="bio/sources/go/go_additions.xml"/>
