@@ -103,6 +103,9 @@
       <property name="src.data.dir" location="/shared/data/psi/intact/2007-02-02"/>
       <property name="organisms" value="7227 6239 4932"/>
     </source>
+    <source name="psi-mi-ontology" type="psi-mi-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/psi-mi/psi-mi.obo"/>
+    </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/DRSC/current"/>
