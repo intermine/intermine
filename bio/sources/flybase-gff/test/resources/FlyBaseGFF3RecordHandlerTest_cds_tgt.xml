@@ -17,7 +17,7 @@
     <reference name="subject" ref_id="0_19"/>
   </item>
   <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="DM"/>
+    <attribute name="taxonId" value="7227"/>
   </item>
   <item id="0_35" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>

@@ -65,7 +65,7 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         writer.write(FullRenderer.render(tgtIw.getItems()));
         writer.close();
 
-        //System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
+        System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 

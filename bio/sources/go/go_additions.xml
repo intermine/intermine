@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.GOTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
-  <attribute name="namespace" type="java.lang.String"/>
 </class>
 </classes>

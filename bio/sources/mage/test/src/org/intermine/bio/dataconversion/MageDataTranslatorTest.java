@@ -148,7 +148,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateMicroArrayAssay() throws Exception{
+    public void testTranslateMicroArrayAssay() throws Exception{
         Item srcItem1 = createSrcItem("DerivedBioAssay", "57_709", "");
         srcItem1.setCollection("derivedBioAssayData", new ArrayList(Arrays.asList(new Object[]{"58_710"})));
         srcItem1.setCollection("derivedBioAssayMap", new ArrayList(Arrays.asList(new Object[]{"1_1"})));
@@ -213,7 +213,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestMicroArrayAssayLabeledExtract() throws Exception{
+    public void testMicroArrayAssayLabeledExtract() throws Exception{
         Item srcItem1 = createSrcItem("MeasuredBioAssay", "0_1", "");
         srcItem1.setReference("featureExtraction", "1_1");
 
@@ -252,7 +252,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateTreatment() throws Exception {
+    public void testTranslateTreatment() throws Exception {
         Item srcItem1 = createSrcItem("Treatment", "0_1", "");
         srcItem1.setReference("action","1_1");
         srcItem1.setCollection("protocolApplications", new ArrayList(Collections.singleton("2_1")));
@@ -312,7 +312,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, tgtIw.getItems());
     }
 
-    public void XtestTranslateTreatmentSampleLabels() throws Exception {
+    public void testTranslateTreatmentSampleLabels() throws Exception {
         Item srcItem0 = createSrcItem("LabeledExtract", "7_1", "");
         srcItem0.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"0_1"})));
 
@@ -364,7 +364,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateReporter() throws Exception {
+    public void testTranslateReporter() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
         srcItem1.setCollection("featureReporterMaps", new ArrayList(Collections.singleton("1_1")));
 
@@ -389,7 +389,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expFeatureToReporter, translator.featureToReporter);
     }
 
-    public void XtestTranslateReporterControl() throws Exception {
+    public void testTranslateReporterControl() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
         srcItem1.setReference("controlType", "1_1");
 
@@ -419,7 +419,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateReporterMaterial() throws Exception {
+    public void testTranslateReporterMaterial() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
         srcItem1.setAttribute("name", "GH1234");
         srcItem1.setCollection("immobilizedCharacteristics",
@@ -460,7 +460,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateReporterBioSequence() throws Exception {
+    public void testTranslateReporterBioSequence() throws Exception {
         Item srcItem1 = createSrcItem("Reporter", "0_1", "");
         srcItem1.setAttribute("name", "GH1234");
         srcItem1.setCollection("immobilizedCharacteristics",
@@ -498,7 +498,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestSearchTreatments() throws Exception {
+    public void testSearchTreatments() throws Exception {
 
         Item srcItem1 = createSrcItem("LabeledExtract", "0_1", "");
         srcItem1.setCollection("treatments", new ArrayList(Arrays.asList(new Object[] {"1_1"})));
@@ -539,7 +539,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateMicroArrayResult() throws Exception {
+    public void testTranslateMicroArrayResult() throws Exception {
         // can't use ItemFactory as bioAssayData reference not in model
         Item srcItem1 = new Item("58_762", srcNs + "BioAssayDatum", "");
         srcItem1.setAttribute("value", "-1.234");
@@ -590,7 +590,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestProcessMicroArrayResults() throws Exception {
+    public void testProcessMicroArrayResults() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
@@ -630,7 +630,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestProcessMicroArrayResultsMaterialIds() throws Exception {
+    public void testProcessMicroArrayResultsMaterialIds() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
@@ -671,7 +671,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestProcessSamples() throws Exception {
+    public void testProcessSamples() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
                                                                mapping, srcModel, getTargetModel(tgtNs));
 
@@ -711,7 +711,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(exp, translator.samplesById);
     }
 
-    public void XtestProcessMicroArrayAssays() throws Exception {
+    public void testProcessMicroArrayAssays() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
                                                                mapping, srcModel, getTargetModel(tgtNs));
         // TODO need to test with numerical ids and mix of characters and numbers
@@ -761,7 +761,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
 
-    public void XtestTranslateSample() throws Exception {
+    public void testTranslateSample() throws Exception {
         Item srcItem1 = createSrcItem("BioSource", "0_1", "");
         srcItem1.setAttribute("identifier", "S:BioSource:FLYC:10");
         srcItem1.setAttribute("name", "BioSource name");
@@ -809,7 +809,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, tgtIw.getItems());
     }
 
-    public void XtestSetDerivedBAToMeasuredBA() throws Exception{
+    public void testSetDerivedBAToMeasuredBA() throws Exception{
 
         Item srcItem10 = createSrcItem("DerivedBioAssay", "57_1", "");
         srcItem10.setCollection("derivedBioAssayMap", new ArrayList(Arrays.asList(new Object[]{"1_1"})));
@@ -850,7 +850,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
     }
 
     // just make sure no exception thrown
-    public void XtestGetPrefetchDescriptors() throws Exception {
+    public void testGetPrefetchDescriptors() throws Exception {
         MageDataTranslator.getPrefetchDescriptors();
 
     }
