@@ -70,9 +70,9 @@ public class DiseaseRegionGFF3HandlerTest extends TestCase
         converter.parse(srcReader);
         converter.store();
 
-        FileWriter writerSrc = new FileWriter(new File("diseaseregion_items.xml"));
-        writerSrc.write(FullRenderer.render(writer.getItems()));
-        writerSrc.close();
+        //FileWriter writerSrc = new FileWriter(new File("diseaseregion_items.xml"));
+        //writerSrc.write(FullRenderer.render(writer.getItems()));
+        //writerSrc.close();
 
         Set expected = new HashSet(getExpectedItems());
         String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, writer.getItems());

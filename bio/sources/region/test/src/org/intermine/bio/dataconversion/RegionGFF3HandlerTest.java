@@ -70,14 +70,15 @@ public class RegionGFF3HandlerTest extends TestCase
         converter.parse(srcReader);
         converter.store();
 
-        FileWriter writerSrc = new FileWriter(new File("region_items.xml"));
-        writerSrc.write(FullRenderer.render(writer.getItems()));
-        writerSrc.close();
+        // uncomment to write a new target items file
+        //FileWriter writerSrc = new FileWriter(new File("region_items.xml"));
+        //writerSrc.write(FullRenderer.render(writer.getItems()));
+        //writerSrc.close();
 
         Set expected = new HashSet(getExpectedItems());
-        String expectedNotActual = "in expected, not actual: " 
+        String expectedNotActual = "in expected, not actual: "
             + compareItemSets(expected, writer.getItems());
-        String actualNotExpected = "in actual, not expected: " 
+        String actualNotExpected = "in actual, not expected: "
             + compareItemSets(writer.getItems(), expected);
         if (expectedNotActual.length() > 25) {
             System.out.println(expectedNotActual);

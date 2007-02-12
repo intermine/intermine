@@ -40,9 +40,9 @@ public class UniprotConverterTest extends TestCase
     }
 
     public void testProcess() throws Exception {
-	
-	Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UniprotConverterTest_src.xml"));
-	
+
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UniprotConverterTest_src.xml"));
+
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new UniprotConverter(itemWriter);
@@ -50,9 +50,9 @@ public class UniprotConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-	FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
-        fw.write(FullRenderer.render(itemWriter.getItems()));
-        fw.close();
+        //FileWriter fw = new FileWriter(new File("uniprot_tgt.xml"));
+        //fw.write(FullRenderer.render(itemWriter.getItems()));
+        //fw.close();
 
         System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
         assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
