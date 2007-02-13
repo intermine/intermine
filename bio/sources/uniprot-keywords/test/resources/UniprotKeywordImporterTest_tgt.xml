@@ -1,40 +1,35 @@
 <items>
-<item id="1_7" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein involved in the degradation of acetoin (3-hydroxy-2-butanone).Acetoin is a component of the butanediol cycle (butanediolfermentation) in microorganisms."/>
-<attribute name="name" value="Acetoin degradation"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="1_1" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="LFS"/>
 </item>
-<item id="1_5" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein involved in the synthesis of acetoin (3-hydroxy-2-butanone).Acetoin is a component of the butanediol cycle (butanediolfermentation) in microorganisms."/>
-<attribute name="name" value="Acetoin biosynthesis"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="1_4" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="Light-harvesting complex"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein which contains at least one 2Fe-2S iron-sulfur cluster: 2 ironatoms complexed to 2 inorganic sulfides and 4 sulfur atoms ofcysteines from the protein."/>
-<attribute name="name" value="2Fe-2S"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="2_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Proteins which form part of the antenna complex, a light-harvestingsystem found in photosynthetic bacteria which absorb light radiation andtransfer the excitation energy to the reaction centres."/>
+<attribute name="name" value="Light-harvesting polypeptide"/>
+<collection name="synonyms"><reference ref_id="1_4"/></collection>
 </item>
-<item id="1_6" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein involved in the degradation of acetoin (3-hydroxy-2-butanone).Acetoin is a component of the butanediol cycle (butanediolfermentation) in microorganisms."/>
-<attribute name="name" value="Acetoin catabolism"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="2_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in the synthesis of lignin, a polymer ofphenylpropanoid subunits found in the walls of plant cells such asxylem and sclerenchyma fibres. Lignin imparts strength to the wall andprotects against degradation by microorganisms."/>
+<attribute name="name" value="Lignin biosynthesis"/>
 </item>
-<item id="1_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein which contains at least one 4Fe-4S iron-sulfur cluster: 4 ironatoms complexed to 4 inorganic sulfides and 4 sulfur atoms ofcysteines from the protein. In a number of iron-sulfur proteins, the4Fe-4S cluster can be reversibly converted by oxidation and loss ofone iron ion to a 3Fe-4S cluster."/>
-<attribute name="name" value="4Fe-4S"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="2_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Enzyme that catalyzes the joining of two molecules coupled with thebreakdown of a pyrophosphate bond in ATP or a similar triphosphate.Sometimes the terms &quot;synthase&quot;, &quot;synthetase&quot;or &quot;carboxylase&quot;are alsoused for this class of enzymes."/>
+<attribute name="name" value="Ligase"/>
 </item>
-<item id="1_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein which contains at least one 3Fe-4S iron-sulfur cluster: 3 ironatoms complexed to 4 inorganic sulfides and 3 sulfur atoms ofcysteines from the protein. In a number of iron-sulfur proteins, the4Fe-4S cluster can be reversibly converted by oxidation and loss ofone iron ion to a 3Fe-4S cluster."/>
-<attribute name="name" value="3Fe-4S"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="2_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein which, if defective, causes Li-Fraumeni syndrome (LFS), anautosomal dominant familial cancer predisposition syndrome associatedwith soft-tissue sarcoma, breast cancer, leukemia, osteosarcoma,melanoma, and cancer of the colon, pancreas, adrenal cortex and brain.Individuals with LFS are at increased risk for developing multipleprimary cancers."/>
+<attribute name="name" value="Li-Fraumeni syndrome"/>
+<collection name="synonyms"><reference ref_id="1_1"/><reference ref_id="1_2"/><reference ref_id="1_3"/></collection>
+</item>
+<item id="1_2" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="Sarcoma family syndrome of Li and Fraumeni"/>
+</item>
+<item id="1_3" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="SBLA syndrome"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Ontology">
 <attribute name="title" value="UniProtKeyword"/>
-</item>
-<item id="1_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein, or part of a protein, whose three-dimensional structure hasbeen resolved experimentally (for example by X-ray crystallography orNMR spectroscopy) and whose coordinates are available in the PDBdatabase. Can also be used for theoretical models."/>
-<attribute name="name" value="3D-structure"/>
-<reference name="ontology" ref_id="0_1"/>
 </item>
 </items>
