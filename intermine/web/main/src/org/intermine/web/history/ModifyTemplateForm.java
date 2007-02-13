@@ -10,8 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import org.intermine.web.WebUtil;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionErrors;
@@ -65,16 +63,10 @@ public class ModifyTemplateForm extends ActionForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = null;
-
-        if (request.getParameter("rename") == null && selected.length == 0) {
+        if (selected.length == 0) {
             errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyQuery.none"));
-        } else if (!WebUtil.isValidName(request.getParameter("rename"))) { 
-            errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("errors.badChars", "template"));
-
-        }
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyTemplate.noselect"));
+        } 
         return errors;
     }
 

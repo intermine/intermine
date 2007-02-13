@@ -10,8 +10,6 @@ package org.intermine.web.history;
  *
  */
 
-import org.intermine.web.WebUtil;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionErrors;
@@ -65,16 +63,9 @@ public class ModifyQueryForm extends ActionForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = null;
-
-        if (request.getParameter("newName") == null && selectedQueries.length == 0) {
+        if (selectedQueries.length == 0) {
             errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyQuery.none"));
-            
-        } else if (!WebUtil.isValidName(request.getParameter("newName"))) { 
-            
-            errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("errors.badChars"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyQuery.noselect"));
         }
 
         return errors;
