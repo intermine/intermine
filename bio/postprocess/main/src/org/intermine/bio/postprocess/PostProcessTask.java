@@ -17,19 +17,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intermine.objectstore.ObjectStoreFactory;
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Transcript;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-import org.intermine.dataloader.XmlDataLoaderTask;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Transcript;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -210,21 +207,6 @@ public class PostProcessTask extends Task
                 if (objectStore == null) {
                     throw new BuildException("objectStore attribute is not set");
                 }
-                LOG.info("Starting update-publications");
-                UpdatePublications up = new UpdatePublications(
-                        ObjectStoreFactory.getObjectStore(objectStore));
-                up.execute();
-                File pubFile = up.getOutputFile();
-                if (pubFile == null) {
-                    throw new BuildException("The publications.xml file is null!");
-                }
-                XmlDataLoaderTask xdlt = new XmlDataLoaderTask();
-                xdlt.setIntegrationWriter("integration.production");
-                xdlt.setSourceName("pubmed");
-                xdlt.setIgnoreDuplicates(true);
-                xdlt.setXmlFile(pubFile);
-                xdlt.execute();
-
             } else if ("add-licences".equals(operation)) {
                 LOG.info("Starting add-licences");
                 new AddLicences(getObjectStoreWriter()).execute();
