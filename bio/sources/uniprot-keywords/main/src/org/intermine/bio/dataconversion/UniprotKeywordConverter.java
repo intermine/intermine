@@ -33,22 +33,22 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Julie Sullivan
  */
 public class UniprotKeywordConverter extends FileConverter
-{  
-   
+{
+
     //TODO: This should come from props files
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private Map ontoMaster = new HashMap();
     private Map keyMaster = new HashMap();
     private Map synMaster = new HashMap();
-    private Map mapMaster = new HashMap();  // map of maps   
-    
+    private Map mapMaster = new HashMap();  // map of maps
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      */
     public UniprotKeywordConverter(ItemWriter writer) {
         super(writer);
-        
+
     }
 
 
@@ -58,7 +58,7 @@ public class UniprotKeywordConverter extends FileConverter
     public void process(Reader reader) throws Exception {
         mapMaps();
         UniprotHandler handler = new UniprotHandler(writer, mapMaster);
-                
+
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -69,13 +69,13 @@ public class UniprotKeywordConverter extends FileConverter
 
 
     private void mapMaps() {
- 
-        mapMaster.put("ontoMaster", ontoMaster);    // ontology - only one 
-        mapMaster.put("keyMaster", keyMaster);      // keyword names        
+
+        mapMaster.put("ontoMaster", ontoMaster);    // ontology - only one
+        mapMaster.put("keyMaster", keyMaster);      // keyword names
         mapMaster.put("synMaster", synMaster);      // synonyms
-        
+
     }
-    
+
     /**
      * Extension of PathQueryHandler to handle parsing TemplateQueries
      */
@@ -92,25 +92,25 @@ public class UniprotKeywordConverter extends FileConverter
         private Map ontoMaster;
         private Map keyMaster;
         private Map synMaster;
-        private Item ontology;        
+        private Item ontology;
         private ReferenceList synCollection;
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          * @param mapMaster Map of all of the maps
          */
         public UniprotHandler(ItemWriter writer, Map mapMaster) {
-            
-            this.ontoMaster = (Map) mapMaster.get("ontoMaster");            
-            this.keyMaster = (Map) mapMaster.get("keyMaster");            
+
+            this.ontoMaster = (Map) mapMaster.get("ontoMaster");
+            this.keyMaster = (Map) mapMaster.get("keyMaster");
             this.synMaster = (Map) mapMaster.get("synMaster");
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-            this.writer = writer;         
+            this.writer = writer;
 
         }
 
-        
+
         /**
          * @see DefaultHandler#startElement
          */
@@ -128,11 +128,11 @@ public class UniprotKeywordConverter extends FileConverter
                 } else if (qName.equals("keywordList")) {
 
                     ontology = getItem(ontoMaster, "Ontology", "title", "UniProtKeyword");
-                    writer.store(ItemHelper.convert(ontology));         
-                } 
+                    writer.store(ItemHelper.convert(ontology));
+                }
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
-            }  
+            }
 
             super.startElement(uri, localName, qName, attrs);
 
@@ -183,37 +183,44 @@ public class UniprotKeywordConverter extends FileConverter
             throws SAXException {
             super.endElement(uri, localName, qName);
 
-            try {      
-           
+            try {
+
                 if (qName.equals("name")) {
-                    
-                    if (name == null) {                        
-                        name = attValue.toString();        
+
+                    if (name == null) {
+                        name = attValue.toString();
                         synCollection = new ReferenceList("synonyms", new ArrayList());
                     }  else {
-                        Item syn = getItem(synMaster, "OntologyTermSynonym", 
-                                           "name", attValue.toString());
-                    
-                        synCollection.addRefId(syn.getIdentifier());
-                                                
-                        if (syn != null) {
-                            writer.store(ItemHelper.convert(syn)); 
+                        boolean store = false;
+                        if (!synMaster.containsKey(attValue.toString())) {
+                            store = true;
                         }
+                        Item syn = getItem(synMaster, "OntologyTermSynonym",
+                                           "name", attValue.toString());
+                        if (store) {
+                            writer.store(ItemHelper.convert(syn));
+                        }
+
+                        synCollection.addRefId(syn.getIdentifier());
                     }
-                    
                 } else if (qName.equals("description")) {
 
-                    String descr = attValue.toString();
-                    Item keyword = getItem(keyMaster, "OntologyTerm", "name", name);
-                    if (keyword != null) {
-                        if (!synCollection.getRefIds().isEmpty()) {
-                            keyword.addCollection(synCollection);
+                    // there are category keywords which don't have a name, we will
+                    // have to ignore these.
+                    if (name != null) {
+                        String descr = attValue.toString();
+
+                        Item keyword = getItem(keyMaster, "OntologyTerm", "name", name);
+                        if (keyword != null) {
+                            if (!synCollection.getRefIds().isEmpty()) {
+                                keyword.addCollection(synCollection);
+                            }
+                            keyword.addAttribute(new Attribute("description", descr));
+                            writer.store(ItemHelper.convert(keyword));
                         }
-                        keyword.addAttribute(new Attribute("description", descr));
-                        writer.store(ItemHelper.convert(keyword));
+                        name = null;
                     }
-                    name = null; 
-                } 
+                }
 
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
@@ -222,27 +229,27 @@ public class UniprotKeywordConverter extends FileConverter
 
 
 
-        private Item getItem(Map map, String itemType, String titleType, String title) 
+        private Item getItem(Map map, String itemType, String titleType, String title)
         throws SAXException {
 
             Item item = (Item) map.get(title);
-            if (item == null) {         
-                item = createItem(itemType);           
-                item.addAttribute(new Attribute(titleType, title));            
-                map.put(title, item);     
+            if (item == null) {
+                item = createItem(itemType);
+                item.addAttribute(new Attribute(titleType, title));
+                map.put(title, item);
 
             }
             return item;
         }
 
-        
+
         /**
          * Convenience method for creating a new Item
          * @param className the name of the class
          * @return a new Item
          */
         protected Item createItem(String className) {
-           
+
             return itemFactory.makeItem(alias(className) + "_" + newId(className),
                                                                   GENOMIC_NS + className, "");
         }
@@ -271,7 +278,7 @@ public class UniprotKeywordConverter extends FileConverter
             String nextIndex = "" + (nextClsId++);
             aliases.put(className, nextIndex);
             return nextIndex;
-        }    
+        }
     }
 }
 
