@@ -456,7 +456,7 @@
             name="modifyTemplateForm"
             parameter="action"
             scope="request"
-            input="history">
+            input="mymine">
       <forward name="mymine" path="/mymine.do" redirect="true"/>
     </action>
 
