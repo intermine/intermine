@@ -9,9 +9,8 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -22,8 +21,7 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.Reference;
-
+import org.intermine.xml.full.ReferenceList;
 import java.io.Reader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -40,6 +38,9 @@ public class UniprotKeywordConverter extends FileConverter
     //TODO: This should come from props files
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private Map ontoMaster = new HashMap();
+    private Map keyMaster = new HashMap();
+    private Map synMaster = new HashMap();
+    private Map mapMaster = new HashMap();  // map of maps   
     
     /**
      * Constructor
@@ -55,8 +56,8 @@ public class UniprotKeywordConverter extends FileConverter
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-     
-        UniprotHandler handler = new UniprotHandler(writer, ontoMaster);
+        mapMaps();
+        UniprotHandler handler = new UniprotHandler(writer, mapMaster);
                 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -67,6 +68,13 @@ public class UniprotKeywordConverter extends FileConverter
     }
 
 
+    private void mapMaps() {
+ 
+        mapMaster.put("ontoMaster", ontoMaster);    // ontology - only one 
+        mapMaster.put("keyMaster", keyMaster);      // keyword names        
+        mapMaster.put("synMaster", synMaster);      // synonyms
+        
+    }
     
     /**
      * Extension of PathQueryHandler to handle parsing TemplateQueries
@@ -78,23 +86,28 @@ public class UniprotKeywordConverter extends FileConverter
         private ItemWriter writer;
         private Map ids = new HashMap();
         private Map aliases = new HashMap();
-        private Map keywords = new HashMap();
+        private String name = null;
         private String attName = null;
         private StringBuffer attValue = null;
         private Map ontoMaster;
-        private Item ontology;
+        private Map keyMaster;
+        private Map synMaster;
+        private Item ontology;        
+        private ReferenceList synCollection;
         
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
-         * @param ontoMaster Holds the ontology variable that's used as 1/2 the key
+         * @param mapMaster Map of all of the maps
          */
-        public UniprotHandler(ItemWriter writer, Map ontoMaster) {
+        public UniprotHandler(ItemWriter writer, Map mapMaster) {
             
+            this.ontoMaster = (Map) mapMaster.get("ontoMaster");            
+            this.keyMaster = (Map) mapMaster.get("keyMaster");            
+            this.synMaster = (Map) mapMaster.get("synMaster");
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;         
-            this.ontoMaster = ontoMaster;
-          
+
         }
 
         
@@ -103,26 +116,28 @@ public class UniprotKeywordConverter extends FileConverter
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
-             
-            if (qName.equals("name")) {
+            try {
+                if (qName.equals("name")) {
 
-                attName = "name";
+                    attName = "name";
 
-            } else if (qName.equals("description")) {
+                } else if (qName.equals("description")) {
 
-                attName = "description";
-                
-            } else if (qName.equals("keywordList")) {
-                
-                ontology = setOnto("UniProtKeyword");
-                
-            } 
-            
+                    attName = "description";
+
+                } else if (qName.equals("keywordList")) {
+
+                    ontology = getItem(ontoMaster, "Ontology", "title", "UniProtKeyword");
+                    writer.store(ItemHelper.convert(ontology));         
+                } 
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }  
+
             super.startElement(uri, localName, qName, attrs);
-      
+
             attValue = new StringBuffer();
         }
-
 
         /**
          * @see DefaultHandler#endElement
@@ -172,53 +187,54 @@ public class UniprotKeywordConverter extends FileConverter
            
                 if (qName.equals("name")) {
                     
-                    String name = attValue.toString();
-                    Item keyword = createItem("OntologyTerm");
-                    keyword.addAttribute(new Attribute("name", name));   
-                    keywords.put(name, keyword);
-          
+                    if (name == null) {                        
+                        name = attValue.toString();        
+                        synCollection = new ReferenceList("synonyms", new ArrayList());
+                    }  else {
+                        Item syn = getItem(synMaster, "OntologyTermSynonym", 
+                                           "name", attValue.toString());
+                    
+                        synCollection.addRefId(syn.getIdentifier());
+                                                
+                        if (syn != null) {
+                            writer.store(ItemHelper.convert(syn)); 
+                        }
+                    }
+                    
                 } else if (qName.equals("description")) {
 
                     String descr = attValue.toString();
-                    Iterator i = keywords.keySet().iterator();
-                    while (i.hasNext()) {
-
-                        String name = (String) i.next();
-                        Item keyword = (Item) keywords.get(name);
+                    Item keyword = getItem(keyMaster, "OntologyTerm", "name", name);
+                    if (keyword != null) {
+                        if (!synCollection.getRefIds().isEmpty()) {
+                            keyword.addCollection(synCollection);
+                        }
                         keyword.addAttribute(new Attribute("description", descr));
-                        keyword.addReference(new Reference("ontology", ontology.getIdentifier()));
                         writer.store(ItemHelper.convert(keyword));
-                        
-                    }  
-                    // reset list                    
-                    keywords = new HashMap();
-
+                    }
+                    name = null; 
                 } 
 
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-       }
-            
+        }
 
 
-        private Item setOnto(String title) 
+
+        private Item getItem(Map map, String itemType, String titleType, String title) 
         throws SAXException {
 
-            Item o = (Item) ontoMaster.get(title);
-            try {
-                if (o == null) {
-                    o = createItem("Ontology");
-                    o.addAttribute(new Attribute("title", title));
-                    ontoMaster.put(title, o);
-                    writer.store(ItemHelper.convert(o));
-                }
+            Item item = (Item) map.get(title);
+            if (item == null) {         
+                item = createItem(itemType);           
+                item.addAttribute(new Attribute(titleType, title));            
+                map.put(title, item);     
 
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
             }
-            return o;
+            return item;
         }
+
         
         /**
          * Convenience method for creating a new Item
@@ -230,7 +246,6 @@ public class UniprotKeywordConverter extends FileConverter
             return itemFactory.makeItem(alias(className) + "_" + newId(className),
                                                                   GENOMIC_NS + className, "");
         }
-
 
         private String newId(String className) {
             Integer id = (Integer) ids.get(className);

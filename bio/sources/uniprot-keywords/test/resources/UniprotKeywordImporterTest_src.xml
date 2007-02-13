@@ -1,47 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <keywordList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="keyword.xsd">
-  <keyword id="KW-0001">
-    <name>2Fe-2S</name>
-    <description>Protein which contains at least one 2Fe-2S iron-sulfur cluster: 2 iron
-atoms complexed to 2 inorganic sulfides and 4 sulfur atoms of
-cysteines from the protein.</description>
+	<keyword id="KW-0435">
+    <name>Li-Fraumeni syndrome</name>
+    <name>LFS</name>
+    <name>Sarcoma family syndrome of Li and Fraumeni</name>
+    <name>SBLA syndrome</name>
+    <description>Protein which, if defective, causes Li-Fraumeni syndrome (LFS), an
+autosomal dominant familial cancer predisposition syndrome associated
+with soft-tissue sarcoma, breast cancer, leukemia, osteosarcoma,
+melanoma, and cancer of the colon, pancreas, adrenal cortex and brain.
+Individuals with LFS are at increased risk for developing multiple
+primary cancers.</description>
   </keyword>
-  <keyword id="KW-0002">
-    <name>3D-structure</name>
-    <description>Protein, or part of a protein, whose three-dimensional structure has
-been resolved experimentally (for example by X-ray crystallography or
-NMR spectroscopy) and whose coordinates are available in the PDB
-database. Can also be used for theoretical models.</description>
+  <keyword id="KW-0436">
+    <name>Ligase</name>
+    <description>Enzyme that catalyzes the joining of two molecules coupled with the
+breakdown of a pyrophosphate bond in ATP or a similar triphosphate.
+Sometimes the terms &quot;synthase&quot;, &quot;synthetase&quot; or &quot;carboxylase&quot; are also
+used for this class of enzymes.</description>
+    <go id="GO:0016874"/>
   </keyword>
-  <keyword id="KW-0003">
-    <name>3Fe-4S</name>
-    <description>Protein which contains at least one 3Fe-4S iron-sulfur cluster: 3 iron
-atoms complexed to 4 inorganic sulfides and 3 sulfur atoms of
-cysteines from the protein. In a number of iron-sulfur proteins, the
-4Fe-4S cluster can be reversibly converted by oxidation and loss of
-one iron ion to a 3Fe-4S cluster.</description>
+  <keyword id="KW-0437">
+    <name>Light-harvesting polypeptide</name>
+    <name>Light-harvesting complex</name>
+    <description>Proteins which form part of the antenna complex, a light-harvesting
+system found in photosynthetic bacteria which absorb light radiation and
+transfer the excitation energy to the reaction centres.</description>
+    <go id="GO:0030076"/>
   </keyword>
-  <keyword id="KW-0004">
-    <name>4Fe-4S</name>
-    <description>Protein which contains at least one 4Fe-4S iron-sulfur cluster: 4 iron
-atoms complexed to 4 inorganic sulfides and 4 sulfur atoms of
-cysteines from the protein. In a number of iron-sulfur proteins, the
-4Fe-4S cluster can be reversibly converted by oxidation and loss of
-one iron ion to a 3Fe-4S cluster.</description>
-  </keyword>
-  <keyword id="KW-0005">
-    <name>Acetoin biosynthesis</name>
-    <description>Protein involved in the synthesis of acetoin (3-hydroxy-2-butanone).
-Acetoin is a component of the butanediol cycle (butanediol
-fermentation) in microorganisms.</description>
-    <go id="GO:0045151"/>
-  </keyword>
-  <keyword id="KW-0006">
-    <name>Acetoin catabolism</name>
-    <name>Acetoin degradation</name>
-    <description>Protein involved in the degradation of acetoin (3-hydroxy-2-butanone).
-Acetoin is a component of the butanediol cycle (butanediol
-fermentation) in microorganisms.</description>
-    <go id="GO:0045150"/>
+  <keyword id="KW-0438">
+    <name>Lignin biosynthesis</name>
+    <description>Protein involved in the synthesis of lignin, a polymer of
+phenylpropanoid subunits found in the walls of plant cells such as
+xylem and sclerenchyma fibres. Lignin imparts strength to the wall and
+protects against degradation by microorganisms.</description>
+    <go id="GO:0009809"/>
   </keyword>
   </keywordList>
