@@ -760,5 +760,11 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
         r = new SingletonResults(q, os, os.getSequence());
         assertEquals(Collections.singletonList(data.get("EmployeeA1")), r);
+        ObjectStoreBag osb2 = storeDataWriter.createObjectStoreBag();
+        storeDataWriter.addToBagFromQuery(osb2, q);
+        q = new Query();
+        q.addToSelect(osb2);
+        r = new SingletonResults(q, os, os.getSequence());
+        assertEquals(Collections.singletonList(((Employee) data.get("EmployeeA1")).getId()), r);
     }
 }

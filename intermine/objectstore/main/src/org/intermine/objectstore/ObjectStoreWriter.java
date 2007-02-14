@@ -13,6 +13,7 @@ package org.intermine.objectstore;
 import java.util.Collection;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.Query;
 
 /**
  * Store, update, and delete objects
@@ -124,6 +125,18 @@ public interface ObjectStoreWriter extends ObjectStore
      * @throws ObjectStoreException if an error occurs
      */
     public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException;
+
+    /**
+     * Adds elements to an ObjectStoreBag from the results of a Query. The data may not be loaded
+     * into Java, so this is a performance improvement method. For example, in SQL this method
+     * may issue a command like "INSERT INTO bag SELECT ...".
+     *
+     * @param osb an ObjectStoreBag
+     * @param query an objectstore Query, which contains only one result column, which is a suitable
+     * type for insertion into the given bag
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void addToBagFromQuery(ObjectStoreBag osb, Query q) throws ObjectStoreException;
 
     /**
      * Gets an ID number which is unique in the database.
