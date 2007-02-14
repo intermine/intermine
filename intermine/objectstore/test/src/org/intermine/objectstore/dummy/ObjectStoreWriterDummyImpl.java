@@ -241,4 +241,8 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
     public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
         throw new RuntimeException("Not implemented");
     }
+
+    public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
+        throw new UnsupportedOperationException();
+    }
 }

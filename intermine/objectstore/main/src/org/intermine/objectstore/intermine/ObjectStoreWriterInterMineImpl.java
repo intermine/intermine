@@ -39,7 +39,13 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.sql.precompute.BestQuery;
+import org.intermine.sql.precompute.OptimiserCache;
+import org.intermine.sql.precompute.PrecomputedTable;
+import org.intermine.sql.precompute.QueryOptimiser;
+import org.intermine.sql.precompute.QueryOptimiserContext;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
@@ -897,6 +903,102 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
         } catch (SQLException e) {
             throw new ObjectStoreException("Error removing from bag", e);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(c);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /**
+     * @see ObjectStoreWriter#addToBagFromQuery
+     */
+    public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
+        List select = query.getSelect();
+        if (select.size() != 1) {
+            throw new IllegalArgumentException("Query has incorrect number of SELECT elements.");
+        }
+        Class type = ((QuerySelectable) select.get(0)).getType();
+        if (!(Integer.class.equals(type) || InterMineObject.class.isAssignableFrom(type))) {
+            throw new IllegalArgumentException("The type of the result colum (" + type.getName()
+                    + ") is not an Integer or InterMineObject");
+        }
+        try {
+            Connection c = null;
+            try {
+                c = getConnection();
+                Set readTables = SqlGenerator.findTableNames(query, getSchema());
+                readTables.add(INT_BAG_TABLE_NAME);
+                batch.flush(c, readTables);
+                addToBagFromQueryWithConnection(c, osb, query);
+            } finally {
+                releaseConnection(c);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        }
+    }
+
+    /**
+     * Adds elements to a bag from the results of a query.
+     *
+     * @param c a Connection
+     * @param osb an ObjectStoreBag
+     * @param query a Query with only one column
+     * @throws ObjectStoreException if there is an error in the underlying database
+     */
+    protected void addToBagFromQueryWithConnection(Connection c, ObjectStoreBag osb, Query query)
+    throws ObjectStoreException {
+        boolean wasInTransaction = isInTransactionWithConnection(c);
+        if (!wasInTransaction) {
+            beginTransactionWithConnection(c);
+        }
+
+        if (getMinBagTableSize() != -1) {
+            createTempBagTables(c, query);
+            flushOldTempBagTables(c);
+        }
+        String sql = SqlGenerator.generate(query, schema, db, null, SqlGenerator.ID_ONLY,
+                bagConstraintTables);
+        try {
+            if (everOptimise) {
+                PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(query);
+                BestQuery bestQuery;
+                if (pt != null) {
+                    OptimiserCache oCache = (OptimiserCache) goFasterCacheMap.get(query);
+                    bestQuery = QueryOptimiser.optimiseWith(sql, null, db, null,
+                            QueryOptimiserContext.DEFAULT, Collections.singleton(pt), oCache);
+                } else {
+                    bestQuery = QueryOptimiser.optimise(sql, null, db, null,
+                            QueryOptimiserContext.DEFAULT);
+                }
+                sql = bestQuery.getBestQueryString();
+            }
+            sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
+            sql = sql.replaceAll(" ([^ ]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
+            if (sql.startsWith("SELECT DISTINCT ")) {
+                sql = "SELECT DISTINCT " + osb.getBagId() + " AS bagid, " + sql.substring(16);
+            } else if (sql.startsWith("SELECT ")) {
+                sql = "SELECT " + osb.getBagId() + " AS bagid, " + sql.substring(7);
+            } else {
+                throw new ObjectStoreException("SqlGenerator produced SQL that cannot be used: "
+                        + sql);
+            }
+            Statement s = c.createStatement();
+            registerStatement(s);
+            try {
+                s.execute("INSERT INTO " + INT_BAG_TABLE_NAME + " (" + BAGID_COLUMN + ", "
+                        + BAGVAL_COLUMN + ") " + sql);
+            } finally {
+                deregisterStatement(s);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error running query: " + sql, e);
         } finally {
             if (!wasInTransaction) {
                 try {

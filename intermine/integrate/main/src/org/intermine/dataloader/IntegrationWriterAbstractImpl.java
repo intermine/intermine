@@ -500,6 +500,17 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
+     * Adds elements to an ObjectStoreBag, delegate to internal ObjectStoreWriter.
+     *
+     * @param osb an ObjectStoreBag
+     * @param query a Query
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
+        osw.addToBagFromQuery(osb, query);
+    }
+
+    /**
      * Gets an ID number which is unique in the database.
      *
      * @return an Integer
