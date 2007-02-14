@@ -746,6 +746,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     bestQuery = QueryOptimiser.optimiseWith(sql, null, db, null,
                             (explain ? limitedContext : QueryOptimiserContext.DEFAULT),
                             Collections.singleton(pt), oCache);
+                    if (sql.equals(bestQuery.getBestQueryString())) {
+                        LOG.warn("Query with goFaster failed to optimise: original = "
+                                + sql);
+                    }
                 } else {
                     bestQuery = QueryOptimiser.optimise(sql, null, db, null,
                             (explain ? limitedContext : QueryOptimiserContext.DEFAULT));
