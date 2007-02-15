@@ -81,6 +81,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Map tableToColNameArray;
     protected Map tableToCollections;
     protected String connectionTakenBy = null;
+    protected Set tablesAltered = new HashSet();
 
     protected static final int SEQUENCE_MULTIPLE = 1000000;
     /**
@@ -404,6 +405,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     if (doDeletes) {
                         batch.deleteRow(c, tableName, "id", o.getId());
+                        tablesAltered.add(tableName);
                     }
                 }
             }
@@ -524,6 +526,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         }
                     }
                     batch.addRow(c, tableInfo.tableName, o.getId(), tableInfo.colNames, values);
+                    tablesAltered.add(tableInfo.tableName);
                 }
 
                 Iterator collectionIter = collections.iterator();
@@ -568,6 +571,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                              indirColNames[1],
                                              (swap ? o.getId() : inCollection.getId()).intValue(),
                                              (swap ? inCollection.getId() : o.getId()).intValue());
+                                tablesAltered.add(indirectTableName);
                             }
                         }
                     }
@@ -651,6 +655,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
                 batch.addRow(c, indirectTableName, indirColNames[0], indirColNames[1],
                              (swap ? hasId : hadId).intValue(), (swap ? hadId : hasId).intValue());
+                tablesAltered.add(indirectTableName);
             } else {
                 throw new ObjectStoreException("Field " + clazz.getName() + "." + fieldName
                         + " is not a many-to-many collection.");
@@ -840,6 +845,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 Integer element = (Integer) iter.next();
                 batch.addRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
                         element.intValue());
+                tablesAltered.add(INT_BAG_TABLE_NAME);
             }
         } catch (SQLException e) {
             throw new ObjectStoreException("Error adding to bag", e);
@@ -900,6 +906,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 Integer element = (Integer) iter.next();
                 batch.deleteRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
                         element.intValue());
+                tablesAltered.add(INT_BAG_TABLE_NAME);
             }
         } catch (SQLException e) {
             throw new ObjectStoreException("Error removing from bag", e);
@@ -994,6 +1001,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             try {
                 s.execute("INSERT INTO " + INT_BAG_TABLE_NAME + " (" + BAGID_COLUMN + ", "
                         + BAGVAL_COLUMN + ") " + sql);
+                tablesAltered.add(INT_BAG_TABLE_NAME);
             } finally {
                 deregisterStatement(s);
             }
@@ -1104,6 +1112,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
                     batch.deleteRow(c, tableName, "id", o.getId());
+                    tablesAltered.add(tableName);
                 }
             }
             invalidateObjectById(o.getId());
@@ -1213,7 +1222,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
             c.commit();
             c.setAutoCommit(true);
-            os.flushObjectById();
+            os.databaseAltered(tablesAltered);
+            System.out.println("Committing. Tables altered: " + tablesAltered);
+            tablesAltered.clear();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error committing transaction", e);
         }

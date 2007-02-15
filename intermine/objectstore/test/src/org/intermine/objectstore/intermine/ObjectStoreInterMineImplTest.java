@@ -723,7 +723,11 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         assertFalse(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
         ((ObjectStoreInterMineImpl)os).precompute(q, "template");
         assertTrue(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
-        
+        ObjectStoreBag osb = storeDataWriter.createObjectStoreBag();
+        storeDataWriter.addToBag(osb, new Integer(5));
+        assertTrue(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
+        storeDataWriter.store((Employee) data.get("EmployeeA1"));
+        assertFalse(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
     }
 
     public void testObjectStoreBag() throws Exception {
