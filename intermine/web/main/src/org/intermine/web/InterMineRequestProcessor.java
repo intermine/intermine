@@ -81,12 +81,15 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     }
                     session.removeAttribute("ser-username");
                 }
+                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
-                    PathQuery pq = PathQuery.fromXml(queryXml);
+                    PathQuery pq = PathQuery.fromXml(queryXml, profile.getSavedBags());
                     if (pq.isValid()) {
+                        session.setAttribute(Constants.QUERY, 
+                                             PathQuery.fromXml(queryXml, profile.getSavedBags()));
+                    } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
-                        session.setAttribute(Constants.QUERY, PathQuery.fromXml(queryXml));
                     }
                     session.removeAttribute("ser-query");
                 }

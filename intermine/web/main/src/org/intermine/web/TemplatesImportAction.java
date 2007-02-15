@@ -44,10 +44,11 @@ public class TemplatesImportAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplatesImportForm tif = (TemplatesImportForm) form;
+
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
         
-        templates = TemplateHelper.xmlToTemplateMap(tif.getXml());
+        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), profile.getSavedBags());
         
         if (tif.isOverwriting()
             && profile.getSavedTemplates().size() > 0) {

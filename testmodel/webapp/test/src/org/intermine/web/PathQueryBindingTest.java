@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class PathQueryBindingTest extends TestCase
 
     public void testProcess() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
-        Map savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is));
+        Map savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap());
 
         Map expected = new LinkedHashMap();
 
@@ -87,7 +88,7 @@ public class PathQueryBindingTest extends TestCase
         // Test marshallings
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         String xml = PathQueryBinding.marshal(employeesWithOldManagers, "employeesWithOldManagers", "testmodel");
-        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())));
+        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), new HashMap());
         expected = new LinkedHashMap();
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
         

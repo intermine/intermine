@@ -127,11 +127,11 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryBinding.TemplateQueryHandler(savedTemplates);
+            subHandler = new TemplateQueryBinding.TemplateQueryHandler(savedTemplates, savedBags);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries);
+            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries, savedBags);
         }
         if (qName.equals("tags")) {
             subHandler = new TagBinding.TagHandler(username, tags);

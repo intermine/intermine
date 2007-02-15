@@ -123,11 +123,12 @@ public class PathQueryBinding
      * Parse PathQueries from XML
      * @param reader the saved queries
      * @return a Map from query name to PathQuery
+     * @param savedBags Map from bag name to bag
      */
-    public static Map unmarshal(Reader reader) {
+    public static Map unmarshal(Reader reader, Map savedBags) {
         Map queries = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries));
+            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, savedBags));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

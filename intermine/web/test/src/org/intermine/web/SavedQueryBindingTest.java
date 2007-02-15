@@ -12,6 +12,7 @@ package org.intermine.web;
 
 import java.io.StringReader;
 import java.util.Date;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 
@@ -33,7 +34,8 @@ public class SavedQueryBindingTest extends TestCase
         
         String xml = SavedQueryBinding.marshal(sq);
         
-        SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml)).values().iterator().next();
+        SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml), 
+                                                                  new HashMap()).values().iterator().next();
         
         assertEquals(sq, sq2);
     }
