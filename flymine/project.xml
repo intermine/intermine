@@ -3,7 +3,8 @@
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
- <source name="flybase-dmel-gff" type="flybase-gff" dump="true">
+  <sources>
+    <source name="flybase-dmel-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -73,8 +74,7 @@
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
-     <sources>
-   <source name="dbID-ncbiID" type="tab-separated-file" dump="true">
+    <source name="dbID-ncbiID" type="tab-separated-file" dump="true">
  <!-- for adding the ncbi geneID using the organismDbId field-->  
       <property name="tsv.config.file" value="resources/dbID-ncbiID.tsv_config"/>
       <property name="tsv.includes" value="ncbigene2DB.txt"/>
