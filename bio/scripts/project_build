@@ -21,7 +21,7 @@ my $project_file = 'project.xml';
 
 sub usage
 {
-  die <<'EOF';
+  die <<"EOF";
 usage:
   $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix
 
