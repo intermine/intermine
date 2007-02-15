@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="userprofile/build/gen/src"/>
-	<classpathentry kind="lib" path="userprofile/dist/userprofile.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry kind="output" path="userprofile/build/classes"/>
-</classpath>
