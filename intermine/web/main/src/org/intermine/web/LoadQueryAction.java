@@ -53,11 +53,13 @@ public class LoadQueryAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         
-        Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml));
+        Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
+                                                 profile.getSavedBags());
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery((PathQuery) query, session, response);
         

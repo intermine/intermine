@@ -91,11 +91,13 @@ public class TemplateQueryBinding
      * Parse TemplateQuerys from XML
      * @param reader the saved templates
      * @return a Map from template name to TemplateQuery
+     * @param savedBags Map from bag name to bag
      */
-    public Map unmarshal(Reader reader) {
+    public Map unmarshal(Reader reader, Map savedBags) {
         Map templates = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates));
+            SAXParser.parse(new InputSource(reader), 
+                            new TemplateQueryHandler(templates, savedBags));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -120,9 +122,10 @@ public class TemplateQueryBinding
         /**
          * Constructor
          * @param templates Map from template name to TemplateQuery
+         * @param savedBags Map from bag name to bag
          */
-        public TemplateQueryHandler(Map templates) {
-            super(new HashMap());
+        public TemplateQueryHandler(Map templates, Map savedBags) {
+            super(new HashMap(), savedBags);
             this.templates = templates;
             reset();
         }

@@ -40,13 +40,16 @@ class PathQueryHandler extends DefaultHandler
     private Map alternativeViews = new HashMap();
     protected PathQuery query;
     private Model model = null;
+    private Map savedBags;
 
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
+     * @param savedBags Map from bag name to bag
      */
-    public PathQueryHandler(Map queries) {
+    public PathQueryHandler(Map queries, Map savedBags) {
         this.queries = queries;
+        this.savedBags = savedBags;
     }
 
     /**
@@ -130,7 +133,7 @@ class PathQueryHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
-            query.checkValidity();
+            query.checkValidity(savedBags);
             for (Iterator iter = alternativeViews.entrySet().iterator(); iter.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 query.addAlternativeView((String) entry.getKey(), (List) entry.getValue());

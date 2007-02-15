@@ -249,13 +249,14 @@ public class TemplateHelper
      * Parse templates in XML format and return a map from template name to
      * TemplateQuery.
      *
-     * @param xml  the template queries in xml format
-     * @return     Map from template name to TemplateQuery
+     * @param xml         the template queries in xml format
+     * @param savedBags   Map from bag name to bag
+     * @return            Map from template name to TemplateQuery
      * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
      */
-    public static Map xmlToTemplateMap(String xml) throws Exception {
+    public static Map xmlToTemplateMap(String xml, Map savedBags) throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
-        return new TemplateQueryBinding().unmarshal(templateQueriesReader);
+        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags);
     }
 
     /**

@@ -11,6 +11,8 @@ package org.intermine.web;
  */
 
 import java.io.StringReader;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,11 +31,14 @@ public class ImportQueriesForm extends ValidatorForm
     private String xml;
     private Map map;
     private String queryBuilder;
+    private final Map savedBags;
     
     /**
      * Creates a new instance of ImportQueriesForm.
+     * @param savedBags Map from bag name to bag
      */
-    public ImportQueriesForm() {
+    public ImportQueriesForm(Map savedBags) {
+        this.savedBags = savedBags;
         reset();
     }
     
@@ -44,10 +49,10 @@ public class ImportQueriesForm extends ValidatorForm
     public Map getQueryMap() {
         if (map == null) {
             try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()));
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags);
             } catch (Exception e) {
                 map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml() 
-                                                                  + "</queries>"));
+                                                                  + "</queries>"), savedBags);
             }
         }
         return map;

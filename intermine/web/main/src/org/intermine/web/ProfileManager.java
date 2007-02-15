@@ -216,9 +216,11 @@ public class ProfileManager
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
             SavedQuery query = (SavedQuery) i.next();
             try {
-                Map queries = SavedQueryBinding.unmarshal(new StringReader(query.getQuery()));
+                Map queries = 
+                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags);
                 if (queries.size() == 0) {
-                    queries = PathQueryBinding.unmarshal(new StringReader(query.getQuery()));
+                    queries = 
+                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -239,7 +241,7 @@ public class ProfileManager
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map templateMap = templateBinding.unmarshal(sr);
+                Map templateMap = templateBinding.unmarshal(sr, savedBags);
                 String templateName = (String) templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);

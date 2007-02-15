@@ -417,10 +417,11 @@ public class PathQuery
     /**
      * Check validity of receiver by trying to create an objectstore Query. If
      * conversion fails, the exception is recorded and isValid will return false.
+     * @param savedBags Map from bag name to bag
      */
-    protected void checkValidity() {
+    protected void checkValidity(Map savedBags) {
         try {
-            MainHelper.makeQuery(this, new HashMap());
+            MainHelper.makeQuery(this, savedBags);
         } catch (Exception err) {
             problems.add(err);
         }
@@ -514,9 +515,10 @@ public class PathQuery
      * Rematerialise single query from XML.
      * @param xml PathQuery XML
      * @return a PathQuery object
+     * @param savedBags Map from bag name to bag
      */
-    public static PathQuery fromXml(String xml) {
-        Map queries = PathQueryBinding.unmarshal(new StringReader(xml));
+    public static PathQuery fromXml(String xml, Map savedBags) {
+        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags);
         return (PathQuery) queries.values().iterator().next();
     }
 }

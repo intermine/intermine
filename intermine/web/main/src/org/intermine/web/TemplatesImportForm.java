@@ -11,6 +11,8 @@ package org.intermine.web;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
@@ -87,12 +89,15 @@ public class TemplatesImportForm extends ValidatorForm
      * @see ValidatorForm#validate
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
         ActionErrors errors = super.validate(mapping, request);
         if (errors != null && errors.size() > 0) {
             return errors;
         }
         try {
-           TemplateHelper.xmlToTemplateMap(getXml());
+           TemplateHelper.xmlToTemplateMap(getXml(), profile.getSavedBags());
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();
