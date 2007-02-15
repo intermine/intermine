@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -39,8 +40,10 @@ public class ImportQueriesAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ImportQueriesForm qif = (ImportQueriesForm) form;
-        
-        Map queries = qif.getQueryMap();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = session.getServletContext();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map queries = qif.getQueryMap(profile.getSavedBags(), classKeys);
         
         if (queries.size() == 1 && request.getParameter("query_builder") != null
             && request.getParameter("query_builder").equals("yes")) {
@@ -48,7 +51,6 @@ public class ImportQueriesAction extends InterMineAction
                                      session, response);
             return mapping.findForward("query");
         } else {
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Iterator iter = queries.keySet().iterator();
             StringBuffer sb = new StringBuffer();
             while (iter.hasNext()) {

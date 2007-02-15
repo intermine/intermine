@@ -48,7 +48,9 @@ public class TemplatesImportAction extends InterMineAction
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
         
-        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), profile.getSavedBags());
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), profile.getSavedBags(),
+                                                    classKeys);
         
         if (tif.isOverwriting()
             && profile.getSavedTemplates().size() > 0) {

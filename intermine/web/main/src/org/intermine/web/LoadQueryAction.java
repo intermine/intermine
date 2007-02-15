@@ -58,8 +58,10 @@ public class LoadQueryAction extends DispatchAction
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
-                                                 profile.getSavedBags());
+                                                 profile.getSavedBags(),
+                                                 classKeys);
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery((PathQuery) query, session, response);
         

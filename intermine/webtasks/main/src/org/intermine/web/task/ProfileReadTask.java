@@ -12,6 +12,8 @@ package org.intermine.web.task;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -19,6 +21,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
@@ -99,10 +102,14 @@ public class ProfileReadTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            ProfileManager pm = new ProfileManager(os, userProfileOS);
+            Properties classKeyProps = new Properties();
+            classKeyProps.load(getClass().getClassLoader()
+                               .getResourceAsStream("class_keys.properties"));
+            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
 
             PkQueryIdUpgrader upgrader = new PkQueryIdUpgrader(this.source);
-            ProfileManagerBinding.unmarshal(reader, pm, os, upgrader);
+            ProfileManagerBinding.unmarshal(reader, pm, os, upgrader, classKeys);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {

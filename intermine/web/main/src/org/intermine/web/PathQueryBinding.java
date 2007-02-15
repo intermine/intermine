@@ -11,10 +11,12 @@ package org.intermine.web;
  */
 
 import java.util.LinkedHashMap;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.io.StringWriter;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -23,6 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.xml.sax.InputSource;
 
+import org.intermine.metadata.Model;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 
@@ -119,22 +122,20 @@ public class PathQueryBinding
         }
     }
 
+    
     /**
      * Parse PathQueries from XML
      * @param reader the saved queries
      * @return a Map from query name to PathQuery
-     * @param savedBags Map from bag name to bag
      */
-    public static Map unmarshal(Reader reader, Map savedBags) {
+    public static Map unmarshal(Reader reader, Map savedBags, Map classKeys) {
         Map queries = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, savedBags));
+            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, savedBags, classKeys));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return queries;
-    }
-
-    
+    }  
 }
 

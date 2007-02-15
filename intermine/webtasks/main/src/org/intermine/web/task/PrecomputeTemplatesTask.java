@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -29,6 +30,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.TemplateQuery;
@@ -210,7 +212,11 @@ public class PrecomputeTemplatesTask extends Task
         try {
             os = ObjectStoreFactory.getObjectStore(alias);
             userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            pm = new ProfileManager(os, userProfileOS);
+            Properties classKeyProps = new Properties();
+            classKeyProps.load(getClass().getClassLoader()
+                               .getResourceAsStream("class_keys.properties"));
+            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            pm = new ProfileManager(os, userProfileOS, classKeys);
         } catch (Exception err) {
             throw new BuildException("Exception creating objectstore/profile manager", err);
         }

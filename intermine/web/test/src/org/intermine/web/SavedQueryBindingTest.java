@@ -13,6 +13,8 @@ package org.intermine.web;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -22,10 +24,15 @@ public class SavedQueryBindingTest extends TestCase
 {
     private Model model;
     private Date created = new Date(1124276877010L);
+    private Map classKeys;
     
     protected void setUp() throws Exception {
         super.setUp();
         model = Model.getInstanceByName("testmodel");
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader()
+                           .getResourceAsStream("class_keys.properties"));
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
 
     public void testMarshalSavedQuery() throws Exception {
@@ -35,7 +42,8 @@ public class SavedQueryBindingTest extends TestCase
         String xml = SavedQueryBinding.marshal(sq);
         
         SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml), 
-                                                                  new HashMap()).values().iterator().next();
+                                                                  new HashMap(),
+                                                                  classKeys).values().iterator().next();
         
         assertEquals(sq, sq2);
     }

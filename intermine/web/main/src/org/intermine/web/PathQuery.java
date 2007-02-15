@@ -411,7 +411,7 @@ public class PathQuery
      * @see Object#toString()
      */
     public String toString() {
-        return "{PathQuery: " + model + ", " + nodes + ", " + view + "}";
+        return "{PathQuery: model=" + model.getName() + ", " + nodes + ", " + view + "}";
     }
 
     /**
@@ -517,8 +517,8 @@ public class PathQuery
      * @return a PathQuery object
      * @param savedBags Map from bag name to bag
      */
-    public static PathQuery fromXml(String xml, Map savedBags) {
-        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags);
+    public static PathQuery fromXml(String xml, Map savedBags, Map classKeys) {
+        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, classKeys);
         return (PathQuery) queries.values().iterator().next();
     }
 }

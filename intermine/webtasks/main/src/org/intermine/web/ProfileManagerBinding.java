@@ -13,10 +13,12 @@ package org.intermine.web;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.SAXParser;
 import org.intermine.web.bag.IdUpgrader;
@@ -25,8 +27,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.intermine.model.userprofile.Tag;
 
 /**
  * Code for reading and writing ProfileManager objects as XML
@@ -67,10 +67,10 @@ public class ProfileManagerBinding
      * correspond to object in old bags.
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-                                 PkQueryIdUpgrader idUpgrader) {
+                                 PkQueryIdUpgrader idUpgrader, Map classKeys) {
         try {
             ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader);
+                new ProfileManagerHandler(profileManager, idUpgrader, classKeys);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,14 +89,16 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileHandler profileHandler = null;
     private ProfileManager profileManager = null;
     private IdUpgrader idUpgrader;
-
+    private Map classKeys;
+    
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      */
-    public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
+    public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
+                                 Map classKeys) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
@@ -108,7 +110,7 @@ class ProfileManagerHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
-            profileHandler = new ProfileHandler(profileManager, idUpgrader);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader, classKeys);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);

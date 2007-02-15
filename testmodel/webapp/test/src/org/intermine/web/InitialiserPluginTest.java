@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -45,7 +46,8 @@ public class InitialiserPluginTest extends TestCase
     private ObjectStoreWriter osw, userProfileOSW;
     private Integer bobId = new Integer(101);
     private String bobPass = "bob_pass";
-
+    private Map classKeys;
+    
     public InitialiserPluginTest(String arg) {
         super(arg);
     }
@@ -57,13 +59,17 @@ public class InitialiserPluginTest extends TestCase
 
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         userProfileOS = userProfileOSW.getObjectStore();
-
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader()
+                           .getResourceAsStream("class_keys.properties"));
+        classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+        
         pm = new NonCheckingProfileManager(os, userProfileOSW);
     }
 
     private class NonCheckingProfileManager extends ProfileManager {
         public NonCheckingProfileManager(ObjectStore os, ObjectStoreWriter userProfileOSW) {
-            super(os, userProfileOSW);
+            super(os, userProfileOSW, classKeys);
         }
         
         // override to prevent the checker from objecting to

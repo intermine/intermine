@@ -93,11 +93,11 @@ public class TemplateQueryBinding
      * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
      */
-    public Map unmarshal(Reader reader, Map savedBags) {
+    public Map unmarshal(Reader reader, Map savedBags, Map classKeys) {
         Map templates = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader), 
-                            new TemplateQueryHandler(templates, savedBags));
+                            new TemplateQueryHandler(templates, savedBags, classKeys));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -124,8 +124,8 @@ public class TemplateQueryBinding
          * @param templates Map from template name to TemplateQuery
          * @param savedBags Map from bag name to bag
          */
-        public TemplateQueryHandler(Map templates, Map savedBags) {
-            super(new HashMap(), savedBags);
+        public TemplateQueryHandler(Map templates, Map savedBags, Map classKeys) {
+            super(new HashMap(), savedBags, classKeys);
             this.templates = templates;
             reset();
         }

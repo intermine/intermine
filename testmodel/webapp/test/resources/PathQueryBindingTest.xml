@@ -18,4 +18,12 @@
       <constraint op="IN" value="bag1"/>
     </node>
   </query>
+  <query name="employeeEndInBag" model="testmodel" view="Employee.name">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.end" type="String">
+      <constraint op="IN" value="e1" description="" identifier="" code="A">
+      </constraint>
+    </node>
+  </query>
 </query-list>

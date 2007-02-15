@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.model.userprofile.Tag;
@@ -23,6 +24,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManager;
@@ -97,7 +99,11 @@ public class LoadDefaultTemplatesTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            ProfileManager pm = new ProfileManager(os, userProfileOS);
+            Properties classKeyProps = new Properties();
+            classKeyProps.load(getClass().getClassLoader()
+                               .getResourceAsStream("class_keys.properties"));
+            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
             Reader reader = new FileReader(xmlFile);
 
             // Copy into existing or new superuser profile
@@ -121,7 +127,7 @@ public class LoadDefaultTemplatesTask extends Task
             // Unmarshal
             Set tags = new HashSet();
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, os,
-                    profileDest.getUsername(), profileDest.getPassword(), tags);
+                    profileDest.getUsername(), profileDest.getPassword(), tags, classKeys);
 
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();
