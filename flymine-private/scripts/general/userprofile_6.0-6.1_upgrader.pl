@@ -17,7 +17,7 @@ BEGIN {
   $InterMine::properties_file = "$ENV{HOME}/flymine.properties";
   $InterMine::db_prefix = 'db.production';
   $InterMine::class_keys = "$ENV{HOME}/svn/dev/bio/core/props/resources/class_keys.properties";
-  @types = qw(Gene Protein Exon GOTerm Transcript Organism);
+  @types = qw(RegulatoryRegion TFmodule Gene Protein GOTerm Transcript Organism ProteinInteraction ProteinFeature Exon Publication);
 }
 
 use GDBM_File;
@@ -192,9 +192,11 @@ sub find_objects_by_type
                             \%objects_by_type, \%keys_for_type, 0)) {
           next IDENTIFIER;
         }
-        if (find_identifier($identifier, $type, $class_key_field,
-                            \%objects_by_type, \%keys_for_type, 1)) {
-          next IDENTIFIER;
+        if ($type eq 'Gene' || $type eq 'Protein') {
+          if (find_identifier($identifier, $type, $class_key_field,
+                              \%objects_by_type, \%keys_for_type, 1)) {
+            next IDENTIFIER;
+          }
         }
       }
     }
@@ -333,7 +335,10 @@ sub add_to_cache
     my @objs_to_store = ();
 
     if (exists $object_by_identifier_cache{$field_value}) {
-      @objs_to_store = thaw $object_by_identifier_cache{$field_value};
+      my $frozen = $object_by_identifier_cache{$field_value};
+      if ($frozen ne '') {
+        @objs_to_store = thaw $frozen;
+      }
     }
 
     if (!grep {$_->{id} == $obj->id()} @objs_to_store) {
@@ -347,7 +352,10 @@ sub add_to_cache
     $object_by_identifier_cache{$field_value} = freeze @objs_to_store;
 
     if (exists $object_by_identifier_cache{lc $field_value}) {
-      @objs_to_store = thaw $object_by_identifier_cache{lc $field_value};
+      my $frozen = $object_by_identifier_cache{lc $field_value};
+      if ($frozen ne '') {
+        @objs_to_store = thaw $frozen;
+      }
     }
 
     if (!grep {$_->{id} == $obj->id()} @objs_to_store) {
