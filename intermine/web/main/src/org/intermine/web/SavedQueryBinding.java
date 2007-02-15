@@ -83,10 +83,10 @@ public class SavedQueryBinding
      * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
      */
-    public static Map unmarshal(Reader reader, Map savedBags) {
+    public static Map unmarshal(Reader reader, Map savedBags, Map classKeys) {
         Map queries = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags));
+            SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags, classKeys));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -109,8 +109,8 @@ public class SavedQueryBinding
          * @param queries Map from saved query name to SavedQuery
          * @param savedBags Map from bag name to bag
          */
-        public SavedQueryHandler(Map queries, Map savedBags) {
-            super(new HashMap(), savedBags);
+        public SavedQueryHandler(Map queries, Map savedBags, Map classKeys) {
+            super(new HashMap(), savedBags, classKeys);
             this.queries = queries;
         }
 

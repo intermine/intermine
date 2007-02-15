@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
@@ -33,7 +34,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class PathQueryHandler extends DefaultHandler
 {
-    private Map queries;
+    private Map queries, classKeys;
+    private Map classKeysMap = new HashMap();
     private String queryName;
     private char gencode;
     private PathNode node;
@@ -47,8 +49,10 @@ class PathQueryHandler extends DefaultHandler
      * @param queries Map from query name to PathQuery
      * @param savedBags Map from bag name to bag
      */
-    public PathQueryHandler(Map queries, Map savedBags) {
+
+    public PathQueryHandler(Map queries, Map savedBags, Map classKeys) {
         this.queries = queries;
+        this.classKeys = classKeys;
         this.savedBags = savedBags;
     }
 
@@ -56,7 +60,7 @@ class PathQueryHandler extends DefaultHandler
      * @see DefaultHandler#startElement
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+    throws SAXException {
         if (qName.equals("alternative-view")) {
             String name = validateName(attrs.getValue("name"));
             List view = StringUtil.tokenize(attrs.getValue("view"));
@@ -87,14 +91,30 @@ class PathQueryHandler extends DefaultHandler
             }
         }
         if (qName.equals("constraint")) {
+            boolean constrainParent = false;
             int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
             Object constraintValue;
             // If we know that the query is not valid, don't resolve the type of
             // the node as it may not resolve correctly
-            if (node.isReference() || BagConstraint.VALID_OPS.contains(constraintOp)
-                    || !query.isValid()) {
+            if (node.isReference() || !query.isValid()) {
                 constraintValue = attrs.getValue("value");
+            } else if (BagConstraint.VALID_OPS.contains(constraintOp)){
+                constraintValue = attrs.getValue("value");
+                // bag constraints are now only valid on classes.  If this bag
+                // constraint is on another field:
+                // a) if a key field move it to parent
+                // b) otherwise throw an exception to disable query
+                if (node.isAttribute()) {
+                    if (ClassKeyHelper.isKeyField(classKeys, node.getParentType(), 
+                                                  node.getFieldName())) {
+                        constrainParent = true;
+                    } else {
+                        Exception e = new Exception("Invalid bag constraint - only objects can be"
+                                + "constrained to be in bags.");
+                        query.problems.add(e);
+                    }
+                }
             } else {
                 Class c = null;
                 if (model != null && !node.getType().startsWith(model.getPackageName())) {
@@ -122,11 +142,19 @@ class PathQueryHandler extends DefaultHandler
                 code = "" + gencode;
                 gencode++;
             }
-            node.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                                                     editableFlag, description, code, identifier));
+            if (constrainParent) {
+                PathNode parent = (PathNode) node.getParent();
+                parent.getConstraints().add(new Constraint(constraintOp, constraintValue,
+                                                           editableFlag, description, code,
+                                                           identifier));
+            } else {
+                node.getConstraints().add(new Constraint(constraintOp, constraintValue,
+                                                         editableFlag, description, code,
+                                                         identifier));
+            }
         }
     }
-    
+
     /**
      * @see DefaultHandler#endElement
      */

@@ -13,6 +13,7 @@ package org.intermine.web;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -83,11 +84,14 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 }
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 String queryXml = (String) session.getAttribute("ser-query");
+                Map classKeys = (Map) sc.getAttribute(Constants.CLASS_KEYS);
                 if (queryXml != null) {
-                    PathQuery pq = PathQuery.fromXml(queryXml, profile.getSavedBags());
+                    PathQuery pq = PathQuery.fromXml(queryXml, profile.getSavedBags(),
+                                                     classKeys);
                     if (pq.isValid()) {
                         session.setAttribute(Constants.QUERY, 
-                                             PathQuery.fromXml(queryXml, profile.getSavedBags()));
+                                             PathQuery.fromXml(queryXml, profile.getSavedBags(),
+                                                               classKeys));
                     } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
                     }

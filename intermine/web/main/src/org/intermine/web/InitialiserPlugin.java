@@ -101,6 +101,8 @@ public class InitialiserPlugin implements PlugIn
         loadClassDescriptions(servletContext, os);
         
         summarizeObjectStore(servletContext, os);
+        // load class keys
+        loadClassKeys(servletContext, os);
         ProfileManager pm = createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
@@ -109,8 +111,6 @@ public class InitialiserPlugin implements PlugIn
         
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
-        // load class keys
-        loadClassKeys(servletContext, os);
         // load custom bag queries
         loadBagQueries(servletContext, os);
         makeCache(servletContext, os);
@@ -406,9 +406,10 @@ public class InitialiserPlugin implements PlugIn
         try {
             Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
             String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
+            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            profileManager = new ProfileManager(os, userProfileOS);
+            profileManager = new ProfileManager(os, userProfileOS, classKeys);
         } catch (ObjectStoreException e) {
             throw new ServletException("Unable to create profile manager - please check that the "
                     + "userprofile database is available", e);

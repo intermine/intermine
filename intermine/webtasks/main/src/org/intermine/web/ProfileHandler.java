@@ -40,7 +40,7 @@ class ProfileHandler extends DefaultHandler
     private ProfileManager profileManager;
     private String username;
     private String password;
-    private Map savedQueries;
+    private Map savedQueries, classKeys;
     private Map savedBags;
     private Map savedTemplates;
     private Set tags;
@@ -63,8 +63,8 @@ class ProfileHandler extends DefaultHandler
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader) {
-        this(profileManager, idUpgrader, null, null, new HashSet());
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, Map classKeys) {
+        this(profileManager, idUpgrader, null, null, new HashSet(), classKeys);
     }
 
     /**
@@ -77,7 +77,7 @@ class ProfileHandler extends DefaultHandler
      * @param tags a set to populate with user tags
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set tags) {
+            String defaultUsername, String defaultPassword, Set tags, Map classKeys) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
@@ -85,6 +85,7 @@ class ProfileHandler extends DefaultHandler
         this.username = defaultUsername;
         this.password = defaultPassword;
         this.tags = tags;
+        this.classKeys = classKeys;
     }
 
     /**
@@ -127,11 +128,12 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryBinding.TemplateQueryHandler(savedTemplates, savedBags);
+            subHandler = new TemplateQueryBinding.TemplateQueryHandler(savedTemplates, savedBags,
+                                                                       classKeys);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries, savedBags);
+            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries, savedBags, classKeys);
         }
         if (qName.equals("tags")) {
             subHandler = new TagBinding.TagHandler(username, tags);

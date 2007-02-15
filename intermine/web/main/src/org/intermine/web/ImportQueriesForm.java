@@ -15,7 +15,10 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
@@ -31,28 +34,29 @@ public class ImportQueriesForm extends ValidatorForm
     private String xml;
     private Map map;
     private String queryBuilder;
-    private final Map savedBags;
     
     /**
      * Creates a new instance of ImportQueriesForm.
      * @param savedBags Map from bag name to bag
      */
-    public ImportQueriesForm(Map savedBags) {
-        this.savedBags = savedBags;
+    public ImportQueriesForm() {
         reset();
     }
+    
+    
     
     /**
      * Return a Map from query name to Query object.
      * @return the Map
      */
-    public Map getQueryMap() {
+    public Map getQueryMap(Map savedBags, Map classKeys) {
         if (map == null) {
             try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags);
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags, classKeys);
             } catch (Exception e) {
                 map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml() 
-                                                                  + "</queries>"), savedBags);
+                                                                  + "</queries>"), savedBags,
+                                                                  classKeys);
             }
         }
         return map;
@@ -117,8 +121,13 @@ public class ImportQueriesForm extends ValidatorForm
         if (errors != null && errors.size() > 0) {
             return errors;
         }
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        
         try {
-           if (getQueryMap().size() == 0) {
+           if (getQueryMap(profile.getSavedBags(), classKeys).size() == 0) {
                if (errors == null) {
                    errors = new ActionErrors();
                }

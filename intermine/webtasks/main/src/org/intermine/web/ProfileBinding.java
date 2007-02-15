@@ -207,7 +207,7 @@ public class ProfileBinding
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-                                    String username, String password, Set tags) {
+                                    String username, String password, Set tags, Map classKeys) {
         try {
             IdUpgrader idUpgrader = new IdUpgrader() {
                 public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
@@ -216,7 +216,7 @@ public class ProfileBinding
                 }
             };
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password, tags);
+                new ProfileHandler(profileManager, idUpgrader, username, password, tags, classKeys);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

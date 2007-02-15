@@ -10,12 +10,16 @@ package org.intermine.web;
  *
  */
 
+import java.util.Map;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
 
 /**
@@ -91,13 +95,14 @@ public class TemplatesImportForm extends ValidatorForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+        ServletContext servletContext = session.getServletContext();
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         ActionErrors errors = super.validate(mapping, request);
         if (errors != null && errors.size() > 0) {
             return errors;
         }
         try {
-           TemplateHelper.xmlToTemplateMap(getXml(), profile.getSavedBags());
+           TemplateHelper.xmlToTemplateMap(getXml(), profile.getSavedBags(), classKeys);
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

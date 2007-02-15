@@ -12,6 +12,8 @@ package org.intermine.web.task;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -22,6 +24,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.ProfileManager;
 import org.intermine.web.ProfileManagerBinding;
 
@@ -88,7 +91,11 @@ public class ProfileWriteTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            ProfileManager pm = new ProfileManager(os, userProfileOS);
+            Properties classKeyProps = new Properties();
+            classKeyProps.load(getClass().getClassLoader()
+                               .getResourceAsStream("class_keys.properties"));
+            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
 

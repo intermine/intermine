@@ -13,6 +13,8 @@ package org.intermine.web.task;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -22,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.XmlUtil;
+import org.intermine.web.ClassKeyHelper;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManager;
@@ -100,7 +103,11 @@ public class DumpDefaultTemplatesTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            ProfileManager pm = new ProfileManager(os, userProfileOS);
+            Properties classKeyProps = new Properties();
+            classKeyProps.load(getClass().getClassLoader()
+                               .getResourceAsStream("class_keys.properties"));
+            Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
 
             if (!pm.hasProfile(username)) {
                 throw new BuildException("no such user " + username);

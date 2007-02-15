@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -47,10 +48,19 @@ import junit.framework.TestCase;
  */
 
 public class MainHelperTest extends TestCase {
+    private Map classKeys;
+    
     public MainHelperTest(String arg) {
         super(arg);
     }
 
+    public void setUp() throws Exception {
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader()
+                           .getResourceAsStream("class_keys.properties"));
+        Model model = Model.getInstanceByName("testmodel");
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
+    }
     public void testGetQualifiedTypeName() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         assertEquals("org.intermine.model.testmodel.Employee",
@@ -385,7 +395,7 @@ public class MainHelperTest extends TestCase {
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap());
+        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), classKeys);
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
@@ -448,7 +458,7 @@ public class MainHelperTest extends TestCase {
     }
 
     public void doQuery(String web, String iql) throws Exception {
-        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap());
+        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(), classKeys);
         PathQuery pq = (PathQuery) parsed.get("test");
         Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP);
         String got = q.toString();

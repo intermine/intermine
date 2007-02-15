@@ -10,32 +10,37 @@ package org.intermine.web;
  *
  */
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-
-import org.apache.struts.action.ActionErrors;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.web.bag.InterMineBag;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.apache.struts.action.ActionErrors;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.bag.InterMineBag;
+
 public class TemplateHelperTest extends TestCase
 {
-    Map templates;
+    private Map templates, classKeys;
 
-    public void setUp() {
+    public void setUp() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        Properties classKeyProps = new Properties();
+        classKeyProps.load(getClass().getClassLoader()
+                           .getResourceAsStream("class_keys.properties"));
+        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         TemplateQueryBinding binding = new TemplateQueryBinding();
         Reader reader = new InputStreamReader(TemplateHelper.class.getClassLoader().getResourceAsStream("WEB-INF/classes/default-template-queries.xml"));
-        templates = binding.unmarshal(reader, new HashMap());
+        templates = binding.unmarshal(reader, new HashMap(), classKeys);
     }
     
     public void testPrecomputeQuery() throws Exception {
@@ -45,7 +50,7 @@ public class TemplateHelperTest extends TestCase
             "SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
-        MainHelper.makeQuery(PathQuery.fromXml(queryXml, new HashMap()),
+        MainHelper.makeQuery(PathQuery.fromXml(queryXml, new HashMap(), classKeys),
                              new HashMap(), pathToQueryNode);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
@@ -139,7 +144,7 @@ public class TemplateHelperTest extends TestCase
                 + "    <constraint op=\"!=\" value=\"40\" description=\"d\" identifier=\"\" code=\"D\" editable=\"true\"></constraint>"
                 + "</node></query></template>");
         TemplateQuery t = 
-            (TemplateQuery) binding.unmarshal(reader, new HashMap()).values().iterator().next();
+            (TemplateQuery) binding.unmarshal(reader, new HashMap(), classKeys).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
