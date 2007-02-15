@@ -4,6 +4,36 @@
 <article>
 
   <section>
+    <title>FlyMine version 6.1 - release notes</title>
+
+    <para>
+FlyMine 6.1 contains a major overhaul of the way bags are handled.  Bags can now only contain actual objects rather than identifiers or symbols.  This means that any object in a bag has already been found in FlyMine which should reduce confusion.  A sophisticated bag upload system has been added to aid in creating bags from external lists of identifiers.
+    </para>
+
+    <para>
+PLEASE NOTE - most save user content is automatically upgraded between FlyMine releases.  In this case it was not possible to port some types of bags.  These are still available in the 6.0 archive, please contact support@flymine.org if you have any queries about transferring bags.
+    </para>
+
+    <para>
+Bags also now have a type (class) assigned to them - for example Gene, Protein, GOTerm.  This means that when editing a constraint in a template query only bags of the correct type will be listed - so if the template requires you to enter a Gene identifier the bags dropdown will list any Gene bags in your profile.    The same is true when creating/editing a query in the QueryBuilder, just add a constraint on the identifier, name, etc of a class and you will see available bags.
+    </para>
+
+    <para>
+The 'Bags' page in MyMine (select 'Bags' or 'MyMine' from the top menu bar) now allows you to paste in a list of identifiers and select a type for the new bag.  The input can be a mixture of different identifier types, for example if you wish to create a bag of <emphasis>Drosophila</emphasis> genes if can be a mixture of CGxx, FBgnxx and symbols.  In the case where an object can't be found to that matches a particular input identifier, FlyMine will attempt to help.  For example if the input list contains a UniProt protein identifier, but you choose to make a gene bag, the website will attempt to find a related gene.  Any matches found in this way will be reported for you to choose which are added to your bag.
+    </para>
+
+    <para>
+As an example, when creating a Gene bag from these identifiers:  zen CG2328 FBgn0015379 Q8IML9_DROME unknown_name FlyMine will find a gene for each of the first three identifiers and find the gene for the Q8IML9_DROME protein.  The "unknown_name" will be reported as not found.
+    </para>
+
+    <para>
+Also new are bag details pages.  These are accessible for any of your saved bags in the 'Bags' tab of MyMine.  They have a similar layout to object details pages but run templates for all objects in your page.  On the page for gene bags is the first of many 'widgets' we plan to add for a viewing and analysis of data in bags.  Currently there a widget that graphs the genes from a bag that are over/under expressed in different tissues according to the FlyAtlas data set (www.flyatlas.org).  Note that clicking on any of the bars in this graph allows you to create a new bag of genes in that category.  More functionality will be available on these pages in release 7.0/
+    </para>
+
+  </section>
+
+
+  <section>
     <title>FlyMine version 6.0 - release notes</title>
 
     <para>FlyMine 6.0 adds data from seven <emphasis>Dropsophila</emphasis> RNAi screens from the DRSC,

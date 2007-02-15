@@ -10,6 +10,19 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 6.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 6.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 6.1 contains a major overhaul of the way FLyMine handles bags.  A sophisticated
+        bag uplaod page has been added and the contents of bags can be analysed on bag details pages.
+      </description>
+      <pubDate>Thu, 15th Feb 2007 20:30 GMT</pubDate>
+    </item>
+
+    <item>
       <title>Service interruption</title>
       <link>http://www.flymine.org/</link>
       <description>
