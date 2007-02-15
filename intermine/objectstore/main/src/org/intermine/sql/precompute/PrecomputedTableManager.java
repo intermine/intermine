@@ -25,6 +25,7 @@ import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.Query;
 import org.intermine.sql.query.AbstractValue;
 import org.intermine.sql.query.SelectValue;
+import org.intermine.sql.query.Table;
 
 import org.apache.log4j.Logger;
 
@@ -174,6 +175,38 @@ public class PrecomputedTableManager
             iter.remove();
         }
         types.clear();
+    }
+
+    /**
+     * Deletes all precomputed tables that would be affected by changes in any table in a given list
+     * of table names.
+     *
+     * @param tablesAltered a Set of table names that may have alterations
+     * @throws SQLException if something goes wrong
+     */
+    public void dropAffected(Set tablesAltered) throws SQLException {
+        Iterator iter = precomputedTables.iterator();
+        while (iter.hasNext()) {
+            PrecomputedTable pt = (PrecomputedTable) iter.next();
+            Query q = pt.getQuery();
+            boolean drop = false;
+            Iterator fromIter = q.getFrom().iterator();
+            while ((!drop) && fromIter.hasNext()) {
+                Object table = fromIter.next();
+                if (table instanceof Table) {
+                    if (tablesAltered.contains(((Table) table).getName())) {
+                        drop = true;
+                    }
+                }
+            }
+            if (drop) {
+                deleteTableFromDatabase(pt.getName());
+                iter.remove();
+                String queryString = pt.getOriginalSql();
+                Map queryStrings = (Map) types.get(pt.getCategory());
+                queryStrings.remove(queryString);
+            }
+        }
     }
 
     /**

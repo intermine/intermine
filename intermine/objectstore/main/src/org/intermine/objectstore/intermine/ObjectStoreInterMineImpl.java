@@ -1154,6 +1154,30 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
+     * Internal method called by the ObjectStoreWriter, to notify the ObjectStore that some of the
+     * data in the database has changed.
+     *
+     * @param tablesAltered a Set of table names that may have been altered
+     */
+    public void databaseAltered(Set tablesAltered) {
+        if (tablesAltered.size() > 0) {
+            if ((tablesAltered.size() > 1) || (!tablesAltered.contains(INT_BAG_TABLE_NAME))) {
+                flushObjectById();
+            } else {
+                synchronized (cache) {
+                    sequenceNumber++;
+                }
+            }
+            try {
+                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+                ptm.dropAffected(tablesAltered);
+            } catch (SQLException e) {
+                throw new Error("Problem with precomputed tables", e);
+            }
+        }
+    }
+
+    /**
      * @see ObjectStoreAbstractImpl#flushObjectById
      */
     public void flushObjectById() {
@@ -1164,12 +1188,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             if (writer != this) {
                 writer.flushObjectById();
             }
-        }
-        try {
-            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-            ptm.dropEverything();
-        } catch (SQLException e) {
-            throw new Error("Problem with precomputed tables", e);
         }
     }
 
