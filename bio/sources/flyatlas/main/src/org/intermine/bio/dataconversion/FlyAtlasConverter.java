@@ -11,20 +11,20 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 
 /**
  * DataConverter to parse an FlyAtlas expression data into items
@@ -77,6 +77,7 @@ public class FlyAtlasConverter extends FileConverter
                 int i = 1;
                 for (i = 1; (i + 4) <= headers.length; i += 5) {
                     String col = headers[i];
+                    col = col.replaceAll("\"", "");
                     String tissue = col.substring(0, col.indexOf(' ')).toLowerCase();
                     String[] results = new String[5];
                     System.arraycopy(line, i, results, 0, 5);
@@ -177,6 +178,9 @@ public class FlyAtlasConverter extends FileConverter
         assays.put("ovary", createAssay("Ovary"));
         assays.put("testes", createAssay("Testis"));
         assays.put("FlyMean", createAssay("Whole Fly"));
+        assays.put("ag", createAssay("Accessory Gland"));
+        assays.put("lt", createAssay("Tubule (larval)"));
+        assays.put("fb", createAssay("Fat Body (larval)"));
     }
 
     private Item createAssay(String name) {
@@ -203,4 +207,3 @@ public class FlyAtlasConverter extends FileConverter
                                     GENOMIC_NS + className, "");
     }
 }
-
