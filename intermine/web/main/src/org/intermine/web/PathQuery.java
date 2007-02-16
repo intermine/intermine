@@ -10,9 +10,9 @@ package org.intermine.web;
  *
  */
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,16 +21,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ResultsInfo;
-
-import org.intermine.metadata.Model;
-import org.intermine.util.CollectionUtil;
-
-import java.io.StringReader;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.util.CollectionUtil;
 
 /**
  * Class to represent a path-based query.
@@ -516,6 +512,7 @@ public class PathQuery
      * @param xml PathQuery XML
      * @return a PathQuery object
      * @param savedBags Map from bag name to bag
+     * @param classKeys class key fields for the model
      */
     public static PathQuery fromXml(String xml, Map savedBags, Map classKeys) {
         Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, classKeys);

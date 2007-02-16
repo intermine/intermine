@@ -251,6 +251,7 @@ public class TemplateHelper
      *
      * @param xml         the template queries in xml format
      * @param savedBags   Map from bag name to bag
+     * @param classKeys class key fields for the model
      * @return            Map from template name to TemplateQuery
      * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
      */

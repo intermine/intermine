@@ -65,6 +65,7 @@ public class ProfileManagerBinding
      * @param os ObjectStore used to resolve object ids
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
+     * @param classKeys class key fields in model
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
                                  PkQueryIdUpgrader idUpgrader, Map classKeys) {
@@ -96,6 +97,7 @@ class ProfileManagerHandler extends DefaultHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
+     * @param classKeys class key fields in model
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
                                  Map classKeys) {

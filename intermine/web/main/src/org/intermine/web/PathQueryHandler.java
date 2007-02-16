@@ -10,12 +10,11 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
@@ -35,7 +34,6 @@ import org.xml.sax.helpers.DefaultHandler;
 class PathQueryHandler extends DefaultHandler
 {
     private Map queries, classKeys;
-    private Map classKeysMap = new HashMap();
     private String queryName;
     private char gencode;
     private PathNode node;
@@ -48,6 +46,7 @@ class PathQueryHandler extends DefaultHandler
      * Constructor
      * @param queries Map from query name to PathQuery
      * @param savedBags Map from bag name to bag
+     * @param classKeys class key fields for the model
      */
 
     public PathQueryHandler(Map queries, Map savedBags, Map classKeys) {
@@ -99,7 +98,7 @@ class PathQueryHandler extends DefaultHandler
             // the node as it may not resolve correctly
             if (node.isReference() || !query.isValid()) {
                 constraintValue = attrs.getValue("value");
-            } else if (BagConstraint.VALID_OPS.contains(constraintOp)){
+            } else if (BagConstraint.VALID_OPS.contains(constraintOp)) {
                 constraintValue = attrs.getValue("value");
                 // bag constraints are now only valid on classes.  If this bag
                 // constraint is on another field:

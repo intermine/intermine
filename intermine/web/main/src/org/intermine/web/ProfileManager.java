@@ -78,6 +78,7 @@ public class ProfileManager
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
+     * @param classKeys class key fields for model
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS, Map classKeys) {
         this.os = os;
