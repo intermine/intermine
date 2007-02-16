@@ -102,6 +102,7 @@ class ProfileManagerHandler extends DefaultHandler
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
+        this.classKeys = classKeys;
     }
 
     /**
