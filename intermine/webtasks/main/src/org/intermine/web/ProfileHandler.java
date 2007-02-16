@@ -62,6 +62,7 @@ class ProfileHandler extends DefaultHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
+     * @param classKeys class key fields in model
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, Map classKeys) {
         this(profileManager, idUpgrader, null, null, new HashSet(), classKeys);
@@ -75,6 +76,7 @@ class ProfileHandler extends DefaultHandler
      * @param defaultUsername default username
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
+     * @param classKeys class key fields in model
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
             String defaultUsername, String defaultPassword, Set tags, Map classKeys) {
@@ -133,7 +135,8 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries, savedBags, classKeys);
+            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries, savedBags,
+                                                                 classKeys);
         }
         if (qName.equals("tags")) {
             subHandler = new TagBinding.TagHandler(username, tags);

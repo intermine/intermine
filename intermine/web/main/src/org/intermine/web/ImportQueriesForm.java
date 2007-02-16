@@ -11,17 +11,15 @@ package org.intermine.web;
  */
 
 import java.io.StringReader;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
 
 /**
@@ -37,7 +35,6 @@ public class ImportQueriesForm extends ValidatorForm
     
     /**
      * Creates a new instance of ImportQueriesForm.
-     * @param savedBags Map from bag name to bag
      */
     public ImportQueriesForm() {
         reset();
@@ -47,6 +44,8 @@ public class ImportQueriesForm extends ValidatorForm
     
     /**
      * Return a Map from query name to Query object.
+     * @param savedBags map from bag name to bag
+     * @param classKeys class keys for model
      * @return the Map
      */
     public Map getQueryMap(Map savedBags, Map classKeys) {

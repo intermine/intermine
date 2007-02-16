@@ -92,6 +92,7 @@ public class TemplateQueryBinding
      * @param reader the saved templates
      * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
+     * @param classKeys class key fields for the model
      */
     public Map unmarshal(Reader reader, Map savedBags, Map classKeys) {
         Map templates = new LinkedHashMap();
@@ -123,6 +124,7 @@ public class TemplateQueryBinding
          * Constructor
          * @param templates Map from template name to TemplateQuery
          * @param savedBags Map from bag name to bag
+         * @param classKeys class key fields for the model
          */
         public TemplateQueryHandler(Map templates, Map savedBags, Map classKeys) {
             super(new HashMap(), savedBags, classKeys);

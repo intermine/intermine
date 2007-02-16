@@ -204,6 +204,7 @@ public class ProfileBinding
      * @param username default username - used if there is no username in the XML
      * @param password default password
      * @param tags a set to populate with user tags
+     * @param classKeys class key fields in model
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
