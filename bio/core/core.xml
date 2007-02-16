@@ -96,6 +96,7 @@
     <attribute name="description" type="java.lang.String"/>
     <attribute name="namespace" type="java.lang.String"/>
     <attribute name="obsolete" type="java.lang.Boolean"/>
+    <attribute name="depth" type="java.lang.Integer"/>
     <reference name="ontology" referenced-type="org.flymine.model.genomic.Ontology"/>
     <collection name="parentRelations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" reverse-reference="childTerm"/>
     <collection name="childRelations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" reverse-reference="parentTerm"/>
