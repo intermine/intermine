@@ -74,6 +74,8 @@ public class SetCollectionCounts
         
         Results results = os.execute(q);
         
+        osw.beginTransaction();
+        
         Iterator resultsIter = results.iterator();
         
         // TODO XXX FIXME - this is very ineffecient, we should get all the collection size in one
@@ -89,5 +91,7 @@ public class SetCollectionCounts
             
             osw.store(o);
         }
+        
+        osw.commitTransaction();
     }
 }
