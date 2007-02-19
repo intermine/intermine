@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ public class GoConverter extends FileConverter
     protected static final String PROP_FILE = "go-annotation_config.properties";
 
     protected Map goTerms = new LinkedHashMap();
+    protected Map goParents = new HashMap();                // list of go terms that are parents
     protected Map goEvidence = new HashMap();               // list of evidence terms, e.g. IEA
     protected Map datasources = new LinkedHashMap();
     protected Map publications = new LinkedHashMap();
@@ -372,7 +374,7 @@ public class GoConverter extends FileConverter
         Item currentGoItem = newGoAnnotationItem(goId, "true", placeHolder.getGoEvidenceColl(),
                 placeHolder.getGoTerm().getIdentifier(),
                 placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
-                placeHolder.getGoTerm().getIdentifier());
+                placeHolder.getGoTerm().getIdentifier(), null);
 
         // If the qualifier is not a NOT.
         if (!"".equals(placeHolder.getQualifier())) {
@@ -453,14 +455,37 @@ public class GoConverter extends FileConverter
                     } else {
                         nextParentGoTermItem = newGoTerm(nextParentTermGoId);
                     }
+                    Item parentItem = null;
+                  
+                                         
+                    if (goParents.containsKey(nextParentTermGoId)) {
+                        parentItem = (Item) goParents.get(nextParentTermGoId);
+                        // add this go term to the parent's collection of children
+                        parentItem.getCollection("childrenGoTerms").addRefId(placeHolder.getGoTerm().getIdentifier());
+                        
+                    } else {
 
-                    // TODO this is where we need to point to children collection
-                    // instead of "placeHolder.getGoTerm().getIdentifier(),"
-                    Item parentItem = newGoAnnotationItem(
-                            nextParentTermGoId, "false", placeHolder.getGoEvidenceColl(),
-                            placeHolder.getGoTerm().getIdentifier(),
-                            placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
-                            nextParentGoTermItem.getIdentifier());
+
+
+                        // start a list of kids for this new parent                        
+                        ReferenceList kids =  new ReferenceList("childrenGoTerms", new ArrayList());
+                        kids.addRefId(placeHolder.getGoTerm().getIdentifier());
+                        
+                        // TODO this is where we need to point to children collection
+                        // instead of "placeHolder.getGoTerm().getIdentifier(),"
+                        parentItem = newGoAnnotationItem(
+                                          nextParentTermGoId, "false", placeHolder.getGoEvidenceColl(),
+                                          placeHolder.getGoTerm().getIdentifier(),
+                                          placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
+                                          nextParentGoTermItem.getIdentifier(),
+                                          kids);
+                        
+                        // add this parent to our list
+                        goParents.put(nextParentTermGoId, parentItem);
+                        
+                        parentItems.add(parentItem);
+
+                    }
 
                     if (termIdNameMap.containsKey(nextParentTermGoId)) {
                         parentItem.setAttribute(
@@ -468,7 +493,7 @@ public class GoConverter extends FileConverter
                                 (String) termIdNameMap.get(nextParentTermGoId));
                     }
 
-                    parentItems.add(parentItem);
+                    
 
                     if (isProductTypeGene) {
                         placeHolder.getGeneProductWrapper().getItem().addToCollection(
@@ -499,7 +524,8 @@ public class GoConverter extends FileConverter
                                      ReferenceList goEvidenceColl,
                                      String actualGoTerm,
                                      String subject,
-                                     String property) {
+                                     String property,
+                                     ReferenceList kids) {
 
         Item goAnnoItem = createItem("GOAnnotation");
         goAnnoItem.setAttribute("identifier", identifier);
@@ -507,6 +533,9 @@ public class GoConverter extends FileConverter
         //goAnnoItem.setAttribute("evidenceCode", evidenceCode);
         if (goEvidenceColl != null) {
             goAnnoItem.addCollection(goEvidenceColl);
+        }
+        if (kids != null) {
+            goAnnoItem.addCollection(kids);
         }
         
         // how does this turn into a reference to the child object?
