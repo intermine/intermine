@@ -455,17 +455,19 @@ public class GoConverter extends FileConverter
                     } else {
                         nextParentGoTermItem = newGoTerm(nextParentTermGoId);
                     }
+                    
+                                     
                     Item parentItem = null;
                   
-                                         
-                    if (goParents.containsKey(nextParentTermGoId)) {
-                        parentItem = (Item) goParents.get(nextParentTermGoId);
+                    // TODO the key here has to include the productId 
+                    String geneId = placeHolder.getGeneProductWrapper().getItem().getIdentifier();
+                    String parentKey = geneId + nextParentTermGoId;
+                    if (goParents.containsKey(parentKey)) {
+                        parentItem = (Item) goParents.get(parentKey);
                         // add this go term to the parent's collection of children
                         parentItem.getCollection("childrenGoTerms").addRefId(placeHolder.getGoTerm().getIdentifier());
                         
                     } else {
-
-
 
                         // start a list of kids for this new parent                        
                         ReferenceList kids =  new ReferenceList("childrenGoTerms", new ArrayList());
@@ -481,8 +483,9 @@ public class GoConverter extends FileConverter
                                           kids);
                         
                         // add this parent to our list
-                        goParents.put(nextParentTermGoId, parentItem);
+                        goParents.put(parentKey, parentItem);
                         
+                        // add parent to list of objects to be stored
                         parentItems.add(parentItem);
 
                     }
