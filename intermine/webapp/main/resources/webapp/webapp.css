@@ -70,7 +70,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   background-color: #ffffa7;
   line-height: 170%;
   font-weight: bold;
-  text-shadow: black 0px 0px 2px;
 }
 
 /* style for boxes with heading - used by the front page and the webapp */
