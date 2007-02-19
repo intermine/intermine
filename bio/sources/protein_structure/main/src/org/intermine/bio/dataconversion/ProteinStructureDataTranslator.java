@@ -39,22 +39,28 @@ public class ProteinStructureDataTranslator extends DataTranslator
 
     private static final String SRC_NS = "http://www.intermine.org/model/protein_structure#";
     protected static final String ENDL = System.getProperty("line.separator");
-    protected String dataLocation;
     protected Item dataSet;
     protected Map proteinFeatures = new HashMap();
     protected Item organism;
+    protected String dataLocation;
 
     /**
      * @see DataTranslator#DataTranslator(ItemReader, Properties, Model, Model)
      */
-    public ProteinStructureDataTranslator(
-            ItemReader srcItemReader, Properties mapping, Model srcModel, Model tgtModel,
-            String dataLocation) {
+    public ProteinStructureDataTranslator(ItemReader srcItemReader, Properties mapping,
+                                          Model srcModel, Model tgtModel) {
         super(srcItemReader, mapping, srcModel, tgtModel);
-        this.dataLocation = dataLocation;
         // proteins are all Drosophila
         this.organism = createItem(tgtNs + "Organism", "");
         organism.setAttribute("taxonId", "7227");
+    }
+
+    /**
+     * Pick up the data location from the ant, the translator needs to open some more files.
+     * @param srcdatadir location of the source data
+     */
+    public void setSrcDataDir(String srcdatadir) {
+        this.dataLocation = srcdatadir;
     }
 
     /**
@@ -62,6 +68,11 @@ public class ProteinStructureDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
         throws ObjectStoreException, InterMineException {
+
+        if (dataLocation == null || dataLocation.startsWith("$")) {
+            throw new IllegalArgumentException("No data location specified, required"
+                              + "for finding .atm structure files (was: " + dataLocation + ")");
+        }
 
         tgtItemWriter.store(ItemHelper.convert(organism));
 
@@ -116,7 +127,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             StringBuffer atm = new StringBuffer();
             try {
                 String filename =
-                        ((dataLocation.lastIndexOf("/") == (dataLocation.length()-1))
+                        ((dataLocation.lastIndexOf("/") == (dataLocation.length() - 1))
                                 ? dataLocation
                                 : dataLocation + "/")
                                 + id + "/" + id + ".atm";

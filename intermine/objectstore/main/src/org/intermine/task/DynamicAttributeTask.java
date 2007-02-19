@@ -47,7 +47,6 @@ public class DynamicAttributeTask extends Task
     protected void configureDynamicAttributes(Object bean) {
         Project antProject = getProject();
         Hashtable projectProps = antProject.getProperties();
-
         PropertyDescriptor[] props =  PropertyUtils.getPropertyDescriptors(bean);
         for (int i = 0; i < props.length; i++) {
             PropertyDescriptor desc = props[i];
@@ -56,7 +55,7 @@ public class DynamicAttributeTask extends Task
                 Class propType = desc.getPropertyType();
                 String propName = setter.getName().substring(3).toLowerCase();
                 Object propValue = projectProps.get(propName);
-
+                
                 if (propValue == null) {
                     // there is not all-lowercase property in projectProps, so try the camelCase
                     // version
@@ -65,6 +64,23 @@ public class DynamicAttributeTask extends Task
                         setterName.substring(3, 4).toLowerCase() + setterName.substring(4);
                     propName = camelCasePropName;
                     propValue = projectProps.get(camelCasePropName);
+                }
+                
+                if (propValue == null) {
+                    // still not found, try replacing each capital (after first) in camelCase
+                    // to be a dot - i.e. setSrcDataDir -> src.data.dir
+                    String setterName = setter.getName();
+                    String camelCasePropName =
+                        setterName.substring(3, 4).toLowerCase() + setterName.substring(4);
+                    String dotName = "";
+                    for (int j = 0; j < camelCasePropName.length(); j++) {
+                        if (Character.isUpperCase(camelCasePropName.charAt(j))) {
+                            dotName += "." + camelCasePropName.substring(j, j + 1).toLowerCase();
+                        } else {
+                            dotName += camelCasePropName.substring(j, j + 1);
+                        }
+                    }
+                    propValue = projectProps.get(dotName);
                 }
 
                 if (propValue != null) {
