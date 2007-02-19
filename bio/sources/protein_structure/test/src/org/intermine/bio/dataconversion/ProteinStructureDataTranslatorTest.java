@@ -10,30 +10,22 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.io.InputStreamReader;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.bio.dataconversion.ProteinStructureDataTranslator;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.Item;
 
 public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
@@ -48,21 +40,31 @@ public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
-        DataTranslator translator =
+        ProteinStructureDataTranslator translator =
             new ProteinStructureDataTranslator(new MockItemReader(itemMap),
-                                               mapping, srcModel, getTargetModel(tgtNs), "resources/test/");
+                                               mapping, srcModel, getTargetModel(tgtNs));
+        translator.setSrcDataDir("resouces/");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
+
+
+
         System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
+
+        // uncomment to write a new target items file
+        //FileWriter fw = new FileWriter(new File("protein-structure_tgt.xml"));
+        //fw.write(FullRenderer.render(tgtIw.getItems()));
+        //fw.close();
+
         assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
     }
 
     protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/ProteinStructureDataTranslatorFunctionalTest_tgt.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("ProteinStructureDataTranslatorFunctionalTest_tgt.xml"));
     }
 
     protected Collection getSrcItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/ProteinStructureDataTranslatorFunctionalTest_src.xml"));
+        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("ProteinStructureDataTranslatorFunctionalTest_src.xml"));
     }
 
     protected String getModelName() {
