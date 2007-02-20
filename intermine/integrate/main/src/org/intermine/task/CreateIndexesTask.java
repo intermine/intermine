@@ -140,15 +140,22 @@ public class CreateIndexesTask extends Task
         setUp();
         Model m = schema.getModel();
         Map statements = new TreeMap();
+        Map clds = new TreeMap();
 
         ClassDescriptor cld = null;
         try {
             for (Iterator i = m.getClassDescriptors().iterator(); i.hasNext();) {
                 cld = (ClassDescriptor) i.next();
+                Map cldIndexes = new TreeMap();
                 if (attributeIndexes) {
-                    getAttributeIndexStatements(cld, statements);
+                    getAttributeIndexStatements(cld, cldIndexes);
                 } else {
-                    getStandardIndexStatements(cld, statements);
+                    getStandardIndexStatements(cld, cldIndexes);
+                }
+                if (!cldIndexes.isEmpty()) {
+                    compressNames(cldIndexes);
+                    statements.putAll(cldIndexes);
+                    clds.put(cld.getName(), cldIndexes);
                 }
             }
         } catch (Exception e) {
@@ -156,7 +163,6 @@ public class CreateIndexesTask extends Task
             throw new BuildException(message, e);
         }
 
-        compressNames(statements);
         
         checkForIndexNameClashes(statements);
 
@@ -171,7 +177,7 @@ public class CreateIndexesTask extends Task
             // limit on index name length (63) and will truncate longer names with a NOTICE rather
             // than an error.
 
-            Iterator statementsIter = statements.keySet().iterator();
+            Iterator statementsIter = clds.keySet().iterator();
 
             while (statementsIter.hasNext()) {
                 String indexName = (String) statementsIter.next();
@@ -179,27 +185,35 @@ public class CreateIndexesTask extends Task
                 dropIndex(indexName);
             }
 
-            statementsIter = new SynchronisedIterator(statements.keySet().iterator());
+            Iterator cldsIter = new SynchronisedIterator(clds.entrySet().iterator());
             Set threads = new HashSet();
 
             synchronized (threads) {
                 for (int i = 1; i <= extraThreads; i++) {
-                    Thread worker = new Thread(new Worker(threads, statementsIter, statements, i));
+                    Thread worker = new Thread(new Worker(threads, cldsIter, i));
                     threads.add(new Integer(i));
                     worker.start();
                 }
             }
 
             try {
-                while (statementsIter.hasNext()) {
-                    String indexName = (String) statementsIter.next();
-                    indexStatement = (IndexStatement) statements.get(indexName);
-                    createIndex(c, indexName, indexStatement, 0);
+                while (cldsIter.hasNext()) {
+                    Map.Entry cldEntry = (Map.Entry) cldsIter.next();
+                    String cldName = (String) cldEntry.getKey();
+                    LOG.info("Thread 0 processing class " + cldName);
+                    statementsIter = ((Map) cldEntry.getValue()).entrySet().iterator();
+                    while (statementsIter.hasNext()) {
+                        Map.Entry statementEntry = (Map.Entry) statementsIter.next();
+                        String indexName = (String) statementEntry.getKey();
+                        indexStatement = (IndexStatement) statementEntry.getValue();
+                        createIndex(c, indexName, indexStatement, 0);
+                    }
                 }
             } catch (NoSuchElementException e) {
                 // This is fine - just a consequence of concurrent access to the iterator. It means
                 // the end of the iterator has been reached, so there is no more work to do.
             }
+            LOG.info("Thread 0 finished");
             synchronized (threads) {
                 while (threads.size() != 0) {
                     LOG.info(threads.size() + " threads left");
@@ -229,13 +243,11 @@ public class CreateIndexesTask extends Task
     {
         private int threadNo;
         private Set threads;
-        private Map statements;
-        private Iterator statementsIter;
+        private Iterator cldsIter;
 
-        public Worker(Set threads, Iterator statementsIter, Map statements, int threadNo) {
+        public Worker(Set threads, Iterator cldsIter, int threadNo) {
             this.threads = threads;
-            this.statementsIter = statementsIter;
-            this.statements = statements;
+            this.cldsIter = cldsIter;
             this.threadNo = threadNo;
         }
 
@@ -245,10 +257,17 @@ public class CreateIndexesTask extends Task
                 try {
                     conn = database.getConnection();
                     conn.setAutoCommit(true);
-                    while (statementsIter.hasNext()) {
-                        String indexName = (String) statementsIter.next();
-                        IndexStatement st = (IndexStatement) statements.get(indexName);
-                        createIndex(conn, indexName, st, threadNo);
+                    while (cldsIter.hasNext()) {
+                        Map.Entry cldEntry = (Map.Entry) cldsIter.next();
+                        String cldName = (String) cldEntry.getKey();
+                        LOG.info("Thread " + threadNo + " processing class " + cldName);
+                        Iterator statementsIter = ((Map) cldEntry.getValue()).entrySet().iterator();
+                        while (statementsIter.hasNext()) {
+                            Map.Entry statementEntry = (Map.Entry) statementsIter.next();
+                            String indexName = (String) statementEntry.getKey();;
+                            IndexStatement st = (IndexStatement) statementEntry.getValue();
+                            createIndex(conn, indexName, st, threadNo);
+                        }
                     }
                 } catch (NoSuchElementException e) {
                 } finally {
@@ -257,13 +276,13 @@ public class CreateIndexesTask extends Task
                             conn.close();
                         }
                     } finally {
+                        LOG.info("Thread " + threadNo + " finished");
                         synchronized (threads) {
                             threads.remove(new Integer(threadNo));
                             threads.notify();
                         }
                     }
                 }
-                LOG.info("Thread " + threadNo + " finished");
             } catch (SQLException e) {
                 LOG.error("Thread " + threadNo + " failed", e);
             }
