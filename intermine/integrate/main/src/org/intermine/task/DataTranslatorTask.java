@@ -33,7 +33,7 @@ import org.intermine.metadata.Model;
 public class DataTranslatorTask extends DynamicAttributeTask
 {
     protected String translator, source, targetAlias, srcModel, tgtModel, organism,
-        dataLocation, mapping, propfile, organisms;
+        mapping, propfile;
 
     /**
      * Set the translator
@@ -89,22 +89,6 @@ public class DataTranslatorTask extends DynamicAttributeTask
      */
     public void setOrganism(String organism) {
         this.organism = organism;
-    }
-
-    /**
-     * Set a space separated list of taxon ids (for psi)
-     * @param organisms a list of taxon ids
-     */
-//     public void setOrganisms(String organisms) {
-//         this.organisms = organisms;
-//     }
-
-    /**
-     * Set the data location (for protein-structure)
-     * @param dataLocation the data location
-     */
-    public void setDataLocation(String dataLocation) {
-        this.dataLocation = dataLocation;
     }
 
     /**
@@ -185,14 +169,6 @@ public class DataTranslatorTask extends DynamicAttributeTask
                 //args = new Object[] {reader, mappingProps, src, tgt, propfile, organism};
 
             //TODO: Fix this hard coded bodgieness ???
-            } else if ("org.intermine.bio.dataconversion.ProteinStructureDataTranslator"
-                       .equals(translator)) {
-                if (dataLocation == null) {
-                    throw new BuildException("dataLocation attribute not set");
-                }
-                types = new Class[]
-                    {ItemReader.class, Properties.class, Model.class, Model.class, String.class};
-                args = new Object[] {reader, mappingProps, src, tgt, dataLocation};
             } else if ("org.intermine.bio.dataconversion.PsiDataTranslator"
                        .equals(translator)) {
 //                 if (organisms == null) {
