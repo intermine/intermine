@@ -430,7 +430,6 @@
       <fieldconfig fieldExpr="subject.identifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="evidenceCode"/>
     </fields>
   </class>
 
