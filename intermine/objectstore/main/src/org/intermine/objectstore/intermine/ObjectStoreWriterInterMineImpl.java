@@ -39,6 +39,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.precompute.BestQuery;
@@ -384,13 +385,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param o the object to store
      * @throws ObjectStoreException sometimes
      */
-    protected void storeWithConnection(Connection c,
-                                       InterMineObject o) throws ObjectStoreException {
+    protected void storeWithConnection(Connection c, InterMineObject o)
+    throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
         }
-
         try {
             boolean doDeletes = populateIds(c, o);
             String xml = null;
@@ -988,19 +988,19 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
             sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
             sql = sql.replaceAll(" ([^ ]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
-            if (sql.startsWith("SELECT DISTINCT ")) {
-                sql = "SELECT DISTINCT " + osb.getBagId() + " AS bagid, " + sql.substring(16);
-            } else if (sql.startsWith("SELECT ")) {
-                sql = "SELECT " + osb.getBagId() + " AS bagid, " + sql.substring(7);
-            } else {
-                throw new ObjectStoreException("SqlGenerator produced SQL that cannot be used: "
-                        + sql);
-            }
             Statement s = c.createStatement();
             registerStatement(s);
             try {
-                s.execute("INSERT INTO " + INT_BAG_TABLE_NAME + " (" + BAGID_COLUMN + ", "
-                        + BAGVAL_COLUMN + ") " + sql);
+                String alias = (String) query.getAliases().get(query.getSelect().get(0));
+                if (query.getSelect().get(0) instanceof QueryClass) {
+                    alias = "id";
+                }
+                sql = "INSERT INTO " + INT_BAG_TABLE_NAME + " (" + BAGID_COLUMN + ", "
+                        + BAGVAL_COLUMN + ") SELECT DISTINCT " + osb.getBagId() + ", sub."
+                        + alias + " FROM (" + sql + ") AS sub WHERE sub." + alias
+                        + " NOT IN (SELECT " + BAGVAL_COLUMN + " FROM " + INT_BAG_TABLE_NAME
+                        + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId() + ")";
+                s.execute(sql);
                 tablesAltered.add(INT_BAG_TABLE_NAME);
             } finally {
                 deregisterStatement(s);
@@ -1223,7 +1223,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             c.commit();
             c.setAutoCommit(true);
             os.databaseAltered(tablesAltered);
-            System.out.println("Committing. Tables altered: " + tablesAltered);
             tablesAltered.clear();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error committing transaction", e);
