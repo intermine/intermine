@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -735,6 +736,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         ArrayList coll = new ArrayList();
         coll.add(new Integer(3));
         coll.add(((Employee) data.get("EmployeeA1")).getId());
+        coll.add(((Employee) data.get("EmployeeA2")).getId());
         coll.add(new Integer(20));
         coll.add(new Integer(23));
         coll.add(new Integer(30));
@@ -763,12 +765,13 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
         r = new SingletonResults(q, os, os.getSequence());
-        assertEquals(Collections.singletonList(data.get("EmployeeA1")), r);
+        assertEquals(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("EmployeeA2")}), r);
         ObjectStoreBag osb2 = storeDataWriter.createObjectStoreBag();
+        storeDataWriter.addToBag(osb2, ((Employee) data.get("EmployeeA1")).getId());
         storeDataWriter.addToBagFromQuery(osb2, q);
         q = new Query();
         q.addToSelect(osb2);
         r = new SingletonResults(q, os, os.getSequence());
-        assertEquals(Collections.singletonList(((Employee) data.get("EmployeeA1")).getId()), r);
+        assertEquals(Arrays.asList(new Object[] {((Employee) data.get("EmployeeA1")).getId(), ((Employee) data.get("EmployeeA2")).getId()}), r);
     }
 }

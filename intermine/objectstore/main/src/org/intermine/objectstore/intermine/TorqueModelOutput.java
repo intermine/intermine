@@ -135,13 +135,13 @@ public class TorqueModelOutput
                 + ENDL)
             .append(generateColumn(ObjectStoreInterMineImpl.BAGID_COLUMN, "java.lang.Integer"))
             .append(generateColumn(ObjectStoreInterMineImpl.BAGVAL_COLUMN, "java.lang.Integer"))
-            .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
-                    + "_index1\">" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\""
+            .append(INDENT + INDENT + "<unique name=\""
+                    + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + "_index1\">" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<unique-column name=\""
                     + ObjectStoreInterMineImpl.BAGID_COLUMN + "\"/>" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\""
+            .append(INDENT + INDENT + INDENT + "<unique-column name=\""
                     + ObjectStoreInterMineImpl.BAGVAL_COLUMN + "\"/>" + ENDL)
-            .append(INDENT + INDENT + "</index>" + ENDL)
+            .append(INDENT + INDENT + "</unique>" + ENDL)
             .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
                     + "_index2\">" + ENDL)
             .append(INDENT + INDENT + INDENT + "<index-column name=\""

@@ -132,7 +132,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * may issue a command like "INSERT INTO bag SELECT ...".
      *
      * @param osb an ObjectStoreBag
-     * @param query an objectstore Query, which contains only one result column, which is a suitable
+     * @param q an objectstore Query, which contains only one result column, which is a suitable
      * type for insertion into the given bag
      * @throws ObjectStoreException if something goes wrong
      */
