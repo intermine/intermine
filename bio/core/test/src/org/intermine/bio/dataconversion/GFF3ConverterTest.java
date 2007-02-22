@@ -44,12 +44,13 @@ public class GFF3ConverterTest extends TestCase {
     String seqClsName = "Chromosome";
     String orgTaxonId = "7227";
     String dataSourceName = "UCSC";
+    String seqDataSourceName = "MGI";
     String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
-        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle,
-                                      tgtModel,
+        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
+                                      dataSetTitle, seqDataSourceName, tgtModel,
                                       new GFF3RecordHandler(tgtModel));
     }
 

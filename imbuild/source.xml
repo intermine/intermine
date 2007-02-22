@@ -248,6 +248,7 @@
                   seqClsName="${gff3.seqClsName}"
                   orgTaxonId="${gff3.taxonId}"
                   dataSourceName="${gff3.dataSourceName}"
+                  seqDataSourceName="${gff3.seqDataSourceName}"
                   dataSetTitle="${gff3.dataSetTitle}"
                   model="${target.model}"
                   handlerClassName="${gff3.handlerClassName}">

@@ -7,6 +7,7 @@
     <source name="flybase-dmel-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
       <!-- <property name="flybase.small" location="true"/>-->
     </source>
@@ -23,6 +24,7 @@
     <source name="flyreg" type="flyreg" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flyreg"/>
     </source>
     <source name="uniprot" type="uniprot" dump="true">
@@ -45,16 +47,19 @@
     <source name="tiling_path" type="tiling_path" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/tiling/current_gff"/>
     </source>
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
     <source name="redfly" type="redfly" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/REDfly/gff"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
@@ -63,6 +68,7 @@
     <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7237"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue">
@@ -92,6 +98,7 @@
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/tiffin/gff3"/>
     </source>
 -->

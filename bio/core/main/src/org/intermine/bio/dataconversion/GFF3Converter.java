@@ -50,13 +50,10 @@ public class GFF3Converter
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
 
 
-    private Item organism;
     private Reference orgRef;
     private ItemWriter writer;
-    private String seqClsName;
-    private String orgTaxonId;
-    private Item dataSet;
-    private Item dataSource;
+    private String seqClsName, orgTaxonId;
+    private Item organism, dataSet, dataSource, seqDataSource;
     private Model tgtModel;
     private int itemid = 0;
     private Map analyses = new HashMap();
@@ -64,8 +61,6 @@ public class GFF3Converter
     private Map identifierMap = new HashMap();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
-
-
 
     /**
      * Constructor
@@ -75,13 +70,15 @@ public class GFF3Converter
      * @param orgTaxonId The taxon ID of the organism we are loading
      * @param dataSourceName name for dataSource
      * @param dataSetTitle title for dataSet
+     * @param seqDataSourceName name of source for synonym on sequence (col 1), often different
+     * to dataSourceName
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
      */
 
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
-                         String dataSourceName, String dataSetTitle, Model tgtModel,
-                         GFF3RecordHandler handler) {
+                         String dataSourceName, String dataSetTitle, String seqDataSourceName,
+                         Model tgtModel, GFF3RecordHandler handler) {
 
         this.writer = writer;
         this.seqClsName = seqClsName;
@@ -97,6 +94,13 @@ public class GFF3Converter
 
         this.dataSource = createItem("DataSource");
         dataSource.addAttribute(new Attribute("name", dataSourceName));
+
+        if (!seqDataSourceName.equals(dataSourceName)) {
+            seqDataSource = createItem("DataSource");
+            seqDataSource.addAttribute(new Attribute("name", seqDataSourceName));
+        } else {
+            seqDataSource = dataSource;
+        }
 
         handler.setItemFactory(itemFactory);
         handler.setIdentifierMap(identifierMap);
@@ -139,6 +143,9 @@ public class GFF3Converter
         writer.store(ItemHelper.convert(organism));
         writer.store(ItemHelper.convert(dataSet));
         writer.store(ItemHelper.convert(dataSource));
+        if (!(seqDataSource == dataSource)) {
+            writer.store(ItemHelper.convert(seqDataSource));
+        }
 
         // write ComputationalAnalysis items
         Iterator iter = analyses.values().iterator();
@@ -453,7 +460,7 @@ public class GFF3Converter
             synonym.addReference(new Reference("subject", seq.getIdentifier()));
             synonym.addAttribute(new Attribute("value", identifier));
             synonym.addAttribute(new Attribute("type", "identifier"));
-            synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+            synonym.addReference(new Reference("source", seqDataSource.getIdentifier()));
             handler.addItem(synonym);
         }
         handler.setSequence(seq);

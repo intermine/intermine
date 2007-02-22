@@ -56,7 +56,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         handler = new FlyBaseGFF3RecordHandler(tgtModel);
         tgtIw = new MockItemWriter(new LinkedHashMap());
         converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName, dateSetTitle,
-                                      tgtModel, handler);
+                                      "FlyBase", tgtModel, handler);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
     }
