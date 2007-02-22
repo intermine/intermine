@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Arrays;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.apache.tools.ant.BuildException;
 
@@ -52,6 +54,8 @@ public class FlyRNAiScreenConverter extends FileConverter
     private Map amplicons = new HashMap();
 
     protected String taxonId;
+    // access to current file for error messages
+    private String fileName;
 
     private static final String PMID_PREFIX = "PMID:";
     private static final String SCREEN_NAME_PREFIX = "Screen_name:";
@@ -65,12 +69,12 @@ public class FlyRNAiScreenConverter extends FileConverter
     // column headings
     private static final String FBGN_COLUMN = "FBGN";
     private static final String PHENOTYPE_COLUMN = "Phenotype";
-    private static final String PHENOTYPE_DETAILS_COLUMN = "PhenotypeDetails";
-    private static final String DRSC_AMPLICON_COLUMN = "DRSC Amplicon";
-    private static final String HFA_AMPLICON_COLUMN = "HFA Amplicon";
-    private static final String AMPLICON_LENGTH_COLUMN = "Amp. Length";
-    private static final String NUM_OFF_TARGET_COLUMN = "Num Potential Off-Targs";
-    private static final String MAX_OFF_TARGET_OVERLAPS_COLUMN = "Max Off-Targ Overlap";
+    private static final String DRSC_AMPLICON_COLUMN = "DRSC_Amplicon";
+    private static final String CURATED_DRSC_AMPLICON_COLUMN = "DRSC Amplicon";
+    private static final String HFA_AMPLICON_COLUMN = "HFA_Amplicon";
+    private static final String AMPLICON_LENGTH_COLUMN = "Amplicon_Length";
+    private static final String NUM_OFF_TARGET_COLUMN = "19bp_Matches";
+    private static final String CAR_REPEATS_COLUMN = "CAR";
     private static final String HIT_COLUMN = "Hit";
 
     private Item dataSet;
@@ -98,15 +102,22 @@ public class FlyRNAiScreenConverter extends FileConverter
         // the flag should be true.  DRSC Amplicon ids can be used to match
         // entries in the two files.
 
-        String fileName = getCurrentFile().getPath();
-        if (fileName.endsWith("_curated.tsv")) {
+        fileName = getCurrentFile().getPath();
+        if (!fileName.endsWith(".dataset")) {
             return;
         }
 
-        File curatedFile = new File(fileName.substring(0, fileName.indexOf("."))
-            + "_curated.tsv");
-        BufferedReader curatedReader = new BufferedReader(new FileReader(curatedFile));
+        BufferedReader curatedReader = null;
+        try {
+            File curatedFile = new File(fileName.substring(0, fileName.indexOf("."))
+                                   + "_curated.tsv");
+            curatedReader = new BufferedReader(new FileReader(curatedFile));
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to find curated file for: " + fileName, e);
+        }
+
         Set offTargetFalse = readCurated(curatedReader);
+        System.out.println("offTargetFalse: " + offTargetFalse);
 
         BufferedReader br = new BufferedReader(reader);
 
@@ -164,7 +175,10 @@ public class FlyRNAiScreenConverter extends FileConverter
         while (tsvIter.hasNext()) {
             String [] thisRow = (String[]) tsvIter.next();
             if (columnNameRow == null) {
-                // the first row has the column headings
+                // the first row has the column headings (unless it is blank)
+                if (thisRow.length <= 1) {
+                    continue;
+                }
                 columnNameRow = thisRow;
                 for (int i = 0; i < columnNameRow.length; i++) {
                     columnNameMap.put(columnNameRow[i], new Integer(i));
@@ -213,8 +227,6 @@ public class FlyRNAiScreenConverter extends FileConverter
 
             String numOffTargets =
                 getColumnValue(columnNameMap, thisRow, NUM_OFF_TARGET_COLUMN);
-            String maxOffTargetOverlaps =
-                getColumnValue(columnNameMap, thisRow, MAX_OFF_TARGET_OVERLAPS_COLUMN);
 
             for (int hitStrengthIndex = 0; hitStrengthIndex < hitStrengths.length;
                  hitStrengthIndex++) {
@@ -241,13 +253,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                     screenHit.setReference("gene", gene);
                     String result = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
                     screenHit.setAttribute("result", result);
-                    if (columnNameMap.containsKey(PHENOTYPE_DETAILS_COLUMN)) {
-                        String resultDetails = getColumnValue(columnNameMap, thisRow,
-                                                              PHENOTYPE_DETAILS_COLUMN);
-                        screenHit.setAttribute("resultDetails", resultDetails);
-                    }
+                    String carRepeats = getColumnValue(columnNameMap, thisRow, CAR_REPEATS_COLUMN);
+                    screenHit.setAttribute("carRepeats", carRepeats);
                     screenHit.setAttribute("numOffTargets", numOffTargets);
-                    screenHit.setAttribute("maxOffTargetOverlaps", maxOffTargetOverlaps);
                     if (hitStrength != null && hitStrength.trim().length() > 0) {
                         try {
                             new Float(hitStrength);
@@ -319,7 +327,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         Integer columnIndex = (Integer) columnNameMap.get(columnTag);
         if (columnIndex == null) {
             throw new RuntimeException("can't find column index for: " + columnTag + " in "
-                                       + row);
+                                       + columnNameMap + " while reading: " + fileName);
         }
         return row[columnIndex.intValue()];
     }
@@ -426,7 +434,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                 continue;
             }
             // reading actual data
-            String amplicon = getColumnValue(curatedNameMap, thisRow, DRSC_AMPLICON_COLUMN);
+            String amplicon = getColumnValue(curatedNameMap, thisRow, CURATED_DRSC_AMPLICON_COLUMN);
             if (amplicon != null) {
                 offtarget.add(amplicon);
             }

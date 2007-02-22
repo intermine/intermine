@@ -6,6 +6,6 @@
 # Cell line: S2 cells
 # Phenotype_description: Fluorescence measurements reflecting viral infection
 ----
-Hit	Phenotype	PhenotypeDetails	HFA Amplicon	DRSC Amplicon	Amp. Length	Gene	FBGN	Num Potential Off-Targs	Max Off-Targ Overlap
-Y	DCV	DCV details	HFA00781	DRSC00781	308	RpL27A	FBgn0010411	1	19
-Y	DCV	DCV details	HFA03055	DRSC03055	160	RpL36A	FBgn0031980	0	0
+Hit	Phenotype	HFA_Amplicon	DRSC_Amplicon	Amplicon_Length	Gene	FBGN	19bp_Matches	CAR
+Y	DCV	HFA00781	DRSC00781	308	RpL27A	FBgn0010411	1	No
+Y	DCV	HFA03055	DRSC03055	160	RpL36A	FBgn0031980	0	No
