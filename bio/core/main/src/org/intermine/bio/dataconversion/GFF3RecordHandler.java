@@ -185,10 +185,13 @@ public class GFF3RecordHandler
         return evidenceReferenceList;
     }
 
+    /**
+     * Reset the list of evidence items.
+     */
     public void clearEvidenceReferenceList() {
         evidenceReferenceList = new ReferenceList("evidence");
     }
-    
+
     /**
      * Set the ComputationalResult item for this record.
      * @param result the ComputationalResult item
@@ -410,7 +413,7 @@ public class GFF3RecordHandler
                     targetLocation.setAttribute("start", locEnd);
                     targetLocation.setAttribute("end", locStart);
                 }
-                
+
                 if (locStrand != null && locStrand.equals("+")) {
                     targetLocation.setAttribute("strand", "1");
                 } else if (locStrand != null && locStrand.equals("-")) {
@@ -516,7 +519,7 @@ public class GFF3RecordHandler
     public Item getDataSource() {
         return dataSource;
     }
-    
+
     /**
      * Set the DataSource to use while processing.  The converter will store() the DataSource.
      * @param dataSource the DataSource
@@ -532,7 +535,7 @@ public class GFF3RecordHandler
     public Item getDataSet() {
         return dataSet;
     }
-    
+
     /**
      * Set the DataSet to use while processing.  Called by the converter.
      * @param dataSet the DataSet

@@ -41,7 +41,8 @@ public class GFF3ConverterTask extends Task
     protected static final Logger LOG = Logger.getLogger(GFF3ConverterTask.class);
 
     protected FileSet fileSet;
-    protected String converter, targetAlias, seqClsName, orgTaxonId, model, handlerClassName;
+    protected String converter, targetAlias, seqClsName, orgTaxonId;
+    protected String seqDataSourceName, model, handlerClassName;
     protected GFF3Parser parser;
 
     private String dataSourceName;
@@ -83,19 +84,27 @@ public class GFF3ConverterTask extends Task
 
 
     /**
-     * Set the organism taxon id 
+     * Set the organism taxon id
      * @param orgTaxonId the organism taxon id
      */
     public void setOrgTaxonId(String orgTaxonId) {
         this.orgTaxonId = orgTaxonId;
     }
-    
+
     /**
      * Set the dataSourceName
      * @param dataSourceName the dataSourceName
      */
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
+    }
+
+    /**
+     * Set the seqDataSourceName
+     * @param seqDataSourceName the seqDataSourceName
+     */
+    public void setSeqDataSourceName(String seqDataSourceName) {
+        this.seqDataSourceName = seqDataSourceName;
     }
 
     /**
@@ -145,6 +154,9 @@ public class GFF3ConverterTask extends Task
         if (dataSourceName == null) {
             throw new BuildException("dataSourceName attribute not set");
         }
+        if (seqDataSourceName == null) {
+            throw new BuildException("seqDataSourceName attribute not set");
+        }
         if (dataSetTitle == null) {
             throw new BuildException("dataSetTitle attribute not set");
         }
@@ -174,7 +186,8 @@ public class GFF3ConverterTask extends Task
                 handler = (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
             }
             GFF3Converter gff3converter =
-                new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle,
+                new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
+                                  dataSetTitle, seqDataSourceName,
                                   tgtModel, handler);
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
