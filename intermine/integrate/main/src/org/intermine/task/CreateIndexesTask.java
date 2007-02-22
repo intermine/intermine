@@ -68,8 +68,8 @@ public class CreateIndexesTask extends Task
     private DatabaseSchema schema = null;
     private Database database = null;
     private static final Logger LOG = Logger.getLogger(CreateIndexesTask.class);
-    private Map tableIndexesDone = new HashMap();
-    private Set indexesMade = new HashSet();
+    private Map tableIndexesDone = Collections.synchronizedMap(new HashMap());
+    private Set indexesMade = Collections.synchronizedSet(new HashSet());
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
     private int extraThreads = 3;
 
@@ -574,7 +574,7 @@ public class CreateIndexesTask extends Task
         LOG.info("Thread " + threadNo + " creating index: " + indexName);
         Set indexesForTable = (Set) tableIndexesDone.get(tableName);
         if (indexesForTable == null) {
-            indexesForTable = new HashSet();
+            indexesForTable = Collections.synchronizedSet(new HashSet());
             tableIndexesDone.put(tableName, indexesForTable);
         }
         if (!indexesForTable.contains(indexStatement.getColumnNames())) {
