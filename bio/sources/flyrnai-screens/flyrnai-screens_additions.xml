@@ -12,9 +12,8 @@
     <attribute name="strength" type="java.lang.Integer"/>
     <attribute name="hasPredictedOffTargetEffect" type="java.lang.Boolean"/>
     <attribute name="result" type="java.lang.String"/>
-    <attribute name="resultDetails" type="java.lang.String"/>
+    <attribute name="carRepeats" type="java.lang.String"/>
     <attribute name="numOffTargets" type="java.lang.Integer"/>
-    <attribute name="maxOffTargetOverlaps" type="java.lang.Integer"/>
     <reference name="amplicon"
                referenced-type="org.flymine.model.genomic.Amplicon" 
                reverse-reference="screenHits"/>

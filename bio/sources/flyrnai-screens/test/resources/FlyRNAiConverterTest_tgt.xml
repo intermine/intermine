@@ -12,10 +12,9 @@
   </item>
   <item id="8_1" class="http://www.flymine.org/model/genomic#RNAiScreenHit">
     <attribute name="hasPredictedOffTargetEffect" value="false"/>
-    <attribute name="maxOffTargetOverlaps" value="0"/>
     <attribute name="numOffTargets" value="0"/>
     <attribute name="result" value="DCV"/>
-    <attribute name="resultDetails" value="DCV details"/>
+    <attribute name="carRepeats" value="No"/>
     <reference name="amplicon" ref_id="5_1"/>
     <reference name="analysis" ref_id="4_1"/>
     <reference name="gene" ref_id="7_1"/>
