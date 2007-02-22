@@ -27,6 +27,7 @@
                     reverse-reference="gene" ordered="true"/>
         <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS"
                     reverse-reference="gene" ordered="true"/>
+        <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
     </class>
 
     <class name="org.flymine.model.genomic.Intron" is-interface="true">
