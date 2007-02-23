@@ -10,28 +10,23 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
+import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.util.XmlUtil;
-
-import org.intermine.bio.io.gff3.GFF3Record;
-
-import org.apache.log4j.Logger;
 
 /**
  * A converter/retriever for FlyBase GFF3 files.
@@ -101,11 +96,30 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
 
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
+        if ("MRNA".equals(clsName)) {
+            transcriptIds.put(feature.getAttribute("identifier").getValue(), feature.getIdentifier());
+        }
         if ("Protein".equals(clsName)) {
             // for v4.3 create translations from proteins and set the identifier from the Alias
             feature.setClassName(tgtNs + "Translation");
+        }
+
+        // Swap organismDbId and identifier - not for DPSE
+        String featureIdentifier = feature.getAttribute("identifier").getValue();
+        if (featureIdentifier.startsWith("FB")) {
+            // v4.3 records have FB numbers as IDs, move to organismDbId
+            feature.setAttribute("organismDbId", record.getId());
+            feature.removeAttribute("identifier");
+        }
+        
+        if ("Protein".equals(clsName)) {
             clsName = "Translation";
-            String identifier = record.getAlias();
+            String identifier = null;
+            if (record.getAlias() != null) {
+                identifier = record.getAlias();
+            } else {
+                identifier = getFlybaseAnnotationId(record);
+            }
             if (identifier != null) {
                 feature.setAttribute("identifier", identifier);
                 addItem(createSynonym(feature, "identifier", identifier));
@@ -161,17 +175,6 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             cdsStrands.put(holder.key + "_" + start, getLocation().getAttribute("strand").getValue());
         }
 
-        if ("MRNA".equals(clsName)) {
-            transcriptIds.put(feature.getAttribute("identifier").getValue(), feature.getIdentifier());
-        }
-
-        String featureIdentifier = feature.getAttribute("identifier").getValue();
-        if (featureIdentifier.startsWith("FB")) {
-            // v4.3 records have FB numbers as IDs, move to organismDbId
-            feature.setAttribute("organismDbId", record.getId());
-            feature.removeAttribute("identifier");
-        }
-
         // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
         // We fix this by changing the pseudogene to a transcript and then fixing the gene
         // class names later
@@ -186,8 +189,15 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if ("MRNA".equals(clsName)) {
+            String identifier = null;
             if (record.getAlias() != null) {
-                feature.setAttribute("identifier", record.getAlias());
+                identifier = record.getAlias();
+            } else {
+                identifier = getFlybaseAnnotationId(record);
+            }
+            feature.setAttribute("identifier", identifier);
+            if (! feature.getAttribute("symbol").getValue().equals(identifier)){
+                addItem(createSynonym(feature, "identifier", identifier));
             }
         }
 
@@ -491,7 +501,31 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         }
         return fbs;
     }
-
+    
+    /**
+     * For a given GFF3Record return the FlyBase Annotation ID
+     * @param record a GFF3Record
+     * @return an identifier or null
+     */
+    private String getFlybaseAnnotationId(GFF3Record record) {
+        List dbXRef = record.getDbxrefs();
+        for (Iterator iter = dbXRef.iterator(); iter.hasNext();) {
+            String xRef = (String) iter.next();
+            if (xRef.startsWith("FlyBase_Annotation_IDs:")) {
+                String[] idArray = xRef.substring(23).split(",");
+                for (int j = 0; j < idArray.length; j++) {
+                    String id = idArray[j];
+                    if (j == 0 && id.startsWith("CG")) {
+                        return id;
+                    } else {
+                        LOG.info("ADDITIONAL ID FOUND:" + id);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
     private class CDSHolder
     {
         String cdsName, transcriptId, key;
