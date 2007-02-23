@@ -19,6 +19,7 @@ import org.intermine.util.TypeUtil;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.imagemap.ImageMapUtilities;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
@@ -109,9 +110,14 @@ public class BagGraphWidget
             plot.getDomainAxis().setLabelFont(labelFont);
             plot.getRangeAxis().setLabelFont(labelFont);
             plot.getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
+            plot.getDomainAxis()
+                .setCategoryLabelPositions(
+                                           CategoryLabelPositions
+                                               .createUpRotationLabelPositions(Math.PI / 6.0));
 
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
+           
             // generate the image and imagemap
             fileName = ServletUtilities.saveChartAsPNG(chart, WIDTH, HEIGHT, info, session);
             imageMap = ImageMapUtilities.getImageMap("chart", info);
