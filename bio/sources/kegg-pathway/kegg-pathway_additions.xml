@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.Pathway" is-interface="true">
+  <attribute name="identifier" type="java.lang.String"/>
+  <attribute name="name" type="java.lang.String"/>
+  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="pathways"/>
+</class>
+<class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <collection name="pathways" referenced-type="org.flymine.model.genomic.Pathway" reverse-reference="genes"/>
+</class>
+</classes>
