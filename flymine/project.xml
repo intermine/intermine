@@ -5,7 +5,7 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
     <source name="flybase-dmel-gff" type="flybase-gff" dump="true">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/gff"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -14,7 +14,7 @@
     <source name="dmel-cg-numbers" type="tab-separated-file">
       <property name="tsv.config.file" value="resources/dmel-cg-numbers.tsv_config"/>
       <property name="tsv.includes" value="cg_fbgn.txt"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1"/>
     </source>
     <source name="worm-gene-identifiers" type="tab-separated-file">
       <property name="tsv.config.file" value="resources/worm-gene-identifiers.tsv_config"/>
@@ -133,7 +133,7 @@
       <!-- fasta.className isn't currently used, but it should be -->
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
     <source name="flybase-dpse-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="7237"/>
@@ -159,7 +159,7 @@
     <source name="name-and-wildtypefunction" type="tab-separated-file" dump="true">
       <property name="tsv.config.file" value="resources/name-and-wildtypefunction.tsv_config"/>
       <property name="tsv.includes" value="flybaseFullNameWT.txt"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1"/>
     </source>
 
 
@@ -181,22 +181,22 @@
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.idSuffix" value="-cds"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
     <source name="flybase-dmel-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
-      <property name="fasta.classAttribute" value="symbol"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
       <property name="fasta.sequenceType" value="protein"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
@@ -232,7 +232,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-transcript-r*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
