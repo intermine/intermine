@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 
@@ -51,14 +52,20 @@ public class HintingFetcher implements EquivalentObjectFetcher
         if (hints.databaseEmpty()) {
             return Collections.EMPTY_SET;
         }
-        Iterator classIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
-        while (classIter.hasNext()) {
-            Class clazz = (Class) classIter.next();
-            if (os.getModel().hasClassDescriptor(clazz.getName())) {
-                if (hints.classNotExists(clazz)) {
-                    return Collections.EMPTY_SET;
+        boolean allPkClassesEmpty = true;
+        Set classDescriptors = os.getModel().getClassDescriptorsForClass(obj.getClass());
+        Iterator cldIter = classDescriptors.iterator();
+        while (cldIter.hasNext() && allPkClassesEmpty) {
+            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+            if (!primaryKeys.isEmpty()) {
+                if (!hints.classNotExists(cld.getType())) {
+                    allPkClassesEmpty = false;
                 }
             }
+        }
+        if (allPkClassesEmpty) {
+            return Collections.EMPTY_SET;
         }
         return fetcher.queryEquivalentObjects(obj, source);
     }
