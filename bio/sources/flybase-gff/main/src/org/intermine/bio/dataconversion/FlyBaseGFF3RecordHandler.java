@@ -75,6 +75,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         // Region is inherited by loads of things, causes conflicts
         //references.put("Region", "gene");
         references.put("RegulatoryRegion", "gene");
+        references.put("TFBindingSite", "gene");
         references.put("SequenceVariant", "genes");
         references.put("FivePrimeUTR", "MRNAs");
         references.put("ThreePrimeUTR", "MRNAs");
@@ -97,7 +98,8 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
 
         if ("MRNA".equals(clsName)) {
-            transcriptIds.put(feature.getAttribute("identifier").getValue(), feature.getIdentifier());
+            transcriptIds.put(feature.getAttribute("identifier").getValue(),
+                              feature.getIdentifier());
         }
         if ("Protein".equals(clsName)) {
             // for v4.3 create translations from proteins and set the identifier from the Alias
@@ -111,19 +113,20 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             feature.setAttribute("organismDbId", record.getId());
             feature.removeAttribute("identifier");
         }
-        
+
         if ("Protein".equals(clsName)) {
             clsName = "Translation";
-            String identifier = null;
-            if (record.getAlias() != null) {
+            // for dmel identifier is in DBxref, for dpse is in Alias
+            String identifier = getFlybaseAnnotationId(record);
+            if (identifier == null) {
                 identifier = record.getAlias();
-            } else {
-                identifier = getFlybaseAnnotationId(record);
             }
             if (identifier != null) {
                 feature.setAttribute("identifier", identifier);
                 addItem(createSynonym(feature, "identifier", identifier));
-                String symbol = feature.getAttribute("name").getValue();
+            }
+            String symbol = feature.getAttribute("name").getValue();
+            if (symbol != null) {
                 feature.setAttribute("symbol", symbol);
                 feature.removeAttribute("name");
             }
@@ -172,7 +175,8 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             ends.add(end);
 
             // Some CDSs have components on different strands, take strand of lowest start
-            cdsStrands.put(holder.key + "_" + start, getLocation().getAttribute("strand").getValue());
+            cdsStrands.put(holder.key + "_" + start,
+                           getLocation().getAttribute("strand").getValue());
         }
 
         // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
@@ -189,15 +193,17 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if ("MRNA".equals(clsName)) {
-            String identifier = null;
-            if (record.getAlias() != null) {
+            // for dmel identifier is in DBxref, for dpse is in Alias
+            String identifier = getFlybaseAnnotationId(record);
+            if (identifier == null) {
                 identifier = record.getAlias();
-            } else {
-                identifier = getFlybaseAnnotationId(record);
             }
-            feature.setAttribute("identifier", identifier);
-            if (! feature.getAttribute("symbol").getValue().equals(identifier)){
-                addItem(createSynonym(feature, "identifier", identifier));
+            if (identifier != null) {
+                feature.setAttribute("identifier", identifier);
+                if (!feature.getAttribute("symbol").getValue().equals(identifier)
+                    && !feature.getAttribute("organismDbId").getValue().equals(identifier)) {
+                    addItem(createSynonym(feature, "identifier", identifier));
+                }
             }
         }
 
@@ -501,7 +507,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         }
         return fbs;
     }
-    
+
     /**
      * For a given GFF3Record return the FlyBase Annotation ID
      * @param record a GFF3Record
@@ -509,6 +515,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
      */
     private String getFlybaseAnnotationId(GFF3Record record) {
         List dbXRef = record.getDbxrefs();
+        if (dbXRef == null) {
+            return null;
+        }
         for (Iterator iter = dbXRef.iterator(); iter.hasNext();) {
             String xRef = (String) iter.next();
             if (xRef.startsWith("FlyBase_Annotation_IDs:")) {
@@ -525,7 +534,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         }
         return null;
     }
-    
+
     private class CDSHolder
     {
         String cdsName, transcriptId, key;
