@@ -247,6 +247,9 @@
            items DB, then into the final objectstore -->
       <property name="tgt.xml.file" location="build/publications.xml"/>
     </source>
+    <source name="kegg-pathway" type="kegg-pathway" dump="true">
+      <property name="src.data.dir" location="/shared/data/kegg/release41"/>
+    </source>    
   </sources>
 
   <post-processing>
