@@ -19,9 +19,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <!-- <property name="flybase.small" location="true"/>-->
     </source>
-    <source name="worm-gene-identifiers" type="tab-separated-file">
-      <property name="tsv.config.file" value="resources/worm-gene-identifiers.tsv_config"/>
-      <property name="tsv.includes" value="genes2molecular_names.txt"/>
+    <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
     </source>
     <source name="flyreg" type="flyreg" dump="true">
