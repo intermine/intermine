@@ -1,0 +1,31 @@
+<items>
+<item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="apterblister"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="2_2"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="FlyBase"/>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="Ribosomal protein LP0"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="2_1"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="name" value="Ribosomal protein LP0"/>
+<attribute name="organismDbId" value="FBgn0000100"/>
+<attribute name="wildTypeFunction" value="Encodes an apurinic-apyrimidinic DNA endonuclease."/>
+<reference name="organism" ref_id="1_1"/>
+</item>
+<item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="name" value="apterblister"/>
+<attribute name="organismDbId" value="FBgn0000101"/>
+<reference name="organism" ref_id="1_1"/>
+</item>
+</items>
