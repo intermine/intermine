@@ -206,22 +206,26 @@ public class GFF3Converter
                 for (Iterator i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
                     Item synonym = createItem("Synonym");
-                    synonym.addReference(new Reference("subject", feature.getIdentifier()));
-                    synonym.addAttribute(new Attribute("value", recordName));
-                    synonym.addAttribute(new Attribute("type", "name"));
-                    synonym.addReference(new Reference("source", dataSource.getIdentifier()));
-                    handler.addItem(synonym);
+                    if (!recordName.equals(record.getId())) {
+                        synonym.addReference(new Reference("subject", feature.getIdentifier()));
+                        synonym.addAttribute(new Attribute("value", recordName));
+                        synonym.addAttribute(new Attribute("type", "name"));
+                        synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+                        handler.addItem(synonym);
+                    }
                 }
             } else {
                 feature.addAttribute(new Attribute("symbol", (String) names.get(0)));
                 for (Iterator i = names.iterator(); i.hasNext(); ) {
                     String recordName = (String) i.next();
-                    Item synonym = createItem("Synonym");
-                    synonym.addReference(new Reference("subject", feature.getIdentifier()));
-                    synonym.addAttribute(new Attribute("value", recordName));
-                    synonym.addAttribute(new Attribute("type", "symbol"));
-                    synonym.addReference(new Reference("source", dataSource.getIdentifier()));
-                    handler.addItem(synonym);
+                    if (!recordName.equals(record.getId())) {
+                        Item synonym = createItem("Synonym");
+                        synonym.addReference(new Reference("subject", feature.getIdentifier()));
+                        synonym.addAttribute(new Attribute("value", recordName));
+                        synonym.addAttribute(new Attribute("type", "symbol"));
+                        synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+                        handler.addItem(synonym);
+                    }
                 }
             }
         }
