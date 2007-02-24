@@ -89,6 +89,7 @@ public class IntergenicRegionUtil
         Set locationSet = new HashSet();
         Map locToGeneMap = new HashMap();
 
+        osw.beginTransaction();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             Integer chrId = (Integer) rr.get(0);
@@ -117,6 +118,7 @@ public class IntergenicRegionUtil
             // we've created some IntergenicRegion objects so store() the DataSet
             osw.store(dataSet);
         }
+        osw.commitTransaction();
     }
 
     /**
