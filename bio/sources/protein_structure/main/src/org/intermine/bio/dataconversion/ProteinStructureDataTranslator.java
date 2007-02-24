@@ -98,8 +98,8 @@ public class ProteinStructureDataTranslator extends DataTranslator
             Item modelledRegion = getReference(srcItem, "modelled_region");
             Item proteinRegion = createItem(tgtNs + "ProteinRegion", "");
             Item protein = createItem(tgtNs + "Protein", "");
-            protein.addAttribute(new Attribute("primaryAccession", modelledRegion
-                                               .getAttribute("uniprot_id").getValue()));
+            String proteinAccession = modelledRegion.getAttribute("uniprot_id").getValue();
+            protein.setAttribute("primaryAccession", proteinAccession);
             protein.setReference("organism", organism.getIdentifier());
             proteinRegion.addReference(new Reference("protein", protein.getIdentifier()));
             Item location = createItem(tgtNs + "Location", "");
@@ -123,6 +123,7 @@ public class ProteinStructureDataTranslator extends DataTranslator
             modelledProteinStructure.addAttribute(new Attribute("ZScore", model
                                                                 .getAttribute("prosa_z_score")
                                                                 .getValue()));
+
             String str;
             StringBuffer atm = new StringBuffer();
             try {
@@ -155,18 +156,20 @@ public class ProteinStructureDataTranslator extends DataTranslator
 
             // sequenceFamily -> proteinFeature
             Item sequenceFamily = getReference(srcItem, "sequence_family");
-            String name = sequenceFamily.getAttribute("pfam_id").getValue();
-            Item proteinFeature = (Item) proteinFeatures.get(name);
+            String pfamId = sequenceFamily.getAttribute("pfam_id").getValue();
+            Item proteinFeature = (Item) proteinFeatures.get(pfamId);
             if (proteinFeature == null) {
                 proteinFeature = createItem(tgtNs + "ProteinFeature", "");
-                proteinFeature.addAttribute(new Attribute("identifier", name));
-                proteinFeatures.put(name, proteinFeature);
+                proteinFeature.addAttribute(new Attribute("identifier", pfamId));
+                proteinFeatures.put(pfamId, proteinFeature);
             }
 
             // link proteinRegion and proteinSequenceFamily
             proteinRegion.addReference(new Reference("proteinFeature",
                                                      proteinFeature.getIdentifier()));
 
+            String structureId = proteinAccession + "-" + pfamId;
+            modelledProteinStructure.setAttribute("identifier", structureId);
             result.add(proteinRegion);
             result.add(protein);
             result.add(location);

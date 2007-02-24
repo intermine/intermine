@@ -2,6 +2,7 @@
 <classes>
 <class name="org.flymine.model.genomic.ProteinStructure" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
   <attribute name="atm" type="java.lang.String"/>
+  <attribute name="identifier" type="java.lang.String"/>
   <reference name="region" referenced-type="org.flymine.model.genomic.ProteinRegion" reverse-reference="structures"/>
 </class>
 <class name="org.flymine.model.genomic.ProteinFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
