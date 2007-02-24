@@ -1,5 +1,6 @@
 <items>
 <item id="-1_6" class="http://www.flymine.org/model/genomic#ModelledProteinStructure">
+<attribute name="identifier" value="O01367-PF00013"/>
 <attribute name="QScore" value="-0.49"/>
 <attribute name="ZScore" value="-1.96"/>
 <attribute name="atm" value=""/>
