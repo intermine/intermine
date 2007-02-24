@@ -25,7 +25,7 @@
     </source>
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 6239 180454 7460 4932"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/9.3"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/9.6"/>
     </source>
    <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/keywords"/>
