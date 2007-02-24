@@ -52,10 +52,6 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/psi-mi/psi-mi.obo"/>
     </source>
-    <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
-    </source>
     <source name="mage" type="mage" dump="true">
       <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
       <property name="quantitationtypes" value="Signal med ratio"/>
@@ -78,6 +74,10 @@
     </source>
     <source name="ensembl-apis-mellifera" type="ensembl" dump="true">
       <property name="organism" value="AM"/>
+    </source>
+    <source name="flyrnai-screens" type="flyrnai-screens">
+      <property name="taxonId" value="7227"/>
+      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
     </source>
     <source name="dbID-ncbiID" type="tab-separated-file">
  <!-- for adding the ncbi geneID using the organismDbId field-->  
