@@ -33,15 +33,6 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
     </source>
-    <source name="redfly" type="redfly">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/redfly"/>
-    </source>
-    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology" dump="true">
-      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
-    </source>
     <source name="protein_structure" type="protein_structure" dump="true">
       <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
@@ -63,10 +54,10 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="affy-probes" type="affy-probes" dump="true">
+    <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes"/>
     </source>
-    <source name="kegg-pathway" type="kegg-pathway" dump="true">
+    <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/release41"/>
     </source>
     <source name="ensembl-anopheles" type="ensembl" dump="true">
@@ -206,7 +197,16 @@
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/"/>
       <property name="src.data.dir.includes" value="flybaseFullNameWT.txt"/>
     </source>
-    <source name="flyreg" type="flyreg" dump="true">
+    <source name="redfly" type="redfly">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/redfly"/>
+    </source>
+    <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
+    </source>
+    <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
