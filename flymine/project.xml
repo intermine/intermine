@@ -37,7 +37,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/REDfly/gff"/>
+      <property name="src.data.dir" location="/shared/data/liftover/redfly"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology" dump="true">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
@@ -77,7 +77,7 @@
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
+      <property name="src.data.dir" location="/shared/data/DRSC/cherry-tmp"/>
     </source>
     <source name="dbID-ncbiID" type="tab-separated-file">
  <!-- for adding the ncbi geneID using the organismDbId field-->  
@@ -92,7 +92,7 @@
       <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID.xml"/>
+      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/rns-fixed.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
 
@@ -102,7 +102,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/tiling/current_gff"/>
+      <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
@@ -210,7 +210,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/flyreg"/>
+      <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
     </source>
 
     <source name="entrez-organism" type="entrez-organism">
