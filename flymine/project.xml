@@ -9,7 +9,7 @@
       <property name="src.data.dir.includes" value="fbgn_annotationID.tsv"/>
     </source>
     <source name="flybase-dmel-gff" type="flybase-gff" dump="true">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -37,7 +37,7 @@
       <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/psi/intact/2007-02-02"/>
+      <property name="src.data.dir" location="/shared/data/psi/intact/2007-02-09"/>
       <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
@@ -68,7 +68,7 @@
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/DRSC/cherry-tmp"/>
+      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
     </source>
     <source name="dbID-ncbiID" type="tab-separated-file">
  <!-- for adding the ncbi geneID using the organismDbId field-->  
@@ -83,7 +83,7 @@
       <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/rns-fixed.xml"/>
+      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
 
@@ -130,13 +130,13 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
-    <source name="flybase-dmel-cds-fasta" type="fasta">
+    <!--source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.idSuffix" value="-cds"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
-    </source>
+    </source-->
     <source name="flybase-dmel-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
@@ -152,13 +152,13 @@
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
-    <source name="flybase-dpse-cds-fasta" type="fasta">
+    <!--source name="flybase-dpse-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.idSuffix" value="-cds"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
-    </source>
+    </source-->
     <source name="flybase-dpse-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
