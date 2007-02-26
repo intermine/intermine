@@ -83,11 +83,20 @@ public class FullHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("item")) {
-            items.add(currentItem);
+            finishedItem(currentItem);
             currentItem = null;
         }
         if (qName.equals("collection")) {
             currentCollectionName = null;
         }
+    }
+
+    /**
+     * Method that does something useful with the finished Item
+     *
+     * @param item an Item
+     */
+    public void finishedItem(Item item) {
+        items.add(item);
     }
 }

@@ -234,6 +234,17 @@
   </target>
 
   <!--
+    Retrieve from an XML file in InterMine format into a target Items database
+    using FullXmlConverterTask.
+  -->
+  <target name="-retrieve-tgt-from-fullxml-file" if="have.file.xml.tgt">
+    <convert-fullxml-file
+      osName="osw.${common.os.prefix}-tgt-items">
+      <fileset dir="${src.data.dir}" includes="**/*.xml"/>
+    </convert-fullxml-file>
+  </target>
+
+  <!--
     Convert a gff3 file(s). Note that you must have sources/genomic-core/main
     as a project dependency to use this target (to have access to the
     GFF3ConverterTask et al)
