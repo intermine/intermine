@@ -30,6 +30,9 @@
         name="convert-xml-file"
         classname="org.intermine.task.XmlConverterTask"/>
     <typedef
+        name="convert-fullxml-file"
+        classname="org.intermine.task.FullXmlConverterTask"/>
+    <typedef
         name="data-load"
         classname="org.intermine.dataloader.ObjectStoreDataLoaderTask"/>
     <typedef

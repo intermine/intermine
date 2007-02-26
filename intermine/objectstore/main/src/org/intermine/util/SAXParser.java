@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.io.IOException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.InputSource;
@@ -29,16 +30,19 @@ public class SAXParser
      * @param handler the SAX event handler to use
      * @throws Exception if an error occuring during parsing
      */
-    public static void parse(InputSource is, DefaultHandler handler) throws Exception {
+    public static void parse(InputSource is, DefaultHandler handler) throws SAXException,
+           IOException, ParserConfigurationException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(true);
             factory.newSAXParser().parse(is, handler);
         } catch (ParserConfigurationException e) {
-            throw new Exception("The underlying parser does not support "
-                                + " the requested features", e);
+            ParserConfigurationException e2 = new ParserConfigurationException("The underlying "
+                    + "parser does not support the requested features");
+            e2.initCause(e);
+            throw e;
         } catch (SAXException e) {
-            throw new Exception("Error parsing XML document", e);
+            throw new SAXException("Error parsing XML document", e);
         }
     }
 }

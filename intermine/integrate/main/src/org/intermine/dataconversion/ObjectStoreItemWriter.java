@@ -93,8 +93,6 @@ public class ObjectStoreItemWriter implements ItemWriter
             }
             //i.remove(); ?
         }
-
-
     }
 
     /**

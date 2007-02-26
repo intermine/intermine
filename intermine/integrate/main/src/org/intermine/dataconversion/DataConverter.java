@@ -23,7 +23,7 @@ import org.intermine.xml.full.ReferenceList;
  * Abstract parent class of all DataConverters
  * @author Mark Woodbridge
  */
- public abstract class DataConverter
+public abstract class DataConverter
 {
     private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
