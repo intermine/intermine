@@ -123,7 +123,10 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             }
             if (identifier != null) {
                 feature.setAttribute("identifier", identifier);
-                addItem(createSynonym(feature, "identifier", identifier));
+                if (feature.hasAttribute("symbol")
+                    && !(feature.getAttribute("symbol").getValue().equals(identifier))) {
+                    addItem(createSynonym(feature, "identifier", identifier));
+                }
             }
             String symbol = feature.getAttribute("name").getValue();
             if (symbol != null) {
