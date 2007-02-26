@@ -51,6 +51,14 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
 
         oligo.setReference("transcript", getSequence().getIdentifier());
 
+        String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
+        if (residues != null) {
+            Item seqItem = getItemFactory().makeItem(null, tgtNs + "Sequence", "");
+            seqItem.setAttribute("residues", residues);
+            addItem(seqItem);
+            oligo.setReference("sequence", seqItem.getIdentifier());
+        }
+
         List aliases = (List) record.getAttributes().get("Alias");
 
         Iterator aliasIter = aliases.iterator();
