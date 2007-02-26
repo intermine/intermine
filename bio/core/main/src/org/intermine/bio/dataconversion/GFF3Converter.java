@@ -457,6 +457,9 @@ public class GFF3Converter
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
             seq = createItem(seqClsName);
+            if (identifier.startsWith("chr")) {
+                identifier = identifier.substring(3);
+            }
             seq.setAttribute("identifier", identifier);
             seq.addReference(getOrgRef());
             seqs.put(identifier, seq);

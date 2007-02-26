@@ -47,7 +47,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String publicationNs = getTargetModel().getNameSpace() + "Publication";
 
         String pmid = (String) ((List) record.getAttributes().get("PMID")).get(0);
-
         Item pubmedItem;
 
         if (pubmedIdMap.containsKey(pmid)) {
@@ -61,7 +60,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         Item bindingSite = getFeature();
 
-        bindingSite.addToCollection("evidence", pubmedItem);
+        addEvidence(pubmedItem);
 
         String factorGeneName = (String) ((List) record.getAttributes().get("Factor")).get(0);
 
