@@ -83,7 +83,7 @@
       <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID.xml"/>
+      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
 
