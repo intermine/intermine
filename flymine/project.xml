@@ -100,6 +100,12 @@
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
 
+    <source name="geneid-translationid" type="intermine-items-large-xml-file">
+      <!-- source for linking a translationId to a geneId from ensembl-->
+      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source> 
+
     <!--  sources that need fixing
     <source name="drosdel" type="drosdel" dump="true"/>
     <source name="tiling_path" type="tiling_path" dump="true">
@@ -111,10 +117,6 @@
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
-    <source name="geneid-translationid" type="intermine-items-xml-file">
-      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source> 
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
