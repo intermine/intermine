@@ -70,23 +70,6 @@
       <property name="taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/DRSC/current"/>
     </source>
-    <source name="dbID-ncbiID" type="tab-separated-file">
- <!-- for adding the ncbi geneID using the organismDbId field-->  
-      <property name="tsv.config.file" value="resources/dbID-ncbiID.tsv_config"/>
-      <property name="tsv.includes" value="ncbigene2DB.txt"/>
-      <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
-    </source>
-    <source name="geneID-ncbiID" type="tab-separated-file">
-<!--for adding the ncbi geneID using the identifier field-->
-      <property name="tsv.config.file" value="resources/geneID-ncbiID.tsv_config"/>
-      <property name="tsv.includes" value="ncbigene2ID.txt"/>
-      <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
-    </source>
-     <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-<!--for linking the pubmed Id to the ncbi gene Id-->      
-	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source>   
     <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
@@ -100,12 +83,6 @@
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
 
-    <source name="geneid-translationid" type="intermine-items-large-xml-file">
-      <!-- source for linking a translationId to a geneId from ensembl-->
-      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source> 
-
     <!--  sources that need fixing
     <source name="drosdel" type="drosdel" dump="true"/>
     <source name="tiling_path" type="tiling_path" dump="true">
@@ -117,6 +94,10 @@
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
+    <source name="geneid-translationid" type="intermine-items-large-xml-file">
+      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source> 
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
@@ -127,6 +108,11 @@
     </source>
     <source name="interpro" type="interpro">
       <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
+    </source>
+    <source name="geneID-ncbiID" type="tab-separated-file">
+      <property name="tsv.config.file" value="resources/geneID-ncbiID.tsv_config"/>
+      <property name="tsv.includes" value="ncbigene2ID.txt"/>
+      <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
     </source>
     -->
 
@@ -219,6 +205,17 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
     </source>
+    <source name="dbID-ncbiID" type="tab-separated-file">
+ <!-- for adding the ncbi geneID using the organismDbId field-->  
+      <property name="tsv.config.file" value="resources/dbID-ncbiID.tsv_config"/>
+      <property name="tsv.includes" value="ncbigene2DB.txt"/>
+      <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
+    </source>
+     <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
+<!--for linking the pubmed Id to the ncbi gene Id-->      
+	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source>   
 
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
