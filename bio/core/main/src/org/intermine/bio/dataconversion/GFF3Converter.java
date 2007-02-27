@@ -454,12 +454,12 @@ public class GFF3Converter
      * @return return/create item of class seqClsName for given identifier
      */
     private Item getSeq(String identifier) {
+        if (identifier.startsWith("chr")) {
+            identifier = identifier.substring(3);
+        }
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
             seq = createItem(seqClsName);
-            if (identifier.startsWith("chr")) {
-                identifier = identifier.substring(3);
-            }
             seq.setAttribute("identifier", identifier);
             seq.addReference(getOrgRef());
             seqs.put(identifier, seq);
