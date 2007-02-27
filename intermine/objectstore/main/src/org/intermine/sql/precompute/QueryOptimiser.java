@@ -197,7 +197,9 @@ public class QueryOptimiser
             return new BestQueryFallback(null, limitOffsetQuery.reconstruct(cachedQuery));
         }
         try {
-            if (database != null) {
+            boolean openedConnection = false;
+            if (explainConnection == null) {
+                openedConnection = true;
                 explainConnection = database.getConnection();
             }
             BestQuery bestQuery;
@@ -239,7 +241,7 @@ public class QueryOptimiser
                 } else {
                     bestQuery.getBestQueryString();
                 }
-                if (database != null) {
+                if (openedConnection) {
                     explainConnection.close();
                 }
             }
