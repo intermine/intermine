@@ -10,8 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -23,6 +27,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -35,15 +41,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 
 /**
  * DataConverter to parse a go annotation file into Items
@@ -228,7 +225,7 @@ public class GoConverter extends FileConverter
 
                 // new gene
                 ItemWrapper newProductWrapper = newProduct(productId, type, newOrganism, 
-                                                           newDatasource.getIdentifier(), true);
+                                                           newDatasource.getIdentifier(), true, null);
 
                 // temporary object while we are rattling through the file
                 // needed because we may have extra publications
@@ -568,12 +565,15 @@ public class GoConverter extends FileConverter
 
                         // if a UniProt protein it may be from a differnet organism
                         // also FlyBase mey be from a different Drosophila species
-                        if (prefix.equals("UniProt") || prefix.equals("FB")) {
+                        if (prefix.equals("UniProt")) {
                             productWrapper = newProduct(value, wt.clsName,
-                                                        organism, dataSourceId, false);
+                                                        organism, dataSourceId, false, null);
+                        } else if (prefix.equals("FB")) {
+                            productWrapper = newProduct(value, wt.clsName, organism, 
+                                                        dataSourceId, false, "organismDbId");
                         } else
                             productWrapper = newProduct(value, wt.clsName,
-                                                        organism, dataSourceId, true);
+                                                        organism, dataSourceId, true, null);
                         Item withProduct = productWrapper.getItem();
                         withProductList.add(withProduct);
                     } else {
@@ -653,19 +653,21 @@ public class GoConverter extends FileConverter
                                      String type,
                                      Item organism,
                                      String dataSourceId,
-                                     boolean createOrganism) throws ObjectStoreException {
-        String idField;
+                                     boolean createOrganism,
+                                     String idField) throws ObjectStoreException {
         String clsName;
 
         // find gene attribute first to see if organism shoudld be part of key
         if ("gene".equalsIgnoreCase(type)) {
             clsName = "Gene";
 
-            String taxonId = organism.getAttribute("taxonId").getValue();
-            idField = (String) geneAttributes.get(taxonId);
             if (idField == null) {
-                throw new RuntimeException("Could not find a geneAttribute property for taxon: "
-                                           + taxonId + " check properties file: " + PROP_FILE);
+                String taxonId = organism.getAttribute("taxonId").getValue();
+                idField = (String) geneAttributes.get(taxonId);
+                if (idField == null) {
+                    throw new RuntimeException("Could not find a geneAttribute property for taxon: "
+                                               + taxonId + " check properties file: " + PROP_FILE);
+                }
             }
         } else if ("protein".equalsIgnoreCase(type)) {
             clsName = "Protein";
