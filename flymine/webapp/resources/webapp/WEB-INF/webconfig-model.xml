@@ -432,6 +432,12 @@
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
+  <class className="org.flymine.model.genomic.GOEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+  </class>
+
 
   <class className="org.flymine.model.genomic.ProteinInteractionRegion">
     <fields>
