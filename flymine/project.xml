@@ -186,10 +186,10 @@
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
-    <source name="flybase-gene-names" type="flybase-gene-names">
+    <!--source name="flybase-gene-names" type="flybase-gene-names">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_3/"/>
       <property name="src.data.dir.includes" value="flybaseFullNameWT.txt"/>
-    </source>
+    </source-->
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
