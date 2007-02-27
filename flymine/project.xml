@@ -87,12 +87,7 @@
 	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
-    <source name="geneid-translationid" type="intermine-items-xml-file">
- <!-- source for linking a translationId to a geneId from ensembl-->
-      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source> 
-	<source name="long_oligo" type="long_oligo">
+    <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
@@ -116,6 +111,10 @@
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
+    <source name="geneid-translationid" type="intermine-items-xml-file">
+      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source> 
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
