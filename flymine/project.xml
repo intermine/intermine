@@ -86,6 +86,18 @@
       <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
+    <source name="long_oligo" type="long_oligo">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="MRNA"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/long_oligo"/>
+    </source>
+    <source name="homophila" type="homophila">
+      <property name="src.data.dir" location="/shared/data/homophila/current"/>
+      <property name="src.data.dir.includes" value="homophila_matches.txt"/>
+      <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
+      <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
+    </source>
 
     <!--  sources that need fixing
     <source name="drosdel" type="drosdel" dump="true"/>
@@ -95,20 +107,8 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
-    <source name="long_oligo" type="long_oligo">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="MRNA"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/long_oligo"/>
-    </source>
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
-    </source>
-    <source name="homophila" type="homophila">
-      <property name="src.data.dir" location="/shared/data/homophila/current"/>
-      <property name="src.data.dir.includes" value="homophila_matches.txt"/>
-      <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
-      <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>

@@ -124,7 +124,9 @@ public class HomophilaConverter extends FileConverter
             }
             omim = fields[0];
             descBuff = new StringBuffer();
-            descBuff.append(fields[1]);
+            if (fields.length > 1) {
+                descBuff.append(fields[1]);
+            }
         }
         diseaseDescriptions.put(omim, descBuff.toString()); // last line
         
