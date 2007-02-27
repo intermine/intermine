@@ -743,7 +743,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 BestQuery bestQuery;
                 if (pt != null) {
                     OptimiserCache oCache = (OptimiserCache) goFasterCacheMap.get(q);
-                    bestQuery = QueryOptimiser.optimiseWith(sql, null, db, null,
+                    bestQuery = QueryOptimiser.optimiseWith(sql, null, db, c,
                             (explain ? limitedContext : QueryOptimiserContext.DEFAULT),
                             Collections.singleton(pt), oCache);
                     if (sql.equals(bestQuery.getBestQueryString())) {
@@ -751,7 +751,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + sql);
                     }
                 } else {
-                    bestQuery = QueryOptimiser.optimise(sql, null, db, null,
+                    bestQuery = QueryOptimiser.optimise(sql, null, db, c,
                             (explain ? limitedContext : QueryOptimiserContext.DEFAULT));
                 }
                 sql = bestQuery.getBestQueryString();
