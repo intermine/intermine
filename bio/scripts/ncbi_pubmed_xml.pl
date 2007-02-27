@@ -2,7 +2,6 @@
 
 #usage: takes data from /shared/data/ncbigene/gene2pubmed as $ARGV[0] and writes the xml file
 #for linking ncbi gene ID to one or more pubmed IDs. 
-#Final xml file should be copied to /shared/data/pubmed/uploadFiles/
 
 use strict;
 
@@ -19,7 +18,7 @@ use InterMine::Model;
 
 #Kim's stuff for writing XML
 my @items = ();
-my $model_file = '../svn/dev/flymine/dbmodel/build/model/genomic_model.xml';
+my $model_file = '../../flymine/dbmodel/build/model/genomic_model.xml';
 my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 my @items_to_write = ();
@@ -30,7 +29,7 @@ my %ids=("4932",'S.cerevisiae',
 	 "6239",'C.elegans',
 	 "7227",'D.melanogaster',
 	 "180454",'A.gambiae str PEST');
-my (%genes,%pubID);
+my (%genes, %pubID, %pubgene);
 
 #open /shared/data/ncbigene/gene2pubmed and get data
 open(F,"<$ARGV[0]") or die "$!";
@@ -40,61 +39,52 @@ while(<F>){
 	#only use the organisms in %ids
 	if(exists $ids{$current_ID}){
 		chomp $f[2];
+		my ($geneID, $pubID) = ($f[1], $f[2]);
+		my ($gene_item, $pub_item);
+		#print "Gene $geneID pub# $pubID\n";
 		
-		$genes{$f[1]} = $f[1];
-		$pubID{$f[2].$f[1]} = {
-		'gene' => $f[1],
-		'pubmed' => $f[2]
-		};
+		#check to see if the gene object has already been stored, if not create it
+		if(!exists $genes{$geneID}){
+			$gene_item = make_item('Gene');
+			$gene_item->set('ncbiGeneNumber', $geneID);
+			$genes{$geneID}={'object' => $gene_item};
+		}
+		#check to see if the publication object has already been stored, if not create it
+		if(!exists $pubID{$pubID}){
+			$pub_item = make_item('Publication');
+			$pub_item->set('pubMedId', $pubID);	
+			$pubID{$pubID}={'object' => $pub_item};
+		}
+		#associate the publication with the gene in the hash 
+		$genes{$geneID}{'publications'}{$pubID} = $pubID;
 	}
 }	
 close(F) or die "$!";
 
-#write ncbiID/pubmedID pairs to a file to speed the next bit up
-my $filepath = "./pairs.txt"; 
-my $ID;
-open(RESULT, ">$filepath") || die "$!";
-foreach $ID (sort keys %pubID){
-  print RESULT "$pubID{$ID}->{'gene'}\t$pubID{$ID}->{'pubmed'}\n";
-}
-close(RESULT);
-
-#for each gene, find which pubmedIds reference it
-foreach my $geneID (sort keys %genes){
+#for each gene, find which pubmedIds reference it, retrieve objects from the hash
+foreach my $gene (sort keys %genes){
 	my @pub_items;
-	print "Gene $geneID has publications:\n";
-	my $gene1_item = make_item('Gene');
-	$gene1_item->set('ncbiGeneNumber', $geneID);
-	
-	open(F,"<$filepath") or die "$!";
-	while(<F>){
-		my @f = split/\t/;
-		my $current_ID=$f[0];
-		if($current_ID==$geneID){
-			chomp $f[1];
-			print "$f[1]\n";
-			my $pub1_item = make_item('Publication');
-			my $pubmedID = $f[1];
-			$pub1_item->set('pubMedId', $pubmedID);
-			push @pub_items,$pub1_item;
+	#print "Gene $gene has publications\n";
+	my $gene_item = $genes{$gene}->{'object'};
+	foreach my $pubID (sort keys %{$genes{$gene}->{publications}} ) {
+		#print "$pubID\n";
+		my $pub_item = $pubID{$pubID}->{'object'};
+		push @pub_items,$pub_item;
 	}
-
-	}close(F) or die "$!";
-	$gene1_item->set('evidence', [@pub_items]);
+	$gene_item->set('publications', [@pub_items]);
 }	
-#delete ncbiID/pubmedID pairs file
-unlink ("$filepath")|| die "Cannot rm $filepath: $!";
 
 #write xml file
-my $output1 = new IO::File(">ncbiID_pubmedID.xml");
-my $writer = new XML::Writer(OUTPUT => $output1, DATA_MODE => 1, DATA_INDENT => 3);
+my $outfile = '/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml';
+my $output = new IO::File(">$outfile");
+my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
 $writer->startTag('items');
 for my $item (@items_to_write) {
   $item->as_xml($writer);
 }
 $writer->endTag('items');
 $writer->end();
-$output1->close();
+$output->close();
 
 sub make_item
 {

@@ -83,10 +83,16 @@
       <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-      <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
+<!--for linking the pubmed Id to the ncbi gene Id-->      
+	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
-    <source name="long_oligo" type="long_oligo">
+    <source name="geneid-translationid" type="intermine-items-xml-file">
+ <!-- source for linking a translationId to a geneId from ensembl-->
+      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source> 
+	<source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
