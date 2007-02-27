@@ -1,0 +1,4 @@
+This source is for reading InterMine format XML files, via a target items database.
+
+Configuration:
+    tgt.xml.file - location of the XML file

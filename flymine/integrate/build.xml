@@ -2,6 +2,9 @@
 <project name="flymine-integration" default="default" basedir=".">
   <description>perform integration</description>
   
+  <!-- To load just one data source, run "ant -Dsource=<whatever>" -->
+  <!-- To empty the production database, go to flymine/dbmodel, and type "ant clean" and then "ant build-db" -->
+
   <import file="../../imbuild/integrate.xml"/>
 
   <target name="test" depends="init, -init-deps">

@@ -73,8 +73,9 @@
       have.file.custom.src - read from a custom file into a tgt items objectstore, translate needed
       have.file.custom.tgt - read from a custom file into a src items objectstore, no translation
       have.file.dag - this source in read from a DAG file into a tgt items objectstore, no translate
-      have.file.xml.tgt - source is XML that is read into a tgt items objectstore, no translation
-      have.file.custom - source is read from a custom file using a DirectDataLoader, no translation,
+      have.file.xml.tgt - source is XML that is loaded directly, no translation
+      have.large.file.xml.tgt - source is XML that is converted to tgt items, no translation
+      have.file.custom.direct - source is read from a custom file using a DirectDataLoader, no translation,
                          no src or tgt items
 
 
@@ -223,7 +224,7 @@
 
   <!--
     Retrieve from an XML file in InterMine format into a production db using
-    ObjectStoreDataLoaderTask.
+    XmlDataLoaderTask.
   -->
   <target name="-retrieve-tgt-from-xml-file" if="have.file.xml.tgt">
     <insert-xml-data
@@ -237,10 +238,10 @@
     Retrieve from an XML file in InterMine format into a target Items database
     using FullXmlConverterTask.
   -->
-  <target name="-retrieve-tgt-from-fullxml-file" if="have.file.xml.tgt">
+  <target name="-retrieve-tgt-from-large-xml-file" if="have.large.file.xml.tgt">
     <convert-fullxml-file
-      osName="osw.${common.os.prefix}-tgt-items">
-      <fileset dir="${src.data.dir}" includes="**/*.xml"/>
+      osName="osw.${common.os.prefix}-tgt-items"
+      xmlFile="${tgt.xml.file}">
     </convert-fullxml-file>
   </target>
 
@@ -316,6 +317,7 @@
                                        -retrieve-from-gff3,
                                        -retrieve-from-dag,
                                        -retrieve-tgt-from-xml-file,
+                                       -retrieve-tgt-from-large-xml-file,
                                        -index-analyse-tgt-items" if="do.tgt.retrieve"/>
 
   <target name="retrieve" depends="src-retrieve, tgt-retrieve"/>

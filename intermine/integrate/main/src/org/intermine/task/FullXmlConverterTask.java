@@ -10,9 +10,10 @@ package org.intermine.task;
  *
  */
 
-import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.dataconversion.ItemWriter;
@@ -31,22 +32,35 @@ import org.apache.tools.ant.types.FileSet;
  */
 public class FullXmlConverterTask extends ConverterTask
 {
-    protected FileSet fileSet;
+    protected File xmlFile;
+    protected String xmlRes;
 
     /**
-     * Set the data fileset
-     * @param fileSet the fileset
+     * Set the XML file to load data from.
+     *
+     * @param xmlFile the XML file
      */
-    public void addFileSet(FileSet fileSet) {
-        this.fileSet = fileSet;
+    public void setXmlFile(File xmlFile) {
+        this.xmlFile = xmlFile;
     }
 
+    /**
+     * Set XML resource name (to load data from classloader).
+     * @param resName classloader resource name
+     */
+    public void setXmlResource(String resName) {
+        this.xmlRes = resName;
+    }
+ 
     /**
      * @see Task#execute
      */
     public void execute() throws BuildException {
-        if (fileSet == null) {
-            throw new BuildException("fileSet must be specified");
+        if (xmlFile == null && xmlRes == null) {
+            throw new BuildException("neither xmlRes nor xmlFile attributes set");
+        }
+        if (xmlFile != null && xmlRes != null) {
+            throw new BuildException("both xmlRes and xmlFile attributes set");
         }
         if (osName == null) {
             throw new BuildException("osName must be specified");
@@ -60,19 +74,20 @@ public class FullXmlConverterTask extends ConverterTask
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             writer = new ObjectStoreItemWriter(osw);
             FullXmlConverter converter = new FullXmlConverter(writer);
-            DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
-            String[] files = ds.getIncludedFiles();
-            for (int i = 0; i < files.length; i++) {
-                toRead = new File(ds.getBasedir(), files[i]);
-                System.err .println("Processing file " + toRead.toString());
-                converter.process(new BufferedReader(new FileReader(toRead)));
+            System.err .println("Processing file " + xmlFile);
+            if (xmlRes != null) {
+                converter.process(new BufferedReader(new InputStreamReader(getClass()
+                                .getClassLoader().getResourceAsStream(xmlRes))));
+            } else {
+                converter.process(new BufferedReader(new FileReader(xmlFile)));
             }
         } catch (Exception e) {
-            if (toRead == null) {
-                throw new BuildException("Exception in FullXmlConverterTask", e);
+            if (xmlFile == null) {
+                throw new BuildException("Exception in FullXmlConverterTask while reading from "
+                        + xmlRes, e);
             } else {
-                throw new BuildException("Exception in FullXmlConverterTask while reading from: "
-                        + toRead, e);
+                throw new BuildException("Exception in FullXmlConverterTask while reading from "
+                        + xmlFile, e);
             }
         } finally {
             try {
