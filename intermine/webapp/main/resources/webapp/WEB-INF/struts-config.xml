@@ -195,7 +195,7 @@
       <forward name="query" path="/query.do" redirect="true"/>
       <forward name="mymine" path="/mymine.do" redirect="true"/>
       <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
-      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
+      <forward name="waiting" path="/pollQuery.do" redirect="true"/>
       <forward name="template" path="/template.do" redirect="true"/>
     </action>
     
@@ -203,7 +203,7 @@
             type="org.intermine.web.LoadQueryAction"
             parameter="method">
       <forward name="query" path="/query.do" redirect="true"/>
-      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
+      <forward name="waiting" path="/pollQuery.do" redirect="true"/>
     </action>
     
     <action path="/begin"
