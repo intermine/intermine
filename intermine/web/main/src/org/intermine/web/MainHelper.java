@@ -367,24 +367,26 @@ public class MainHelper
         // forwards in the query so we can't process these in the above loop. 
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) { 
             PathNode node = (PathNode) i.next(); 
-            String path = node.getPath(); 
-            QueryNode qn = (QueryNode) queryBits.get(path); 
+            if (node.isReference() || node.isCollection()) {
+                String path = node.getPath(); 
+                QueryNode qn = (QueryNode) queryBits.get(path); 
 
-            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
-                Constraint c = (Constraint) j.next(); 
-                ConstraintSet cs = (ConstraintSet) codeToCS.get(c.getCode()); 
-                if (node.isReference() && ((c.getOp() == ConstraintOp.NOT_EQUALS)
-                            || ((c.getOp() == ConstraintOp.EQUALS)
-                                && (!loops.containsKey(path))
-                                && (!loops.containsKey(c.getValue()))))) { 
-                    QueryClass refQc = (QueryClass) queryBits.get(c.getValue()); 
-                    if (refQc == null) {
-                        throw new NullPointerException("Could not find QueryClass for "
-                                + c.getValue() + " in querybits: " + queryBits);
-                    }
-                    cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc)); 
-                } 
-            } 
+                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
+                    Constraint c = (Constraint) j.next(); 
+                    ConstraintSet cs = (ConstraintSet) codeToCS.get(c.getCode()); 
+                    if ((c.getOp() == ConstraintOp.NOT_EQUALS)
+                        || ((c.getOp() == ConstraintOp.EQUALS)
+                            && (!loops.containsKey(path))
+                            && (!loops.containsKey(c.getValue())))) { 
+                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue()); 
+                        if (refQc == null) {
+                            throw new NullPointerException("Could not find QueryClass for "
+                                    + c.getValue() + " in querybits: " + queryBits);
+                        }
+                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc)); 
+                    } 
+                }
+            }
         }
 
         if (andcs.getConstraints().isEmpty()) {
