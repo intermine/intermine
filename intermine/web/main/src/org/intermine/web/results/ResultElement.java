@@ -16,6 +16,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
+import org.intermine.util.Util;
 
 /**
  * Cell of results table containing information
@@ -153,20 +154,28 @@ public class ResultElement implements Serializable
     
     /**
      * (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @see java.lang.Object#equals
      */
     public boolean equals(Object obj) {
-        ResultElement cell = (ResultElement) obj;
-        return (field.equals(cell.getField())  && id.equals(cell.getId()) 
-                        && type.equals(cell.getType()));
+        try {
+            ResultElement cell = (ResultElement) obj;
+            return (Util.equals(field, cell.getField())  && id.equals(cell.getId())
+                            && type.equals(cell.getType()));
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Comparing a ResultsElement with a "
+                    + obj.getClass().getName());
+        } catch (NullPointerException e) {
+            throw new NullPointerException("field = " + field + ", id = " + id + ", type = "
+                    + type);
+        }
     }
     
     /**
      * (non-Javadoc)
-     * @see java.lang.Object#hashCode()
+     * @see java.lang.Object#hashCode
      */
     public int hashCode() {
-        return field.hashCode() + 3 * id.hashCode() + 7 * type.hashCode();
+        return (field == null ? 0 : field.hashCode()) + 3 * id.hashCode() + 7 * type.hashCode();
     }
     
 }
