@@ -457,6 +457,11 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_, a2_, a3_, a4_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_, org.intermine.model.testmodel.Address AS a4_ WHERE (LOWER(a1_.name) = 'employeea1' AND a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_ AND a1_.address CONTAINS a4_ AND LOWER(a4_.address) != 'fred' AND a3_.address CONTAINS a4_) ORDER BY a1_.name, a2_.name, a3_.name, a1_.age, a1_.fullTime, a4_.address");
     }
 
+    public void test14() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.employees.name\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.department\" type=\"Department\"></node><node path=\"Employee.department.employees\" type=\"Employee\"><constraint op=\"!=\" value=\"Employee\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>",
+                "SELECT DISTINCT a1_, a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.employees CONTAINS a3_ AND a3_ != a1_) ORDER BY a1_.name, a3_.name");
+    }
+
     public void doQuery(String web, String iql) throws Exception {
         Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(), classKeys);
         PathQuery pq = (PathQuery) parsed.get("test");
