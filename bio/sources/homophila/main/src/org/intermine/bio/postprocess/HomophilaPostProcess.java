@@ -102,6 +102,7 @@ public class HomophilaPostProcess extends PostProcessor
         Iterator iter = results.iterator();
         int count = 0;
 
+        osw.beginTransaction();
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
             Gene gene = (Gene) rr.get(0);
@@ -133,6 +134,7 @@ public class HomophilaPostProcess extends PostProcessor
 
             count++;
         }
+        osw.commitTransaction();
 
         LOG.info("Added " + count + " references to Disease to drosophila Genes");
     }
