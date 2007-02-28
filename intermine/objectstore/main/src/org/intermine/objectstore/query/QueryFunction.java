@@ -90,7 +90,7 @@ public class QueryFunction implements QueryEvaluable
        */
     public Class getType() {
         if (op == COUNT) {
-            return Integer.class;
+            return Long.class;
         }
         return obj.getType();
     }
