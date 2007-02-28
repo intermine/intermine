@@ -40,7 +40,9 @@ my %gene_association_map =
    wormbase => {suffix => 'wb'},
    mgi => {suffix => 'mgi'},
    rgd => {suffix => 'rgd'},
-   sgd => {suffix => 'sgd'});
+   sgd => {suffix => 'sgd'},
+   pombe => {suffix => 'GeneDB_Spombe'},
+   malaria => {suffix => 'GeneDB_Pfalciparum'});
 
 # Get latest version of the gene ontology - is updated every 30 mins
 my $go_ftp = Net::FTP->new($godatabase_server, Passive => 1)
@@ -87,13 +89,12 @@ if (!(-d $uniprot_dir)) {
 
 my $uniprot_download_dir = "$uniprot_dir/$date_string";
 
-if (-d $uniprot_download_dir) {
-  warn "$uniprot_download_dir already exists - skipping download\n";
-} else {
+if (!(-d $uniprot_download_dir)) {
   mkdir $uniprot_download_dir;
 
   print STDERR "getting $uniprot_go_server/$uniprot_go_dir/$goa_file_gz to $uniprot_download_dir\n";
 
+  $goa_ftp->binary();
   $goa_ftp->get($goa_file_gz, "$uniprot_download_dir/$goa_file_gz");
 
   print STDERR "getting $uniprot_go_server/$uniprot_go_dir/README to $uniprot_download_dir\n";
@@ -105,34 +106,38 @@ if (-d $uniprot_download_dir) {
   if ((system "gzip -dr $uniprot_download_dir") != 0) {
     die qq|system "gzip -dr $uniprot_download_dir" failed: $?\n|;
   }
-}
 
-open GOA_FILE, "$uniprot_download_dir/$goa_file"
-  or die "can't open $uniprot_download_dir/$goa_file";
-
-while (my $line = <GOA_FILE>) {
+  open GOA_FILE, "$uniprot_download_dir/$goa_file"
+      or die "can't open $uniprot_download_dir/$goa_file";
+  
+  while (my $line = <GOA_FILE>) {
+      for my $taxon_id (keys %taxon_map) {
+          if ($line =~ /\ttaxon\:$taxon_id\t/) {
+              push @{$taxon_map{$taxon_id}{lines}}, $line;
+          }
+      }
+  }
+  
+  close GOA_FILE or die;
+  
   for my $taxon_id (keys %taxon_map) {
-    if ($line =~ /\ttaxon\:$taxon_id\t/) {
-      push @{$taxon_map{$taxon_id}{lines}}, $line;
-    }
-  }
-}
-
-close GOA_FILE or die;
-
-for my $taxon_id (keys %taxon_map) {
-  my $suffix = $taxon_map{$taxon_id}{suffix};
-  open OUT_FILE, ">$uniprot_download_dir/gene_association_$suffix"
-    or die "can't open $uniprot_download_dir/gene_association_$suffix for writing\n";
-
-  for my $line (@{$taxon_map{$taxon_id}{lines}}) {
-    print OUT_FILE $line;
+      my $suffix = $taxon_map{$taxon_id}{suffix};
+      open OUT_FILE, ">$uniprot_download_dir/gene_association_$suffix"
+          or die "can't open $uniprot_download_dir/gene_association_$suffix for writing\n";
+      
+      for my $line (@{$taxon_map{$taxon_id}{lines}}) {
+          print OUT_FILE $line;
+      }
+      
+      close OUT_FILE or die;
   }
 
-  close OUT_FILE or die;
+  system "chmod -R a+r,g+w $uniprot_download_dir";
+
+} else {
+    warn "$uniprot_download_dir already exists - skipping download\n";
 }
 
-system "chmod -R a+r,g+w $uniprot_download_dir";
 
 #### Get other gene association files
 my $godatabase_ftp = Net::FTP->new($godatabase_server, Passive => 1)
