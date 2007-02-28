@@ -221,10 +221,6 @@ public class MainChange extends DispatchAction
         ((PathNode) query.getNodes().get(path)).getConstraints().remove(index);
         query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
         
-        PathNode pn = (PathNode) query.getNodes().get(path);
-        Constraint c = (Constraint) pn.getConstraints().get(index);
-        ConstraintOp op = c.getOp();
-        
         return mapping.findForward("query");
     }
 
