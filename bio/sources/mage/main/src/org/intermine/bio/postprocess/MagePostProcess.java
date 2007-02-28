@@ -77,11 +77,12 @@ public class MagePostProcess extends PostProcessor
             // CDNAClone.results (MicroArrayResult)
             createCDNACloneResultsCollection();
             // CompositeSequence.results (MicroArrayResult)
-            createCompositeSeqResultsCollection();
+            // this is commented out to work with FlyMine build
+            //createCompositeSeqResultsCollection();
             // Gene.microArrayResults
             createMicroArrayResultsCollection();
         } catch (Exception e) {
-            throw new RuntimeException("exception in mage post-processing");
+            throw new RuntimeException("exception in mage post-processing", e);
         }
     }
 
