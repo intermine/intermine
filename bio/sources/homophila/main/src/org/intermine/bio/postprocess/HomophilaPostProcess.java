@@ -98,7 +98,7 @@ public class HomophilaPostProcess extends PostProcessor
             LOG.error("Failed to find publication with id 11752278");
         }
 
-        Results results = findHomophilaGenesDiseases(osw);
+        Results results = findHomophilaGenesDiseases(osw.getObjectStore());
         Iterator iter = results.iterator();
         int count = 0;
 
