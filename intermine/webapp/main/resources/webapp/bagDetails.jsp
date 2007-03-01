@@ -8,6 +8,8 @@
 <!-- bagDetails.jsp -->
 <html:xhtml/>
 
+<script type="text/javascript" src="js/bagDetails.js" ></script>
+
 <script type="text/javascript">
 <!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
@@ -108,10 +110,12 @@
 
 <br/>
 
-<c:if test="${! empty graphDisplayerArray}">
 <div class="heading">
   Widgets
 </div>
+
+<c:if test="${! empty graphDisplayerArray}">
+
 <div class="body">
   <c:forEach items="${graphDisplayerArray}" var="htmlContent">
     <div class="widget">
@@ -122,11 +126,20 @@
 </div>
 </c:if>
 
+<c:if test="${bag.type == 'Gene'}">
+	  <%-- go stats --%>	      
+      <tiles:insert name="goStatDisplayer.tile">
+        <tiles:put name="interMineIdBag" beanName="bag"/>
+      </tiles:insert>
+</c:if>
+
+
 <div class="heading">
   Templates
 </div>
 
 <div class="body">
+
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect">
       <tiles:insert name="objectDetailsAspect.tile">
@@ -142,5 +155,6 @@
   <c:set var="pagedTable" value="${pagedColl}" scope="request"/>
   <tiles:get name="export.tile"/>
 </c:if>
+
 
 <!-- /bagDetails.jsp -->
