@@ -91,31 +91,12 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
-    <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
-    </source>
-    <source name="geneid-translationid" type="intermine-items-large-xml-file">
-      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source> 
-    <source name="go" type="go">
-      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
-    </source>
-    <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
-      <property name="src.data.dir.includes" value="*/gene_association*"/>
-    </source>
-    <source name="interpro" type="interpro">
-      <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
-    </source>
     <source name="geneID-ncbiID" type="tab-separated-file">
       <property name="tsv.config.file" value="resources/geneID-ncbiID.tsv_config"/>
       <property name="tsv.includes" value="ncbigene2ID.txt"/>
       <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
     </source>
     -->
-
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
@@ -216,7 +197,24 @@
 	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
-
+    <source name="interpro" type="interpro" dump="true">
+      <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
+    </source>
+    <source name="go" type="go">
+      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
+    </source>
+    <source name="go-annotation" type="go-annotation" dump="true">
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current/"/>
+      <property name="src.data.dir.includes" value="*/gene_association*"/>
+    </source>
+    <source name="geneid-translationid" type="intermine-items-large-xml-file">
+      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId_good.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source> 
+    <source name="inparanoid-orthologue" type="orthologue" dump="true">
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/2007-01-04/toload"/>
+    </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
