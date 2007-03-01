@@ -9,11 +9,12 @@ use strict;
 #define organism ids
 my %ids=("4932",'S.cerevisiae',
 	 "6239",'C.elegans',
-	 "7227",'D.melanogaster',
-	 "180454",'A.gambiae str PEST');
+	 "7227",'D.melanogaster'#,
+	 #"180454",'A.gambiae str PEST'
+	 );
 my (%IDdata,%DBdata);
 
-#open /shared/data/ncbigene/gene_info
+#open /shared/data/pubmed/gene_info
 open(F,"<$ARGV[0]") or die "$!";
 while(<F>){
 	my @f = split/\t/;
@@ -57,12 +58,12 @@ close(F) or die "$!";
 print "\nsaving...\n";
 
 #write the results to a tab delimited file
-my $ID;
-open(RESULT, ">ncbigene2ID.txt") || die "$!";
-foreach $ID (sort keys %IDdata){
-  print RESULT "$ID\t$IDdata{$ID}\n";
-}
-close(RESULT);
+#my $ID;
+#open(RESULT, ">ncbigene2ID.txt") || die "$!";
+#foreach $ID (sort keys %IDdata){
+#  print RESULT "$ID\t$IDdata{$ID}\n";
+#}
+#close(RESULT);
 
 my $DB;
 open(RESULT, ">ncbigene2DB.txt") || die "$!";

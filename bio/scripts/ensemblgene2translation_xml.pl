@@ -42,20 +42,11 @@ closedir(DIR);
 foreach my $file (@files){
 	my %genes; #hash to store the gene objects
 	my ($taxonID) = ($file=~/^(\d+)/);
+	
 	my $org_item = make_item('Organism');
 	$org_item->set('taxonId', $taxonID);
 	
-	#kim's subroutine. Organsim object references are automatically created where necessary
-	sub make_item
-	{
-  		my $implements = shift;
-  		my $item = $item_factory->make_item(implements => $implements);
-  		push @items_to_write, $item;
-  		if ($item->valid_field('organism')) {
-    	$item->set('organism', $org_item);
-  	}
-  	return $item;
-	}
+	#print Dumper($org_item);
 	#print "file $file Taxon $taxonID\n";
 	
 	#add the path to the file name
@@ -68,8 +59,8 @@ foreach my $file (@files){
 		my $gene_item;
 		my @f = split/\t/;
 		my ($geneID,$translationID) = ($f[0],$f[1]);
-		 
 		chomp $translationID;
+		 
 		#print "$geneID $translationID\t";
 		
 		#check that there is a translation ID and that the current line does not contain column titles
@@ -85,6 +76,7 @@ foreach my $file (@files){
 			my $trans_item = make_item('Translation');
 			$trans_item->set('identifier', $translationID);
 			$trans_item->set('synonyms', [$t_syn_item]);
+			$trans_item->set('organism', $org_item);
 			
 			#if the gene has already been identified add a reference to it's object to the translation object
 			if(exists $genes{$geneID}){
@@ -102,6 +94,7 @@ foreach my $file (@files){
 				$gene_item = make_item('Gene');
 				$gene_item->set('identifier', $geneID);
 				$gene_item->set('synonyms', [$g_syn_item]);
+				$gene_item->set('organism', $org_item);
 				$genes{$geneID}={'object' => $gene_item};
 				$trans_item->set('gene', $gene_item);
 				#print "New gene\n";
@@ -124,3 +117,10 @@ $writer->endTag('items');
 $writer->end();
 $output->close();
 
+#kim's subroutine. Organsim object references are automatically created where necessary
+	sub make_item{
+  		my $implements = shift;
+  		my $item = $item_factory->make_item(implements => $implements);
+  		push @items_to_write, $item;
+  		return $item;
+	}

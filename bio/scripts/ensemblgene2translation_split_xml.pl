@@ -28,9 +28,7 @@ my @items_to_write = ();
 my @files;
 my $source = 'Ensembl';
 
-#create the DataSource object
-my $source_item = make_item('DataSource');
-$source_item->set('name', $source);
+
 
 #identify the input files
 my $source_dir ='/shared/data/orthologues/ensembl/geneid2translationid/';
@@ -42,20 +40,14 @@ closedir(DIR);
 foreach my $file (@files){
 	my %genes; #hash to store the gene objects
 	my ($taxonID) = ($file=~/^(\d+)/);
+	
+	#create the DataSource object
+	my $source_item = make_item('DataSource');
+	$source_item->set('name', $source);
+	
 	my $org_item = make_item('Organism');
 	$org_item->set('taxonId', $taxonID);
 	
-	#kim's subroutine. Organsim object references are automatically created where necessary
-	sub make_item
-	{
-  		my $implements = shift;
-  		my $item = $item_factory->make_item(implements => $implements);
-  		push @items_to_write, $item;
-  		if ($item->valid_field('organism')) {
-    	$item->set('organism', $org_item);
-  	}
-  	return $item;
-	}
 	#print "file $file Taxon $taxonID\n";
 	
 	#add the path to the file name
@@ -85,6 +77,7 @@ foreach my $file (@files){
 			my $trans_item = make_item('Translation');
 			$trans_item->set('identifier', $translationID);
 			$trans_item->set('synonyms', [$t_syn_item]);
+			$trans_item->set('organism', $org_item);
 			
 			#if the gene has already been identified add a reference to it's object to the translation object
 			if(exists $genes{$geneID}){
@@ -102,6 +95,7 @@ foreach my $file (@files){
 				$gene_item = make_item('Gene');
 				$gene_item->set('identifier', $geneID);
 				$gene_item->set('synonyms', [$g_syn_item]);
+				$gene_item->set('organism', $org_item);
 				$genes{$geneID}={'object' => $gene_item};
 				$trans_item->set('gene', $gene_item);
 				#print "New gene\n";
@@ -125,3 +119,10 @@ $writer->end();
 $output->close();
 @items_to_write = ();
 }#end foreach
+#kim's subroutine. Organsim object references are automatically created where necessary
+	sub make_item{
+  		my $implements = shift;
+  		my $item = $item_factory->make_item(implements => $implements);
+  		push @items_to_write, $item;
+  		return $item;
+	}

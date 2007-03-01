@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-#usage: takes data from /shared/data/ncbigene/gene2pubmed as $ARGV[0] and writes the xml file
+#usage: takes data from /shared/data/pubmed/gene2pubmed as $ARGV[0] and writes the xml file
 #for linking ncbi gene ID to one or more pubmed IDs. 
 
 use strict;
@@ -27,8 +27,9 @@ my @items_to_write = ();
 #define organism ids to include
 my %ids=("4932",'S.cerevisiae',
 	 "6239",'C.elegans',
-	 "7227",'D.melanogaster',
-	 "180454",'A.gambiae str PEST');
+	 "7227",'D.melanogaster'#,
+	 #"180454",'A.gambiae str PEST'
+	 );
 my (%genes, %pubID, %pubgene);
 
 #open /shared/data/ncbigene/gene2pubmed and get data
@@ -75,7 +76,7 @@ foreach my $gene (sort keys %genes){
 }	
 
 #write xml file
-my $outfile = '/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml';
+my $outfile = '/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_no_anopheles.xml';
 my $output = new IO::File(">$outfile");
 my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
 $writer->startTag('items');
