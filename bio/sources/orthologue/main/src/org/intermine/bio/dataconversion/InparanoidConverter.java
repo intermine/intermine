@@ -14,11 +14,13 @@ import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Properties;
 import java.util.Enumeration;
@@ -51,6 +53,7 @@ public class InparanoidConverter extends FileConverter
     protected Map sources = new LinkedHashMap();
     protected Map orgSources = new HashMap();
     protected Map taxonIds = new HashMap();
+    protected Map attributes = new HashMap();
 
     /**
      * Constructor
@@ -80,20 +83,27 @@ public class InparanoidConverter extends FileConverter
                 PropertiesUtil.getPropertiesStartingWith(code, props));
             String taxonId = codeProps.getProperty("taxonid");
             if (taxonId == null) {
-                throw new IllegalArgumentException("Unable to find taxonId property for code: "
+                throw new IllegalArgumentException("Unable to find 'taxonId' property for code: "
                                                    + code + " in file: " + PROP_FILE);
             }
             taxonId = taxonId.trim();
             String source = codeProps.getProperty("source");
-            if (taxonId == null) {
-                throw new IllegalArgumentException("Unable to find source property for code: "
+            if (source == null) {
+                throw new IllegalArgumentException("Unable to find 'source' property for code: "
                                                    + code + " in file: " + PROP_FILE);
             }
+            String attribute = codeProps.getProperty("attribute");
+            if (attribute == null) {
+                attribute = "identifier";
+            }
+            
             source = source.trim();
             taxonId = taxonId.trim();
+            attribute = attribute.trim();
             code = code.trim();
             taxonIds.put(code, taxonId);
             orgSources.put(taxonId, source);
+            attributes.put(code, attribute);
         }
     }
 
@@ -102,7 +112,7 @@ public class InparanoidConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         int lineNum = 0;
-        String line, species = null, oldIndex = null;
+        String line, lastCode = null, oldIndex = null;
         Item gene = null, trans = null;
 
         BufferedReader br = new BufferedReader(reader);
@@ -110,81 +120,101 @@ public class InparanoidConverter extends FileConverter
             lineNum++;
             String[] array = line.split("\t");
 
-            if (array.length != 4 && array.length < 8) {
+            if (array.length < 5) {
                 throw new IllegalArgumentException("Line " + lineNum
-                                                   + " does not have at least eight elements: "
+                                                   + " does not have at least five elements: "
                                                    + line);
             }
-
-            String type = null;
 
             String index = array[0];
             String geneId = null;
             String transId = null;
-
+            
             // some files have gene id, no translations
             // TODO this should be specified in the config files
-            if ("modSC".equals(array[2]) || "modRR".equals(array[2]) || "modMM".equals(array[2])
-                || "modSP".equals(array[2]) || "sanPF".equals(array[2]) || "modCE".equals(array[2])) {
+            //if ("modSC".equals(array[2]) || "modRR".equals(array[2]) || "modMM".equals(array[2])
+            //    || "modSP".equals(array[2]) || "sanPF".equals(array[2]) || "modCE".equals(array[2])) {
+            //    geneId = array[4];
+            //} else {
+            //    transId = array[4];
+            //}
+            String code = array[2].substring(0, array[2].indexOf('.'));
+            Set createGenes = new HashSet(Arrays.asList(new String[] {"modDROME", "modSACCE", "sanSCHPO", 
+                    "modCAEEL", "modMUSMU", "modDANRE", "modDICDI"}));
+            if (createGenes.contains(code)) {
                 geneId = array[4];
             } else {
                 transId = array[4];
             }
-
-            String organismDbId = null;
-
-            // for ensembl data we can create corresponding genes, parse id from additional info
-            // Ensembl gene id should be identifier
-            if (array[2].startsWith("ens")) {
-                String info = array[7];
-                StringTokenizer tok = new StringTokenizer(info, " ");
-                while (tok.hasMoreTokens()) {
-                    String bit = (String) tok.nextToken().trim();
-                    if (bit.startsWith("gene:")) {
-                        geneId = bit.substring(5);
-                    }
-                }
-                if (array[2].equals("ensCE")) {
-                    organismDbId = geneId;
-                }
-            } else if (array[2].equals("modSP") || array[2].equals("sanPF")) {
-                // these should set Gene.identifier so do nothing
-            } else {
-                // other model organism db identifiers set as Gene.organismDbId
-                organismDbId = geneId;
-            }
+            
+//            String organismDbId = null;
+//
+//            // for ensembl data we can create corresponding genes, parse id from additional info
+//            // Ensembl gene id should be identifier
+//            if (array[2].startsWith("ens")) {
+//                String info = array[7];
+//                StringTokenizer tok = new StringTokenizer(info, " ");
+//                while (tok.hasMoreTokens()) {
+//                    String bit = (String) tok.nextToken().trim();
+//                    if (bit.startsWith("gene:")) {
+//                        geneId = bit.substring(5);
+//                    }
+//                }
+//                if (array[2].equals("ensCE")) {
+//                    organismDbId = geneId;
+//                }
+//            } else if (array[2].equals("modSP") || array[2].equals("sanPF")) {
+//                // these should set Gene.identifier so do nothing
+//            } else {
+//                // other model organism db identifiers set as Gene.organismDbId
+//                organismDbId = geneId;
+//            }
 
             if (!index.equals(oldIndex)) {
                 // clear old values and try to set new ones
                 gene = null;
                 trans = null;
                 oldIndex = index;
-                species = array[2];
+                lastCode = code;
                 if (transId != null) {
-                    trans = newBioEntity(transId, null, getOrganism(species), "Translation");
+                    trans = newBioEntity(transId, (String) attributes.get(lastCode), getOrganism(lastCode), "Translation");
                 }
                 if (geneId != null) {
-                    gene = newBioEntity(geneId, organismDbId, getOrganism(species), "Gene");
+                    gene = newBioEntity(geneId, (String) attributes.get(lastCode), getOrganism(lastCode), "Gene");
                 }
                 continue;
-            }
+            } 
 
             Item newTrans = null;
             if (transId != null) {
-                newTrans = newBioEntity(transId, null, getOrganism(array[2]), "Translation");
+                newTrans = newBioEntity(transId, (String) attributes.get(code), getOrganism(code), "Translation");
             }
 
             Item newGene = null;
             if (geneId != null) {
-                newGene = newBioEntity(geneId, organismDbId, getOrganism(array[2]), "Gene");
+                newGene = newBioEntity(geneId, (String) attributes.get(code), getOrganism(code), "Gene");
             }
-            Item result = newResult(array[3]);
-
+            String score = array[3];
+            Item result = newResult(score);
+            
             // create two orthologues/paralogues with subject[Translation] and
             // object[Translation] reversed
-            Item item1 = createItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
-            Item item2 = createItem(species.equals(array[2]) ? "Paralogue" : "Orthologue");
+            Item item1 = createItem(lastCode.equals(code) ? "Paralogue" : "Orthologue");
+            Item item2 = createItem(lastCode.equals(code) ? "Paralogue" : "Orthologue");
 
+            // Temporary - Paralogues should get a score as well instead of a
+            // ComputationalResults
+            if (!lastCode.equals(code)) {
+                item1.setAttribute("score", score);
+                item2.setAttribute("score", score);
+            }
+                
+            item1.addCollection(new ReferenceList("evidence", 
+                   Arrays.asList(new Object[] {db.getIdentifier(), result.getIdentifier()})));
+            item2.addCollection(new ReferenceList("evidence", 
+                   Arrays.asList(new Object[] {db.getIdentifier(), result.getIdentifier()})));
+            
+            
             if (gene != null) {
                 item1.setReference("object", gene.getIdentifier());
                 item2.setReference("subject", gene.getIdentifier());
@@ -204,15 +234,12 @@ public class InparanoidConverter extends FileConverter
 
             }
 
-            item1.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                {db.getIdentifier(), result.getIdentifier()})));
             writer.store(ItemHelper.convert(item1));
-            item2.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
-                {db.getIdentifier(), result.getIdentifier()})));
             writer.store(ItemHelper.convert(item2));
 
-            if (!species.equals(array[2])) {
-                species = array[2];
+            // switched first BioEntity of next group
+            if (!lastCode.equals(code)) {
+                lastCode = code;
                 gene = newGene;
                 trans = newTrans;
             }
@@ -248,35 +275,26 @@ public class InparanoidConverter extends FileConverter
      * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected Item newBioEntity(String identifier, String organismDbId, Item organism, String type)
+    protected Item newBioEntity(String value, String attribute, Item organism, String type)
         throws ObjectStoreException {
         // HACK mouse and rat identifiers should have 'MGI:' and 'RGD:' at the start
         String taxonId = organism.getAttribute("taxonId").getValue();
-        if (taxonId.equals("10116")) {
-            organismDbId = "RGD:" + organismDbId;
-        } else if (taxonId.equals("10090")) {
-            organismDbId = "MGI:" + organismDbId;
-        }
 
         // lookup by identifier and type, sometimes same id for translation and gene
-        String key = type + identifier;
+        String key = type + value;
         if (bioEntities.containsKey(key)) {
             return (Item) bioEntities.get(key);
         }
 
         Item item = createItem(type);
-        if (type.equals("Gene") && organismDbId != null) {
-            item.setAttribute("organismDbId", organismDbId);
-        } else {
-            item.setAttribute("identifier", identifier);
-        }
+        item.setAttribute(attribute, value);
         item.setReference("organism", organism.getIdentifier());
         bioEntities.put(key, item);
 
         // create a synonm - lookup source according to organism
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", "identifier");
-        synonym.setAttribute("value", identifier);
+        synonym.setAttribute("value", value);
         synonym.setReference("subject", item.getIdentifier());
         Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
         synonym.setReference("source", source.getIdentifier());
@@ -316,10 +334,6 @@ public class InparanoidConverter extends FileConverter
     }
 
     private Item getOrganism(String code) {
-        if (code.length() != 5) {
-            throw new IllegalArgumentException("invalid organism code: " + code);
-        }
-
         String taxonId = (String) taxonIds.get(code);
         if (taxonId == null) {
             throw new IllegalArgumentException("Unable to find taxonId for code: "
