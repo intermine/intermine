@@ -51,10 +51,11 @@ public class InparanoidConverterTest extends TestCase
         // note that the confidence for the first member of a group appears to be meaningless (row 1).
         // the fifth is some form of swissprot id to identify the protein
         // so...this input should produce one orthologue (rows 1 & 3) and two paralogues (1 & 2, 3 & 4)
-        String input = "14\t1217\tmodSC\t1.000\tS000001208\t100%\tUbiquitin.\t\tF25B5.4" + ENDL
-            + "14\t1217\tmodSC\t0.997\tS000003666\t100%\t(Lethal protein 363).\t\tQ95Q95" + ENDL
-            + "14\t1217\tensAG\t1.000\tENSANGP00000028450\t100%\t40S RIBOSOMAL S27A Ensembl-family member\tAnopheles_gambiae.MOZ2a.dec.pep.fa:>ENSANGP00000028450 pep:novel chromosome:MOZ2a:2R:12996734:12999022:1 gene:ENSANGG00000024959 transcript:ENSANGT00000029080" + ENDL
-            + "14\t1217\tensAG\t0.566\tENSANGP00000008615\t100%\tF25C8.3 PROTEIN.\tAnopheles_gambiae.MOZ2a.dec.pep.fa:>ENSANGP00000008615 pep:known chromosome:MOZ2a:2R:6308197:6324138:-1 gene:ENSANGG00000006494 transcript:ENSANGT00000008615\tQ8T5I0" + ENDL;
+        String input = "14\t1217\tmodSACCE.fa\t1.000\tS000001208\t100%" + ENDL
+            + "14\t1217\tmodSACCE.fa\t0.997\tS000003666\t100%" + ENDL
+            + "14\t1217\tensANOGA.fa\t1.000\tENSANGP00000028450\t98%" + ENDL
+            + "14\t1217\tensANOGA.fa\t1.000\tENSANGP00000029999\t95%" + ENDL
+            + "14\t1217\tensANOGA.fa\t0.566\tENSANGP00000008615\t100%" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new InparanoidConverter(itemWriter);
@@ -62,9 +63,9 @@ public class InparanoidConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-//           FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
-//           fw.write(FullRenderer.render(itemWriter.getItems()));
-//           fw.close();
+        FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
+        fw.write(FullRenderer.render(itemWriter.getItems()));
+        fw.close();
 
         System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
         assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
