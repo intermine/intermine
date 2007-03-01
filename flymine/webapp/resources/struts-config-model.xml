@@ -1,5 +1,6 @@
 <!-- this comment is here to prevent ant from setting model.struts.config to null -->
-
+  	
+               
     <action path="/sequenceExporter"
             type="org.flymine.web.SequenceExporter"/>
     
@@ -22,4 +23,12 @@
             type="org.flymine.web.OrthologueAction">
       <forward name="results" path="/results.do" redirect="true"/>
       <forward name="details" path="/objectDetails.do" redirect="true"/>
+    </action>
+    
+	<action path="/initGoStatDisplayer" 
+		type="org.flymine.web.GoStatDisplayerController"/>
+        
+    <action path="/goStatAction"
+            type="org.flymine.web.GoStatAction">
+      <forward name="results" path="/results.do" redirect="true"/>    
     </action>
