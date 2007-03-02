@@ -80,15 +80,11 @@
                 </c:choose>
               </td>
               <td align="center" nowrap>
-                <html:link action="/template?name=${favouriteTemplate.name}&amp;type=user" 
+                <html:link action="/template?name=${favouriteTemplate.name}&amp;type=all" 
                 				titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>
                 </html:link> |
-                <html:link action="/editTemplate?name=${favouriteTemplate.name}" 
-                				titleKey="history.action.edit.hover">
-                  <fmt:message key="history.action.edit"/>
-                </html:link> |
-                <html:link action="/exportTemplates?type=user&amp;name=${favouriteTemplate.name}"
+                <html:link action="/exportTemplates?name=${favouriteTemplate.name}&amp;type=all"
                 				titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
