@@ -22,12 +22,7 @@
 <div id="hiddenDiv1" style="display:none;">
 
         <dl>
-          <dt>
-            Agaisse et al (2005) Science 309:1248-1251 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16020693">PubMed: 16020693</a>).
-          </dt>
-          <dd>
-            Genome-wide RNAi screen for host factors required for intracellular bacterial infection.
-          </dd>
+
           <dt>
            Baeg et al (2005) Genes Dev 19:1861-1870 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16055650">PubMed: 16055650</a>).
           </dt>
@@ -35,10 +30,22 @@
            Genome-wide RNAi analysis of JAK/STAT signaling components in <i>Drosophila</i>.
           </dd>
           <dt>
+           Bard et al (2006) Nature 439:604-607 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16452979">PubMed: 16452979</a>).
+          </dt>
+          <dd>
+           Functional genomics reveals genes involved in protein secretion and Golgi organization.
+          </dd>
+          <dt>
            Boutros et al (2004) Science 303:832-835 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14764878">PubMed: 14764878</a>).
           </dt>
           <dd>
            Genome-wide RNAi analysis of growth and viability in <i>Drosophila</i> cells.
+          </dd>
+          <dt>
+           Cherry et al (2005) Genes Dev 19:445-452 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15713840">PubMed: 15713840</a>).
+          </dt>
+          <dd>
+           Genome-wide RNAi screen reveals a specific sensitivity of IRES-containing RNA viruses to host translation inhibition.
           </dd>
           <dt>
            DasGupta et al (2005) Science 308:826-833 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15817814">PubMed: 15817814</a>).
@@ -51,6 +58,18 @@
           </dt>
           <dd>
            Parallel chemical genetic and genome-wide RNAi screens identify cytokinesis inhibitors and targets.
+          </dd>
+          <dt>
+             Gwack et al (2006) Nature 441:646-650 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16511445">PubMed: 16511445</a>).
+          </dt>
+          <dd>
+            A genome-wide <i>Drosophila</i> RNAi screen identifies DYRK-family kinases as regulators of NFAT.
+          </dd>
+          <dt>
+            Nybakken et al (2005) Nature Genetics 37:1323-1332 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16311596">PubMed: 16311596</a>).
+          </dt>
+          <dd>
+            A genome-wide RNA interference screen in <i>Drosophila melanogaster</i> cells for new components of the Hh signaling pathway.
           </dd>
           <dt>
            Philips et al (2005) (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16020694">PubMed: 16020694</a>).
@@ -66,7 +85,7 @@
           </dd>
 
           <p>
-          Note: Because of the issue of off-target effect (OTE) (see <a href="http://www.flyrnai.org/RNAi_OTE.html">Matter Arising: Issues of off-targets in Drosophila RNAi screens </a>), FlyMine only contains results from the DRSC curated lists for each screen. Any gene that was targeted by a dsRNA with predicted OTEs is omitted from that list.  Furthermore, for each result, FlyMine shows the number of potential off-targets based on sequence matches (numOffTargets) - at least one length of 19 bp or more with matching sequence of 19 bp or more of this amplicon - as well as the maximum continuous sequence overlap of potential off-target(s) (maxOffTargetOverlaps).
+          Note: Because of the issue of off-target effect (OTE) (see <a href="http://www.flyrnai.org/RNAi_OTE.html">Matter Arising: Issues of off-targets in Drosophila RNAi screens </a>), FlyMine only contains results from the DRSC curated lists for each screen. Any gene that was targeted by a dsRNA with predicted OTEs is omitted from that list. Furthermore, for each result, FlyMine shows the number of potential off-targets based on sequence matches (numOffTargets) - at least one length of 19 bp or more with matching sequence of 19 bp or more of this amplicon - as well as CAR repeats - a 18 bp long stretch of CA(A/G) triplets. Such repeats have been implicated in off-target effects.
           </p>
 
         </dl>
@@ -175,7 +194,7 @@
           <ul>
             <li>
              <im:querylink text="All <i>D. melanogaster</i> RNAi data " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.rnaiResults.analysis.publication.pubMedId Gene.rnaiResults.analysis.name Gene.rnaiResults.analysis.cellLine Gene.rnaiResults.analysis.analysisDescription Gene.organismDbId Gene.rnaiResults.amplicon.identifier Gene.rnaiResults.result Gene.rnaiResults.resultDetails Gene.rnaiResults.strength Gene.rnaiResults.numOffTargets Gene.rnaiResults.maxOffTargetOverlaps">
+              <query name="" model="genomic" view="Gene.rnaiResults.analysis.publication.pubMedId Gene.rnaiResults.analysis.name Gene.rnaiResults.analysis.cellLine Gene.rnaiResults.analysis.analysisDescription Gene.organismDbId Gene.rnaiResults.amplicon.identifier Gene.rnaiResults.result Gene.rnaiResults.strength Gene.rnaiResults.numOffTargets ">
                <node path="Gene" type="Gene">
                 </node>
                <node path="Gene.rnaiResults" type="RNAiScreenHit">
