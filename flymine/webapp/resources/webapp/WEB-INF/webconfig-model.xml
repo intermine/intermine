@@ -136,7 +136,7 @@
       <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
       toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
       description="For each tissue in the adult fly, the number of genes from my bag for which the levels or expression are significantly high (Up) or low (Down) according to AffyCall." />
-      <bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"/>
+      <!--<bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"/>-->
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" reverseCollection="pathways"/>
     </bagdisplayers>
   </class>
