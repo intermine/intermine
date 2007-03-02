@@ -87,10 +87,16 @@ public class WebConfig
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
 
-        digester.addObjectCreate("webconfig/class/graphdisplayers/graphdisplayer",
+        digester.addObjectCreate("webconfig/class/bagdisplayers/graphdisplayer",
                                  GraphDisplayer.class);
-        digester.addSetProperties("webconfig/class/graphdisplayers/graphdisplayer");
-        digester.addSetNext("webconfig/class/graphdisplayers/graphdisplayer", "addGraphDisplayer");
+        digester.addSetProperties("webconfig/class/bagdisplayers/graphdisplayer");
+        digester.addSetNext("webconfig/class/bagdisplayers/graphdisplayer", "addGraphDisplayer");
+
+        digester.addObjectCreate("webconfig/class/bagdisplayers/bagtabledisplayer",
+                                 BagTableDisplayer.class);
+        digester.addSetProperties("webconfig/class/bagdisplayers/bagtabledisplayer");
+        digester.addSetNext("webconfig/class/bagdisplayers/bagtabledisplayer",
+                            "addBagTableDisplayer");
         
         digester.addSetNext("webconfig/class", "addType");
         

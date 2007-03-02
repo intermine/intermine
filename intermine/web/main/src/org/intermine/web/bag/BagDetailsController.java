@@ -31,12 +31,14 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
 import org.intermine.web.Profile;
+import org.intermine.web.config.BagTableDisplayer;
 import org.intermine.web.config.GraphDisplayer;
 import org.intermine.web.config.Type;
 import org.intermine.web.config.WebConfig;
 import org.intermine.web.results.PagedCollection;
 import org.intermine.web.results.WebCollection;
 import org.intermine.web.widget.BagGraphWidget;
+import org.intermine.web.widget.BagTableWidgetLoader;
 import org.intermine.web.widget.DataSetLdr;
 
 /**
@@ -97,6 +99,20 @@ public class BagDetailsController extends TilesAction
                     });
             }
         }
+        
+        ArrayList tableDisplayerArray = new ArrayList();
+        Set bagTabledisplayers = type.getBagTableDisplayers();
+        for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
+            BagTableDisplayer bagTableDisplayer = (BagTableDisplayer) iter.next();
+            String ldrType = bagTableDisplayer.getType();
+            String collectionName = bagTableDisplayer.getCollectionName();
+            String fields = bagTableDisplayer.getFields();
+            String title = bagTableDisplayer.getTitle();
+            BagTableWidgetLoader bagWidgLdr = new BagTableWidgetLoader(title, ldrType, collectionName,
+                                                                       imBag, os, webConfig, model,
+                                                                       classKeys, fields);
+            tableDisplayerArray.add(bagWidgLdr);
+        }
 
         WebCollection webCollection = new WebCollection(os, imBag.getType(), imBag, model,
                                                         webConfig, classKeys);
@@ -104,7 +120,7 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("bag", imBag);
         request.setAttribute("pagedColl", pagedColl);
         request.setAttribute("graphDisplayerArray", graphDisplayerArray);
-
+        request.setAttribute("tableDisplayerArray", tableDisplayerArray);
         return null;
     }
 }

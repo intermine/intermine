@@ -38,6 +38,7 @@ public class Type
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet graphDisplayers = new ListOrderedSet();
+    private ListOrderedSet bagTableDisplayers = new ListOrderedSet();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
 
@@ -112,6 +113,14 @@ public class Type
     public ListOrderedSet getGraphDisplayers() {
         return graphDisplayers;
     }
+    
+    /**
+     * Get the BagTableDisplayers for thi type
+     * @return the List of BagTableDisplayers
+     */
+    public ListOrderedSet getBagTableDisplayers() {
+        return bagTableDisplayers;
+    }
 
     /**
      * Add a GraphDisplayer to the List oof GraphDisplayers
@@ -120,6 +129,15 @@ public class Type
      */
     public void addGraphDisplayer(GraphDisplayer gdisp) {
         graphDisplayers.add(gdisp);
+    }
+
+    /**
+     * Add a BagTableDisplayer to the List oof BagTableDisplayers
+     * for that type
+     * @param btDisp a BagTableDisplayer
+     */
+    public void addBagTableDisplayer(BagTableDisplayer btDisp) {
+        bagTableDisplayers.add(btDisp);
     }
 
     /**
