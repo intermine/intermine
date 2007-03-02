@@ -110,21 +110,108 @@
 
 <br/>
 
-<div class="heading">
-  Widgets
-</div>
-
-<c:if test="${! empty graphDisplayerArray}">
-
-<div class="body">
-  <c:forEach items="${graphDisplayerArray}" var="htmlContent">
-    <div class="widget">
-      <c:out value="${htmlContent[0]}" escapeXml="false"/>
-      <p><c:out value="${htmlContent[1]}"/></p>
+<c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray)}">
+    <c:set var="widgetCount" value="0" />
+    <div class="heading">
+        Widgets
     </div>
-  </c:forEach>
-</div>
-</c:if>
+    <div class="body">
+        <table cellpadding="0" cellspacing="10">
+            <c:forEach items="${graphDisplayerArray}" var="htmlContent">
+                <c:choose>
+                    <c:when test="${widgetCount % 2 == 0}">
+                        <tr valign="top"><td>
+                    </c:when>
+                    <c:otherwise>
+                        <td>
+                        </c:otherwise>
+                </c:choose>
+                <div class="widget">
+                    <c:out value="${htmlContent[0]}" escapeXml="false"/>
+                    <p><c:out value="${htmlContent[1]}"/></p>
+                    </div>
+                    <c:choose>
+                        <c:when test="${widgetCount % 2 == 0}">
+                          </td>
+                        </c:when>
+                        <c:otherwise>
+                          </td></tr>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:set var="widgetCount" value="${widgetCount+1}" />
+            </c:forEach>
+
+            <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
+                <c:if test="${! empty bagTableDisplayerResults.flattenedResults}">
+                    <c:choose>
+                        <c:when test="${widgetCount % 2 == 0}">
+                            <tr valign="top"><td>
+                            </c:when>
+                            <c:otherwise>
+                                <td>
+                                </c:otherwise>
+                            </c:choose>
+
+                            <div class="widget">
+                                <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
+                                <div class="widget_slide">
+                                <table class="results" cellspacing="0">
+                                    <tr>
+                                        <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
+                                            <th align="center" valign="top">
+                                                <div>
+                                                    <c:out value="${fn:replace(column, '.', '&nbsp;> ')}" escapeXml="false"/>
+                                                </div>
+                                            </th>
+                                        </c:forEach>
+                                    </tr>
+
+                                    <c:forEach items="${bagTableDisplayerResults.flattenedResults}" var="row" varStatus="status">
+                                        <c:set var="rowClass">
+                                            <c:choose>
+                                                <c:when test="${status.count % 2 == 1}">odd</c:when>
+                                                    <c:otherwise>even</c:otherwise>
+                                                    </c:choose>
+                                                </c:set>
+                                                <tr class="${rowClass}">
+                                                    <c:forEach var="cell" items="${row}" varStatus="status2">
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${cell.keyField}">
+                                                                    <html:link action="/objectDetails?id=${cell.id}">
+                                                                    <c:out value="${cell.field}" />
+                                                                    </html:link>
+                                                                </c:when>
+                                                                <c:when test="${! empty cell.otherLink}">
+                                                                    <html:link action="/bagTableWidgetResults?${cell.otherLink}">
+                                                                    <c:out value="${cell.field}" />
+                                                                    </html:link>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:out value="${cell.field}" />
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                    </c:forEach>
+                                                </tr>
+                                            </c:forEach>
+                                        </table>
+                                        </div>
+                                    </div>
+                                    <c:choose>
+                                    <c:when test="${widgetCount % 2 == 0}">
+                                    </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                    </td></tr>
+                                    </c:otherwise>
+                                </c:choose>
+                                <c:set var="widgetCount" value="${widgetCount+1}" />
+                            </c:if>
+                        </c:forEach>
+                    </table>
+                </div>
+            </c:if>
 
 <c:if test="${bag.type == 'Gene'}">
 	  <%-- go stats --%>	      
