@@ -194,6 +194,9 @@ public class SqlGenerator
                             || (start - cacheEntry.getLastOffset() >= 10000)) {
                         QueryNode firstOrderBy = null;
                         firstOrderBy = (QueryNode) q.getEffectiveOrderBy().iterator().next();
+                        if (firstOrderBy instanceof QueryFunction) {
+                            return;
+                        }
                         if (firstOrderBy instanceof QueryClass) {
                             firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
                         }
