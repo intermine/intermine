@@ -91,7 +91,7 @@
             </script>
           </span>
           <span class="menu-item">
-            <a href="{xsl:concat($webappprefix,'/mymine.do)}">
+            <a href="{xsl:concat($webappprefix,'/mymine.do')}">
               MyMine
             </a>
           </span>
