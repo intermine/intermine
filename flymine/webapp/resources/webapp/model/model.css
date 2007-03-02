@@ -36,6 +36,14 @@ html, body
     text-align: center;
     width: 450px;
     background-color: #F5F0FF;
+    max-height:400px;
+}
+.widget_slide {
+	margin-top:10px;
+    max-height:350px;
+    overflow-x:none;
+    overflow-y:auto;
+    overflow: auto;
 }
 
 #bagDescriptionDiv{
