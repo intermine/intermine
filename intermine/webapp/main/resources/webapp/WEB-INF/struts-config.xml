@@ -319,6 +319,10 @@
       <forward name="results" path="/results.do" redirect="true"/>
     </action>
     
+    <action path="/bagTableWidgetResults"
+            type="org.intermine.web.results.BagTableWidgetResults">
+      <forward name="results" path="/results.do" redirect="true"/>
+    </action>
     
     <!-- wait for a custom build query to run -->
     <action path="/pollQuery"
