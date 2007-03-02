@@ -91,6 +91,14 @@ public class CreateTemplateAction extends InterMineAction
             seenProblem = true;
         }
         
+        // Check for a name clash with system templates
+        Profile superUser = SessionMethods.getSuperUserProfile(servletContext);
+        if (superUser.getSavedTemplates().containsKey(tbs.getName())) {
+            recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()),
+                    request);
+            seenProblem = true;
+        }
+        
         // Check whether there is a template name clash
         if (profile.getSavedTemplates().containsKey(tbs.getName())
                 && (tbs.getUpdatingTemplate() == null

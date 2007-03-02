@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -49,9 +50,11 @@ public class EditTemplateAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        String queryName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        TemplateQuery template = (TemplateQuery) profile.getSavedTemplates()
-                                                        .get(request.getParameter("name"));
+        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session,
+                profile.getUsername(), queryName, TemplateHelper.ALL_TEMPLATE);
         
         PathQuery queryClone = (PathQuery) template.clone();
         SessionMethods.loadQuery(queryClone, session, response);
