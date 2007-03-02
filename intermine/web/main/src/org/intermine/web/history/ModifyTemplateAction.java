@@ -167,7 +167,7 @@ public class ModifyTemplateAction extends InterMineAction
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String templateName = mqf.getSelected()[i];
-            List tagList = pm.getTags(null, templateName, TagTypes.TEMPLATE, profile.getUsername());
+            List tagList = pm.getTags("favourite", templateName, TagTypes.TEMPLATE, profile.getUsername());
             for (Iterator iter = tagList.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
                 pm.deleteTag(tag);
