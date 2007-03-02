@@ -69,8 +69,7 @@ public class Column
         this.index = index;
         this.type = type;
         this.path = null;
-        setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
-                    + type.toString());
+        setColumnId(name + "_" + type.toString());
     }
 
     /**
