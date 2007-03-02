@@ -85,32 +85,36 @@ public class PollQueryAction extends InterMineAction
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
             LOG.debug("query qid " + qid + " complete");
-                        // Look at results, if only one result, go straight to object details page
+            // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             if (followSingleResult) {
                 List allRows = pr.getAllRows ();
                 if ((allRows instanceof WebResults)) {
                     WebResults webResults = (WebResults) allRows;
-                    // Query can have more than one column, forward from
-                    // the first
-                    Object o = null;
-                    if (webResults.size() == 1) {
-                        o = webResults.getResultElements(0).get(0);                    
-                    } else if (webResults.size() > 1 && webResults.size() < 100) {
-                        // special case hack - if every element of the first column is the same,
-                        // use that as the object to forward to
-                        o = webResults.getResultElements(0).get(0);
-                        for (int i = 1; i < webResults.size(); i++) {
-                            if (!o.equals(webResults.getResultElements(i).get(0))) {
-                                o = null;
-                                break;
+                    // Query can have more than one column, forward from the first
+                    Object cell = null;
+                    Integer forwardId = null;
+                    if (webResults.size() > 0) {
+                        cell = webResults.getResultElements(0).get(0);
+                        if (cell instanceof ResultElement) {
+                            forwardId = ((ResultElement) cell).getId();
+                        }
+                        if (forwardId != null && webResults.size() > 1 && webResults.size() < 100) {
+                            // special case hack - if every element of the first column is the same,
+                            // use that as the object to forward to
+                            for (int i = 1; i < webResults.size() && forwardId != null; i++) {
+                                cell = webResults.getResultElements(i).get(0);
+                                if (cell instanceof ResultElement) {
+                                    if (!forwardId.equals(((ResultElement) cell).getId())) {
+                                        forwardId = null;
+                                    }
+                                }
                             }
                         }
                     }
 
-                    if (o != null && (o instanceof ResultElement)) {
-                        String url = "/objectDetails.do?id=" + ((ResultElement) o).getId()
-                            + "&trail=_" + ((ResultElement) o).getId();
+                    if (forwardId != null) {
+                        String url = "/objectDetails.do?id=" + forwardId + "&trail=_" + forwardId;
                         return new ActionForward(url, true);
                     }
                 }
