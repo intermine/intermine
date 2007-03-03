@@ -824,7 +824,8 @@ public class WriteGFFTask extends Task
     }
 
     private String chromosomeFileNamePrefix(Chromosome chr) {
-        return chr.getOrganism().getGenus() + "_" + chr.getOrganism().getSpecies()
+        return chr.getOrganism().getGenus() + "_"
+            + chr.getOrganism().getSpecies().replaceAll(" ", "_")
             + "_chr_" + chr.getIdentifier();
 
     }
