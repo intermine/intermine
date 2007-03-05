@@ -84,7 +84,7 @@ public class GoStatAction extends InterMineAction
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
-               
+        
         // select * from gene where goannotation = goterm and gene in bag
                 
         Query q = new Query();
@@ -96,7 +96,7 @@ public class GoStatAction extends InterMineAction
         
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
         QueryField qfGeneId = new QueryField(qcGene, "id");
-        QueryField qfGoTerm = new QueryField(qcGo, "name");
+        QueryField qfGoTerm = new QueryField(qcGo, "identifier");
         
         q.addFrom(qcGene);          
         q.addFrom(qcGoAnnotation);
@@ -142,6 +142,8 @@ public class GoStatAction extends InterMineAction
         
         Results results = new Results(q, os, os.getSequence());
 
+        System.out.println(" bag query - " + q.toString());
+        
         String columnName = "Gene";
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);

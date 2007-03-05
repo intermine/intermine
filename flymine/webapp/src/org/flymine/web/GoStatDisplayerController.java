@@ -36,6 +36,8 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
+import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SortableMap;
 import org.intermine.web.bag.InterMineBag;
@@ -60,18 +62,25 @@ import org.apache.struts.tiles.actions.TilesAction;
  * calculates p-values of goterms
  * @author Julie Sullivan
  */
-public class GoStatDisplayerController extends TilesAction
+public class GoStatDisplayerController extends InterMineAction
 {
+    /**
+     * 
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+                    throws Exception {
 
-        /**
-         * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
-         *      HttpServletResponse)
-         */
-        public ActionForward execute(ComponentContext context, ActionMapping mapping,
-                                     ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
-
+            
             HttpSession session = request.getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             ServletContext servletContext = session.getServletContext();
@@ -91,21 +100,26 @@ public class GoStatDisplayerController extends TilesAction
             if (namespace == null)  {
                  namespace = new String("biological_process");
             }
+            Double maxValue = new Double("0.10");
 
             LinkedHashMap resultsMap = new LinkedHashMap();
             String bagName = request.getParameter("bagName");
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
-            // TODO put this back in if not using rubbish database
-            //int geneCountAll = oss.getClassCount("org.flymine.model.genomic.Gene");
-            int geneCountAll = getGeneTotal(os);
-            int geneCountBag = bag.size();
+            // put all vars in request for getting on the .jsp page
+            session.setAttribute("bagName", bagName);
+            session.setAttribute("ontology", namespace);
+            session.setAttribute("significanceValue", significanceValue);
 
+//            System.out.println("Ontology:  " + namespace);
+//            System.out.println("bagName:  " + bagName);
+//            System.out.println("significanceValue:  " + significanceValue);
+            
             Collection organisms = getOrganisms(os, bag);
 
             // ~~~~~~~~~~~~~~~~~~ BAG QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             Query q = new Query();
-            q.setDistinct(true);
+            q.setDistinct(false);
             QueryClass qcGene = new QueryClass(Gene.class);
             QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
             QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -116,7 +130,7 @@ public class GoStatDisplayerController extends TilesAction
             QueryField qfGeneId = new QueryField(qcGene, "id");
             QueryField qfOrganism = new QueryField(qcOrganism, "id");
             QueryField qfNamespace = new QueryField(qcGo, "namespace");
-            //QueryField qfGoTermId = new QueryField(qcGo, "identifier");
+            QueryField qfGoTermId = new QueryField(qcGo, "identifier");
 
             QueryFunction geneCount = new QueryFunction();
 
@@ -125,8 +139,9 @@ public class GoStatDisplayerController extends TilesAction
             q.addFrom(qcOrganism);
             q.addFrom(qcGo);
 
-            q.addToSelect(qfGoTerm);
+            q.addToSelect(qfGoTermId);
             q.addToSelect(geneCount);
+            q.addToSelect(qfGoTerm);
 
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -140,10 +155,11 @@ public class GoStatDisplayerController extends TilesAction
             // limit to organisms in the bag
             BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
             cs.addConstraint(bc2);
-
-            // gene.allGoAnnotation CONTAINS GOAnnotation
+                        
+            // gene.goAnnotation CONTAINS GOAnnotation
             QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
-            ContainsConstraint cc1 =
+            ContainsConstraint cc1 = 
+
                 new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
             cs.addConstraint(cc1);
 
@@ -171,11 +187,15 @@ public class GoStatDisplayerController extends TilesAction
             q.setConstraint(cs);
 
             q.addToGroupBy(qfGoTerm);
-
+            q.addToGroupBy(qfGoTermId);
+            
+            //System.out.println(" ~~~ bag query --- " + q);
+            
             Results rBag = new Results(q, os, os.getSequence());
 
             Iterator itBag = rBag.iterator();
             HashMap geneCountMap = new HashMap();
+            HashMap goTermToIdMap = new HashMap();
 
             // rattle through go terms for genes in bag
             while (itBag.hasNext()) {
@@ -189,21 +209,28 @@ public class GoStatDisplayerController extends TilesAction
                 // put in our map
                 geneCountMap.put(goTermIdBag, countBag);
 
+                // go term id & term, used to display on results page
+                goTermToIdMap.put(goTermIdBag, rrBag.get(2));
+                
             }
+            
+            request.setAttribute("goTermToIds", goTermToIdMap);
+            
             // we're done with results from first query
             //os.releaseGoFaster(q);
 
             // ~~~~~~~~~~~~~~~~~~~~~~~ ALL QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             q = new Query();
-            q.setDistinct(true);
+            q.setDistinct(false);
 
             q.addFrom(qcGene);
             q.addFrom(qcGoAnnotation);
             q.addFrom(qcOrganism);
             q.addFrom(qcGo);
 
-            //.addToSelect(qfGoTermId);
-            q.addToSelect(qfGoTerm);
+
+            q.addToSelect(qfGoTermId);                      
+
             q.addToSelect(geneCount);
 
             cs = new ConstraintSet(ConstraintOp.AND);
@@ -215,23 +242,28 @@ public class GoStatDisplayerController extends TilesAction
             cs.addConstraint(bc2);
             q.setConstraint(cs);
 
-            //q.addToGroupBy(qfGoTermId);
-            q.addToGroupBy(qfGoTerm);
+            q.addToGroupBy(qfGoTermId);
+            //q.addToGroupBy(qfGoTerm);
             //q.addToOrderBy(qfGoTermId);
 
-            try {
-                os.goFaster(q);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
+//            try {
+//                os.goFaster(q);
+//            } catch (ObjectStoreException e) {
+//                throw new ObjectStoreException(e);
+//            }
 
+            // TODO put this back in if not using rubbish database
+            //int geneCountAll = oss.getClassCount("org.flymine.model.genomic.Gene");
+            int geneCountAll = getGeneTotal(os, organisms);
+            int geneCountBag = bag.size();
+            
             Results rAll = new Results(q, os, os.getSequence());
             rAll.setBatchSize(5000);
 
             Iterator itAll = rAll.iterator();
 
             Hypergeometric h = new Hypergeometric(geneCountAll);
-
+            HashMap goGeneCountBagMap = new HashMap();
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -248,44 +280,78 @@ public class GoStatDisplayerController extends TilesAction
                     int goGeneCount = countAll.intValue();
 
                    // get p value
-                   // System.out.print("[gene-" + goTermAll + "]");
-                   // System.out.print("[geneCountBag-" + geneCountBag + "]");
-                   // System.out.print("[goGeneCountBag-" + goGeneCountBag + "]");
-                   // System.out.print("[goGeneCount-" + goGeneCount + "]");
-                   // System.out.print("[geneCountAll-" + geneCountAll + "]");
-                   // System.out.println();
+//                    System.out.print("[geneCountBag-" + geneCountBag + "]");
+//                    System.out.print("[goGeneCountBag-" + goGeneCountBag + "]");
+//                    System.out.print("[goGeneCount-" + goGeneCount + "]");
+//                    System.out.print("[geneCountAll-" + geneCountAll + "]");
+//                    System.out.println();
                     double p =
                         h.calculateP(geneCountBag, goGeneCountBag, goGeneCount, geneCountAll);
 
                     // maps can't handle doubles
                     Double P = new Double(p);
-
-                    resultsMap.put(goTerm, P);
+                    if (P.compareTo(maxValue) < 0) {
+                        resultsMap.put(goTerm, P);
+                        goGeneCountBagMap.put(goTerm, String.valueOf(goGeneCountBag));
+                    }
 
                 }
             }
-            os.releaseGoFaster(q);
+            
+            //System.out.println(" ~~~ all query --- " + q);
+            
+            //os.releaseGoFaster(q);
 
-            //Bonferroni b = new Bonferroni(resultsMap, significanceValue);
-            //HashMap adjustedResultsMap = b.getAdjustedMap();
+                        
+            Bonferroni b = new Bonferroni(resultsMap, significanceValue);    
+            b.calculate();
+            HashMap adjustedResultsMap = b.getAdjustedMap();
 
-            SortableMap sortedMap = new SortableMap(resultsMap);
+
+            SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
 
 
-            request.setAttribute("pvalues", sortedMap);
-            return null;
+            session.setAttribute("pvalues", sortedMap);
+            session.setAttribute("geneTotals", goGeneCountBagMap);
+            
+            return new ForwardParameters(mapping.findForward("results"))
+            .forward();
+            
         }
 
         // gets total number of genes.
         // TODO should be using object store summary instead!
-        private int getGeneTotal(ObjectStore os) {
+        private int getGeneTotal(ObjectStore os, Collection organisms) {
 
-            Query q = new Query();
-            QueryClass qcGene = new QueryClass(Gene.class);
-            QueryFunction geneCount = new QueryFunction();
-            q.addFrom(qcGene);
+            
+            Query q = new Query();      
+            q.setDistinct(false);
+            QueryClass qcGene = new QueryClass(Gene.class);  
+            QueryClass qcOrganism = new QueryClass(Organism.class);
+            
+            QueryField qfOrganism = new QueryField(qcOrganism, "id");
+            QueryFunction geneCount = new QueryFunction();      
+            
+            q.addFrom(qcGene);          
+
+            q.addFrom(qcOrganism);
+            
             q.addToSelect(geneCount);
+                        
+            ConstraintSet cs;
+            cs = new ConstraintSet(ConstraintOp.AND);
+            
+            BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
+            cs.addConstraint(bc2);
+            
+            // gene is from organism
+            QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
+            ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
+            cs.addConstraint(cc2);            
+            
+            q.setConstraint(cs);  
+            
             Results r = new Results(q, os, os.getSequence());
             Iterator it = r.iterator();
             ResultsRow rr =  (ResultsRow) it.next();
@@ -333,7 +399,14 @@ public class GoStatDisplayerController extends TilesAction
             return ids;
 
         }
+        
+        
+        private void setRequest(String significanceValue, String namespace, String bagName) {
+            //request.
+        }
 }
+
+
 
 /**
  *
