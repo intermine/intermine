@@ -138,6 +138,7 @@ public class AjaxServices
      */
     public String rename(String name, String type, String newName)
         throws Exception {
+        newName = newName.trim();
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
