@@ -8,7 +8,7 @@
 <!-- bagDetails.jsp -->
 <html:xhtml/>
 
-<script type="text/javascript" src="js/bagDetails.js" ></script>
+
 
 <script type="text/javascript">
 <!--//<![CDATA[
@@ -214,12 +214,9 @@
             </c:if>
 
 <c:if test="${bag.type == 'Gene'}">
-	  <%-- go stats --%>	      
-      <tiles:insert name="goStatDisplayer.tile">
-        <tiles:put name="interMineIdBag" beanName="bag"/>
-      </tiles:insert>
+	<%-- go stats --%>	
+	<iframe src="initGoStatDisplayer.do?bagName=${bag.name}" id="window" width="500" height="500" scrollbars="auto"></iframe>
 </c:if>
-
 
 <div class="heading">
   Templates
