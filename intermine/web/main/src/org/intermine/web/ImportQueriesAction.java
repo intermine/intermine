@@ -45,10 +45,11 @@ public class ImportQueriesAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map queries = qif.getQueryMap(profile.getSavedBags(), classKeys);
         
-        if (queries.size() == 1 && request.getParameter("query_builder") != null
-            && request.getParameter("query_builder").equals("yes")) {
-            SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(),
-                                     session, response);
+        if (queries.size() == 1
+            && ((request.getParameter("query_builder") != null && request
+                .getParameter("query_builder").equals("yes")) || profile.getUsername() == null)) {
+            SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(), session,
+                                     response);
             return mapping.findForward("query");
         } else {
             Iterator iter = queries.keySet().iterator();
