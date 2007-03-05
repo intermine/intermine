@@ -76,7 +76,10 @@
 
 <div class="body">
   <html:form action="/templateAction">
-    <div class="templateTitle">${templateQuery.title}</div>
+    <div class="templateTitle">${templateQuery.title}
+    <tiles:insert name="starTemplate.tile">
+      <tiles:put name="templateName" value="${templateQuery.name}"/>
+    </tiles:insert></div>
     <div class="templateDescription">${templateQuery.description}</div>
     <table border="0" class="templateForm">
       <c:set var="index" value="${0}"/>
@@ -268,5 +271,8 @@
       </c:if>
     </c:if>
   </html:form>
+      <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
+        <p><i><fmt:message key="template.notlogged"/></i></p>
+      </c:if>
 </div>
 
