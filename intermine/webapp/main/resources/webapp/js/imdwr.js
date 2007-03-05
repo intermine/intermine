@@ -31,7 +31,7 @@ function renameElement(name, type, index){
 	document.getElementById('form_'+name).style.display="none";
 	document.getElementById('name_'+name).innerHTML="<i>saving...</i>";
 	document.getElementById('name_'+name).style.display="block";
-	AjaxServices.rename(name,type, document.getElementById('newName_'+name).value, function(str){
+	AjaxServices.rename(name,type, (document.getElementById('newName_'+name).value).replace(/^\s*|\s*$/g,""), function(str){
 		document.getElementById('name_'+name).innerHTML=str;
 		document.getElementById('selected_' + type + '_' + index).value=str;
 	});
