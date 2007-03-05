@@ -46,7 +46,7 @@ public class SaveQueryForm extends ActionForm
      * @return the query name
      */
     public String getQueryName() {
-        return queryName;
+        return queryName.trim();
     }
 
     /**
