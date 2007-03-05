@@ -89,7 +89,6 @@ public class GoStatDisplayerController extends InterMineAction
             ObjectStoreSummary oss =
                 (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
-            //String significanceValue = new String ("0.05");
             String significanceValue = null;
             significanceValue = request.getParameter("significanceValue");
             if (significanceValue == null)  {
@@ -109,14 +108,11 @@ public class GoStatDisplayerController extends InterMineAction
             // put all vars in request for getting on the .jsp page
             session.setAttribute("bagName", bagName);
             session.setAttribute("ontology", namespace);
-            session.setAttribute("significanceValue", significanceValue);
+            //session.setAttribute("significanceValue", significanceValue);
 
-//            System.out.println("Ontology:  " + namespace);
-//            System.out.println("bagName:  " + bagName);
-//            System.out.println("significanceValue:  " + significanceValue);
-            
             Collection organisms = getOrganisms(os, bag);
-
+            Collection badOntologies = getOntologies(); // list of ontologies to ignore            
+            
             // ~~~~~~~~~~~~~~~~~~ BAG QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             Query q = new Query();
             q.setDistinct(false);
@@ -155,11 +151,15 @@ public class GoStatDisplayerController extends InterMineAction
             // limit to organisms in the bag
             BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
             cs.addConstraint(bc2);
+            
+            // ignore main 3 ontologies
+            BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
+            cs.addConstraint(bc3);
+            
                         
             // gene.goAnnotation CONTAINS GOAnnotation
             QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
             ContainsConstraint cc1 = 
-
                 new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
             cs.addConstraint(cc1);
 
@@ -189,8 +189,6 @@ public class GoStatDisplayerController extends InterMineAction
             q.addToGroupBy(qfGoTerm);
             q.addToGroupBy(qfGoTermId);
             
-            //System.out.println(" ~~~ bag query --- " + q);
-            
             Results rBag = new Results(q, os, os.getSequence());
 
             Iterator itBag = rBag.iterator();
@@ -215,9 +213,6 @@ public class GoStatDisplayerController extends InterMineAction
             }
             
             request.setAttribute("goTermToIds", goTermToIdMap);
-            
-            // we're done with results from first query
-            //os.releaseGoFaster(q);
 
             // ~~~~~~~~~~~~~~~~~~~~~~~ ALL QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             q = new Query();
@@ -228,9 +223,7 @@ public class GoStatDisplayerController extends InterMineAction
             q.addFrom(qcOrganism);
             q.addFrom(qcGo);
 
-
-            q.addToSelect(qfGoTermId);                      
-
+            q.addToSelect(qfGoTermId);  
             q.addToSelect(geneCount);
 
             cs = new ConstraintSet(ConstraintOp.AND);
@@ -240,20 +233,11 @@ public class GoStatDisplayerController extends InterMineAction
             cs.addConstraint(sc1);
             cs.addConstraint(sc2);
             cs.addConstraint(bc2);
+            cs.addConstraint(bc3);
             q.setConstraint(cs);
 
             q.addToGroupBy(qfGoTermId);
-            //q.addToGroupBy(qfGoTerm);
-            //q.addToOrderBy(qfGoTermId);
 
-//            try {
-//                os.goFaster(q);
-//            } catch (ObjectStoreException e) {
-//                throw new ObjectStoreException(e);
-//            }
-
-            // TODO put this back in if not using rubbish database
-            //int geneCountAll = oss.getClassCount("org.flymine.model.genomic.Gene");
             int geneCountAll = getGeneTotal(os, organisms);
             int geneCountBag = bag.size();
             
@@ -272,19 +256,18 @@ public class GoStatDisplayerController extends InterMineAction
 
                 if (geneCountMap.containsKey(goTerm)) {
 
-
                     // get counts
                     Long countBag = (Long) geneCountMap.get(goTerm);
                     int goGeneCountBag = countBag.intValue();
                     Long countAll = (java.lang.Long) rrAll.get(1);
                     int goGeneCount = countAll.intValue();
 
-                   // get p value
 //                    System.out.print("[geneCountBag-" + geneCountBag + "]");
 //                    System.out.print("[goGeneCountBag-" + goGeneCountBag + "]");
 //                    System.out.print("[goGeneCount-" + goGeneCount + "]");
 //                    System.out.print("[geneCountAll-" + geneCountAll + "]");
 //                    System.out.println();
+                    
                     double p =
                         h.calculateP(geneCountBag, goGeneCountBag, goGeneCount, geneCountAll);
 
@@ -297,20 +280,13 @@ public class GoStatDisplayerController extends InterMineAction
 
                 }
             }
-            
-            //System.out.println(" ~~~ all query --- " + q);
-            
-            //os.releaseGoFaster(q);
-
                         
             Bonferroni b = new Bonferroni(resultsMap, significanceValue);    
             b.calculate();
             HashMap adjustedResultsMap = b.getAdjustedMap();
 
-
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
-
 
             session.setAttribute("pvalues", sortedMap);
             session.setAttribute("geneTotals", goGeneCountBagMap);
@@ -321,9 +297,7 @@ public class GoStatDisplayerController extends InterMineAction
         }
 
         // gets total number of genes.
-        // TODO should be using object store summary instead!
         private int getGeneTotal(ObjectStore os, Collection organisms) {
-
             
             Query q = new Query();      
             q.setDistinct(false);
@@ -360,6 +334,7 @@ public class GoStatDisplayerController extends InterMineAction
             return n;
         }
 
+        // gets organisms in bag
         private Collection getOrganisms(ObjectStoreInterMineImpl os, InterMineBag bag) {
 
             Query q = new Query();
@@ -399,6 +374,20 @@ public class GoStatDisplayerController extends InterMineAction
             return ids;
 
         }
+        
+        // gets organisms in bag
+        private Collection getOntologies() {
+
+            Collection ids = new ArrayList();
+
+            ids.add("GO:0008150");  // biological_process
+            ids.add("GO:0003674");  // molecular_function
+            ids.add("GO:0005575");  // cellular_component
+
+            return ids;
+
+        }
+        
         
         
         private void setRequest(String significanceValue, String namespace, String bagName) {
