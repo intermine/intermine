@@ -179,7 +179,7 @@
       if (removeButton != null) {
         removeButton.disabled = !checked;
       }
-      document.getElementById('export_button').disabled = !checked;
+      // document.getElementById('export_button').disabled = !checked;
       with(form) {
         for(var i=0;i < elements.length;i++) {
           var thiselm = elements[i];
@@ -210,7 +210,7 @@
 	 	      if (removeButton != null) { 
         removeButton.disabled = deleteDisable;
       }
-      document.getElementById('export_button').disabled = deleteDisable;
+      // document.getElementById('export_button').disabled = deleteDisable;
       document.getElementById('selected_' + type).checked = columnCheckBoxChecked;
       return true;
     }
