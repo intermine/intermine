@@ -152,11 +152,17 @@ public class AjaxServices
             return errorMsg;
         }
         if (type.equals("history")) {
+            if (profile.getHistory().get(name) == null) {
+                return "<i>" + name + " does not exist</i>";
+            }
             if (profile.getHistory().get(newName) != null) {
                 return "<i>" + newName + " already exists</i>";
             }
             profile.renameHistory(name, newName);
         } else if (type.equals("saved")) {
+            if (profile.getSavedQueries().get(name) == null) {
+                return "<i>" + name + " does not exist</i>";
+            }
             if (profile.getSavedQueries().get(newName) != null) {
                 return "<i>" + newName + " already exists</i>";
             }
@@ -165,17 +171,19 @@ public class AjaxServices
             sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
             profile.saveQuery(sq.getName(), sq);
         } else if (type.equals("bag")) {
-           if (profile.getSavedBags().get(newName) != null) {
-               return "<i>" + newName + " already exists</i>";
-           }
-           InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
-           profile.deleteBag(name);
-           SessionMethods.invalidateBagTable(session, name);
-           int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
-                                          "max.bag.size.notloggedin",
-                                          Constants.MAX_NOT_LOGGED_BAG_SIZE);
-           bag.setName(newName);
-           profile.saveBag(newName, bag, maxNotLoggedSize);
+            if (profile.getSavedBags().get(name) == null) {
+                return "<i>" + name + " does not exist</i>";
+            }
+            if (profile.getSavedBags().get(newName) != null) {
+                return "<i>" + newName + " already exists</i>";
+            }
+            InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
+            profile.deleteBag(name);
+            SessionMethods.invalidateBagTable(session, name);
+            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
+                    "max.bag.size.notloggedin", Constants.MAX_NOT_LOGGED_BAG_SIZE);
+            bag.setName(newName);
+            profile.saveBag(newName, bag, maxNotLoggedSize);
         } else {
             return "Type unknown";
         }
