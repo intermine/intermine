@@ -5,7 +5,7 @@
     <large-image>model/genomics.gif</large-image>
     <intro-text>
       The gene structure and other genome annotation in FlyMine are provided by
-      a variety of curated source databases.  In most cases FlyMine includes
+      a variety of source databases.  In most cases FlyMine includes
       all genome features that have chromosomal locations (e.g. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
