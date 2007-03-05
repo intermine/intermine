@@ -142,7 +142,7 @@ public class GoStatAction extends InterMineAction
         
         Results results = new Results(q, os, os.getSequence());
 
-        System.out.println(" bag query - " + q.toString());
+        //System.out.println(" bag query - " + q.toString());
         
         String columnName = "Gene";
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
