@@ -113,7 +113,7 @@
 <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray)}">
     <c:set var="widgetCount" value="0" />
     <div class="heading">
-        Widgets
+        Viewers
     </div>
     <div class="body">
         <table cellpadding="0" cellspacing="10">
@@ -128,7 +128,7 @@
                 </c:choose>
                 <div class="widget">
                     <c:out value="${htmlContent[0]}" escapeXml="false"/>
-                    <p><c:out value="${htmlContent[1]}"/></p>
+                    <p><c:out value="${htmlContent[1]}" escapeXml="false"/></p>
                     </div>
                     <c:choose>
                         <c:when test="${widgetCount % 2 == 0}">
@@ -142,7 +142,7 @@
             </c:forEach>
 
             <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
-                <c:if test="${! empty bagTableDisplayerResults.flattenedResults}">
+                
                     <c:choose>
                         <c:when test="${widgetCount % 2 == 0}">
                             <tr valign="top"><td>
@@ -153,8 +153,10 @@
                             </c:choose>
 
                             <div class="widget">
+                            <c:choose>
+								<c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
                                 <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
-                                <div class="widget_slide">
+                                <div class="widget_slide" align="center">
                                 <table class="results" cellspacing="0">
                                     <tr>
                                         <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
@@ -196,7 +198,11 @@
                                                 </tr>
                                             </c:forEach>
                                         </table>
+                                        <p><c:out value="${bagTableDisplayerResults.description}" escapeXml="false"/></p>
                                         </div>
+                            </c:when>
+                            <c:otherwise><i>No results for ${bagTableDisplayerResults.title}</i></c:otherwise>
+                            </c:choose>
                                     </div>
                                     <c:choose>
                                     <c:when test="${widgetCount % 2 == 0}">
@@ -207,7 +213,7 @@
                                     </c:otherwise>
                                 </c:choose>
                                 <c:set var="widgetCount" value="${widgetCount+1}" />
-                            </c:if>
+
                         </c:forEach>
                     </table>
                 </div>

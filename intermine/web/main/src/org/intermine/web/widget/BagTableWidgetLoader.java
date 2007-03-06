@@ -47,7 +47,7 @@ public class BagTableWidgetLoader
     private Results results;
     private LinkedList columns;
     private LinkedList flattenedResults;
-    private String title;
+    private String title, description;
     
     /**
      * This class loads and formats the data for the count
@@ -64,9 +64,10 @@ public class BagTableWidgetLoader
      * @param model the model
      * @param classKeys the classKeys
      */
-    public BagTableWidgetLoader(String title, String type, String collectionName, InterMineBag bag,
+    public BagTableWidgetLoader(String title, String description, String type, String collectionName, InterMineBag bag,
         ObjectStore os, WebConfig webConfig, Model model, Map classKeys, String fields) {
         this.title = title;
+        this.description = description;
         Query q = new Query();
         
         Class clazzA = null;
@@ -168,7 +169,7 @@ public class BagTableWidgetLoader
             flattenedResults.add(flattenedRow);
         }
         // Add the count column
-        columns.add(bag.getType());
+        columns.add(bag.getType() + "s");
     }
     
     /**
@@ -203,7 +204,20 @@ public class BagTableWidgetLoader
         return columns;
     }
     
+    /**
+     * Get the title
+     * @return the title
+     */
     public String getTitle() {
         return title;
     }
+    
+    /**
+     * Get the description
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
 }
