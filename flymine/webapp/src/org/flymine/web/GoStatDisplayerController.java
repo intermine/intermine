@@ -89,6 +89,10 @@ public class GoStatDisplayerController extends InterMineAction
             ObjectStoreSummary oss =
                 (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
+            session.removeAttribute("goStatPvalues");
+            session.removeAttribute("goStatGeneTotals");
+            session.removeAttribute("goStatGoTermToId");
+
             String significanceValue = null;
             significanceValue = request.getParameter("significanceValue");
             if (significanceValue == null)  {
@@ -101,7 +105,7 @@ public class GoStatDisplayerController extends InterMineAction
             }
             Double maxValue = new Double("0.10");
 
-            LinkedHashMap resultsMap = new LinkedHashMap();
+            
             String bagName = request.getParameter("bagName");
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
@@ -211,8 +215,6 @@ public class GoStatDisplayerController extends InterMineAction
                 goTermToIdMap.put(goTermIdBag, rrBag.get(2));
                 
             }
-            
-            request.setAttribute("goTermToIds", goTermToIdMap);
 
             // ~~~~~~~~~~~~~~~~~~~~~~~ ALL QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             q = new Query();
@@ -247,7 +249,10 @@ public class GoStatDisplayerController extends InterMineAction
             Iterator itAll = rAll.iterator();
 
             Hypergeometric h = new Hypergeometric(geneCountAll);
+            
             HashMap goGeneCountBagMap = new HashMap();
+            HashMap resultsMap = new HashMap();
+            
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -273,24 +278,22 @@ public class GoStatDisplayerController extends InterMineAction
 
                     // maps can't handle doubles
                     Double P = new Double(p);
-                    if (P.compareTo(maxValue) < 0) {
-                        resultsMap.put(goTerm, P);
-                        goGeneCountBagMap.put(goTerm, String.valueOf(goGeneCountBag));
-                    }
-
+                    resultsMap.put(goTerm, P);
+                    goGeneCountBagMap.put(goTerm, String.valueOf(goGeneCountBag));
                 }
-            }
-                        
+            }                 
+           
             Bonferroni b = new Bonferroni(resultsMap, significanceValue);    
-            b.calculate();
+            b.calculate(maxValue);
             HashMap adjustedResultsMap = b.getAdjustedMap();
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
-
-            session.setAttribute("pvalues", sortedMap);
-            session.setAttribute("geneTotals", goGeneCountBagMap);
             
+            session.setAttribute("goStatPvalues", sortedMap);
+            session.setAttribute("goStatGeneTotals", goGeneCountBagMap);
+            session.setAttribute("goStatGoTermToId", goTermToIdMap);
+                        
             return new ForwardParameters(mapping.findForward("results"))
             .forward();
             
@@ -375,7 +378,7 @@ public class GoStatDisplayerController extends InterMineAction
 
         }
         
-        // gets organisms in bag
+        // adds 3 main ontologies to array.  these 3 will be excluded from the query
         private Collection getOntologies() {
 
             Collection ids = new ArrayList();
@@ -387,12 +390,7 @@ public class GoStatDisplayerController extends InterMineAction
             return ids;
 
         }
-        
-        
-        
-        private void setRequest(String significanceValue, String namespace, String bagName) {
-            //request.
-        }
+
 }
 
 

@@ -20,11 +20,11 @@ import java.util.Iterator;
  */
 public class Bonferroni
 {
-    private static HashMap originalMap = new HashMap();
-    private static HashMap adjustedMap = new HashMap();
-    private static Double significanceValue;
-    private static double numberOfTests;
-    private static final Double maxValue = new Double("1");
+    private HashMap originalMap = new HashMap();
+    private HashMap adjustedMap = new HashMap();
+    private Double significanceValue;
+    private double numberOfTests;
+    // static final Double maxValue = new Double("1");
 
     /**
      * @param originalMap Hashmap of go terms and their pvalues.
@@ -38,7 +38,7 @@ public class Bonferroni
     }
 
     
-    public void calculate() {
+    public void calculate(Double maxValue) {
         
         double bonferroni = significanceValue.doubleValue()/numberOfTests;
         
@@ -52,18 +52,13 @@ public class Bonferroni
             Double adjustedP = new Double(numberOfTests * p.doubleValue());
             //Double adjustedP = new Double(bonferroni + p.doubleValue());
             
-            // if the new value is greater than 1, just set to 1.
-            // we don't want to confuse people
-            if (adjustedP.compareTo(maxValue) > 0) {
-                adjustedP = maxValue;
-            }
-            
-            // put new values into map
-            adjustedMap.put(goTerm, adjustedP);
-            
+            // don't store values >= maxValue
+            if (adjustedP.compareTo(maxValue) < 0) {              
+                // put new values into map
+                adjustedMap.put(goTerm, adjustedP);                
+            }         
         }
     }
-
 
     public HashMap getAdjustedMap() {
         return adjustedMap;
