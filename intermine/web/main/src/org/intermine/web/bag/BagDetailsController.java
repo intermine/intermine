@@ -108,7 +108,8 @@ public class BagDetailsController extends TilesAction
             String collectionName = bagTableDisplayer.getCollectionName();
             String fields = bagTableDisplayer.getFields();
             String title = bagTableDisplayer.getTitle();
-            BagTableWidgetLoader bagWidgLdr = new BagTableWidgetLoader(title, ldrType, collectionName,
+            String description = bagTableDisplayer.getDescription();
+            BagTableWidgetLoader bagWidgLdr = new BagTableWidgetLoader(title, description, ldrType, collectionName,
                                                                        imBag, os, webConfig, model,
                                                                        classKeys, fields);
             tableDisplayerArray.add(bagWidgLdr);

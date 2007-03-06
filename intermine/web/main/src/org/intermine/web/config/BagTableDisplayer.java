@@ -20,6 +20,7 @@ public class BagTableDisplayer
     private String type;
     private String collectionName;
     private String fields;
+    private String description;
 
     /**
      * Get the type
@@ -81,6 +82,20 @@ public class BagTableDisplayer
      */
     public void setFields(String fields) {
         this.fields = fields;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
