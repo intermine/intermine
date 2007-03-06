@@ -44,31 +44,36 @@ public class TemplatesExportAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String name = request.getParameter("name");
         String type = request.getParameter("type");
-        Map templates = null;
+        
+        String xml = null;
+
+        if (name == null) {
+            if (type == null || type.equals("user")) {
+                xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates());
+            } else if (type.equals("global")) {
+                xml = TemplateHelper.templateMapToXml(SessionMethods
+                        .getSuperUserProfile(servletContext).getSavedTemplates());
+            } else {
+                throw new IllegalArgumentException("Cannot export all templates for type " + type);
+            }
+        } else {
+            TemplateQuery t = TemplateHelper.findTemplate(servletContext, session,
+                    profile.getUsername(), name, type);
+            if (t != null) {
+                xml = t.toXml();
+            } else {
+                throw new IllegalArgumentException("Cannot find template " + name + " in context "
+                        + type);
+            }
+        }
+        xml = XmlUtil.indentXmlSimple(xml);
         
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
         
-        if (type == null || type.equals("user")) {
-            templates = profile.getSavedTemplates();
-        } else if (type.equals("global")) {
-            templates = SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
-        } else {
-            return null;
-        }
-        
-        String name = request.getParameter("name");
-        
         PrintStream out = new PrintStream(response.getOutputStream());
-        String xml = null;
-        
-        if (StringUtils.isNotEmpty(name)) {
-            xml = ((TemplateQuery) templates.get(name)).toXml();
-        } else {
-            xml = TemplateHelper.templateMapToXml(templates);
-        }
-        xml = XmlUtil.indentXmlSimple(xml);
         out.print(xml);
         out.flush();
         return null;
