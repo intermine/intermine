@@ -108,7 +108,19 @@ Reference population: All genes from <c:out value='${goStatOrganisms}'/>.
 	  		<c:forEach items="${goStatPvalues}" var="results">
     			<tr>  	
   					<td align="left"><c:out value='${goStatGoTermToId[results.key]}'/> [<c:out value='${results.key}'/>]</td>
-  					<td align="left"><fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" /></td> 		
+  					
+  					
+  					
+  					<td align="left">
+  						<c:choose>
+  						<c:when test="${results.value < 0.0000001}">
+  							<fmt:formatNumber value="${results.value}" pattern="0.#######E0" minFractionDigits="7" maxFractionDigits="7" />
+						</c:when>		
+						<c:otherwise>
+	  						<fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" />
+				        </c:otherwise>        
+    				    </c:choose>
+  					</td>
   					<td align="left" nowrap>
   		   				<html:link action="/goStatAction?key=${results.key}&bag=${bagName}" target="_top">
   		   					[<c:out value='${goStatGeneTotals[results.key]}'/> genes]
