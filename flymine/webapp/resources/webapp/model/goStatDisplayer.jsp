@@ -1,3 +1,9 @@
+<%
+String path = request.getContextPath();
+String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+path+"/display.jsp";
+%>
+
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -10,12 +16,29 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  
+
   <head>
 
+    <base href="<%=basePath%>" />
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
-        
+    
+    <script type="text/javascript" src="js/prototype.js"></script>
+    <script type="text/javascript" src="js/scriptaculous.js"></script>
+    
+	<script type='text/javascript' src='dwr/interface/AjaxServices.js'></script>
+	<script type='text/javascript' src='dwr/engine.js'></script>
+	<script type='text/javascript' src='dwr/util.js'></script>
+
+    <script type="text/javascript" src="js/imdwr.js"></script>
+    
+    <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
+    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
+          name="description"/>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
+    
+    <title>
+      
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
@@ -53,7 +76,7 @@ Reference population: All genes from <c:out value='${goStatOrganisms}'/>.
 <table>	
 <tr>
 	<td valign="top" align="center">
-	<form action="initGoStatDisplayer.do" method="get" name="goStatForm">
+	<form action="<%=request.getContextPath()%>/initGoStatDisplayer.do" method="get" name="goStatForm">
 	<table>
       <tr>
       	<td>Ontology</td>
