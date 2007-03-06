@@ -214,13 +214,33 @@
             </c:if>
 
 <c:if test="${bag.type == 'Gene'}">
+
+ 	<c:choose>
+		<c:when test="${widgetCount % 2 == 0}">
+    	    <tr valign="top"><td>
+        </c:when>
+        <c:otherwise>
+             <td>
+        </c:otherwise>
+    </c:choose>
+
 	<%-- go stats --%>	
     <table cellpadding="0" cellspacing="10">
     <tr>
-    	<td><iframe src="initGoStatDisplayer.do?bagName=${bag.name}" id="window" width="500" height="500" scrollbars="auto"></iframe></td>
+    	<td><iframe src="initGoStatDisplayer.do?bagName=${bag.name}" id="window" width="490" height="500" scrollbars="auto"></iframe></td>
     </tr>
     </table>
     <br>
+
+	<c:choose>
+		<c:when test="${widgetCount % 2 == 0}">
+			</td>	
+		</c:when>
+		<c:otherwise>
+			</td></tr>
+		</c:otherwise>
+	</c:choose>
+	<c:set var="widgetCount" value="${widgetCount+1}" />
 </c:if>
 
 <div class="heading">

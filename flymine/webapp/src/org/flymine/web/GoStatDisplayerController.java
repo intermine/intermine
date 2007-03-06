@@ -64,6 +64,9 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class GoStatDisplayerController extends InterMineAction
 {
+    
+    String organismNames = null;
+    
     /**
      * 
      * @param mapping The ActionMapping used to select this instance
@@ -92,7 +95,8 @@ public class GoStatDisplayerController extends InterMineAction
             session.removeAttribute("goStatPvalues");
             session.removeAttribute("goStatGeneTotals");
             session.removeAttribute("goStatGoTermToId");
-
+            session.removeAttribute("goStatOrganisms");
+            
             String significanceValue = null;
             significanceValue = request.getParameter("significanceValue");
             if (significanceValue == null)  {
@@ -293,7 +297,7 @@ public class GoStatDisplayerController extends InterMineAction
             session.setAttribute("goStatPvalues", sortedMap);
             session.setAttribute("goStatGeneTotals", goGeneCountBagMap);
             session.setAttribute("goStatGoTermToId", goTermToIdMap);
-                        
+            session.setAttribute("goStatOrganisms", organismNames);
             return new ForwardParameters(mapping.findForward("results"))
             .forward();
             
@@ -345,6 +349,7 @@ public class GoStatDisplayerController extends InterMineAction
             QueryClass qcGene = new QueryClass(Gene.class);
             QueryClass qcOrganism = new QueryClass(Organism.class);
 
+            QueryField qfOrganismName = new QueryField(qcOrganism, "name");
             QueryField qfOrganism = new QueryField(qcOrganism, "id");
             QueryField qfGeneId = new QueryField(qcGene, "id");
 
@@ -352,7 +357,8 @@ public class GoStatDisplayerController extends InterMineAction
             q.addFrom(qcOrganism);
 
             q.addToSelect(qfOrganism);
-
+            q.addToSelect(qfOrganismName);
+            
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
             BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
@@ -372,6 +378,13 @@ public class GoStatDisplayerController extends InterMineAction
 
                 ResultsRow rr =  (ResultsRow) it.next();
                 ids.add(rr.get(0));
+                
+                if (organismNames == null) {
+                    organismNames = (String) rr.get(1);
+                } else {
+                    organismNames += ", " + rr.get(1);
+                }
+                
             }
 
             return ids;
