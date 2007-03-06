@@ -110,13 +110,15 @@
 
 <br/>
 
+<!-- widget table -->
+<table border=0 cellpadding="0" cellspacing="10">
+
 <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray)}">
     <c:set var="widgetCount" value="0" />
     <div class="heading">
         Viewers
     </div>
-    <div class="body">
-        <table cellpadding="0" cellspacing="10">
+    <div class="body">        
             <c:forEach items="${graphDisplayerArray}" var="htmlContent">
                 <c:choose>
                     <c:when test="${widgetCount % 2 == 0}">
@@ -215,7 +217,7 @@
                                 <c:set var="widgetCount" value="${widgetCount+1}" />
 
                         </c:forEach>
-                    </table>
+                 
                 </div>
             </c:if>
 
@@ -233,7 +235,7 @@
 	<%-- go stats --%>	
     <table cellpadding="0" cellspacing="10">
     <tr>
-    	<td><iframe src="initGoStatDisplayer.do?bagName=${bag.name}" id="window" width="490" height="500" scrollbars="auto"></iframe></td>
+    	<td><iframe src="initGoStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe></td>
     </tr>
     </table>
     <br>
@@ -249,6 +251,10 @@
 	<c:set var="widgetCount" value="${widgetCount+1}" />
 </c:if>
 
+</table>
+<!-- /widget table -->   
+   
+   
 <div class="heading">
   Templates
 </div>
