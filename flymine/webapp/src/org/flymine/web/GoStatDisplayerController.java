@@ -65,7 +65,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class GoStatDisplayerController extends InterMineAction
 {
     
-    String organismNames = null;
+    String organismNames;
     
     /**
      * 
@@ -373,7 +373,8 @@ public class GoStatDisplayerController extends InterMineAction
             Results r = new Results(q, os, os.getSequence());
             Iterator it = r.iterator();
             Collection ids = new ArrayList();
-
+            organismNames = null;
+            
             while (it.hasNext()) {
 
                 ResultsRow rr =  (ResultsRow) it.next();
