@@ -323,6 +323,7 @@ public class GoStatDisplayerController extends InterMineAction
             ConstraintSet cs;
             cs = new ConstraintSet(ConstraintOp.AND);
             
+            
             BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
             cs.addConstraint(bc2);
             
@@ -360,9 +361,10 @@ public class GoStatDisplayerController extends InterMineAction
             q.addToSelect(qfOrganismName);
             
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-            BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
-            cs.addConstraint(bc);
+            if (bag != null) {
+                BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
+                cs.addConstraint(bc);
+            }
 
             QueryObjectReference qr = new QueryObjectReference(qcGene, "organism");
             ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
