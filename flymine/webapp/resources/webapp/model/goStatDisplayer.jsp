@@ -12,7 +12,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   
   <head>
-    <base href="http://eowyn:8080/flymine/layout.jsp" />
 
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
@@ -40,8 +39,16 @@
 <c:if test="${ontology == 'molecular_function'}">
 	<c:set var="moleSELECTED">selected</c:set>
 </c:if>	
-
 <div class="body">
+
+<center><h2>Gene Ontology Enrichment</h2></center>
+
+GO terms that are enriched for genes in this bag compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
+<br><br>
+Reference population: All genes from <c:out value='${goStatOrganisms}'/>.
+<br><br>
+
+
 	
 <table>	
 <tr>
@@ -67,24 +74,32 @@
 </tr>
 <tr>
 	<td>
-		<table cellpadding="5" border="0" cellspacing="0" class="results">
-	  	<tr>	
-  			<th>GO Term</td>
-	  		<th>p-value</td>
-  			<th>&nbsp;</td>
-		</tr>
-  		<c:forEach items="${goStatPvalues}" var="results">
-    		<tr>  	
-  				<td align="left"><c:out value='${goStatGoTermToId[results.key]}'/> [<c:out value='${results.key}'/>]</td>
-  				<td align="left"><fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" /></td> 		
-  				<td align="left" nowrap>
-  		   			<html:link action="/goStatAction?key=${results.key}&bag=${bagName}" target="_top">
-  		   				[<c:out value='${goStatGeneTotals[results.key]}'/> genes]
-       				</html:link>  	
-	       		</td>
+		<c:choose>
+		<c:when test="${!empty goStatPvalues}">
+			<table cellpadding="5" border="0" cellspacing="0" class="results">
+		  	<tr>	
+  				<th>GO Term</td>
+	  			<th>p-value</td>
+  				<th>&nbsp;</td>
 			</tr>
-		</c:forEach>
-		</table>
+	  		<c:forEach items="${goStatPvalues}" var="results">
+    			<tr>  	
+  					<td align="left"><c:out value='${goStatGoTermToId[results.key]}'/> [<c:out value='${results.key}'/>]</td>
+  					<td align="left"><fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" /></td> 		
+  					<td align="left" nowrap>
+  		   				<html:link action="/goStatAction?key=${results.key}&bag=${bagName}" target="_top">
+  		   					[<c:out value='${goStatGeneTotals[results.key]}'/> genes]
+       					</html:link>  	
+	       			</td>
+				</tr>
+			</c:forEach>
+			</table>
+		</c:when>		
+		<c:otherwise>
+	        No results found.
+        </c:otherwise>        
+        </c:choose>
+
 	</td>
 </tr>
 </table>
