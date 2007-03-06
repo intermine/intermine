@@ -37,7 +37,7 @@
             <i>Drosophila melanogaster</i>
           </dt>
           <dd>
-            Release 4.3 genome annotation from <a href="http://www.flybase.org">
+            Release 5.1 genome annotation from <a href="http://www.flybase.org">
               <html:img src="model/FlyBase_logo_mini.png"/> </a>.
           </dd>
           <dt>
@@ -156,21 +156,6 @@
                 </node>
                 <node path="Gene.organism.name" type="String">
                   <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-
-          <li>
-            <im:querylink text="All <i>Caenorhabditis elegans</i> gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>

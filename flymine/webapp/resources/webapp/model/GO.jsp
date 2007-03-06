@@ -32,12 +32,11 @@
       other organisms is also included and is accessible via orthologues.
       </p>      
         <ul>
-         <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.ebi.ac.uk/GOA/">FlyBase</a>, updated 26th March 2006.</li><br/>
-         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/">GO annotation@EBI</a> project, updated 4th March 2006.</li><br/>
-         <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.ebi.uniprot.org/index.shtml">UniProt</a>, updated 12th March 2006.</li><br/>
-         <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/">SGD</a>, updated 19th April 2006.</li><br/>
-         <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>, updated 15th April 2006.</li><br/>
-         <li><i>R. norvegicus</i> - GO annotations for <i>R. norvegicus</i> gene products assigned by <a href="http://rgd.mcw.edu/">RGD</a>, updated 26th March 2006.</li><br/>
+         <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.ebi.ac.uk/GOA/">FlyBase</a></li><br/>
+         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/">GO annotation@EBI</a> project.</li><br/>
+         <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org">WormBase</a>.</li><br/>
+         <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/">SGD</a>.</li><br/>
+         <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>.</li><br/>
        </ul>
       </div>
 

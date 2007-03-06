@@ -26,7 +26,7 @@
           In addition, orthologues from these five species to several others:
         </p>
         <p>
-          <i>C. familiaris , D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, P. falciparum 3D7, R. norvegicus, S. cerevisiae, S. pombe, T. nigroviridis, T. rubripes</I>
+          <i>C. familiaris , D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe</I>
         <p>
           <im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
             <query name="" model="genomic" view="Orthologue.object.organism.shortName Orthologue.subject.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
