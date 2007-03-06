@@ -129,7 +129,7 @@
                   <fmt:message key="history.action.edit"/>
                 </html:link> |
                 <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}"
-                				titleKey="history.action.execute.hover">
+                				titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
                 <c:if test="${IS_SUPERUSER && savedTemplate.value.valid}">
