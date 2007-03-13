@@ -1,8 +1,11 @@
 #!/usr/bin/perl -w
 
-#usage: takes data from /shared/data/pubmed/gene2pubmed as $ARGV[0] and writes the xml file
-#for linking ncbi gene ID to one or more pubmed IDs. 
+#usage: takes data from /shared/data/pubmed/gene2pubmed as $ARGV[1] and 
+#/shared/data/pubmed/gene_info as $ARGV[0] (the current files were downloaded from
+#ftp://ftp.ncbi.nlm.nih.gov/gene/DATA) and then writes the xml file for linking the 
+#ncbi gene ID to one or more pubmed IDs. 
 
+use warnings;
 use strict;
 
 BEGIN {
@@ -27,13 +30,15 @@ my @items_to_write = ();
 #define organism ids to include
 my %ids=("4932",'S.cerevisiae',
 	 "6239",'C.elegans',
-	 "7227",'D.melanogaster'#,
-	 #"180454",'A.gambiae str PEST'
+	 "7227",'D.melanogaster',
+	 "180454",'A.gambiae str PEST'
 	 );
+
+##create gene/pubmed objects and associate pubmed objects to correct gene object 
 my (%genes, %pubID, %pubgene);
 
-#open /shared/data/ncbigene/gene2pubmed and get data
-open(F,"<$ARGV[0]") or die "$!";
+#open /shared/data/pubmed/gene2pubmed and get data
+open(F,"<$ARGV[1]") or die "$!";
 while(<F>){
 	my @f = split/\t/;
 	my $current_ID=$f[0];
@@ -62,13 +67,77 @@ while(<F>){
 }	
 close(F) or die "$!";
 
+##add the gene identifier or organismDbId used by flymine to the ncbi number gene object
+my (%IDdata,%DBdata);
+
+#open /shared/data/pubmed/gene_info
+open(F,"<$ARGV[0]") or die "$!";
+while(<F>){
+	my @f = split/\t/;
+	my $current_ID=$f[0];
+	#only use the organisms in %ids
+	if(exists $ids{$current_ID}){
+  	  	my ($identifier,$dbID);
+		my $ncbigeneID = $f[1];
+		
+		#use taxonID to get correct type of data where available
+		if($current_ID==180454 && $f[3] ne "-"){
+			chomp $f[3];
+	  		$identifier = $f[3];
+			#remove excess characters
+			if($identifier=~ /^AgaP_/){
+				$identifier=substr $identifier,5;
+			}
+			#check for duplicates
+			if(exists $genes{$ncbigeneID}{$identifier}){
+				print "$identifier already found\n"
+			}elsif(exists $genes{$ncbigeneID}->{'object'}){
+				print "$identifier\t$ncbigeneID\tValid id\n";
+				$genes{$ncbigeneID}{$identifier}=$identifier;
+				my $gene_item = $genes{$ncbigeneID}->{'object'};
+				$gene_item->set('identifier', $identifier);
+			}else{
+				print"$identifier\t$ncbigeneID\tInvalid ID\n";
+				delete $genes{$ncbigeneID};	
+			}
+		#use organismDbId where available	
+		}elsif($f[5] ne "-"){
+			chomp $f[5];
+			$dbID = $f[5];
+	    	#remove excess characters
+			if($dbID=~ /^SGD:/){
+				$dbID=substr $dbID,4;
+      		}elsif($dbID=~/^WormBase:/){
+				$dbID=substr $dbID,9;
+      		}elsif($dbID=~/^[Ff][Ll][Yy][Bb][Aa][Ss][Ee]:/){
+				$dbID=substr $dbID,8;
+      		}
+			
+			#check for duplicates
+			if(exists $genes{$ncbigeneID}{$dbID}){
+				print "$dbID already found\n"
+			}elsif(exists $genes{$ncbigeneID}->{'object'}){
+				print "$dbID\t$ncbigeneID\tValid id\n";
+				$genes{$ncbigeneID}{$dbID}=$dbID;
+				my $gene_item = $genes{$ncbigeneID}->{'object'};
+				$gene_item->set('organismDbId', $dbID);
+			}else{
+				print"$dbID\t$ncbigeneID\tInvalid ID\n";
+				delete $genes{$ncbigeneID};
+			}	
+    	}	
+	}
+}
+close(F) or die "$!";
+
+
 #for each gene, find which pubmedIds reference it, retrieve objects from the hash
 foreach my $gene (sort keys %genes){
 	my @pub_items;
-	#print "Gene $gene has publications\n";
+	print "Gene $gene has publications\n";
 	my $gene_item = $genes{$gene}->{'object'};
 	foreach my $pubID (sort keys %{$genes{$gene}->{publications}} ) {
-		#print "$pubID\n";
+		print "$pubID\n";
 		my $pub_item = $pubID{$pubID}->{'object'};
 		push @pub_items,$pub_item;
 	}
@@ -76,7 +145,7 @@ foreach my $gene (sort keys %genes){
 }	
 
 #write xml file
-my $outfile = '/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_no_anopheles.xml';
+my $outfile = '/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml';
 my $output = new IO::File(">$outfile");
 my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
 $writer->startTag('items');
