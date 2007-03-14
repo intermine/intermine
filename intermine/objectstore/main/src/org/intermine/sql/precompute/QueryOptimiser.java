@@ -526,11 +526,12 @@ public class QueryOptimiser
                         // of the original query.
 
                         Iterator orderByIter = tempOrderBy.iterator();
-                        if (precompOrderBy.size() <= tempOrderBy.size()) {
+                        if (orderByIter.hasNext()) {
                             boolean matches = true;
                             boolean matchesDesc = true;
-                            for (int i = 0; (i < precompOrderBy.size()) && (matches
-                                        || matchesDesc); i++) {
+                            int i;
+                            for (i = 0; (i < precompOrderBy.size()) && (matches || matchesDesc)
+                                    && orderByIter.hasNext(); i++) {
                                 AbstractValue precompOrderByField = (AbstractValue) precompOrderBy
                                     .get(i);
                                 AbstractValue nextPrecompOrderBy;
@@ -556,6 +557,31 @@ public class QueryOptimiser
                                     matchesDesc = false;
                                 }
                             }
+                            if ((matches || matchesDesc) && currentQuery.isDistinct()) {
+                                Set newS = new HashSet();
+                                Iterator newSelectSVs = newQuery.getSelect().iterator();
+                                while (newSelectSVs.hasNext()) {
+                                    SelectValue newSelectSV = (SelectValue) newSelectSVs.next();
+                                    newS.add(newSelectSV.getValue());
+                                }
+                                for(;(i < precompOrderBy.size()) && (matches || matchesDesc); i++) {
+                                    AbstractValue precompOrderByField = (AbstractValue)
+                                        precompOrderBy.get(i);
+                                    Field nextPrecompOrderBy;
+                                    if (precompOrderByField instanceof OrderDescending) {
+                                        nextPrecompOrderBy = new Field(((SelectValue) valueMap.get(
+                                                        ((OrderDescending) precompOrderByField)
+                                                        .getValue())).getAlias(),
+                                                precomputedSqlTable);
+                                    } else {
+                                        nextPrecompOrderBy = new Field(((SelectValue) valueMap
+                                                .get(precompOrderByField)).getAlias(),
+                                            precomputedSqlTable);
+                                    }
+                                    matches = matches && newS.contains(nextPrecompOrderBy);
+                                    matchesDesc = matchesDesc && newS.contains(nextPrecompOrderBy);
+                                }
+                            }
 
                             if (matches) {
                                 orderByField = new Field(precomputedTable.getOrderByField(),
@@ -573,16 +599,15 @@ public class QueryOptimiser
                             newOrderBy.add(orderByIter.next());
                         }
                         // Surely this messes up the distinct - increases the number of rows?
-                        //if ((orderByField != null) && currentQuery.isDistinct()) {
-                        //    newQuery.addSelect(new SelectValue(orderByField,
-                        //                                       "orderby_field_from_pt"));
-                        //}
+                        if ((orderByField != null) && currentQuery.isDistinct()) {
+                            newQuery.addSelect(new SelectValue(orderByField,
+                                                               "orderby_field_from_pt"));
+                        }
                     }
 
                     // Populate the WHERE clause of newQuery with the contents of the WHERE clause
                     // of currentQuery, leaving out those constraints in whereConstraintEqualsSet.
-                    if (currentQuery.isDistinct() || (orderByField == null)
-                            || (!query.getGroupBy().isEmpty())) {
+                    if ((orderByField == null) || (!query.getGroupBy().isEmpty())) {
                         reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
                                 whereConstraintEqualsSet, null, 0, null, false, false);
