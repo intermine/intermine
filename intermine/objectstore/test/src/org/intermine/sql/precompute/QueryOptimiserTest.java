@@ -11,6 +11,8 @@ package org.intermine.sql.precompute;
  */
 
 import junit.framework.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -347,10 +349,10 @@ public class QueryOptimiserTest extends TestCase
         ec4.add(ec1);
         ec4.add(ec3);
 
-        assertEquals(ec1, QueryOptimiser.reconstructAbstractConstraint(c1, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
-        assertEquals(ec2, QueryOptimiser.reconstructAbstractConstraint(c2, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
-        assertEquals(ec3, QueryOptimiser.reconstructAbstractConstraint(c3, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
-        assertEquals(ec4, QueryOptimiser.reconstructAbstractConstraint(c4, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false));
+        assertEquals(ec1, QueryOptimiser.reconstructAbstractConstraint(c1, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false, false));
+        assertEquals(ec2, QueryOptimiser.reconstructAbstractConstraint(c2, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false, false));
+        assertEquals(ec3, QueryOptimiser.reconstructAbstractConstraint(c3, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false, false));
+        assertEquals(ec4, QueryOptimiser.reconstructAbstractConstraint(c4, precomputedSqlTable, valueMap, tableSet, false, null, 0, null, false, false));
 
         Set set = new HashSet();
         set.add(c1);
@@ -364,7 +366,7 @@ public class QueryOptimiserTest extends TestCase
         eset.add(ec4);
         Set newSet = new HashSet();
         Set constraintEqualsSet = new HashSet();
-        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null, false);
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null, false, false);
         assertEquals(eset, newSet);
 
         newSet = new HashSet();
@@ -373,7 +375,7 @@ public class QueryOptimiserTest extends TestCase
         eset.add(ec2);
         eset.add(ec4);
         constraintEqualsSet.add(c3);
-        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null, false);
+        QueryOptimiser.reconstructAbstractConstraints(set, precomputedSqlTable, valueMap, tableSet, false, newSet, constraintEqualsSet, null, 0, null, false, false);
         assertEquals(eset, newSet);
     }
 
@@ -837,7 +839,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT DISTINCT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
-        eq = new Query("SELECT DISTINCT P42.a AS a, P42.b AS b, P42.c AS c, P42.orderby_field AS orderby_field_from_pt FROM precomp1 AS P42 ORDER BY P42.orderby_field");
+        eq = new Query("SELECT DISTINCT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 ORDER BY P42.orderby_field");
         eSet = new ConsistentSet();
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
@@ -1021,4 +1023,66 @@ public class QueryOptimiserTest extends TestCase
         eSet.add(new Query("SELECT DISTINCT P42.a23_ AS a17_, P42.a18_, P42.a19_, P42.a20_, P42.a21_, P42.a22_ FROM precomp1 AS P42 WHERE LOWER(P42.a23_) = 'cg3481' ORDER BY P42.a23_, P42.a18_, P42.a19_, P42.a20_, P42.a21_, P42.a22_"));
         assertEquals(eSet, bestQuery.getQueries());
     }*/
+
+    public void testOrderDescending() throws Exception {
+        Query q1 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id, b.id DESC");
+        Query q2 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id DESC, b.id");
+        Query q3 = new Query("SELECT DISTINCT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id, b.id DESC");
+        Query pq1 = new Query("SELECT a.id AS aa, a.name AS ab FROM Employee AS a ORDER BY a.id DESC");
+        Query pq2 = new Query("SELECT a.id AS aa, a.name AS ab FROM Employee AS a ORDER BY a.id");
+        Query pq3 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id DESC, b.id DESC");
+        Query pq4 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id DESC, b.id");
+        Query pq5 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id, b.id DESC");
+        Query pq6 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id, b.id");
+
+        Map map = new HashMap();
+
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
+        assertEquals("SELECT a.id AS aa, a.name AS ab FROM Employee AS a ORDER BY a.id DESC", pt1.getSQLString());
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
+        assertEquals("SELECT a.id AS aa, a.name AS ab FROM Employee AS a ORDER BY a.id", pt2.getSQLString());
+        PrecomputedTable pt3 = new PrecomputedTable(pq3, pq3.getSQLString(), "precomp3", null, con);
+        assertEquals("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, -(COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) - COALESCE(b.id::numeric, 49999999999999999999) AS orderby_field FROM Employee AS a, Company AS b ORDER BY a.id DESC, b.id DESC", pt3.getSQLString());
+        PrecomputedTable pt4 = new PrecomputedTable(pq4, pq4.getSQLString(), "precomp4", null, con);
+        assertEquals("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, -(COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) + COALESCE(b.id::numeric, 49999999999999999999) AS orderby_field FROM Employee AS a, Company AS b ORDER BY a.id DESC, b.id", pt4.getSQLString());
+        PrecomputedTable pt5 = new PrecomputedTable(pq5, pq5.getSQLString(), "precomp5", null, con);
+        assertEquals("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, (COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) - COALESCE(b.id::numeric, 49999999999999999999) AS orderby_field FROM Employee AS a, Company AS b ORDER BY a.id, b.id DESC", pt5.getSQLString());
+        PrecomputedTable pt6 = new PrecomputedTable(pq6, pq6.getSQLString(), "precomp6", null, con);
+        assertEquals("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, (COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) + COALESCE(b.id::numeric, 49999999999999999999) AS orderby_field FROM Employee AS a, Company AS b ORDER BY a.id, b.id", pt6.getSQLString());
+
+        doTestAddToMap(map, "pt1, q1", pt1, q1, "SELECT P42.aa, P42.ab, b.id AS ba, b.name AS bb FROM precomp1 AS P42, Company AS b WHERE P42.aa < 5 ORDER BY P42.aa, b.id DESC");
+        doTestAddToMap(map, "pt2, q1", pt2, q1, "SELECT P42.aa, P42.ab, b.id AS ba, b.name AS bb FROM precomp2 AS P42, Company AS b WHERE P42.aa < 5 ORDER BY P42.aa, b.id DESC");
+        doTestAddToMap(map, "pt3, q1", pt3, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp3 AS P42 WHERE P42.aa < 5 ORDER BY P42.aa, P42.ba DESC");
+        doTestAddToMap(map, "pt4, q1", pt4, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp4 AS P42 WHERE P42.orderby_field > -550000000000000000000 ORDER BY P42.orderby_field DESC");
+        doTestAddToMap(map, "pt5, q1", pt5, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp5 AS P42 WHERE P42.orderby_field < 550000000000000000000 ORDER BY P42.orderby_field");
+        doTestAddToMap(map, "pt6, q1", pt6, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp6 AS P42 WHERE P42.aa < 5 ORDER BY P42.aa, P42.ba DESC");
+
+        doTestAddToMap(map, "pt4, q2", pt4, q2, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp4 AS P42 WHERE P42.orderby_field > -550000000000000000000 ORDER BY P42.orderby_field");
+        doTestAddToMap(map, "pt5, q2", pt5, q2, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp5 AS P42 WHERE P42.orderby_field < 550000000000000000000 ORDER BY P42.orderby_field DESC");
+
+        doTestAddToMap(map, "pt5, q3", pt5, q3, "SELECT DISTINCT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp5 AS P42 WHERE P42.aa < 5 ORDER BY P42.orderby_field");
+
+        assertTrue("" + map, map.isEmpty());
+    }
+
+    public static void doTestAddToMap(Map map, String description, PrecomputedTable pt, Query q, String expected) {
+        try {
+            BestQueryStorer bestQuery = new BestQueryStorer();
+            StringUtil.setNextUniqueNumber(42);
+            QueryOptimiser.recursiveOptimise(Collections.singleton(pt), q, bestQuery, q);
+            addIfNE(map, description, Collections.singleton(new Query(expected)), bestQuery.getQueries());
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            pw.flush();
+            map.put(description, sw.toString());
+        }
+    }
+
+    public static void addIfNE(Map map, String a, Object b, Object c) {
+        if (!b.equals(c)) {
+            map.put(a, c);
+        }
+    }
 }

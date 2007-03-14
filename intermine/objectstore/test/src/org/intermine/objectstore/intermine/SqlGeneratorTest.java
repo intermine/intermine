@@ -39,6 +39,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
@@ -342,6 +343,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         //results.put("ObjectStoreBagQueryClass", "SELECT a1_.departmentId AS a3_, a1_.id AS a1_id FROM Employee AS a1_, osbag_int AS indirect0 WHERE a1_.departmentId = indirect0.value AND indirect0.bagid = 5 ORDER BY a1_.departmentId, a1_.id");
         //results2.put("ObjectStoreBagQueryClass", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "osbag_int"})));
         results.put("ObjectStoreBagQueryClass", NO_RESULT);
+        results.put("OrderDescending", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id DESC");
+        results2.put("OrderDescending", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
@@ -665,6 +668,18 @@ public class SqlGeneratorTest extends SetupDataTestCase
         assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.name IS NOT NULL AND a1_.name > 'flibble' ORDER BY a1_.name OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
     }
 
+    public void testRegisterOffset4() throws Exception {
+        DatabaseSchema schema = getSchema();
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "name");
+        q.addToSelect(f);
+        q.addToOrderBy(new OrderDescending(f));
+        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " ORDER BY a1_.name DESC", SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+        SqlGenerator.registerOffset(q, 5, schema, db, "flibble", Collections.EMPTY_MAP);
+        assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " " + getRegisterOffset4() + " a1_.name < 'flibble' ORDER BY a1_.name DESC OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
+    }
 
     public void testForPrecomp() throws Exception {
         DatabaseSchema schema = getSchema();

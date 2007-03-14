@@ -270,6 +270,8 @@ public class IqlQuery
                 + ref.getFieldName() + "(DEF " + objRepresentation + ")";
         } else if (qn instanceof ObjectStoreBag) {
             return "BAG(" + ((ObjectStoreBag) qn).getBagId() + ")";
+        } else if (qn instanceof OrderDescending) {
+            return nodeToString(q, ((OrderDescending) qn).getQueryOrderable()) + " DESC";
         } else {
             throw new IllegalArgumentException("Invalid Object for nodeToString: " + qn.toString());
         }

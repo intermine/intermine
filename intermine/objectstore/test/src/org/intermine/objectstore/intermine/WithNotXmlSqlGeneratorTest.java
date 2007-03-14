@@ -224,6 +224,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("LowerBag", Collections.singleton("Employee"));
         results.put("ObjectStoreBag", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_, " + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " AS indirect0 WHERE a1_.id = indirect0." + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AND indirect0." + ObjectStoreInterMineImpl.BAGID_COLUMN + " = 5 ORDER BY a1_.id");
         results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"Employee", ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME})));
+        results.put("OrderDescending", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id DESC");
+        results2.put("OrderDescending", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() {

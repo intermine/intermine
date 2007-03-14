@@ -410,6 +410,8 @@ public class IqlQueryParser
                 return processNewSafeFunction(ast.getFirstChild(), q);
             case IqlTokenTypes.TYPECAST:
                 return processNewTypeCast(ast.getFirstChild(), q);
+            case IqlTokenTypes.ORDER_DESC:
+                return new OrderDescending(processNewQueryNodeOrReference(ast.getFirstChild(), q));
             default:
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");

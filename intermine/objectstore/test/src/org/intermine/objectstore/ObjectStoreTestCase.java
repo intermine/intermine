@@ -481,6 +481,13 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("FetchBag", Collections.EMPTY_LIST);
         results.put("ObjectStoreBag", Collections.EMPTY_LIST);
         results.put("ObjectStoreBagQueryClass", Collections.EMPTY_LIST);
+        r = new Object[][] { { data.get("EmployeeB3") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB1") },
+                             { data.get("EmployeeA3") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA1") } };
+        results.put("OrderDescending", toList(r));
     }
 
     /**
@@ -495,6 +502,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         if (results.get(type) instanceof Failure) {
             try {
                 Results res = os.execute((Query) queries.get(type));
+                res.setBatchSize(2);
                 Iterator iter = res.iterator();
                 while (iter.hasNext()) {
                     iter.next();
@@ -505,6 +513,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
             }
         } else {
             Results res = os.execute((Query)queries.get(type));
+            res.setBatchSize(2);
             List expected = (List) results.get(type);
             if ((expected != null) && (!expected.equals(res))) {
                 Set a = new HashSet(expected);

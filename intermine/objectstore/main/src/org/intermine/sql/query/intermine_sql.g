@@ -40,6 +40,7 @@ tokens {
     OR_CONSTRAINT_SET;
     SUBQUERY_CONSTRAINT;
     INLIST_CONSTRAINT;
+    ORDER_DESC;
 }
 
 start_rule: sql ;
@@ -68,13 +69,17 @@ group_clause: #( GROUP_CLAUSE ( abstract_value )+ ) ;
 
 having_clause: #( HAVING_CLAUSE ( abstract_constraint)+ ) ;
 
-order_clause: #( ORDER_CLAUSE ( abstract_value )+ ) ;
+order_clause: #( ORDER_CLAUSE ( orderby_value )+ ) ;
 
 limit_clause: #( LIMIT_CLAUSE INTEGER ( INTEGER )? ) ;
 
 select_value: #( SELECT_VALUE abstract_value ( field_alias )? );
 
 abstract_table: table | subquery ;
+
+orderby_value: #( ORDER_DESC abstract_value )
+        | abstract_value
+    ;
 
 abstract_value: unsafe_function | safe_function | typecast | constant | field ;
 
@@ -344,7 +349,7 @@ having_clause:
     ;
 
 order_clause:
-        "order"! "by"! abstract_value ( COMMA! abstract_value )*
+        "order"! "by"! orderby_value ( COMMA! orderby_value )*
         { #order_clause = #([ORDER_CLAUSE, "ORDER_CLAUSE"], #order_clause); }
     ;
 
@@ -366,6 +371,12 @@ select_value:
 
 abstract_table:
         table | subquery
+    ;
+
+orderby_value:
+        (abstract_value "desc")=> abstract_value "desc"!
+        { #orderby_value = #([ORDER_DESC, "ORDER_DESC"], #orderby_value); }
+        | abstract_value
     ;
 
 abstract_value:

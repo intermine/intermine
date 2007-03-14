@@ -43,6 +43,7 @@ tokens {
     TYPECAST;
     FIELD_PATH_EXPRESSION;
     OBJECTSTOREBAG;
+    ORDER_DESC;
 }
 
 
@@ -81,7 +82,7 @@ group_clause:
     ;
 
 order_clause:
-        "order"! "by"! abstract_value ( COMMA! abstract_value )*
+        "order"! "by"! orderby_value ( COMMA! orderby_value )*
         { #order_clause = #([ORDER_CLAUSE, "ORDER_CLAUSE"], #order_clause); }
     ;
 
@@ -100,6 +101,12 @@ select_value:
 
 abstract_table:
         table | subquery | multitable | query_class_bag | query_class_bag_multi
+    ;
+
+orderby_value:
+        (abstract_value "desc")=> abstract_value "desc"!
+        { #orderby_value = #([ORDER_DESC, "ORDER_DESC"], #orderby_value); }
+        | abstract_value
     ;
 
 abstract_value:
