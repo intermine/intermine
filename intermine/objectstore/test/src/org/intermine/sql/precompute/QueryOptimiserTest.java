@@ -839,7 +839,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals(eSet, bestQuery.getQueries());
 
         q = new Query("SELECT DISTINCT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
-        eq = new Query("SELECT DISTINCT P42.a AS a, P42.b AS b, P42.c AS c FROM precomp1 AS P42 ORDER BY P42.orderby_field");
+        eq = new Query("SELECT DISTINCT P42.a AS a, P42.b AS b, P42.c AS c, P42.orderby_field AS orderby_field_from_pt FROM precomp1 AS P42 ORDER BY P42.orderby_field");
         eSet = new ConsistentSet();
         eSet.add(eq);
         StringUtil.setNextUniqueNumber(42);
@@ -942,7 +942,7 @@ public class QueryOptimiserTest extends TestCase
             Set precomps = new HashSet();
             precomps.add(pt1);
 
-            System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
+            //System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
 
             StringUtil.setNextUniqueNumber(42);
             BestQueryStorer bestQuery = new BestQueryStorer();
@@ -973,7 +973,7 @@ public class QueryOptimiserTest extends TestCase
             Set precomps = new HashSet();
             precomps.add(pt1);
 
-            System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
+            //System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
 
             StringUtil.setNextUniqueNumber(42);
             BestQueryStorer bestQuery = new BestQueryStorer();
@@ -1028,12 +1028,14 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id, b.id DESC");
         Query q2 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id DESC, b.id");
         Query q3 = new Query("SELECT DISTINCT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id, b.id DESC");
+        Query q4 = new Query("SELECT DISTINCT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b WHERE a.id < 5 ORDER BY a.id");
         Query pq1 = new Query("SELECT a.id AS aa, a.name AS ab FROM Employee AS a ORDER BY a.id DESC");
         Query pq2 = new Query("SELECT a.id AS aa, a.name AS ab FROM Employee AS a ORDER BY a.id");
         Query pq3 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id DESC, b.id DESC");
         Query pq4 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id DESC, b.id");
         Query pq5 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id, b.id DESC");
         Query pq6 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb FROM Employee AS a, Company AS b ORDER BY a.id, b.id");
+        Query pq7 = new Query("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, b.vatNumber AS bc FROM Employee AS a, Company AS b ORDER BY a.id, b.id DESC, b.vatNumber");
 
         Map map = new HashMap();
 
@@ -1049,6 +1051,7 @@ public class QueryOptimiserTest extends TestCase
         assertEquals("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, (COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) - COALESCE(b.id::numeric, 49999999999999999999) AS orderby_field FROM Employee AS a, Company AS b ORDER BY a.id, b.id DESC", pt5.getSQLString());
         PrecomputedTable pt6 = new PrecomputedTable(pq6, pq6.getSQLString(), "precomp6", null, con);
         assertEquals("SELECT a.id AS aa, a.name AS ab, b.id AS ba, b.name AS bb, (COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) + COALESCE(b.id::numeric, 49999999999999999999) AS orderby_field FROM Employee AS a, Company AS b ORDER BY a.id, b.id", pt6.getSQLString());
+        PrecomputedTable pt7 = new PrecomputedTable(pq7, pq7.getSQLString(), "precomp7", null, con);
 
         doTestAddToMap(map, "pt1, q1", pt1, q1, "SELECT P42.aa, P42.ab, b.id AS ba, b.name AS bb FROM precomp1 AS P42, Company AS b WHERE P42.aa < 5 ORDER BY P42.aa, b.id DESC");
         doTestAddToMap(map, "pt2, q1", pt2, q1, "SELECT P42.aa, P42.ab, b.id AS ba, b.name AS bb FROM precomp2 AS P42, Company AS b WHERE P42.aa < 5 ORDER BY P42.aa, b.id DESC");
@@ -1056,11 +1059,15 @@ public class QueryOptimiserTest extends TestCase
         doTestAddToMap(map, "pt4, q1", pt4, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp4 AS P42 WHERE P42.orderby_field > -550000000000000000000 ORDER BY P42.orderby_field DESC");
         doTestAddToMap(map, "pt5, q1", pt5, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp5 AS P42 WHERE P42.orderby_field < 550000000000000000000 ORDER BY P42.orderby_field");
         doTestAddToMap(map, "pt6, q1", pt6, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp6 AS P42 WHERE P42.aa < 5 ORDER BY P42.aa, P42.ba DESC");
+        doTestAddToMap(map, "pt7, q1", pt7, q1, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp7 AS P42 WHERE P42.orderby_field < 55000000000000000000050000000000000000000 ORDER BY P42.orderby_field");
 
         doTestAddToMap(map, "pt4, q2", pt4, q2, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp4 AS P42 WHERE P42.orderby_field > -550000000000000000000 ORDER BY P42.orderby_field");
         doTestAddToMap(map, "pt5, q2", pt5, q2, "SELECT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp5 AS P42 WHERE P42.orderby_field < 550000000000000000000 ORDER BY P42.orderby_field DESC");
 
-        doTestAddToMap(map, "pt5, q3", pt5, q3, "SELECT DISTINCT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp5 AS P42 WHERE P42.aa < 5 ORDER BY P42.orderby_field");
+        doTestAddToMap(map, "pt5, q3", pt5, q3, "SELECT DISTINCT P42.aa, P42.ab, P42.ba, P42.bb, P42.orderby_field AS orderby_field_from_pt FROM precomp5 AS P42 WHERE P42.orderby_field < 550000000000000000000 ORDER BY P42.orderby_field");
+        doTestAddToMap(map, "pt7, q3", pt7, q3, "SELECT DISTINCT P42.aa, P42.ab, P42.ba, P42.bb FROM precomp7 AS P42 WHERE P42.aa < 5 ORDER BY P42.aa, P42.ba DESC");
+
+        doTestAddToMap(map, "pt5, q4", pt5, q4, "SELECT DISTINCT P42.aa, P42.ab, P42.ba, P42.bb, P42.orderby_field AS orderby_field_from_pt FROM precomp5 AS P42 WHERE P42.orderby_field < 550000000000000000000 ORDER BY P42.orderby_field");
 
         assertTrue("" + map, map.isEmpty());
     }
