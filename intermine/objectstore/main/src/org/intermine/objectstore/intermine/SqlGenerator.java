@@ -44,6 +44,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
@@ -56,6 +57,7 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QueryPathExpression;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QuerySelectable;
@@ -220,11 +222,8 @@ public class SqlGenerator
                         }
                     }
                 }
-                QueryNode firstOrderBy = null;
-                firstOrderBy = (QueryNode) q.getEffectiveOrderBy().iterator().next();
-                if (firstOrderBy instanceof QueryClass) {
-                    firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
-                }
+                QueryOrderable firstOrderBy = null;
+                firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
                 // Now we need to work out if this field is a primitive type or a object
                 // type (that can accept null values).
                 Constraint offsetConstraint = getOffsetConstraint(q, firstOrderBy, value, schema);
@@ -246,9 +245,9 @@ public class SqlGenerator
     /**
      * Create a constraint to add to the main query to deal with offset - this is based on
      * the first element in the order by (field) and a given value (x).  If the order by
-     * element cannot have null values this is: 'field > x'.  If field can have null values
+     * element cannot have null values this is: 'field &gt; x'.  If field can have null values
      * *and* it has not already been constrained as 'NOT NULL' in the main query it is:
-     * '(field > x or field IS NULL'.
+     * '(field &gt; x or field IS NULL'.
      * @param q the Query
      * @param firstOrderBy the offset element of the query's order by list
      * @param value a value, such that adding a WHERE component first_order_field &gt; value with
@@ -256,10 +255,18 @@ public class SqlGenerator
      * @param schema the DatabaseSchema in which to look up metadata
      * @return the constraint(s) to add to the main query
      */
-    protected static Constraint getOffsetConstraint(Query q, QueryNode firstOrderBy,
+    protected static Constraint getOffsetConstraint(Query q, QueryOrderable firstOrderBy,
                                                   Object value, DatabaseSchema schema) {
+        boolean reverse = false;
+        if (firstOrderBy instanceof OrderDescending) {
+            firstOrderBy = ((OrderDescending) firstOrderBy).getQueryOrderable();
+            reverse = true;
+        }
+        if (firstOrderBy instanceof QueryClass) {
+            firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
+        }
         boolean hasNulls = true;
-        if (firstOrderBy instanceof QueryField) {
+        if ((firstOrderBy instanceof QueryField) && (!reverse)) {
             FromElement qc = ((QueryField) firstOrderBy).getFromElement();
             if (qc instanceof QueryClass) {
                 if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
@@ -275,22 +282,28 @@ public class SqlGenerator
                 }
             }
         }
-        SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                  ConstraintOp.GREATER_THAN, new QueryValue(value));
-        if (hasNulls) {
-            // if the query aready constrains the first order by field to be
-            // not null it doesn't make sense to add a costraint to null
-            CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint(firstOrderBy);
-            ConstraintHelper.traverseConstraints(q.getConstraint(), check);
-            if (!check.exists()) {
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
-                cs.addConstraint(sc);
-                cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                                      ConstraintOp.IS_NULL));
-                return cs;
+        if (reverse) {
+            return new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                    ConstraintOp.LESS_THAN, new QueryValue(value));
+        } else {
+            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                    ConstraintOp.GREATER_THAN, new QueryValue(value));
+            if (hasNulls) {
+                // if the query aready constrains the first order by field to be
+                // not null it doesn't make sense to add a costraint to null
+                CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
+                        firstOrderBy);
+                ConstraintHelper.traverseConstraints(q.getConstraint(), check);
+                if (!check.exists()) {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+                    cs.addConstraint(sc);
+                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                ConstraintOp.IS_NULL));
+                    return cs;
+                }
             }
+            return sc;
         }
-        return sc;
     }
 
     /**
@@ -1665,12 +1678,21 @@ public class SqlGenerator
         Iterator orderByIter = q.getEffectiveOrderBy().iterator();
         while (orderByIter.hasNext()) {
             Object node = orderByIter.next();
+            boolean desc = false;
+            if (node instanceof OrderDescending) {
+                desc = true;
+                node = ((OrderDescending) node).getQueryOrderable();
+            }
             if (!((node instanceof QueryValue) || (node instanceof QueryPathExpression))) {
                 StringBuffer buffer = new StringBuffer();
                 if (node instanceof QueryClass) {
-                    retval.append(needComma ? ", " : " ORDER BY ");
-                    needComma = true;
-                    queryClassToString(retval, (QueryClass) node, q, schema, ID_ONLY, state);
+                    queryClassToString(buffer, (QueryClass) node, q, schema, ID_ONLY, state);
+                    if (!seen.contains(buffer.toString())) {
+                        retval.append(needComma ? ", " : " ORDER BY ");
+                        needComma = true;
+                        retval.append(buffer.toString());
+                        seen.add(buffer.toString());
+                    }
                 } else if (node instanceof QueryObjectReference) {
                     QueryObjectReference ref = (QueryObjectReference) node;
                     buffer.append((String) state.getFieldToAlias(ref.getQueryClass())
@@ -1729,6 +1751,9 @@ public class SqlGenerator
                             }
                         }
                     }
+                }
+                if (desc) {
+                    retval.append(" DESC");
                 }
             }
         }

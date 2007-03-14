@@ -233,6 +233,9 @@ public class QueryCloner
         } else if (orig instanceof ObjectStoreBag) {
             // Immutable
             return orig;
+        } else if (orig instanceof OrderDescending) {
+            return new OrderDescending((QueryOrderable) cloneThing(((OrderDescending) orig)
+                        .getQueryOrderable(), fromElementMap));
         }
         throw new IllegalArgumentException("Unknown object type: " + orig);
     }

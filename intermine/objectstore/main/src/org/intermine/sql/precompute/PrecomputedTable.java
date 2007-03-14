@@ -23,6 +23,7 @@ import java.util.Map;
 import org.intermine.sql.query.AbstractTable;
 import org.intermine.sql.query.AbstractValue;
 import org.intermine.sql.query.Field;
+import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.Query;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SQLStringable;
@@ -94,6 +95,9 @@ public class PrecomputedTable implements SQLStringable, Comparable
                 Iterator orderByIter = q.getOrderBy().iterator();
                 while (orderByIter.hasNext() && useOrderByField) {
                     AbstractValue column = (AbstractValue) orderByIter.next();
+                    if (column instanceof OrderDescending) {
+                        column = ((OrderDescending) column).getValue();
+                    }
                     if (valueMap.containsKey(column)) {
                         if (column instanceof Field) {
                             AbstractTable table = ((Field) column).getTable();
@@ -151,6 +155,9 @@ public class PrecomputedTable implements SQLStringable, Comparable
             Iterator orderByIter = q.getOrderBy().iterator();
             if (orderByIter.hasNext()) {
                 AbstractValue column = (AbstractValue) orderByIter.next();
+                if (column instanceof OrderDescending) {
+                    column = ((OrderDescending) column).getValue();
+                }
                 if (column instanceof Field) {
                     AbstractTable table = ((Field) column).getTable();
                     if (table instanceof Table) {
@@ -189,17 +196,35 @@ public class PrecomputedTable implements SQLStringable, Comparable
             orderByField = ORDERBY_FIELD;
             List orderBy = q.getOrderBy();
             StringBuffer extraBuffer = new StringBuffer();
-            for (int i = orderBy.size() - 1; i > 0; i--) {
-                extraBuffer.append("(COALESCE(" + ((SQLStringable) orderBy.get(orderBy.size() - 1
-                                        - i)).getSQLString()
-                        + "::numeric, 49999999999999999999) * 1");
-                for (int o = 0; o < i; o++) {
+            for (int i = 0; i < orderBy.size(); i++) {
+                AbstractValue orderByField = (AbstractValue) orderBy.get(i);
+                if (orderByField instanceof OrderDescending) {
+                    orderByField = ((OrderDescending) orderByField).getValue();
+                    if (i == 0) {
+                        extraBuffer.append("-");
+                    } else {
+                        extraBuffer.append(" - ");
+                    }
+                } else {
+                    if (i != 0) {
+                        extraBuffer.append(" + ");
+                    }
+                }
+                if (i < orderBy.size() - 1) {
+                    extraBuffer.append("(");
+                }
+                extraBuffer.append("COALESCE(" + orderByField.getSQLString() + "::numeric, 49999999999999999999)");
+                if (i < orderBy.size() - 1) {
+                    extraBuffer.append(" * 1");
+                }
+                for (int o = 0; o < orderBy.size() - 1 - i; o++) {
                     extraBuffer.append("00000000000000000000");
                 }
-                extraBuffer.append(") + ");
+                if (i < orderBy.size() - 1) {
+                    extraBuffer.append(")");
+                }
             }
-            extraBuffer.append("COALESCE(" + ((SQLStringable) orderBy.get(orderBy.size() - 1))
-                    .getSQLString() + "::numeric, 49999999999999999999) AS " + ORDERBY_FIELD);
+            extraBuffer.append(" AS " + ORDERBY_FIELD);
             generationSqlString = q.getSQLStringForPrecomputedTable(extraBuffer.toString());
         } else {
             orderByField = null;

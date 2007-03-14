@@ -239,6 +239,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("FetchBag", fetchBag());
         queries.put("ObjectStoreBag", objectStoreBag());
         queries.put("ObjectStoreBagQueryClass", objectStoreBagQueryClass());
+        queries.put("OrderDescending", orderDescending());
     }
 
     /*
@@ -1656,6 +1657,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(qc);
         q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "employees"), ConstraintOp.CONTAINS, qc));
         q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT Employee FROM Employee ORDER BY Employee DESC
+     */
+    public static Query orderDescending() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToOrderBy(new OrderDescending(qc));
         return q;
     }
 }

@@ -44,6 +44,8 @@ public class QueryTestCase extends OneTimeTestCase
             checkQueryClassLists(msg + ": FROM lists are not equal", q1.getFrom(), q2.getFrom(), q1, q2);
             // Are the constraints equal?
             checkConstraints(msg + ": CONSTRAINTS not the same", q1.getConstraint(), q2.getConstraint(), q1, q2);
+            // Are the ORDER BY lists equal?
+            checkQueryClassLists(msg + ": ORDER BY lists are not equal", q1.getOrderBy(), q2.getOrderBy(), q1, q2);
             // Do the toString methods return the same thing?
             checkToString(msg + ": toString does not return the same String", q1, q2);
         } else if ((q1 == null) && (q2 == null)) {
@@ -126,6 +128,18 @@ public class QueryTestCase extends OneTimeTestCase
                 } else {
                     fail(msg + ": ObjectStoreBag does not match " + qc2.getClass().getName());
                 }
+            } else if (qc1 instanceof OrderDescending) {
+                if (qc2 instanceof OrderDescending) {
+                    checkQueryNodes(msg + ": OrderDescending element does not match", ((OrderDescending) qc1).getQueryOrderable(), ((OrderDescending) qc2).getQueryOrderable(), q1, q2);
+                } else {
+                    fail(msg + ": OrderDescending does not match " + qc2.getClass().getName());
+                }
+            } else if (qc1 instanceof QueryReference) {
+                if (qc2 instanceof QueryReference) {
+                    checkQueryReferences(msg, (QueryReference) qc1, (QueryReference) qc2, q1, q2);
+                } else {
+                    fail(msg + ": QueryReference does not match " + qc2.getClass().getName());
+                }
             } else {
                 fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());
             }
@@ -133,7 +147,7 @@ public class QueryTestCase extends OneTimeTestCase
 
     }
 
-    protected void checkQueryNodes(String msg, QueryNode qn1, QueryNode qn2, Query q1, Query q2) {
+    protected void checkQueryNodes(String msg, Object qn1, Object qn2, Query q1, Query q2) {
         if ((qn1 == null) && (qn2 == null)) {
             return;
         }

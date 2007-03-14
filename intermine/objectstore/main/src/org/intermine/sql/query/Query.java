@@ -775,6 +775,8 @@ public class Query implements SQLStringable
                 return processNewUnsafeFunction(ast.getFirstChild());
             case SqlTokenTypes.SAFE_FUNCTION:
                 return processNewSafeFunction(ast.getFirstChild());
+            case SqlTokenTypes.ORDER_DESC:
+                return new OrderDescending(processNewAbstractValue(ast.getFirstChild()));
             default:
                 throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]"));

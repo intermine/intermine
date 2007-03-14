@@ -50,6 +50,7 @@ import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
+import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -760,8 +761,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
             long endOptimiseTime = System.currentTimeMillis();
-            sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
-            sql = sql.replaceAll(" ([^ ]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
+            sql = sql.replaceAll(" ([^ )]*) IS NULL", " ($1 IS NULL) = true");
+            sql = sql.replaceAll(" ([^ )]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
             long postNullStuff = System.currentTimeMillis();
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
@@ -854,6 +855,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Object firstOrderByObject = q.getEffectiveOrderBy().iterator().next();
             if (firstOrderByObject instanceof QueryOrderable) {
                 QueryOrderable firstOrderBy = (QueryOrderable) firstOrderByObject;
+                if (firstOrderBy instanceof OrderDescending) {
+                    firstOrderBy = ((OrderDescending) firstOrderBy).getQueryOrderable();
+                }
                 if (q.getSelect().contains(firstOrderBy) && (objResults.size() > 1)) {
                     int colNo = q.getSelect().indexOf(firstOrderBy);
                     int rowNo = objResults.size() - 1;

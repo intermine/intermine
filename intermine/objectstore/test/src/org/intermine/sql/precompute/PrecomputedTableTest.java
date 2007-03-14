@@ -139,17 +139,22 @@ public class PrecomputedTableTest extends TestCase
         Query q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
         PrecomputedTable pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals("orderby_field", pt.getOrderByField());
+        assertEquals("SELECT ta.id AS a, tb.id AS b, tc.id AS c, (COALESCE(ta.id::numeric, 49999999999999999999) * 10000000000000000000000000000000000000000) + (COALESCE(tb.id::numeric, 49999999999999999999) * 100000000000000000000) + COALESCE(tc.id::numeric, 49999999999999999999) AS orderby_field FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id", pt.getSQLString());
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.name AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
         pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals(null, pt.getOrderByField());
+        assertEquals(q1.getSQLString(), pt.getSQLString());
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.name AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
         pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
         assertEquals(null, pt.getOrderByField());
+        assertEquals(q1.getSQLString(), pt.getSQLString());
 
         q1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.name");
         pt = new PrecomputedTable(q1, q1.getSQLString(), "name", null, con);
+        assertEquals(null, pt.getOrderByField());
+        assertEquals(q1.getSQLString(), pt.getSQLString());
     }
 
     public void testCompareTo() throws Exception {
