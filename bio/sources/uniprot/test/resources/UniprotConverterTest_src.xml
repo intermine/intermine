@@ -9,7 +9,7 @@
   <name>EVE_DROME</name>
   <protein type="fragment">
     <name>Segmentation protein even-skipped</name>
-    <name>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx Dummy Second Name xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</name>
+    <name>Dummy Second Name</name>
   </protein>
   <gene>
     <name type="primary">eve</name>
@@ -176,6 +176,9 @@
   </dbReference>
   <dbReference type="InterPro" id="IPR000047" key="53">
     <property type="entry name" value="HTH_lambrepressr"/>
+  </dbReference>
+	<dbReference type="InterPro" id="IPR004095" key="340">
+    <property type="entry name" value="TGS"/>
   </dbReference>
   <dbReference type="Gene3D" id="G3DSA:1.10.10.60" key="54">
     <property type="entry name" value="Homeodomain-rel"/>
