@@ -45,7 +45,8 @@ public class UniprotConverterTest extends TestCase
 
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new UniprotConverter(itemWriter);
+        UniprotConverter converter = new UniprotConverter(itemWriter);
+        converter.setCreateinterpro("true"); 
         converter.process(reader);
         converter.close();
 
