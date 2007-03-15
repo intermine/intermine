@@ -366,7 +366,7 @@ public class GoConverter extends FileConverter
             actualGoTerms);
 
         // add this term to actual go terms list
-        //actualGoTerms.addRefId(placeHolder.getGoTerm().getIdentifier());
+        actualGoTerms.addRefId(placeHolder.getGoTerm().getIdentifier());
         
         // If the qualifier is not a NOT.
         if (!"".equals(placeHolder.getQualifier())) {
@@ -452,8 +452,7 @@ public class GoConverter extends FileConverter
                 PlaceHolder parentPlaceHolder = (PlaceHolder) holderMap.get(key);
                 parentItem = parentPlaceHolder.getGoAnno();
                 // add this go term to the parent's collection of children                
-                // TODO temporarily don't write actualGOTerms collection
-                //parentItem.getCollection("actualGoTerms").addRefId(placeHolder.getGoTerm().getIdentifier());
+                parentItem.getCollection("actualGoTerms").addRefId(placeHolder.getGoTerm().getIdentifier());
                 if (!goAnnoItems.containsKey(key)) {
                     goAnnoItems.put(key, parentItem);
                 }
@@ -462,10 +461,10 @@ public class GoConverter extends FileConverter
                 ReferenceList actualGoTerms = null;
                 if (goAnnoItems.containsKey(key)) {
                     parentItem = (Item) goAnnoItems.get(key);
-                    //actualGoTerms = parentItem.getCollection("actualGoTerms");
+                    actualGoTerms = parentItem.getCollection("actualGoTerms");
                 } else {
                     // start a list of kids for this new parent
-                    //actualGoTerms =  new ReferenceList("actualGoTerms", new ArrayList());
+                    actualGoTerms =  new ReferenceList("actualGoTerms", new ArrayList());
 
                     // create annotation object
                     parentItem = newGoAnnotationItem(
@@ -476,7 +475,7 @@ public class GoConverter extends FileConverter
 
                     goAnnoItems.put(key, parentItem);
                 }
-                //actualGoTerms.addRefId(placeHolder.getGoTerm().getIdentifier());
+                actualGoTerms.addRefId(placeHolder.getGoTerm().getIdentifier());
             }
 
             // add name to parent
@@ -523,10 +522,9 @@ public class GoConverter extends FileConverter
         if (goEvidenceColl != null) {
             goAnnoItem.addCollection(goEvidenceColl);
         }
-        // TODO - temporarily don't write actualGoTerms collection to be compatible with old model
-//        if (actualGoTerms != null) {
-//            goAnnoItem.addCollection(actualGoTerms);
-//        }
+        if (actualGoTerms != null) {
+            goAnnoItem.addCollection(actualGoTerms);
+        }
         goAnnoItem.setReference("subject", subject);
         goAnnoItem.setReference("property", property);
         return goAnnoItem;

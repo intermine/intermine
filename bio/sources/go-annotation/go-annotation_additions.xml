@@ -8,7 +8,7 @@
   <attribute name="qualifier" type="java.lang.String"/>
   <attribute name="withText" type="java.lang.String"/>  
   <attribute name="isPrimaryAssignment" type="java.lang.Boolean"/>  
-  <reference name="actualGoTerm" referenced-type="org.flymine.model.genomic.GOTerm"/>
+  <collection name="actualGoTerms" referenced-type="org.flymine.model.genomic.GOTerm"/>
   <reference name="assignedBy" referenced-type="org.flymine.model.genomic.DataSource"/>
   <collection name="goEvidenceCodes" referenced-type="org.flymine.model.genomic.GOEvidenceCode"/>  
   <collection name="with" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true"/>
