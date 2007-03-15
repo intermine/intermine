@@ -26,7 +26,7 @@
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 6239 180454 7460 4932"/>
       <property name="src.data.dir" location="/shared/data/uniprot/9.6"/>
-       <property name="createinterpro" value="true"/>
+       <property name="createinterpro" value="false"/>
     </source>
    <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/keywords"/>
@@ -83,15 +83,15 @@
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
-
-    <!--  sources that need fixing
-    <source name="drosdel" type="drosdel" dump="true"/>
     <source name="tiling_path" type="tiling_path" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
+
+    <!--  sources that need fixing
+    <source name="drosdel" type="drosdel" dump="true"/>
     <source name="geneID-ncbiID" type="tab-separated-file">
       <property name="tsv.config.file" value="resources/geneID-ncbiID.tsv_config"/>
       <property name="tsv.includes" value="ncbigene2ID.txt"/>
