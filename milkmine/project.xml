@@ -17,20 +17,8 @@
       <property name="organism" value="RN"/>
       <property name="excludelist" value="org.intermine.model.ensembl.dna org.intermine.model.ensembl.repeat_feature org.intermine.model.ensembl.misc_attrib org.intermine.model.ensembl.misc_feature org.intermine.model.ensembl.misc_feature_misc_set"/>
     </source> -->
-<!--    <source name="ensembl-chimp" type="ensembl">
-      <property name="organism" value="PT"/>
-      <property name="excludelist" value="org.intermine.model.ensembl.dna org.intermine.model.ensembl.repeat_feature org.intermine.model.ensembl.misc_attrib org.intermine.model.ensembl.misc_feature org.intermine.model.ensembl.misc_feature_misc_set"/>
-    </source> -->
-<!--    <source name="ensembl-dog" type="ensembl">
-      <property name="organism" value="ML"/>
-      <property name="excludelist" value="org.intermine.model.ensembl.dna org.intermine.model.ensembl.repeat_feature org.intermine.model.ensembl.misc_attrib org.intermine.model.ensembl.misc_feature org.intermine.model.ensembl.misc_feature_misc_set"/>
-    </source> -->
 <!--    <source name="ensembl-cow" type="ensembl">
       <property name="organism" value="BT"/>
-      <property name="excludelist" value="org.intermine.model.ensembl.dna org.intermine.model.ensembl.repeat_feature org.intermine.model.ensembl.misc_attrib org.intermine.model.ensembl.misc_feature org.intermine.model.ensembl.misc_feature_misc_set"/>
-    </source> -->
-<!--    <source name="ensembl-opossum" type="ensembl">
-      <property name="organism" value="MD"/>
       <property name="excludelist" value="org.intermine.model.ensembl.dna org.intermine.model.ensembl.repeat_feature org.intermine.model.ensembl.misc_attrib org.intermine.model.ensembl.misc_feature org.intermine.model.ensembl.misc_feature_misc_set"/>
     </source> -->
 
@@ -40,9 +28,9 @@
    </source> -->
 
 <!-- This is my own source of bioactive milk peptides which are known to be found in milk -->
-   <source name="milk_peptides" type="milk_peptides">
+<!--   <source name="milk_peptides" type="milk_peptides">
       <property name="tgt.xml.file" location="/tmp/xml"/>
-   </source> 
+   </source> -->
 
 <!-- This is my own source of the 135 semantic types found in the UMLS -->
 <!--  <source name="semantic_types" type="semantic_types">
@@ -57,31 +45,23 @@
     <!-- UniProt may need to be split into to two steps because of integration keys,
         this is just because some organisms may fill in Gene.identifier and some
         fill in Gene.organismDbId.  There is no need for one source per organism.-->
-<!--   <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="10090 10116"/>
-      <property name="src.data.dir" location="/user_data/XML/"/>
-    </source> -->
-    <!-- <source name="uniprot-gene-identifier" type="uniprot">
-      <property name="uniprot.organisms" value="10090,10116"/>
-      <property name="src.data.dir" location="/user_data/XML/"/>
-    </source> -->
+    <source name="uniprot" type="uniprot">
+      <!--property name="uniprot.organisms" value="9913 9606 9925 10090 10116 9940"/-->
+      <property name="uniprot.organisms" value="9913 9925 9940"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/9.6"/>
+    </source>
 
     <!-- load all PSI files downloaded to given directory.  Need to include a list
          taxon ids to restrict the interactions loaded.  -->
-<!--    <source name="psi-intact" type="psi">
-      <property name="src.data.dir" location="/user_data/XML/psi"/>
-      <property name="organisms" value="10090 10116"/>
-    </source> -->
+    <source name="psi-intact" type="psi">
+      <property name="src.data.dir" location="/shared/data/milkmine/psi/intact/2007-03-09"/>
+      <property name="organisms" value="9913 9940 9606 9925 10090 10116"/>
+    </source>
 
     <!-- need to get a postgresql dump of interpro from FlyMine group to mirror
          locally.  Then just specify list of taxon ids to retrieve for. -->
     <!-- <source name="interpro" type="interpro">
       <property name="interpro.organisms" value="10090 10116"/>
-    </source> -->
-
-    <!-- load the gene ontology term definitions. -->
-<!--    <source name="go" type="go">
-      <property name="src.data.file" location="/user_data/XML/ontology/gene_ontology.obo"/>
     </source> -->
 
     <!-- Load all InParanoid orthologue files in specified directory.  This sets
@@ -91,37 +71,24 @@
       <property name="src.data.dir" location="/user_data/XML/inparanoid/"/>
     </source> -->
 
-    <!-- load all gene_association files from specified directory.  Again this is split
-         into two depending on whether Gene.identifier or Gene.organismDbId is set. -->
-<!--    <source name="go-annotation-mouse-gene-identifier" type="go-annotation">
-      <property name="ontologyfile" location="/user_data/XML/ontology/gene_ontology.obo"/>
-      <property name="geneattribute" value="identifier"/>
-      <property name="src.data.dir" location="/user_data/XML/go/"/>
-    </source> -->
-<!--    <source name="go-annotation-gene-identifier" type="go-annotation">
-      <property name="ontologyfile" location="/user_data/XML/ontology/gene_ontology.obo"/>
-      <property name="geneattribute" value="identifier"/>
-      <property name="src.data.dir" location="/user_data/XML/go/"/>
-    </source> -->
-<!--    <source name="entrez-organism" type="entrez-organism"> -->
+    <!-- load the gene ontology term definitions. -->
+    <source name="go" type="go">
+      <property name="src.data.file" location="/user_data/XML/ontology/gene_ontology.obo"/>
+    </source>
+
+    <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/shared/data/gene_ontology/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/uniprot/2007-03-06"/>
+    </source>
+
+    <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
            file, loads that file into a target items DB, then into the final
            objectstore -->
-<!--      <property name="tgt.xml.file" location="build/organisms.xml"/>
-    </source> -->
-
-    <!-- old stuff, moved by rns -->
-    <!-- source name="uniprot-mouse" type="uniprot">
-      <property name="uniprot.organisms" value="10090"/>
-      <property name="src.data.dir" location="/user_data/XML/"/>
+      <property name="tgt.xml.file" location="build/organisms.xml"/>
     </source>
-    <source name="uniprot-rat" type="uniprot">
-      <property name="uniprot.organisms" value="10116"/>
-      <property name="src.data.dir" location="/user_data/XML/"/>
-    </source> -->
   </sources>
-
   <post-processing>
 <!--    
     <post-process name="fetch-ensembl-contig-sequences"/>

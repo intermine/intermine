@@ -382,6 +382,14 @@ public class UniprotConverter extends FileConverter
 
                     // get relevant database for this organism
                     dbName = (String) taxIdToDb.get(taxonId);
+                    if (dbName == null) {
+                        String message = "No gene source database defined for organism: "
+                            + taxonId + ", using UniProt.";
+                        System .err.println(message);
+                        LOG.warn(message);
+                        taxIdToDb.put(taxonId, "UniProt");
+                        dbName = "UniProt";
+                    }
 
                 // <entry><reference><citation><dbreference>
                 } else if (hasPrimary  && qName.equals("dbReference")
@@ -939,6 +947,10 @@ public class UniprotConverter extends FileConverter
                         geneOrganismDbId = "RGD:" + geneOrganismDbId;
                     }
                     uniqueGeneIdentifier = geneOrganismDbId;
+                } else if (taxonId.equals("9913") || taxonId.equals("9940")
+                           || taxonId.equals("9925")) {
+                    // cow, sheep and goat for MilkMine
+                    uniqueGeneIdentifier = primaryGeneName;
                 }
 
                 // uniprot data source has primary key of Gene.organismDbId
