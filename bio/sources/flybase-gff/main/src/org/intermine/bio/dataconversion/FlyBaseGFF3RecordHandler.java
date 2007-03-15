@@ -148,38 +148,36 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             } catch (Exception e) {
                 throw new RuntimeException("error getting parents for CDS: " + cdsId, e);
             }
-            try {
+            if (!transIter.hasNext()) {
+                throw new RuntimeException("no parent found for CDS: " + cdsId);
+            }
+            while (transIter.hasNext()) {
                 transcriptId = (String) transIter.next();
-            } catch (Exception e) {
-                throw new RuntimeException("no parent found for CDS: " + cdsId, e);
-            }
-            if (transIter.hasNext()) {
-                throw new RuntimeException("multiple parents found for CDS: " + cdsId);
-            }
 
-            CDSHolder holder = new CDSHolder(cdsName, transcriptId);
-            cdss.add(holder);
+                CDSHolder holder = new CDSHolder(cdsName, transcriptId);
+                cdss.add(holder);
 
-            // TODO does reference to transcript get set?
-            Integer start = new Integer(getLocation().getAttribute("start").getValue());
-            Integer end = new Integer(getLocation().getAttribute("end").getValue());
-            Set starts = (Set) cdsStarts.get(holder);
-            if (starts == null) {
-                starts = new TreeSet();
-                cdsStarts.put(holder, starts);
+                // TODO does reference to transcript get set?
+                Integer start = new Integer(getLocation().getAttribute("start").getValue());
+                Integer end = new Integer(getLocation().getAttribute("end").getValue());
+                Set starts = (Set) cdsStarts.get(holder);
+                if (starts == null) {
+                    starts = new TreeSet();
+                    cdsStarts.put(holder, starts);
+                }
+                starts.add(start);
+
+                Set ends = (Set) cdsEnds.get(holder);
+                if (ends == null) {
+                    ends = new TreeSet();
+                    cdsEnds.put(holder, ends);
+                }
+                ends.add(end);
+
+                // Some CDSs have components on different strands, take strand of lowest start
+                cdsStrands.put(holder.key + "_" + start,
+                               getLocation().getAttribute("strand").getValue());
             }
-            starts.add(start);
-
-            Set ends = (Set) cdsEnds.get(holder);
-            if (ends == null) {
-                ends = new TreeSet();
-                cdsEnds.put(holder, ends);
-            }
-            ends.add(end);
-
-            // Some CDSs have components on different strands, take strand of lowest start
-            cdsStrands.put(holder.key + "_" + start,
-                           getLocation().getAttribute("strand").getValue());
         }
 
         // In FlyBase GFF, pseudogenes are modelled as a gene with a pseudogene feature as a child.
