@@ -57,11 +57,12 @@ public class UniprotConverter extends FileConverter
     private Map taxIdToDb = new HashMap();
     private Map featureTypes = new HashMap();
     private Map geneMaster = new HashMap();
+    private Map interproMaster = new HashMap();
     private Set geneIdentifiers = new HashSet();
     private Map ids = new HashMap();
     private Map aliases = new HashMap();
     private Map keyMaster = new HashMap();
-
+    private boolean createInterpro = false;
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -80,7 +81,7 @@ public class UniprotConverter extends FileConverter
         mapMaps();
         mapDatabases();
         mapFeatures();
-        UniprotHandler handler = new UniprotHandler(writer, mapMaster);
+        UniprotHandler handler = new UniprotHandler(writer, mapMaster, createInterpro);
 
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -102,10 +103,12 @@ public class UniprotConverter extends FileConverter
         mapMaster.put("dsMaster", dsMaster);
         mapMaster.put("ontoMaster", ontoMaster);
         mapMaster.put("geneMaster", geneMaster);
+        mapMaster.put("interproMaster", interproMaster);
         mapMaster.put("geneIdentifiers", geneIdentifiers);
         mapMaster.put("ids", ids);
         mapMaster.put("aliases", aliases);
         mapMaster.put("keyMaster", keyMaster);
+        
     }
 
     // makes map so we know which datasource to use for each organism
@@ -160,6 +163,16 @@ public class UniprotConverter extends FileConverter
         featureTypes.put("UNSURE", "unsure residue");            // none
 
     }
+    
+    public void setCreateinterpro(String createinterpro) {
+        if(createinterpro.equals("true")) {
+            this.createInterpro = true;
+        } else {
+            this.createInterpro = false;
+        }
+       
+    }
+    
     /**
      * Extension of PathQueryHandler to handle parsing TemplateQueries
      */
@@ -173,6 +186,7 @@ public class UniprotConverter extends FileConverter
         private Item sequence;
         private Item comment;
         private Item feature;
+        private Item interpro;  // protein feature
         private Map synonyms;
         private Map genes;
         private StringBuffer descr;
@@ -186,7 +200,8 @@ public class UniprotConverter extends FileConverter
         private ReferenceList keywordCollection;
         private ReferenceList featureCollection;
         private ReferenceList geneCollection;
-
+        private ReferenceList interproCollection;
+        
         // maps genes for this protein to that gene's lists of names, identifiers, etc
         private Map geneTOgeneNameTypeToName;
         private Map geneTOgeneDesignations;
@@ -205,6 +220,7 @@ public class UniprotConverter extends FileConverter
         private Map dbMaster;
         private Map dsMaster;
         private Map ontoMaster;
+        private Map interproMaster;
         private Map taxIdToDb;        // which database to use for which organism
         private Map featureTypes;
         private Item datasource;
@@ -220,13 +236,15 @@ public class UniprotConverter extends FileConverter
         private Stack stack = new Stack();
         private String attName = null;
         private StringBuffer attValue = null;
-
+        private boolean createInterpro = false;
+        
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          * @param mapMaster the Map of maps
+         * @param createInterpro whether or not to create interpro items
          */
-        public UniprotHandler(ItemWriter writer, Map mapMaster) {
+        public UniprotHandler(ItemWriter writer, Map mapMaster, boolean createInterpro) {
 
             itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;
@@ -236,6 +254,7 @@ public class UniprotConverter extends FileConverter
             this.dbMaster = (Map) mapMaster.get("dbMaster");
             this.dsMaster = (Map) mapMaster.get("dsMaster");
             this.ontoMaster = (Map) mapMaster.get("ontoMaster");
+            this.interproMaster = (Map) mapMaster.get("interproMaster");
             this.taxIdToDb = (Map) mapMaster.get("taxIdToDb");
             this.featureTypes = (Map) mapMaster.get("featureTypes");
             this.geneMaster = (Map) mapMaster.get("geneMaster");
@@ -243,7 +262,7 @@ public class UniprotConverter extends FileConverter
             this.ids = (Map) mapMaster.get("ids");
             this.aliases = (Map) mapMaster.get("aliases");
             this.keyMaster = (Map) mapMaster.get("keyMaster");
-
+            this.createInterpro = createInterpro;
         }
 
 
@@ -357,29 +376,54 @@ public class UniprotConverter extends FileConverter
                             feature.setAttribute("end", attrs.getValue("position"));
                         }
 
+                // <entry><dbreference type="InterPro" >
+                } else if (createInterpro
+                                && qName.equals("dbReference") 
+                                && attrs.getValue("type").equals("InterPro")) { 
+                                            
+                        String interproId = attrs.getValue("id").toString();
+                        String interproItemId = null;
+                        
+                        if (interproMaster.get(interproId) == null) {
+                            interpro = createItem("ProteinFeature");
+                            interpro.setAttribute("interproId", interproId);
+                            interproItemId = interpro.getIdentifier();
+                            interproMaster.put(interproId, interproItemId);
+                        } else {
+                            interproItemId = (String) interproMaster.get(interproId);
+                        }
+                        if (interproCollection.getRefIds().isEmpty()) {
+                            protein.addCollection(interproCollection);
+                        }
+                        interproCollection.addRefId(interproItemId);                      
+                        
+                // <entry><dbreference type="InterPro"><property type="entry name" value="***"/>
+                } else if (createInterpro
+                                && qName.equals("property") 
+                                && attrs.getValue("type").equals("entry name")
+                                && stack.peek().equals("dbReference")) { 
+                                                            
+                        if (interpro != null) {
+                            interpro.setAttribute("name", attrs.getValue("value").toString());
+                            writer.store(ItemHelper.convert(interpro));
+                            interpro = null;
+                        }
+                        
                 // <entry><organism><dbreference>
                 } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
 
                     taxonId = attrs.getValue("id");
                     Item organism;
 
-                    // if organism isn't in master list, add
-                    // otherwise, just get the id from the master list
                     if (orgMaster.get(taxonId) == null) {
-
                         organism = createItem("Organism");
                         orgMaster.put(attrs.getValue("id"), organism);
                         organism.setAttribute("taxonId", taxonId);
                         writer.store(ItemHelper.convert(organism));
-
                     } else {
-
                         organism = (Item) orgMaster.get(taxonId);
-
                     }
-
                     protein.setReference("organism", organism.getIdentifier());
-
                     // get relevant database for this organism
                     dbName = (String) taxIdToDb.get(taxonId);
                     if (dbName == null) {
@@ -397,9 +441,6 @@ public class UniprotConverter extends FileConverter
                            && attrs.getValue("type").equals("PubMed")) {
 
                     String pubId;
-
-                    // if publication isn't in master list, add it
-                    // otherwise, just get the id from the master list
                     if (pubMaster.get(attrs.getValue("id")) == null) {
 
                         Item pub = createItem("Publication");
@@ -623,7 +664,7 @@ public class UniprotConverter extends FileConverter
                         commentCollection.addRefId(comment.getIdentifier());
                         writer.store(ItemHelper.convert(comment));
                     }
-
+                    
                 // <entry><gene><name>
                 } else if (qName.equals("name") && stack.peek().equals("gene")) {
 
@@ -737,6 +778,7 @@ public class UniprotConverter extends FileConverter
             keywordCollection = new ReferenceList("keywords", new ArrayList());
             commentCollection = new ReferenceList("comments", new ArrayList());
             pubCollection = new ReferenceList("publications", new ArrayList());
+            interproCollection = new ReferenceList("proteinFeatures", new ArrayList());
             geneCollection = null;
 
             genes = new HashMap();
