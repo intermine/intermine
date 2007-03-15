@@ -30,6 +30,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
@@ -71,7 +73,7 @@ public class BagTableWidgetResults extends InterMineAction
         
         String typeA = request.getParameter("typeA");
         String typeB = request.getParameter("typeB");
-        String reverseCollection = request.getParameter("reverseCollection");
+        String reverseCollection = request.getParameter("collection");
         String bagName = request.getParameter("bagName");
         String id = request.getParameter("id");
         
@@ -92,8 +94,13 @@ public class BagTableWidgetResults extends InterMineAction
         q.addToSelect(qClassA);
         
         ConstraintSet cstSet = new ConstraintSet(ConstraintOp.AND);
-        QueryCollectionReference qcr = new QueryCollectionReference(qClassA, reverseCollection);
-        ContainsConstraint cstr = new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qClassB);
+        QueryReference qr;
+        try {
+            qr = new QueryCollectionReference(qClassA, reverseCollection);
+        } catch (Exception e) {
+            qr = new QueryObjectReference(qClassA, reverseCollection);
+        }
+        ContainsConstraint cstr = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qClassB);
         cstSet.addConstraint(cstr);
         
         SimpleConstraint simpleConstraint = new SimpleConstraint(new QueryField(qClassB, "id"),

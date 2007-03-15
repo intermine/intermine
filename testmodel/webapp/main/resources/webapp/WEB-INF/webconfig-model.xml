@@ -21,6 +21,9 @@
     <longdisplayers>
       <displayer src="/model/employeeName.jsp" aspects="People"/>
     </longdisplayers>
+    <bagdisplayers>
+      <bagtabledisplayer title="Department information" type="Department" collectionName="department" description="Most popular Departments for this bag" />
+    </bagdisplayers>
   </class>
 
   <!-- exists to test that long displayers for base classes (in this case
