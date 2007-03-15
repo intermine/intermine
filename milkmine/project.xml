@@ -77,8 +77,8 @@
     </source>
 
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/gene_ontology/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/uniprot/2007-03-06"/>
+      <property name="ontologyfile" location="/shared/data/milkmine/gene_ontology/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/milkmine/go-annotation/uniprot/2007-03-06"/>
     </source>
 
     <source name="entrez-organism" type="entrez-organism">
