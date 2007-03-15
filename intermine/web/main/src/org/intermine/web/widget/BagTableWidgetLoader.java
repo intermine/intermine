@@ -1,32 +1,37 @@
 package org.intermine.web.widget;
 
 /*
- * Copyright (C) 2002-2005 FlyMine This code may be freely distributed and modified under the terms
- * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
- * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
+ * Copyright (C) 2002-2005 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
  */
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
-import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
@@ -44,9 +49,8 @@ import org.intermine.web.results.ResultElement;
  */
 public class BagTableWidgetLoader
 {
-    private Results results;
-    private LinkedList columns;
-    private LinkedList flattenedResults;
+    private List columns;
+    private List flattenedResults;
     private String title, description;
     
     /**
@@ -56,16 +60,15 @@ public class BagTableWidgetLoader
      * @param type The type to do the count on
      * @param collectionName the name of the collection corresponding to the
      * bag type
-     * @param reverseCollection the name oof the corresponding collection
-     * for the bag type
      * @param bag the bag
      * @param os the objectstore
      * @param webConfig the webConfig
      * @param model the model
      * @param classKeys the classKeys
      */
-    public BagTableWidgetLoader(String title, String description, String type, String collectionName, InterMineBag bag,
-        ObjectStore os, WebConfig webConfig, Model model, Map classKeys, String fields) {
+    public BagTableWidgetLoader(String title, String description, String type, String
+            collectionName, InterMineBag bag, ObjectStore os, WebConfig webConfig, Model model,
+            Map classKeys, String fields) {
         this.title = title;
         this.description = description;
         Query q = new Query();
@@ -92,8 +95,13 @@ public class BagTableWidgetLoader
         
         
         ConstraintSet cstSet = new ConstraintSet(ConstraintOp.AND);
-        QueryCollectionReference qcr = new QueryCollectionReference(qClassB, collectionName);
-        ContainsConstraint cstr = new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qClassA);
+        QueryReference qr;
+        try {
+            qr = new QueryCollectionReference(qClassB, collectionName);
+        } catch (Exception e) {
+            qr = new QueryObjectReference(qClassB, collectionName);
+        }
+        ContainsConstraint cstr = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qClassA);
         cstSet.addConstraint(cstr);
         
         QueryField qf = new QueryField(qClassB, "id");
@@ -103,13 +111,18 @@ public class BagTableWidgetLoader
         q.setConstraint(cstSet);
         
         q.addToGroupBy(qClassA);
-        q.addToOrderBy(count);
+        q.addToOrderBy(new OrderDescending(count));
         
-        results = new Results(q, os, os.getSequence());
+        List results;
+        try {
+            results = os.execute(q, 0, 10, true, true, os.getSequence());
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
         ClassDescriptor cld = MainHelper.getClassDescriptor(type, model);
-        columns = new LinkedList();
+        columns = new ArrayList();
         
-        if (fields!=null && fields.length() != 0) {
+        if ((fields != null) && (fields.length() != 0)) {
             String[] fieldArray = fields.split(",");
             for (int i = 0; i < fieldArray.length; i++) {
                 String field = fieldArray[i];
@@ -117,18 +130,18 @@ public class BagTableWidgetLoader
                 columns.add(newColumnName);
             }
         } else {
-        List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-        for (Iterator iter = cldFieldConfigs.iterator(); iter.hasNext();) {
-            FieldConfig fc = (FieldConfig) iter.next();
+            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+            for (Iterator iter = cldFieldConfigs.iterator(); iter.hasNext();) {
+                FieldConfig fc = (FieldConfig) iter.next();
                 if (!fc.getShowInResults()) {
                     continue;
                 }
                 String fieldExpr = fc.getFieldExpr();
                 String newColumnName = type + "." + fieldExpr;
                 columns.add(newColumnName);
+            }
         }
-        }
-        flattenedResults = new LinkedList();
+        flattenedResults = new ArrayList();
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList flattenedRow = new ArrayList();
             ResultsRow resRow = (ResultsRow) iter.next();
@@ -142,27 +155,19 @@ public class BagTableWidgetLoader
                         Path path = new Path(model, columnName);
                         Object fieldValue = path.resolve(o);
                         String thisType = TypeUtil.unqualifiedName(path.getStartClassDescriptor()
-                            .getName());
+                                .getName());
                         String fieldName = path.getEndFieldDescriptor().getName();
                         boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, thisType,
-                                                                       fieldName);
+                                fieldName);
                         flattenedRow.add(new ResultElement(os, fieldValue, o.getId(), thisType,
-                                                       path, isKeyField));
+                                    path, isKeyField));
                     }
                     lastObjectId = o.getId();
                 } else if (element instanceof Long) {
-                    flattenedRow.add(new ResultElement(String.valueOf((Long) element),
-                                                           "bagName="
-                                                                           + bag.getName()
-                                                                           + "&typeB="
-                                                                           + type
-                                                                           + "&typeA="
-                                                                           + bag.getType()
-                                                                           + "&reverseCollection="
-                                                                           + collectionName
-                                                                           + "&id="
-                                                                           + lastObjectId
-                                                                               .toString()));
+                    flattenedRow.add(new ResultElement(String.valueOf((Long) element), "bagName="
+                                + bag.getName() + "&typeB=" + type + "&typeA=" + bag.getType()
+                                + "&collection=" + collectionName + "&id=" + lastObjectId
+                                .toString()));
                 } 
 
             }
@@ -177,23 +182,7 @@ public class BagTableWidgetLoader
      * @return the flattened results
      */
     public List getFlattenedResults() {
-        LinkedList reverseResults = new LinkedList();
-        int i = 0;
-        // The following code is needed to reverse sort
-        // because there is no asc/desc choice in the IM query
-        ListIterator iter = flattenedResults.listIterator();
-        while (iter.hasNext()) {
-            iter.next();
-            // Move iterator to the end
-        }
-        while (iter.hasPrevious()) {
-            reverseResults.add((ArrayList) iter.previous());
-            if (i>=9){
-                return reverseResults;
-            }
-            i++;
-        }
-        return reverseResults;
+        return flattenedResults;
     }
     
     /**
