@@ -46,9 +46,10 @@
         this is just because some organisms may fill in Gene.identifier and some
         fill in Gene.organismDbId.  There is no need for one source per organism.-->
     <source name="uniprot" type="uniprot">
-      <!--property name="uniprot.organisms" value="9913 9606 9925 10090 10116 9940"/-->
-      <property name="uniprot.organisms" value="9913 9925 9940"/>
+      <property name="uniprot.organisms" value="9913 9606 9925 10090 10116 9940"/>
+      <!--property name="uniprot.organisms" value="9913"/-->
       <property name="src.data.dir" location="/shared/data/uniprot/9.6"/>
+      <property name="createinterpro" value="true"/>
     </source>
 
     <!-- load all PSI files downloaded to given directory.  Need to include a list
@@ -79,6 +80,7 @@
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/milkmine/gene_ontology/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/milkmine/go-annotation/uniprot/2007-03-06"/>
+      <property name="src.data.dir.includes" value="gene_association*"/>
     </source>
 
     <source name="entrez-organism" type="entrez-organism">
