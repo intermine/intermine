@@ -11,8 +11,13 @@
   <collection name="inParalogues" referenced-type="org.flymine.model.genomic.Paralogue" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Paralogue" extends="org.flymine.model.genomic.Relation" is-interface="true">
+  <attribute name="score" type="java.lang.Double"/>
+  <attribute name="subjectBootstrapScore" type="java.lang.Integer"/>
+  <attribute name="objectBootstrapScore" type="java.lang.Integer"/>
   <reference name="objectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
   <reference name="subjectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
+  <collection name="inParalogues" referenced-type="org.flymine.model.genomic.Paralogue" ordered="true"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
   <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
