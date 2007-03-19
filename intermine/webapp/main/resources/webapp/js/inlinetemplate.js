@@ -39,16 +39,16 @@ function loadInlineTemplate(i) {
   });
 }
 
-function toggleCollectionVisibility(placement, field, object_id) {
+function toggleCollectionVisibility(placement, field, object_id, trail) {
   if ($('coll_'+placement+'_'+field+'_inner').innerHTML=='') {
     // need to fetch
     new Ajax.Updater('coll_'+placement+'_'+field+'_inner', modifyDetailsURL, {
-      parameters:'method=ajaxVerbosify&placement='+placement+'&field='+field+'&id='+object_id,
+      parameters:'method=ajaxVerbosify&placement='+placement+'&field='+field+'&id='+object_id+'&trail='+trail,
       asynchronous:true
     });
   } else {
     new Ajax.Request(modifyDetailsURL, {
-      parameters:'method=ajaxVerbosify&placement='+placement+'&field='+field+'&id='+object_id,
+      parameters:'method=ajaxVerbosify&placement='+placement+'&field='+field+'&id='+object_id+'&trail='+trail,
       asynchronous:true
     });
   }
