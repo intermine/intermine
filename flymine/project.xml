@@ -14,6 +14,13 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
     </source>
+<!--
+    <source name="dmel-cg-numbers" type="tab-separated-file">
+      <property name="tsv.config.file" value="resources/dmel-cg-numbers.tsv_config"/>
+      <property name="tsv.includes" value="cg_fbgn.txt"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1"/>
+    </source>
+-->
     <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -90,8 +97,14 @@
       <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
 
+    <source name="drosdel-gff" type="drosdel-gff">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/drosdel"/>
+    </source>
+
     <!--  sources that need fixing
-    <source name="drosdel" type="drosdel" dump="true"/>
     <source name="geneID-ncbiID" type="tab-separated-file">
       <property name="tsv.config.file" value="resources/geneID-ncbiID.tsv_config"/>
       <property name="tsv.includes" value="ncbigene2ID.txt"/>
