@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.ArtificialDeletion" 
+         extends="org.flymine.model.genomic.Deletion" is-interface="true">
+    <attribute name="available" type="java.lang.Boolean"/>
+    <reference name="element1" 
+               referenced-type="org.flymine.model.genomic.TransposableElementInsertionSite"/>
+    <reference name="element2" 
+               referenced-type="org.flymine.model.genomic.TransposableElementInsertionSite"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
+    <attribute name="type" type="java.lang.String"/> 
+    <attribute name="subType" type="java.lang.String"/> 
+  </class>
+</classes>

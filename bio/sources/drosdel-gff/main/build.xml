@@ -1,0 +1,4 @@
+<project name="drosdel-gff-tasks" default="default" basedir=".">
+  <description>build drosdel-gff tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

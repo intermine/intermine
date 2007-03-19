@@ -1,0 +1,8 @@
+<project name="drosdel-gff" default="default" basedir=".">
+
+  <description>build, test, package drosdel-gff</description>
+
+  <import file="../../../imbuild/source.xml"/>
+
+</project>
+
