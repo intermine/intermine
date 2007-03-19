@@ -69,6 +69,14 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
             elem2.setAttribute("identifier", elem2Identifier);
             feature.setReference("element2", elem2);
         } else {
+            if (record.getAttributes().get("type") != null) {
+                String type = (String) ((List) record.getAttributes().get("type")).get(0);
+                feature.setAttribute("type", type);
+            }
+            if (record.getAttributes().get("subtype") != null) {
+                String type = (String) ((List) record.getAttributes().get("subtype")).get(0);
+                feature.setAttribute("subType", type);
+            }
             // save and don't store so we can fix up element references
             String identifier = feature.getAttribute("identifier").getValue();
             if (elementsMap.get(identifier) != null) {
