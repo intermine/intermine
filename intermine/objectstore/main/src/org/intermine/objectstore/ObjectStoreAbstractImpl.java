@@ -281,13 +281,11 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
         Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
-        Results results = execute(query);
-        results.setNoOptimise();
+        List results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
 
         if (results.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
-                                               + "this primary key (" + results.size() + "): "
-                                               + query.toString());
+                    + "this primary key (" + results.size() + "): " + query.toString());
         }
         if (results.size() == 1) {
             InterMineObject j = (InterMineObject) ((ResultsRow) results.get(0)).get(0);
@@ -305,7 +303,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws DataChangedException if the sequence numbers do not match
      */
     public void checkSequence(int sequence, Query q, String message) throws DataChangedException {
-        if (sequence != getSequence()) {
+        if ((sequence != getSequence()) && (sequence != SEQUENCE_IGNORE)) {
             DataChangedException e = new DataChangedException("Sequence numbers do not match - was "
                     + "given " + sequence + " but needed " + getSequence() + " for operation \""
                     + message + q + "\"");
