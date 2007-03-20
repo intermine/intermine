@@ -27,6 +27,8 @@ import org.intermine.objectstore.query.ResultsInfo;
  */
 public interface ObjectStore
 {
+    public static final int SEQUENCE_IGNORE = Integer.MAX_VALUE;
+
     /**
      * Execute a Query on this ObjectStore
      *
