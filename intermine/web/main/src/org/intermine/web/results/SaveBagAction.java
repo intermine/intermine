@@ -24,6 +24,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.Constants;
+import org.intermine.web.ForwardParameters;
 import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.ProfileManager;
@@ -77,7 +78,6 @@ public class SaveBagAction extends InterMineAction
             // the form was submitted without pressing a submit button, eg. using submit() from
             // Javascript
         }
-
         return null;
     }
 
@@ -292,8 +292,13 @@ public class SaveBagAction extends InterMineAction
                 }
             }
         }
-
-        return mapping.findForward("results");
+        if (request.getParameter("saveNewBag") != null) {
+            return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
+                bag.getName())
+                .forward();
+        } else {
+            return mapping.findForward("results");
+        }
     }
 
     private ActionForward checkBagSize(ActionMapping mapping, HttpServletRequest request, 
