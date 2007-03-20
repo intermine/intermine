@@ -213,7 +213,8 @@ public class PrecomputedTable implements SQLStringable, Comparable
                 if (i < orderBy.size() - 1) {
                     extraBuffer.append("(");
                 }
-                extraBuffer.append("COALESCE(" + orderByField.getSQLString() + "::numeric, 49999999999999999999)");
+                extraBuffer.append("COALESCE(" + orderByField.getSQLString()
+                        + "::numeric, 49999999999999999999)");
                 if (i < orderBy.size() - 1) {
                     extraBuffer.append(" * 1");
                 }

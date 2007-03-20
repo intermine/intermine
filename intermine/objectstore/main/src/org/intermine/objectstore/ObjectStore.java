@@ -27,6 +27,7 @@ import org.intermine.objectstore.query.ResultsInfo;
  */
 public interface ObjectStore
 {
+    /** A sequence number indicating no concurrency control is needed. */
     public static final int SEQUENCE_IGNORE = Integer.MAX_VALUE;
 
     /**

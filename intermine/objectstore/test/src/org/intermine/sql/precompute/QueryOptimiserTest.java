@@ -1077,7 +1077,11 @@ public class QueryOptimiserTest extends TestCase
             BestQueryStorer bestQuery = new BestQueryStorer();
             StringUtil.setNextUniqueNumber(42);
             QueryOptimiser.recursiveOptimise(Collections.singleton(pt), q, bestQuery, q);
-            addIfNE(map, description, Collections.singleton(new Query(expected)), bestQuery.getQueries());
+            if (expected == null) {
+                addIfNE(map, description, Collections.EMPTY_SET, bestQuery.getQueries());
+            } else {
+                addIfNE(map, description, Collections.singleton(new Query(expected)), bestQuery.getQueries());
+            }
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -1091,5 +1095,28 @@ public class QueryOptimiserTest extends TestCase
         if (!b.equals(c)) {
             map.put(a, c);
         }
+    }
+
+    public void testDistinctAggregate() {
+        Query q1 = new Query("SELECT DISTINCT COUNT(*) AS c FROM Department AS a, Employee AS b WHERE b.departmentid = a.id AND a.id = 5 ORDER BY COUNT(*)");
+        Query pq1 = new Query("SELECT DISTINCT a.id AS aa, COUNT(*) AS c FROM Department AS a, Employee AS b WHERE b.departmentid = a.id GROUP BY a.id ORDER BY a.id, COUNT(*)");
+        Query pq2 = new Query("SELECT DISTINCT a.id AS aa FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id");
+        Query pq3 = new Query("SELECT a.id AS aa FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id");
+
+        Map map = new HashMap();
+
+        PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
+        //assertEquals("SELECT a.id AS aa, COUNT(*) AS c, (COALESCE(a.id::numeric, 49999999999999999999) * 100000000000000000000) + COALESCE(COUNT(*)::numeric, 49999999999999999999) AS orderby_field FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id, COUNT(*)", pt1.getSQLString());
+        PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
+        assertEquals("SELECT DISTINCT a.id AS aa FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id", pt2.getSQLString());
+        PrecomputedTable pt3 = new PrecomputedTable(pq3, pq3.getSQLString(), "precomp3", null, con);
+        assertEquals("SELECT a.id AS aa FROM Department AS a, Employee AS b WHERE b.departmentid = a.id ORDER BY a.id", pt3.getSQLString());
+
+        // TODO: Eventually we should be able to do this.
+        //doTestAddToMap(map, "pt1", pt1, q1, "SELECT DISTINCT P42.c FROM precomp1 AS P42 WHERE P42.aa = 5 ORDER BY P42.orderby_field");
+        doTestAddToMap(map, "pt2", pt2, q1, null);
+        doTestAddToMap(map, "pt3", pt3, q1, "SELECT DISTINCT COUNT(*) AS c FROM precomp3 AS P42 WHERE P42.aa = 5 ORDER BY COUNT(*)");
+
+        assertTrue("" + map, map.isEmpty());
     }
 }

@@ -80,4 +80,11 @@ public class OrderDescending extends AbstractValue
     public String toString() {
         return getSQLString();
     }
+
+    /**
+     * @see AbstractValue#isAggregate
+     */
+    public boolean isAggregate() {
+        return value.isAggregate();
+    }
 }

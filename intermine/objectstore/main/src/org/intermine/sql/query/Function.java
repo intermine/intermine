@@ -324,16 +324,6 @@ public class Function extends AbstractValue
     }
 
     /**
-     * Returns true if this function is an aggregate function.
-     *
-     * @return true if function is COUNT, MAX, MIN, SUM, or AVG
-     */
-    public boolean isAggregate() {
-        return (operation == COUNT) || (operation == MAX) || (operation == MIN)
-            || (operation == SUM) || (operation == AVG);
-    }
-
-    /**
      * Returns the operation of the function.
      *
      * @return operation
@@ -349,5 +339,31 @@ public class Function extends AbstractValue
      */
     public List getOperands() {
         return operands;
+    }
+
+    /**
+     * Returns true if this value is an aggregate function.
+     *
+     * @return a boolean
+     */
+    public boolean isAggregate() {
+        switch(operation) {
+            case COUNT:
+            case MAX:
+            case MIN:
+            case SUM:
+            case AVG:
+            case STDDEV:
+                return true;
+            default:
+                Iterator iter = operands.iterator();
+                while (iter.hasNext()) {
+                    AbstractValue av = (AbstractValue) iter.next();
+                    if (av.isAggregate()) {
+                        return true;
+                    }
+                }
+                return false;
+        }
     }
 }
