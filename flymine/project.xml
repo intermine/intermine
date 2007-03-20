@@ -200,12 +200,6 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
     </source>
-    <source name="dbID-ncbiID" type="tab-separated-file">
- <!-- for adding the ncbi geneID using the organismDbId field-->  
-      <property name="tsv.config.file" value="resources/dbID-ncbiID.tsv_config"/>
-      <property name="tsv.includes" value="ncbigene2DB.txt"/>
-      <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
-    </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
 <!--for linking the pubmed Id to the ncbi gene Id-->      
 	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
