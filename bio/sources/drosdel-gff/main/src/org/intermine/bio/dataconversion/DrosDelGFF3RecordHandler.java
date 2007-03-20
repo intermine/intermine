@@ -28,7 +28,6 @@ import org.intermine.xml.full.Item;
 public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
 {
     private Map elementsMap = new HashMap();
-    private String tgtNs;
     
     /**
      * Create a new DrosDelGFF3RecordHandler for the given target model.
@@ -36,7 +35,6 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
      */
     public DrosDelGFF3RecordHandler (Model tgtModel) {
         super(tgtModel);
-        tgtNs = tgtModel.getNameSpace().toString();
     }
 
     /**
@@ -52,9 +50,8 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 (String) ((List) record.getAttributes().get("Element1")).get(0);
             Item elem1 = (Item) elementsMap.get(elem1Identifier);
             if (elem1 == null) {
-                elem1 = 
-                    getItemFactory().makeItem(null, tgtNs + "TransposableElementInsertionSite", "");
-                elementsMap.put(elem1Identifier, elem1);
+                throw new RuntimeException("TransposableElementInsertionSite features must "
+                                           + "be first in the GFF file");
             }
             elem1.setAttribute("identifier", elem1Identifier);
             feature.setReference("element1", elem1);
@@ -62,9 +59,8 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 (String) ((List) record.getAttributes().get("Element2")).get(0);
             Item elem2 = (Item) elementsMap.get(elem2Identifier);
             if (elem2 == null) {
-                elem2 = 
-                    getItemFactory().makeItem(null, tgtNs + "TransposableElementInsertionSite", "");
-                elementsMap.put(elem2Identifier, elem2);
+                throw new RuntimeException("TransposableElementInsertionSite features must "
+                                           + "be first in the GFF file");
             }
             elem2.setAttribute("identifier", elem2Identifier);
             feature.setReference("element2", elem2);
@@ -79,13 +75,8 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
             }
             // save and don't store so we can fix up element references
             String identifier = feature.getAttribute("identifier").getValue();
-            if (elementsMap.get(identifier) != null) {
-                Item savedItem = (Item) elementsMap.get(identifier);
-                String savedItemIdentifier = savedItem.getIdentifier();
-                // fix the current item so that it has the identifier we created earlier
-                feature.setIdentifier(savedItemIdentifier);
-            }
             elementsMap.put(identifier, feature);
+            feature.setAttribute("symbol", identifier);
             removeFeature();
         }
     }
