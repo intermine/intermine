@@ -77,7 +77,8 @@ public class ModifyDetails extends DispatchAction
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, type);
         PathQuery query = (PathQuery) template.clone();
-
+        String trail = request.getParameter("trail");
+        
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPath());
@@ -135,6 +136,7 @@ public class ModifyDetails extends DispatchAction
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
                                                                     .addParameter("qid", qid)
+                                                                    .addParameter("trail", trail)
                                                                     .forward();
     }
 

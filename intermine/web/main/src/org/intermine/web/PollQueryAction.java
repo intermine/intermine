@@ -59,8 +59,10 @@ public class PollQueryAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         String qid = request.getParameter("qid");
-        boolean followSingleResult = "followSingleResult".equals(mapping.getParameter());
+        String trail = request.getParameter("trail");
 
+        boolean followSingleResult = "followSingleResult".equals(mapping.getParameter());
+        request.setAttribute("trail", trail);
         if (StringUtils.isEmpty(qid)) {
             recordError(new ActionMessage("errors.pollquery.emptyqid", qid), request);
             return mapping.findForward("error");
@@ -84,6 +86,8 @@ public class PollQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.pollquery.cancelled", qid), request);
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
+            
+
             LOG.debug("query qid " + qid + " complete");
             // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
@@ -112,18 +116,35 @@ public class PollQueryAction extends InterMineAction
                             }
                         }
                     }
+                    
+                    if (forwardId != null) { 
+                        if(trail != null) {
+                            trail += "_" + forwardId;
+                        } else {
+                            trail = "_" + forwardId;
+                        }
 
-                    if (forwardId != null) {
-                        String url = "/objectDetails.do?id=" + forwardId + "&trail=_" + forwardId;
+                        String url = "/objectDetails.do?id=" + forwardId + "&trail=" + trail;
                         return new ActionForward(url, true);
                     }
                 }
             }
-            return new ForwardParameters(mapping.findForward("results"))
-                .addParameter("table", "results." + qid).forward();
+            
+            if(trail != null) {
+                trail += "_results." + qid;
+            } else {
+                trail = "_results." + qid; 
+            }
+
+            return new ForwardParameters(mapping.findForward("results"))                        
+                            .addParameter("trail", trail)
+                            .addParameter("table", "results." + qid)
+                            .forward();
         } else {
+
             LOG.debug("query qid " + qid + " still running, making client wait");
-            request.setAttribute("qid", request.getParameter("qid"));
+            request.setAttribute("qid", qid);
+            request.setAttribute("trail", trail);
             if (controller.getTickleCount() < 4) {
                 request.setAttribute("POLL_REFRESH_SECONDS", new Integer(1));
             } else {

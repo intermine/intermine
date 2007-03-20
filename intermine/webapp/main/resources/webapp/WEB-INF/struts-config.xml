@@ -620,6 +620,7 @@
     <action path="/initObjectTrail"
             type="org.intermine.web.results.ObjectTrailController"/>
 
+	<!-- this class doesn't exist anymore.  replaced by initTable? -->
     <action path="/initResults"
             type="org.intermine.web.results.ResultsController"/>
 

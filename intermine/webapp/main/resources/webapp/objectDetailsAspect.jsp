@@ -44,7 +44,7 @@
         <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
-        <tiles:put name="noTemplatesMsgKey" value=""/>
+        <tiles:put name="noTemplatesMsgKey" value=""/>        
       </tiles:insert>
       <c:if test="${!empty templates && foundDisplayer}">
         <hr class="seperator"/>
