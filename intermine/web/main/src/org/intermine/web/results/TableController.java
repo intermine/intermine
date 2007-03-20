@@ -58,6 +58,16 @@ public class TableController extends TilesAction
         HttpSession session = request.getSession();
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
+        String trail = request.getParameter("trail");
+        
+//        if (trail != null) {
+//            trail += request.getParameter("table");
+//        } else {
+//            trail = request.getParameter("table");
+//        }
+            
+        
+        request.setAttribute("trail", trail);
         
         SaveBagForm bagForm = (SaveBagForm) session.getAttribute("saveBagForm");
         if (bagForm != null) {

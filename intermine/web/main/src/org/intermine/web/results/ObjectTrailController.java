@@ -68,18 +68,24 @@ public class ObjectTrailController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         String trail = request.getParameter("trail");
+        //TODO will break on bags with underscores
         String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '_')
                 : new String[0];
         ArrayList elements = new ArrayList();
         String elementTrail = "";
-        
+
         for (int i = 0; i < ids.length; i++) {
             elementTrail += "_" + ids[i];
             // we also check that the results table actually exists. If the user bookmarked
             // the URL then it probably won't exist in their session
-            if (ids[i].startsWith("results")
-                && SessionMethods.getResultsTable(session, ids[i]) != null) {
-                elements.add(new TrailElement(ids[i]));
+            if (ids[i].startsWith("results")) {
+                            //&& SessionMethods.getResultsTable(session, ids[i]) != null) {
+                elements.add(new TrailElement(ids[i].substring(7), trail, "results"));
+            } else if (ids[i].startsWith("query")) {
+                elements.add(new TrailElement(ids[i], trail, "query"));
+            } else if (ids[i].startsWith("bag")) {
+                String bagName = ids[i].substring(3);
+                elements.add(new TrailElement(bagName, trail, "bag"));
             } else {
                 InterMineObject o = null;
                 try {
@@ -96,13 +102,12 @@ public class ObjectTrailController extends TilesAction
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
         }
-        
-        String tableParam = request.getParameter("table");
-        
-        if (ids.length == 0 && tableParam != null && tableParam.startsWith("results")
-                && SessionMethods.getResultsTable(session, tableParam) != null) {
-            elements.add(new TrailElement(tableParam));
-        }
+//      TODO what is this?  
+        String tableParam = request.getParameter("table");       
+//        if (ids.length == 0 && tableParam != null && tableParam.startsWith("results")
+//                && SessionMethods.getResultsTable(session, tableParam) != null) {
+//            elements.add(new TrailElement(tableParam, "table"));
+//        }
         
         request.setAttribute("trailElements", elements);
         return null;
@@ -131,8 +136,8 @@ public class ObjectTrailController extends TilesAction
         private String label;
         private String trail;
         private int id;
-        private boolean table;
-        private String tableId;
+        private String type;        // query, bag or table (as in results table)
+        private String elementId;   // tableId or bagName
         
         /**
          * Construct an object trail element.
@@ -144,23 +149,27 @@ public class ObjectTrailController extends TilesAction
             this.label = label;
             this.trail = trail;
             this.id = id;
+            this.type = "object";
         }
         
         /**
-         * Construct a table trail element.
-         * @param tableId table identifier
+         * Construct a trail element.
+         * @param id identifier
+         * @param whichObject what kind of trail element this is:  bag, query or table
+         * @param trail object trail - only used for results tables.
          */
-        private TrailElement(String tableId) {
-            this.table = true;
-            this.tableId = tableId;
+        private TrailElement(String id, String trail, String whichObject) {
+            this.type = whichObject;
+            this.elementId = id;
+            this.trail = trail;
         }
         
         /**
          * Return whether or not this trail element refers to a table.
          * @return true if this element refers to a table
          */
-        public boolean isTable() {
-            return table;
+        public String getType() {
+            return type;
         }
         
         /**
@@ -168,8 +177,8 @@ public class ObjectTrailController extends TilesAction
          * will return null.
          * @return table identifier
          */
-        public String getTableId() {
-            return tableId;
+        public String getElementId() {
+            return elementId;
         }
         
         /**
@@ -201,8 +210,8 @@ public class ObjectTrailController extends TilesAction
          */
         public String toString() {
             return new ToStringBuilder(this)
-                .append("isTable", table)
-                .append("tableId", tableId)
+                .append("type", type)
+                .append("elementId", elementId)
                 .append("objectId", id).toString();
         }
     }

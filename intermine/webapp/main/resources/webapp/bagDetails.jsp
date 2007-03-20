@@ -57,7 +57,7 @@
             <c:when test="${pagedColl.columnNames[column.index] == 'Gene.chromosomeLocation'}">
            </c:when>
 	        <c:when test="${resultElement.keyField}">
-	          <html:link action="/objectDetails?id=${resultElement.id}">
+	          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=_bag${bag.name}_${resultElement.id}">
 		        <c:out value="${resultElement.field}" />
 	          </html:link>
 	        </c:when>
@@ -182,7 +182,7 @@
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${cell.keyField}">
-                                                                    <html:link action="/objectDetails?id=${cell.id}">
+                                                                    <html:link action="/objectDetails?id=${cell.id}&amp;trail=_bag${bag.name}_${cell.id}">
                                                                     <c:out value="${cell.field}" />
                                                                     </html:link>
                                                                 </c:when>
@@ -266,6 +266,7 @@
       <tiles:insert name="objectDetailsAspect.tile">
         <tiles:put name="placement" value="aspect:${aspect}"/>
         <tiles:put name="interMineIdBag" beanName="bag"/>
+        <tiles:put name="trailPrepend" value="_${bag.name}"/>
       </tiles:insert>
     </c:forEach>
 </div>

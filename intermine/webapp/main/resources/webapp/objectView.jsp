@@ -13,6 +13,7 @@
 
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
+
 <div class="objectView">
   <c:choose>
     <c:when test="${empty leafClds}">
@@ -36,10 +37,9 @@
       </c:choose>
     </c:when>
     <c:otherwise>
-      <c:if test="${fn:substring(param.table, 0, 7) == 'results'}">
-        <c:set var="prepend" value="_${param.table}"/>
-      </c:if>
-      <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${prepend}${param.trail}_${resultElement.id}" scope="request"/>
+        
+  
+      <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}_${resultElement.id}" scope="request"/>
       <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>

@@ -26,7 +26,7 @@
   <!--
     function timedredirect()
     {
-      window.location.replace("<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}"/>");
+      window.location.replace("<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}&trail=${param.trail}"/>");
     }
     setTimeout("timedredirect()", ${POLL_REFRESH_SECONDS}*1000 );
     window.status = '';
