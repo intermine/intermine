@@ -135,6 +135,15 @@ public class Constant extends AbstractValue
     }
 
     /**
+     * Returns true if this value is an aggregate function.
+     *
+     * @return a boolean
+     */
+    public boolean isAggregate() {
+        return false;
+    }
+
+    /**
      * @see Object#toString
      */
     public String toString() {

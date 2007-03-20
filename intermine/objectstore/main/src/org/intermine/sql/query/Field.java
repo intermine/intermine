@@ -128,4 +128,13 @@ public class Field extends AbstractValue
         }
         return INCOMPARABLE;
     }
+
+    /**
+     * Returns true if this value is an aggregate function.
+     *
+     * @return a boolean
+     */
+    public boolean isAggregate() {
+        return false;
+    }
 }

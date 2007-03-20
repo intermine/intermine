@@ -406,6 +406,26 @@ public class QueryOptimiser
         if (!precompQuery.getGroupBy().isEmpty()) {
             return mergeGroupBy(precomputedTable, query, originalQuery);
         }
+        // If the PrecomputedTable is distinct, then the Query has to be.
+        if (precompQuery.isDistinct() && (!query.isDistinct())) {
+            return Collections.EMPTY_SET;
+        }
+        // If the Query is distinct, but has an aggregate function, then it isn't really.
+        if (precompQuery.isDistinct() && query.isDistinct()) {
+            boolean hasAggregate = !query.getGroupBy().isEmpty();
+            if (!hasAggregate) {
+                // May still have an aggregate function.
+                Iterator iter = query.getSelect().iterator();
+                while (iter.hasNext() && (!hasAggregate)) {
+                    SelectValue sv = (SelectValue) iter.next();
+                    AbstractValue av = sv.getValue();
+                    hasAggregate = hasAggregate || av.isAggregate();
+                }
+            }
+            if (hasAggregate) {
+                return Collections.EMPTY_SET;
+            }
+        }
         Set retval = new HashSet();
 
         // Find the possible mappings from tables in the
@@ -445,12 +465,6 @@ public class QueryOptimiser
             }
             // So now whereConstraintEqualsSet contains all the constraints that can be left out of
             // the WHERE clause
-
-            // If the PrecomputedTable is distinct, then the Query has to be.
-            if (precompQuery.isDistinct() && (!query.isDistinct())) {
-                mappingsIter.remove();
-                continue;
-            }
         }
 
         // Now, we can pass the trimmed mappings Set into MappingUtil.findMultipleCombinations. For
@@ -564,7 +578,8 @@ public class QueryOptimiser
                                     SelectValue newSelectSV = (SelectValue) newSelectSVs.next();
                                     newS.add(newSelectSV.getValue());
                                 }
-                                for(;(i < precompOrderBy.size()) && (matches || matchesDesc); i++) {
+                                for (; (i < precompOrderBy.size())
+                                        && (matches || matchesDesc); i++) {
                                     AbstractValue precompOrderByField = (AbstractValue)
                                         precompOrderBy.get(i);
                                     Field nextPrecompOrderBy;
@@ -781,7 +796,6 @@ public class QueryOptimiser
         }
         return retval;
     }
-
 
     /**
      * Compares 2 sets of AbstractConstraints

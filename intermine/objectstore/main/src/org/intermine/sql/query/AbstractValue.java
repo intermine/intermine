@@ -164,4 +164,11 @@ public abstract class AbstractValue implements SQLStringable
         int compareVal = compare(obj, tableMap, reverseTableMap);
         return (compareVal == EQUAL);
     }
+
+    /**
+     * Returns true if this value is an aggregate function.
+     *
+     * @return a boolean
+     */
+    public abstract boolean isAggregate();
 }

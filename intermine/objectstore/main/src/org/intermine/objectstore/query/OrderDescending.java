@@ -22,7 +22,7 @@ public class OrderDescending implements QueryOrderable
     /**
      * Creates a new OrderDescending object from the given QueryOrderable.
      *
-     * @param a QueryOrderable
+     * @param qo a QueryOrderable
      * @throws IllegalArgumentException if the argument is already an OrderDescending
      */
     public OrderDescending(QueryOrderable qo) {

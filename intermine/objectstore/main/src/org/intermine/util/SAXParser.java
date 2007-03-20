@@ -28,7 +28,9 @@ public class SAXParser
      * Parse the an xml file
      * @param is the inputsource to parse
      * @param handler the SAX event handler to use
-     * @throws Exception if an error occuring during parsing
+     * @throws SAXException if an error occurs during parsing
+     * @throws IOException if an error occurs reading from the InputSource
+     * @throws ParserConfigurationException if there is an error in the config
      */
     public static void parse(InputSource is, DefaultHandler handler) throws SAXException,
            IOException, ParserConfigurationException {
