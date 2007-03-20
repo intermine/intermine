@@ -469,6 +469,7 @@
             name="saveBagForm"
             input="results">
       <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="bag" path="/bagDetails.do" redirect="true"/>
     </action>
 
     <action path="/saveQuery"
