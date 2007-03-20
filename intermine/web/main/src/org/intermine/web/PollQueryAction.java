@@ -103,15 +103,13 @@ public class PollQueryAction extends InterMineAction
                         if (cell instanceof ResultElement) {
                             forwardId = ((ResultElement) cell).getId();
                         }
-                        if (forwardId != null && webResults.size() > 1 && webResults.size() < 100) {
-                            // special case hack - if every element of the first column is the same,
-                            // use that as the object to forward to
-                            for (int i = 1; i < webResults.size() && forwardId != null; i++) {
-                                cell = webResults.getResultElements(i).get(0);
-                                if (cell instanceof ResultElement) {
-                                    if (!forwardId.equals(((ResultElement) cell).getId())) {
-                                        forwardId = null;
-                                    }
+                        // special case hack - if every element of the first column is the same,
+                        // use that as the object to forward to
+                        for (int i = 1; i < webResults.size() && forwardId != null; i++) {
+                            cell = webResults.getResultElements(i).get(0);
+                            if (cell instanceof ResultElement) {
+                                if (!forwardId.equals(((ResultElement) cell).getId())) {
+                                    forwardId = null;
                                 }
                             }
                         }
