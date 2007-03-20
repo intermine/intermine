@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="/intermine-web/lib/jfreechart-1.0.3.jar"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/flymine-dbmodel"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>
