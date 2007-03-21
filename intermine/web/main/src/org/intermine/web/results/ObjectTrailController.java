@@ -68,34 +68,57 @@ public class ObjectTrailController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = (Model) os.getModel();
         String trail = request.getParameter("trail");
-        //TODO will break on bags with underscores
-        String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '_')
+        // parse trail into bits with pipe delimiter
+        String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
                 : new String[0];
         ArrayList elements = new ArrayList();
         String elementTrail = "";
 
         for (int i = 0; i < ids.length; i++) {
-            elementTrail += "_" + ids[i];
+            elementTrail += "|" + ids[i];
             // we also check that the results table actually exists. If the user bookmarked
             // the URL then it probably won't exist in their session
-            if (ids[i].startsWith("results")) {
+            
+            // split this param pair again with . delimiter
+            // will be something like bag.baggieName or results.col0
+            String URLparam = ids[i];
+            String breadcrumbs[] = StringUtils.split(URLparam, '.');
+            
+            if (breadcrumbs[0].equals("results")) {
                             //&& SessionMethods.getResultsTable(session, ids[i]) != null) {
-                elements.add(new TrailElement(ids[i].substring(7), trail, "results"));
-            } else if (ids[i].startsWith("query")) {
-                elements.add(new TrailElement(ids[i], trail, "query"));
-            } else if (ids[i].startsWith("bag")) {
-                String bagName = ids[i].substring(3);
-                elements.add(new TrailElement(bagName, trail, "bag"));
+                /* breadcrumbs[1] is the results table id
+                 *  can be:
+                 *      col0, col1, ... <-- template
+                 *      qid0, qid1, ... <-- query
+                 *      results.0   ... <-- i don't know
+                 *      
+                 *  so if breadcrumbs[1] is just an integer, we need to re-add "results." to it
+                 */
+                String resultsTableId = breadcrumbs[1];
+                String prepend = "";
+                try { 
+                        int n = Integer.parseInt(resultsTableId); 
+                        prepend = "results.";   // this item should be "results.0" so 
+                                                // re-add the results string
+                } catch(NumberFormatException e) { 
+                    // isn't a number, don't need to do anything
+                } 
+                elements.add(new TrailElement(prepend+resultsTableId, elementTrail, "results"));
+            } else if (breadcrumbs[0].equals("bag")) {
+                // breadcrumbs[1] is the bag name
+                elements.add(new TrailElement(breadcrumbs[1], elementTrail, "bag"));                
+            } else if (breadcrumbs[0].equals("query")) {
+                elements.add(new TrailElement("query", elementTrail, "query"));
             } else {
                 InterMineObject o = null;
                 try {
-                    o = os.getObjectById(new Integer(ids[i]));
+                    o = os.getObjectById(new Integer(breadcrumbs[0]));
                 } catch (NumberFormatException err) {
-                    LOG.warn("bad object id " + ids[i]);
+                    LOG.warn("bad object id " + breadcrumbs[0]);
                     continue;
                 }
                 if (o == null) {
-                    LOG.warn("failed to getObjectById " + ids[i]);
+                    LOG.warn("failed to getObjectById " + breadcrumbs[0]);
                     continue;
                 }
                 String label = createTrailLabel(o, model);
@@ -103,7 +126,7 @@ public class ObjectTrailController extends TilesAction
             }
         }
 //      TODO what is this?  
-        String tableParam = request.getParameter("table");       
+//        String tableParam = request.getParameter("table");       
 //        if (ids.length == 0 && tableParam != null && tableParam.startsWith("results")
 //                && SessionMethods.getResultsTable(session, tableParam) != null) {
 //            elements.add(new TrailElement(tableParam, "table"));

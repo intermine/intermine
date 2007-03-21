@@ -31,9 +31,13 @@
       <c:if test="${!empty bagName}">
           <c:set var="extra" value="${extra}&amp;bagName=${bagName}" />
       </c:if>
+      
+      <%-- favourites star --%>
       <tiles:insert name="starTemplate.tile">
         <tiles:put name="templateName" value="${templateQuery.name}"/>
       </tiles:insert>
+      
+      <%-- (t) img.  trail isn't used here because queries always reset the trail --%>
       <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
                  title="${linkTitle}">
         <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>

@@ -8,6 +8,8 @@
 <!-- objectDetails.jsp -->
 <html:xhtml/>
 
+
+
 <script type="text/javascript">
 <!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
@@ -244,6 +246,7 @@
       <tiles:insert name="objectDetailsAspect.tile">
         <tiles:put name="placement" value="aspect:${aspect}"/>
         <tiles:put name="displayObject" beanName="object"/>
+        <tiles:put name="trail" value="${request.trail}"/>
       </tiles:insert>
     </c:forEach>
 

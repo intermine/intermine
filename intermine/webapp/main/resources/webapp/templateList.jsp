@@ -15,6 +15,7 @@
 <tiles:importAttribute name="noTemplatesMsgKey" ignore="true"/>
 <tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="type"/>
+<tiles:importAttribute name="trail" ignore="true"/>
 
 <c:if test="${!empty displayObject}">
   <c:set var="interMineObject" value="${displayObject.object}"/>
@@ -29,6 +30,7 @@
         <tiles:put name="templateQuery" beanName="templateQuery"/>
         <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="type" value="${type}"/>
+        <tiles:put name="trail" value="${trail}"/>
       </tiles:insert>
     </c:if>
     <c:if test="${!status.last}">

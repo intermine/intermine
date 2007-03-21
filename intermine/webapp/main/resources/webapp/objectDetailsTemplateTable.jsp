@@ -68,7 +68,7 @@
                               <c:set var="object" value="${resultElement.object}"/>
                               <c:set var="displayObject2" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                               <%-- Link to object --%>
-                              <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${param.trail}_${object.id}" scope="request"/>
+                              <c:set var="linkAction" value="/objectDetails?id=${object.id}&amp;trail=${param.trail}|${object.id}" scope="request"/>
                               <span style="white-space:nowrap">
                                 <c:forEach var="cld" items="${leafClds}">
                                   <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
@@ -160,7 +160,7 @@
         $('img_'+id).parentNode.href='#';
         $('img_'+id).parentNode.onclick = function(){return false;};
       } else {
-        $('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;type=global${extra}\" title=\"View in table\">${table.resultsSize} results</a>';
+        $('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;type=global${extra}&amp;trail=${param.trail}\" title=\"View in table\">${table.resultsSize} results</a>';
       }
     </script>
   </c:otherwise>

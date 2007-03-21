@@ -110,7 +110,19 @@ public class TemplateAction extends InterMineAction
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages, saveQuery);
         Thread.sleep(200);
-        return new ForwardParameters(mapping.findForward("waiting")).addParameter("qid", qid)
+        
+        String trail = "";
+        
+        // only put query on the trail if we are saving the query
+        // otherwise its a "super top secret" query, e.g. quick search
+        // also, note we are not saving any previous trails.  trail resets at queries and bags
+        if (saveQuery) {
+            trail = "|query";
+        } 
+                        
+        return new ForwardParameters(mapping.findForward("waiting"))
+                .addParameter("qid", qid)
+                .addParameter("trail", trail)
                 .forward();
     }
 }

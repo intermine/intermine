@@ -117,9 +117,9 @@ public class PollQueryAction extends InterMineAction
                     
                     if (forwardId != null) { 
                         if(trail != null) {
-                            trail += "_" + forwardId;
+                            trail += "|" + forwardId;
                         } else {
-                            trail = "_" + forwardId;
+                            trail = "|" + forwardId;
                         }
 
                         String url = "/objectDetails.do?id=" + forwardId + "&trail=" + trail;
@@ -129,9 +129,9 @@ public class PollQueryAction extends InterMineAction
             }
             
             if(trail != null) {
-                trail += "_results." + qid;
+                trail += "|results." + qid;
             } else {
-                trail = "_results." + qid; 
+                trail = "|results." + qid; 
             }
 
             return new ForwardParameters(mapping.findForward("results"))                        

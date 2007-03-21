@@ -70,7 +70,7 @@ public class CollectionDetailsAction extends Action
         Integer id = new Integer((String) request.getParameter("id"));
         String field = request.getParameter("field");
         String pageSize = request.getParameter("pageSize");
-
+        String trail = request.getParameter("trail");
         Object o = os.getObjectById(id);
 
         Set cds = model.getClassDescriptorsForClass(o.getClass());
@@ -105,10 +105,17 @@ public class CollectionDetailsAction extends Action
         PagedCollection pc = new PagedCollection(webCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
-
+        
+        // add results table to trail 
+        if (trail != null) {
+            trail += "|results." + identifier;
+        } else {
+            trail = "|results." + identifier;
+        }
+        
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
                         .addParameter("size", pageSize)
-                        .addParameter("trail", request.getParameter("trail")).forward();
+                        .addParameter("trail", trail).forward();
     }
 }
