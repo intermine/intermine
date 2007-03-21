@@ -178,7 +178,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
-        addRequestParameter("trail", "_results.0_42");
+        addRequestParameter("trail", "|results.0|42");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
@@ -188,7 +188,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertEquals(1, c.size());
         
         ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(0);
-        assertFalse(e1.isTable());
+        assertFalse(e1.getType().equals("results"));
         assertEquals(42, e1.getObjectId());
         
         verifyNoActionErrors();
