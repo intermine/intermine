@@ -89,24 +89,24 @@ Couldn't find ${build.properties.file}
                    model="${userprofile.model.name}"/>
   </target>
   
-  <target name="-load-default-templates" depends="-init-build-db">
+  <target name="-load-default-templates" depends="-init-app-properties, -init-build-db">
     <load-default-templates templatesXml="${default.template.queries}"
                             username="${superuser.account}" osAlias="${objectstore.name}"
                             userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
-  <target name="dump-default-templates" depends="-init-build-db">
+  <target name="dump-default-templates" depends="-init-app-properties, -init-build-db">
     <dump-default-templates fileName="${default.template.queries}"
                             username="${superuser.account}" osAlias="${objectstore.name}"
                             userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
-  <target name="write-userprofile-xml" depends="-init-build-db">
+  <target name="write-userprofile-xml" depends="-init-app-properties, -init-build-db">
     <write-userprofile-xml fileName="${build.dir}/userprofile.xml" osAlias="${objectstore.name}"
                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
 
-  <target name="read-userprofile-xml" depends="-init-build-db">
+  <target name="read-userprofile-xml" depends="-init-app-properties, -init-build-db">
     <read-userprofile-xml fileName="${build.dir}/userprofile.xml" osAlias="${objectstore.name}"
                           userProfileAlias="${userprofile.objectstorewriter.name}"/>
   </target>
