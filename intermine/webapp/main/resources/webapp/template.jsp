@@ -38,14 +38,14 @@
 
     document.getElementById("operandEditSpan" + index).style.display = "";
   }
-  
+
   /***********************************************************
    * Use bag checkbox has been clicked.
    **********************************************************/
   function clickUseBag(index)
   {
     var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
-    
+
     document.templateForm["attributeOps("+index+")"].disabled=useBag;
     if (document.templateForm["attributeOptions("+index+")"])
       document.templateForm["attributeOptions("+index+")"].disabled=useBag;
@@ -77,8 +77,8 @@
 <div class="body">
   <html:form action="/templateAction">
     <div class="templateTitle">${templateQuery.title}
-    <tiles:insert name="starTemplate.tile">
-      <tiles:put name="templateName" value="${templateQuery.name}"/>
+      <tiles:insert name="starTemplate.tile">
+        <tiles:put name="templateName" value="${templateQuery.name}"/>
     </tiles:insert></div>
     <div class="templateDescription">${templateQuery.description}</div>
     <table border="0" class="templateForm">
@@ -91,11 +91,11 @@
           <c:set var="options" value="${displayConstraints[con].optionsList}"/>
           <c:remove var="bags"/>
           <c:remove var="bagType"/>
-		  <c:if test="${! empty constraintBags[con]}">
+          <c:if test="${! empty constraintBags[con]}">
             <c:set var="bags" value="${constraintBags[con]}"/>
             <c:set var="bagType" value="${constraintBagTypes[con]}"/>
           </c:if>
-                    
+
           <c:if test="${!empty con.description}">
             <tr>
               <td align="right" valign="top" rowspan="2">
@@ -107,16 +107,16 @@
             </tr>
           </c:if>
           <tr>
-            
+
             <script type="text/javascript">
               <!--
-                fixedOps[${index-1}] = new Array();
-                <c:forEach items="${fixedOps}" var="op" varStatus="oi">
-                  fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
-                </c:forEach>
-              //-->
+                  fixedOps[${index-1}] = new Array();
+                  <c:forEach items="${fixedOps}" var="op" varStatus="oi">
+                    fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
+                  </c:forEach>
+                  //-->
             </script>
-          
+
             <c:if test="${empty con.description}">
               <td valign="top" align="right">
                 <c:out value="[${index}]"/>
@@ -134,7 +134,7 @@
                 </c:forEach>
               </html:select>
               <span id="operandEditSpan${index-1}">
-               <html:text property="attributeValues(${index})"/>
+                <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
                   <img src="images/left-arrow.gif" alt="&lt;-" border="0" height="13" width="13"/>
@@ -142,19 +142,19 @@
               </span>
               <c:if test="${!empty options}">
                 <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
-                <c:forEach items="${options}" var="option">
-                  <option value="${option}">
-                    <c:out value="${option}"/>
-                  </option>
-                </c:forEach>
+                  <c:forEach items="${options}" var="option">
+                    <option value="${option}">
+                      <c:out value="${option}"/>
+                    </option>
+                  </c:forEach>
                 </select>
               </c:if>
-              
-                <br/>
 
-           	  <c:if test="${!empty bagType}">                
+              <br/>
+
+              <c:if test="${!empty bagType}">
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
-                
+
                 <fmt:message key="template.or"/>
                 <fmt:message key="template.constraintobe"/>
                 <html:select property="bagOp(${index})">
@@ -172,12 +172,12 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                
+
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">
-           				<fmt:param value="${bagType}"/>
-         			</fmt:message>
+                      <fmt:param value="${bagType}"/>
+                    </fmt:message>
                   </div>
                 </c:if>
 
@@ -185,13 +185,13 @@
                 <!--
                   var selectedBagName = '${selectedBagNames[con]}';
                   if(selectedBagName){
-	                  clickUseBag(${index});
+                          clickUseBag(${index});
                   }
                 //-->
                 </script>
               </c:if>
               <script type="text/javascript">
-          
+
                 <!--
                 /* setting options popup value to correct initial state. */
                 if (document.templateForm["attributeOptions(${index})"] != null)
@@ -223,7 +223,7 @@
         </c:forEach>
       </c:forEach>
     </table>
-    
+
     <c:if test="${!empty templateQuery.alternativeViews}">
       <p>
         Select an output table format:
@@ -244,7 +244,7 @@
           </td>
         </tr>
         <c:forEach var="entry" items="${templateQuery.alternativeViews}">
-          <tr>    
+          <tr>
             <td>
               <html:radio property="view" value="${entry.key}"/>
             </td>
@@ -261,7 +261,7 @@
         </c:forEach>
       </table>
     </c:if>
-    
+
     <c:if test="${empty previewTemplate}">
       <br/>
       <html:hidden property="templateName"/>
@@ -269,12 +269,11 @@
       <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
       <html:submit><fmt:message key="template.submitToQuery"/></html:submit>
       <c:if test="${IS_SUPERUSER}">
-	      <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+        <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
       </c:if>
     </c:if>
   </html:form>
-      <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
-        <p><i><fmt:message key="template.notlogged"/></i></p>
-      </c:if>
+  <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
+    <p><i><fmt:message key="template.notlogged"/></i></p>
+  </c:if>
 </div>
-
