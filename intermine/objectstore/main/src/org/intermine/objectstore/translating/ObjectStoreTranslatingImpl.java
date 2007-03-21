@@ -22,14 +22,15 @@ import java.util.WeakHashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DynamicUtil;
 
 import org.apache.log4j.Logger;
 
@@ -221,8 +222,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //LOG.error(sw.toString());
         synchronized (cache) {
             LOG.warn("Probable inefficiency: internalGetObjectById called "
-                    + (retval == null ? "" : "for " + retval.getClass().toString())
-                    + " with id " + id + ", class " + clazz.toString()
+                    + (retval == null ? "" : "to fetch a " + DynamicUtil.getFriendlyName(retval
+                            .getClass())) + " with id " + id + ", clazz " + clazz.toString()
                     + ", cache size = " + cache.size() + " - maybe you should use"
                     + " ObjectStoreFastCollectionsForTranslatorImpl");
         }

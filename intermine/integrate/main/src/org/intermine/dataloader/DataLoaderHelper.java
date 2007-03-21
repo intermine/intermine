@@ -413,7 +413,7 @@ public class DataLoaderHelper
         Iterator pkSetIter = primaryKeys.iterator();
         while (pkSetIter.hasNext()) {
             PrimaryKey pk = (PrimaryKey) pkSetIter.next();
-            if (!queryNulls && !objectPrimaryKeyNotNull(model, obj, cld, pk, source)) {
+            if (!queryNulls && !objectPrimaryKeyNotNull(model, obj, cld, pk, source, idMap)) {
                 LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
                 continue;
             }
@@ -523,12 +523,12 @@ public class DataLoaderHelper
      * checked
      * @param pk the primary key to check
      * @param source the Source database
+     * @param idMap an IntToIntMap from source IDs to destination IDs
      * @return true if the the given primary key is non-null for the given object
      * @throws MetaDataException if anything goes wrong
      */
     public static boolean objectPrimaryKeyNotNull(Model model, InterMineObject obj,
-                                                  ClassDescriptor cld, PrimaryKey pk,
-                                                  Source source)
+            ClassDescriptor cld, PrimaryKey pk, Source source, IntToIntMap idMap)
         throws MetaDataException {
         Iterator pkFieldIter = pk.getFieldNames().iterator();
       PK:
@@ -564,11 +564,17 @@ public class DataLoaderHelper
                     return false;
                 }
 
+                if ((refObj.getId() != null) && (idMap.get(refObj.getId()) != null)) {
+                    // We have previously loaded the object in this reference.
+                    continue;
+                }
+
                 if (refObj instanceof ProxyReference) {
                     refObj = ((ProxyReference) refObj).getObject();
                 }
 
                 boolean foundNonNullKey = false;
+                boolean foundKey = false;
                 Set classDescriptors = model.getClassDescriptorsForClass(refObj.getClass());
                 Iterator cldIter = classDescriptors.iterator();
 
@@ -589,15 +595,16 @@ public class DataLoaderHelper
 
                     while (pkSetIter.hasNext()) {
                         PrimaryKey refPK = (PrimaryKey) pkSetIter.next();
+                        foundKey = true;
 
-                        if (objectPrimaryKeyNotNull(model, refObj, refCld, refPK, source)) {
+                        if (objectPrimaryKeyNotNull(model, refObj, refCld, refPK, source, idMap)) {
                            foundNonNullKey = true;
                            break CLDS;
                         }
                     }
                 }
 
-                if (!foundNonNullKey) {
+                if (foundKey && (!foundNonNullKey)) {
                     return false;
                 }
             }
