@@ -356,7 +356,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
-        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source));
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source, new IntToIntMap()));
     }
 
     public void testObjectPrimaryKeyIsNullNullField() throws Exception {
@@ -371,7 +371,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
-        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source));
+        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, e, cld, pk, source, new IntToIntMap()));
     }
 
     public void testObjectPrimaryKeyIsNull2() throws Exception {
@@ -390,7 +390,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         PrimaryKey pk = (PrimaryKey) primaryKeys.iterator().next();
 
-        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk, source));
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk, source, new IntToIntMap()));
     }
 
     public void testObjectPrimaryKeyIsNullNullField2() throws Exception {
@@ -411,12 +411,12 @@ public class DataLoaderHelperTest extends QueryTestCase
         PrimaryKey pk1 = (PrimaryKey) pkIter.next();
 
         // Company.key1=name, address
-        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk1, source));
+        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk1, source, new IntToIntMap()));
 
         PrimaryKey pk2 = (PrimaryKey) pkIter.next();
 
         // Company.key2=vatNumber
-        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source));
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source, new IntToIntMap()));
     }
 
     public void testObjectPrimaryKeyIsNullNullField3() throws Exception {
@@ -430,7 +430,7 @@ public class DataLoaderHelperTest extends QueryTestCase
             model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         PrimaryKey pk = (PrimaryKey) PrimaryKeyUtil.getPrimaryKeys(cld).get("key1");
 
-        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, d, cld, pk, null));
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, d, cld, pk, null, new IntToIntMap()));
     }
 
     public void testGetDescriptors() throws Exception {
