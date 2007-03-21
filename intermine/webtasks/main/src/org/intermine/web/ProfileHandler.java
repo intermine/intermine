@@ -126,7 +126,8 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getUserProfileObjectStore(),
-                                                 profileManager.getObjectStore(), savedBags, null);
+                                                 profileManager.getObjectStore(), savedBags, null,
+                                                 idObjectMap, idUpgrader);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
@@ -164,7 +165,7 @@ class ProfileHandler extends DefaultHandler
             Iterator objectIter = objects.iterator();
             while (objectIter.hasNext()) {
                 InterMineObject object = (InterMineObject) objectIter.next();
-                idObjectMap.put(object.getId() + "", object);
+                idObjectMap.put(object.getId(), object);
             }
         }
         if (qName.equals("bags") || qName.equals("template-queries")

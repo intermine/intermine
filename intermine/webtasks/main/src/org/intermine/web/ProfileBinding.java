@@ -10,16 +10,14 @@ package org.intermine.web;
  *
  */
 
-import java.io.Reader;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import org.intermine.objectstore.query.ResultsRow;
 
-import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -29,12 +27,23 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.bag.BagElement;
 import org.intermine.web.bag.IdUpgrader;
-import org.intermine.web.bag.InterMineBagBinding;
 import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.bag.InterMineBagBinding;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
+
+import java.io.Reader;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
 /**
@@ -45,8 +54,8 @@ import org.xml.sax.InputSource;
 
 public class ProfileBinding
 {
-
     private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
+
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
@@ -88,6 +97,27 @@ public class ProfileBinding
 
             if (writeBags) {
                 ItemFactory itemFactory = new ItemFactory(os.getModel());
+
+                Set idSet = new HashSet();
+
+                getProfileObjectIds(profile, os, idSet);
+
+                if (!idSet.isEmpty()) {
+                    List objects = os.getObjectsByIds(idSet);
+
+                    writer.writeStartElement("items");
+                    Iterator objectsIter = objects.iterator();
+
+                    while (objectsIter.hasNext()) {
+                        ResultsRow rr = (ResultsRow) objectsIter.next();
+                        InterMineObject o = (InterMineObject) rr.get(0);
+                        Item item = itemFactory.makeItem(o);
+                        FullRenderer.renderImpl(writer, item, false);
+                    }
+
+                    writer.writeEndElement();
+                }
+
                 writer.writeStartElement("bags");
                 for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
                     Map.Entry entry = (Map.Entry) i.next();
@@ -145,9 +175,42 @@ public class ProfileBinding
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling profile", e);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("exception while marshalling profile", e);
         }
     }
-    
+
+    /**
+     * Get the ids of objects in all bags and all objects mentioned in primary keys of those
+     * items (recursively).
+     * @param profile read the object in the bags from this Profile
+     * @param os the ObjectStore to use when following references
+     * @param idsToSerialise object ids are added to this Set
+     */
+    private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
+        for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            InterMineBag bag = (InterMineBag) entry.getValue();
+
+            Iterator iter = bag.iterator();
+
+            while (iter.hasNext()) {
+                BagElement bagElement = (BagElement) iter.next();
+                InterMineObject object;
+                Integer id = bagElement.getId();
+                try {
+                    object = os.getObjectById(id);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("Unable to find object for id: " + id, e);
+                }
+                if (object == null) {
+                    throw new RuntimeException("Unable to find object for id: " + id);
+                }
+                getIdsFromObject(object, os.getModel(), idsToSerialise);
+            }
+        }
+    }
+
     /**
      * For the given object, add its ID and all IDs of all objects in any of its primary keys to
      * idsToSerialise.

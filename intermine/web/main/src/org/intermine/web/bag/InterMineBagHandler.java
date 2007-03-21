@@ -11,9 +11,13 @@ package org.intermine.web.bag;
  */
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -36,8 +40,9 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagType;
     private String bagDescription;
     private InterMineBag bag;
-//    private List row;
-
+    private Map idToObjectMap;
+    private IdUpgrader idUpgrader;
+    
     /**
      * Create a new InterMineBagHandler object.
      * @param uos
@@ -48,11 +53,20 @@ public class InterMineBagHandler extends DefaultHandler
      *            Map from bag name to InterMineIdBag - results are added to this
      *            Map
      * @param userId the id of the user
+     * @param idUpgrader bag object id upgrader
+     * @param idToObjectMap
+     *            a Map from id to InterMineObject. This is used to create
+     *            template objects to pass to createPKQuery() so that old bags
+     *            can be used with new ObjectStores.
      */
-    public InterMineBagHandler(ObjectStore uos, ObjectStore os, Map bags, Integer userId) {
+    public InterMineBagHandler(ObjectStore uos, ObjectStore os, Map bags, Integer userId,
+                               Map idToObjectMap, IdUpgrader idUpgrader) {
         this.uos = uos;
+        this.os = os;
         this.bags = bags;
         this.userId = userId;
+        this.idUpgrader = idUpgrader;
+        this.idToObjectMap = idToObjectMap;
     }
 
     /**
@@ -76,12 +90,20 @@ public class InterMineBagHandler extends DefaultHandler
                                            Collections.EMPTY_SET);
                     bag.setDescription(bagDescription);
                 }
-                
-//                if (row == null) {
-//                    row = new ArrayList();
-//                }
-                
-                bag.add(new BagElement(id, type));
+
+                if (os.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
+                    // the id isn't in the database and we have an Item representing the object from
+                    // a previous database
+                    InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
+
+                    Set newIds = idUpgrader.getNewIds(oldObject, os);
+                    Iterator newIdIter = newIds.iterator();
+                    while (newIdIter.hasNext()) {
+                        bag.add(new BagElement((Integer) newIdIter.next(), type));
+                    }
+                } else {
+                    bag.add(new BagElement(id, type));
+                }
             }
         } catch (Exception e) {
             throw new SAXException(e);
@@ -89,13 +111,9 @@ public class InterMineBagHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement
+     * @see DefaultHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String qName) {
-//        if (qName.equals("row")) {
-//            bag.add(row);
-//            row = null;
-//        }
         if (qName.equals("bag")) {
             bags.put(bagName, bag);
             bag = null;

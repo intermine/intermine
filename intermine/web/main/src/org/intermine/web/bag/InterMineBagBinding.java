@@ -12,6 +12,8 @@ package org.intermine.web.bag;
 
 import java.io.Reader;
 import java.io.StringWriter;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,9 +75,7 @@ public class InterMineBagBinding
 
             if (bag.width() == 1) {
                 for (Iterator j = bag.iterator(); j.hasNext();) {
-//                    writer.writeStartElement("row");
                     writeOneBagElement((BagElement) j.next(), writer);
-//                    writer.writeEndElement();
                 }
             } else {
                 List listOfLists = bag.asListOfLists();
@@ -83,12 +83,10 @@ public class InterMineBagBinding
                 while (columnIter.hasNext()) {
                     List row = (List) columnIter.next();
                     Iterator rowIter = row.iterator();
-//                    writer.writeStartElement("row");
                     while (rowIter.hasNext()) {
                         BagElement o = (BagElement) rowIter.next();
                         writeOneBagElement(o, writer);
                     }
-//                    writer.writeEndElement();
                 }
             }
             writer.writeEndElement();
@@ -121,7 +119,8 @@ public class InterMineBagBinding
         final Map bags = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader),
-                    new InterMineBagHandler(uos, os, bags, userId));
+                            new InterMineBagHandler(uos, os, bags, userId, new HashMap(),
+                                                    idUpgrader.ERROR_UPGRADER));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
