@@ -41,8 +41,8 @@ public class FlyBaseGeneNamesConverterTest extends TestCase
 
     public void testProcess() throws Exception {
         //
-        String input = "FBgn0000100\tRibosomal protein LP0\tEncodes an apurinic-apyrimidinic DNA endonuclease.\n"
-            + "FBgn0000101\tapterblister\t\n";
+        String input = "FBgn0004053\tzen\tzerknullt\tzerknullt 1,zerknullt" + ENDL
+            + "FBgn0012699\tDpse\\Gld\tGlucose dehydrogenas" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new FlyBaseGeneNamesConverter(itemWriter);

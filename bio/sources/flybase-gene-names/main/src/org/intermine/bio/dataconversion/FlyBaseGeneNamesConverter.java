@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.intermine.util.TextFileUtil;
 import org.intermine.objectstore.ObjectStoreException;
@@ -60,10 +63,9 @@ public class FlyBaseGeneNamesConverter extends FileConverter
         dmel.setAttribute("taxonId", "7227");
         writer.store(ItemHelper.convert(dmel));
 
-        // currently no data for Dpse
-        //dpse = createItem("Organism");
-        //dpse.setAttribute("taxonId", "7237");
-        //writer.store(ItemHelper.convert(dpse));
+        dpse = createItem("Organism");
+        dpse.setAttribute("taxonId", "7237");
+        writer.store(ItemHelper.convert(dpse));
     }
 
 
@@ -78,38 +80,70 @@ public class FlyBaseGeneNamesConverter extends FileConverter
         int lineNo = 0;
         boolean readingData = false;
 
-        // data is in format
-        // FBgn | name | wild type function
+        // data is in format:
+        // FBgn | symbol | current fullname | fullname synonyms | symbol synonyms
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
+            Set geneSynonyms = new HashSet();
 
             if (line.length <= 1 || line[0].startsWith("#")) {
                 continue;
             }
 
-            if (line.length < 3) {
+            if (line.length < 2) {
                 throw new RuntimeException("Line does not have enough elements: "
                                            + Arrays.asList(line));
             }
             String fbgn = line[0];
-            String name = line[1];
-            String wt = line[2];
+            String symbol = line[1];
+            String name = line[2];
 
-            Item gene = createItem("Gene");
-            gene.setAttribute("organismDbId", fbgn);
+            Item organism = null;
 
-            if (name != null && !name.equals("")) {
-                gene.setAttribute("name", name);
-                createSynonym(gene, "name", name);
+            // symbols have format Dpse\x, Dyak\y, z where missing D???\ means Dmel
+            if (symbol.indexOf("\\") < 0) {
+                organism = dmel;
+            } else if (symbol.startsWith("Dpse\\")) {
+                organism = dpse;
             }
 
-            if (wt != null && !wt.equals("")) {
-                gene.setAttribute("wildTypeFunction", wt);
-            }
+            // create id a name or a symbol
+            if (organism != null && ((name != null && !name.equals(""))
+                                     || (symbol != null && !symbol.equals("")))) {
+                // set and create synonym for all fields, some genes only come from this source
+                Item gene = createItem("Gene");
+                gene.setAttribute("organismDbId", fbgn);
+                createSynonym(gene, "identifier", fbgn);
+                geneSynonyms.add(fbgn);
 
-            gene.setReference("organism", dmel.getIdentifier());
-            writer.store(ItemHelper.convert(gene));
+                if ((symbol != null) && !(symbol.equals(""))) {
+                    gene.setAttribute("symbol", symbol);
+                    createSynonym(gene, "symbol", symbol);
+                    geneSynonyms.add(symbol);
+                }
+
+                if ((name != null) && !(name.equals(""))) {
+                    gene.setAttribute("name", name);
+                    createSynonym(gene, "name", name);
+                    geneSynonyms.add(name);
+                }
+
+                if ((line.length >= 4) && line[3] != null && !(line[3].equals(""))) {
+                    ArrayList synonyms = new ArrayList(Arrays.asList(line[3].split(",")));
+                    Iterator iter = synonyms.iterator();
+                    while (iter.hasNext()) {
+                        String synonym = ((String) iter.next()).trim();
+                        if (!geneSynonyms.contains(synonym)) {
+                            createSynonym(gene, "name", synonym);
+                            geneSynonyms.add(synonym);
+                        }
+                    }
+                }
+
+                gene.setReference("organism", organism.getIdentifier());
+                writer.store(ItemHelper.convert(gene));
+            }
         }
     }
 
