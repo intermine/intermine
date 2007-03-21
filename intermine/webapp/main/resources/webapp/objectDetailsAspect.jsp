@@ -8,6 +8,7 @@
 <tiles:importAttribute name="displayObject" ignore="true"/>
 <tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="placement"/>
+<tiles:importAttribute name="trail"/>
 
 <!-- objectDetailsAspect.jsp -->
 
@@ -31,7 +32,7 @@
       <c:if test="${! empty displayObject}">
         <tiles:insert page="/objectDetailsRefsCols.jsp">
           <tiles:put name="object" beanName="displayObject"/>
-          <tiles:put name="placement" value="${placement}"/>
+          <tiles:put name="placement" value="${placement}"/>      
         </tiles:insert>
       </c:if>
       <%-- the controller of this tile should have already called the controller
@@ -44,7 +45,8 @@
         <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
-        <tiles:put name="noTemplatesMsgKey" value=""/>        
+        <tiles:put name="noTemplatesMsgKey" value=""/>          
+        <tiles:put name="trail" value="${trail}"/>                
       </tiles:insert>
       <c:if test="${!empty templates && foundDisplayer}">
         <hr class="seperator"/>
@@ -52,6 +54,7 @@
       <c:if test="${! empty displayObject}">
         <tiles:insert page="/objectDetailsDisplayers.jsp">
           <tiles:put name="placement" value="${placement}"/>
+                  
           <tiles:put name="displayObject" beanName="displayObject"/>
         </tiles:insert>
       </c:if>

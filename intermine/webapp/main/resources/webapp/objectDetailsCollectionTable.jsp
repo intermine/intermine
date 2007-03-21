@@ -88,7 +88,7 @@
               </td>
             </c:forEach>
             <td width="10px" nowrap>
-              [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}_${collection.table.ids[status.index]}">
+              [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}|${collection.table.ids[status.index]}">
                 <fmt:message key="results.details"/>
               </html:link>]
             </td>

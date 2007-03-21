@@ -24,7 +24,7 @@
           <im:abbreviate value="${object}" length="${maxLength}"/>
         </c:when>
         <c:when test="${resultElement.keyField}">
-          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}_${resultElement.id}">
+          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}">
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
           <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
@@ -39,7 +39,7 @@
     <c:otherwise>
         
   
-      <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}_${resultElement.id}" scope="request"/>
+      <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
       <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
