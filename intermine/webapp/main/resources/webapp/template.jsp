@@ -89,6 +89,8 @@
           <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
           <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
           <c:set var="options" value="${displayConstraints[con].optionsList}"/>
+          <c:remove var="bags"/>
+          <c:remove var="bagType"/>
 		  <c:if test="${! empty constraintBags[con]}">
             <c:set var="bags" value="${constraintBags[con]}"/>
             <c:set var="bagType" value="${constraintBagTypes[con]}"/>
