@@ -97,14 +97,25 @@ public class FullRenderer
 
     /**
      * Render the given Item as XML using an XMLStreamWriter
-     * @param writer to XMLStreamWriter to write to 
+     * @param writer to XMLStreamWriter to write to
      * @param item the Item to render
      */
     public static void render(XMLStreamWriter writer, Item item) {
+        renderImpl(writer, item, true);
+    }
+
+    /**
+     * Render the given Item as XML using an XMLStreamWriter
+     * @param writer to XMLStreamWriter to write to
+     * @param item the Item to render
+     * @param renderCollections render the collections if and only if this is true
+     */
+    public static void renderImpl(XMLStreamWriter writer, Item item,
+                                  boolean renderCollections) {
         if (item.getIdentifier() == null) {
             throw new IllegalArgumentException("Item has null Identifier");
         }
-        
+
         try {
             writer.writeStartElement("item");
             writer.writeAttribute("id", item.getIdentifier());
@@ -134,19 +145,21 @@ public class FullRenderer
                 writer.writeCharacters(ENDL);
             }
 
-            TreeSet cols = new TreeSet(new RendererComparator());
-            cols.addAll(item.getCollections());
-            for (Iterator i = cols.iterator(); i.hasNext();) {
-                ReferenceList refList = (ReferenceList) i.next();
-                writer.writeStartElement("collection");
-                writer.writeAttribute("name", refList.getName());
-            
-                for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
-                    writer.writeEmptyElement("reference");
-                    writer.writeAttribute("ref_id", (String) j.next());
+            if (renderCollections) {
+                TreeSet cols = new TreeSet(new RendererComparator());
+                cols.addAll(item.getCollections());
+                for (Iterator i = cols.iterator(); i.hasNext();) {
+                    ReferenceList refList = (ReferenceList) i.next();
+                    writer.writeStartElement("collection");
+                    writer.writeAttribute("name", refList.getName());
+
+                    for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
+                        writer.writeEmptyElement("reference");
+                        writer.writeAttribute("ref_id", (String) j.next());
+                    }
+                    writer.writeEndElement();
+                    writer.writeCharacters(ENDL);
                 }
-                writer.writeEndElement();
-                writer.writeCharacters(ENDL);
             }
             writer.writeEndElement();
             writer.writeCharacters(ENDL);
@@ -154,7 +167,7 @@ public class FullRenderer
             throw new RuntimeException("unexpected exception while accessing a XMLStreamWriter", e);
         }
     }
-        
+
     /**
      * Render the given Item as XML
      * @param item the Item to render
@@ -167,7 +180,7 @@ public class FullRenderer
         XMLStreamWriter writer;
         try {
             writer = factory.createXMLStreamWriter(sw);
-            render(writer, item);
+            renderImpl(writer, item, true);
         } catch (XMLStreamException e) {
             throw new RuntimeException("unexpected failure while creating Item XML", e);
         }

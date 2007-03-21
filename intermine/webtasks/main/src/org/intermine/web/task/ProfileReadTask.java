@@ -108,7 +108,12 @@ public class ProfileReadTask extends Task
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
 
-            PkQueryIdUpgrader upgrader = new PkQueryIdUpgrader(this.source);
+            PkQueryIdUpgrader upgrader;
+            if (source == null) {
+                upgrader = new PkQueryIdUpgrader();
+            } else {
+                upgrader = new PkQueryIdUpgrader(this.source);
+            }
             ProfileManagerBinding.unmarshal(reader, pm, os, upgrader, classKeys);
         } catch (Exception e) {
             throw new BuildException(e);
