@@ -543,4 +543,23 @@ public class GFF3RecordHandler
     public void setDataSet(Item dataSet) {
         this.dataSet = dataSet;
     }
+    
+
+    /**
+     * Create and add a synonym Item from the given information.
+     * @param subject the subject of the new Synonym
+     * @param type the Synonym type
+     * @param value the Synonym value
+     * @return the new Synonym Item
+     */
+    public Item addSynonym(Item subject, String type, String value) {
+        String tgtNs = tgtModel.getNameSpace().toString();
+        Item synonym = getItemFactory().makeItem(null, tgtNs + "Synonym", "");
+        synonym.setAttribute("type", type);
+        synonym.setAttribute("value", value);
+        synonym.setReference("subject", subject.getIdentifier());
+        synonym.setReference("source", getDataSource().getIdentifier());
+        addItem(synonym);
+        return synonym;
+    }
 }
