@@ -1,157 +1,143 @@
 <?xml version="1.0"?>
 <items>
-  <item id="5_4" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGP00000029999"/>
-    <reference name="source" ref_id="6_2"/>
-    <reference name="subject" ref_id="9_2"/>
+    <reference name="source" ref_id="5_2"/>
+    <reference name="subject" ref_id="7_2"/>
   </item>
-  <item id="10_2" class="http://www.flymine.org/model/genomic#Orthologue">
+  <item id="8_2" class="http://www.flymine.org/model/genomic#Orthologue">
     <attribute name="score" value="1.000"/>
-    <reference name="subject" ref_id="4_1"/>
-    <reference name="objectTranslation" ref_id="9_1"/>
+    <reference name="subject" ref_id="3_1"/>
+    <reference name="objectTranslation" ref_id="7_1"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_2"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="10_1" class="http://www.flymine.org/model/genomic#Orthologue">
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Orthologue">
     <attribute name="score" value="1.000"/>
-    <reference name="object" ref_id="4_1"/>
-    <reference name="subjectTranslation" ref_id="9_1"/>
+    <reference name="object" ref_id="3_1"/>
+    <reference name="subjectTranslation" ref_id="7_1"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_2"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="5_2" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="Ensembl"/>
   </item>
-  <item id="5_3" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGP00000028450"/>
-    <reference name="source" ref_id="6_2"/>
-    <reference name="subject" ref_id="9_1"/>
+    <reference name="source" ref_id="5_2"/>
+    <reference name="subject" ref_id="7_1"/>
   </item>
-  <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="S000003666"/>
-    <reference name="source" ref_id="6_1"/>
-    <reference name="subject" ref_id="4_2"/>
+    <reference name="source" ref_id="5_1"/>
+    <reference name="subject" ref_id="3_2"/>
   </item>
-  <item id="9_3" class="http://www.flymine.org/model/genomic#Translation">
+  <item id="7_3" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="identifier" value="ENSANGP00000008615"/>
-    <reference name="organism" ref_id="3_2"/>
+    <reference name="organism" ref_id="2_2"/>
   </item>
-  <item id="8_3" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectTranslation" ref_id="9_1"/>
-    <reference name="subjectTranslation" ref_id="9_2"/>
+  <item id="6_3" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="score" value="1.000"/>
+    <reference name="objectTranslation" ref_id="7_1"/>
+    <reference name="subjectTranslation" ref_id="7_2"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_3"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="InParanoid data set"/>
   </item>
-  <item id="8_5" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectTranslation" ref_id="9_1"/>
-    <reference name="subjectTranslation" ref_id="9_3"/>
+  <item id="6_5" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="score" value="0.566"/>
+    <reference name="objectTranslation" ref_id="7_1"/>
+    <reference name="subjectTranslation" ref_id="7_3"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_4"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="S000001208"/>
-    <reference name="source" ref_id="6_1"/>
-    <reference name="subject" ref_id="4_1"/>
+    <reference name="source" ref_id="5_1"/>
+    <reference name="subject" ref_id="3_1"/>
   </item>
-  <item id="8_2" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="object" ref_id="4_2"/>
-    <reference name="subject" ref_id="4_1"/>
+  <item id="6_2" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="score" value="0.997"/>
+    <reference name="object" ref_id="3_2"/>
+    <reference name="subject" ref_id="3_1"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_1"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="8_6" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectTranslation" ref_id="9_3"/>
-    <reference name="subjectTranslation" ref_id="9_1"/>
+  <item id="6_6" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="score" value="0.566"/>
+    <reference name="objectTranslation" ref_id="7_3"/>
+    <reference name="subjectTranslation" ref_id="7_1"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_4"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="180454"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="11743721"/>
   </item>
-  <item id="9_1" class="http://www.flymine.org/model/genomic#Translation">
+  <item id="7_1" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="identifier" value="ENSANGP00000028450"/>
-    <reference name="organism" ref_id="3_2"/>
+    <reference name="organism" ref_id="2_2"/>
   </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="4932"/>
   </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="5_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="SGD"/>
   </item>
-  <item id="8_1" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="object" ref_id="4_1"/>
-    <reference name="subject" ref_id="4_2"/>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="score" value="0.997"/>
+    <reference name="object" ref_id="3_1"/>
+    <reference name="subject" ref_id="3_2"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_1"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="5_5" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGP00000008615"/>
-    <reference name="source" ref_id="6_2"/>
-    <reference name="subject" ref_id="9_3"/>
+    <reference name="source" ref_id="5_2"/>
+    <reference name="subject" ref_id="7_3"/>
   </item>
-  <item id="8_4" class="http://www.flymine.org/model/genomic#Paralogue">
-    <reference name="objectTranslation" ref_id="9_2"/>
-    <reference name="subjectTranslation" ref_id="9_1"/>
+  <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="score" value="1.000"/>
+    <reference name="objectTranslation" ref_id="7_2"/>
+    <reference name="subjectTranslation" ref_id="7_1"/>
     <collection name="evidence">
-      <reference ref_id="2_1"/>
-      <reference ref_id="7_3"/>
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="9_2" class="http://www.flymine.org/model/genomic#Translation">
+  <item id="7_2" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="identifier" value="ENSANGP00000029999"/>
-    <reference name="organism" ref_id="3_2"/>
+    <reference name="organism" ref_id="2_2"/>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="S000001208"/>
-    <reference name="organism" ref_id="3_1"/>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="S000001208"/>
+    <reference name="organism" ref_id="2_1"/>
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
-    <attribute name="algorithm" value="InParanoid"/>
-    <reference name="publication" ref_id="0_1"/>
-  </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="S000003666"/>
-    <reference name="organism" ref_id="3_1"/>
-  </item>
-  <item id="7_1" class="http://www.flymine.org/model/genomic#ComputationalResult">
-    <attribute name="confidence" value="0.997"/>
-    <reference name="analysis" ref_id="1_1"/>
-  </item>
-  <item id="7_2" class="http://www.flymine.org/model/genomic#ComputationalResult">
-    <attribute name="confidence" value="1.000"/>
-    <reference name="analysis" ref_id="1_1"/>
-  </item>
-  <item id="7_4" class="http://www.flymine.org/model/genomic#ComputationalResult">
-    <attribute name="confidence" value="0.566"/>
-    <reference name="analysis" ref_id="1_1"/>
-  </item>
-  <item id="7_3" class="http://www.flymine.org/model/genomic#ComputationalResult">
-    <attribute name="confidence" value="1.000"/>
-    <reference name="analysis" ref_id="1_1"/>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="S000003666"/>
+    <reference name="organism" ref_id="2_1"/>
   </item>
 </items>
