@@ -13,6 +13,7 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
+      <!-- <property name="flybase.small" value="true"/> -->
     </source>
     <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
@@ -192,20 +193,20 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
-    <!--source name="flybase-dmel-cds-fasta" type="fasta">
+    <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.idSuffix" value="-cds"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
-    </source-->
-    <!--source name="flybase-dpse-cds-fasta" type="fasta">
+    </source>
+    <source name="flybase-dpse-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.idSuffix" value="-cds"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
       <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
-    </source-->
+    </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
