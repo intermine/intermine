@@ -46,24 +46,30 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
         List availableList = (List) record.getAttributes().get("available");
         if (record.getType().equals("ArtificialDeletion")) {
             feature.setAttribute("available", (String) availableList.get(0));
-            String elem1Identifier = 
-                (String) ((List) record.getAttributes().get("Element1")).get(0);
-            Item elem1 = (Item) elementsMap.get(elem1Identifier);
-            if (elem1 == null) {
-                throw new RuntimeException("TransposableElementInsertionSite features must "
-                                           + "be first in the GFF file");
+            List element1List = (List) record.getAttributes().get("Element1");
+            if (element1List != null) {
+                String elem1Identifier = (String) element1List.get(0);
+                Item elem1 = (Item) elementsMap.get(elem1Identifier);
+                if (elem1 == null) {
+                    throw new RuntimeException("TransposableElementInsertionSite features must "
+                                               + "be first in the GFF file - can't find: "
+                                               + elem1Identifier);
+                }
+                elem1.setAttribute("identifier", elem1Identifier);
+                feature.setReference("element1", elem1);
             }
-            elem1.setAttribute("identifier", elem1Identifier);
-            feature.setReference("element1", elem1);
-            String elem2Identifier = 
-                (String) ((List) record.getAttributes().get("Element2")).get(0);
-            Item elem2 = (Item) elementsMap.get(elem2Identifier);
-            if (elem2 == null) {
-                throw new RuntimeException("TransposableElementInsertionSite features must "
-                                           + "be first in the GFF file");
+            List element2List = (List) record.getAttributes().get("Element2");
+            if (element2List != null) {
+                String elem2Identifier = (String) element2List.get(0);
+                Item elem2 = (Item) elementsMap.get(elem2Identifier);
+                if (elem2 == null) {
+                    throw new RuntimeException("TransposableElementInsertionSite features must "
+                                               + "be first in the GFF file - can't find: " 
+                                               + elem2Identifier);
+                }
+                elem2.setAttribute("identifier", elem2Identifier);
+                feature.setReference("element2", elem2);
             }
-            elem2.setAttribute("identifier", elem2Identifier);
-            feature.setReference("element2", elem2);
         } else {
             if (record.getAttributes().get("type") != null) {
                 String type = (String) ((List) record.getAttributes().get("type")).get(0);
