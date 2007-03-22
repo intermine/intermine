@@ -14,13 +14,6 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
     </source>
-<!--
-    <source name="dmel-cg-numbers" type="tab-separated-file">
-      <property name="tsv.config.file" value="resources/dmel-cg-numbers.tsv_config"/>
-      <property name="tsv.includes" value="cg_fbgn.txt"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1"/>
-    </source>
--->
     <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -90,27 +83,12 @@
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
-    <source name="tiling_path" type="tiling_path" dump="true">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
-    </source>
-
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/drosdel/combined"/>
     </source>
-
-    <!--  sources that need fixing
-    <source name="geneID-ncbiID" type="tab-separated-file">
-      <property name="tsv.config.file" value="resources/geneID-ncbiID.tsv_config"/>
-      <property name="tsv.includes" value="ncbigene2ID.txt"/>
-      <property name="src.data.dir" location="/shared/data/pubmed/uploadFiles"/>
-    </source>
-    -->
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
@@ -118,13 +96,6 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
-    <!--source name="flybase-dmel-cds-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.idSuffix" value="-cds"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
-    </source-->
     <source name="flybase-dmel-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
@@ -140,13 +111,6 @@
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
-    <!--source name="flybase-dpse-cds-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7237"/>
-      <property name="fasta.idSuffix" value="-cds"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
-    </source-->
     <source name="flybase-dpse-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
@@ -200,11 +164,6 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
     </source>
-     <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-<!--for linking the pubmed Id to the ncbi gene Id-->      
-	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source>   
     <source name="interpro" type="interpro" dump="true">
       <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
     </source>
@@ -223,6 +182,30 @@
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/2007-01-04/toload"/>
     </source>
+     <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
+	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source>   
+    <source name="tiling_path" type="tiling_path" dump="true">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
+    </source>
+    <!--source name="flybase-dmel-cds-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.idSuffix" value="-cds"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
+    </source-->
+    <!--source name="flybase-dpse-cds-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.idSuffix" value="-cds"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
+    </source-->
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
