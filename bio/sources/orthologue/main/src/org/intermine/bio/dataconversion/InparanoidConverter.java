@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.Properties;
 import java.util.Enumeration;
 
@@ -46,7 +45,7 @@ public class InparanoidConverter extends FileConverter
 
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map bioEntities = new HashMap();
-    protected Item db, analysis;
+    protected Item db, pub;
     protected Map ids = new HashMap();
     protected Map organisms = new LinkedHashMap();
     protected ItemFactory itemFactory;
@@ -96,7 +95,7 @@ public class InparanoidConverter extends FileConverter
             if (attribute == null) {
                 attribute = "identifier";
             }
-            
+
             source = source.trim();
             taxonId = taxonId.trim();
             attribute = attribute.trim();
@@ -129,46 +128,15 @@ public class InparanoidConverter extends FileConverter
             String index = array[0];
             String geneId = null;
             String transId = null;
-            
-            // some files have gene id, no translations
-            // TODO this should be specified in the config files
-            //if ("modSC".equals(array[2]) || "modRR".equals(array[2]) || "modMM".equals(array[2])
-            //    || "modSP".equals(array[2]) || "sanPF".equals(array[2]) || "modCE".equals(array[2])) {
-            //    geneId = array[4];
-            //} else {
-            //    transId = array[4];
-            //}
+
             String code = array[2].substring(0, array[2].indexOf('.'));
-            Set createGenes = new HashSet(Arrays.asList(new String[] {"modDROME", "modSACCE", "sanSCHPO", 
-                    "modCAEEL", "modMUSMU", "modDANRE", "modDICDI"}));
+            Set createGenes = new HashSet(Arrays.asList(new String[] {"modDROME", "modSACCE",
+                "sanSCHPO", "modCAEEL", "modMUSMU", "modDANRE", "modDICDI"}));
             if (createGenes.contains(code)) {
                 geneId = array[4];
             } else {
                 transId = array[4];
             }
-            
-//            String organismDbId = null;
-//
-//            // for ensembl data we can create corresponding genes, parse id from additional info
-//            // Ensembl gene id should be identifier
-//            if (array[2].startsWith("ens")) {
-//                String info = array[7];
-//                StringTokenizer tok = new StringTokenizer(info, " ");
-//                while (tok.hasMoreTokens()) {
-//                    String bit = (String) tok.nextToken().trim();
-//                    if (bit.startsWith("gene:")) {
-//                        geneId = bit.substring(5);
-//                    }
-//                }
-//                if (array[2].equals("ensCE")) {
-//                    organismDbId = geneId;
-//                }
-//            } else if (array[2].equals("modSP") || array[2].equals("sanPF")) {
-//                // these should set Gene.identifier so do nothing
-//            } else {
-//                // other model organism db identifiers set as Gene.organismDbId
-//                organismDbId = geneId;
-//            }
 
             if (!index.equals(oldIndex)) {
                 // clear old values and try to set new ones
@@ -177,44 +145,41 @@ public class InparanoidConverter extends FileConverter
                 oldIndex = index;
                 lastCode = code;
                 if (transId != null) {
-                    trans = newBioEntity(transId, (String) attributes.get(lastCode), getOrganism(lastCode), "Translation");
+                    trans = newBioEntity(transId, (String) attributes.get(lastCode),
+                                         getOrganism(lastCode), "Translation");
                 }
                 if (geneId != null) {
-                    gene = newBioEntity(geneId, (String) attributes.get(lastCode), getOrganism(lastCode), "Gene");
+                    gene = newBioEntity(geneId, (String) attributes.get(lastCode),
+                                        getOrganism(lastCode), "Gene");
                 }
                 continue;
-            } 
+            }
 
             Item newTrans = null;
             if (transId != null) {
-                newTrans = newBioEntity(transId, (String) attributes.get(code), getOrganism(code), "Translation");
+                newTrans = newBioEntity(transId, (String) attributes.get(code),
+                                        getOrganism(code), "Translation");
             }
 
             Item newGene = null;
             if (geneId != null) {
-                newGene = newBioEntity(geneId, (String) attributes.get(code), getOrganism(code), "Gene");
+                newGene = newBioEntity(geneId, (String) attributes.get(code),
+                                       getOrganism(code), "Gene");
             }
             String score = array[3];
-            Item result = newResult(score);
-            
+
             // create two orthologues/paralogues with subject[Translation] and
             // object[Translation] reversed
             Item item1 = createItem(lastCode.equals(code) ? "Paralogue" : "Orthologue");
             Item item2 = createItem(lastCode.equals(code) ? "Paralogue" : "Orthologue");
 
-            // Temporary - Paralogues should get a score as well instead of a
-            // ComputationalResults
-            if (!lastCode.equals(code)) {
-                item1.setAttribute("score", score);
-                item2.setAttribute("score", score);
-            }
-                
-            item1.addCollection(new ReferenceList("evidence", 
-                   Arrays.asList(new Object[] {db.getIdentifier(), result.getIdentifier()})));
-            item2.addCollection(new ReferenceList("evidence", 
-                   Arrays.asList(new Object[] {db.getIdentifier(), result.getIdentifier()})));
-            
-            
+            item1.setAttribute("score", score);
+            item2.setAttribute("score", score);
+            item1.addCollection(new ReferenceList("evidence",
+                Arrays.asList(new Object[] {db.getIdentifier(), pub.getIdentifier()})));
+            item2.addCollection(new ReferenceList("evidence",
+                Arrays.asList(new Object[] {db.getIdentifier(), pub.getIdentifier()})));
+
             if (gene != null) {
                 item1.setReference("object", gene.getIdentifier());
                 item2.setReference("subject", gene.getIdentifier());
@@ -268,11 +233,11 @@ public class InparanoidConverter extends FileConverter
 
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
-     * @param identifier identifier for the new Gene/Protein
-     * @param organism the Organism for this protein
+     * @param value identifier for the new Gene/Translation
+     * @param organism the Organism for this Gene/Translation
      * @param type create either a Gene or Translation
-     * @param organismDbId if not null will be set to Gene.organismDbId
-     * @return a new Gene/Protein Item
+     * @param attribute the attribute of the BioEntity set, e.g. identifier or organismDbId
+     * @return a new Gene/Translation Item
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected Item newBioEntity(String value, String attribute, Item organism, String type)
@@ -319,20 +284,6 @@ public class InparanoidConverter extends FileConverter
         return source;
     }
 
-    /**
-     * Convenience method to create a new analysis result
-     * @param confidence the INPARANOID confidence for the result
-     * @return a new ComputationalResult Item
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected Item newResult(String confidence) throws ObjectStoreException {
-        Item item = createItem("ComputationalResult");
-        item.setAttribute("confidence", confidence);
-        item.setReference("analysis", analysis.getIdentifier());
-        writer.store(ItemHelper.convert(item));
-        return item;
-    }
-
     private Item getOrganism(String code) {
         String taxonId = (String) taxonIds.get(code);
         if (taxonId == null) {
@@ -354,17 +305,13 @@ public class InparanoidConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected void setupItems() throws ObjectStoreException {
-        Item pub = createItem("Publication");
+        pub = createItem("Publication");
         pub.setAttribute("pubMedId", "11743721");
-
-        analysis = createItem("ComputationalAnalysis");
-        analysis.setAttribute("algorithm", "InParanoid");
-        analysis.setReference("publication", pub.getIdentifier());
 
         db = createItem("DataSet");
         db.setAttribute("title", "InParanoid data set");
 
-        List toStore = Arrays.asList(new Object[] {db, analysis, pub});
+        List toStore = Arrays.asList(new Object[] {db, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {
             writer.store(ItemHelper.convert((Item) i.next()));
         }

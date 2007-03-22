@@ -12,9 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import junit.framework.TestCase;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.InputStreamReader;
@@ -49,8 +46,7 @@ public class InparanoidConverterTest extends TestCase
         // the third is the species (orthologues are cross-species, paralogues are within-species)
         // the fourth is a confidence relative to the closest match (defined as the orthologue and given a confidence of 1.000)
         // note that the confidence for the first member of a group appears to be meaningless (row 1).
-        // the fifth is some form of swissprot id to identify the protein
-        // so...this input should produce one orthologue (rows 1 & 3) and two paralogues (1 & 2, 3 & 4)
+        // so...this input should produce one orthologue (rows 1 & 3) and three paralogues (1 & 2, 3 & 4, 3 & 5)
         String input = "14\t1217\tmodSACCE.fa\t1.000\tS000001208\t100%" + ENDL
             + "14\t1217\tmodSACCE.fa\t0.997\tS000003666\t100%" + ENDL
             + "14\t1217\tensANOGA.fa\t1.000\tENSANGP00000028450\t98%" + ENDL
@@ -63,9 +59,9 @@ public class InparanoidConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
-        fw.write(FullRenderer.render(itemWriter.getItems()));
-        fw.close();
+        //FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
+        //fw.write(FullRenderer.render(itemWriter.getItems()));
+        //fw.close();
 
         System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
         assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
