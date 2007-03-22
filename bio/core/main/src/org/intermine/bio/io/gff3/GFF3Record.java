@@ -69,14 +69,22 @@ public class GFF3Record
 
         String startString = st.nextToken();
         try {
-            start = Integer.parseInt(startString);
+            if (startString.equals(".")) {
+                start = -1;
+            } else {
+                start = Integer.parseInt(startString);
+            }
         } catch (NumberFormatException nfe) {
             throw new IOException("can not parse integer for start position: " + startString);
         }
 
         String endString = st.nextToken();
         try {
-            end = Integer.parseInt(endString);
+            if (endString.equals(".")) {
+                end = -1;
+            } else {
+                end = Integer.parseInt(endString);
+            }
         } catch (NumberFormatException nfe) {
             throw new IOException("can not parse integer for end position: " + endString);
         }
