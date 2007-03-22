@@ -338,45 +338,55 @@ public class DataLoaderHelper
      */
     public static Query createPKQuery(Model model, InterMineObject obj, Source source,
             IntToIntMap idMap, EquivalentObjectHints hints, boolean queryNulls)
-         throws MetaDataException {
+    throws MetaDataException {
 
-            int subCount = 0;
-            Query q = new Query();
-            q.setDistinct(false);
-            QueryClass qcIMO = new QueryClass(InterMineObject.class);
-            q.addFrom(qcIMO);
-            q.addToSelect(qcIMO);
-            ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
-            Query subQ = null;
+        int subCount = 0;
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcIMO = new QueryClass(InterMineObject.class);
+        q.addFrom(qcIMO);
+        q.addToSelect(qcIMO);
+        ConstraintSet where = new ConstraintSet(ConstraintOp.OR);
+        Query subQ = null;
 
-            Set classDescriptors = model.getClassDescriptorsForClass(obj.getClass());
-            Iterator cldIter = classDescriptors.iterator();
-            while (cldIter.hasNext()) {
-                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                Set classQueries =
-                    createPKQueriesForClass(model, obj, source, idMap, hints, queryNulls, cld);
+        Set classDescriptors = model.getClassDescriptorsForClass(obj.getClass());
+        boolean valid = classDescriptors.isEmpty();
+        boolean invalid = false;
 
+        Iterator cldIter = classDescriptors.iterator();
+        while (cldIter.hasNext()) {
+            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            Set classQueries =
+                createPKQueriesForClass(model, obj, source, idMap, hints, queryNulls, cld);
+
+            if (classQueries != null) {
                 Iterator classQueriesIter = classQueries.iterator();
 
                 while (classQueriesIter.hasNext()) {
                     subQ = (Query) classQueriesIter.next();
+                    valid = true;
                     where.addConstraint(new SubqueryConstraint(qcIMO, ConstraintOp.IN, subQ));
                     subCount++;
                 }
+            } else {
+                invalid = true;
             }
-            q.setConstraint(where);
-            switch (subCount) {
-            case 0:
-                if (queryNulls) {
-                    return q;
-                } else {
-                    return null;
-                }
+        }
+        if (!invalid) {
+            valid = true;
+        }
+        q.setConstraint(where);
+        switch (subCount) {
             case 1:
                 return subQ;
+            case 0:
+                if (!valid) {
+                    throw new IllegalArgumentException("No valid primary key found for object"
+                            + obj);
+                }
             default:
                 return q;
-            }
+        }
 
     }
 
@@ -398,7 +408,7 @@ public class DataLoaderHelper
      */
     private static Set createPKQueriesForClass(Model model, InterMineObject obj, Source source,
             IntToIntMap idMap, EquivalentObjectHints hints, boolean queryNulls, ClassDescriptor cld)
-        throws MetaDataException {
+    throws MetaDataException {
         Set primaryKeys;
         if (source == null) {
             primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
@@ -409,6 +419,7 @@ public class DataLoaderHelper
         LOG.debug("primary keys for class " + cld.getName() + " = " + primaryKeys);
 
         Set returnSet = new LinkedHashSet();
+        boolean valid = primaryKeys.isEmpty();
 
         Iterator pkSetIter = primaryKeys.iterator();
         while (pkSetIter.hasNext()) {
@@ -417,6 +428,7 @@ public class DataLoaderHelper
                 LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
                 continue;
             }
+            valid = true;
 
             Query query = new Query();
             query.setDistinct(false);
@@ -509,7 +521,11 @@ public class DataLoaderHelper
             returnSet.add(query);
         }
 
-        return returnSet;
+        if (valid) {
+            return returnSet;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -529,7 +545,7 @@ public class DataLoaderHelper
      */
     public static boolean objectPrimaryKeyNotNull(Model model, InterMineObject obj,
             ClassDescriptor cld, PrimaryKey pk, Source source, IntToIntMap idMap)
-        throws MetaDataException {
+    throws MetaDataException {
         Iterator pkFieldIter = pk.getFieldNames().iterator();
       PK:
         while (pkFieldIter.hasNext()) {

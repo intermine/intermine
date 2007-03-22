@@ -130,7 +130,11 @@ public class DataLoaderHelperTest extends QueryTestCase
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        assertNull(DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null, false));
+        try {
+            Query q = DataLoaderHelper.createPKQuery(model, e, source, new IntToIntMap(), null, false);
+            fail("" + q);
+        } catch (IllegalArgumentException ex) {
+        }
     }
 
     // null key field in object (reference)
@@ -143,7 +147,11 @@ public class DataLoaderHelperTest extends QueryTestCase
         c.setName("company1");
         c.setAddress(null);
 
-        assertNull(DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null, false));
+        try {
+            Query q = DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null, false);
+            fail("" + q);
+        } catch (IllegalArgumentException ex) {
+        }
     }
 
     // null key fields in referenced object
@@ -158,7 +166,11 @@ public class DataLoaderHelperTest extends QueryTestCase
         a.setAddress(null);
         c.setAddress(a);
 
-        assertNull(DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null, false));
+        try {
+            Query q = DataLoaderHelper.createPKQuery(model, c, source, new IntToIntMap(), null, false);
+            fail("" + q);
+        } catch (IllegalArgumentException ex) {
+        }
     }
 
     // one key has null values, expect just the other key
