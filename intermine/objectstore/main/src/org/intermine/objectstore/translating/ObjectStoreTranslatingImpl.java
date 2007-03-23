@@ -221,11 +221,13 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //pw.flush();
         //LOG.error(sw.toString());
         synchronized (cache) {
+            Exception e = new Exception();
+            e.fillInStackTrace();
             LOG.warn("Probable inefficiency: internalGetObjectById called "
                     + (retval == null ? "" : "to fetch a " + DynamicUtil.getFriendlyName(retval
                             .getClass())) + " with id " + id + ", clazz " + clazz.toString()
                     + ", cache size = " + cache.size() + " - maybe you should use"
-                    + " ObjectStoreFastCollectionsForTranslatorImpl");
+                    + " ObjectStoreFastCollectionsForTranslatorImpl", e);
         }
         internalGetObjectByIdCount++;
         if (internalGetObjectByIdCount % 1000 == 0) {

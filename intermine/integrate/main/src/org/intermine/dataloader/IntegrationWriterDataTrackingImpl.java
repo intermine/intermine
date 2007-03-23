@@ -394,7 +394,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @see IntegrationWriterAbstractImpl#close
      */
     public void close() throws ObjectStoreException {
-        osw.close();
+        super.close();
         dataTracker.close();
 
         // There is a bug somewhere in this code that sometimes allows skeletons to
