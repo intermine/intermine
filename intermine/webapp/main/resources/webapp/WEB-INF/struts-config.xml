@@ -681,6 +681,9 @@
 
     <action path="/initExternalLinks" type="org.intermine.web.results.ExternalLinksController"/>
 
+    <action path="/initClassChooser"
+            type="org.intermine.web.ClassChooserController"/>
+
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
 

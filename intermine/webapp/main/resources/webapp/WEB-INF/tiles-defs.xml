@@ -75,7 +75,7 @@
     <put name="pageName" value="confirm"/>
   </definition>
   <definition name="classChooser.page" extends="layout.template">
-    <put name="body" value="queryClassSelect.jsp"/>
+    <put name="body" value="classChooser.tile"/>
     <put name="pageName" value="classChooser"/>
   </definition>
   <definition name="results.page" extends="layout.template">
@@ -158,7 +158,7 @@
   </definition> 
   
    <definition name="objectDetailsBags.tile" path="/objectDetailsBags.jsp" controllerUrl="/objectDetailsBags.do"/>
-  
+  <definition name="classChooser.tile" path="/queryClassSelect.jsp" controllerUrl="/initClassChooser.do"/>
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="history.tile" path="/history.jsp" />
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
