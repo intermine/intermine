@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -259,8 +260,10 @@ public class InitialiserPlugin implements PlugIn
         Map classes = new LinkedHashMap();
         Map classCounts = new LinkedHashMap();
         for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
-            String className = (String) i.next();
-            classes.put(className, TypeUtil.unqualifiedName(className));
+            String className = (String) i.next();            
+            if (!className.equals(InterMineObject.class.getName())) {
+                classes.put(className, TypeUtil.unqualifiedName(className));
+            }
             try {
                 classCounts.put(className, new Integer(oss.getClassCount(className)));
             } catch (Exception e) {
