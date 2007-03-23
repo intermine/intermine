@@ -15,21 +15,21 @@
     <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="Swiss-Prot data set"/>
         <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
-        <attribute name="version" value="UniProt 8.9"/>
+        <attribute name="version" value="UniProt 9.6"/>
         <attribute name="url" value="http://ca.expasy.org/sprot"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="12" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="TrEMBL data set"/>
         <attribute name="description" value="Translated CDSs from the EMBL database"/>
-        <attribute name="version" value="UniProt 8.9"/>
+        <attribute name="version" value="UniProt 9.6"/>
         <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
     <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="UniProt data set"/>
         <attribute name="description" value="UniProt Knowledgebase"/>
-        <attribute name="version" value="8.9"/>
+        <attribute name="version" value="9.6"/>
         <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
         <reference name="dataSource" ref_id="10"/>
     </item>
@@ -43,7 +43,7 @@
     <item id="21" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
         <attribute name="description" value="The FlyBase Drosophila melanogaster genome data set"/>
-        <attribute name="version" value="4.3"/>
+        <attribute name="version" value="5.1"/>
         <attribute name="url" value="http://www.flybase.org"/>
         <reference name="dataSource" ref_id="20"/>
     </item>
@@ -66,7 +66,7 @@
         <attribute name="title" value="InParanoid data set"/>
         <attribute name="description"
             value="InParanoid eukaryotic orthologue groups"/>
-        <attribute name="version" value="4.0"/>
+        <attribute name="version" value="04/01/07"/>
         <attribute name="url" value="http://inparanoid.cgb.ki.se"/>
         <reference name="dataSource" ref_id="30"/>
     </item>
@@ -138,7 +138,7 @@
         <attribute name="title" value="Department of Genetics tiling path"/>
         <attribute name="description"
             value="Primers and amplimers tiling the Drosophila melanogaster genome"/>
-        <attribute name="version" value="4.0"/>
+        <attribute name="version" value="5.1"/>
         <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
         <reference name="dataSource" ref_id="110"/>
     </item>
@@ -164,7 +164,7 @@
     <item id="131" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="DrosDel data set"/>
         <attribute name="description" value="DrosDel deletion data"/>
-        <attribute name="version" value="FlyBase 4.0 mapping"/>
+        <attribute name="version" value="FlyBase 5.1 mapping"/>
         <attribute name="url" value="http://www.drosdel.org.uk/"/>
         <reference name="dataSource" ref_id="130"/>
     </item>
