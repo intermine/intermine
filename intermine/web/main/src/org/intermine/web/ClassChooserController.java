@@ -54,13 +54,13 @@ public class ClassChooserController extends TilesAction
         Map sortedClassDescrs = new TreeMap (classDescrs);        
         StringBuffer sb = new StringBuffer();
 
-        for (Iterator it = sortedClassDescrs.keySet().iterator(); it.hasNext(); ){
+        for (Iterator it = sortedClassDescrs.keySet().iterator(); it.hasNext();) {
             String helpKey = (String) it.next();
             String helpText = (String) sortedClassDescrs.get(helpKey);          
             Integer n = (Integer) classCounts.get(model + "." + helpKey);            
             
-            // if this class has objects, add help text to array for javascript to use on 
-            // display page
+            // if this class has objects, add help text to array 
+            // for javascript to use on display page
             if (helpText != null && n != null && n.intValue() > 0) {                
                 String escaped = new String();
                 escaped = helpText.replaceAll("'", "\\\\'");
@@ -68,7 +68,7 @@ public class ClassChooserController extends TilesAction
             }
         }
         // remove last comma
-        sb.deleteCharAt(sb.length()-1); 
+        sb.deleteCharAt(sb.length() - 1); 
         request.setAttribute("helpText", sb);
         return null;
     }
