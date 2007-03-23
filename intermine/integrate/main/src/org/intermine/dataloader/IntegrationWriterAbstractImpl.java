@@ -13,8 +13,10 @@ package org.intermine.dataloader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -33,6 +35,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
@@ -53,7 +56,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
 
-    protected static final int MAX_MAPPINGS = 1000000;
     protected ObjectStoreWriter osw;
     protected static final int SKELETON = 0;
     protected static final int FROM_DB = 1;
@@ -63,6 +65,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected int idMapOps = 0;
     protected boolean ignoreDuplicates = false;
     protected EquivalentObjectFetcher eof;
+    protected Map summaryTimes = new HashMap();
+    protected Map summaryCounts = new HashMap();
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -161,9 +165,25 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             SingletonResults result = new SingletonResults(q, this, getSequence());
             result.setNoOptimise();
             result.setNoExplain();
+            long before = System.currentTimeMillis();
+            try {
+                result.get(0);
+            } catch (Exception e) {
+                // Ignore - operation will be repeated later
+            }
+            long time = System.currentTimeMillis() - before;
+            String summaryName = DynamicUtil.getFriendlyName(obj.getClass());
+            Long soFar = (Long) summaryTimes.get(summaryName);
+            Integer soFarCount = (Integer) summaryCounts.get(summaryName);
+            if (soFar == null) {
+                soFar = new Long(0L);
+                soFarCount = new Integer(0);
+            }
+            summaryTimes.put(summaryName, new Long(time + soFar.longValue()));
+            summaryCounts.put(summaryName, new Integer(soFarCount.intValue() + 1));
             return result;
         } else {
-            return new HashSet();
+            return Collections.EMPTY_SET;
         }
     }
 
@@ -266,9 +286,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         }
                         InterMineObject target = null;
                         if (type == SOURCE) {
-                            target = store((InterMineObject)
-                                    TypeUtil.getFieldValue(srcObj, fieldName), source, skelSource,
-                                    SKELETON);
+                            target = (InterMineObject) TypeUtil.getFieldProxy(srcObj, fieldName);
+                            if ((target != null) && (target.getId() != null)
+                                    && (idMap.get(target.getId()) == null)
+                                    && (target instanceof ProxyReference)) {
+                                target = ((ProxyReference) target).getObject();
+                            }
+                            target = store(target, source, skelSource, SKELETON);
                         } else {
                             target = (InterMineObject) TypeUtil.getFieldValue(srcObj,
                                     fieldName);
@@ -652,6 +676,15 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void close() throws ObjectStoreException {
         osw.close();
+        LOG.info("Equivalent object query summary:");
+        Iterator summaryNames = summaryTimes.keySet().iterator();
+        while (summaryNames.hasNext()) {
+            String summaryName = (String) summaryNames.next();
+            Long summaryTime = (Long) summaryTimes.get(summaryName);
+            Integer summaryCount = (Integer) summaryCounts.get(summaryName);
+            LOG.info("Performed equivalence query for " + summaryName + " " + summaryCount + " times. Average time "
+                    + (summaryTime.longValue() / summaryCount.longValue()) + " ms");
+        }
     }
 
     /**
