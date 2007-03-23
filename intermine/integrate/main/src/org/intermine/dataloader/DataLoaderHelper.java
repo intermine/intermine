@@ -381,7 +381,7 @@ public class DataLoaderHelper
                 return subQ;
             case 0:
                 if (!valid) {
-                    throw new IllegalArgumentException("No valid primary key found for object"
+                    throw new IllegalArgumentException("No valid primary key found for object: "
                             + obj);
                 }
             default:
