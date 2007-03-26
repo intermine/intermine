@@ -95,13 +95,16 @@ public class MainController extends TilesAction
         } else {
             isSuperUser = false;
         }
+        
+        String prefix = (String) session.getAttribute("prefix");
         Collection nodes = 
             MainHelper.makeNodes((String) session.getAttribute("path"), model, isSuperUser);
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes
             String pathName = node.getPath();
-            if (view.contains(pathName)) {
+            String fullPath = prefix + "." + node.getFieldName();
+            if (view.contains(fullPath)) {
                 node.setSelected(true);
             } else {
                 Path path = new Path(model, pathName);
@@ -130,7 +133,6 @@ public class MainController extends TilesAction
         request.setAttribute("viewPathLinkPaths", getPathTypes(prefixes.values(), query));
 
         // set up the navigation links (eg. Department > employees > department)
-        String prefix = (String) session.getAttribute("prefix");
         String current = null;
         Map navigation = new LinkedHashMap();
         Map navigationPaths = new LinkedHashMap();
