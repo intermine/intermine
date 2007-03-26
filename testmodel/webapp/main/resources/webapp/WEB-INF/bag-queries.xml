@@ -11,4 +11,9 @@
       SELECT DISTINCT a1_.id as a2_, a1_.name as a3_ FROM org.intermine.model.testmodel.Employable AS a1_ WHERE lower(a1_.name) IN ? ORDER BY a1_
     </query>
   </bag-type>
+  <bag-type type="Address">
+    <query message="employees for conversion" matchesAreIssues="true">
+      SELECT DISTINCT a1_.id as a2_, a1_.name as a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE LOWER(a1_.name) IN ? ORDER BY a1_
+    </query>
+  </bag-type>
 </bag-queries>

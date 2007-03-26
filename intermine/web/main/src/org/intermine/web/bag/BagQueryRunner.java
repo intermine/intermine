@@ -283,7 +283,7 @@ public class BagQueryRunner
             Map objTypes = CollectionUtil.groupByClass(objectToInput.keySet(), true);
 
             Iterator objTypeIter = objTypes.keySet().iterator();
-            while (objTypeIter.hasNext()) {
+            while (objTypeIter.hasNext() && !objsOfWrongType.isEmpty()) {
                 Class fromClass = (Class) objTypeIter.next();
                 List candidateObjs = (List) objTypes.get(fromClass);
 
