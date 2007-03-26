@@ -23,7 +23,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.Constants;
-import org.intermine.web.SessionMethods;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -43,7 +42,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class ObjectTrailController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(ObjectTrailController.class);
-    
+
     /**
      * Looks at the "trail" request parameter and extracts the object ids from it, then
      * looks up the actual objects and creates a list of TrailItems.
@@ -78,12 +77,12 @@ public class ObjectTrailController extends TilesAction
             elementTrail += "|" + ids[i];
             // we also check that the results table actually exists. If the user bookmarked
             // the URL then it probably won't exist in their session
-            
+
             // split this param pair again with . delimiter
             // will be something like bag.baggieName or results.col0
-            String URLparam = ids[i];
-            String breadcrumbs[] = StringUtils.split(URLparam, '.');
-            
+            String urlParam = ids[i];
+            String breadcrumbs[] = StringUtils.split(urlParam, '.');
+
             if (breadcrumbs[0].equals("results")) {
                             //&& SessionMethods.getResultsTable(session, ids[i]) != null) {
                 /* breadcrumbs[1] is the results table id
@@ -91,22 +90,22 @@ public class ObjectTrailController extends TilesAction
                  *      col0, col1, ... <-- template
                  *      qid0, qid1, ... <-- query
                  *      results.0   ... <-- i don't know
-                 *      
+                 *
                  *  so if breadcrumbs[1] is just an integer, we need to re-add "results." to it
                  */
                 String resultsTableId = breadcrumbs[1];
                 String prepend = "";
-                try { 
-                        int n = Integer.parseInt(resultsTableId); 
-                        prepend = "results.";   // this item should be "results.0" so 
+                try {
+                        int n = Integer.parseInt(resultsTableId);
+                        prepend = "results.";   // this item should be "results.0" so
                                                 // re-add the results string
-                } catch(NumberFormatException e) { 
+                } catch (NumberFormatException e) {
                     // isn't a number, don't need to do anything
-                } 
-                elements.add(new TrailElement(prepend+resultsTableId, elementTrail, "results"));
+                }
+                elements.add(new TrailElement(prepend + resultsTableId, elementTrail, "results"));
             } else if (breadcrumbs[0].equals("bag")) {
                 // breadcrumbs[1] is the bag name
-                elements.add(new TrailElement(breadcrumbs[1], elementTrail, "bag"));                
+                elements.add(new TrailElement(breadcrumbs[1], elementTrail, "bag"));
             } else if (breadcrumbs[0].equals("query")) {
                 elements.add(new TrailElement("query", elementTrail, "query"));
             } else {
@@ -125,17 +124,17 @@ public class ObjectTrailController extends TilesAction
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
         }
-//      TODO what is this?  
-//        String tableParam = request.getParameter("table");       
+//      TODO what is this?
+//        String tableParam = request.getParameter("table");
 //        if (ids.length == 0 && tableParam != null && tableParam.startsWith("results")
 //                && SessionMethods.getResultsTable(session, tableParam) != null) {
 //            elements.add(new TrailElement(tableParam, "table"));
 //        }
-        
+
         request.setAttribute("trailElements", elements);
         return null;
     }
-    
+
     /**
      * Create trail element label. Label is a list of each leaf class name.
      * @param object the intermine object associated with the trail element
@@ -150,7 +149,7 @@ public class ObjectTrailController extends TilesAction
         }
         return StringUtils.trim(label);
     }
-    
+
     /**
      * Bean passed to JSP to represent an element in the trail.
      */
@@ -161,7 +160,7 @@ public class ObjectTrailController extends TilesAction
         private int id;
         private String type;        // query, bag or table (as in results table)
         private String elementId;   // tableId or bagName
-        
+
         /**
          * Construct an object trail element.
          * @param label link label
@@ -174,7 +173,7 @@ public class ObjectTrailController extends TilesAction
             this.id = id;
             this.type = "object";
         }
-        
+
         /**
          * Construct a trail element.
          * @param id identifier
@@ -186,7 +185,7 @@ public class ObjectTrailController extends TilesAction
             this.elementId = id;
             this.trail = trail;
         }
-        
+
         /**
          * Return whether or not this trail element refers to a table.
          * @return true if this element refers to a table
@@ -194,7 +193,7 @@ public class ObjectTrailController extends TilesAction
         public String getType() {
             return type;
         }
-        
+
         /**
          * Return the table identifier if isTable==true. If isTable==false this method
          * will return null.
@@ -203,7 +202,7 @@ public class ObjectTrailController extends TilesAction
         public String getElementId() {
             return elementId;
         }
-        
+
         /**
          * Get the trail URL parameter for this trail element.
          * @return trail URL parameter for the trail element
@@ -211,7 +210,7 @@ public class ObjectTrailController extends TilesAction
         public String getTrail() {
             return trail;
         }
-        
+
         /**
          * Get the label for this trail element.
          * @return label for the trail element
@@ -219,7 +218,7 @@ public class ObjectTrailController extends TilesAction
         public String getLabel() {
             return label;
         }
-        
+
         /**
          * Get the object id for this trail element.
          * @return the object id for the trail element
@@ -227,7 +226,7 @@ public class ObjectTrailController extends TilesAction
         public int getObjectId() {
             return id;
         }
-        
+
         /**
          * @see Object#toString()
          */

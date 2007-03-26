@@ -22,8 +22,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileSet;
 
 /**
  * Task in invoke XML conversion.
@@ -51,7 +49,7 @@ public class FullXmlConverterTask extends ConverterTask
     public void setXmlResource(String resName) {
         this.xmlRes = resName;
     }
- 
+
     /**
      * @see Task#execute
      */
@@ -69,7 +67,7 @@ public class FullXmlConverterTask extends ConverterTask
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         File toRead = null;
-        
+
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             writer = new ObjectStoreItemWriter(osw);

@@ -103,20 +103,23 @@ public class IntronUtil
         q.addFrom(qcTranLoc);
         q.addToSelect(qcTranLoc);
         QueryObjectReference qorTranLoc = new QueryObjectReference(qcTran, "chromosomeLocation");
-        ContainsConstraint ccTranLoc = new ContainsConstraint(qorTranLoc, ConstraintOp.CONTAINS, qcTranLoc);
+        ContainsConstraint ccTranLoc =
+            new ContainsConstraint(qorTranLoc, ConstraintOp.CONTAINS, qcTranLoc);
         cs.addConstraint(ccTranLoc);
 
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
         QueryCollectionReference qcrExons = new QueryCollectionReference(qcTran, "exons");
-        ContainsConstraint ccTranExons = new ContainsConstraint(qcrExons, ConstraintOp.CONTAINS, qcExon);
+        ContainsConstraint ccTranExons =
+            new ContainsConstraint(qcrExons, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(ccTranExons);
 
         QueryClass qcExonLoc = new QueryClass(Location.class);
         q.addFrom(qcExonLoc);
         q.addToSelect(qcExonLoc);
         QueryObjectReference qorExonLoc = new QueryObjectReference(qcExon, "chromosomeLocation");
-        ContainsConstraint ccExonLoc = new ContainsConstraint(qorExonLoc, ConstraintOp.CONTAINS, qcExonLoc);
+        ContainsConstraint ccExonLoc =
+            new ContainsConstraint(qorExonLoc, ConstraintOp.CONTAINS, qcExonLoc);
         cs.addConstraint(ccExonLoc);
 
         q.setConstraint(cs);
@@ -211,7 +214,8 @@ public class IntronUtil
 
         while (locationIter.hasNext()) {
             Location location = (Location) locationIter.next();
-            bs.set(location.getStart().intValue() - tranStart, (location.getEnd().intValue() - tranStart) + 1);
+            bs.set(location.getStart().intValue() - tranStart,
+                   (location.getEnd().intValue() - tranStart) + 1);
         }
 
         int prevEndPos = 0;

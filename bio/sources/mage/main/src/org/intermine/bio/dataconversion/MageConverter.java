@@ -25,7 +25,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FileReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.Writer;
@@ -117,15 +116,15 @@ public class MageConverter extends FileConverter
         start = time;
 
         String fileName = getCurrentFile().getPath();
-        System.err.println("fileName: " + fileName);
+        System.err. println("fileName: " + fileName);
         if (!fileName.endsWith(".xml")) {
             return;
         }
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());
-        System.out.println("refMap.size: " + refMap.size());
-        System.out.println("seenMap.size: " + seenMap.size());
+        System.out. println("refMap.size: " + refMap.size());
+        System.out. println("seenMap.size: " + seenMap.size());
 
     }
 

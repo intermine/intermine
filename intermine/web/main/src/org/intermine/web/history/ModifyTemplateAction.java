@@ -43,7 +43,7 @@ import org.intermine.web.tagging.TagTypes;
 public class ModifyTemplateAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyTemplateAction.class);
-    
+
     /**
      * Forward to the correct method based on the button pressed.
      * @param mapping The ActionMapping used to select this instance
@@ -94,11 +94,11 @@ public class ModifyTemplateAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
-        
+
         for (int i = 0; i < mqf.getSelected().length; i++) {
             profile.deleteTemplate(mqf.getSelected()[i]);
         }
-        
+
         if (profile.getUsername() != null
             && profile.getUsername()
             .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
@@ -130,7 +130,7 @@ public class ModifyTemplateAction extends InterMineAction
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
-        
+
         PrintStream out = new PrintStream(response.getOutputStream());
         out.println("<template-list>");
         Map templates = profile.getSavedTemplates();
@@ -142,9 +142,9 @@ public class ModifyTemplateAction extends InterMineAction
         }
         out.println("</template-list>");
         out.flush();
-        
+
         return null;
-    }    
+    }
 
     /**
      * Remove the selected templates from the list of favourites.
@@ -156,7 +156,7 @@ public class ModifyTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    private ActionForward removeFavourite(ActionMapping mapping, ActionForm form, 
+    private ActionForward removeFavourite(ActionMapping mapping, ActionForm form,
                                           HttpServletRequest request,
                                           HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -167,7 +167,8 @@ public class ModifyTemplateAction extends InterMineAction
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String templateName = mqf.getSelected()[i];
-            List tagList = pm.getTags("favourite", templateName, TagTypes.TEMPLATE, profile.getUsername());
+            List tagList =
+                pm.getTags("favourite", templateName, TagTypes.TEMPLATE, profile.getUsername());
             for (Iterator iter = tagList.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
                 pm.deleteTag(tag);

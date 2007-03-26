@@ -16,14 +16,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
-
 import org.apache.tools.ant.BuildException;
+
 /**
  * A converter/retriever for Tfbs GFF3 files.
  *
@@ -46,24 +45,22 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
 
     }
 
-
-
     /**
      * @see GFF3RecordHandler#process()
      */
     public void process(GFF3Record record) throws BuildException {
         Item feature = getFeature();
-   
+
         if (record.getAttributes().get("type") != null) {
             String type = (String) ((List) record.getAttributes().get("type")).get(0);
             feature.setAttribute("type", type);
         }
-            
+
         if (record.getAttributes().get("sequence") != null) {
             String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
             Item sequence = getSequenceItem(residues);
-            feature.setReference("sequence", sequence.getIdentifier());   
-        }         
+            feature.setReference("sequence", sequence.getIdentifier());
+        }
 
         List conservedOrganismList = getConservedOrganismList(record);
         if (conservedOrganismList != null) {
@@ -99,18 +96,18 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             while (i.hasNext()) {
                 String orgAbbrev = (String) i.next();
                 if (conservedOrgMap.containsKey(orgAbbrev)) {
-                    conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);                 
+                    conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);
                 } else {
                     conservedOrg = createItem("Organism");
                     conservedOrg.setAttribute("abbreviation", orgAbbrev);
                     addItem(conservedOrg);
                     conservedOrgMap.put(orgAbbrev, conservedOrg);
                 }
-                conservedOrganismList.add(conservedOrg.getIdentifier());   
+                conservedOrganismList.add(conservedOrg.getIdentifier());
             }
         }
         return conservedOrganismList;
-    } 
+    }
 
     private Item getSequenceItem(String residues) {
         Item sequence = (Item) sequenceMap.get(residues);
@@ -159,5 +156,5 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             addItem(distanceRelation);
         }
     }
-    
+
 }

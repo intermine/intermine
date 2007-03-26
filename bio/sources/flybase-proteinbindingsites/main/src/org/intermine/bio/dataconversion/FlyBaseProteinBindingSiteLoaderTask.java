@@ -10,8 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.NoSuchElementException;
-
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.SAXParser;
@@ -56,11 +54,17 @@ public class FlyBaseProteinBindingSiteLoaderTask extends FileDirectDataLoaderTas
         this.taxonId = taxonId;
     }
 
-    //Use this for testing with junit.
+    /**
+     * Directly set the array of files to read from.  Use this for testing with junit.
+     * @param files the File objects
+     */
     protected void setFileArray(File[] files) {
         this.files = files;
     }
 
+    /**
+     * Process and load all of the files.
+     */
     public void process() {
         try {
             Class orgClass = Organism.class;
@@ -91,6 +95,8 @@ public class FlyBaseProteinBindingSiteLoaderTask extends FileDirectDataLoaderTas
 
     /**
      * Handles each file.  Factored out so we can supply files for testing.
+     * @param file the File to process.
+     * @throws BuildException if the is a problem
      */
     public void processFile(File file) throws BuildException {
         try {

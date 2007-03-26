@@ -1,6 +1,6 @@
 package org.flymine.web;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -57,10 +57,10 @@ import org.apache.struts.action.ActionMapping;
 public class GoStatAction extends InterMineAction
 {
    private int index = 0;
-    
+
     /**
 
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -84,83 +84,81 @@ public class GoStatAction extends InterMineAction
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
-        
+
         // select * from gene where goannotation = goterm and gene in bag
-                
+
         Query q = new Query();
-    
-        QueryClass qcGene = new QueryClass(Gene.class);     
+
+        QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcGo = new QueryClass(GOTerm.class);
-        
+
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfGoTerm = new QueryField(qcGo, "identifier");
-        
-        q.addFrom(qcGene);          
+
+        q.addFrom(qcGene);
         q.addFrom(qcGoAnnotation);
         q.addFrom(qcOrganism);
         q.addFrom(qcGo);
-        
+
         q.addToSelect(qcGene);
-        
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);            
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (bag != null) {
             // genes must be in bag
             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
-            cs.addConstraint(bc1); 
+            cs.addConstraint(bc1);
         }
-        
+
         // gene.goAnnotation CONTAINS GOAnnotation
         QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
         cs.addConstraint(cc1);
-                               
+
         // gene is from organism
         QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
         ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
         cs.addConstraint(cc2);
-               
+
         // goannotation contains go term
         QueryObjectReference qr3 = new QueryObjectReference(qcGoAnnotation, "property");
         ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcGo);
         cs.addConstraint(cc3);
 
         // can't be a NOT relationship!
-        SimpleConstraint sc1 = new SimpleConstraint(qfQualifier, 
+        SimpleConstraint sc1 = new SimpleConstraint(qfQualifier,
                                                      ConstraintOp.IS_NULL);
         cs.addConstraint(sc1);
-        
-        SimpleConstraint sc2 = new SimpleConstraint(qfGoTerm, 
+
+        SimpleConstraint sc2 = new SimpleConstraint(qfGoTerm,
                                                     ConstraintOp.EQUALS,
                                                     new QueryValue(goTermId));
         cs.addConstraint(sc2);
-        
-        q.setConstraint(cs);           
-        
+
+        q.setConstraint(cs);
+
         Results results = new Results(q, os, os.getSequence());
 
-        //System.out.println(" bag query - " + q.toString());
-        
         String columnName = "Gene";
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        WebCollection webCollection = 
+        WebCollection webCollection =
             new WebCollection(os, columnName, results, model, webConfig, classKeys);
         PagedCollection pagedColl = new PagedCollection(webCollection);
-        
+
         String identifier = "qid" + index++;
         SessionMethods.setResultsTable(session, identifier, pagedColl);
-        
+
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
                         .addParameter("size", "10")
                         .addParameter("trail", "").forward();
-        
-    
- 
+
+
+
     }
 }

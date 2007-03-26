@@ -182,7 +182,8 @@ public class EntrezOrganismRetriever extends Task
 Example
 
   <?xml version="1.0"?>
-  <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 29 October 2004//EN" "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/eSummary_041029.dtd">
+  <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 29 October 2004//EN" 
+            "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/eSummary_041029.dtd">
   <eSummaryResult>
     <DocSum>
       <Id>7227</Id>

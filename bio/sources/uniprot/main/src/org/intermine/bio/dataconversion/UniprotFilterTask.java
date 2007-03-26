@@ -73,24 +73,24 @@ public class UniprotFilterTask extends Task
         if (fileSet == null) {
             throw new BuildException("fileSet must be specified");
         } else {
-            System.err.println("Fileset: " + fileSet.toString());
+            System.err. println("Fileset: " + fileSet.toString());
         }
 
         if (tgtDir == null) {
             throw new BuildException("tgtDir must be specified");
         } else {
-            System.err.println("TGT Dir: " + tgtDir.toString());
+            System.err. println("TGT Dir: " + tgtDir.toString());
         }
 
         if (organisms.isEmpty()) {
-            System.err.println("No Organisms to Filter on - doing everything!");
+            System.err. println("No Organisms to Filter on - doing everything!");
         } else {
             String spacer = " ";
             StringBuffer buff = new StringBuffer("Organism Filter List: ");
             for (Iterator it = organisms.iterator(); it.hasNext(); ) {
                 buff.append(it.next() + spacer);
             }
-            System.err.println(buff.toString());
+            System.err. println(buff.toString());
         }
 
         try {

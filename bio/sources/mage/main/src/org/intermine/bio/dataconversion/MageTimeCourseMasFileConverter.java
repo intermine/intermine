@@ -61,23 +61,27 @@ public class MageTimeCourseMasFileConverter extends FileConverter
     public MageTimeCourseMasFileConverter(ItemWriter writer)
         throws ObjectStoreException, MetaDataException, IOException {
         super(writer);
-        
+
         readConfig();
         LOG.info("config " + config);
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
         dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "The Weatherall Institute of Molecular Medicine, Oxford University");
+        dataSource.setAttribute("name", "The Weatherall Institute of Molecular Medicine, "
+                                + "Oxford University");
         dataSource.setAttribute("url", "http://www.imm.ox.ac.uk/");
         writer.store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
         dataSet.setAttribute("title", "FDCP");
-        dataSet.setAttribute("description", "Molecular Signatures of Self-Renewal, Differentiation, and Lineage Choice in Multipotential Hemopoietic Progenitor Cells In Vitro");     
-        
-        dataSet.setAttribute("url", 
-                             "http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm");
+        dataSet.setAttribute("description",
+                             "Molecular Signatures of Self-Renewal, Differentiation, "
+                             + "and Lineage Choice in Multipotential Hemopoietic Progenitor "
+                             + "Cells In Vitro");
+
+        dataSet.setAttribute("url",
+                        "http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm");
         writer.store(ItemHelper.convert(dataSet));
 
         organismMM = createItem("Organism");
@@ -91,14 +95,14 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         if (experimentName != null) {
             experiment.setAttribute("name", experimentName);
         }
-        String description = null; 
+        String description = null;
         description = getConfig(expName, "description");
         if (description != null) {
             experiment.setAttribute("description", description);
         }
         String pmid = getConfig(expName, "pmid");
         if (pmid != null && !pmid.equals("")) {
-            Item pub = getPublication(pmid.trim()); 
+            Item pub = getPublication(pmid.trim());
             writer.store(ItemHelper.convert(pub));
             experiment.setReference("publication", pub.getIdentifier());
         }
@@ -106,20 +110,19 @@ public class MageTimeCourseMasFileConverter extends FileConverter
 
         Item sample1 = createItem("Sample");
         sample1.setReference("organism", organismMM.getIdentifier());
-        String materialType = null; 
+        String materialType = null;
         materialType = getConfig(expName, "materialIdType");
-        if( materialType != null) {
+        if (materialType != null) {
             sample1.setAttribute("materialType",  getConfig(expName, "materialIdType"));
         }
         String characteric = null;
         characteric = getConfig(expName, "primaryCharacteristic");
         if (characteric != null) {
             sample1.setAttribute("primaryCharacteristicType", "TargetedCellType");
-            sample1.setAttribute("primaryCharacteristic", getConfig(expName, "primaryCharacteristic"));
+            sample1.setAttribute("primaryCharacteristic",
+                                 getConfig(expName, "primaryCharacteristic"));
         }
         writer.store(ItemHelper.convert(sample1));
-
-
     }
 
 
@@ -145,14 +148,14 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             String probeId = array[0].trim();
             String apcall = array[1];
             String replicates = array[2];
-            String type = array[3]; 
+            String type = array[3];
             String condition = array[4];
             String timePoint = array[5];
             String timeUnit = array[6];
-            aveAPCall = Integer.parseInt(apcall)/Integer.parseInt(replicates);
+            aveAPCall = Integer.parseInt(apcall) / Integer.parseInt(replicates);
 
             Item probe = createProbe("CompositeSequence", PROBEPREFIX, probeId,
-                                     organismMM.getIdentifier(), dataSource.getIdentifier(), 
+                                     organismMM.getIdentifier(), dataSource.getIdentifier(),
                                      dataSet.getIdentifier(), writer);
 
             String name = timePoint.concat(" ").concat(timeUnit);
@@ -164,20 +167,20 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             result.setAttribute("isControl", "false");
             if (aveAPCall > 0.5) {
                 result.setAttribute("flag", "present");
-            } else { 
+            } else {
                 result.setAttribute("flag", "absent");
             }
             result.setAttribute("value", apcall.concat("/").concat(replicates));
             result.setReference("experiment", experiment.getIdentifier());
-            result.addCollection(new ReferenceList("assays", 
+            result.addCollection(new ReferenceList("assays",
                                  new ArrayList(Collections.singleton(assay.getIdentifier()))));
             writer.store(ItemHelper.convert(result));
 
             probe.addCollection(new ReferenceList("results",
                                 new ArrayList(Collections.singleton(result.getIdentifier()))));
 
-            writer.store(ItemHelper.convert(probe));            
-            
+            writer.store(ItemHelper.convert(probe));
+
         }
     }
 
@@ -192,7 +195,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createProbe(String clsName, String probePre, String id, String orgId, 
+     private Item createProbe(String clsName, String probePre, String id, String orgId,
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
@@ -224,7 +227,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             assay.setAttribute("name", name);
             assay.setReference("experiment", experiment.getIdentifier());
             if (sample1 != null) {
-                assay.addCollection(new ReferenceList("samples", 
+                assay.addCollection(new ReferenceList("samples",
                                 new ArrayList(Collections.singleton(sample1.getIdentifier()))));
             }
             assayMap.put(name, assay);
@@ -260,8 +263,8 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             String value = (String) entry.getValue();
             String exptName = key.substring(0, key.indexOf("."));
             String propName = key.substring(key.indexOf(".") + 1);
-            
-            addToMap(config, exptName, propName, value);            
+
+            addToMap(config, exptName, propName, value);
         }
     }
 
@@ -300,7 +303,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
      */
     private Item getPublication(String pmid) {
         Item pub = createItem("Publication");
-        pub.setAttribute("pubMedId", pmid);        
+        pub.setAttribute("pubMedId", pmid);
         return pub;
     }
 
@@ -311,6 +314,6 @@ public class MageTimeCourseMasFileConverter extends FileConverter
      */
     protected Item createItem(String clsName) {
         return itemFactory.makeItemForClass(GENOMIC_NS + clsName);
-    }   
-    
+    }
+
 }

@@ -84,7 +84,7 @@ public class EnsemblDataTranslator extends DataTranslator
                                  Model srcModel,
                                  Model tgtModel,
                                  String propsFileName,
-                                 String orgAbbrev) throws RuntimeException {
+                                 String orgAbbrev) {
 
         super(srcItemReader, mergeSpec, srcModel, tgtModel);
 

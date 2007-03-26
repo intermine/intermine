@@ -24,7 +24,7 @@ public class Hypergeometric
      * @param numGenes the number of genes in the bag.
      **/
 
-    public Hypergeometric(int numGenes){
+    public Hypergeometric(int numGenes) {
 
         logFactorials = new double[numGenes + 1];
         logFactorials[0] = 0;
@@ -44,10 +44,11 @@ public class Hypergeometric
      */
     private static double logChoose(int n, int k) {
         if (n == 0) {
-            if (k == 0)
+            if (k == 0) {
                 return 0;
-            else
+            } else {
                 return Double.NEGATIVE_INFINITY;
+            }
         }
         if (k == 0) {
             return 0;
@@ -76,7 +77,8 @@ public class Hypergeometric
 
         double sum = 0;
         for (int j = n; j >= k; j--) {
-            sum += Math.exp(logChoose(bigM, j) + logChoose(bigN - bigM, n - j) - logChoose(bigN, n));
+            sum +=
+                Math.exp(logChoose(bigM, j) + logChoose(bigN - bigM, n - j) - logChoose(bigN, n));
         }
 
         return sum;

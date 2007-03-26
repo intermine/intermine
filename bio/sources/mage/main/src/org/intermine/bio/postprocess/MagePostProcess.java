@@ -91,7 +91,6 @@ public class MagePostProcess extends PostProcessor
      * @throws ObjectStoreException 
      * @throws IllegalAccessException 
      * @throws SQLException 
-     * @throws Exception if anything goes wrong
      */
     protected void createMicroArrayResultsCollection()
              throws ObjectStoreException, IllegalAccessException, SQLException {

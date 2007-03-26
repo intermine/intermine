@@ -128,7 +128,7 @@ public class BagQuery
         String connectFieldName = bagQueryConfig.getConnectField();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         String constrainFieldName = bagQueryConfig.getConstrainField();
-        if (StringUtils.isEmpty(extraFieldValue)|| connectFieldName == null
+        if (StringUtils.isEmpty(extraFieldValue) || connectFieldName == null
             || extraClassName == null || constrainFieldName == null) {
             return queryArg;
         }

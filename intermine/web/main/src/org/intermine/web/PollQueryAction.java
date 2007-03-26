@@ -86,7 +86,7 @@ public class PollQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.pollquery.cancelled", qid), request);
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
-            
+
 
             LOG.debug("query qid " + qid + " complete");
             // Look at results, if only one result, go straight to object details page
@@ -114,9 +114,9 @@ public class PollQueryAction extends InterMineAction
                             }
                         }
                     }
-                    
-                    if (forwardId != null) { 
-                        if(trail != null) {
+
+                    if (forwardId != null) {
+                        if (trail != null) {
                             trail += "|" + forwardId;
                         } else {
                             trail = "|" + forwardId;
@@ -127,14 +127,14 @@ public class PollQueryAction extends InterMineAction
                     }
                 }
             }
-            
-            if(trail != null) {
+
+            if (trail != null) {
                 trail += "|results." + qid;
             } else {
-                trail = "|results." + qid; 
+                trail = "|results." + qid;
             }
 
-            return new ForwardParameters(mapping.findForward("results"))                        
+            return new ForwardParameters(mapping.findForward("results"))
                             .addParameter("trail", trail)
                             .addParameter("table", "results." + qid)
                             .forward();

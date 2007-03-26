@@ -14,11 +14,7 @@ import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.util.XmlUtil;
 
-import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Record;
-
-import org.apache.log4j.Logger;
-
 
 /**
  * Handle special cases when converting malaria GFF3 files.
@@ -28,9 +24,14 @@ import org.apache.log4j.Logger;
 
 public class MalariaGFF3RecordHandler extends GFF3RecordHandler
 {
+    /**
+     * Create a new MalariaGFF3RecordHandler object.
+     * @param tgtModel the target Model
+     */
     public MalariaGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
     }
+
     /**
      * @see GFF3RecordHandler#process(GFF3Record)
      */

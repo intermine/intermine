@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -682,8 +681,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             String summaryName = (String) summaryNames.next();
             Long summaryTime = (Long) summaryTimes.get(summaryName);
             Integer summaryCount = (Integer) summaryCounts.get(summaryName);
-            LOG.info("Performed equivalence query for " + summaryName + " " + summaryCount + " times. Average time "
-                    + (summaryTime.longValue() / summaryCount.longValue()) + " ms");
+            LOG.info("Performed equivalence query for " + summaryName + " " + summaryCount
+                     + " times. Average time "
+                     + (summaryTime.longValue() / summaryCount.longValue()) + " ms");
         }
     }
 

@@ -52,11 +52,11 @@ public class BagTableWidgetLoader
     private List columns;
     private List flattenedResults;
     private String title, description;
-    
+
     /**
      * This class loads and formats the data for the count
      * table widgets in the bag details page
-     * 
+     *
      * @param type The type to do the count on
      * @param collectionName the name of the collection corresponding to the
      * bag type
@@ -72,7 +72,7 @@ public class BagTableWidgetLoader
         this.title = title;
         this.description = description;
         Query q = new Query();
-        
+
         Class clazzA = null;
         Class clazzB = null;
         try {
@@ -81,19 +81,19 @@ public class BagTableWidgetLoader
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        
+
         QueryClass qClassA = new QueryClass(clazzA);
         QueryClass qClassB = new QueryClass(clazzB);
-        
+
         q.addFrom(qClassA);
         q.addFrom(qClassB);
 
         QueryFunction count = new QueryFunction();
-        
+
         q.addToSelect(qClassA);
         q.addToSelect(count);
-        
-        
+
+
         ConstraintSet cstSet = new ConstraintSet(ConstraintOp.AND);
         QueryReference qr;
         try {
@@ -103,16 +103,16 @@ public class BagTableWidgetLoader
         }
         ContainsConstraint cstr = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qClassA);
         cstSet.addConstraint(cstr);
-        
+
         QueryField qf = new QueryField(qClassB, "id");
         BagConstraint bagCstr = new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds());
         cstSet.addConstraint(bagCstr);
-        
+
         q.setConstraint(cstSet);
-        
+
         q.addToGroupBy(qClassA);
         q.addToOrderBy(new OrderDescending(count));
-        
+
         List results;
         try {
             results = os.execute(q, 0, 10, true, true, os.getSequence());
@@ -121,7 +121,7 @@ public class BagTableWidgetLoader
         }
         ClassDescriptor cld = MainHelper.getClassDescriptor(type, model);
         columns = new ArrayList();
-        
+
         if ((fields != null) && (fields.length() != 0)) {
             String[] fieldArray = fields.split(",");
             for (int i = 0; i < fieldArray.length; i++) {
@@ -168,7 +168,7 @@ public class BagTableWidgetLoader
                                 + bag.getName() + "&typeB=" + type + "&typeA=" + bag.getType()
                                 + "&collection=" + collectionName + "&id=" + lastObjectId
                                 .toString()));
-                } 
+                }
 
             }
             flattenedResults.add(flattenedRow);
@@ -176,7 +176,7 @@ public class BagTableWidgetLoader
         // Add the count column
         columns.add(bag.getType() + "s");
     }
-    
+
     /**
      * get the flattened results
      * @return the flattened results
@@ -184,7 +184,7 @@ public class BagTableWidgetLoader
     public List getFlattenedResults() {
         return flattenedResults;
     }
-    
+
     /**
      * Get the columnNames
      * @return the columnNames
@@ -192,7 +192,7 @@ public class BagTableWidgetLoader
     public List getColumns() {
         return columns;
     }
-    
+
     /**
      * Get the title
      * @return the title
@@ -200,7 +200,7 @@ public class BagTableWidgetLoader
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Get the description
      * @return the description

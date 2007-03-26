@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -95,7 +94,7 @@ public class KeggPathwayConvertor extends FileConverter
                 writer.store(ItemHelper.convert(pathway));
             } else if (currentFile.getName().startsWith("dme_gene_map")) {
                 String geneName = line[0];
-                if(geneName.startsWith("Dmel_")) {
+                if (geneName.startsWith("Dmel_")) {
                     geneName = geneName.substring(5);
                 }
                 String mapIdentifiers = line[1];
@@ -113,17 +112,17 @@ public class KeggPathwayConvertor extends FileConverter
             }
         }
     }
-    
-    private Item getPathway(String identifier){
+
+    private Item getPathway(String identifier) {
         Item pathway = (Item) pathwayMap.get(identifier);
         if (pathway == null) {
             pathway = createItem("Pathway");
-            pathway.setAttribute("identifier", "dme"+identifier);
+            pathway.setAttribute("identifier", "dme" + identifier);
             pathwayMap.put(identifier, pathway);
         }
         return pathway;
     }
-    
+
     private String newId(String className) {
         Integer id = (Integer) ids.get(className);
         if (id == null) {

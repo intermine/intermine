@@ -17,7 +17,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.TypeUtil;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Organism;
 
 import java.io.BufferedReader;
@@ -107,11 +106,17 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         this.classAttribute = classAttribute;
     }
 
-    //Use this for testing with junit.
+    /**
+     * Directly set the array of files to read from.  Use this for testing with junit.
+     * @param files the File objects
+     */
     protected void setFileArray(File[] files) {
         this.files = files;
     }
 
+    /**
+     * Process and load all of the fasta files.
+     */
     public void process() {
         try {
             Class orgClass = Organism.class;
@@ -148,18 +153,20 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * Handles each fasta file. Factored out so we can supply files for testing.
-     * */
+     * @param file the File to process.
+     * @throws BuildException if the is a problem
+     */
     public void processFile(File file) throws BuildException {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
-            System.err. println ("reading " + sequenceType + " sequence from: " + file);
+            System.err. println("reading " + sequenceType + " sequence from: " + file);
 
             SequenceIterator iter =
                     (SequenceIterator) SeqIOTools.fileToBiojava("fasta", sequenceType, reader);
 
             if (!iter.hasNext()) {
-                System.err. println ("no fasta sequences found - exiting");
+                System.err. println("no fasta sequences found - exiting");
                 return;
             }
 

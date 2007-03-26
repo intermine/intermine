@@ -1,6 +1,6 @@
 package org.intermine.web;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -36,39 +35,39 @@ public class ClassChooserController extends TilesAction
 {
     /**
      * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
-     *                          HttpServletResponse) 
+     *                          HttpServletResponse)
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)  throws Exception {
-        
+
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String model = os.getModel().getPackageName();
-        
+
         Map classCounts = (Map) servletContext.getAttribute("classCounts");
         Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
-        Map sortedClassDescrs = new TreeMap (classDescrs);        
+        Map sortedClassDescrs = new TreeMap (classDescrs);
         StringBuffer sb = new StringBuffer();
 
         for (Iterator it = sortedClassDescrs.keySet().iterator(); it.hasNext();) {
             String helpKey = (String) it.next();
-            String helpText = (String) sortedClassDescrs.get(helpKey);          
-            Integer n = (Integer) classCounts.get(model + "." + helpKey);            
-            
-            // if this class has objects, add help text to array 
+            String helpText = (String) sortedClassDescrs.get(helpKey);
+            Integer n = (Integer) classCounts.get(model + "." + helpKey);
+
+            // if this class has objects, add help text to array
             // for javascript to use on display page
-            if (helpText != null && n != null && n.intValue() > 0) {                
+            if (helpText != null && n != null && n.intValue() > 0) {
                 String escaped = new String();
                 escaped = helpText.replaceAll("'", "\\\\'");
                 sb.append(new String("'" + escaped + "',"));
             }
         }
         // remove last comma
-        sb.deleteCharAt(sb.length() - 1); 
+        sb.deleteCharAt(sb.length() - 1);
         request.setAttribute("helpText", sb);
         return null;
     }
