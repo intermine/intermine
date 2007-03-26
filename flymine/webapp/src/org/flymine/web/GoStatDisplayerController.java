@@ -104,15 +104,12 @@ public class GoStatDisplayerController extends InterMineAction
                  namespace = new String("biological_process");
             }
             Double maxValue = new Double("0.10");
-
-
             String bagName = request.getParameter("bagName");
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
             // put all vars in request for getting on the .jsp page
             session.setAttribute("bagName", bagName);
             session.setAttribute("ontology", namespace);
-            //session.setAttribute("significanceValue", significanceValue);
 
             Collection organisms = getOrganisms(os, bag);
             Collection badOntologies = getOntologies(); // list of ontologies to ignore
@@ -206,7 +203,7 @@ public class GoStatDisplayerController extends InterMineAction
                 ResultsRow rrBag =  (ResultsRow) itBag.next();
 
                 String goTermIdBag = (String) rrBag.get(0);
-                Long countBag = (java.lang.Long) rrBag.get(1);
+                Long countBag = (java.lang.Long) rrBag.get(1);  // put all vars in request for getting on the .jsp page
 
                 // put in our map
                 geneCountMap.put(goTermIdBag, countBag);
@@ -270,8 +267,7 @@ public class GoStatDisplayerController extends InterMineAction
                         h.calculateP(geneCountBag, goGeneCountBag, goGeneCount, geneCountAll);
 
                     // maps can't handle doubles
-                    Double p = new Double(p);
-                    resultsMap.put(goTerm, P);
+                    resultsMap.put(goTerm, new Double(p));
                     goGeneCountBagMap.put(goTerm, String.valueOf(goGeneCountBag));
                 }
             }
