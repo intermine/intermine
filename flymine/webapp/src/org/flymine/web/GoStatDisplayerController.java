@@ -15,6 +15,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.actions.TilesAction;
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -29,36 +45,16 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.Constants;
-import org.intermine.web.ForwardParameters;
-import org.intermine.web.InterMineAction;
 import org.intermine.web.Profile;
 import org.intermine.web.SortableMap;
 import org.intermine.web.bag.InterMineBag;
-
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * calculates p-values of goterms
  * @author Julie Sullivan
  */
-public class GoStatDisplayerController extends InterMineAction
+public class GoStatDisplayerController extends TilesAction
 {
 
     String organismNames;
@@ -108,8 +104,8 @@ public class GoStatDisplayerController extends InterMineAction
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
             // put all vars in request for getting on the .jsp page
-            session.setAttribute("bagName", bagName);
-            session.setAttribute("ontology", namespace);
+            request.setAttribute("bagName", bagName);
+            request.setAttribute("ontology", namespace);
 
             Collection organisms = getOrganisms(os, bag);
             Collection badOntologies = getOntologies(); // list of ontologies to ignore
@@ -279,13 +275,11 @@ public class GoStatDisplayerController extends InterMineAction
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
 
-            session.setAttribute("goStatPvalues", sortedMap);
-            session.setAttribute("goStatGeneTotals", goGeneCountBagMap);
-            session.setAttribute("goStatGoTermToId", goTermToIdMap);
-            session.setAttribute("goStatOrganisms", organismNames);
-            return new ForwardParameters(mapping.findForward("results"))
-            .forward();
-
+            request.setAttribute("goStatPvalues", sortedMap);
+            request.setAttribute("goStatGeneTotals", goGeneCountBagMap);
+            request.setAttribute("goStatGoTermToId", goTermToIdMap);
+            request.setAttribute("goStatOrganisms", organismNames);
+            return null;
         }
 
         // gets total number of genes.

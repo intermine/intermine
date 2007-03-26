@@ -11,3 +11,6 @@
   <definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
   	controllerUrl="/initOrthologueDisplayer.do"/>
   	
+  <definition name="goStatDisplayer.tile" path="/model/goStatDisplayer.jsp" 
+  	controllerUrl="/initGoStatDisplayer.do"/>
+  

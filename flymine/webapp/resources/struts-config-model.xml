@@ -26,9 +26,10 @@
     </action>
     
 	<action path="/initGoStatDisplayer" 
-		type="org.flymine.web.GoStatDisplayerController" >
-		<forward name="results" path="/model/goStatDisplayer.jsp" redirect="true" />
-    </action>
+		type="org.flymine.web.GoStatDisplayerController" />
+    
+    <action path="/goStatDisplayer" 
+		forward="goStatDisplayer.tile" />
     
     <action path="/goStatAction"
             type="org.flymine.web.GoStatAction">
