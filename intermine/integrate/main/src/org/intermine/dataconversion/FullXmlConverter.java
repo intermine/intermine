@@ -13,8 +13,6 @@ package org.intermine.dataconversion;
 import org.apache.log4j.Logger;
 
 import java.io.Reader;
-import java.util.Map;
-import java.util.HashMap;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
@@ -74,6 +72,7 @@ public class FullXmlConverter extends DataConverter
 
         /**
          * Do something useful with the Item.
+         * @param item the Item
          */
         public void finishedItem(Item item) {
             try {
