@@ -151,8 +151,7 @@
               </c:if>
 
               <br/>
-
-              <c:if test="${!empty bagType}">
+           	  <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">                
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 
                 <fmt:message key="template.or"/>
@@ -180,13 +179,13 @@
                     </fmt:message>
                   </div>
                 </c:if>
-
-                <script type="text/javascript">
+ 
+             <script type="text/javascript">
                 <!--
-                  var selectedBagName = '${selectedBagNames[con]}';
-                  if(selectedBagName){
+                  // var selectedBagName = '${selectedBagNames[con]}';
+                  // if(selectedBagName){
                           clickUseBag(${index});
-                  }
+                  // }
                 //-->
                 </script>
               </c:if>
