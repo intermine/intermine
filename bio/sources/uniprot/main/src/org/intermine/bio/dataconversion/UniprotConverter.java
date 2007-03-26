@@ -164,8 +164,12 @@ public class UniprotConverter extends FileConverter
 
     }
 
+    /**
+     * Toggle whether or not to import interpro data
+     * @param createinterpro String whether or not to import interpro data (true/false)
+     */
     public void setCreateinterpro(String createinterpro) {
-        if(createinterpro.equals("true")) {
+        if (createinterpro.equals("true")) {
             this.createInterpro = true;
         } else {
             this.createInterpro = false;
@@ -207,12 +211,12 @@ public class UniprotConverter extends FileConverter
         private Map geneTOgeneDesignations;
 
         // reset for each gene
-        private Map geneNameTypeToName;     // ORF, primary, etc value for gene name
-        private Set geneNames;              // list of names for this gene
-        private Map geneDesignations;       // gene names from each database
-        private String possibleGeneIdSource;// ie FlyBase, Ensemble, etc.
-        private String possibleGeneId;      // temp holder for gene identifier
-                                            // until "gene designation" is verified on next line
+        private Map geneNameTypeToName;      // ORF, primary, etc value for gene name
+        private Set geneNames;               // list of names for this gene
+        private Map geneDesignations;        // gene names from each database
+        private String possibleGeneIdSource; // ie FlyBase, Ensemble, etc.
+        private String possibleGeneId;       // temp holder for gene identifier
+                                             // until "gene designation" is verified on next line
 
         // master lists - only one is created
         private Map pubMaster;
@@ -271,22 +275,15 @@ public class UniprotConverter extends FileConverter
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
-
             attName = null;
-
             try {
-
                 // <entry>
                 if (qName.equals("entry")) {
-
                     // create, clear all lists for each new protein
                     initProtein();
-
                 // <entry><protein>
                 } else if (qName.equals("protein")) {
-
                     String isFragment = "false";
-
                     // check for <protein type="fragment*">
                     if (attrs.getValue("type") != null) {
                         String type = attrs.getValue("type");
@@ -295,40 +292,29 @@ public class UniprotConverter extends FileConverter
                         }
                     }
                     protein.setAttribute("isFragment", isFragment);
-
                 // <entry><protein><name>
                 } else if (qName.equals("name") && stack.peek().equals("protein")) {
-
                     attName = "name";
                     evidence = attrs.getValue("evidence");
-
                 // <entry><name>
                 } else if (qName.equals("name") && stack.peek().equals("entry")) {
-
                     attName = "identifier";
-
                 // <entry><accession>
                 } else if (qName.equals("accession")) {
-
                     attName = "value";
-
                 // <entry><sequence>
                 } else if (qName.equals("sequence")) {
-
                     String strLength = attrs.getValue("length");
                     String strMass = attrs.getValue("mass");
-
                     if (strLength != null) {
                         sequence = createItem("Sequence");
                         sequence.setAttribute("length", strLength);
                         protein.setAttribute("length", strLength);
                         attName = "residues";
                     }
-
                     if (strMass != null) {
                         protein.setAttribute("molecularWeight", strMass);
                     }
-
                 // <entry><feature>
                 } else if (qName.equals("feature")
                                 && attrs.getValue("type") != null
@@ -339,19 +325,15 @@ public class UniprotConverter extends FileConverter
                     String strStatus = null;
                     feature = createItem("UniProtFeature");
                     feature.addReference(new Reference("protein", protein.getIdentifier()));
-
                     if (featureCollection.getRefIds().isEmpty()) {
                         protein.addCollection(featureCollection);
                     }
-
                     featureCollection.addRefId(feature.getIdentifier());
                     feature.setAttribute("type", strType);
                     Item keyword = getKeyword(strType);
                     feature.addReference(new Reference("feature", keyword.getIdentifier()));
-
                     if (attrs.getValue("status") != null) {
                         strStatus = attrs.getValue("status");
-
                         if (strName != null) {
                             strName += " (" + strStatus + ")";
                         } else {
@@ -361,7 +343,6 @@ public class UniprotConverter extends FileConverter
                     if (strName != null) {
                         feature.setAttribute("description", strName);
                     }
-
                 // <entry><feature><location><start||end>
                 } else if ((qName.equals("begin") || qName.equals("end")
                                 || qName.equals("position"))
@@ -375,15 +356,12 @@ public class UniprotConverter extends FileConverter
                             feature.setAttribute("begin", attrs.getValue("position"));
                             feature.setAttribute("end", attrs.getValue("position"));
                         }
-
                 // <entry><dbreference type="InterPro" >
                 } else if (createInterpro
                                 && qName.equals("dbReference")
                                 && attrs.getValue("type").equals("InterPro")) {
-
                         String interproId = attrs.getValue("id").toString();
                         String interproItemId = null;
-
                         if (interproMaster.get(interproId) == null) {
                             interpro = createItem("ProteinFeature");
                             interpro.setAttribute("interproId", interproId);
@@ -396,25 +374,20 @@ public class UniprotConverter extends FileConverter
                             protein.addCollection(interproCollection);
                         }
                         interproCollection.addRefId(interproItemId);
-
                 // <entry><dbreference type="InterPro"><property type="entry name" value="***"/>
                 } else if (createInterpro
                                 && qName.equals("property")
                                 && attrs.getValue("type").equals("entry name")
                                 && stack.peek().equals("dbReference")) {
-
                         if (interpro != null) {
                             interpro.setAttribute("name", attrs.getValue("value").toString());
                             writer.store(ItemHelper.convert(interpro));
                             interpro = null;
                         }
-
                 // <entry><organism><dbreference>
                 } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
-
                     taxonId = attrs.getValue("id");
                     Item organism;
-
                     if (orgMaster.get(taxonId) == null) {
                         organism = createItem("Organism");
                         orgMaster.put(attrs.getValue("id"), organism);
@@ -434,89 +407,61 @@ public class UniprotConverter extends FileConverter
                         taxIdToDb.put(taxonId, "UniProt");
                         dbName = "UniProt";
                     }
-
                 // <entry><reference><citation><dbreference>
                 } else if (hasPrimary  && qName.equals("dbReference")
                            && stack.peek().equals("citation")
                            && attrs.getValue("type").equals("PubMed")) {
-
                     String pubId;
                     if (pubMaster.get(attrs.getValue("id")) == null) {
-
                         Item pub = createItem("Publication");
                         pub.setAttribute("pubMedId", attrs.getValue("id"));
                         pubMaster.put(attrs.getValue("id"), pub.getIdentifier());
                         pubId = pub.getIdentifier();
                         writer.store(ItemHelper.convert(pub));
-
                     } else {
-
                         pubId = (String) pubMaster.get(attrs.getValue("id"));
                     }
-
                     // if this is the first publication for this protein, add collection
                     if (pubCollection.getRefIds().isEmpty()) {
                         protein.addCollection(pubCollection);
                     }
-
                     pubCollection.addRefId(pubId);
-
                 // <entry><comment>
                 } else if (qName.equals("comment") && attrs.getValue("type") != null) {
-
                     comment = createItem("Comment");
                     comment.setAttribute("type", attrs.getValue("type"));
-
                 // <entry><comment><text>
                 } else if (qName.equals("text") && stack.peek().equals("comment")) {
-
                     attName = "text";
-
                 // <entry><keyword>
                 } else if (qName.equals("keyword")) {
-
                     attName = "keyword";
-
                 // <entry><gene>
                 } else if (qName.equals("gene")) {
-
                     initGene();
-
                 // <entry><gene><name>
                 } else if (qName.equals("name") && stack.peek().equals("gene")) {
-
                     // will be primary, ORF, synonym or ordered locus
                     attName = attrs.getValue("type");
-
                 // <dbreference type="EC">
                 } else if (qName.equals("dbReference") && attrs.getValue("type").equals("EC")) {
-
                     String ecNumber = attrs.getValue("id");
                     if (ecNumber != null) {
                         protein.setAttribute("ecNumber", ecNumber);
                     }
-
                 // <dbreference type="FlyBase/UniProt/etc.." id="*" key="12345">
                 } else if (qName.equals("dbReference")
                            && taxIdToDb.containsValue(attrs.getValue("type"))) {
-
                     // could be identifier but check next tag to see if this is a gene designation
                     possibleGeneId = attrs.getValue("id");
                     possibleGeneIdSource = attrs.getValue("type");
-
                 //    <dbreference><property type="gene designation" value="*">
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("gene designation")
                            && geneNames.contains(attrs.getValue("value"))) {
-
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // TODO need to handle when there is no property
-                    // or there is only one name
-                    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     if (possibleGeneIdSource != null && possibleGeneId != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
-
                 // <uniprot>
                 } else if (qName.equals("uniprot")) {
                    initData();
@@ -525,7 +470,6 @@ public class UniprotConverter extends FileConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-
             super.startElement(uri, localName, qName, attrs);
             stack.push(qName);
             attValue = new StringBuffer();
