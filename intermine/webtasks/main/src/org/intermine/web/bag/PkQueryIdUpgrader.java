@@ -10,6 +10,7 @@ package org.intermine.web.bag;
  *
  */
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,6 +40,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
      * No argument constructor - will use all available keyDefs to upgrade bags.
      */
     public PkQueryIdUpgrader() {
+        // empty
     }
 
     /**
@@ -64,6 +66,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
                                                    new IntToIntMap(), null, false);
         } catch (MetaDataException e) {
             throw new RuntimeException("Unable to create query for new object", e);
+        } catch (IllegalArgumentException e) {
+            LOG.error("createPKQuery() failed for old object: " + oldObject.getId()
+                      + " with error message: " + e.getMessage());
+            return Collections.EMPTY_SET;
         }
 
         SingletonResults results = new SingletonResults(query, os, os.getSequence());
@@ -78,10 +84,13 @@ public class PkQueryIdUpgrader implements IdUpgrader
             LOG.error("createPKQuery() found no results for old object: " + oldObject.getId()
                       + " executed query: " + query);
             return new HashSet();
-        } else if (size > 1) {
-            throw new RuntimeException("createPKQuery() query didn't return 1 result for: "
-                                       + oldObject.getId() + " (size was " + size + ")");
         } else {
+            if (size > 1) {
+                LOG.error("createPKQuery() query didn't return 1 result for: "
+                          + oldObject.getId() + " (size was " + size + ", values: "
+                          + results + ")");
+            }
+
             Set returnSet = new HashSet();
 
             Iterator iter = results.iterator();
