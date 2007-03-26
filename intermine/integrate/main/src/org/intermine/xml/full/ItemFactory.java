@@ -34,7 +34,7 @@ public class ItemFactory
      * An ItemFactory constructed with no Model, so the Items it creates do no type checking.
      */
     public static final ItemFactory NULL_MODEL_ITEM_FACTORY = new ItemFactory();
-    
+
     private Model model;
     private int newItemId = 1;
     private String prefix = "";
@@ -51,7 +51,7 @@ public class ItemFactory
      * Create an ItemFactory specific to a particular model.  Items created by this ItemFactory will
      * be checked against the given model.  ie. the set methods in Item will check that the
      * operation is valid for the given model.
-     * @param model the Model to use when checking 
+     * @param model the Model to use when checking
      */
     public ItemFactory (Model model) {
         this.model = model;
@@ -106,7 +106,7 @@ public class ItemFactory
         Item item;
         if (identifier == null) {
             item = makeItem();
-        } else { 
+        } else {
             item = makeItem(identifier);
         }
 
@@ -172,6 +172,18 @@ public class ItemFactory
      * @return a new Full Data Item
      */
     public Item makeItem(InterMineObject obj) {
+        return makeItemImpl(obj, true);
+    }
+
+
+    /**
+     * Convert a InterMineObject to Item format.
+     * @param obj object to convert
+     * @param transferCollections if true add the colections from obj to the new Item, otherwise
+     * ignore the collections of obj
+     * @return a new Full Data Item
+     */
+    public Item makeItemImpl(InterMineObject obj, boolean transferCollections) {
         if (obj.getId() == null) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
@@ -201,14 +213,16 @@ public class ItemFactory
                 }
                 // Collection
                 if (Collection.class.isAssignableFrom(value.getClass())) {
-                    Collection col = (Collection) value;
-                    if (col.size() > 0) {
-                        ReferenceList refList = new ReferenceList(fieldname);
-                        for (Iterator j = col.iterator(); j.hasNext();) {
-                            InterMineObject tempobj = (InterMineObject) j.next();
-                            refList.addRefId((tempobj).getId().toString());
+                    if (transferCollections) {
+                        Collection col = (Collection) value;
+                        if (col.size() > 0) {
+                            ReferenceList refList = new ReferenceList(fieldname);
+                            for (Iterator j = col.iterator(); j.hasNext();) {
+                                InterMineObject tempobj = (InterMineObject) j.next();
+                                refList.addRefId((tempobj).getId().toString());
+                            }
+                            item.addCollection(refList);
                         }
-                        item.addCollection(refList);
                     }
                 } else if (value instanceof InterMineObject) {
                     Reference ref = new Reference();
