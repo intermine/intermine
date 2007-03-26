@@ -188,6 +188,7 @@ public class TemplateController extends TilesAction
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
                             tf.setUseBagConstraint(j + "", true);
+                            selectedBagNames.put(c, bagName);
                         }
                     }
                 }
