@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
 public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 {
     private String tgtNs;
-    private String REDFLY_PREFIX = "REDfly:";
+    private static final String REDFLY_PREFIX = "REDfly:";
     private Map anatomyMap = new HashMap();
     private Map geneMap = new HashMap();
     private Map publications = new HashMap();
@@ -170,17 +170,5 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         addItem(publicationItem);
         publications.put(pubmedId, publicationItem);
         return publicationItem;
-    }
-
-    /**
-     * Create a synonym Item from the given information.
-     */
-    private Item createSynonym(Item subject, String type, String value) {
-        Item synonym = getItemFactory().makeItem(null, tgtNs + "Synonym", "");
-        synonym.setAttribute("type", type);
-        synonym.setAttribute("value", value);
-        synonym.setReference("subject", subject.getIdentifier());
-        synonym.setReference("source", getDataSource().getIdentifier());
-        return synonym;
     }
 }
