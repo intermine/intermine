@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -132,14 +133,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * @see IntegrationWriter#getMainSource
      */
-    public Source getMainSource(String name) throws ObjectStoreException {
+    public Source getMainSource(String name) {
         return dataTracker.stringToSource(name);
     }
 
     /**
      * @see IntegrationWriter#getSkeletonSource
      */
-    public Source getSkeletonSource(String name) throws ObjectStoreException {
+    public Source getSkeletonSource(String name) {
         return dataTracker.stringToSource("skel_" + name);
     }
 
@@ -161,14 +162,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             return null;
         }
         try {
-            //String oText = o.getClass().getName() + ":" + o.getId().toString();
-            //int oTextLength = oText.length();
-            //oText = oText.substring(oTextLength > 60 ? 60 : oTextLength);
-            //LOG.debug("store() called on " + oText);
-            Set equivalentObjects = getEquivalentObjects(o, source);
-            if ((equivalentObjects.size() == 1) && (type == SKELETON)) {
-                InterMineObject onlyEquivalent = (InterMineObject)
-                    equivalentObjects.iterator().next();
+            Set equivObjects = getEquivalentObjects(o, source);
+            if ((equivObjects.size() == 1) && (type == SKELETON)) {
+                InterMineObject onlyEquivalent = (InterMineObject) equivObjects.iterator().next();
                 if (onlyEquivalent instanceof ProxyReference) {
                     //LOG.debug("store() finished trivially for object " + oText);
                     // This onlyEquivalent object MUST have come from the ID map.
@@ -181,13 +177,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             }
             Integer newId = null;
             // if multiple equivalent objects in database just use id of first one
-            Iterator equivalentIter = equivalentObjects.iterator();
+            Iterator equivalentIter = equivObjects.iterator();
             if (equivalentIter.hasNext()) {
                 newId = ((InterMineObject) equivalentIter.next()).getId();
             }
             Set classes = new HashSet();
             classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
-            Iterator objIter = equivalentObjects.iterator();
+            Iterator objIter = equivObjects.iterator();
             while (objIter.hasNext()) {
                 InterMineObject obj = (InterMineObject) objIter.next();
                 if (obj instanceof ProxyReference) {
@@ -210,138 +206,128 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             }
 
             Map trackingMap = new HashMap();
-            try {
-                Map fieldToEquivalentObjects = new HashMap();
-                Map fieldDescriptors = getModel().getFieldDescriptorsForClass(newObj.getClass());
-                Set modelFieldNames = fieldDescriptors.keySet();
-                Set typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
-                if (!modelFieldNames.equals(typeUtilFieldNames)) {
-                    throw new ObjectStoreException("Failed to store data not in the model");
-                }
-                Iterator fieldIter = fieldDescriptors.entrySet().iterator();
-                while (fieldIter.hasNext()) {
-                    FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next())
-                        .getValue();
-                    String fieldName = field.getName();
-                    if (!"id".equals(fieldName)) {
-                        Set sortedEquivalentObjects;
+            Map fieldToEquivalentObjects = new HashMap();
+            Model model = getModel();
+            Map fieldDescriptors = model.getFieldDescriptorsForClass(newObj.getClass());
+            Set modelFieldNames = fieldDescriptors.keySet();
+            Set typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
+            if (!modelFieldNames.equals(typeUtilFieldNames)) {
+                throw new ObjectStoreException("Failed to store data not in the model");
+            }
+            Iterator fieldIter = fieldDescriptors.entrySet().iterator();
+            while (fieldIter.hasNext()) {
+                FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next()).getValue();
+                String fieldName = field.getName();
+                if (!"id".equals(fieldName)) {
+                    Set sortedEquivalentObjects;
 
-                        // always add to collections, resolve other clashes by priority
-                        if (field instanceof CollectionDescriptor) {
-                            sortedEquivalentObjects = new HashSet();
-                        } else {
-                            Comparator compare = new SourcePriorityComparator(dataTracker, field,
-                                    (type == SOURCE ? source : skelSource), o, dbIdsStored, this,
-                                    source, skelSource);
-                            sortedEquivalentObjects = new TreeSet(compare);
-                        }
-
-                        if (getModel().getFieldDescriptorsForClass(o.getClass())
-                                .containsKey(fieldName)) {
-                            sortedEquivalentObjects.add(o);
-                        }
-                        objIter = equivalentObjects.iterator();
-                        while (objIter.hasNext()) {
-                            InterMineObject obj = (InterMineObject) objIter.next();
-                            Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
-                            if ((equivalentObjects.size() == 1) && (fieldSource != null)
-                                    && (fieldSource.equals(source)
-                                        || (fieldSource.equals(skelSource) && (type != SOURCE)))) {
-                                if (type == SOURCE) {
-                                    if (obj instanceof ProxyReference) {
-                                         obj = ((ProxyReference) obj).getObject();
-                                    }
-                                    String errMessage;
-                                    if (dbIdsStored.contains(obj.getId())) {
-                                        errMessage = "There is already an equivalent "
-                                            + "in the database from this source (" + source
-                                            + ") from *this* run; new object from source: \"" + o
-                                            + "\", object from database (earlier in this run): \""
-                                            + obj
-                                            + "\"; noticed problem while merging field \""
-                                            + field.getName() + "\" originally read from source: "
-                                            + fieldSource;
-                                    } else {
-                                        errMessage = "There is already an equivalent "
-                                            + "in the database from this source (" + source
-                                            + ") from a *previous* run; "
-                                            + "object from source in this run: \""
-                                            + o + "\", object from database: \"" + obj
-                                            + "\"; noticed problem while merging field \""
-                                            + field.getName() + "\" originally read from source: "
-                                            + fieldSource;
-                                    }
-
-                                    if (!ignoreDuplicates) {
-                                        LOG.error(errMessage);
-                                        throw new IllegalArgumentException(errMessage);
-                                    }
-                                }
-                                //LOG.debug("store() finished simply for object " + oText);
-                                return obj;
-                            }
-                            // materialise proxies before searching for this field
-                            if (obj instanceof ProxyReference) {
-                                ProxyReference newproxy = (ProxyReference) obj;
-                                obj = ((ProxyReference) obj).getObject();
-                                if (obj == null) {
-                                     LOG.error("obj is null ");
-                                     LOG.error ("o " + o);
-                                     LOG.error("proxyId " + newproxy.getId());
-                                     LOG.error("proxy " + newproxy);
-                                     ObjectStore os = newproxy.getObjectStore();
-                                     os.invalidateObjectById(newproxy.getId());
-                                     obj = newproxy.getObject();
-                                     LOG.error("obj: " + obj);
-                                 }
-
-                            }
-                            try {
-                                if (getModel().getFieldDescriptorsForClass(obj.getClass())
-                                    .containsKey(fieldName)) {
-                                    sortedEquivalentObjects.add(obj);
-                                }
-                            } catch (RuntimeException e) {
-                                 LOG.error("fieldName " + fieldName);
-                                 LOG.error ("o " + o);
-                                 LOG.error("id " + obj.getId());
-                                 LOG.error("obj " + obj);
-                                 LOG.error("obj.getClass() " + obj.getClass());
-                                 LOG.error("desc " + getModel().getFieldDescriptorsForClass(obj
-                                             .getClass()));
-                                 LOG.error("error " , e);
-                                 throw e;
-                            }
-                        }
-                        fieldToEquivalentObjects.put(field, sortedEquivalentObjects);
+                    // always add to collections, resolve other clashes by priority
+                    if (field instanceof CollectionDescriptor) {
+                        sortedEquivalentObjects = new HashSet();
+                    } else {
+                        Comparator compare = new SourcePriorityComparator(dataTracker, field,
+                             (type == SOURCE ? source : skelSource), o, dbIdsStored, this,
+                             source, skelSource);
+                        sortedEquivalentObjects = new TreeSet(compare);
                     }
-                }
 
-                Iterator fieldToEquivIter = fieldToEquivalentObjects.entrySet().iterator();
-                while (fieldToEquivIter.hasNext()) {
-                    Source lastSource = null;
-                    Map.Entry fieldToEquivEntry = (Map.Entry) fieldToEquivIter.next();
-                    FieldDescriptor field = (FieldDescriptor) fieldToEquivEntry.getKey();
-                    Set sortedEquivalentObjects = (Set) fieldToEquivEntry.getValue();
-                    String fieldName = field.getName();
-
-                    objIter = sortedEquivalentObjects.iterator();
+                    if (model.getFieldDescriptorsForClass(o.getClass()).containsKey(fieldName)) {
+                        sortedEquivalentObjects.add(o);
+                    }
+                    objIter = equivObjects.iterator();
                     while (objIter.hasNext()) {
                         InterMineObject obj = (InterMineObject) objIter.next();
-                        if (obj == o) {
-                            copyField(obj, newObj, source, skelSource, field, type);
-                            lastSource = (type == SOURCE ? source : skelSource);
-                        } else {
-                            Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
-                            copyField(obj, newObj, fieldSource, fieldSource, field, FROM_DB);
-                            lastSource = fieldSource;
+                        Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
+                        if ((equivObjects.size() == 1) && (fieldSource != null)
+                            && (fieldSource.equals(source)
+                            || (fieldSource.equals(skelSource) && (type != SOURCE)))) {
+                            if (type == SOURCE) {
+                                if (obj instanceof ProxyReference) {
+                                    obj = ((ProxyReference) obj).getObject();
+                                }
+                                String errMessage;
+                                if (dbIdsStored.contains(obj.getId())) {
+                                    errMessage = "There is already an equivalent "
+                                        + "in the database from this source (" + source
+                                        + ") from *this* run; new object from source: \"" + o
+                                        + "\", object from database (earlier in this run): \""
+                                        + obj + "\"; noticed problem while merging field \""
+                                        + field.getName() + "\" originally read from source: "
+                                        + fieldSource;
+                                } else {
+                                    errMessage = "There is already an equivalent "
+                                        + "in the database from this source (" + source
+                                        + ") from a *previous* run; "
+                                        + "object from source in this run: \""
+                                        + o + "\", object from database: \"" + obj
+                                        + "\"; noticed problem while merging field \""
+                                        + field.getName() + "\" originally read from source: "
+                                        + fieldSource;
+                                }
+
+                                if (!ignoreDuplicates) {
+                                    LOG.error(errMessage);
+                                    throw new IllegalArgumentException(errMessage);
+                                }
+                            }
+                            //LOG.debug("store() finished simply for object " + oText);
+                            return obj;
+                        }
+                        // materialise proxies before searching for this field
+                        if (obj instanceof ProxyReference) {
+                            ProxyReference newproxy = (ProxyReference) obj;
+                            obj = ((ProxyReference) obj).getObject();
+                            if (obj == null) {
+                                LOG.error("obj is null o: " + o);
+                                LOG.error("proxyId " + newproxy.getId());
+                                LOG.error("proxy " + newproxy);
+                                ObjectStore os = newproxy.getObjectStore();
+                                os.invalidateObjectById(newproxy.getId());
+                                obj = newproxy.getObject();
+                                LOG.error("obj: " + obj);
+                            }
+                        }
+                        try {
+                            if (model.getFieldDescriptorsForClass(obj.getClass())
+                                            .containsKey(fieldName)) {
+                                sortedEquivalentObjects.add(obj);
+                            }
+                        } catch (RuntimeException e) {
+                            LOG.error("fieldName: " + fieldName + " o: " + o + " id: "
+                                      + obj.getId() + " obj: " + obj + " obj.getClass(): "
+                                      + obj.getClass() + " description: " + model.
+                                      getFieldDescriptorsForClass(obj.getClass()));
+                            LOG.error("error " , e);
+                            throw e;
                         }
                     }
-                    trackingMap.put(fieldName, lastSource);
+                    fieldToEquivalentObjects.put(field, sortedEquivalentObjects);
                 }
-            } catch (IllegalAccessException e) {
-                throw new ObjectStoreException(e);
             }
+
+            Iterator fieldToEquivIter = fieldToEquivalentObjects.entrySet().iterator();
+            while (fieldToEquivIter.hasNext()) {
+                Source lastSource = null;
+                Map.Entry fieldToEquivEntry = (Map.Entry) fieldToEquivIter.next();
+                FieldDescriptor field = (FieldDescriptor) fieldToEquivEntry.getKey();
+                Set sortedEquivalentObjects = (Set) fieldToEquivEntry.getValue();
+                String fieldName = field.getName();
+
+                objIter = sortedEquivalentObjects.iterator();
+                while (objIter.hasNext()) {
+                    InterMineObject obj = (InterMineObject) objIter.next();
+                    if (obj == o) {
+                        copyField(obj, newObj, source, skelSource, field, type);
+                        lastSource = (type == SOURCE ? source : skelSource);
+                    } else {
+                        Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
+                        copyField(obj, newObj, fieldSource, fieldSource, field, FROM_DB);
+                        lastSource = fieldSource;
+                    }
+                }
+                trackingMap.put(fieldName, lastSource);
+            }
+
             store(newObj);
 
             // We have called store() on an object, and we are about to write all of its data
@@ -373,12 +359,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     skeletons.set(newObj.getId().intValue(), false);
                 }
             }
-            //LOG.debug("store() finished normally for object " + oText);
             return newObj;
         } catch (RuntimeException e) {
             throw new RuntimeException("Exception while loading object " + o, e);
         } catch (ObjectStoreException e) {
             throw new ObjectStoreException("Exception while loading object " + o, e);
+        } catch (IllegalAccessException e) {
+            throw new ObjectStoreException(e);
         }
     }
 
