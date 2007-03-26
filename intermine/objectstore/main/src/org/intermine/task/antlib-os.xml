@@ -1,5 +1,8 @@
 <antlib>
     <typedef
+        name="acceptance-tests"
+        classname="org.intermine.task.AcceptanceTestTask"/>
+    <typedef
         name="build-torque"
         classname="org.intermine.objectstore.intermine.TorqueModelOutputTask"/>
     <typedef
