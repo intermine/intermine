@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -111,7 +112,7 @@ public class ProfileBinding
                     while (objectsIter.hasNext()) {
                         ResultsRow rr = (ResultsRow) objectsIter.next();
                         InterMineObject o = (InterMineObject) rr.get(0);
-                        Item item = itemFactory.makeItem(o);
+                        Item item = itemFactory.makeItemImpl(o, false);
                         FullRenderer.renderImpl(writer, item, false);
                     }
 
@@ -171,8 +172,6 @@ public class ProfileBinding
                 }
             }
             writer.writeEndElement();
-
-            writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling profile", e);
         } catch (ObjectStoreException e) {
@@ -188,12 +187,34 @@ public class ProfileBinding
      * @param idsToSerialise object ids are added to this Set
      */
     private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
+        List idsToPreFetch = new ArrayList();
+        
         for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
 
             Iterator iter = bag.iterator();
 
+
+            while (iter.hasNext()) {
+                BagElement bagElement = (BagElement) iter.next();
+                idsToPreFetch.add(bagElement.getId());
+            }
+        }
+
+        // pre-fetch objects from all bags into the cache
+        try {
+            os.getObjectsByIds(idsToPreFetch);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to find object for ids: " + idsToPreFetch, e);
+        }
+        
+        for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            InterMineBag bag = (InterMineBag) entry.getValue();
+            
+            Iterator iter = bag.iterator();
+            
             while (iter.hasNext()) {
                 BagElement bagElement = (BagElement) iter.next();
                 InterMineObject object;
