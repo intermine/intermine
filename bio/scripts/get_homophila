@@ -4,6 +4,7 @@
 # homophila/2.1
 # the version used in the directory name is the version mentioned on the Homophila web page
 # the script should be run in /shared/data
+# modified by Philip North 20/03/07 to include parts of the process that were previously done manually
 
 use strict;
 use warnings;
@@ -14,6 +15,7 @@ my $homophila_server = "http://superfly.ucsd.edu/homophila";
 my $homophila_data_file = "homophila_all.txt";
 my $homophila_matches_file = "homophila_matches.txt";
 my $homophila_diseases_file = "homophila_diseases.txt";
+my $protein_ids_file = "protein_ids.txt";
 
 my $version;
 
@@ -32,7 +34,6 @@ $year -= 100;
 $year += 2000;
 
 my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
-
 my $download_dir = "${version}_$date_string";
 
 if (-d "homophila/$download_dir") {
@@ -62,14 +63,18 @@ if ($line !~ /CG\tOMIM_ID/) {
 
 my %homophila_matches = ();
 my %homophila_diseases = ();
+my %proteinID = ();
 
 while ($line = <HOMOPHILA_DATA>) {
   chomp $line;
   my @bits = split /\t/, $line;
-
   # get unique matches and diseases
   $homophila_matches{join "\t", @bits[0..3]}++;
+  if(@bits[1,6]){
   $homophila_diseases{join "\t", @bits[1,6]}++;
+  }
+  #and protein Ids
+	$proteinID{$bits[2]} = $bits[2];
 }
 
 open HOMOPHILA_MATCHES, ">homophila/$download_dir/$homophila_matches_file"
@@ -90,8 +95,104 @@ close HOMOPHILA_DATA;
 close HOMOPHILA_MATCHES;
 close HOMOPHILA_DISEASES;
 
+#===================================================================================
+# this part replaces the manual batch upload of protein ids to ncbi entrez
+# use eutils to access ncbi with the protein Ids and retrieve the GenPept entries.
+
+use LWP::Simple;
+
+# output file
+my $sequences_file = "sequences.gp";
+
+# eutils URL
+my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
+
+# define database and output format
+my $db     = "Protein";
+my $report = "gp";
+
+# URL for esearch
+my $esearch = "$utils/esearch.fcgi?" .
+              "db=$db&retmax=1&usehistory=y&term=";
+
+open SEQUENCES, ">homophila/$download_dir/$sequences_file"
+   or die "can't open homophila/$download_dir/$sequences_file\n";
+
+for my $prot (sort keys %proteinID) {
+	# id to be queried by esearch and final esearch URL
+	my $queryID  = $prot;
+	my $esearch_result = get($esearch . $queryID);
+	
+	# identify parameters for efetch
+	$esearch_result =~
+	  m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s;
+
+	my $Count    = $1;
+	my $QueryKey = $2;
+	my $WebEnv   = $3;
+	#print "Count = $Count; QueryKey = $QueryKey; WebEnv = $WebEnv\n\n";
+
+	my $retstart;
+	my $retmax=3;
+	
+	# for each record found by esearch, use efetch to retrieve it
+	for($retstart = 0; $retstart < $Count; $retstart += $retmax) {
+		my $efetch = "$utils/efetch.fcgi?" .
+	               "rettype=$report&retmode=text&retstart=$retstart&retmax=$retmax&" .
+	               "db=$db&query_key=$QueryKey&WebEnv=$WebEnv";     
+		my $efetch_result = get($efetch);
+  		print SEQUENCES "$efetch_result\n";		
+	}
+	&delay();
+}close SEQUENCES;
+
+# implements the three second delay between queries as required by ncbi
+sub delay(){
+my $future = (time + 3);
+	while (1) {
+    	if (time >= $future) {
+        	return;        
+   		}
+	}
+}
+#=================================================================================
+# this part was once create_protein_gene.pl 
+
+# output file
+my $prot_gene_file = "protein_gene.txt";
+
+my $more = 0;
+my $cds = 0;
+
+my $source = "homophila/$download_dir/$sequences_file";
+
+open PROT_GENES, ">homophila/$download_dir/$prot_gene_file"
+   or die "can't open homophila/$download_dir/$prot_gene_file\n";
+
+open(FILE, "<$source") or die "$!";
+while (<FILE>) {
+	if (!$more && /LOCUS      /) {
+    	$more = 1;
+  	}
+	if( $more && (/(NP_\d+)/ || /(XP_\d+)/) ){
+    	print PROT_GENES "$1\t";
+    	$more = 0;
+    	$cds = 0;
+	}
+	if (!$cds && /CDS      /) {
+    	$cds = 1;
+  	}
+	if ($cds && /gene="(.+)"/) {
+    	if ($more) { print "|"; }
+    	print PROT_GENES "$1\n";
+   		$more = 1;
+  	}	
+}
+close (FILE) or die "$!";
+close PROT_GENES;
+
+# create the @current link
 unlink "homophila/current";
-
 warn "created $download_dir\n";
-
 symlink $download_dir, "homophila/current" or die "can't create homophila/current";
+
