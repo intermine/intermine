@@ -50,12 +50,14 @@
 
   </target>
 
-
-
-  
   <target name="test-task" depends="init">
     <integrate projectXml="../project.xml" basedir="../.." source="uniprot" action="retrieve"/>
   </target>
-  
+
+  <target name="acceptance-tests" depends="-init-properties, -init-integrate, -init-deps">
+    <acceptance-tests configFile="../../bio/core/test/resources/flymine_acceptance_test.conf"
+                      outputFile="build/acceptance_test.html"
+                      database="db.production"/>
+  </target>
 </project>
 
