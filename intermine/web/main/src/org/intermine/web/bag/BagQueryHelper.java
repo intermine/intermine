@@ -45,20 +45,20 @@ public class BagQueryHelper
      * Message associated with default bag query.
      */
     public static final String DEFAULT_MESSAGE = "searching key fields";
-    
+
     /**
      * Create a BagQuery that constrains the class key fields of the given type.
      * @param type the class to query for
-     * @param bagQueryConfig The BagQueryConfig object used to get the extra class and field to 
+     * @param bagQueryConfig The BagQueryConfig object used to get the extra class and field to
      * constrain when making the query (eg. constrain Bioentiry.organism.name = "something")
      * @param classKeys the class keys map
      * @param input the input strings/identifiers
      * @param model the Model to pass to the BagQuery constructor
-     * @return a BagQuery that queries for objects of class given of type where any of the class 
+     * @return a BagQuery that queries for objects of class given of type where any of the class
      * key fields match any of the input identifiers
      * @throws ClassNotFoundException
      */
-    public static BagQuery createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig, 
+    public static BagQuery createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig,
                                                  Model model, Map classKeys, Collection input)
         throws ClassNotFoundException {
 
@@ -73,7 +73,7 @@ public class BagQueryHelper
         while (inputIter.hasNext()) {
             lowerCaseInput.add(((String) inputIter.next()).toLowerCase());
         }
-        
+
         Query q = new Query();
         QueryClass qc = new QueryClass(cls);
         q.addFrom(qc);

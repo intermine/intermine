@@ -16,12 +16,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-
 
 import org.apache.tools.ant.BuildException;
 
@@ -36,7 +34,6 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
     protected Map conservedOrgMap =  new HashMap();
     protected Map sequenceMap =  new HashMap();
 
-
     /**
      * Create a new CnsGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -45,32 +42,30 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         super(tgtModel);
 
     }
+
     /**
      * @see GFF3RecordHandler#process(GFF3Record)
      */
     public void process(GFF3Record record) throws BuildException {
         Item feature = getFeature();
-   
+
         if (record.getAttributes().get("type") != null) {
             String type = (String) ((List) record.getAttributes().get("type")).get(0);
             feature.setAttribute("type", type);
         }
-            
+
         if (record.getAttributes().get("sequence") != null) {
             String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
             Item sequence = getSequenceItem(residues);
-            feature.setReference("sequence", sequence.getIdentifier());   
-        }         
+            feature.setReference("sequence", sequence.getIdentifier());
+        }
 
         List conservedOrganismList = getConservedOrganismList(record);
         if (conservedOrganismList != null) {
             feature.addCollection(new ReferenceList("conservedOrganisms", conservedOrganismList));
         }
     }
-        /**
-     * @param clsName
-     * @return item
-     */
+
     private Item createItem(String clsName) {
         return getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
                                   + clsName);
@@ -85,18 +80,18 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
             while (i.hasNext()) {
                 String orgAbbrev = (String) i.next();
                 if (conservedOrgMap.containsKey(orgAbbrev)) {
-                    conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);                 
+                    conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);
                 } else {
                     conservedOrg = createItem("Organism");
                     conservedOrg.setAttribute("abbreviation", orgAbbrev);
                     addItem(conservedOrg);
                     conservedOrgMap.put(orgAbbrev, conservedOrg);
                 }
-                conservedOrganismList.add(conservedOrg.getIdentifier());   
+                conservedOrganismList.add(conservedOrg.getIdentifier());
             }
         }
         return conservedOrganismList;
-    } 
+    }
 
     private Item getSequenceItem(String residues) {
         Item sequence = (Item) sequenceMap.get(residues);

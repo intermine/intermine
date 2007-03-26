@@ -394,6 +394,9 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
         return retList;
     }
 
+    /**
+     * Create a CDS object from the cds parts read from the file.
+     */
     protected Set createCDSs() {
         Set retval = new HashSet();
         // How to identify a CDS is unclear.

@@ -67,7 +67,7 @@ public abstract class WebUtil
 
         return intVal;
     }
-    
+
     /**
      * Gets the cache directory.
      * @param servletContext the servlet context
@@ -92,7 +92,7 @@ public abstract class WebUtil
         }
         return cacheDir;
     }
-    
+
     /**
      * Given an image on disk, write the image to the client. Assumes content type from
      * the file extensions.
@@ -156,10 +156,10 @@ public abstract class WebUtil
                 }
             }
         }
-        
+
         return sb.toString();
     }
-    
+
     /**
      * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
      * expression with %'s.
@@ -205,7 +205,7 @@ public abstract class WebUtil
                 }
             }
         }
-        
+
         return sb.toString();
     }
 
@@ -222,15 +222,15 @@ public abstract class WebUtil
         newResults.setBatchSize(newBatchSize);
         return newResults;
     }
-    
-    /** 
-     * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and 
-     * dashes. 
+
+    /**
+     * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
+     * dashes.
      * @param name Name of bag/query/template to be validated
      * @return isValid Returns true if this name is correct, false if this name contains a bad char
      */
     public static boolean isValidName(String name) {
-       
+
         boolean isValid = false;
         if (name != null) {
             Pattern p = Pattern.compile("[^\\w\\s]");
@@ -241,54 +241,52 @@ public abstract class WebUtil
         }
         return isValid;
     }
-    
-    /** 
-     * Returns the word value of special characters (ie returns _AMPERSAND_ for &, etc).  Used for 
+
+    /**
+     * Returns the word value of special characters (ie returns _AMPERSAND_ for &, etc).  Used for
      * the forced renaming of queries/templates in the query/template import.
      * @param specialCharacter The special character, ie &
      * @return wordEquivalent The special character's name, ie AMPERSAND
      */
     public static String getSpecCharToText(String specialCharacter) {
-        
+
         HashMap specCharToText = mapChars();
         String wordEquivalent = (String) specCharToText.get(specialCharacter);
         wordEquivalent = "_" + wordEquivalent + "_";
         return wordEquivalent;
-        
+
     }
-   
-    
+
+
     /**
      * Takes a string and replaces special characters with the text value, e.g. it would change
      * "a&b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
      * characters.
      * @param name Name of query/template
-     * @param type Type of value - either template or query
      * @return rebuiltName Name of query/template with the special characters removed
      */
     public static String replaceSpecialChars(String name) {
         String tmp = name;
         String rebuiltName = "";
-        
-        for(int i = 0; i < tmp.length(); i++) {
 
+        for (int i = 0; i < tmp.length(); i++) {
             char c = tmp.charAt(i);
-            String str = String.valueOf(c);                
-             
-            if (!WebUtil.isValidName(str)) {           
-                rebuiltName += WebUtil.getSpecCharToText(str);                
-            } else {                
-                rebuiltName += str;                
+            String str = String.valueOf(c);
+
+            if (!WebUtil.isValidName(str)) {
+                rebuiltName += WebUtil.getSpecCharToText(str);
+            } else {
+                rebuiltName += str;
             }
-        }        
+        }
         return rebuiltName;
     }
-    
-    
+
+
     private static HashMap mapChars() {
-     
+
         HashMap specCharToText = new HashMap();
-        
+
         specCharToText.put("‘", new String("QUOTE"));
         specCharToText.put("’", new String("QUOTE"));
         specCharToText.put("“", new String("QUOTE"));
@@ -296,10 +294,10 @@ public abstract class WebUtil
         specCharToText.put("‹", new String("LESS_THAN_SIGN"));
         specCharToText.put("›", new String("GREATER_THAN_SIGN"));
         specCharToText.put("!", new String("EXCLAMATION_POINT"));
-        specCharToText.put("£", new String("POUND_SIGN"));        
+        specCharToText.put("£", new String("POUND_SIGN"));
         specCharToText.put("$", new String("DOLLAR_SIGN"));
         specCharToText.put("%", new String("PERCENT_SIGN"));
-        
+
         specCharToText.put("^", new String("CARET"));
         specCharToText.put("&", new String("AMPERSAND"));
         specCharToText.put("(", new String("LEFT_PARENTHESIS"));
@@ -308,10 +306,10 @@ public abstract class WebUtil
         specCharToText.put("=", new String("EQUALS_SIGN"));
         specCharToText.put("{", new String("LEFT_BRACKET"));
         specCharToText.put("}", new String("RIGHT_BRACKET"));
-        specCharToText.put("[", new String("LEFT_BRACKET"));        
+        specCharToText.put("[", new String("LEFT_BRACKET"));
         specCharToText.put("]", new String("RIGHT_BRACKET"));
         specCharToText.put(":", new String("COLON"));
-        
+
         specCharToText.put(";", new String("SEMICOLON"));
         specCharToText.put("@", new String("AT_SIGN"));
         specCharToText.put(",", new String("COMMA"));
@@ -320,11 +318,11 @@ public abstract class WebUtil
         specCharToText.put("#", new String("HASH"));
         specCharToText.put("<", new String("LESS_THAN"));
         specCharToText.put(">", new String("GREATER_THAN"));
-        specCharToText.put("'", new String("APOSTROPHE"));        
+        specCharToText.put("'", new String("APOSTROPHE"));
         specCharToText.put("/", new String("FORWARD_SLASH"));
         specCharToText.put("\\", new String("BACK_SLASH"));
-        
+
         return specCharToText;
     }
-   
+
 }

@@ -11,7 +11,6 @@ package org.intermine.web;
  */
 
 import java.io.PrintStream;
-import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +21,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.util.XmlUtil;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Exports templates to XML.

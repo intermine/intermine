@@ -65,7 +65,8 @@ public class ModifyQueryForm extends ActionForm
         ActionErrors errors = null;
         if (selectedQueries.length == 0) {
             errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyQuery.noselect"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.modifyQuery.noselect"));
         }
 
         return errors;

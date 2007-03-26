@@ -17,7 +17,6 @@ import java.util.HashMap;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 
-import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Record;
 
 /**

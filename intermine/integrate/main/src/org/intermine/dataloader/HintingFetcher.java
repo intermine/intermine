@@ -18,7 +18,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
 
 /**
  * Class providing EquivalentObjectFetcher functionality that makes use of hints to improve

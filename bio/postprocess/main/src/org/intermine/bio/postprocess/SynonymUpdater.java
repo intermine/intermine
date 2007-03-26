@@ -50,7 +50,7 @@ public class SynonymUpdater
 {
     protected ObjectStoreWriter osw;
     private Model model;
- 
+
     /**
      * Make a new SynonymUpdater object
      * @param osw an ObjectStore to write to
@@ -65,7 +65,7 @@ public class SynonymUpdater
     public SynonymUpdater() {
         // empty
     }
-    
+
     /**
      * Set the isPrimary flag of the Synonym object where the value of the Synonym matches one of
      * the class key fields of the subject BioEntity.
@@ -75,12 +75,12 @@ public class SynonymUpdater
         // TODO Auto-generated method stub
 
         InputStream is = getClassKeysInputStream();
-        
+
         Properties classKeyProperties = new Properties();
         classKeyProperties.load(is);
-        
+
         Map classKeyMap = ClassKeyHelper.readKeys(model, classKeyProperties);
-        
+
         Query q = new Query();
 
         q.setDistinct(false);
@@ -111,12 +111,12 @@ public class SynonymUpdater
         res.setBatchSize(5000);
 
         Iterator resIter = res.iterator();
-        
+
         osw.beginTransaction();
-        
+
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
-            BioEntity bioEntity= (BioEntity) rr.get(0);
+            BioEntity bioEntity = (BioEntity) rr.get(0);
             Synonym synonym = (Synonym) rr.get(1);
             String synonymValue = synonym.getValue();
             Set classes = DynamicUtil.decomposeClass(bioEntity.getClass());
@@ -146,7 +146,7 @@ public class SynonymUpdater
             }
             osw.store(synonymCopy);
         }
-        
+
         osw.commitTransaction();
     }
 

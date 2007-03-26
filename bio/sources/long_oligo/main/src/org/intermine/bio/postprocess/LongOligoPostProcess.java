@@ -1,13 +1,5 @@
 package org.intermine.bio.postprocess;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.postprocess.PostProcessor;
-
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.MicroarrayOligo;
-import org.flymine.model.genomic.Transcript;
-
 /*
  * Copyright (C) 2002-2007 FlyMine
  *
@@ -17,6 +9,14 @@ import org.flymine.model.genomic.Transcript;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.postprocess.PostProcessor;
+
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.MicroarrayOligo;
+import org.flymine.model.genomic.Transcript;
 
 /**
  * LongOligoPostProcess class
@@ -41,8 +41,7 @@ public class LongOligoPostProcess extends PostProcessor
      * <br/>
      * Use the MicroarrayOligo->Transcript and Transcript->Chromosome Locations to create
      * MicroarrayOligo->Chromosome Locations.
-     * @throws ObjectStoreException 
-     * @throws Exception if anything goes wrong
+     * @throws ObjectStoreException if anything goes wrong
      */
     public void postProcess() throws ObjectStoreException {
         CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());

@@ -65,7 +65,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward removeNode(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -181,7 +181,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward addConstraint(ActionMapping mapping, ActionForm form,
                                        HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -212,7 +212,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward removeConstraint(ActionMapping mapping, ActionForm form,
                                           HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -241,7 +241,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward editConstraint(ActionMapping mapping, ActionForm form,
                                         HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -313,7 +313,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward addPath(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
@@ -366,7 +366,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward changePath(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
         String prefix = request.getParameter("prefix");
@@ -395,8 +395,9 @@ public class MainChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward startTemplateBuild(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+                                            HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws Exception {
         HttpSession session = request.getSession();
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState());
         return mapping.findForward("query");
@@ -420,7 +421,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward stopTemplateBuild(ActionMapping mapping, ActionForm form,
                                            HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         session.removeAttribute(Constants.EDITING_VIEW);
@@ -444,7 +445,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward addToView(ActionMapping mapping, ActionForm form,
                                    HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -458,7 +459,8 @@ public class MainChange extends DispatchAction
 
         Path path = MainHelper.makePath(model, query, fullPathName);
         // If an object has been selected, select its fields instead
-        if (path.getEndFieldDescriptor() == null || path.endIsReference() || path.endIsCollection()) {
+        if (path.getEndFieldDescriptor() == null || path.endIsReference()
+            || path.endIsCollection()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
             List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
             Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
@@ -496,7 +498,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward selectView(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         String name = request.getParameter("name");
 
@@ -522,7 +524,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward selectDefaultView(ActionMapping mapping, ActionForm form,
                                            HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.EDITING_VIEW);
 
@@ -546,7 +548,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward renameView(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String oldName = request.getParameter("oldName");
@@ -577,7 +579,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward deleteView(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String name = request.getParameter("name");
@@ -605,7 +607,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward newView(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String name = request.getParameter("name");
@@ -633,7 +635,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward ajaxExpand(ActionMapping mapping, ActionForm form,
                                     HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         changePath(mapping, form, request, response);
         MainController.populateRequest(request, response);
 
@@ -669,7 +671,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward ajaxCollapse(ActionMapping mapping, ActionForm form,
                                       HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         changePath(mapping, form, request, response);
         return null;
     }
@@ -691,7 +693,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward ajaxNewConstraint(ActionMapping mapping, ActionForm form,
                                            HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         addPath(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }
@@ -712,8 +714,9 @@ public class MainChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward ajaxEditConstraint(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+                                            HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws Exception {
         editConstraint(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }
@@ -735,7 +738,7 @@ public class MainChange extends DispatchAction
      */
     public ActionForward ajaxRenderPaths(ActionMapping mapping, ActionForm form,
                                          HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         MainController.populateRequest(request, response);
         return mapping.findForward("queryPaths");
     }

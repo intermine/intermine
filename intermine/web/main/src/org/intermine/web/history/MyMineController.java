@@ -23,7 +23,6 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -92,7 +91,7 @@ public class MyMineController extends TilesAction
         }
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreSummary oss = 
+        ObjectStoreSummary oss =
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Collection qualifiedTypes = os.getModel().getClassNames();
         ArrayList typeList = new ArrayList();
@@ -122,7 +121,7 @@ public class MyMineController extends TilesAction
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
-        
+
         List extraClassFieldValues =
             getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
         request.setAttribute("extraClassFieldValues", extraClassFieldValues);
@@ -130,7 +129,7 @@ public class MyMineController extends TilesAction
         // find the types in typeList that contain a field with the name given by
         // bagQueryConfig.getConnectField()
         List typesWithConnectingField = new ArrayList();
-        Iterator allTypesIterator = 
+        Iterator allTypesIterator =
             new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
         while (allTypesIterator.hasNext()) {
             String connectFieldName = bagQueryConfig.getConnectField();
@@ -143,11 +142,11 @@ public class MyMineController extends TilesAction
             }
         }
         request.setAttribute("typesWithConnectingField", typesWithConnectingField);
-        
+
         return null;
     }
 
-    private List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName, 
+    private List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName,
                                 String constrainField) {
         List fieldValues = oss.getFieldValues(extraClassName, constrainField);
         if (fieldValues == null) {
@@ -165,7 +164,7 @@ public class MyMineController extends TilesAction
             try {
                 results = os.execute(q);
             } catch (ObjectStoreException e) {
-                throw new RuntimeException("problem querying values of: " + extraClassName + "." 
+                throw new RuntimeException("problem querying values of: " + extraClassName + "."
                                            + constrainField);
             }
             fieldValues = new ArrayList();
@@ -174,7 +173,7 @@ public class MyMineController extends TilesAction
                 fieldValues.add(fieldValue == null ? null : fieldValue.toString());
             }
         }
-        
+
         return fieldValues;
     }
 }

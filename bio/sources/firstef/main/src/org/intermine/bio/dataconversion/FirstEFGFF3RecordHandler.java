@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 
-import org.intermine.bio.dataconversion.GFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 

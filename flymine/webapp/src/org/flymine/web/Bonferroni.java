@@ -1,6 +1,6 @@
 package org.flymine.web;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -31,32 +31,32 @@ public class Bonferroni
      * @param significanceValue significance Value.
      */
     public Bonferroni(HashMap originalMap, String significanceValue) {
-      
+
         this.originalMap = originalMap;
         this.significanceValue = new Double(significanceValue);
         this.numberOfTests = originalMap.size();
     }
 
-    
+
     public void calculate(Double maxValue) {
-        
-        double bonferroni = significanceValue.doubleValue()/numberOfTests;
-        
+
+        double bonferroni = significanceValue.doubleValue() / numberOfTests;
+
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext();) {
 
             // get original values
             String goTerm = (String) iter.next();
             Double p = (Double) originalMap.get(goTerm);
-            
+
             // calc new value
             Double adjustedP = new Double(numberOfTests * p.doubleValue());
             //Double adjustedP = new Double(bonferroni + p.doubleValue());
-            
+
             // don't store values >= maxValue
-            if (adjustedP.compareTo(maxValue) < 0) {              
+            if (adjustedP.compareTo(maxValue) < 0) {
                 // put new values into map
-                adjustedMap.put(goTerm, adjustedP);                
-            }         
+                adjustedMap.put(goTerm, adjustedP);
+            }
         }
     }
 

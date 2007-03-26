@@ -41,7 +41,7 @@ import org.biojava.bio.symbol.Location;
 
 /**
  * DataConverter to parse an EMBL/Genbank/other file using BioJava and generate genomic model
- * items. 
+ * items.
  * @author Kim Rutherford
  */
 public class BioJavaFlatFileConverter extends FileConverter
@@ -55,7 +55,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     protected Map taxonIds = new HashMap();
 
     private Set itemsToStore = null;
-    
+
     private Map organisms = new HashMap();
     private Map chromosomes = new HashMap();
     private Map genes = new HashMap();
@@ -71,7 +71,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public BioJavaFlatFileConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
@@ -87,10 +87,10 @@ public class BioJavaFlatFileConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         itemsToStore = new HashSet();
-        
+
         BufferedReader br = new BufferedReader(reader);
         SequenceIterator sequences = SeqIOTools.readEmbl(br);
-        while(sequences.hasNext()){
+        while (sequences.hasNext()) {
             Item chr = makeChromosome();
             Item org = null;
 
@@ -100,24 +100,24 @@ public class BioJavaFlatFileConverter extends FileConverter
                 while (iter.hasNext()) {
                     Feature feature = (Feature) iter.next();
                     String type =  feature.getType();
-                    
+
                     /*
-                    System.err.println("got: " + feature);
-                    System.err.println("type: " + type);
+                    System.err. println("got: " + feature);
+                    System.err. println("type: " + type);
                     Location location = feature.getLocation();
-                    System.err.println("location: " + location);
+                    System.err. println("location: " + location);
                     Annotation annotation = feature.getAnnotation();
                     Iterator annoKeyIter = annotation.keys().iterator();
                     while (annoKeyIter.hasNext()) {
                         Object key = annoKeyIter.next();
-                        System.err.println("  " + key + ": " + annotation.getProperty(key));
+                        System.err. println("  " + key + ": " + annotation.getProperty(key));
                     }
                     */
                     if (type.equals("source")) {
                         org = handleSourceFeature(feature, chr);
                         continue;
-                    } 
-                    
+                    }
+
                     if (type.equals("CDS")) {
                         handleCDS(feature, chr);
                     } else {
@@ -126,7 +126,7 @@ public class BioJavaFlatFileConverter extends FileConverter
                         }
                     }
                 }
-                
+
                 Iterator itemIter = itemsToStore.iterator();
                 while (itemIter.hasNext()) {
                     Item item = (Item) itemIter.next();
@@ -149,7 +149,7 @@ public class BioJavaFlatFileConverter extends FileConverter
 
     /**
      * Create (or find in the cache) a CDS Item for the given feature
-     * @param chr 
+     * @param chr
      */
     private void handleCDS(Feature feature, Item chr) {
         if (feature.getAnnotation().containsProperty("pseudo")) {
@@ -166,15 +166,16 @@ public class BioJavaFlatFileConverter extends FileConverter
         mRNA.setAttribute("identifier", mrnaName);
         mrnaFeatures.put(mrnaName, mRNA);
 
-        Item translation= makeItem("Translation");
-        String translationName = getUniqueName(translationFeatures, geneIdentifier + "_translation");
+        Item translation = makeItem("Translation");
+        String translationName =
+            getUniqueName(translationFeatures, geneIdentifier + "_translation");
         translation.setAttribute("identifier", translationName);
         translationFeatures.put(translationName, translation);
         translation.setReference("transcript", mRNA);
         mRNA.setReference("translation", translation);
         cds.setReference("translation", translation);
 
-        String uniprotId = getDbxref(feature, "UniProtKB/TrEMBL");        
+        String uniprotId = getDbxref(feature, "UniProtKB/TrEMBL");
 
         if (uniprotId != null) {
             Item protein = getProtein(uniprotId);
@@ -183,7 +184,7 @@ public class BioJavaFlatFileConverter extends FileConverter
             mRNA.setReference("protein", protein);
             translation.setReference("protein", protein);
         }
-        
+
         makeLocation(feature, cds, chr);
     }
 
@@ -198,7 +199,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     protected String getGeneIdentifierFromCDS(Feature feature) {
         return (String) getPropList(feature.getAnnotation(), "gene").get(0);
     }
-    
+
     private Item getCDS(String geneName) {
         String cdsName = geneName + "_CDS";
         Item cds = makeItem("CDS");
@@ -206,7 +207,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         cdsFeatures.put(cdsName, cds);
 
         cds.setAttribute("identifier", cdsName);
-        
+
         return cds;
     }
 
@@ -259,7 +260,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         genes.put(name, gene);
         return gene;
     }
-    
+
     private Item makeItem(String c) {
         Item item = itemFactory.makeItemForClass(GENOMIC_NS + c);
         itemsToStore.add(item);
@@ -295,7 +296,7 @@ public class BioJavaFlatFileConverter extends FileConverter
             prop = annotation.getProperty(propName);
         } catch (NoSuchElementException e) {
             return new ArrayList();
-        }        
+        }
         if (prop instanceof List) {
             return (List) prop;
         } else {
@@ -329,7 +330,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         chromosomeName = getUniqueName(chromosomes, chromosomeName);
         chr.setAttribute("identifier", chromosomeName);
         chromosomes.put(chromosomeName, chr);
-        
+
         String taxonId = getDbxref(feature, TAXON_PREFIX);
 
         if (taxonId == null) {

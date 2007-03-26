@@ -25,22 +25,22 @@ import java.util.Map;
  * @author Richard Smith
  */
 public class BagQueryResult
-{ 
+{
     /**
      * Key of the Map returned by getIssues() when the query for the input string found more than
      * one object.
      */
     public static final String DUPLICATE = "DUPLICATE";
-    
+
     /**
-     * Key of the Map returned by getIssues() when the input string 
-     */ 
+     * Key of the Map returned by getIssues() when the input string
+     */
     public static final String OTHER = "OTHER";
-     
+
     /**
-     * Key of the Map returned by getIssues() when the object found when querying using input string 
+     * Key of the Map returned by getIssues() when the object found when querying using input string
      * needed to be translated.
-     */ 
+     */
     public static final String TYPE_CONVERTED = "TYPE_CONVERTED";
 
     private Map matches = new LinkedHashMap();
@@ -101,8 +101,8 @@ public class BagQueryResult
     }
 
     /**
-     * Get a Map of any input Strings for which objects of the right type could not be found.  
-     * @return a Map of from input string to null/object - null when the input doesn't match any 
+     * Get a Map of any input Strings for which objects of the right type could not be found.
+     * @return a Map of from input string to null/object - null when the input doesn't match any
      * object of any type, otherwise a reference to a Set of the objects that matched
      */
     public Map getUnresolved() {

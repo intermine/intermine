@@ -742,7 +742,7 @@ public class InterproDataTranslator extends DataTranslator
 
         } else {
             LOG.warn("SKIPPING SYNONYM CREATION FOR TGTITEM:"
-                    + (tgtItem != null ? tgtItem.getClassName() : "NULL" ));
+                    + (tgtItem != null ? tgtItem.getClassName() : "NULL"));
         }
 
         return extraDatabaseSynonym;

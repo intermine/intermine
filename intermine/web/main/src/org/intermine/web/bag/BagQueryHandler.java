@@ -1,9 +1,13 @@
 package org.intermine.web.bag;
 
 /*
- * Copyright (C) 2002-2007 FlyMine This code may be freely distributed and modified under the terms
- * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
- * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
  */
 
 import java.util.ArrayList;
@@ -22,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Handler for bag-query.xml files.
- * 
+ *
  * @author Richard Smith
  */
 public class BagQueryHandler extends DefaultHandler
@@ -51,7 +55,7 @@ public class BagQueryHandler extends DefaultHandler
 
     /**
      * Create a new BagQueryHandler object.
-     * 
+     *
      * @param model
      *            the Model to use when checking types
      */
@@ -63,7 +67,7 @@ public class BagQueryHandler extends DefaultHandler
 
     /**
      * Return the bag queries from the XML file.
-     * 
+     *
      * @return a Map from class name to a List of BagQuery objects
      */
     public Map getBagQueries() {
@@ -167,7 +171,7 @@ public class BagQueryHandler extends DefaultHandler
 
     /**
      * Return the BagQueryConfig created from the XML.
-     * 
+     *
      * @return the BagQueryConfig
      */
     public BagQueryConfig getBagQueryConfig() {

@@ -16,7 +16,6 @@ import java.util.List;
 import org.intermine.dataloader.DirectDataLoader;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -32,8 +31,8 @@ class FBProteinBindingSiteHandler extends DefaultHandler
     private StringBuffer charData = new StringBuffer(1000);
 
     /**
-     * Create a new 
-     * @param ddl
+     * Create a new FBProteinBindingSiteHandler.
+     * @param ddl the DirectDataLoader
      */
     public FBProteinBindingSiteHandler(DirectDataLoader ddl) {
         this.ddl = ddl;
@@ -45,31 +44,35 @@ class FBProteinBindingSiteHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs) {
         stack.add(0, new StackElement(qName, attrs));
     }
-    
+
     /**
      * @see DefaultHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String qName) {
         stack.remove(0);
-        if (qName.equals("fbid") && stackGet(0).name.equals("ID") 
+        if (qName.equals("fbid") && stackGet(0).name.equals("ID")
             && stackGet(1).name.equals("GADR")) {
-            System.err.println("qName: " + charData.toString());
+            System.err. println("qName: " + charData.toString());
             geneName = charData.toString();
         }
 
         charData.setLength(0);
     }
 
+    /**
+     * Prcoess the characters from the stream.
+     * @param chr the characters
+     * @param start the start position in the chr array
+     * @param length the number of characters to read
+     */
     public void characters (char ch[], int start, int length) {
         charData.append(ch, start, length);
     }
-    
+
     private StackElement stackGet(int i) {
         return (StackElement) stack.get(i);
     }
 
-
-    
     private class StackElement
     {
         final String name;

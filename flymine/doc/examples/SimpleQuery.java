@@ -29,19 +29,23 @@ public class SimpleQuery
     private String iql;
     private ObjectStore os;
 
+    /**
+     * Main method.
+     * @param args the arguments
+     */
     public static void main(String[] args) throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.production");
         String packageName = os.getModel().getPackageName();
         String queryString = args[0];
 
-        System.err.println ("qyery: " + queryString);
+        System.err. println ("qyery: " + queryString);
         Query q = new IqlQuery(queryString, packageName).toQuery();
 
 // optional:
-//         System.err.println ("starting precompute(): " + q);
+//         System.err. println ("starting precompute(): " + q);
 //         ((ObjectStoreInterMineImpl) os).precompute(q, "temp");
 
-        System.err.println ("finished precompute()");
+        System.err. println ("finished precompute()");
         Results r = os.execute(q);
 
 // optional:

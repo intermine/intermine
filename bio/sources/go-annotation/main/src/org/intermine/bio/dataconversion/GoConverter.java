@@ -155,7 +155,7 @@ public class GoConverter extends FileConverter
         productWrapperMap = new LinkedHashMap();
         holderMap = new LinkedHashMap();
         goAnnoItems = new LinkedHashMap();
-      
+
         if (ontology == null) {
             throw new BuildException("ontology must be specified");
         }
@@ -224,13 +224,14 @@ public class GoConverter extends FileConverter
                 Item newOrganism = newOrganism(array[12]);
 
                 // new gene
-                ItemWrapper newProductWrapper = newProduct(productId, type, newOrganism, 
-                                                           newDatasource.getIdentifier(), true, null);
+                ItemWrapper newProductWrapper =
+                    newProduct(productId, type, newOrganism,
+                               newDatasource.getIdentifier(), true, null);
 
                 // temporary object while we are rattling through the file
                 // needed because we may have extra publications
                 PlaceHolder newPlaceHolder = new PlaceHolder(
-                        qualifier, newDatasource, newPublication, newGoEvidenceColl, 
+                        qualifier, newDatasource, newPublication, newGoEvidenceColl,
                         newProductWrapper, newGoTerm, array[7], newOrganism);
 
                 holderMap.put(key, newPlaceHolder);
@@ -263,7 +264,8 @@ public class GoConverter extends FileConverter
         // First put everything on a stack so we don't have to hold too many items in memory
         Stack holderStack = buildHolderStack();
 
-        // Holds a map of all the goterms which act as keys for their respective set of parent terms.
+        // Holds a map of all the goterms which act as keys for their respective set of parent
+        // terms
         Map goTermId2ParentTermIdSetsMap = null;
 
         // do we have an obo based ontology file ?
@@ -286,7 +288,7 @@ public class GoConverter extends FileConverter
 
         while (!holderStack.isEmpty()) {
             PlaceHolder nextPlaceHolder = (PlaceHolder) holderStack.pop();
-            if (!nextPlaceHolder.getQualifier().equals("NOT")) { 
+            if (!nextPlaceHolder.getQualifier().equals("NOT")) {
                 newParentGoAnnotation(goTermId2ParentTermIdSetsMap, nextPlaceHolder);
             }
         }
@@ -299,7 +301,7 @@ public class GoConverter extends FileConverter
 
             // go annotation object
             Item goAnnotation = (Item) goAnnoItems.get(key);
-            
+
             // this is where all go annotation objects are stored
             doStore(goAnnotation, STORE_ONE);
         }
@@ -336,10 +338,13 @@ public class GoConverter extends FileConverter
      * iterate through the list of parents and process those.
      * @param placeHolder Object that holds all go annotation related information
      * @param goTermId2ParentTermIdSetsMap map of go terms to parent go terms
+     * @throws ObjectStoreException if there is a problem
      */
-    protected void newParentGoAnnotation(Map goTermId2ParentTermIdSetsMap, PlaceHolder placeHolder) throws ObjectStoreException {
+    protected void newParentGoAnnotation(Map goTermId2ParentTermIdSetsMap, PlaceHolder placeHolder)
+        throws ObjectStoreException {
         String goId = placeHolder.getGoTerm().getAttribute("identifier").getValue();
-        if (goTermId2ParentTermIdSetsMap != null && goTermId2ParentTermIdSetsMap.containsKey(goId)) {
+        if (goTermId2ParentTermIdSetsMap != null
+            && goTermId2ParentTermIdSetsMap.containsKey(goId)) {
             Set parentTermIdsSet = (Set) goTermId2ParentTermIdSetsMap.get(goId);
             if (parentTermIdsSet != null) {
                 processParents(placeHolder, parentTermIdsSet);
@@ -358,7 +363,7 @@ public class GoConverter extends FileConverter
         String goId = placeHolder.getGoTerm().getAttribute("identifier").getValue();
 
         ReferenceList actualGoTerms =  new ReferenceList("actualGoTerms", new ArrayList());
-        
+
         // create new go annotation object
         Item currentGoItem = newGoAnnotationItem(goId, "true", placeHolder.getGoEvidenceColl(),
             placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
@@ -367,7 +372,7 @@ public class GoConverter extends FileConverter
 
         // add this term to actual go terms list
         actualGoTerms.addRefId(placeHolder.getGoTerm().getIdentifier());
-        
+
         // If the qualifier is not a NOT.
         if (!"".equals(placeHolder.getQualifier())) {
             currentGoItem.addAttribute(new Attribute("qualifier", placeHolder.getQualifier()));
@@ -424,19 +429,19 @@ public class GoConverter extends FileConverter
     }
 
     //-------------- PRODUCE THE SET OF PARENT TERM LINKING GOANNOTATION OBJECTS ---------------
-    private void processParents(PlaceHolder placeHolder, Set parentTermIdsSet) 
+    private void processParents(PlaceHolder placeHolder, Set parentTermIdsSet)
     throws ObjectStoreException {
 
         // loop over the set of Id's and create a GoAnnotation object that links the gene
         // geneProduct, the infered parent term and the current go term items.
 
         boolean isProductTypeGene = (placeHolder.getGeneProductWrapper().getItem().getClassName().indexOf("Gene") >= 0);
-        
+
         for (Iterator parentIdIter = parentTermIdsSet.iterator(); parentIdIter.hasNext();) {
 
             // go term identifier
             String parentTermGoId = parentIdIter.next().toString();
-            
+
             // go term object
             Item nextParentGoTerm = newGoTerm(parentTermGoId);
 
@@ -445,18 +450,18 @@ public class GoConverter extends FileConverter
             Item parentItem = null;
             String geneId = placeHolder.getGeneProductWrapper().getItem().getIdentifier();
             GoTermToGene key = new GoTermToGene(geneId, parentTermGoId, placeHolder.getQualifier());
-                        
+
             // gene&goterm combo already exists
             if (holderMap.containsKey(key)) {
-                
+
                 PlaceHolder parentPlaceHolder = (PlaceHolder) holderMap.get(key);
                 parentItem = parentPlaceHolder.getGoAnno();
-                // add this go term to the parent's collection of children                
+                // add this go term to the parent's collection of children
                 parentItem.getCollection("actualGoTerms").addRefId(placeHolder.getGoTerm().getIdentifier());
                 if (!goAnnoItems.containsKey(key)) {
                     goAnnoItems.put(key, parentItem);
                 }
-                
+
             } else {
                 ReferenceList actualGoTerms = null;
                 if (goAnnoItems.containsKey(key)) {
@@ -504,7 +509,7 @@ public class GoConverter extends FileConverter
      *                            parent relationship.
      * @param goEvidenceColl    collection of evidence terms related to this annotation
      * @param subject gene described by go term
-     * @param property go term 
+     * @param property go term
      * @param actualGoTerms list of children goterms
      * @return the go annotation item
      */
@@ -569,7 +574,7 @@ public class GoConverter extends FileConverter
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSourceId, false, null);
                         } else if (prefix.equals("FB")) {
-                            productWrapper = newProduct(value, wt.clsName, organism, 
+                            productWrapper = newProduct(value, wt.clsName, organism,
                                                         dataSourceId, false, "organismDbId");
                         } else
                             productWrapper = newProduct(value, wt.clsName,
@@ -1152,7 +1157,7 @@ public class GoConverter extends FileConverter
                 GoTermToGene go = (GoTermToGene) o;
 //              && code.equals(go.code)
                 return productId.equals(go.productId)
-                        && goId.equals(go.goId)                        
+                        && goId.equals(go.goId)
                         && qualifier.equals(go.qualifier);
             }
             return false;
@@ -1163,9 +1168,9 @@ public class GoConverter extends FileConverter
          */
         public int hashCode() {
 //          + (7 * code.hashCode())
-            
+
             return ((3 * productId.hashCode())
-                    + (5 * goId.hashCode())                    
+                    + (5 * goId.hashCode())
                     + (7 * qualifier.hashCode()));
         }
 

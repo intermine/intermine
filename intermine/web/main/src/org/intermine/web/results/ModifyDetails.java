@@ -1,9 +1,13 @@
 package org.intermine.web.results;
 
 /*
- * Copyright (C) 2002-2007 FlyMine This code may be freely distributed and modified under the terms
- * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
- * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
  */
 
 import java.util.HashMap;
@@ -44,14 +48,14 @@ import org.intermine.web.bag.InterMineBag;
 
 /**
  * Action to handle events from the object details page
- * 
+ *
  * @author Mark Woodbridge
  */
 public class ModifyDetails extends DispatchAction
 {
     /**
      * Show in table for inline template queries.
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -78,7 +82,7 @@ public class ModifyDetails extends DispatchAction
                                                              name, type);
         PathQuery query = (PathQuery) template.clone();
         String trail = request.getParameter("trail");
-        
+
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPath());
@@ -95,12 +99,12 @@ public class ModifyDetails extends DispatchAction
                         String paramName = c.getIdentifier() + "_value";
                         String constraintValue = request.getParameter(paramName);
                         if (constraintValue != null) {
-                            nodeCopy
-                                    .setConstraintValue(nodeCopy.getConstraint(ci), constraintValue);
+                            nodeCopy.setConstraintValue(nodeCopy.getConstraint(ci),
+                                                        constraintValue);
                         }
                     }
                 }
-            } else if (useBagNode != null) {// && name.equals(useBagNode)) {
+            } else if (useBagNode != null) { // && name.equals(useBagNode)) {
                 // bag details page - remove the identified constraint and constrain
                 // its parent to be in the bag
                 PathNode parent = (PathNode) query.getNodes().get(nodeCopy.getParent().getPath());
@@ -129,8 +133,8 @@ public class ModifyDetails extends DispatchAction
             }
         }
         SessionMethods.loadQuery(query, request.getSession(), response);
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(
-                                                                  Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        QueryMonitorTimeout clientState =
+            new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages, false);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
@@ -237,7 +241,7 @@ public class ModifyDetails extends DispatchAction
 
     /**
      * Count number of results for a template on the object details page.
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -297,7 +301,7 @@ public class ModifyDetails extends DispatchAction
 
     /**
      * For a dynamic class, find the class descriptor from which a field is derived
-     * 
+     *
      * @param clds
      *            the class descriptors for the dynamic class
      * @param fieldName
@@ -326,7 +330,7 @@ public class ModifyDetails extends DispatchAction
 
     /**
      * Get a DisplayObject from the session given the object id as a string.
-     * 
+     *
      * @param session
      *            the current http session
      * @param idString

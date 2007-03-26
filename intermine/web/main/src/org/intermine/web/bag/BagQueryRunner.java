@@ -1,9 +1,13 @@
 package org.intermine.web.bag;
 
 /*
- * Copyright (C) 2002-2007 FlyMine This code may be freely distributed and modified under the terms
- * of the GNU Lesser General Public Licence. This should be distributed with the code. See the
- * LICENSE file for more information or http://www.gnu.org/copyleft/lesser.html.
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
  */
 
 import java.util.ArrayList;
@@ -36,7 +40,7 @@ import javax.servlet.ServletContext;
 /**
  * For a given list of input strings search for objects using default and configured queries for a
  * particular type.
- * 
+ *
  * @author Richard Smith
  */
 public class BagQueryRunner
@@ -53,7 +57,7 @@ public class BagQueryRunner
 
     /**
      * Construct with configured bag queries and a map of type -> key fields.
-     * 
+     *
      * @param os
      *            the ObjectStore to run queries on
      * @param classKeys
@@ -75,7 +79,7 @@ public class BagQueryRunner
     /**
      * Given an input list of string identifiers search for corresponding objects. First run a
      * default query then any queries configured for the speified type.
-     * 
+     *
      * @param type
      *            an unqualified class name to search for objects
      * @param input
@@ -91,7 +95,7 @@ public class BagQueryRunner
      * @throws InterMineException
      */
     public BagQueryResult searchForBag(String type, List input, String extraFieldValue)
-    throws ClassNotFoundException, ObjectStoreException, InterMineException {
+        throws ClassNotFoundException, ObjectStoreException, InterMineException {
 
         Map lowerCaseInput = new HashMap();
         List cleanInput = new ArrayList();
@@ -169,7 +173,7 @@ public class BagQueryRunner
 
     /**
      * Add results from resMap to a a BagQueryResults object.
-     * 
+     *
      * @throws InterMineException
      */
     private void addResults(Map resMap, Set unresolved, BagQueryResult bqr, BagQuery bq, Class type)
@@ -255,7 +259,7 @@ public class BagQueryRunner
      * add them to bqr as TYPE_CONVERTED issues and remove them from objsOfWrongType.
      */
     void convertObjects(BagQueryResult bqr, BagQuery bq, Class type, Map objsOfWrongType)
-    throws InterMineException {
+        throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
             Map objectToInput = new HashMap();
@@ -282,7 +286,7 @@ public class BagQueryRunner
             while (objTypeIter.hasNext()) {
                 Class fromClass = (Class) objTypeIter.next();
                 List candidateObjs = (List) objTypes.get(fromClass);
-                
+
                 // we may have already converted some of these types, remove any that have been.
                 List objs = new ArrayList();
                 Iterator candidateIter = candidateObjs.iterator();
@@ -292,7 +296,7 @@ public class BagQueryRunner
                         objs.add(candidate);
                     }
                 }
-                
+
                 // try to convert objects to target type
                 Map convertedObjsMap = TypeConverter.convertObjects(context, fromClass, type, objs);
                 if (convertedObjsMap == null) {

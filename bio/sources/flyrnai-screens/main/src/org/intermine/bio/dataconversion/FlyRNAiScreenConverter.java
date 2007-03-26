@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Arrays;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 
 import org.apache.tools.ant.BuildException;
 
@@ -117,7 +115,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
 
         Set offTargetFalse = readCurated(curatedReader);
-        System.out.println("offTargetFalse: " + offTargetFalse);
+        System.out. println("offTargetFalse: " + offTargetFalse);
 
         BufferedReader br = new BufferedReader(reader);
 
@@ -366,6 +364,7 @@ public class FlyRNAiScreenConverter extends FileConverter
      * Convenience method to create and store a new synonym Item
      * @param synonymName the actual synonym
      * @param subject the synonym's subject item
+     * @param source the source of the Synonym
      * @return a new synonym Item
      */
     protected Item newSynonym(String synonymName, Item subject, Item source) {

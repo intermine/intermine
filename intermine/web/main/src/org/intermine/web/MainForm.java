@@ -46,9 +46,9 @@ public class MainForm extends ActionForm
     protected String operator = "and";
     protected String nullConstraint;
     protected Object parsedAttributeValue;
-    
+
     // template builder elements
-    
+
     protected boolean editable;
     protected String templateLabel;
     protected String templateId;
@@ -84,7 +84,7 @@ public class MainForm extends ActionForm
     public void setLoopQueryValue(String loopQuery) {
         this.loopQueryValue = loopQuery;
     }
-    
+
     /**
      * Gets the value of bagOp
      * @return the value of bagOp
@@ -158,13 +158,13 @@ public class MainForm extends ActionForm
     }
 
     /**
-     * Sets the value of attributeValue
-     * @param attributeValue value to assign to attributeValue
+     * Sets the value of attributeOptions
+     * @param attributeOptions value to assign to attributeOptions
      */
     public void setAttributeOptions(String attributeOptions) {
         this.attributeOptions = attributeOptions;
     }
-    
+
     /**
      * Gets the value of subclassValue
      * @return the value of subclassValue
@@ -204,7 +204,7 @@ public class MainForm extends ActionForm
     public String getOperator() {
         return operator;
     }
-    
+
     /**
      * Set the operator, "and" or "or"
      * @param operator the operator
@@ -212,7 +212,7 @@ public class MainForm extends ActionForm
     public void setOperator(String operator) {
         this.operator = operator;
     }
-    
+
     /**
      * Get the null/not null constraint value. Returned value will be
      * either "NULL" or "NotNULL".
@@ -221,7 +221,7 @@ public class MainForm extends ActionForm
     public String getNullConstraint() {
         return nullConstraint;
     }
-    
+
     /**
      * Set the null/not null constraint. Parameter should be
      * either "NULL" or "NotNULL".
@@ -230,7 +230,7 @@ public class MainForm extends ActionForm
     public void setNullConstraint(String nullConstraint) {
         this.nullConstraint = nullConstraint;
     }
-    
+
     /**
      * Gets the value of parsedAttributeValue
      * @return the value of parsedAttributeValue
@@ -270,7 +270,7 @@ public class MainForm extends ActionForm
     public void setTemplateLabel(String templateLabel) {
         this.templateLabel = templateLabel;
     }
-    
+
     /**
      * Get the editable flag (when building a template).
      * @return whether this constraint is editable
@@ -307,7 +307,7 @@ public class MainForm extends ActionForm
         ActionErrors errors = new ActionErrors();
         ConstraintOp constraintOp = (getAttributeOp() == null) ? null
                     : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
-        
+
         if (request.getParameter("attribute") != null) {
             PathNode node = (PathNode) query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
@@ -318,10 +318,10 @@ public class MainForm extends ActionForm
         if (errors.size() > 0) {
             session.setAttribute("editingNode", query.getNodes().get(path));
         }
-        
+
         return errors;
     }
-    
+
     /**
      * Parse an attribute value
      * @param value the value as a String
@@ -334,7 +334,7 @@ public class MainForm extends ActionForm
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
         Object parsedValue = null;
-        
+
         if (Date.class.equals(type)) {
             DateFormat df;
             if (locale == null) {
@@ -351,7 +351,7 @@ public class MainForm extends ActionForm
             }
         } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES
                    || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
-            // Is the expression valid? We need a non-zero length string at least 
+            // Is the expression valid? We need a non-zero length string at least
             if (value.length() == 0) {
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.like"));
             } else {
@@ -372,7 +372,7 @@ public class MainForm extends ActionForm
         }
         return parsedValue;
     }
-    
+
     /**
      * @see ActionForm#reset
      */

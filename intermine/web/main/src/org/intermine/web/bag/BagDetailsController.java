@@ -99,7 +99,7 @@ public class BagDetailsController extends TilesAction
                     });
             }
         }
-        
+
         ArrayList tableDisplayerArray = new ArrayList();
         Set bagTabledisplayers = type.getBagTableDisplayers();
         for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
@@ -109,9 +109,10 @@ public class BagDetailsController extends TilesAction
             String fields = bagTableDisplayer.getFields();
             String title = bagTableDisplayer.getTitle();
             String description = bagTableDisplayer.getDescription();
-            BagTableWidgetLoader bagWidgLdr = new BagTableWidgetLoader(title, description, ldrType, collectionName,
-                                                                       imBag, os, webConfig, model,
-                                                                       classKeys, fields);
+            BagTableWidgetLoader bagWidgLdr =
+                new BagTableWidgetLoader(title, description, ldrType, collectionName,
+                                         imBag, os, webConfig, model,
+                                         classKeys, fields);
             tableDisplayerArray.add(bagWidgLdr);
         }
 
