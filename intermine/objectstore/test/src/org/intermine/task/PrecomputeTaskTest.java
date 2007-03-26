@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
 
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryTestCase;
 
 /**
  * Tests for PrecomputeTask.
@@ -42,7 +43,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
  * @author Kim Rutherford
  */
 
-public class PrecomputeTaskTest extends TestCase
+public class PrecomputeTaskTest extends QueryTestCase
 {
     ObjectStore os;
 
@@ -54,6 +55,10 @@ public class PrecomputeTaskTest extends TestCase
         super.setUp();
 
         os = ObjectStoreFactory.getObjectStore("os.unittest");
+    }
+
+    public static Test suite() {
+        return buildSuite(PrecomputeTaskTest.class);
     }
 
     /**
@@ -187,6 +192,7 @@ public class PrecomputeTaskTest extends TestCase
 
     
     protected void compareQueryLists(List a, List b) {
+        assertEquals(a.size(), b.size());
         for (int i = 0; i< a.size(); i++) {
             assertEquals((Query) a.get(i), (Query) b.get(i));
         }
