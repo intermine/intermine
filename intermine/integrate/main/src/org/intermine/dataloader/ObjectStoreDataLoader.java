@@ -122,7 +122,8 @@ public class ObjectStoreDataLoader extends DataLoader
                 }
             }
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
-                        / ((new Date()).getTime() - startTime)) + " object per minute");
+                        / ((new Date()).getTime() - startTime)) + " object per minute for source "
+                    + source.getName());
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
         } catch (RuntimeException e) {
