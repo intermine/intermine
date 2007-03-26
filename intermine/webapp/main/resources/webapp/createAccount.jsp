@@ -5,6 +5,11 @@
 <html:xhtml/>
 <div class="body">
   <html:form action="/createAccountAction">
+
+	<div style="width:70%">
+	  <b><i><fmt:message key="createAccount.privacy"/></i></b>
+	</div>
+	<p/>
     <table>
       <tr>
         <td><fmt:message key="createAccount.username"/></td>
