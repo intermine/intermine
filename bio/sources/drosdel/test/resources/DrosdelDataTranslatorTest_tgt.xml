@@ -1,17 +1,19 @@
 <?xml version="1.0"?>
 <items>
-  <item id="-1_14" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value=""/>
-    <reference name="organism" ref_id="-1_1"/>
+  <item id="-1_7" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="12612185"/>
+    <attribute name="endIsPartial" value="false"/>
+    <attribute name="start" value="12612184"/>
+    <attribute name="startIsPartial" value="false"/>
+    <attribute name="strand" value="0"/>
+    <reference name="object" ref_id="-1_4"/>
+    <reference name="subject" ref_id="1_2"/>
   </item>
   <item id="-1_16" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="name"/>
     <attribute name="value" value="Df(2L)ED49"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="1_5"/>
-  </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="abbreviation" value="DM"/>
   </item>
   <item id="1_3" class="http://www.flymine.org/model/genomic#ArtificialDeletion">
     <attribute name="available" value="true"/>
@@ -26,6 +28,12 @@
       <reference ref_id="-1_10"/>
     </collection>
   </item>
+  <item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="Df(2R)ED1"/>
+    <reference name="source" ref_id="-1_3"/>
+    <reference name="subject" ref_id="1_3"/>
+  </item>
   <item id="-1_12" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="568096"/>
     <attribute name="endIsPartial" value="false"/>
@@ -34,6 +42,10 @@
     <attribute name="strand" value="0"/>
     <reference name="object" ref_id="-1_11"/>
     <reference name="subject" ref_id="1_4"/>
+  </item>
+  <item id="-1_14" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value=""/>
+    <reference name="organism" ref_id="-1_1"/>
   </item>
   <item id="1_4" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
     <attribute name="identifier" value="5-SZ-3596"/>
@@ -45,6 +57,41 @@
     </collection>
     <collection name="synonyms">
       <reference ref_id="-1_13"/>
+    </collection>
+  </item>
+  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="DrosDel data set"/>
+  </item>
+  <item id="-1_4" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="2R"/>
+    <reference name="organism" ref_id="-1_1"/>
+  </item>
+  <item id="-1_11" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="2L"/>
+    <reference name="organism" ref_id="-1_1"/>
+  </item>
+  <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="DrosDel"/>
+  </item>
+  <item id="-1_9" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="12612185"/>
+    <attribute name="endIsPartial" value="false"/>
+    <attribute name="start" value="12541590"/>
+    <attribute name="startIsPartial" value="false"/>
+    <attribute name="strand" value="0"/>
+    <reference name="object" ref_id="-1_4"/>
+    <reference name="subject" ref_id="1_3"/>
+  </item>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
+    <attribute name="identifier" value="5-HA-1118"/>
+    <attribute name="symbol" value="5-HA-1118"/>
+    <attribute name="type" value="RS"/>
+    <reference name="organism" ref_id="-1_1"/>
+    <collection name="evidence">
+      <reference ref_id="-1_2"/>
+    </collection>
+    <collection name="synonyms">
+      <reference ref_id="-1_8"/>
     </collection>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
@@ -59,43 +106,6 @@
       <reference ref_id="-1_6"/>
     </collection>
   </item>
-  <item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="Df(2R)ED1"/>
-    <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="1_3"/>
-  </item>
-  <item id="-1_9" class="http://www.flymine.org/model/genomic#Location">
-    <attribute name="end" value="12612185"/>
-    <attribute name="endIsPartial" value="false"/>
-    <attribute name="start" value="12541590"/>
-    <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="0"/>
-    <reference name="object" ref_id="-1_4"/>
-    <reference name="subject" ref_id="1_3"/>
-  </item>
-   <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="CB-0140-3"/>
-    <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="1_1"/>
-  </item>
-  <item id="1_2" class="http://www.flymine.org/model/genomic#TransposableElementInsertionSite">
-    <attribute name="identifier" value="5-HA-1118"/>
-    <attribute name="symbol" value="5-HA-1118"/>
-    <attribute name="type" value="RS"/>
-    <reference name="organism" ref_id="-1_1"/>
-    <collection name="evidence">
-      <reference ref_id="-1_2"/>
-    </collection>
-    <collection name="synonyms">
-      <reference ref_id="-1_8"/>
-    </collection>
-  </item>
-  <item id="-1_4" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="2R"/>
-    <reference name="organism" ref_id="-1_1"/>
-  </item>
   <item id="-1_5" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="12541591"/>
     <attribute name="endIsPartial" value="false"/>
@@ -105,24 +115,29 @@
     <reference name="object" ref_id="-1_4"/>
     <reference name="subject" ref_id="1_1"/>
   </item>
-  <item id="-1_11" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="2L"/>
-    <reference name="organism" ref_id="-1_1"/>
-  </item>
-  <item id="-1_7" class="http://www.flymine.org/model/genomic#Location">
-    <attribute name="end" value="12612185"/>
-    <attribute name="endIsPartial" value="false"/>
-    <attribute name="start" value="12612184"/>
-    <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="0"/>
-    <reference name="object" ref_id="-1_4"/>
-    <reference name="subject" ref_id="1_2"/>
+  <item id="-1_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
   </item>
   <item id="-1_13" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="5-SZ-3596"/>
     <reference name="source" ref_id="-1_3"/>
     <reference name="subject" ref_id="1_4"/>
+  </item>
+  <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="5-HA-1118"/>
+    <reference name="source" ref_id="-1_3"/>
+    <reference name="subject" ref_id="1_2"/>
+  </item>
+  <item id="-1_15" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="12612185"/>
+    <attribute name="endIsPartial" value="false"/>
+    <attribute name="start" value="568095"/>
+    <attribute name="startIsPartial" value="false"/>
+    <attribute name="strand" value="0"/>
+    <reference name="object" ref_id="-1_14"/>
+    <reference name="subject" ref_id="1_5"/>
   </item>
   <item id="1_5" class="http://www.flymine.org/model/genomic#ArtificialDeletion">
     <attribute name="available" value="false"/>
@@ -137,22 +152,10 @@
       <reference ref_id="-1_16"/>
     </collection>
   </item>
-  <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
-    <attribute name="value" value="5-HA-1118"/>
+    <attribute name="value" value="CB-0140-3"/>
     <reference name="source" ref_id="-1_3"/>
-    <reference name="subject" ref_id="1_2"/>
-  </item>
-  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="DrosDel data set"/>
-  </item>
-  <item id="-1_15" class="http://www.flymine.org/model/genomic#Location">
-    <attribute name="end" value="12612185"/>
-    <attribute name="endIsPartial" value="false"/>
-    <attribute name="start" value="568095"/>
-    <attribute name="startIsPartial" value="false"/>
-    <attribute name="strand" value="0"/>
-    <reference name="object" ref_id="-1_14"/>
-    <reference name="subject" ref_id="1_5"/>
+    <reference name="subject" ref_id="1_1"/>
   </item>
 </items>
