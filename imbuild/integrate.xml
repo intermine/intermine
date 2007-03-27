@@ -45,6 +45,8 @@
     be provided on the command line. E.g.
     
     ant integrate -Dsource=uniprot-dros -Daction=retrieve
+or  ant integrate -Dsource=uniprot-dros,drosdel
+or  ant integrate -Dsource=all
   -->
   
   <target name="integrate" depends="-init-properties, init, -init-deps, -init-integrate">
