@@ -61,6 +61,7 @@ public class ViewAction extends InterMineAction
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         
         return new ForwardParameters(mapping.findForward("waiting"))
+                            .addParameter("trail", "|query")
                             .addParameter("qid", qid).forward();
     }
 }
