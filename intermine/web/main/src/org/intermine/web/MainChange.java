@@ -466,10 +466,11 @@ public class MainChange extends DispatchAction
             Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
             while (cldFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-                Path pathToAdd = new Path(model, fullPathName + "." + fc.getFieldExpr());
+                Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
+                String fullPathNoConstraints = pathToAdd.toStringNoConstraints();
                 if (pathToAdd.getEndClassDescriptor() == null
-                    && !view.contains(pathToAdd.toString())) {
-                    view.add(pathToAdd.toString());
+                    && !view.contains(fullPathNoConstraints)) {
+                    view.add(fullPathNoConstraints);
                 }
             }
         } else {
