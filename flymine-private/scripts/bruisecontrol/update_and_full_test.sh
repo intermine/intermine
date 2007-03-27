@@ -77,36 +77,26 @@ else
   TARGET=$1
 fi
 
-dropdb unittest
-dropdb testmodel-webapp-userprofile
-dropdb testmodel-webapp
-dropdb notxmltest
-dropdb truncunittest
-dropdb fulldatatest
-dropdb flatmodetest
-dropdb genomictest
-dropdb webservice-test
-
-createdb webservice-test
-createdb unittest
-createdb testmodel-webapp-userprofile
-createdb testmodel-webapp
-createdb notxmltest
-createdb truncunittest
-createdb fulldatatest
-createdb flatmodetest
-createdb genomictest
+for i in bio-fulldata-test bio-test webservice-test unittest testmodel-webapp-userprofile testmodel-webapp notxmltest truncunittest fulldatatest flatmodetest genomictest
+do
+  dropdb $i
+  createdb $i
+done
 
 cd ../../testmodel/dbmodel
 ant build-db > $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
-cd $BUILD_PROJ
 
+
+# intermine tests
+
+cd $BUILD_PROJ
 ant -lib /software/noarch/junit/ default >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
 BUILD_RESULT=$?
 
 ant -lib /software/noarch/junit/ $TARGET >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
 
-# flymine tests
+
+# bio tests
 
 cd $BUILD_PROJ/../../bio/test-all
 INTERMINE_RESULTS_DIR=../intermine/all/build/test/results
