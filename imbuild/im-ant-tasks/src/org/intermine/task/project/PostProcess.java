@@ -14,6 +14,7 @@ package org.intermine.task.project;
  * A representation of a post-processing production step.
  * @author Kim Rutherford
  */
-public class PostProcess extends Action {
+public class PostProcess extends Action
+{
     // empty
 }
