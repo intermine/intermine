@@ -1,13 +1,13 @@
 <antlib>
     <typedef
             name="mappings"
-            classname="org.intermine.bio.postprocess.PostProcessTask"/>
+            classname="org.intermine.bio.postprocess.PostProcessOperationsTask"/>
     <typedef
             name="create-overlap-relations"
             classname="org.intermine.bio.postprocess.CreateOverlapRelationsTask"/>
     <typedef
             name="transfer-sequences"
-            classname="org.intermine.bio.postprocess.PostProcessTask"/>
+            classname="org.intermine.bio.postprocess.PostProcessOperationsTask"/>
     <typedef
             name="load-xml-data"
             classname="org.intermine.dataloader.XmlDataLoaderTask"/>
@@ -16,11 +16,11 @@
             classname="org.intermine.bio.util.LinkInTask"/>
     <typedef
             name="homophila-post-process"
-            classname="org.intermine.bio.postprocess.PostProcessTask"/>
+            classname="org.intermine.bio.postprocess.PostProcessOperationsTask"/>
     <typedef
             name="tsv-file-reader"
             classname="org.intermine.bio.task.TSVFileReaderWithSynonymTask"/>
     <typedef
             name="fetch-sequences"
-            classname="org.intermine.bio.postprocess.PostProcessTask"/>
+            classname="org.intermine.bio.postprocess.PostProcessOperationsTask"/>
 </antlib>

@@ -125,7 +125,7 @@ public class IntronUtil
         q.setConstraint(cs);
         q.addToOrderBy(qcTran);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessTask.PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results results = new Results(q, os, os.getSequence());
         results.setBatchSize(500);
         Iterator resultsIter = results.iterator();

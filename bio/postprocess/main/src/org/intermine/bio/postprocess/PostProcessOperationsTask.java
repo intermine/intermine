@@ -27,22 +27,23 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.task.CreateIndexesTask;
 
 /**
  * Run operations on genomic model database after DataLoading
  *
  * @author Richard Smith
  */
-public class PostProcessTask extends Task
+public class PostProcessOperationsTask extends Task
 {
-    private static final Logger LOG = Logger.getLogger(PostProcessTask.class);
+    private static final Logger LOG = Logger.getLogger(PostProcessOperationsTask.class);
 
     /**
-     * The category to pass to ObjectStoreInterMineImpl.precomute().
+     * The category to pass to ObjectStoreInterMineImpl.precompute().
      */
     public static final String PRECOMPUTE_CATEGORY = "precompute";
 
-    protected String operation, objectStore, objectStoreWriter, ensemblDb;
+    protected String operation, objectStoreWriter, ensemblDb;
     protected File outputFile;
     protected ObjectStoreWriter osw;
 
@@ -53,15 +54,6 @@ public class PostProcessTask extends Task
      */
     public void setOperation(String operation) {
         this.operation = operation;
-    }
-
-    /**
-     * Sets the value of objectStore
-     *
-     * @param objectStore an objectStore alias for operations that require one
-     */
-    public void setObjectStore(String objectStore) {
-        this.objectStore = objectStore;
     }
 
     /**
@@ -188,8 +180,9 @@ public class PostProcessTask extends Task
                 LOG.info("Starting CalculateLocations.createOverlapRelations()");
                 List classNamesToIgnoreList = new ArrayList();
                 String ignoreFileName = "overlap.config";
+                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
                 InputStream classesToIgnoreStream =
-                    PostProcessTask.class.getClassLoader().getResourceAsStream(ignoreFileName);
+                    classLoader.getResourceAsStream(ignoreFileName);
                 if (classesToIgnoreStream == null) {
                     throw new RuntimeException("can't find resource: " + ignoreFileName);
                 }
@@ -203,10 +196,6 @@ public class PostProcessTask extends Task
 
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 cl.createOverlapRelations(classNamesToIgnoreList, false);
-            } else if ("update-publications".equals(operation)) {
-                if (objectStore == null) {
-                    throw new BuildException("objectStore attribute is not set");
-                }
             } else if ("add-licences".equals(operation)) {
                 LOG.info("Starting add-licences");
                 new AddLicences(getObjectStoreWriter()).execute();
@@ -227,6 +216,10 @@ public class PostProcessTask extends Task
             } else if ("synonym-update".equals(operation)) {
                 SynonymUpdater synonymUpdater = new SynonymUpdater(getObjectStoreWriter());
                 synonymUpdater.update();
+            } else if ("create-attribute-indexes".equals(operation)) {
+                CreateIndexesTask cit = new CreateIndexesTask();
+                cit.setObjectStore(getObjectStoreWriter().getObjectStore());
+                cit.execute();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }

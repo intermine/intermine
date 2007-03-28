@@ -68,7 +68,7 @@
     
   <!-- CREATE INDEXES ON ALL NON-PRIMARY KEY ATTRIBUTES -->
 
-  <target name="create-indexes-attribute" depends="-init-build-db">
+  <target name="create-attribute-indexes" depends="-init-build-db">
     <create-indexes alias="${objectstore.name}" attributeIndexes="true"/>
   </target>
 
