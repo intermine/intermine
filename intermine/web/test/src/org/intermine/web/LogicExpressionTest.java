@@ -1,5 +1,7 @@
 package org.intermine.web;
 
+import org.intermine.web.logic.LogicExpression;
+
 import junit.framework.TestCase;
 
 public class LogicExpressionTest extends TestCase
