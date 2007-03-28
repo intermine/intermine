@@ -148,6 +148,7 @@ public class CreateIndexesTask extends Task
     /**
      * @see Task#execute
      */
+    @SuppressWarnings("null")
     public void execute() throws BuildException {
         setUp();
         Model m = schema.getModel();
@@ -170,7 +171,7 @@ public class CreateIndexesTask extends Task
                     clds.put(cld.getName(), cldIndexes);
                 }
             }
-        } catch (Exception e) {
+        } catch (MetaDataException e) {
             String message = "Error creating indexes for " + cld.getType();
             throw new BuildException(message, e);
         }
@@ -257,6 +258,12 @@ public class CreateIndexesTask extends Task
         private Set threads;
         private Iterator cldsIter;
 
+        /**
+         * Create a new Worker object.
+         * @param threads the Thread indexes
+         * @param cldsIter an Iterator over the classes to index
+         * @param threadNo the thread index of this thread
+         */
         public Worker(Set threads, Iterator cldsIter, int threadNo) {
             this.threads = threads;
             this.cldsIter = cldsIter;
@@ -276,7 +283,7 @@ public class CreateIndexesTask extends Task
                         Iterator statementsIter = ((Map) cldEntry.getValue()).entrySet().iterator();
                         while (statementsIter.hasNext()) {
                             Map.Entry statementEntry = (Map.Entry) statementsIter.next();
-                            String indexName = (String) statementEntry.getKey();;
+                            String indexName = (String) statementEntry.getKey();
                             IndexStatement st = (IndexStatement) statementEntry.getValue();
                             createIndex(conn, indexName, st, threadNo);
                         }
