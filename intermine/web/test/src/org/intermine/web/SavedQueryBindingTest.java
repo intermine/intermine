@@ -19,6 +19,10 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.SavedQueryBinding;
+import org.intermine.web.logic.query.PathQuery;
 
 public class SavedQueryBindingTest extends TestCase
 {
