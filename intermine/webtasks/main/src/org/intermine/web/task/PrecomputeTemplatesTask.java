@@ -30,11 +30,11 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.web.ClassKeyHelper;
-import org.intermine.web.Profile;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.TemplateQuery;
-import org.intermine.web.TemplateHelper;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.TemplateHelper;
+import org.intermine.web.logic.TemplateQuery;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)

@@ -12,6 +12,20 @@ package org.flymine.web;
 
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -24,32 +38,15 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.ForwardParameters;
-import org.intermine.web.InterMineAction;
-import org.intermine.web.Profile;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.config.WebConfig;
-import org.intermine.web.results.PagedCollection;
-import org.intermine.web.results.WebCollection;
-
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.ForwardParameters;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.struts.InterMineAction;
+import org.intermine.web.struts.WebCollection;
 /**
  * Builds a query to get all the genes (in bag) associated with specified go term.
  * @author Julie Sullivan

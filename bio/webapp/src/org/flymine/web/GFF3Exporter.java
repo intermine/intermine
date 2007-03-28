@@ -33,11 +33,11 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.util.StringUtil;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.TableExporter;
-import org.intermine.web.WebUtil;
-import org.intermine.web.results.Column;
-import org.intermine.web.results.PagedTable;
+import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.TableExporter;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
 
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
@@ -240,7 +240,7 @@ public class GFF3Exporter implements TableExporter
     }
 
     /**
-     * @see org.intermine.web.TableExporter#canExport(PagedTable)
+     * @see org.intermine.web.logic.TableExporter#canExport(PagedTable)
      */
     public boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();

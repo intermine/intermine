@@ -46,9 +46,15 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.bag.BagElement;
-import org.intermine.web.bag.InterMineBag;
 import org.intermine.web.bag.PkQueryIdUpgrader;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.bag.BagElement;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Tests for the Profile class.

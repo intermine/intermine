@@ -32,8 +32,8 @@ import org.intermine.bio.networkview.network.FlyEdge;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.InterMineAction;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.struts.InterMineAction;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

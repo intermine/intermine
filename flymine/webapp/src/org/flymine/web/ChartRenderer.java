@@ -17,8 +17,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.InterMineAction;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.struts.InterMineAction;
 
 import org.flymine.model.genomic.MicroArrayAssay;
 import org.flymine.model.genomic.MicroArrayResult;

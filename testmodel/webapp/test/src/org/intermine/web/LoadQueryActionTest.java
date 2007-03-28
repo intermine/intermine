@@ -12,6 +12,8 @@ package org.intermine.web;
 
 import java.util.HashMap;
 
+import org.intermine.web.logic.Constants;
+
 import servletunit.struts.MockStrutsTestCase;
 
 /**

@@ -14,6 +14,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -23,27 +33,15 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.ForwardParameters;
-import org.intermine.web.InterMineAction;
-import org.intermine.web.Profile;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.config.WebConfig;
-import org.intermine.web.results.PagedCollection;
-import org.intermine.web.results.WebCollection;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.ForwardParameters;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.struts.InterMineAction;
+import org.intermine.web.struts.WebCollection;
 
 /**
  * Action class to run an IQL query and constraint the results to

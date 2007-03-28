@@ -30,8 +30,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.web.TemplateHelper;
-import org.intermine.web.TemplateQuery;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Tests for PrecomputeTemplatesTask.

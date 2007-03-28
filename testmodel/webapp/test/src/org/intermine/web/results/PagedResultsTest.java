@@ -33,9 +33,9 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.MainHelper;
-import org.intermine.web.PathQuery;
-import org.intermine.web.PathQueryBinding;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 public class PagedResultsTest extends TestCase
 {

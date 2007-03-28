@@ -11,6 +11,11 @@ package org.intermine.web.config;
  */
 
 import org.intermine.metadata.Model;
+import org.intermine.web.logic.config.Displayer;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.TableExportConfig;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
 
 import java.io.InputStream;
 import java.util.Arrays;

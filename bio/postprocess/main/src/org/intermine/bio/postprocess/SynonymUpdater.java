@@ -32,7 +32,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.ClassKeyHelper;
+import org.intermine.web.logic.ClassKeyHelper;
 
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Synonym;

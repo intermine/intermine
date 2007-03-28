@@ -20,7 +20,13 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.ClassKeyHelper;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.bag.BagQuery;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryHelper;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.bag.BagQueryRunner;
+import org.intermine.web.logic.bag.ConvertedObjectPair;
 
 import java.io.InputStream;
 

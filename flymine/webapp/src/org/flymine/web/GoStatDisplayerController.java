@@ -45,10 +45,10 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.Constants;
-import org.intermine.web.Profile;
-import org.intermine.web.SortableMap;
-import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.SortableMap;
+import org.intermine.web.logic.bag.InterMineBag;
 
 /**
  * calculates p-values of goterms

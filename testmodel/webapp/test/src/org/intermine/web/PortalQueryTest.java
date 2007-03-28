@@ -11,7 +11,8 @@ package org.intermine.web;
  */
 
 import servletunit.struts.MockStrutsTestCase;
-import org.intermine.web.SessionMethods;
+
+import org.intermine.web.logic.SessionMethods;
 
 public class PortalQueryTest extends MockStrutsTestCase
 {

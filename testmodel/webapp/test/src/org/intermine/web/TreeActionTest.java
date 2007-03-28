@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+
 import servletunit.struts.MockStrutsTestCase;
 
 public class TreeActionTest extends MockStrutsTestCase

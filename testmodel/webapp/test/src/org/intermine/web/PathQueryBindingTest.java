@@ -25,6 +25,11 @@ import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constraint;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 /**
  * Tests for the PathQueryBinding class
