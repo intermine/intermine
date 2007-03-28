@@ -39,7 +39,7 @@
 
       <%-- show the description only if we've run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${(resultsTable.class.name == 'org.intermine.web.results.PagedResults')
+      <c:if test="${(resultsTable.class.name == 'org.intermine.web.logic.results.PagedResults')
                   && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
@@ -291,7 +291,7 @@
         </c:if>
 
         <%-- Return to main results link
-             <c:if test="${resultsTable.class.name != 'org.intermine.web.results.PagedResults' && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
+             <c:if test="${resultsTable.class.name != 'org.intermine.web.logic.results.PagedResults' && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
                <p>
                  <html:link action="/results?table=results">
                    <fmt:message key="results.return"/>

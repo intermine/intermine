@@ -1,347 +1,192 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-
-<!DOCTYPE struts-config PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
-          "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
-
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
 <struts-config>
-
+  <data-sources>
+  </data-sources>
   <!-- ========== Form Bean Definitions =================================== -->
-
   <form-beans>
-
-    <form-bean name="loginForm"
-               type="org.intermine.web.LoginForm"/>
-
-    <form-bean name="templateForm"
-               type="org.intermine.web.TemplateForm"/>
-
-    <form-bean name="browseForm"
-               type="org.intermine.web.TemplateForm"/>
-
-    <form-bean name="modifyQueryForm"
-               type="org.intermine.web.history.ModifyQueryForm"/>
-
-    <form-bean name="modifyBagForm"
-               type="org.intermine.web.bag.ModifyBagForm"/>
-
-    <form-bean name="modifyTemplateForm"
-               type="org.intermine.web.history.ModifyTemplateForm"/>
-
-    <form-bean name="mainForm"
-               type="org.intermine.web.MainForm"/>
-
-    <form-bean name="queryClassSelectForm"
-               type="org.intermine.web.QueryClassSelectForm"/>
-
-    <form-bean name="changeTableSizeForm"
-               type="org.intermine.web.results.ChangeTableSizeForm"/>
-
-    <form-bean name="saveBagForm"
-               type="org.intermine.web.results.SaveBagForm"/>
-
-    <form-bean name="emptyForm"
-               type="org.apache.struts.action.DynaActionForm"/>
-
-    <form-bean name="saveQueryForm"
-               type="org.intermine.web.SaveQueryForm"/>
-
-    <form-bean name="buildBagForm"
-               type="org.intermine.web.BuildBagForm"/>
-
-    <form-bean name="bagUploadConfirmForm"
-               type="org.intermine.web.bag.BagUploadConfirmForm"/>
-
-    <form-bean name="requestPasswordForm"
-               type="org.intermine.web.RequestPasswordForm"/>
-    
-    <form-bean name="feedbackForm"
-               type="org.intermine.web.FeedbackForm"/>
-    
-    <form-bean name="importTemplatesForm"
-               type="org.intermine.web.TemplatesImportForm"/>
-    
-    <form-bean name="importTagsForm"
-               type="org.intermine.web.tagging.ImportTagsForm"/>
-    
-    <form-bean name="templateSearchForm"
-               type="org.intermine.web.TemplateSearchForm"/>
-    
-    <form-bean name="importQueriesForm"
-               type="org.intermine.web.ImportQueriesForm"/>
-    
-    <form-bean name="templateSettingsForm"
-               type="org.intermine.web.TemplateSettingsForm"/>
-    
-    <form-bean name="createAccountForm"
-               type="org.intermine.web.account.CreateAccountForm"/>
-    
-    <form-bean name="changePasswordForm" 
-               type="org.intermine.web.account.ChangePasswordForm"/>
-    		   
-    <form-bean name="modifyBagDetailsForm" 
-    		   type="org.intermine.web.bag.ModifyBagDetailsForm"/>
+    <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
+    <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
+    <form-bean name="browseForm" type="org.intermine.web.struts.TemplateForm"/>
+    <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
+    <form-bean name="modifyBagForm" type="org.intermine.web.struts.ModifyBagForm"/>
+    <form-bean name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateForm"/>
+    <form-bean name="mainForm" type="org.intermine.web.struts.MainForm"/>
+    <form-bean name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectForm"/>
+    <form-bean name="changeTableSizeForm" type="org.intermine.web.struts.ChangeTableSizeForm"/>
+    <form-bean name="saveBagForm" type="org.intermine.web.struts.SaveBagForm"/>
+    <form-bean name="emptyForm" type="org.apache.struts.action.DynaActionForm"/>
+    <form-bean name="saveQueryForm" type="org.intermine.web.struts.SaveQueryForm"/>
+    <form-bean name="buildBagForm" type="org.intermine.web.struts.BuildBagForm"/>
+    <form-bean name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmForm"/>
+    <form-bean name="requestPasswordForm" type="org.intermine.web.struts.RequestPasswordForm"/>
+    <form-bean name="feedbackForm" type="org.intermine.web.struts.FeedbackForm"/>
+    <form-bean name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportForm"/>
+    <form-bean name="importTagsForm" type="org.intermine.web.struts.ImportTagsForm"/>
+    <form-bean name="templateSearchForm" type="org.intermine.web.struts.TemplateSearchForm"/>
+    <form-bean name="importQueriesForm" type="org.intermine.web.struts.ImportQueriesForm"/>
+    <form-bean name="templateSettingsForm" type="org.intermine.web.struts.TemplateSettingsForm"/>
+    <form-bean name="createAccountForm" type="org.intermine.web.struts.CreateAccountForm"/>
+    <form-bean name="changePasswordForm" type="org.intermine.web.struts.ChangePasswordForm"/>
+    <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
   </form-beans>
-
   <!-- ========== Exceptions Configuration ================================ -->
-
   <global-exceptions>
-    <exception type="java.lang.Exception"
-               key="exception.message"
-               path="error.page"
-               handler="org.intermine.web.InterMineExceptionHandler"/>
+    <exception type="java.lang.Exception" path="error.page" key="exception.message" handler="org.intermine.web.logic.InterMineExceptionHandler"/>
   </global-exceptions>
-
   <!-- ========== Global Forward Definitions ============================== -->
-
   <global-forwards>
-    <forward name="error"
-             path="error.page"/>
+    <forward name="error" path="error.page"/>
   </global-forwards>
-
   <!-- ========== Action Mapping Definitions ============================== -->
   <action-mappings>
-
-    <!-- Actions that just forward elsewhere - only used by jsps -->
-    
-    <action path="/tree"
-            forward="tree.page"/>
-
-    <action path="/examples"
-            forward="examples.page"/>
-
-    <action path="/template"
-            forward="template.page"/>
-
-    <action path="/templates"
-            forward="templates.page"/>
-
-    <action path="/import"
-            forward="importTemplates.page"/>
-    
-    <action path="/mymine"
-            forward="mymine.page"/>
-            
-    <action path="/history"
-            forward="history.page"/>
-
-    <action path="/classChooser"
-            forward="classChooser.page"/>
-
-    <action path="/help"
-            forward="help.page"/>
-
-    <action path="/objectDetails"
-            forward="objectDetails.page"/>
-
-    <action path="/classDescription"
-            forward="classDescription.page"/>
-
-    <action path="/login"
-            forward="login.page"/>
-    
-    <action path="/feedback"
-            forward="feedback.page"/>
-    
-    <action path="/contextHelp"
-            forward="contextHelp.page"/>
-    
-    <action path="/templateProblems"
-            forward="templateProblems.page"/>
-    
-    <action path="/results"
-            forward="results.page"/>
-    
-    <action path="/aspect"
-            forward="aspect.page"/>
-    
-    <action path="/importQueries"
-            forward="importQueries.page"/>
-    
-    <action path="/tagImport"
-            forward="importTags.page"/>
-    
-    <action path="/standalone"
-            forward="standalone.page"/>
-    
-    <action path="/createAccount"
-            forward="createAccount.page"/>
-    
-    <action path="/changePassword"
-            forward="changePassword.page"/>
-            
-    <action path="/bagDetails"
-            forward="bagDetails.page"/>
-
-    <!-- Actions that provide downloads -->
-
-    <action path="/getAttributeAsFile"
-            type="org.intermine.web.results.GetAttributeAsFileAction"/>
-
-    <action path="/exportTemplates"
-            type="org.intermine.web.TemplatesExportAction"/>
-    
-    <action path="/exportQuery"
-            type="org.intermine.web.ExportQueryAction"/>
-            
-    <action path="/loadTmpImg"
-            type="org.intermine.web.widget.TempImageLoader"/>
-
-    <!-- Actions invoked using links -->
-    
-    <action path="/modifyQueryChange"
-            type="org.intermine.web.history.ModifyQueryChangeAction"
-            parameter="method">
-      <forward name="query" path="/query.do" redirect="true"/>
-      <forward name="mymine" path="/mymine.do" redirect="true"/>
-      <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
-      <forward name="waiting" path="/pollQuery.do" redirect="true"/>
-      <forward name="template" path="/template.do" redirect="true"/>
+    <action path="/tree" forward="tree.page">
     </action>
-    
-    <action path="/loadQuery"
-            type="org.intermine.web.LoadQueryAction"
-            parameter="method">
-      <forward name="query" path="/query.do" redirect="true"/>
-      <forward name="waiting" path="/pollQuery.do" redirect="true"/>
+    <action path="/examples" forward="examples.page">
     </action>
-    
-    <action path="/begin"
-            type="org.intermine.web.BeginAction">
+    <action path="/template" forward="template.page">
+    </action>
+    <action path="/templates" forward="templates.page">
+    </action>
+    <action path="/import" forward="importTemplates.page">
+    </action>
+    <action path="/mymine" forward="mymine.page">
+    </action>
+    <action path="/history" forward="history.page">
+    </action>
+    <action path="/classChooser" forward="classChooser.page">
+    </action>
+    <action path="/help" forward="help.page">
+    </action>
+    <action path="/objectDetails" forward="objectDetails.page">
+    </action>
+    <action path="/classDescription" forward="classDescription.page">
+    </action>
+    <action path="/login" forward="login.page">
+    </action>
+    <action path="/feedback" forward="feedback.page">
+    </action>
+    <action path="/contextHelp" forward="contextHelp.page">
+    </action>
+    <action path="/templateProblems" forward="templateProblems.page">
+    </action>
+    <action path="/results" forward="results.page">
+    </action>
+    <action path="/aspect" forward="aspect.page">
+    </action>
+    <action path="/importQueries" forward="importQueries.page">
+    </action>
+    <action path="/tagImport" forward="importTags.page">
+    </action>
+    <action path="/standalone" forward="standalone.page">
+    </action>
+    <action path="/createAccount" forward="createAccount.page">
+    </action>
+    <action path="/changePassword" forward="changePassword.page">
+    </action>
+    <action path="/bagDetails" forward="bagDetails.page">
+    </action>
+    <action path="/getAttributeAsFile" type="org.intermine.web.struts.GetAttributeAsFileAction">
+    </action>
+    <action path="/exportTemplates" type="org.intermine.web.struts.TemplatesExportAction">
+    </action>
+    <action path="/exportQuery" type="org.intermine.web.struts.ExportQueryAction">
+    </action>
+    <action path="/loadTmpImg" type="org.intermine.web.logic.widget.TempImageLoader">
+    </action>
+    <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="template" redirect="true" path="/template.do"/>
+    </action>
+    <action path="/loadQuery" type="org.intermine.web.struts.LoadQueryAction" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+    </action>
+    <action path="/begin" type="org.intermine.web.struts.BeginAction">
       <forward name="begin" path="begin.page"/>
     </action>
-    
-    <action path="/query"
-            type="org.intermine.web.QueryAction">
+    <action path="/query" type="org.intermine.web.struts.QueryAction">
       <forward name="query" path="query.page"/>
       <forward name="template" path="/template.do"/>
     </action>
-    
-    <action path="/logout"
-            type="org.intermine.web.LogoutAction">
-      <forward name="begin" path="/begin.do" redirect="true"/>
+    <action path="/logout" type="org.intermine.web.struts.LogoutAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
-    
-    <action path="/confirm"
-            type="org.intermine.web.ConfirmAction">
+    <action path="/confirm" type="org.intermine.web.struts.ConfirmAction">
       <forward name="confirm" path="confirm.page"/>
     </action>
-    
-    <action path="/collectionDetails"
-            type="org.intermine.web.results.CollectionDetailsAction">
-      <forward name="results" path="/results.do" redirect="true"/>
+    <action path="/collectionDetails" type="org.intermine.web.struts.CollectionDetailsAction">
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
-
-    <action path="/userTemplateAction"
-            type="org.intermine.web.UserTemplateAction"
-            parameter="method">
-      <forward name="begin" path="/mymine.do" redirect="true"/>
+    <action path="/userTemplateAction" type="org.intermine.web.struts.UserTemplateAction" parameter="method">
+      <forward name="begin" redirect="true" path="/mymine.do"/>
       <forward name="template" path="template.page"/>
     </action>
-
-    <action path="/mainChange"
-            type="org.intermine.web.MainChange"
-            parameter="method">
-      <forward name="query" path="/query.do" redirect="true"/>
+    <action path="/mainChange" type="org.intermine.web.struts.MainChange" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
       <forward name="browserLines" path="/mainBrowserLines.jsp"/>
       <forward name="mainConstraint" path="mainConstraint.tile"/>
       <forward name="queryPaths" path="mainPaths.tile"/>
     </action>
-    
-    <action path="/inlineTagEditorChange"
-            type="org.intermine.web.tagging.InlineTagEditorChange"
-            parameter="method">
+    <action path="/inlineTagEditorChange" type="org.intermine.web.logic.tagging.InlineTagEditorChange" parameter="method">
       <forward name="editTags" path="/editTags.jsp"/>
       <forward name="currentTags" path="/currentTags.jsp"/>
     </action>
-    
-    <action path="/viewChange"
-            type="org.intermine.web.ViewChange"
-            parameter="method">
-      <forward name="query" path="/query.do" redirect="true"/>
+    <action path="/viewChange" type="org.intermine.web.logic.ViewChange" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    
-    <action path="/exportAction"
-            type="org.intermine.web.ExportAction"
-            parameter="method">
+    <action path="/exportAction" type="org.intermine.web.struts.ExportAction" parameter="method">
       <forward name="results" path="results.page"/>
     </action>
-    
-    <action path="/changeTable"
-            type="org.intermine.web.results.ChangeTableAction"
-            parameter="method">
-      <forward name="results" path="/results.do" redirect="true"/>
+    <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
-
-    <action path="/changeTree"
-            type="org.intermine.web.TreeAction"
-            parameter="method">
+    <action path="/changeTree" type="org.intermine.web.struts.TreeAction" parameter="method">
       <forward name="renderTree" path="tree.page"/>
-      <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-
-    <action path="/modifyDetails"
-            type="org.intermine.web.results.ModifyDetails"
-            parameter="method">
-      <forward name="objectDetails" path="/objectDetails.do" redirect="true"/>
+    <action path="/modifyDetails" type="org.intermine.web.logic.results.ModifyDetails" parameter="method">
+      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
       <forward name="results" path="results.page"/>
       <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
       <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
-      <forward name="waiting" path="/pollTemplateQuery.do" redirect="true"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
     </action>
-    
-    <action path="/editTemplate"
-            type="org.intermine.web.EditTemplateAction">
-      <forward name="query" path="/query.do" redirect="true"/>
+    <action path="/editTemplate" type="org.intermine.web.struts.EditTemplateAction">
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    
-    <action path="/collapseElement"
-            type="org.intermine.web.CollapseAction">
+    <action path="/collapseElement" type="org.intermine.web.struts.CollapseAction">
     </action>
-    
-    <action path="/exportTags"
-            type="org.intermine.web.tagging.ExportTagsAction">
+    <action path="/exportTags" type="org.intermine.web.struts.ExportTagsAction">
     </action>
-    
-    <action path="/importTags"
-            type="org.intermine.web.tagging.ImportTagsAction"
-            name="importTagsForm">
-      <forward name="success" path="/mymine.do" redirect="true"/>
+    <action path="/importTags" name="importTagsForm" type="org.intermine.web.struts.ImportTagsAction">
+      <forward name="success" redirect="true" path="/mymine.do"/>
     </action>
-    
-    <action path="/addToBagAction"
-            type="org.intermine.web.results.AddToBagAction">
-      <forward name="objectDetails" path="/objectDetails.do" redirect="true"/>
+    <action path="/addToBagAction" type="org.intermine.web.struts.AddToBagAction">
+      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
     </action>
-    
-    <action path="/queryForGraphAction"
-            type="org.intermine.web.results.QueryForGraphAction">
-      <forward name="results" path="/results.do" redirect="true"/>
+    <action path="/queryForGraphAction" type="org.intermine.web.logic.results.QueryForGraphAction">
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
-    
-    <action path="/bagTableWidgetResults"
-            type="org.intermine.web.results.BagTableWidgetResults">
-      <forward name="results" path="/results.do" redirect="true"/>
+    <action path="/bagTableWidgetResults" type="org.intermine.web.logic.results.BagTableWidgetResults">
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
-    
-    <!-- wait for a custom build query to run -->
-    <action path="/pollQuery"
-            type="org.intermine.web.PollQueryAction">
+    <action path="/pollQuery" type="org.intermine.web.struts.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>
       <!-- problem running query -->
-      <forward name="failure" path="/query.do" redirect="true"/>
+      <forward name="failure" redirect="true" path="/query.do"/>
       <!-- implicitly cancelled by user -->
-      <forward name="cancelled" path="/query.do" redirect="true"/>
+      <forward name="cancelled" redirect="true" path="/query.do"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="results" redirect="true" path="/results.do"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
-    
-    <!-- wait for a template query to run -->
-    <action path="/pollTemplateQuery"
-            type="org.intermine.web.PollQueryAction">
+    <action path="/pollTemplateQuery" type="org.intermine.web.struts.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>
       <!-- problem running query -->
@@ -349,15 +194,11 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="error.page"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="results" redirect="true" path="/results.do"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
-    
-    <!-- wait for a browse query to run -->
-    <action path="/pollBrowseQuery"
-            type="org.intermine.web.PollQueryAction"
-            parameter="followSingleResult">
+    <action path="/pollBrowseQuery" type="org.intermine.web.struts.PollQueryAction" parameter="followSingleResult">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>
       <!-- problem running query -->
@@ -365,359 +206,169 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" path="error.page"/>
       <!-- forward to results page -->
-      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="results" redirect="true" path="/results.do"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
-
-    <!-- Actions invoked using buttons - no other form input -->
-    <action path="/viewAction"
-            type="org.intermine.web.ViewAction"
-            name="emptyForm">
-      <forward name="waiting" path="/pollQuery.do" redirect="true" />
+    <action path="/viewAction" name="emptyForm" type="org.intermine.web.struts.ViewAction">
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
-
-    <!-- Actions invoked using buttons - not validating form -->
-    <action path="/createTemplate"
-            type="org.intermine.web.CreateTemplateAction">
-      <forward name="mymine" path="/mymine.do" redirect="true"/>
-      <forward name="query" path="/query.do" redirect="true"/>
+    <action path="/createTemplate" type="org.intermine.web.struts.CreateTemplateAction">
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    
-    <action path="/changeTableSize"
-            name="changeTableSizeForm"
-            scope="request"
-            type="org.intermine.web.results.ChangeTableSizeAction">
-      <forward name="results" path="/results.do" redirect="true"/>
+    <action path="/changeTableSize" name="changeTableSizeForm" type="org.intermine.web.struts.ChangeTableSizeAction" scope="request">
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
-    
-    <!-- Actions invoked using buttons - validating form -->
-    <action path="/templateAction"
-            type="org.intermine.web.TemplateAction"
-            name="templateForm"
-            parameter="action"
-            input="template">
-      <forward name="waiting" path="/pollTemplateQuery.do" redirect="true"/>
+    <action path="/templateAction" name="templateForm" type="org.intermine.web.struts.TemplateAction" input="template" parameter="action">
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
       <forward name="query" path="query.page"/>
       <forward name="template" path="template.page"/>
     </action>
-    
-    <action path="/importTemplates"
-            type="org.intermine.web.TemplatesImportAction"
-            scope="request"
-            name="importTemplatesForm"
-            input="import">
+    <action path="/importTemplates" name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportAction" scope="request" input="import">
       <forward name="import" path="importTemplates.page"/>
-      <forward name="mymine" path="/mymine.do" redirect="true"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-    
-    <action path="/importQueriesAction"
-            type="org.intermine.web.ImportQueriesAction"
-            scope="request"
-            name="importQueriesForm"
-            input="importQueries">
+    <action path="/importQueriesAction" name="importQueriesForm" type="org.intermine.web.struts.ImportQueriesAction" scope="request" input="importQueries">
       <forward name="importQueries" path="importQueries.page"/>
-      <forward name="query" path="/query.do" redirect="true"/>
-      <forward name="mymine" path="/mymine.do?page=saved" redirect="true"/>
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    
-    <action path="/browseAction"
-            type="org.intermine.web.TemplateAction"
-            name="browseForm"
-            input="begin">
-      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
+    <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.TemplateAction" input="begin">
+      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
     </action>
-    
-    <action path="/feedbackAction"
-            type="org.intermine.web.FeedbackAction"
-            name="feedbackForm"
-            scope="request"
-            input="feedback">
+    <action path="/feedbackAction" name="feedbackForm" type="org.intermine.web.struts.FeedbackAction" scope="request" input="feedback">
       <forward name="feedback" path="feedback.page"/>
     </action>
-
-    <action path="/modifyQuery"
-            type="org.intermine.web.history.ModifyQueryAction"
-            name="modifyQueryForm"
-            parameter="action"
-            scope="request"
-            input="history">
-      <forward name="mymine" path="/mymine.do" redirect="true"/>
-      <forward name="history" path="/history.do" redirect="true"/>
+    <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="history" redirect="true" path="/history.do"/>
     </action>
-    
-    <action path="/modifyBag"
-            type="org.intermine.web.bag.ModifyBagAction"
-            name="modifyBagForm"
-            parameter="action"
-            scope="request"
-            input="bag">
-      <forward name="bag" path="/mymine.do?page=bags" redirect="true"/>
+    <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action">
     </action>
-
-    <action path="/modifyTemplate"
-            type="org.intermine.web.history.ModifyTemplateAction"
-            name="modifyTemplateForm"
-            parameter="action"
-            scope="request"
-            input="mymine">
-      <forward name="mymine" path="/mymine.do" redirect="true"/>
+    <action path="/modifyTemplate" name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateAction" scope="request" input="mymine" parameter="action">
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-
-    <action path="/saveBag"
-            type="org.intermine.web.results.SaveBagAction"
-            name="saveBagForm"
-            input="results">
-      <forward name="results" path="/results.do" redirect="true"/>
-      <forward name="bag" path="/bagDetails.do" redirect="true"/>
+    <action path="/saveBag" name="saveBagForm" type="org.intermine.web.struts.SaveBagAction" input="results">
+      <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="bag" redirect="true" path="/bagDetails.do"/>
     </action>
-
-    <action path="/saveQuery"
-            type="org.intermine.web.SaveQueryAction"
-            name="saveQueryForm"
-            input="query">
+    <action path="/saveQuery" name="saveQueryForm" type="org.intermine.web.struts.SaveQueryAction" input="query">
       <forward name="query" path="query.page"/>
     </action>
-    
-    <action path="/buildBag"
-            type="org.intermine.web.BuildBagAction"
-            name="buildBagForm"
-            parameter="action"
-            input="mymine">
+    <action path="/buildBag" name="buildBagForm" type="org.intermine.web.struts.BuildBagAction" input="mymine" parameter="action">
       <forward name="mymine" path="mymine.page"/>
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
-
-    <action path="/bagUploadConfirm"
-            type="org.intermine.web.bag.BagUploadConfirmAction"
-            name="bagUploadConfirmForm"
-            validate="true"
-            parameter="action"
-            input="error">
+    <action path="/bagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmAction" validate="true" input="error" parameter="action">
       <forward name="back" path="mymine.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
-      <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
-
-    <action path="/templateSearch"
-            type="org.intermine.web.TemplateSearchAction"
-            name="templateSearchForm"
-            input="templateSearch">
+    <action path="/templateSearch" name="templateSearchForm" type="org.intermine.web.struts.TemplateSearchAction" input="templateSearch">
       <forward name="templateSearch" path="templateSearch.page"/>
     </action>
-
-    <action path="/queryClassSelect"
-            type="org.intermine.web.QueryClassSelectAction"
-            name="queryClassSelectForm"
-            scope="request"
-            input="query">
+    <action path="/queryClassSelect" name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectAction" scope="request" input="query">
       <forward name="classChooser" path="classChooser.page"/>
-      <forward name="query" path="/query.do" redirect="true"/>
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-
-    <action path="/mainAction"
-            type="org.intermine.web.MainAction"
-            name="mainForm"
-            parameter="action"
-            input="query">
-      <forward name="query" path="/query.do" redirect="true"/>
+    <action path="/mainAction" name="mainForm" type="org.intermine.web.struts.MainAction" input="query" parameter="action">
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-
-    <action path="/loginAction"
-            type="org.intermine.web.LoginAction"
-            name="loginForm"
-            input="login"
-            parameter="action">
+    <action path="/loginAction" name="loginForm" type="org.intermine.web.struts.LoginAction" input="login" parameter="action">
       <forward name="login" path="login.page"/>
-      <forward name="mymine" path="/mymine.do" redirect="true"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-
-    <action path="/requestPasswordAction"
-            type="org.intermine.web.RequestPasswordAction"
-            name="requestPasswordForm"
-            input="login"
-            parameter="action">
+    <action path="/requestPasswordAction" name="requestPasswordForm" type="org.intermine.web.struts.RequestPasswordAction" input="login" parameter="action">
       <forward name="login" path="login.page"/>
     </action>
-    
-    <action path="/templateSettingsAction"
-            type="org.intermine.web.TemplateSettingsAction"
-            name="templateSettingsForm"
-            input="query"
-            scope="request">
-      <forward name="query" path="/query.do" redirect="true"/>      
+    <action path="/templateSettingsAction" name="templateSettingsForm" type="org.intermine.web.struts.TemplateSettingsAction" scope="request" input="query">
+      <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    
-    <action path="/createAccountAction"
-            type="org.intermine.web.account.CreateAccountAction"
-            name="createAccountForm"
-            input="createAccount">
+    <action path="/createAccountAction" name="createAccountForm" type="org.intermine.web.struts.CreateAccountAction" input="createAccount">
       <forward name="createAccount" path="createAccount.page"/>
-      <forward name="mymine" path="mymine.page" redirect="true"/>
+      <forward name="mymine" redirect="true" path="mymine.page"/>
     </action>
-
-    <action path="/changePasswordAction"
-            type="org.intermine.web.account.ChangePasswordAction"
-            name="changePasswordForm"
-            input="changePassword">
+    <action path="/changePasswordAction" name="changePasswordForm" type="org.intermine.web.struts.ChangePasswordAction" input="changePassword">
       <forward name="changePassword" path="changePassword.page"/>
       <forward name="mymine" path="mymine.page"/>
     </action>
-    
-    <action path="/modifyBagDetailsAction"
-    		type="org.intermine.web.bag.ModifyBagDetailsAction"
-    		name="modifyBagDetailsForm"
-    		input="bagDetails">
-      <forward name="bagDetails" path="/bagDetails.do" redirect="true"/>
-      <forward name="bagResultsTable" path="/bagResultsTable.do" redirect="true"/>
+    <action path="/modifyBagDetailsAction" name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsAction" input="bagDetails">
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+      <forward name="bagResultsTable" redirect="true" path="/bagResultsTable.do"/>
     </action>
-
-    <action path="/bagResultsTable"
-            type="org.intermine.web.results.BagDetailsAction">
-      <forward name="results" path="/results.do" redirect="true"/>
+    <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
+      <forward name="results" redirect="true" path="/results.do"/>
     </action>
-
-    <!-- Other actions -->
-    
-    <action path="/portal"
-            type="org.intermine.web.PortalQueryAction">
-      <forward name="waiting" path="/pollBrowseQuery.do" redirect="true"/>
+    <action path="/portal" type="org.intermine.web.struts.PortalQueryAction">
+      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
     </action>
-    
-    <action path="/ping"
-            type="org.intermine.web.HeartbeatAction"/>
-
-    <!-- Controllers -->
-    <action path="/initMain"
-            type="org.intermine.web.MainController"/>
-
-    <action path="/initChangePassword"
-            type="org.intermine.web.ChangePasswordController"/>
-
-    <action path="/initMainConstraint"
-            type="org.intermine.web.MainConstraintController"/>
-    
-    <action path="/initMainPaths"
-            type="org.intermine.web.MainPathsController"/>
-
-    <action path="/initInlineTagEditor"
-            type="org.intermine.web.tagging.InlineTagEditorController"/>
-
-    <action path="/initBrowse"
-            type="org.intermine.web.BrowseController"/>
-
-    <action path="/initTemplateList"
-            type="org.intermine.web.TemplateListController"/>
-
-    <action path="/initObjectDetailsTemplateTable"
-            type="org.intermine.web.ObjectDetailsTemplateController"/>
-
-    <action path="/initMymine"
-            type="org.intermine.web.history.MyMineController"/>
-
-    <action path="/initObjectView"
-            type="org.intermine.web.results.ObjectViewController"/>
-    
-    <action path="/initObjectTrail"
-            type="org.intermine.web.results.ObjectTrailController"/>
-
-	<!-- this class doesn't exist anymore.  replaced by initTable? -->
-    <action path="/initResults"
-            type="org.intermine.web.results.ResultsController"/>
-
-    <action path="/initTable"
-            type="org.intermine.web.results.TableController"
-            name="changeTableSizeForm"/>
-    
-    <action path="/initObjectDetails"
-            type="org.intermine.web.results.ObjectDetailsController"/>
-
-    <action path="/initObjectDetailsAspect"
-            type="org.intermine.web.results.ObjectDetailsAspectController"/>
-
-    <action path="/initOneField"
-            type="org.intermine.web.results.OneFieldController"/>
-
-    <action path="/initTree"
-            type="org.intermine.web.TreeController"/>
-
-    <action path="/initExport"
-            type="org.intermine.web.ExportController"/>
-
-    <action path="/initAspect"
-            type="org.intermine.web.AspectController"/>
-
-    <action path="/initBag"
-            type="org.intermine.web.BagController"
-            name="buildBagForm"/>
-
-    <action path="/initBagUploadConfirm"
-            type="org.intermine.web.bag.BagUploadConfirmController"
-            validate="false"
-            name="bagUploadConfirmForm"/>
-
-    <action path="/initBagUploadConfirmIssue"
-            type="org.intermine.web.bag.BagUploadConfirmIssueController"/>
-
-    <action path="/initTemplate"
-            type="org.intermine.web.TemplateController"
-            validate="false"
-            name="templateForm"/>
-
-    <action path="/initFavourites"
-            type="org.intermine.web.FavouritesController"/>
-    
-    <action path="/starTemplate"
-            type="org.intermine.web.StarTemplateController"/>
-
-    <action path="/objectDetailsBags"
-            type="org.intermine.web.ObjectDetailsBagsController"/>
-
-    <action path="/precomputeTemplate"
-            type="org.intermine.web.PrecomputeTemplateController"/>
-            
-    <action path="/initBagDetails"
-            type="org.intermine.web.bag.BagDetailsController"/>
-
-    <action path="/initExternalLinks" type="org.intermine.web.results.ExternalLinksController"/>
-
-    <action path="/initClassChooser"
-            type="org.intermine.web.ClassChooserController"/>
-
-    <!-- don't (re)move this - it's used for importing any model-specific actions -->
-    <!--@MODEL_INCLUDE@-->
-
+    <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
+    </action>
+    <action path="/initMain" type="org.intermine.web.struts.MainController">
+    </action>
+    <action path="/initMainConstraint" type="org.intermine.web.struts.MainConstraintController">
+    </action>
+    <action path="/initMainPaths" type="org.intermine.web.struts.MainPathsController">
+    </action>
+    <action path="/initInlineTagEditor" type="org.intermine.web.struts.InlineTagEditorController">
+    </action>
+    <action path="/initBrowse" type="org.intermine.web.struts.BrowseController">
+    </action>
+    <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
+    </action>
+    <action path="/initObjectDetailsTemplateTable" type="org.intermine.web.struts.ObjectDetailsTemplateController">
+    </action>
+    <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
+    </action>
+    <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController">
+    </action>
+    <action path="/initObjectTrail" type="org.intermine.web.struts.ObjectTrailController">
+    </action>
+    <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController">
+    </action>
+    <action path="/initObjectDetails" type="org.intermine.web.struts.ObjectDetailsController">
+    </action>
+    <action path="/initObjectDetailsAspect" type="org.intermine.web.struts.ObjectDetailsAspectController">
+    </action>
+    <action path="/initTree" type="org.intermine.web.struts.TreeController">
+    </action>
+    <action path="/initExport" type="org.intermine.web.struts.ExportController">
+    </action>
+    <action path="/initAspect" type="org.intermine.web.struts.AspectController">
+    </action>
+    <action path="/initBag" name="buildBagForm" type="org.intermine.web.struts.BagController">
+    </action>
+    <action path="/initBagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmController" validate="false">
+    </action>
+    <action path="/initBagUploadConfirmIssue" type="org.intermine.web.struts.BagUploadConfirmIssueController">
+    </action>
+    <action path="/initTemplate" name="templateForm" type="org.intermine.web.struts.TemplateController" validate="false">
+    </action>
+    <action path="/initFavourites" type="org.intermine.web.struts.FavouritesController">
+    </action>
+    <action path="/starTemplate" type="org.intermine.web.struts.StarTemplateController">
+    </action>
+    <action path="/precomputeTemplate" type="org.intermine.web.struts.PrecomputeTemplateController">
+    </action>
+    <action path="/initBagDetails" type="org.intermine.web.struts.BagDetailsController">
+    </action>
+    <action path="/initExternalLinks" type="org.intermine.web.struts.ExternalLinksController">
+    </action>
+    <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
+    </action>
   </action-mappings>
-
-  <!-- ========== Controller Configuration ================================ -->
-
-  <controller processorClass="org.intermine.web.InterMineRequestProcessor" nocache="true">
-    <!-- The "input" parameter on "action" elements is the name of a
-         local or global "forward" rather than a module-relative path -->
+  <controller nocache="true" processorClass="org.intermine.web.logic.InterMineRequestProcessor">
     <set-property property="inputForward" value="true"/>
   </controller>
-
-  <!-- ========== Message Resources Definitions =========================== -->
-  <!-- used by LookupDispatchActions -->
   <message-resources parameter="InterMineWebApp"/>
-
-  <!-- model-specific resources -->
   <message-resources parameter="model" key="model"/>
-
   <!-- ========== Plug Ins Configuration ================================== -->
-
   <plug-in className="org.apache.struts.plugins.ModuleConfigVerifier"/>
-
-  <plug-in className="org.intermine.web.InitialiserPlugin"/>
-
+  <plug-in className="org.intermine.web.logic.InitialiserPlugin"/>
   <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
-    <set-property property="pathnames"
-                  value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+    <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
   </plug-in>
-
   <plug-in className="org.apache.struts.tiles.TilesPlugin">
-    <set-property property="definitions-config"
-                  value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
+    <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml,/WEB-INF/tiles-defs-model.xml"/>
   </plug-in>
-
 </struts-config>
