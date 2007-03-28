@@ -35,6 +35,8 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.TypeConverter;
 
 /**
  * @author Matthew Wakeling

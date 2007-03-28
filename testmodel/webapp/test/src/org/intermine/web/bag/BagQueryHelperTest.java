@@ -10,7 +10,10 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.web.ClassKeyHelper;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.bag.BagQuery;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryHelper;
 
 public class BagQueryHelperTest extends TestCase {
 	

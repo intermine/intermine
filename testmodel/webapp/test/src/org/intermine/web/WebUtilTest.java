@@ -10,6 +10,8 @@ package org.intermine.web;
  *
  */
 
+import org.intermine.web.logic.WebUtil;
+
 import junit.framework.TestCase;
 
 /**

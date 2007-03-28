@@ -16,6 +16,7 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Thing;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.ClassKeyHelper;
 
 public class ClassKeyHelperTest extends TestCase {
     private Model model;

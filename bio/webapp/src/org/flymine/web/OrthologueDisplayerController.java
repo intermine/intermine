@@ -32,8 +32,8 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
-import org.intermine.web.bag.BagElement;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagElement;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;

@@ -21,10 +21,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.ClassKeyHelper;
-import org.intermine.web.ProfileManager;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.ProfileManager;
 
 /**
  * Task to read an XML file of a webapp userprofiles into a userprofile ObjectStore.

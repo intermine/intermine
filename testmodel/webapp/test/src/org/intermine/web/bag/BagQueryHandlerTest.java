@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.intermine.metadata.Model;
 import org.intermine.util.SAXParser;
+import org.intermine.web.logic.bag.BagQueryHandler;
 import org.xml.sax.InputSource;
 
 import junit.framework.TestCase;

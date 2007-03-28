@@ -33,6 +33,7 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.results.WebResults;
 
 import junit.framework.TestCase;
 

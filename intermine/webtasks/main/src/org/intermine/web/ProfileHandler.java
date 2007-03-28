@@ -10,13 +10,6 @@ package org.intermine.web;
  *
  */
 
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.web.bag.IdUpgrader;
-import org.intermine.web.bag.InterMineBagHandler;
-import org.intermine.xml.full.FullHandler;
-import org.intermine.xml.full.FullParser;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.SavedQueryHandler;
+import org.intermine.web.logic.TagHandler;
+import org.intermine.web.logic.TemplateQueryHandler;
+import org.intermine.web.logic.bag.IdUpgrader;
+import org.intermine.web.logic.bag.InterMineBagHandler;
+import org.intermine.xml.full.FullHandler;
+import org.intermine.xml.full.FullParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -131,16 +135,16 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryBinding.TemplateQueryHandler(savedTemplates, savedBags,
+            subHandler = new TemplateQueryHandler(savedTemplates, savedBags,
                                                                        classKeys);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryBinding.SavedQueryHandler(savedQueries, savedBags,
+            subHandler = new SavedQueryHandler(savedQueries, savedBags,
                                                                  classKeys);
         }
         if (qName.equals("tags")) {
-            subHandler = new TagBinding.TagHandler(username, tags);
+            subHandler = new TagHandler(username, tags);
         }
         if (subHandler != null) {
             subHandler.startElement(uri, localName, qName, attrs);

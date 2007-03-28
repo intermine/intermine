@@ -33,6 +33,11 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.InitialiserPlugin;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.profile.TagChecker;
 
 /**
  *

@@ -10,38 +10,11 @@ package org.flymine.web;
  *
  */
 
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.InterMineAction;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.TableExporter;
-import org.intermine.web.results.Column;
-import org.intermine.web.results.PagedTable;
-import org.intermine.web.results.ResultElement;
-import org.intermine.web.results.WebCollection;
-import org.intermine.web.results.WebResults;
-
-import org.flymine.biojava.FlyMineSequence;
-import org.flymine.biojava.FlyMineSequenceFactory;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-
-import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +29,30 @@ import org.apache.struts.action.ActionMapping;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.flymine.biojava.FlyMineSequence;
+import org.flymine.biojava.FlyMineSequenceFactory;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.TableExporter;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.struts.InterMineAction;
+import org.intermine.web.struts.WebCollection;
 
 /**
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
@@ -347,7 +344,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
     }
 
     /**
-     * @see org.intermine.web.TableExporter#canExport(PagedTable)
+     * @see org.intermine.web.logic.TableExporter#canExport(PagedTable)
      */
     public boolean canExport(PagedTable pt) {
         return getFeatureColumn(pt) != null;

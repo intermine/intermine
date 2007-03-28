@@ -10,6 +10,7 @@ package org.intermine.web;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ResultsRow;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -29,22 +32,23 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.bag.BagElement;
-import org.intermine.web.bag.IdUpgrader;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.bag.InterMineBagBinding;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.SavedQueryBinding;
+import org.intermine.web.logic.TagBinding;
+import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.TemplateQueryBinding;
+import org.intermine.web.logic.bag.BagElement;
+import org.intermine.web.logic.bag.IdUpgrader;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.bag.InterMineBagBinding;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-
-import java.io.Reader;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
 /**

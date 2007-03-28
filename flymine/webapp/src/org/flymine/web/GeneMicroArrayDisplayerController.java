@@ -17,7 +17,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.Constants;
+import org.intermine.web.logic.Constants;
 
 import org.flymine.model.genomic.Gene;
 

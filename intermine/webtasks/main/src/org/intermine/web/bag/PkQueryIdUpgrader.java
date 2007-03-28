@@ -23,6 +23,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntToIntMap;
+import org.intermine.web.logic.bag.IdUpgrader;
 
 import org.apache.log4j.Logger;
 

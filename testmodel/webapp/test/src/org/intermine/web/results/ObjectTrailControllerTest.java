@@ -22,8 +22,9 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.SessionMethods;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.results.ObjectTrailController;
 
 import org.apache.struts.tiles.ComponentContext;
 

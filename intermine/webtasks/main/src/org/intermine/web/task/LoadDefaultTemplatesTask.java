@@ -19,21 +19,20 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.ClassKeyHelper;
-import org.intermine.web.Profile;
 import org.intermine.web.ProfileBinding;
-import org.intermine.web.ProfileManager;
-import org.intermine.web.RequestPasswordAction;
-import org.intermine.web.TemplateQuery;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.struts.RequestPasswordAction;
 
 /**
  * Load template queries form an XML file into a given user profile.

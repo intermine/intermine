@@ -29,8 +29,8 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.bag.InterMineBag;
-import org.intermine.web.widget.DataSetLdr;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.widget.DataSetLdr;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -141,21 +141,21 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
     }
 
     /**
-     * @see org.intermine.web.widget.DataSetLdr#getDataSet()
+     * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
      */
     public DefaultCategoryDataset getDataSet() {
         return dataSet;
     }
 
     /**
-     * @see org.intermine.web.widget.DataSetLdr#getGeneCategoryArray()
+     * @see org.intermine.web.logic.widget.DataSetLdr#getGeneCategoryArray()
      */
     public Object[] getGeneCategoryArray() {
         return geneCategoryArray;
     }
     
     /**
-     * @see org.intermine.web.widget.DataSetLdr#getResultsSize()
+     * @see org.intermine.web.logic.widget.DataSetLdr#getResultsSize()
      */
     public int getResultsSize() {
         return results.size();

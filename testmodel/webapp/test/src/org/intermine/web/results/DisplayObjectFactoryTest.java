@@ -22,8 +22,10 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.Constants;
-import org.intermine.web.config.WebConfig;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.DisplayObjectFactory;
 
 import servletunit.struts.MockStrutsTestCase;
 

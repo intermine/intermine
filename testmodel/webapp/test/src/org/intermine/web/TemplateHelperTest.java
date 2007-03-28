@@ -26,7 +26,16 @@ import junit.framework.TestCase;
 import org.apache.struts.action.ActionErrors;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.bag.InterMineBag;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constraint;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateQueryBinding;
+import org.intermine.web.struts.TemplateForm;
 
 public class TemplateHelperTest extends TestCase
 {

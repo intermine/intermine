@@ -33,9 +33,9 @@ import org.flymine.model.genomic.ProteinInteractor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
-import org.intermine.web.SessionMethods;
-import org.intermine.web.TableExporter;
-import org.intermine.web.results.PagedTable;
+import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.TableExporter;
+import org.intermine.web.logic.results.PagedTable;
 
 /**
  * An implementation of TableExporter that exports protein interactions 
@@ -141,7 +141,7 @@ public class ProteinInteractionExporter implements TableExporter
     /**
      * @param pt the PagedTable containing the results 
      * @return true if exportable results were found
-     * @see org.intermine.web.TableExporter#canExport
+     * @see org.intermine.web.logic.TableExporter#canExport
      * @see org.intermine.bio.web.PIUtil#canExport
      */
     public boolean canExport(PagedTable pt) {

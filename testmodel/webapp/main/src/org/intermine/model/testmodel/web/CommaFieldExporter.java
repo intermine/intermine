@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.ExportException;
-import org.intermine.web.FieldExporter;
+import org.intermine.web.logic.ExportException;
+import org.intermine.web.logic.FieldExporter;
 
 /**
  * CommaFieldExporter class

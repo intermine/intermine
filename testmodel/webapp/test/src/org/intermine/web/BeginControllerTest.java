@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.struts.tiles.ComponentContext;
+import org.intermine.web.logic.Constants;
 
 import servletunit.struts.MockStrutsTestCase;
 

@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.struts.MainForm;
 
 import junit.framework.TestCase;
 

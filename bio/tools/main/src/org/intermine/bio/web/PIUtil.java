@@ -14,8 +14,8 @@ import java.util.List;
 
 import org.flymine.model.genomic.ProteinInteraction;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.web.results.Column;
-import org.intermine.web.results.PagedTable;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
 
 /**
  * This class contains various methods used by the protein interaction exporters
@@ -136,7 +136,7 @@ public class PIUtil
     /**
      * @param pt the PagedTable containing the results 
      * @return true if exportable results were found
-     * @see org.intermine.web.TableExporter#canExport
+     * @see org.intermine.web.logic.TableExporter#canExport
      */
     public static boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();

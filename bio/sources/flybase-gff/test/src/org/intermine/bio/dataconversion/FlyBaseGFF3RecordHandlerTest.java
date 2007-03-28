@@ -240,7 +240,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
 
         handler.process(record);
 
-        handler.setReferences(handler.references);
+        handler.setReferences(handler.references); 
 
         Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
         expectedGene.setAttribute("identifier", "CG2671");
@@ -265,5 +265,18 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
             }
         }
         assertEquals(expectedSequenceVariant, actualSequenceVariant);
+    }
+    
+    public void testHandleSynonyms() throws Exception{
+        String ENDL = System.getProperty("line.separator");
+//        String gff = "4\tFlyBase\tCDS\t100\t200\t.\t+\t.\tID=CDS_CG17469:2_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
+//            + "4\tFlyBase\tCDS\t300\t400\t.\t+\t.\tID=CDS_CG17469:3_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
+//            + "4\tFlyBase\tmRNA\t1223426\t1223545\t.\t+\t.\tID=FBtr0100348;Name=tran-2;" + ENDL;
+        String gff = "4\tFlyBase\tmRNA\t3871513\t3872386\t.\t-\t.\tID=FBtr0077514;Name=symbol-RA;Parent=FBgn0051957;Dbxref=FlyBase_Annotation_IDs:CG31957-RA;";
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        converter.parse(srcReader);
+        converter.store();
+        converter.close();
+        System.out.println(FullRenderer.render(tgtIw.getItems()));
     }
 }

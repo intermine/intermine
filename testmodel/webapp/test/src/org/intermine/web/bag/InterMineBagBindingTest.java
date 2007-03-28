@@ -23,7 +23,10 @@ import junit.framework.TestCase;
 import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.web.results.ResultElement;
+import org.intermine.web.logic.bag.BagElement;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.bag.InterMineBagBinding;
+import org.intermine.web.logic.results.ResultElement;
 
 
 /**

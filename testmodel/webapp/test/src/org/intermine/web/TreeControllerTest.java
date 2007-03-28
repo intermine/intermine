@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.TreeNode;
+import org.intermine.web.logic.profile.Profile;
 
 import org.apache.struts.tiles.ComponentContext;
 
