@@ -19,6 +19,20 @@
    </h4>
 
 <div id="hiddenDiv1" style="display:none;">
+	
+		<p>
+		Note: In release 7.0 of FlyMine the format for the tiling path
+	span, PCR product and primer identifiers has changed.  Previously the
+	identifier included the genomic location (eg
+	span2L:1-7529_amplimer_1). However, in order for identifiers to remain
+	consistent between genome sequence releases, this has now been changed
+	to a numerical identifier (eg span2L:0000001_amplimer_1).  The old
+	identifiers (with chromosome locations according to genome release
+	4.0) can be found in the synonyms and can still be searched for using
+	the quick search. The tiling path data has been re-mapped to
+	genome sequence release 5.0 as of FlyMine release 7.0. </p>
+
+
            <p>
             Whole genome tiling path primers for ChIP-chip experiments
             in <i>D. melanogaster</i>.  The primers were designed to PCR-amplify 1000-1200
