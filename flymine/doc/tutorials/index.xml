@@ -25,7 +25,7 @@
       </listitem>
 
       <listitem>
-        <para><ulink url="tutorial4-BagsHistory.xml">Tutorial 4</ulink>: Bags and History</para>
+        <para><ulink url="tutorial4-Bags.xml">Tutorial 4</ulink>: Bags</para>
       </listitem>
 
       <listitem>
@@ -38,6 +38,10 @@
 
      <listitem>
         <para><ulink url="tutorial7-buildtemplate.xml">Tutorial 7</ulink>: Building a template</para>
+      </listitem>
+
+     <listitem>
+        <para><ulink url="tutorial8-MyMine.xml">Tutorial 8</ulink>: MyMine</para>
       </listitem>
 
     </orderedlist>
