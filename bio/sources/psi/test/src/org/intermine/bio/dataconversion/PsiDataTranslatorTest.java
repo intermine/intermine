@@ -10,24 +10,20 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Collection;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.File;
-import java.io.FileWriter;
 
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.bio.dataconversion.PsiDataTranslator;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.XmlConverter;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.FullParser;
 
 public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
@@ -40,10 +36,9 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         Collection srcItems = getSrcItems();
 
         // print out source items XML - result of running XmlConverter on PSI XML
-//         FileWriter writer = new FileWriter(new File("src.xml"));
-//         writer.write(FullRenderer.render(srcItems));
-//         writer.write(FullRenderer.render(srcItems));
-//         writer.close();
+//        java.io.FileWriter writer = new java.io.FileWriter(new java.io.File("src.xml"));
+//        writer.write(org.intermine.xml.full.FullRenderer.render(srcItems));
+//        writer.close();
         String organisms = "7227 4932";
         DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
                                                           mapping, srcModel, getTargetModel(tgtNs));
@@ -54,7 +49,7 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
         //Use to write out the translated file if you want to make a new tgts file for testing
 
-//         FileWriter fw = new FileWriter(new File("psi_tgts.xml"));
+//         java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("psi_tgts.xml"));
 //         fw.write("<items>");
 //         fw.write(tgtIw.getItems().toString());
 //         fw.write("</items>");

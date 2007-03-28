@@ -73,11 +73,9 @@ public class GoConverter extends FileConverter
     private OboParser oboParser = null;
 
     /*Some Debugging vars*/
-    private Map storedItemMap = new LinkedHashMap();
     private static final String STORE_ONE = "store_1";
     //private static final String STORE_TWO = "store_2";
     private static final String STORE_THREE = "store_3";
-    private static final String NO_ID_ATTR = "NO_ID_ATTR";
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
@@ -214,7 +212,7 @@ public class GoConverter extends FileConverter
 
                 // get the rest of the data
                 Item newDatasource = newDatasource(array[14]);
-                Item newPublication = newPublication(array[5]);
+                String newPublicationId = newPublication(array[5]);
                 Item newGoTerm = newGoTerm(goId);
                 ReferenceList newGoEvidenceColl = null;
                 if (evidence != null) {
@@ -231,7 +229,7 @@ public class GoConverter extends FileConverter
                 // temporary object while we are rattling through the file
                 // needed because we may have extra publications
                 PlaceHolder newPlaceHolder = new PlaceHolder(
-                        qualifier, newDatasource, newPublication, newGoEvidenceColl,
+                        qualifier, newDatasource, newPublicationId, newGoEvidenceColl,
                         newProductWrapper, newGoTerm, array[7], newOrganism);
 
                 holderMap.put(key, newPlaceHolder);
@@ -242,7 +240,7 @@ public class GoConverter extends FileConverter
                 // get temp object
                 PlaceHolder holder = (PlaceHolder) holderMap.get(key);
 
-                Item extraPubItem = newPublication(array[5]);
+                String extraPubItem = newPublication(array[5]);
 
                 // add extra publication
                 if (extraPubItem != null) {
@@ -356,8 +354,8 @@ public class GoConverter extends FileConverter
     //------------------------- Produce a new GOAnnotation object -------------------------
     protected void newGoAnnotation(PlaceHolder placeHolder) throws ObjectStoreException {
 
-        boolean isProductTypeGene = (
-                        placeHolder.getGeneProductWrapper().getItem().getClassName().indexOf("Gene") >= 0);
+        boolean isProductTypeGene = (placeHolder.getGeneProductWrapper().getItem().getClassName()
+                        .indexOf("Gene") >= 0);
 
         // go term id
         String goId = placeHolder.getGoTerm().getAttribute("identifier").getValue();
@@ -405,18 +403,21 @@ public class GoConverter extends FileConverter
         ReferenceList references = new ReferenceList();
         references.setName("evidence");
         references.addRefId(placeHolder.getDatasource().getIdentifier());
-        if (placeHolder.getPublication() != null) {
-            references.addRefId(placeHolder.getPublication().getIdentifier());
+        if (placeHolder.getPublicationId() != null) {
+            references.addRefId(placeHolder.getPublicationId());
         }
         currentGoItem.addCollection(references);
 
         // add item to gene go collections
         if (isProductTypeGene) {
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation", currentGoItem);
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation", currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation",
+                                                                          currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation",
+                                                                          currentGoItem);
         } else {
             LOG.debug("Skipping setting go & allGo annotation collection for a:"
-                      + placeHolder.getGeneProductWrapper().getItem().getClassName() + " with ident:"
+                      + placeHolder.getGeneProductWrapper().getItem().getClassName() 
+                      + " with ident:"
                       + placeHolder.getGeneProductWrapper().getItem().getIdentifier());
         }
 
@@ -435,7 +436,8 @@ public class GoConverter extends FileConverter
         // loop over the set of Id's and create a GoAnnotation object that links the gene
         // geneProduct, the infered parent term and the current go term items.
 
-        boolean isProductTypeGene = (placeHolder.getGeneProductWrapper().getItem().getClassName().indexOf("Gene") >= 0);
+        boolean isProductTypeGene = (placeHolder.getGeneProductWrapper().getItem()
+                        .getClassName().indexOf("Gene") >= 0);
 
         for (Iterator parentIdIter = parentTermIdsSet.iterator(); parentIdIter.hasNext();) {
 
@@ -443,7 +445,7 @@ public class GoConverter extends FileConverter
             String parentTermGoId = parentIdIter.next().toString();
 
             // go term object
-            Item nextParentGoTerm = newGoTerm(parentTermGoId);
+            Item nextParentGoTermId = newGoTerm(parentTermGoId);
 
             LOG.debug("GoConverter - parents are being set for go a term:" + parentTermGoId);
 
@@ -457,7 +459,8 @@ public class GoConverter extends FileConverter
                 PlaceHolder parentPlaceHolder = (PlaceHolder) holderMap.get(key);
                 parentItem = parentPlaceHolder.getGoAnno();
                 // add this go term to the parent's collection of children
-                parentItem.getCollection("actualGoTerms").addRefId(placeHolder.getGoTerm().getIdentifier());
+                parentItem.getCollection("actualGoTerms").addRefId(placeHolder.getGoTerm()
+                                                                   .getIdentifier());
                 if (!goAnnoItems.containsKey(key)) {
                     goAnnoItems.put(key, parentItem);
                 }
@@ -475,7 +478,7 @@ public class GoConverter extends FileConverter
                     parentItem = newGoAnnotationItem(
                                  parentTermGoId, "false", placeHolder.getGoEvidenceColl(),
                                  placeHolder.getGeneProductWrapper().getItem().getIdentifier(),
-                                 nextParentGoTerm.getIdentifier(),
+                                 nextParentGoTermId.getIdentifier(),
                                  actualGoTerms);
 
                     goAnnoItems.put(key, parentItem);
@@ -490,7 +493,8 @@ public class GoConverter extends FileConverter
 
             // add parent to collection
             if (isProductTypeGene) {
-                placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation", parentItem);
+                placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation",
+                                                                              parentItem);
             } else {
                 LOG.debug("Skipping adding a parent GoAnnotation ref to the "
                           + "allGoAnnotation collection of a non gene item.");
@@ -576,9 +580,10 @@ public class GoConverter extends FileConverter
                         } else if (prefix.equals("FB")) {
                             productWrapper = newProduct(value, wt.clsName, organism,
                                                         dataSourceId, false, "organismDbId");
-                        } else
+                        } else {
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSourceId, true, null);
+                        }
                         Item withProduct = productWrapper.getItem();
                         withProductList.add(withProduct);
                     } else {
@@ -602,43 +607,43 @@ public class GoConverter extends FileConverter
      */
     private void doStore(Item itemToStore, String callSource) throws ObjectStoreException {
 
-        Attribute identAttr = null;
-        identAttr = itemToStore.getAttribute("identifier");
-
-
-        String i2sId = itemToStore.getIdentifier();
-
-        if (storedItemMap.containsKey(itemToStore.getIdentifier())) {
-
-            StringBuffer bigLogMsg = new StringBuffer();
-
-            bigLogMsg.append("doStore ");
-            bigLogMsg.append(callSource);
-            bigLogMsg.append(" has seen this item id before:");
-            bigLogMsg.append(i2sId);
-            bigLogMsg.append(" id_attr:");
-            bigLogMsg.append(identAttr != null ? identAttr.getValue() : NO_ID_ATTR);
-            bigLogMsg.append(" previous_id_attr:");
-            bigLogMsg.append(storedItemMap.get(i2sId) != null
-                    ? storedItemMap.get(i2sId) : "no_prev_attr");
-            bigLogMsg.append(" are attrs the same:");
-
-            if (identAttr != null) {
-                bigLogMsg.append(identAttr.getValue().equalsIgnoreCase(
-                        storedItemMap.get(i2sId).toString()) ? "true" : "false");
-            }
-
-            LOG.error(bigLogMsg.toString());
-        } else {
-
-            LOG.debug("doStore " + callSource
-                    + " called on a new item:" + itemToStore.getClassName()
-                    + " id:" + i2sId
-                    + " id_attr:" + (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
-
-            storedItemMap.put(i2sId,
-                    (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
-        }
+//        Attribute identAttr = null;
+//        identAttr = itemToStore.getAttribute("identifier");
+//
+//
+//        String i2sId = itemToStore.getIdentifier();
+//
+//        if (storedItemMap.containsKey(itemToStore.getIdentifier())) {
+//
+//            StringBuffer bigLogMsg = new StringBuffer();
+//
+//            bigLogMsg.append("doStore ");
+//            bigLogMsg.append(callSource);
+//            bigLogMsg.append(" has seen this item id before:");
+//            bigLogMsg.append(i2sId);
+//            bigLogMsg.append(" id_attr:");
+//            bigLogMsg.append(identAttr != null ? identAttr.getValue() : NO_ID_ATTR);
+//            bigLogMsg.append(" previous_id_attr:");
+//            bigLogMsg.append(storedItemMap.get(i2sId) != null
+//                    ? storedItemMap.get(i2sId) : "no_prev_attr");
+//            bigLogMsg.append(" are attrs the same:");
+//
+//            if (identAttr != null) {
+//                bigLogMsg.append(identAttr.getValue().equalsIgnoreCase(
+//                        storedItemMap.get(i2sId).toString()) ? "true" : "false");
+//            }
+//
+//            LOG.error(bigLogMsg.toString());
+//        } else {
+//
+//            LOG.debug("doStore " + callSource
+//                    + " called on a new item:" + itemToStore.getClassName()
+//                    + " id:" + i2sId
+//                    + " id_attr:" + (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
+//
+//            storedItemMap.put(i2sId,
+//                    (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
+//        }
 
         writer.store(ItemHelper.convert(itemToStore));
     }
@@ -696,7 +701,7 @@ public class GoConverter extends FileConverter
         }
 
         Item product = createItem(clsName);
-        if (organism != null && createOrganism == true) {
+        if (organism != null && createOrganism) {
             product.setReference("organism", organism.getIdentifier());
         }
         product.setAttribute(idField, accession);
@@ -823,23 +828,24 @@ public class GoConverter extends FileConverter
      * @param codes the codes
      * @return the publication
      */
-    protected Item newPublication(String codes) throws ObjectStoreException {
-        Item item = null;
+    protected String newPublication(String codes) throws ObjectStoreException {
+        String pubId = null;
         String[] array = codes.split("[|]");
         for (int i = 0; i < array.length; i++) {
             if (array[i].startsWith("PMID:")) {
                 String code = array[i].substring(5);
-                item = (Item) publications.get(code);
-                if (item == null) {
-                    item = createItem("Publication");
+                pubId = (String) publications.get(code);
+                if (pubId == null) {
+                    Item item = createItem("Publication");
                     item.addAttribute(new Attribute("pubMedId", code));
-                    publications.put(code, item);
+                    pubId = item.getIdentifier();
+                    publications.put(code, pubId);
                     writer.store(ItemHelper.convert(item));
                 }
                 break;
             }
         }
-        return item;
+        return pubId;
     }
 
     /**
@@ -910,7 +916,7 @@ public class GoConverter extends FileConverter
 
         private String qualifier;
         private Item datasource;
-        private Item publication;
+        private String publicationId;
         private ReferenceList goEvidenceColl;
         private ItemWrapper geneProduct;
         private Item goTerm;
@@ -935,12 +941,13 @@ public class GoConverter extends FileConverter
          * @param organism    the current organism as an Item
          */
         public PlaceHolder(
-                String qualifier, Item datasource, Item publication, ReferenceList goEvidenceColl,
-                ItemWrapper product, Item goTerm, String withText, Item organism) {
+                String qualifier, Item datasource, String publicationId,
+                ReferenceList goEvidenceColl, ItemWrapper product, Item goTerm,
+                String withText, Item organism) {
             this();
             this.qualifier = qualifier;
             this.datasource = datasource;
-            this.publication = publication;
+            this.publicationId = publicationId;
             this.goEvidenceColl = goEvidenceColl;
             this.geneProduct = product;
             this.goTerm = goTerm;
@@ -965,8 +972,8 @@ public class GoConverter extends FileConverter
         /**
          * @return the related Publication item
          */
-        public Item getPublication() {
-            return publication;
+        public String getPublicationId() {
+            return publicationId;
         }
 
         /**

@@ -23,9 +23,12 @@ my $goa_file_gz = "$goa_file.gz";
 # taxon IDs that should be grepped out of the $goa_file and the suffix to use
 # when creating the output file
 my %taxon_map = (
-   180454 => {suffix => 'agp'},
-   7460 => {suffix => 'am'},
-   9606 => {suffix => 'hs'});
+   9913 => {suffix => 'bovin'},
+   9940 => {suffix => 'sheep'},
+   9925 => {suffix => 'goat'},
+   10090 => {suffix => 'mouse'},
+   10116 => {suffix => 'rat'},
+   9606 => {suffix => 'human'});
 
 my $godatabase_server = "ftp.geneontology.org";
 my $godatabase_dir = "pub/go/gene-associations";
@@ -137,6 +140,7 @@ if (!(-d $uniprot_download_dir)) {
 } else {
     warn "$uniprot_download_dir already exists - skipping download\n";
 }
+return;
 
 
 #### Get other gene association files

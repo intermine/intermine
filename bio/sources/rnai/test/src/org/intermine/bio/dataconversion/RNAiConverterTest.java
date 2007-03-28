@@ -10,19 +10,16 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
-import java.io.File;
-import java.io.StringReader;
-import java.io.FileWriter;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.xml.full.FullParser;
 
 public class RNAiConverterTest extends TestCase
 {
@@ -39,9 +36,9 @@ public class RNAiConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("worm-rnai_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
-        //fw.close();
+//        java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("worm-rnai_tgt.xml"));
+//        fw.write(org.intermine.xml.full.FullRenderer.render(itemWriter.getItems()));
+//        fw.close();
 
         Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/RNAiConverterTest.xml")));
 

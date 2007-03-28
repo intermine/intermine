@@ -149,7 +149,6 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             String apcall = array[1];
             String replicates = array[2];
             String type = array[3];
-            String condition = array[4];
             String timePoint = array[5];
             String timeUnit = array[6];
             aveAPCall = Integer.parseInt(apcall) / Integer.parseInt(replicates);

@@ -242,9 +242,6 @@ public class InparanoidConverter extends FileConverter
      */
     protected Item newBioEntity(String value, String attribute, Item organism, String type)
         throws ObjectStoreException {
-        // HACK mouse and rat identifiers should have 'MGI:' and 'RGD:' at the start
-        String taxonId = organism.getAttribute("taxonId").getValue();
-
         // lookup by identifier and type, sometimes same id for translation and gene
         String key = type + value;
         if (bioEntities.containsKey(key)) {

@@ -288,16 +288,16 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     /**
      * Return the first alias in the given record that matches the pattern
      */
-    private String findInAliases(GFF3Record record, String regex) {
-        Iterator aliasIter = ((List) record.getAttributes().get("Alias")).iterator();
-        while (aliasIter.hasNext()) {
-            String alias = (String) aliasIter.next();
-            if (alias.matches(regex)) {
-                return alias;
-            }
-        }
-        return null;
-    }
+//    private String findInAliases(GFF3Record record, String regex) {
+//        Iterator aliasIter = ((List) record.getAttributes().get("Alias")).iterator();
+//        while (aliasIter.hasNext()) {
+//            String alias = (String) aliasIter.next();
+//            if (alias.matches(regex)) {
+//                return alias;
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * Return items that need extra processing that can only be done after all other GFF features

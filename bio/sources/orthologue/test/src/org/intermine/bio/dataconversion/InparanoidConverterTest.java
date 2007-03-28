@@ -10,23 +10,17 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.io.BufferedReader;
 import java.io.StringReader;
-import java.io.InputStreamReader;
-import java.io.FileWriter;
-import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.bio.dataconversion.InparanoidConverter;
+
+import junit.framework.TestCase;
+
 import org.intermine.dataconversion.DataTranslatorTestCase;
-import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.xml.full.FullParser;
 
 public class InparanoidConverterTest extends TestCase
 {
@@ -59,8 +53,8 @@ public class InparanoidConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("orth_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
+        //java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("orth_tgt.xml"));
+        //fw.write(org.intermine.xml.full.FullRenderer.render(itemWriter.getItems()));
         //fw.close();
 
         System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));

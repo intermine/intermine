@@ -10,70 +10,67 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.lang.reflect.Method;
-import java.util.StringTokenizer;
-import java.util.ArrayList;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.Writer;
-import java.io.Reader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
-import org.biomage.tools.xmlutils.MAGEReader;
-import org.biomage.QuantitationType.QuantitationType_package;
-import org.biomage.QuantitationType.QuantitationType;
-import org.biomage.QuantitationType.Ratio;
-import org.biomage.Experiment.Experiment;
-import org.biomage.Experiment.Experiment_package;
-import org.biomage.DesignElement.Feature;
-import org.biomage.DesignElement.Reporter;
-import org.biomage.DesignElement.CompositeSequence;
-import org.biomage.Description.OntologyEntry;
+import org.apache.log4j.Logger;
 import org.biomage.BioAssay.BioAssay;
 import org.biomage.BioAssay.BioAssay_package;
 import org.biomage.BioAssay.DerivedBioAssay;
 import org.biomage.BioAssay.MeasuredBioAssay;
-import org.biomage.BioAssayData.BioAssayData_package;
 import org.biomage.BioAssayData.BioAssayData;
-import org.biomage.BioAssayData.MeasuredBioAssayData;
-import org.biomage.BioAssayData.BioDataCube;
+import org.biomage.BioAssayData.BioAssayData_package;
 import org.biomage.BioAssayData.BioAssayDimension;
-import org.biomage.BioAssayData.DesignElementDimension;
-import org.biomage.BioAssayData.CompositeSequenceDimension;
-import org.biomage.BioAssayData.FeatureDimension;
-import org.biomage.BioAssayData.ReporterDimension;
-import org.biomage.BioAssayData.DerivedBioAssayData;
-import org.biomage.BioAssayData.DataExternal;
-import org.biomage.BioAssayData.QuantitationTypeDimension;
 import org.biomage.BioAssayData.BioAssayMap;
-import org.biomage.Interface.HasBioAssays;
-import org.biomage.DesignElement.DesignElement;
-import org.biomage.Common.MAGEJava;
+import org.biomage.BioAssayData.BioDataCube;
+import org.biomage.BioAssayData.CompositeSequenceDimension;
+import org.biomage.BioAssayData.DataExternal;
+import org.biomage.BioAssayData.DerivedBioAssayData;
+import org.biomage.BioAssayData.DesignElementDimension;
+import org.biomage.BioAssayData.FeatureDimension;
+import org.biomage.BioAssayData.MeasuredBioAssayData;
+import org.biomage.BioAssayData.QuantitationTypeDimension;
+import org.biomage.BioAssayData.ReporterDimension;
 import org.biomage.Common.Identifiable;
+import org.biomage.Common.MAGEJava;
+import org.biomage.Description.OntologyEntry;
+import org.biomage.DesignElement.CompositeSequence;
+import org.biomage.DesignElement.DesignElement;
+import org.biomage.DesignElement.Feature;
+import org.biomage.DesignElement.Reporter;
+import org.biomage.Experiment.Experiment;
+import org.biomage.Experiment.Experiment_package;
+import org.biomage.Interface.HasBioAssays;
+import org.biomage.QuantitationType.QuantitationType;
+import org.biomage.QuantitationType.QuantitationType_package;
+import org.biomage.QuantitationType.Ratio;
 import org.biomage.QuantitationType.SpecializedQuantitationType;
-
+import org.biomage.tools.xmlutils.MAGEReader;
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
-import org.intermine.util.TypeUtil;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.FileConverter;
-import org.intermine.metadata.Model;
-
-import org.apache.log4j.Logger;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * Convert MAGE-ML to InterMine Full Data Xml via MAGE-OM objects.
@@ -832,8 +829,8 @@ public class MageConverter extends FileConverter
 //                  BioDataCube bdc = (BioDataCube)  mbad.getBioDataValues();
 //                  Order order = bdc.getOrder();
 //                  LOG.error ("order for measured biodatacube " + order);
-                    List colTypes = mbad.getQuantitationTypeDimension().getQuantitationTypes();
-                    List rowNames = null;
+                    //List colTypes = mbad.getQuantitationTypeDimension().getQuantitationTypes();
+                    //List rowNames = null;
 
 
                     // TODO identifiers
@@ -946,7 +943,7 @@ public class MageConverter extends FileConverter
                     MeasuredBioAssayData mbad = (MeasuredBioAssayData) dataIter.next();
 
                     // dbad.DesignElementDimension
-                    DesignElementDimension ded = mbad.getDesignElementDimension();
+                    //DesignElementDimension ded = mbad.getDesignElementDimension();
                     dbad.setDesignElementDimension(mbad.getDesignElementDimension());
 
                     // TODO BioAssayDimension.bioAssays
@@ -1006,10 +1003,6 @@ public class MageConverter extends FileConverter
         // TODO get this to use an item factory.  Problem is with a class DataExternal
         // which appears in object model but is not defined in XMI.
         //return itemFactory.makeItem(alias(className) + "_" + id++, MAGE_NS + className, "");
-    }
-
-    private void storeItems(Collection items) throws Exception {
-        writer.storeAll(ItemHelper.convertToFullDataItems(new ArrayList(items)));
     }
 
     private void storeItem(Item item) throws Exception {
