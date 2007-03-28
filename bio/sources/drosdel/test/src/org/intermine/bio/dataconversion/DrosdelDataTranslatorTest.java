@@ -10,13 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-import org.intermine.bio.dataconversion.DrosdelDataTranslator;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;

@@ -10,26 +10,23 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.intermine.bio.DiseaseRegionGFF3RecordHandler;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the DiseaseRegionGFF3Handler class.
@@ -70,8 +67,9 @@ public class DiseaseRegionGFF3HandlerTest extends TestCase
         converter.parse(srcReader);
         converter.store();
 
-        //FileWriter writerSrc = new FileWriter(new File("diseaseregion_items.xml"));
-        //writerSrc.write(FullRenderer.render(writer.getItems()));
+        // uncomment to write a new items xml file
+        //java.io.FileWriter writerSrc = new java.io.FileWriter(new java.io.File("diseaseregion_items.xml"));
+        //writerSrc.write(org.intermine.xml.full.FullRenderer.render(writer.getItems()));
         //writerSrc.close();
 
         Set expected = new HashSet(getExpectedItems());

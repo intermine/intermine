@@ -75,10 +75,8 @@ public class FlyBaseGeneNamesConverter extends FileConverter
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-        String arrayName;
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
         int lineNo = 0;
-        boolean readingData = false;
 
         // data is in format:
         // FBgn | symbol | current fullname | fullname synonyms | symbol synonyms
@@ -93,7 +91,8 @@ public class FlyBaseGeneNamesConverter extends FileConverter
 
             if (line.length < 2) {
                 throw new RuntimeException("Line does not have enough elements: "
-                                           + Arrays.asList(line));
+                                           + Arrays.asList(line) + " (line number "
+                                           + lineNo);
             }
             String fbgn = line[0];
             String symbol = line[1];
@@ -144,6 +143,7 @@ public class FlyBaseGeneNamesConverter extends FileConverter
                 gene.setReference("organism", organism.getIdentifier());
                 writer.store(ItemHelper.convert(gene));
             }
+            lineNo++;
         }
     }
 

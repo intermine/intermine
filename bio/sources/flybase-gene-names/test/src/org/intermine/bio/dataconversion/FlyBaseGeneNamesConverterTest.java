@@ -10,24 +10,17 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.io.InputStreamReader;
-import java.io.FileWriter;
 import java.io.File;
-import java.util.Collection;
+import java.io.FileWriter;
+import java.io.StringReader;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.dataconversion.DataTranslatorTestCase;
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.FileConverter;
 
-public class FlyBaseGeneNamesConverterTest extends TestCase
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.xml.full.FullRenderer;
+
+public class FlyBaseGeneNamesConverterTest extends ItemsTestCase
 {
     private String ENDL = System.getProperty("line.separator");
 
@@ -35,12 +28,9 @@ public class FlyBaseGeneNamesConverterTest extends TestCase
         super(arg);
     }
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     public void testProcess() throws Exception {
-        //
+        // data is in format:
+        // FBgn | symbol | current fullname | fullname synonyms | symbol synonyms
         String input = "FBgn0004053\tzen\tzerknullt\tzerknullt 1,zerknullt" + ENDL
             + "FBgn0012699\tDpse\\Gld\tGlucose dehydrogenas" + ENDL;
 
@@ -50,15 +40,11 @@ public class FlyBaseGeneNamesConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        FileWriter fw = new FileWriter(new File("flybase-gene-names_tgt.xml"));
-        fw.write(FullRenderer.render(itemWriter.getItems()));
-        fw.close();
+        //FileWriter fw = new FileWriter(new File("flybase-gene-names_tgt.xml"));
+        //fw.write(FullRenderer.render(itemWriter.getItems()));
+        //fw.close();
 
-        //System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
-        //assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
-    }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyBaseGeneNamesConverterTest.xml"));
+        assertEquals(readItemSet("FlyBaseGeneNamesConverterTest.xml"),
+                     itemWriter.getItems());
     }
 }

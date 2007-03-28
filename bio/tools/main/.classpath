@@ -42,5 +42,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry kind="lib" path="/intermine-web/lib/struts.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

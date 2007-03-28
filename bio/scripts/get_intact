@@ -18,8 +18,8 @@ my $download_dir = "$psi_dir/intact";
 
 # list of organisms to get - this is the five letter abbreviation used as the
 # start of intact filenames.  Add more to this list to get more organisms
-my @organisms = ("drome", "caeel", "yeast");
-
+#my @organisms = ("drome", "caeel", "yeast");
+my @organisms = ("human", "mouse", "rat", "bovin", "sheep");
 
 #### Access EBI ftp server
 my $ebi_ftp = Net::FTP->new($ebi_server, Passive => 1)

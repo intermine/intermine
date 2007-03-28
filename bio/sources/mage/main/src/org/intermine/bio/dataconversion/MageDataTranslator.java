@@ -10,43 +10,38 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.InputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.Comparator;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
-
-import org.intermine.InterMineException;
-import org.intermine.util.XmlUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.*;
-
-import org.intermine.dataconversion.ItemPath;
-import org.intermine.dataconversion.ItemReader;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.DataTranslator;
-import org.intermine.dataconversion.ItemPrefetchDescriptor;
-//import org.intermine.dataconversion.ItemPrefetchConstraintDynamic;
-//import org.intermine.dataconversion.ObjectStoreItemPathFollowingImpl;
-import org.intermine.metadata.Model;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.intermine.InterMineException;
+import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.ItemPath;
+import org.intermine.dataconversion.ItemPrefetchDescriptor;
+import org.intermine.dataconversion.ItemReader;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
+import org.intermine.util.XmlUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 /**
  * Convert MAGE data in fulldata Item format conforming to a source OWL definition
@@ -65,7 +60,6 @@ public class MageDataTranslator extends DataTranslator
 
     private Map dbs = new HashMap();
     private Map pubs = new HashMap();
-    private Map dbRefs = new HashMap();
     private String srcNs;
 
     private Map experiments = new HashMap();
@@ -323,8 +317,6 @@ public class MageDataTranslator extends DataTranslator
         String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
         Collection translated = super.translateItem(srcItem);
-        Item gene = new Item();
-        Item organism = new Item();
         if (translated != null) {
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
@@ -445,7 +437,6 @@ public class MageDataTranslator extends DataTranslator
         // PATH Experiment.descriptions.bibliographicReferences
         if (srcItem.hasCollection("descriptions")) {
             boolean desFlag = false;
-            boolean pubFlag = false;
             Iterator desIter = getCollection(srcItem, "descriptions");
             while (desIter.hasNext()) {
                 Item desItem = (Item) desIter.next();
@@ -1039,7 +1030,6 @@ public class MageDataTranslator extends DataTranslator
                         charItems.add(tgtCharItem);
                         list.add(tgtCharItem.getIdentifier());
                     }
-                    HashMap charMap = new HashMap();
                     addToMap(sampleToChars, tgtItem.getIdentifier(), category, value);
                 }
             }
@@ -1320,7 +1310,6 @@ public class MageDataTranslator extends DataTranslator
      */
     private String getSampleSummary(String id) {
         Item sample = (Item) samplesById.get(id);
-        String summary = "";
         if (sample != null
             && sample.getAttribute("primaryCharacteristicType") != null
             && sample.getAttribute("primaryCharacteristic") != null) {
@@ -1353,8 +1342,6 @@ public class MageDataTranslator extends DataTranslator
      */
     protected Item processMicroArrayResult(ResultHolder holder) {
         Item maResult = itemFromResultHolder((ResultHolder) holder);
-
-        String maResultId = maResult.getIdentifier();
         String experimentId = null;
 
         // MicroArrayResult.assays
@@ -1645,19 +1632,6 @@ public class MageDataTranslator extends DataTranslator
     }
 
     /**
-     * get an item by path and deal with conversion to/from fulldata items
-     * @param path = ItemPath
-     * @param startItem = Item
-     * @return item
-     * @throws ObjectStoreException if anything goes wrong with finding item
-     */
-    private Item getItemByPath(ItemPath path, Item startItem)
-        throws ObjectStoreException {
-        return ItemHelper.convert(srcItemReader.getItemByPath(path,
-               ItemHelper.convert(startItem)));
-    }
-
-    /**
      * Keep MicroArrayResults in memory in a more efficient way, can be changed
      * back into items again.  This could be done in a more efficient way.
      */
@@ -1808,7 +1782,7 @@ public class MageDataTranslator extends DataTranslator
         paths.put(srcNs + "Treatment", descSet);
 
 
-        ItemPrefetchDescriptor desc, desc1, desc2, desc3, desc4;
+        //ItemPrefetchDescriptor desc, desc1, desc2, desc3, desc4;
 
         descSet = new HashSet();
 

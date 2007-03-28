@@ -10,27 +10,22 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.Collection;
-import java.io.*;
+import java.util.Map;
 
+import org.intermine.dataconversion.DataTranslator;
+import org.intermine.dataconversion.DataTranslatorTestCase;
+import org.intermine.dataconversion.MockItemReader;
+import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.metadata.Model;
-import org.intermine.bio.dataconversion.InterproDataTranslator;
-import org.intermine.dataconversion.*;
 
 public class InterproDataTranslatorTest extends DataTranslatorTestCase {
   private String tgtNs = "http://www.flymine.org/model/genomic#";
-  private ItemFactory interproItemFactory;
-  private ItemFactory genomicItemFactory;
 
   public InterproDataTranslatorTest(String arg) throws Exception {
     super(arg, "osw.bio-fulldata-test");
-    interproItemFactory = new ItemFactory(Model.getInstanceByName("interpro"));
-    genomicItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
   }
 
   public void setUp() throws Exception {
@@ -84,19 +79,19 @@ public class InterproDataTranslatorTest extends DataTranslatorTestCase {
     return "genomic";
   }
 
-  private void writeTgtFile(MockItemWriter targetItemWriter) throws Exception {
-
-    File tgtFile = new File("interpro_tgt.xml");
-
-    if (tgtFile.exists()) {
-      tgtFile.delete();
-    }
-
-    FileWriter fw = new FileWriter(tgtFile);
-    fw.write(targetItemWriter.getItems().toString());
-    fw.flush();
-    fw.close();
-  }
+//  private void writeTgtFile(MockItemWriter targetItemWriter) throws Exception {
+//
+//    File tgtFile = new File("interpro_tgt.xml");
+//
+//    if (tgtFile.exists()) {
+//      tgtFile.delete();
+//    }
+//
+//    FileWriter fw = new FileWriter(tgtFile);
+//    fw.write(targetItemWriter.getItems().toString());
+//    fw.flush();
+//    fw.close();
+//  }
 
   private void writeMessageToTestLogFile(String message) throws Exception {
       System.err.println(message);
