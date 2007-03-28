@@ -371,12 +371,10 @@
         template queries relating to a certain type of data. Select
         'Public templates' to search predefined templates, 'My
         templates' to search templates you have created and saved
-        yourself or 'Everything' to search all templates. The keyword
-        search facility uses the template's shortened title (see
-        below). The results are graded by similarity to the search
-        terms. An option to view the full list of all templates is
-        also available by clicking on 'View all template
-        queries'. </para> </listitem>
+        yourself or 'Everything' to search all templates. The results
+        are graded by similarity to the search terms. An option to
+        view the full list of all templates is also available by
+        clicking on 'View all template queries'. </para> </listitem>
 
       <listitem>
        <para> Using the 'Search templates' option on the top menu bar
@@ -395,27 +393,34 @@
        pages</link> list templates queries that have been pre-run for
        that particular object. </para>
       </listitem>
-     </orderedlist>
+
+     <listitem>
+       <para> <link linkend="manualbagDetailsPage">Bag details pages</link>
+       list templates queries that have been pre-run for the set of
+       objects in the bag. </para>
+      </listitem>
+
+    </orderedlist>
 
        <para> In all cases: Clicking on the 't' next to the template
        text will show the template page. </para>
 
-       <para> Templates appear on aspect pages and Object details
-       pages with their title, e.g. 'GO term identifier --> Genes in
-       one specific organism', where the part before the arrow refers
-       to the query starting point, and the part after the arrow to
-       the query output. On the template page itself, apart from the
-       title, a more complete description of what the template does is
-       given: e.g. for the previous example: 'Search for genes
-       annotated with a particular GO term'. Templates range from
-       relatively simple queries, such as 'Gene --> Orthologues
-       (Search for predicted orthologues for a particular gene)' to
-       more complex queries, integrating two or more datasets: like
-       'Gene --> Protein + Interacting Proteins + Pfam domain with
-       predicted 3-D structure (For the protein product of a
-       particular gene, show any proteins it has been shown to
-       interact with and for these proteins their Pfam domain
-       content').</para>
+       <para> Templates queries are listed using a title with the
+       format, (e.g) 'GO term identifier --> Genes in one specific
+       organism', where the part before the arrow refers to the query
+       starting point, and the part after the arrow to the query
+       output. Such a format allows easy scanning of lists of template
+       queries. On the template page itself, a more complete
+       description of what the template does is also given: e.g. for
+       the previous example: 'Search for genes annotated with a
+       particular GO term'. Templates range from relatively simple
+       queries, such as 'Gene --> Orthologues (Search for predicted
+       orthologues for a particular gene)' to more complex queries,
+       integrating two or more datasets: like 'Gene --> Protein +
+       Interacting Proteins + Pfam domain with predicted 3-D structure
+       (For the protein product of a particular gene, show any
+       proteins it has been shown to interact with and for these
+       proteins their Pfam domain content').</para>
  
   </sect1>
   
@@ -437,8 +442,22 @@
 
       <listitem>
        <para> Fill in the boxes with the appropriate values or leave
-       them with the default values shown. </para>
+       them with the default values shown.</para>
       </listitem>
+
+
+	<listitem><para> Any variable (box) in a template query can be
+       constrained to a <link linkend="manualBags">bag</link> (or 'not
+       in' a bag) rather than a single value, provided you have a bag
+       of the correct type saved in <link
+       linkend="manualMyMine">'MyMine'</link>.  For example, if you
+       want to run a particular query for a list of genes rather than
+       a single gene, you can create a bag of genes and run a template
+       query using this bag.  To constrain a query to a bag, select
+       the checkbox underneath the variable box and choose the bag
+       from the drop-down list.</para></listitem>
+
+
 
       <listitem>
  
@@ -472,7 +491,7 @@
     <orderedlist>
       <listitem>
         <para> In order to build a template you need to
-        be <link linkend="manualLoggingIn">logged-in</link> into
+        be <link linkend="manualLoggingIn">logged-in</link> to
         FlyMine.</para>
       </listitem>
 
@@ -487,18 +506,18 @@
       </listitem>
 
       <listitem>
-        <para> When building a query with the Query Builder, none of
-        the constraints will be editable. However, at least one
-        constraint needs to be editable in order to be able to save
-        the query as a template. To make a constraint editable, click
-        on the lock next to the constraint: A field with 'Template
-        constraint settings' will appear in the right column. Click in
-        the check-box next to 'Editable'. At the same time, it is
-        possible to add a label to the editable constraint (optional)
-        to clarify what it is, in the 'Constraint label' box. Click on
-        the 'Update' button in this field. The label will appear on
-        the template page after creating the template (see
-        below). </para>
+        <para> In order to save a query as a template it is necessary
+        to define which of the constraints in the query will be
+        editable in the template (there must be at least one
+        'editable' constraint in the query). To make a constraint
+        editable, click on the lock next to the constraint: A field
+        with 'Template constraint settings' will appear in the right
+        column. Click in the check-box next to 'Editable'. At the same
+        time, it is possible to add a label to the editable constraint
+        (optional) to clarify what it is, in the 'Constraint label'
+        box. Click on the 'Update' button in this field. The label
+        will appear on the template page after creating the template
+        (see below). </para>
 
         <para> An editable constraint will have an open lock in the
         constraint list, whereas the lock of a constraint that cannot
@@ -510,9 +529,9 @@
         editable, 'no label' will appear under the
         constraint. Clicking on 'no label' allows you to add a
         label. Click on 'Update' to implement the change. The label
-        you give will appear above the constraint box on the template
-        page and should provide direction as to what the query is
-        going to do. </para>
+        you give will appear next to the constraint box on the
+        template page and should provide direction as to what sort of
+        constraint should be added. </para>
       </listitem>
 
       <listitem>
@@ -535,17 +554,17 @@
 
       <listitem>
         <para> You will be able to view and run this template from
-        your 'MyMine' page <link linkend="manualMyMine">MyMine
-        page</link>. Access your account via the 'MyMine' button in
-        the top menu bar on every FlyMine page. Your templates will be
-        saved under 'Saved Templates'. To go to a template page, click
-        on 'Run' in the 'Actions' column. A yellow star next to the
-        query name marks it as a favourite query. To mark a template
-        as a favourite, click on the star icon next to the template
-        name. As a result, the star will become yellow. Once a
-        template has been created, it can still be edited, by clicking
-        on 'Edit' in the 'Actions' column. The template queries can
-        also be <link linkend="manualImportExportQueries">exported and
+        your <link linkend="manualMyMine">MyMine page</link>. Access
+        your account via the 'MyMine' button in the top menu bar on
+        every FlyMine page. Your templates will be saved under 'Saved
+        Templates'. To go to a template page, click on 'Run' in the
+        'Actions' column. To mark a template as a favourite, click on
+        the star icon next to the template name. As a result, the star
+        will become yellow and the template will appear under
+        'Favourite Templates' in your MyMine account. Once a template
+        has been created, it can still be edited, by clicking on
+        'Edit' in the 'Actions' column. Template queries can also be
+        <link linkend="manualImportExportQueries">exported and
         imported </link> in XML format. This feature allows you to
         pass a query on to someone else. </para> </listitem>
         </orderedlist> </sect1>
@@ -716,7 +735,8 @@
     <title>The output list</title>
 
        <para> The output list (bottom) shows all fields that you have
-       selected to show in your results. Initially, the output list
+       selected to show in your results. Each field will become a
+       column in your results table. Initially, the output list
        (bottom) will say 'No fields selected for output'. See <xref
        linkend="manualRunQB"/> for more details.</para>
 
@@ -731,7 +751,7 @@
     <para> You can think of the classes as boxes containing lots of
     individual items (objects). To create a query you want certain
     items from certain boxes. You therefore have to select the boxes
-    that require the items you want and constrain the boxes so that
+    that contain the items you want and constrain the boxes so that
     you only select the subset of items in the boxes that you
     require. To query FlyMine you therefore select the classes that
     hold the objects you require. Constraints can be applied to the
@@ -752,21 +772,55 @@
     class or field in the model browser (left) and click on the
     <inlinemediaobject><imageobject><imagedata fileref="constrain.gif"
     /></imageobject></inlinemediaobject> button next to it. This will
-    add it to the constraints list and bring up a box in which you
-    specify your constraint.  The type of constraint you can add will
-    depend on whether a class or an attribute (a field with only one
-    unique piece of information, like e.g. an identifier, as opposed
-    to a field that references to another class) is selected. If you
-    have selected an attribute either specify a particular constraint
-    using the box provided or set the attribute to be 'Has no value'
-    or 'Has a value'. Classes for which there are subclasses
-    (e.g. tRNA is a subclass of Transcript) can be constrained to a
-    particular subclass. If the query already has one or more
-    constraints, you can also define the logic between them and the
-    new constraint by selecting either 'and' or 'or'. Once you have
-    defined your constraint (and its relationship with other
-    constraints) press 'Add to query'. The new constraint will appear
-    in the 'Constraints on the current query' list. </para>
+    bring up a box in which you specify your constraint.  The type of
+    constraint you can add will depend on what you have selected to
+    constrain and whether a class or an attribute (a field with only
+    one unique piece of information, like e.g. an identifier, as
+    opposed to a field that references to another class) is
+    selected. If you have selected an attribute the following options will be available:</para>
+
+
+    	    <orderedlist>
+	      <listitem>
+		<para>Choose logical conjunction: If the query already
+    has one or more constraints, you can define the logic between them
+    and the new constraint by selecting either 'and' or 'or'.</para>
+          </listitem>
+
+	      <listitem>
+		<para>Choose a filter: 'Filter query results on this
+		field having a specific value': Allows you to constrain
+		to just a single value.  </para> </listitem>
+
+	      <listitem>
+		<para>Choose a filter: 'Filter query results on the
+		contents of your bag': This option will only be
+		available if you have bags of the correct type saved
+		in your <link linkend="manualMyMine">MyMine
+		account</link>. To select this option click on the
+		title and select your bag from the drop-down list.
+		</para>
+		</listitem>
+	      
+              <listitem>
+		<para>Choose a filter: 'Filter query results on this
+		field having any value or not'.  This option allows you
+		to constrain an attribute to either have a value or not
+		have a value.</para> </listitem>
+	    
+          
+	    </orderedlist>
+
+ 
+       <para>Classes for which there are subclasses (e.g. tRNA is a
+       subclass of Transcript) can be constrained to a particular
+       subclass (see below). The subclasses available will appear as a drop-down
+       list.</para>
+
+	  <para>Once you have defined your constraint (and its
+             relationship with other constraints) press 'Add to query'. The new
+             constraint will appear in the 'Constraints on the current query'
+             list. </para>
 
    </sect2>
 
@@ -956,8 +1010,8 @@
 
       <para> All queries in FlyMine can be performed on lists or
       'bags' that you create yourself. Bags are holders for lists of
-      data, e.g. a list of gene identifiers. Bags can be created from
-      an external source or from results from previous queries. Saved
+      data, e.g. a list of genes. Bags can be uploaded from
+      an external source or from the results of queries. Saved
       bags of data can be used to constrain queries (either in a <link
       linkend="manualTemplateQueries">template query</link> or in the
       <link linkend="manualQueryBuilder">Query Builder</link>),
@@ -974,35 +1028,179 @@
  </sect1>
 
  <sect1 id="manualMakingBags">
-     <title>Making a bag</title>
+     <title>Making a bag from an external source</title>
 
     <itemizedlist>
      <listitem>
 
-      <para id="manualNewBag"> Create a new bag: Bags can be created
+      <para id="manualNewBag"> Create a new bag: Bags can be uploaded
       from an external source. The left-hand side 'My bags' on the bag
       page shows you the list of your saved bags. The right-hand side
       'Create a new bag' allows you to type or past in a list of <link
       linkend="manualFlyMineIdentifiers">identifiers</link>, or upload
-      a file containing the list. Do not mix up different types of
-      identifiers if you want to use your bag to constrain a query -
-      e.g. make a bag of gene symbols only or gene identifiers
-      only.</para>
+      a file containing the list:</para>
 
-     </listitem>
+
+	    <orderedlist>
+	      <listitem>
+		<para> Type of bag: To make a bag you must first
+          select the type of bag you want to make (for example a bag
+          of genes).  It is not possible to make mixed bags.</para>
+          </listitem>
+
+	      <listitem>
+		<para> Constrain by organism (optional): You can
+		optionally set the organism for your list of items.
+		This is useful if, for example, you have a list of
+		gene symbols, as the same symbol may be present in more
+		than one organism.</para> </listitem>
+
+	      <listitem>
+		<para> Type/Paste in identifiers: Either type or paste in your list or:</para> </listitem>
+	      
+              <listitem>
+		<para> Upload identifiers from a file: click on
+		'Upload identifiers from a file' and then 'Browse' to
+		find your file for upload.</para> </listitem>
+	    
+                <listitem>
+		<para> Create Bag: Click on 'Create bag' to upload your
+		bag. </para> </listitem>
+
+	    </orderedlist>
+
+
+    </listitem>
  
-     <listitem>
-      <para id="manualResultBag"> Create a bag from results: Data from
-      previous queries can also be saved into a bag. To save your data
-      to a bag select the required data on a result page and either
-      add it to an existing bag or save it to a new bag, using the
-      boxes displayed underneath the results. Selecting the check
-      boxes next to the column headings will select the entire column
-      for saving. Alternatively, individual items can be saved by
-      selecting check-boxes next to the items. Currently, a bag can
-      only contain one column.</para> </listitem>
 
-    </itemizedlist>
+     <listitem>
+
+      <para id="manualConfirmBagCreation"> Confirm bag creation: The list
+      that you upload is checked against the FlyMine database to
+      ensure that everything in your list can be found in FlyMine.
+      Any discepencies are reported as follows: </para>
+
+	    <orderedlist>
+
+	      <listitem>
+		<para>Low quality matches: These are items in your
+		list that do not match a key (main) identifier in
+		FlyMine but were found as synonyms. This may mean you
+		have a secondary (old) identifier or are using a gene
+		symbol that is not the official symbol for that gene.
+		If you are happy that the item identified is the
+		correct one, you can add it to your bag by clicking on
+		'Add' in the last column.  </para> </listitem>
+
+
+  	  <listitem>
+		<para>Converted types: These are items in your list
+		that matched something in FlyMine, but not of the type
+		you selected. (For example, if you selected type=gene,
+		but had a protein identifier in your list).  FlyMine
+		can convert these into the type you selected so that
+		you can add the item to your bag - click on 'Add' in
+		the last column. </para>
+		</listitem>
+
+	      <listitem>
+		<para>Unresolved identifiers: These are items in your
+		list that were either not found in FlyMine, could not
+		be converted to the type you selected or matched
+		objects from an organism other than the one you
+		selected. </para> </listitem>
+
+              </orderedlist>
+
+
+ </listitem>
+	   
+	  <listitem>
+	    <para id="saveBag"> Save bag: Give your bag a name and
+      click on 'Save bag'.  This will take you to a <link
+      linkend="manualbagDetailsPage">Bag overview page</link> </para>
+	  </listitem>
+
+
+
+
+  </itemizedlist>
+
+</sect1>
+
+
+     <sect1>
+         <title>Making a bag from a results table</title>
+
+
+   <itemizedlist>
+     <listitem>
+      <para id="manualResultBag"> A bag can be created from results
+      tables. To save your data to a bag select the required data on a
+      result page and either add it to an existing bag or save it to a
+      new bag, using the boxes displayed underneath the
+      results. Selecting the check boxes next to the column headings
+      will select the entire column for saving. Alternatively,
+      individual items can be saved by selecting check-boxes next to
+      the items. Currently, a bag can only contain one column.
+      However, if you have multiple columns for the same item (eg a
+      column for gene identifier and one for gene symbol), you will
+      notice that all related columns become highlighted when you
+      select the checkbox next to one.  This is because you are saving
+      the actual item (eg the gene) to a bag, not just the
+      identifier. </para>
+      </listitem>
+
+   </itemizedlist> 
+
+</sect1>
+
+   <sect1>
+         <title>Bag details pages</title>
+
+
+   <itemizedlist>
+     <listitem>
+      <para id="manualbagDetailsPage">A bag details page is automatically displayed when you upload a bag from an external source.  Bag details pages can also be accessed by clicking on a bag name from your bags saved in MyMine.  A bag details page provides the following information:</para>
+
+	      <orderedlist>
+
+	      <listitem>
+		<para>Bag contents: A table providing information
+		summarising the contents of your bag. If your bag
+		contains more than ten items, only the first ten are
+		shown in this table.  A button 'View whole bag'
+		underneath the table allows you to view the entire
+		bag.  To the right of the summary table is a box
+		allowing you to enter a description for your bag.
+		This is particularly useful if you are logged in and
+		may come back to use your bag again at a later point.
+		</para> </listitem>
+
+	      <listitem>
+		<para>Widgets: Widgets provide additional information
+		about the contents of your bag. Widgets are currently
+		only available for bags of genes.  Widgets giving a
+		summary of gene expression in the adult fly (according
+		to the FlyAtlas data), a summary of pathways in which
+		any genes in your bag are involved (according to KEGG)
+		and statistical anlysis of the GO enrichment of the
+		set of genes in your bag, are shown where the data is
+		available.  The types of data shown through widgets
+		will increase in future releases of FlyMine. </para></listitem>
+
+	      <listitem>
+		<para>Templates: A set of template queries which have
+		been automatically run on all the items in your
+		bag. </para></listitem>
+
+
+	    
+	      </orderedlist>
+
+      </listitem>
+
+   </itemizedlist> 
 
   </sect1>
 
@@ -1010,43 +1208,55 @@
     <title>Making use of bags</title>
 
      <para> Bags can be used in three different ways: to constrain a
-     query, either in a <link linkend="manualTemplateQueries">template
-     query</link> or in the <link linkend="manualQueryBuilder">Query
-     Builder</link>, to save query results within FlyMine and to
-     perform logical operations. </para>
+     query, either a <link linkend="manualTemplateQueries">template
+     query</link> or a query cnstructed using the <link
+     linkend="manualQueryBuilder">Query Builder</link>, to save query
+     results within FlyMine and to perform logical operations. </para>
 
     <orderedlist>
 
-     <listitem>    
-       <para> Any variable (box) in a template query can be
+     <listitem> <para> Any variable (box) in a template query can be
        constrained to a bag (or 'not in' a bag) rather than a single
-       value. If you have bags saved in your history the option to
-       constrain each variable to a bag will appear automatically. For
+       value, provided you have a bag of the correct type saved in
+       <link linkend="manualMyMine">'MyMine'</link>.  For
        example, if you want to run a particular query for a list of
-       genes rather than a single gene, you can create a bag of gene
-       symbols/identifiers and run a template query using this
-       bag.</para> 
+       genes rather than a single gene, you can create a bag of genes
+       and run a template query using this bag.  To constrain a query
+       to a bag, select the checkbox underneath the variable box and
+       choose the bag from the drop-down list.</para>
 
        <para> Bags of data can be used to constrain queries in the
        Query Builder. If you have bags of saved data under <link
        linkend="manualMyMine">'MyMine'</link> you will automatically
        be able to use these from within the Query Builder to constrain
-       a query. When a field or class is selected for constraining a
-       query using the Query Builder the constraint box in the right
-       hand constraint panel will ask you to either add a constraint
-       or constrain to a choice of your bags. </para>
+       a query. When a field is selected for constraining a query
+       using the Query Builder the constraint options in the right
+       hand constraint panel will ask you to either 'Filter query
+       results on this field having a specific value' or 'Filter query
+       results on the contents of your bag'. This latter option will
+       only appear if you have bags of the correct type saved in <link
+       linkend="manualMyMine">'MyMine'</link>.  To add a bag
+       constraint, click on 'Filter query results on this field having
+       a specific value' and chose your bag from the drop down list.
+       Note there is also the option to change 'IN' bag to 'NOT IN'
+       bag.</para>
 
      </listitem>
 
-     <listitem> 
-      <para> Result from queries can also be saved into a bag. To save
-      your data to a bag select the required data on a result page and
-      either add it to an existing bag or save it to a new bag, using
-      the boxes displayed underneath the results. Selecting the check
-      boxes next to the column headings will select the entire column
-      for saving. Alternatively, individual items can be saved by
-      selecting check boxes next to the items. Currently, a bag can
-      only contain one column.</para>
+     <listitem> <para> Results from queries can also be saved into a
+      bag. To save your data to a bag select the required data on a
+      results page and either add it to an existing bag or save it to
+      a new bag, using the boxes displayed underneath the
+      results. Selecting the check boxes next to the column headings
+      will select the entire column for saving. Alternatively,
+      individual items can be saved by selecting check boxes next to
+      the items. Currently, a bag can only contain one column.
+      However, if you have multiple columns for the same item (eg a
+      column for gene identifier and one for gene symbol), you will
+      notice that all related columns become highlighted when you
+      select the checkbox next to one.  This is because you are saving
+      the actual item (eg the gene) to a bag, not just the
+      identifier.</para>
      </listitem>
 
      <listitem>
@@ -1054,7 +1264,7 @@
       can be performed on bags of data from your <link
       linkend="manualMyMine">bag page</link>. Use the check-boxes
       next to your saved bags to select two or more bags for these
-      operations. </para> 
+      operations and enter a name for the new bag. </para> 
     </listitem>
 
 
