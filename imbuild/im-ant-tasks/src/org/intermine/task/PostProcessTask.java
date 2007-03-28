@@ -98,7 +98,7 @@ public class PostProcessTask extends Task
         }
 
         project = ProjectXmlBinding.unmarshall(projectXml);
-        System.out.println("Found " + project.getPostProcesses().size() + " post-processes");
+        System.out.print("Found " + project.getPostProcesses().size() + " post-processes\n");
 
         if ("${source}".equalsIgnoreCase(action)) { action = ""; }
         if ("${action}".equalsIgnoreCase(action)) { action = ""; }
@@ -110,7 +110,7 @@ public class PostProcessTask extends Task
             for (Iterator iter = postProcessMap.keySet().iterator(); iter.hasNext(); ) {
                 String name = iter.next().toString();
 
-                System.out.println(" executing post process: " + name);
+                System.out.print(" executing post process: " + name + "\n");
 
                 if (DO_SOURCES.equals(name)) {
                     doAllSourcePostProcessing();
@@ -168,7 +168,8 @@ public class PostProcessTask extends Task
         Source s = (Source) project.getSources().get(source);
         File sourceDir = new File(new File(workspaceBaseDir, "/bio/sources"), s.getType());
 
-        System.out.println("Performing postprocess on source:" + source + ", in dir: " + sourceDir);
+        System.out.print("Performing postprocess on source:" + source + ", in dir: " + sourceDir
+                         + "\n");
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);
@@ -230,8 +231,9 @@ public class PostProcessTask extends Task
     }
 
     private void setProperty(Object obj, String property, Object value) throws Exception {
-        Method method = obj.getClass().getMethod("set" + property.substring(0, 1).toUpperCase() +
-                property.substring(1), new Class[]{value.getClass()});
+        Method method =
+            obj.getClass().getMethod("set" + property.substring(0, 1).toUpperCase()
+                                     + property.substring(1), new Class[]{value.getClass()});
         method.invoke(obj, new Object[]{value});
     }
 }
