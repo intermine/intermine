@@ -73,9 +73,6 @@ public class CreateIndexesTask extends Task
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
     private int extraThreads = 3;
 
-    // incremented after each index add to the internal map and used to make index names unique
-    private int indexCount = 0;
-    
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
      * @param alias the ObjectStore alias
