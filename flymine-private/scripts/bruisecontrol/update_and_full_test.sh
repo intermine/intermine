@@ -101,6 +101,7 @@ ant -lib /software/noarch/junit/ $TARGET >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
 cd $BUILD_PROJ/../../bio/test-all
 INTERMINE_RESULTS_DIR=../intermine/all/build/test/results
 (cd dbmodel; ant -lib /software/noarch/junit/ build-db)
+ant clean
 ant -lib /software/noarch/junit/ fulltest -Dtest.results.dir=$INTERMINE_RESULTS_DIR -Dresults.junit=$INTERMINE_RESULTS_DIR >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
 
 
