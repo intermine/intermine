@@ -4,5 +4,6 @@
         <file-match-pattern match-pattern=".*java$" include-pattern="true"/>
         <file-match-pattern match-pattern=".*build/" include-pattern="false"/>
         <file-match-pattern match-pattern=".*Test\.java$" include-pattern="false"/>
+        <file-match-pattern match-pattern="_[a-zA-Z].java" include-pattern="false"/>
     </fileset>
 </fileset-config>
