@@ -29,16 +29,18 @@
           </imageobject><textobject><phrase> </phrase></textobject>
         </mediaobject>
 
-    <para>To save a query as a template there must be at least one
-    'editable' constraint in the query.  To make a constraint editable
-    within a template, click on the lock next to the constraint: A
-    field with 'Template constraint settings' will appear in the right
-    column. Click in the tick-box next to 'Editable'. At the same
-    time, it is possible to add a label to the editable constraint
-    (optional) to clarify what it is by typing in a label in
-    'Constraint label'. Click on the 'Update' button in this
-    field. The label will appear on the template page after creating
-    the template (see below).</para>
+    <para>In order to save a query as a template it is necessary to
+        define which of the constraints in the query will be editable
+        in the template (there must be at least one 'editable'
+        constraint in the query).  To make a constraint editable
+        within a template, click on the lock next to the constraint: A
+        field with 'Template constraint settings' will appear in the
+        right column. Click in the tick-box next to 'Editable'. At the
+        same time, it is possible to add a label to the editable
+        constraint (optional) to clarify what it is by typing in a
+        label in 'Constraint label'. Click on the 'Update' button in
+        this field. The label will appear on the template page after
+        creating the template (see below).</para>
  
         <mediaobject>
           <imageobject>
