@@ -72,13 +72,28 @@ public class CreateIndexesTask extends Task
     private Set indexesMade = Collections.synchronizedSet(new HashSet());
     private static final int POSTGRESQL_INDEX_NAME_LIMIT = 63;
     private int extraThreads = 3;
+    private ObjectStore objectStore;
 
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
      * @param alias the ObjectStore alias
      */
     public void setAlias(String alias) {
+        if (objectStore != null) {
+            throw new BuildException("set one of alias and objectStore, not both");
+        }
         this.alias = alias;
+    }
+
+    /**
+     * Set the ObjectStore to use.  Can be set instead of alias.
+     * @param objectStore
+     */
+    public void setObjectStore(ObjectStore objectStore) {
+        if (alias != null) {
+            throw new BuildException("set one of alias and objectStore, not both");
+        }
+        this.objectStore = objectStore;
     }
 
     /**
@@ -106,16 +121,16 @@ public class CreateIndexesTask extends Task
      * @throws BuildException if something is wrong
      */
     public void setUp() throws BuildException {
-        if (alias == null) {
-            throw new BuildException("alias attribute is not set");
+        if (alias == null && objectStore == null) {
+            throw new BuildException("exactly one of alias and objectStore must be set");
         }
 
-        ObjectStore objectStore;
-
-        try {
-            objectStore = ObjectStoreFactory.getObjectStore(alias);
-        } catch (Exception e) {
-            throw new BuildException("Exception while creating ObjectStore", e);
+        if (objectStore == null) {
+            try {
+                objectStore = ObjectStoreFactory.getObjectStore(alias);
+            } catch (Exception e) {
+                throw new BuildException("Exception while creating ObjectStore", e);
+            }
         }
 
         if (objectStore instanceof ObjectStoreInterMineImpl) {
@@ -267,6 +282,7 @@ public class CreateIndexesTask extends Task
                         }
                     }
                 } catch (NoSuchElementException e) {
+                    // rmpty
                 } finally {
                     try {
                         if (conn != null) {

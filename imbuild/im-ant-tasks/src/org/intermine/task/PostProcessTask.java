@@ -215,10 +215,11 @@ public class PostProcessTask extends Task
 
     private Task newPostProcessTask() {
         ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
-        Object pp = ClasspathUtils.newInstance("org.intermine.bio.postprocess.PostProcessTask", cl);
+        String className = "org.intermine.bio.postprocess.PostProcessOperationsTask";
+        // use reflection to avoid depending on the bio/postprocess project
+        Object pp = ClasspathUtils.newInstance(className, cl);
 
         try {
-            setProperty(pp, "objectStore", "os.production");
             setProperty(pp, "objectStoreWriter", "osw.production");
             setProperty(pp, "project", getProject());
         } catch (Exception err) {
