@@ -10,22 +10,27 @@ package org.intermine.task;
  *
  */
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
+import java.util.Vector;
 
 import org.intermine.task.project.Project;
 import org.intermine.task.project.ProjectXmlBinding;
 import org.intermine.task.project.Source;
 import org.intermine.task.project.UserProperty;
 
+import java.io.File;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
+import org.apache.tools.ant.util.StringUtils;
 
 /**
  * A task that can read a project.xml file and run an data integration build.
@@ -80,6 +85,10 @@ public class Integrate extends Task
         workspaceBaseDir = basedir;
     }
 
+    /**
+     * Run the integration.
+     * @throws BuildException if parameters aren't set or the source or action is invalid
+     */
     public void execute() throws BuildException {
         if (projectXml == null) {
             throw new BuildException("no projectXml specified");
@@ -87,8 +96,12 @@ public class Integrate extends Task
         if (workspaceBaseDir == null) {
             throw new BuildException("no workspaceBaseDir specified");
         }
+        if (source == null || source.trim().equals("")) {
+            throw new BuildException("no source set, try \"ant -Dsource=all\" or "
+                                     + "\"ant -Dsource=source1,source2\"");
+        }
 
-        System.err.println ("action: " + action);
+        System.err.print("action: " + action + "\n");
 
         if (action != null && !action.equals("") && !possibleActions.contains(action)) {
             StringBuffer sb = new StringBuffer();
@@ -102,27 +115,33 @@ public class Integrate extends Task
 
         intermineProject = ProjectXmlBinding.unmarshall(projectXml);
 
-        System.out.println("Found " + intermineProject.getSources().size() + " sources");
+        System.out.print("Found " + intermineProject.getSources().size() + " sources" + "\n");
 
-        if (source.equals("")) {
+        List<String> sources = new ArrayList<String>();
+        
+        if (source.equals("") || source.equals("all")) {
             Iterator iter = intermineProject.getSources().entrySet().iterator();
             while (iter.hasNext()) {
                 String thisSource = (String) ((Map.Entry) iter.next()).getKey();
-                if (action.equals("")) {
-                    performAction(thisSource);
-                } else {
-                    performAction(action, thisSource);
-                }
+                sources.add(thisSource);
             }
         } else {
-            if (intermineProject.getSources().get(source) == null) {
-                throw new BuildException("can't find source in project definition file: " + source);
+            Vector<String> bits = StringUtils.split(source, ',');
+            for (String bit: bits) {
+                sources.add(bit);
+            } 
+        }
+         
+        for (String thisSource: sources) {
+            if (intermineProject.getSources().get(thisSource) == null) {
+                throw new BuildException("can't find source in project definition file: " 
+                                         + thisSource);
             }
 
             if (action.equals("")) {
-                performAction(source);
+                performAction(thisSource);
             } else {
-                performAction(action, source);
+                performAction(action, thisSource);
             }
         }
     }
@@ -139,8 +158,8 @@ public class Integrate extends Task
                                 intermineProject.getType() + File.separatorChar + "sources"); 
         File sourceDir = new File(baseDir, s.getType());
 
-        System.out.println("Performing integration action \"" + action + "\" for source \""
-                           + source + "\" in directory: " + sourceDir);
+        System.out.print("Performing integration action \"" + action + "\" for source \""
+                         + source + "\" in directory: " + sourceDir + "\n");
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);
