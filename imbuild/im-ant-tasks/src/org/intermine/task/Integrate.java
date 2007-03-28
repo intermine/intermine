@@ -146,25 +146,25 @@ public class Integrate extends Task
         }
     }
 
-    private void performAction(String source) {
-        performAction("retrieve", source);
-        performAction("translate", source);
-        performAction("load", source);
+    private void performAction(String sourceName) {
+        performAction("retrieve", sourceName);
+        performAction("translate", sourceName);
+        performAction("load", sourceName);
     }
 
-    private void performAction(String action, String source) {
-        Source s = (Source) intermineProject.getSources().get(source);
+    private void performAction(String actionName, String sourceName) {
+        Source s = (Source) intermineProject.getSources().get(sourceName);
         File baseDir = new File(workspaceBaseDir,
                                 intermineProject.getType() + File.separatorChar + "sources"); 
         File sourceDir = new File(baseDir, s.getType());
 
-        System.out.print("Performing integration action \"" + action + "\" for source \""
-                         + source + "\" in directory: " + sourceDir + "\n");
+        System.out.print("Performing integration action \"" + actionName + "\" for source \""
+                         + sourceName + "\" in directory: " + sourceDir + "\n");
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);
         ant.setInheritAll(false);
-        ant.setTarget(action);
+        ant.setTarget(actionName);
         ant.setProject(getProject());
 
         // Tell sub-invocation to execute targets on dependencies.  This is needed so that ant in
@@ -188,7 +188,7 @@ public class Integrate extends Task
             UserProperty sp = (UserProperty) globalPropIter.next();
             Property prop = ant.createProperty();
             if (sp.getName() == null) {
-                throw new BuildException("name not set for property in: " + source);
+                throw new BuildException("name not set for property in: " + sourceName);
             } else {
                 prop.setName(sp.getName());
             }
@@ -223,7 +223,7 @@ public class Integrate extends Task
         // source.name
         Property prop = ant.createProperty();
         prop.setName("source.name");
-        prop.setValue(source);
+        prop.setValue(sourceName);
 
         ant.execute();
     }
