@@ -286,15 +286,14 @@ public class ProfileBinding
      * using the ProfileManager.
      * @param reader contains the Profile XML
      * @param profileManager the ProfileManager to pass to the Profile constructor
-     * @param os ObjectStore used to resolve object ids
      * @param username default username - used if there is no username in the XML
      * @param password default password
      * @param tags a set to populate with user tags
      * @param classKeys class key fields in model
      * @return the new Profile
      */
-    public static Profile unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-                                    String username, String password, Set tags, Map classKeys) {
+    public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
+                                    String password, Set tags, Map classKeys) {
         try {
             IdUpgrader idUpgrader = new IdUpgrader() {
                 public Set getNewIds(InterMineObject oldObject, ObjectStore os) {

@@ -126,7 +126,7 @@ public class LoadDefaultTemplatesTask extends Task
 
             // Unmarshal
             Set tags = new HashSet();
-            Profile profileSrc = ProfileBinding.unmarshal(reader, pm, os,
+            Profile profileSrc = ProfileBinding.unmarshal(reader, pm,
                     profileDest.getUsername(), profileDest.getPassword(), tags, classKeys);
 
             if (profileDest.getSavedTemplates().size() == 0) {
