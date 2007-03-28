@@ -171,7 +171,9 @@ public class ProfileBinding
                     }
                 }
             }
-            writer.writeEndElement();
+            writer.writeEndElement();  // end <tags>
+
+            writer.writeEndElement();  // end <userprofile>
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling profile", e);
         } catch (ObjectStoreException e) {
