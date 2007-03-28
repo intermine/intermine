@@ -11,6 +11,12 @@
         Current data
       </div>
       <div class="body">
+
+	<p>
+	Note: The DrosDel data has been re-mapped to
+	genome sequence release 5.0 as of FlyMine release 7.0. 
+	</p>
+
         <p>
           <a href="http://www.drosdel.org.uk">DrosDel</a> is a collection
           of <i>P</i>-element insertions for generating custom chromosomal aberrations

@@ -21,6 +21,12 @@
 
 <div id="hiddenDiv1" style="display:none;">
 
+	<dt>
+		Note: The REDfly data has been re-mapped to
+		genome sequence release 5.0 as of FlyMine release 7.0. 
+	</dt>
+
+
           <dt>
             Transcriptional  <i>cis</i>-regulatory modules (CRMs) for <i>D. melanogaster</i>
             from the <a href="http://redfly.ccr.buffalo.edu"> REDfly database </a>.
@@ -45,6 +51,12 @@
           </h4>
 
   <div id="hiddenDiv2" style="display:none;">
+
+	<dt>
+		Note: The FlyReg data has been re-mapped to
+		genome sequence release 5.0 as of FlyMine release 7.0. 
+	</dt>	
+
 
           <dt>
             DNase I footprints for <i>D. melanogaster</i> from the 
