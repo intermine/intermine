@@ -14,7 +14,7 @@
       (org.intermine.objectstore.ObjectStore) application.getAttribute("OBJECTSTORE");
    org.intermine.metadata.Model model = os.getModel();
    java.util.Map classDescriptions = (java.util.Map) application.getAttribute("classDescriptions");
-   String helpText = org.intermine.web.HelpUtil.getHelpText(model, classDescriptions, type);
+   String helpText = org.intermine.web.logic.HelpUtil.getHelpText(model, classDescriptions, type);
    request.setAttribute("helpText", helpText);
 %>
 
