@@ -78,5 +78,8 @@
     <xsl:comment>#include virtual="/<xsl:value-of select="$webapppath"/>/standalone.do?page=<xsl:value-of select="@page"/>"</xsl:comment>
   </xsl:template>
   
+  <xsl:template match="ssi-include-static">
+    <xsl:comment>#include virtual="<xsl:value-of select="@page"/>"</xsl:comment>
+  </xsl:template>
   
 </xsl:stylesheet>
