@@ -78,3 +78,8 @@ for my $psi_file (@psi_files) {
             or die "can't get $psi_file from $ebi_server/ebi_ftp->pwd()/$psi_file: $?";
     }
 }
+unlink "psi/intact/current";
+$release_dir = substr($release_dir,0,10);
+warn "created $release_dir\n";
+symlink $release_dir, "psi/intact/current" or die "can't create psi/intact/current";
+

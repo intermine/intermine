@@ -191,7 +191,7 @@ while (<FILE>) {
 close (FILE) or die "$!";
 close PROT_GENES;
 
-# create the @current link
+# create the current@ link
 unlink "homophila/current";
 warn "created $download_dir\n";
 symlink $download_dir, "homophila/current" or die "can't create homophila/current";
