@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.logic;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -31,10 +31,10 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.LogicExpression;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.web.logic.MainHelper;
+import org.intermine.web.logic.PathNode;
+import org.intermine.web.logic.PathQuery;
+import org.intermine.web.logic.PathQueryBinding;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;

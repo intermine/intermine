@@ -10,8 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,8 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.DataTranslatorTestCase;
@@ -29,9 +25,15 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
+
+import junit.framework.TestCase;
 
 public class FlyBaseGFF3RecordHandlerTest extends TestCase
 {
