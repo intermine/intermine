@@ -42,7 +42,8 @@ public class ClassChooserController extends TilesAction
                                  ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)  throws Exception {
+                                 HttpServletResponse response) 
+        throws Exception {
 
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -62,14 +63,13 @@ public class ClassChooserController extends TilesAction
             // if this class has objects, add help text to array
             // for javascript to use on display page
             if (helpText != null && n != null && n.intValue() > 0) {
-                String escaped = new String();
-                escaped = helpText.replaceAll("'", "\\\\'");
-                sb.append(new String("'" + escaped + "',"));
+                String escaped = helpText.replaceAll("'", "\\\\'");
+                sb.append("'" + helpKey + "': '" + escaped + "', ");
             }
         }
         // remove last comma
         sb.deleteCharAt(sb.length() - 1);
-        request.setAttribute("helpText", sb);
+        request.setAttribute("helpMap", sb);
         return null;
     }
 }

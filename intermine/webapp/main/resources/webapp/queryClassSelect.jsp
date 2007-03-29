@@ -10,25 +10,31 @@
 
 <!-- queryClassSelect.jsp -->
 
-<script type="text/javascript">	
-	// array of help texts built in the controller
-	var classArray = new Array(<%=request.getAttribute("helpText")%>); 
-	function showClassSelectHelp() {
-		var i = document.queryClassSelectForm.className.selectedIndex;		
-		var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
-		var selectedClassName = fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
-		var helpText = classArray[i];
-		document.getElementById('queryClassSelect').innerHTML = selectedClassName + ":  " + helpText;
-		document.getElementById('classSelectDiv').style.display = 'block';
+<script type="text/javascript">
+   // array of help texts built in the controller
+   var helpMap = {${helpMap}};
+
+   function showClassSelectHelp() {
+      var i = document.queryClassSelectForm.className.selectedIndex;
+      var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
+      var selectedClassName =
+         fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
+      var helpText = helpMap[selectedClassName];
+      if (!helpText) {
+         helpText = "no description available";
+      }
+      document.getElementById('queryClassSelect').innerHTML =
+         selectedClassName + ":  " + helpText;
+      document.getElementById('classSelectDiv').style.display = 'block';
     }
-        
+
 </script>
 <div class="body">
 
 <table>
 <tr>
 	<td>
-		
+
   <html:form action="/queryClassSelect">
     <html:select property="className" size="20" onchange="showClassSelectHelp();">
       <c:forEach items="${classes}" var="entry">
@@ -36,17 +42,17 @@
           <html:option value="${entry.key}">
             <c:out value="${entry.value}"/>
           </html:option>
-        </c:if>     
+        </c:if>
       </c:forEach>
-    </html:select>    
-    <br/>    
+    </html:select>
+    <br/>
     <html:submit>
       <fmt:message key="button.selectClass"/>
     </html:submit>
   </html:form>
-  
+
  </td>
- <td width="100%" valign="top"> 	
+ <td width="100%" valign="top">
 	<div id="classSelectDiv" style="display:none;">
 	  <div class="topBar contextHelp"> <%-- IE table width bug --%>
     	<table width="100%" cellspacing="0" border="0" cellpadding="0">
@@ -63,10 +69,10 @@
     	</table>
 	  </div>
 	  <br/>
-	</div> 	
-  </td>  
+	</div>
+  </td>
 </tr>
 </table>
-  
+
 </div>
 <!-- /queryClassSelect.jsp -->
