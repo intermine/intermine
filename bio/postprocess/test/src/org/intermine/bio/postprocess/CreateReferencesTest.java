@@ -16,30 +16,30 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import junit.framework.TestCase;
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Annotation;
-import org.flymine.model.genomic.FivePrimeUTR;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Evidence;
 import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.GOTerm;
 import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.Orthologue;
+import org.flymine.model.genomic.OverlapRelation;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.RankedRelation;
 import org.flymine.model.genomic.Relation;
 import org.flymine.model.genomic.SimpleRelation;
 import org.flymine.model.genomic.ThreePrimeUTR;
 import org.flymine.model.genomic.Transcript;
-import org.flymine.model.genomic.OverlapRelation;
-import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.UTR;
-
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -57,12 +57,6 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * Tests for the CreateReferences class.

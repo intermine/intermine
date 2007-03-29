@@ -75,8 +75,6 @@ public class GFF3UtilTest extends TestCase
         
         GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, extraAttributes);
 
-        Map exonAttributes = new LinkedHashMap();
-
         GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, new HashMap());
         GFF3Record gff3Chromosome =
             GFF3Util.makeGFF3Record(chromosome, soClassNameMap, new HashMap());

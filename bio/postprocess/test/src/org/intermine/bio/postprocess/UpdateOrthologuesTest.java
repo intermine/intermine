@@ -24,8 +24,8 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Orthologue;
 import org.flymine.model.genomic.Paralogue;
-import org.flymine.model.genomic.Translation;
 import org.flymine.model.genomic.Relation;
+import org.flymine.model.genomic.Translation;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -163,68 +163,6 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         assertEquals(objGene1, resOrth.getObject());
         assertEquals(subGene1, resOrth.getSubject());
     }
-
-
-    private class OrthologueHolder
-    {
-        public Orthologue orth;
-
-        public OrthologueHolder(Orthologue orth) {
-            this.orth = orth;
-        }
-
-        public boolean equals(OrthologueHolder holder) {
-            if (holder.orth.getObject().getId().equals(this.orth.getObject().getId())
-                && holder.orth.getSubject().getId().equals(this.orth.getSubject().getId())) {
-                return true;
-            }
-            return false;
-        }
-
-        public int hashCode() {
-            //return orth.getObject().getId().hashCode() + (3 * orth.getSubject().getId().hashCode());
-            return 0;
-        }
-
-        public String toString() {
-            return "object: " + orth.getObject().getId() + " subject: " + orth.getSubject().getId() + " hashCode: " + hashCode();
-        }
-    }
-
-
-    // return true if expected and actaul ortholuges have the same gene as object and subject
-    private boolean compareOrthologues(Orthologue expected, Orthologue actual) {
-        if (expected.getObject().equals(actual.getObject())
-            && expected.getSubject().equals(actual.getSubject())) {
-            return true;
-        }
-        return false;
-    }
-
-
-
-    private Relation getExpectedData(Class relClass, Gene objGene, Gene subGene) {
-        Relation rel = (Relation) DynamicUtil.createObject(Collections.singleton(relClass));
-        rel.setEvidence(new HashSet());
-        rel.setId(new Integer(1));
-        Translation objTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
-        objTranslation.setId(OBJ_TRANSLATION_ID);
-        Translation subTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
-        subTranslation.setId(SUB_TRANSLATION_ID);
-
-        String clsName = TypeUtil.unqualifiedName(relClass.getName());
-        if (clsName.equals("Orthologue")) {
-            ((Orthologue) rel).setObjectTranslation(objTranslation);
-            ((Orthologue) rel).setSubjectTranslation(subTranslation);
-        } else {
-            ((Paralogue) rel).setObjectTranslation(objTranslation);
-            ((Paralogue) rel).setSubjectTranslation(subTranslation);
-        }
-        rel.setObject(objGene);
-        rel.setSubject(subGene);
-        return rel;
-    }
-
 
     // create an [Ortho|Para]logue with object and subject Translations that have objGenes and subGenes
     // in their respective genes collections

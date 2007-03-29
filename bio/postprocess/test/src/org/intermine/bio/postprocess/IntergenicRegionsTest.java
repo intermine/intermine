@@ -10,30 +10,6 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.util.DynamicUtil;
-
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.ChromosomeBand;
-import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.IntergenicRegion;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Synonym;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,10 +21,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections.collection.CompositeCollection;
-
 import junit.framework.TestCase;
+
+import org.apache.commons.collections.IteratorUtils;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.DataSource;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.IntergenicRegion;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Synonym;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Tests for the IntergenicRegionUtil class.
@@ -57,7 +49,6 @@ import junit.framework.TestCase;
 public class IntergenicRegionsTest extends TestCase
 {
     private ObjectStoreWriter osw;
-    private IntegrationWriter iw;
     private Organism organism = null;
     private DataSource dataSource;
 
@@ -84,7 +75,6 @@ public class IntergenicRegionsTest extends TestCase
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
                                                     .getSequence());
         Iterator resIter = res.iterator();
@@ -128,9 +118,7 @@ public class IntergenicRegionsTest extends TestCase
     public void testCreateIntergenicRegionFeaturesRefs() throws Exception {
         IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
 
-        List chrXgeneLocList =  new ArrayList();
         Map chrXlocMap = new HashMap();
-        Integer chrXId = createChrX(chrXgeneLocList, chrXlocMap, 3000);
         List chr1geneLocList =  new ArrayList();
         Map chr1locMap = new HashMap();
         Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 4000);

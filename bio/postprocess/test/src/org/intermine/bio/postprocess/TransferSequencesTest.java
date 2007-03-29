@@ -17,8 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.BioEntity;
@@ -31,7 +31,6 @@ import org.flymine.model.genomic.RepeatRegion;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -54,7 +53,6 @@ public class TransferSequencesTest extends TestCase
     private Exon [] storedExons;
     private Transcript [] storedTranscripts;
     private RepeatRegion [] storedRepeatRegions;
-    private Model model;
 
     private String expectedExonSequence0 =
         "tatgactgtaacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatct" +
@@ -106,7 +104,6 @@ public class TransferSequencesTest extends TestCase
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
-        model = Model.getInstanceByName("genomic");
         createData();
     }
 
@@ -119,7 +116,6 @@ public class TransferSequencesTest extends TestCase
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, osw.getObjectStore(),
                                                     osw.getObjectStore().getSequence());
         LOG.error("created results");

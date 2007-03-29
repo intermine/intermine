@@ -730,7 +730,8 @@ public class CalculateLocations
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, 
+            PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results res = new Results(q, os, os.getSequence());
 
         res.setBatchSize(500);
