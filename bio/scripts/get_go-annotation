@@ -134,8 +134,11 @@ if (!(-d $uniprot_download_dir)) {
       
       close OUT_FILE or die;
   }
-
-  system "chmod -R a+r,g+w $uniprot_download_dir";
+	unlink "$uniprot_dir/current";
+	symlink $date_string, "$uniprot_dir/current" or die "can't create $uniprot_dir/current";
+	unlink "go-annotation/current/uniprot";
+	symlink ("../uniprot/$date_string", "go-annotation/current/uniprot") or die "can't create go-annotation/current";
+	system "chmod -R a+r,g+w $uniprot_download_dir";
 
 } else {
     warn "$uniprot_download_dir already exists - skipping download\n";
@@ -195,6 +198,11 @@ for my $source_database (keys %gene_association_map) {
     if ((system "gzip -dr $gene_association_download_dir") != 0) {
       die qq|system "gzip -dr $gene_association_download_dir" failed: $?\n|;
     }
+	unlink "$source_dir/current";
+	symlink $date_string, "$source_dir/current" or die "can't create $source_dir/current";
+	unlink "go-annotation/current/$source_database";
+	symlink "../$source_database/$date_string", "go-annotation/current/$source_database" or die "can't create go-annotation/current/$source_dir";
+  
   }
 
   system "chmod -R a+r,g+w $gene_association_download_dir";
