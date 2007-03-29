@@ -1,4 +1,4 @@
-package org.intermine.web.config;
+package org.intermine.web.logic.config;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
