@@ -26,13 +26,11 @@ Distributed under the Creative Commons Attribution-NoDerivs License
 </uniprot>';
 
 #define source and output directories
-my $source_dir = $ARGV[0]
-    or die "\nPlease supply a directory for the source files and the destination direcory.
-e.g. ./split_uniprot.pl /shared/data/uniprot/9.3/ /shared/data/uniprot/9.3/split/\n\n";
+my $version = $ARGV[0] or die "\nPlease supply the UniProt version you wish to split.
+e.g. 9.3\n\n";
+my $source_dir = "/shared/data/uniprot/$version/";
 
-my $split_dir = $ARGV[1]
-    or die "\nPlease supply a directory for the source files and the destination direcory.\n
-e.g. ./split_uniprot.pl /shared/data/uniprot/9.3/ /shared/data/uniprot/9.3/split/\n\n";
+my $split_dir = "/shared/data/uniprot/$version/split/";
 
 #create output dir, empty it if already exists?
 if(!-e $split_dir ){
