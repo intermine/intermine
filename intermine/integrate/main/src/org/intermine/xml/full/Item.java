@@ -28,7 +28,7 @@ import org.intermine.util.XmlUtil;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
-public class Item
+public class Item implements Comparable
 {
     private String identifier = "";
     private String className = "";
@@ -554,6 +554,25 @@ public class Item
         return false;
     }
 
+    /**
+     * Compare items first by class, then by identifier, intended for creating
+     * ordered output files.
+     * @see Comparable#compareTo
+     */ 
+    public int compareTo(Object o) {
+        if (!(o instanceof Item)) {
+            throw new RuntimeException("Attempt to compare an item to a " + o.getClass() + " ("
+                                       + o.toString() + ")");
+        }
+        
+        Item i = (Item) o;
+        int compValue = this.getClassName().compareTo(i.getClassName());
+        if (compValue == 0) {
+            compValue = this.getIdentifier().compareTo(i.getIdentifier());
+        }
+        return compValue;
+    }
+    
     /**
      * @see Object#hashCode
      */
