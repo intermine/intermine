@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<items>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="1673656"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#TFBindingSite">
+    <attribute name="identifier" value="000448"/>
+    <reference name="factor" ref_id="1_3"/>
+    <reference name="gene" ref_id="1_4"/>
+    <collection name="evidence">
+      <reference ref_id="1_2"/>
+    </collection>
+  </item>
+  <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="symbol" value="dpp"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="1_3" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="symbol" value="Ubx"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="1_7" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="symbol" value="Adf1"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="1_5" class="http://www.flymine.org/model/genomic#TFBindingSite">
+    <attribute name="identifier" value="003665"/>
+    <reference name="factor" ref_id="1_7"/>
+    <reference name="gene" ref_id="1_4"/>
+    <collection name="evidence">
+      <reference ref_id="1_6"/>
+    </collection>
+  </item>
+  <item id="1_6" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="7791801"/>
+  </item>
+  <item id="1_10" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="symbol" value="Adh"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="1_8" class="http://www.flymine.org/model/genomic#TFBindingSite">
+    <attribute name="identifier" value="005046"/>
+    <reference name="factor" ref_id="1_7"/>
+    <reference name="gene" ref_id="1_10"/>
+    <collection name="evidence">
+      <reference ref_id="1_9"/>
+    </collection>
+  </item>
+  <item id="1_9" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="2105454"/>
+  </item>
+</items>

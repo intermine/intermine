@@ -12,17 +12,13 @@ package org.intermine.bio.dataconversion;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.intermine.dataconversion.DataTranslatorTestCase;
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.xml.full.FullParser;
 
-public class UniprotConverterTest extends TestCase
+public class UniprotConverterTest extends ItemsTestCase
 {
     public UniprotConverterTest(String arg) {
         super(arg);
@@ -34,8 +30,8 @@ public class UniprotConverterTest extends TestCase
 
     public void testProcess() throws Exception {
 
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UniprotConverterTest_src.xml"));
-
+        Reader reader = new InputStreamReader(getClass().getClassLoader()
+                                              .getResourceAsStream("UniprotConverterTest_src.xml"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         UniprotConverter converter = new UniprotConverter(itemWriter);
@@ -44,15 +40,10 @@ public class UniprotConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-//        java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("uniprot_tgt.xml"));
-//        fw.write(org.intermine.xml.full.FullRenderer.render(itemWriter.getItems()));
-//        fw.close();
+        writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
 
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
-        assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
-    }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("UniprotConverterTest_tgt.xml"));
+        Set expected = readItemSet("UniprotConverterTest_tgt.xml");
+        
+        assertEquals(expected, itemWriter.getItems());
     }
 }
