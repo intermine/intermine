@@ -48,22 +48,42 @@ public abstract class ItemsTestCase extends TestCase
     public static void assertEquals(Set a, Set b) throws Exception
     {
         // check that these are both items sets
-        Iterator iter = a.iterator();
-        while (iter.hasNext()) {
-            if (!(iter.next() instanceof Item)) {
-                TestCase.assertEquals(a, b);
-                return;
-            }
-        }
-        iter = b.iterator();
-        while (iter.hasNext()) {
-            if (!(iter.next() instanceof Item)) {
-                TestCase.assertEquals(a, b);
-                return;
-            }
+        if (!checkItemSet(a) || ! checkItemSet(b)) {
+            TestCase.assertEquals(a, b);
+            return;
+
         }
 
+        String message = compareItemSets(a, b, false);
+        if (message .length() > 0) {
+            fail(message);
+        }
+    }
+
+    public static String compareItemSets(Set a, Set b) {
+        return compareItemSets(a, b, true);
+    }
+    
+    private static boolean checkItemSet(Set set) {
+        Iterator iter = set.iterator();
+        while (iter.hasNext()) {
+            if (!(iter.next() instanceof Item)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private static String compareItemSets(Set a, Set b, boolean checkItems) {
+        // check these are both item sets
+        if (checkItems && (!checkItemSet(a) || !checkItemSet(b))) {
+            throw new IllegalArgumentException("Comparing sets that contains objects that "
+                                               + "aren't Items: a = " + a + ", b = " + b);
+        }
+        
+        
         // now have compatible collections of items, compare them
+        StringBuffer message = new StringBuffer();
         Set inAnotB = diffItemSets(a, b);
         Set inBnotA = diffItemSets(b, a);
         if (inAnotB.isEmpty() && inBnotA.isEmpty()) {
@@ -72,7 +92,6 @@ public abstract class ItemsTestCase extends TestCase
         } else {
             String ENDL = System.getProperty("line.separator");
             // fail with a helpful message
-            StringBuffer message = new StringBuffer();
             message.append("Item collections do not match." + ENDL);
             if (!inAnotB.isEmpty()) {
                 message.append("In expected, not actual: " + ENDL);
@@ -86,10 +105,10 @@ public abstract class ItemsTestCase extends TestCase
                 ts.addAll(inBnotA);
                 message.append(ts + ENDL);
             }
-            fail(message.toString());
         }
+        return message.toString();
     }
-
+    
     /**
      * Given two sets of Items (a and b) return a set of Items that are present in a
      * but not b.
