@@ -35,7 +35,7 @@ my %ids=("4932",'S.cerevisiae',
 	 );
 
 ##create gene/pubmed objects and associate pubmed objects to correct gene object 
-my (%genes, %pubID, %pubgene);
+my (%organism, %genes, %pubID, %pubgene);
 
 #open /shared/data/pubmed/gene2pubmed and get data
 open(F,"<$ARGV[1]") or die "$!";
@@ -46,9 +46,15 @@ while(<F>){
 	if(exists $ids{$current_ID}){
 		chomp $f[2];
 		my ($geneID, $pubID) = ($f[1], $f[2]);
-		my ($gene_item, $pub_item);
+		my ($org_item, $gene_item, $pub_item);
 		#print "Gene $geneID pub# $pubID\n";
 		
+		#check to see if the organism object has already been stored, if not create it
+		if(!exists $organism{$current_ID}){
+			$org_item = make_item('Organism');
+			$org_item->set('taxonId', $current_ID);
+			$organism{$current_ID}={'object' => $org_item};
+		}
 		#check to see if the gene object has already been stored, if not create it
 		if(!exists $genes{$geneID}){
 			$gene_item = make_item('Gene');
@@ -95,7 +101,10 @@ while(<F>){
 				print "$identifier\t$ncbigeneID\tValid id\n";
 				$genes{$ncbigeneID}{$identifier}=$identifier;
 				my $gene_item = $genes{$ncbigeneID}->{'object'};
+				my $org_item = $organism{$current_ID}->{'object'};
 				$gene_item->set('identifier', $identifier);
+				$gene_item->set('organism', $org_item);
+				
 			}else{
 				print"$identifier\t$ncbigeneID\tInvalid ID\n";
 				delete $genes{$ncbigeneID};	
