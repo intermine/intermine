@@ -10,21 +10,18 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import junit.framework.TestCase;
-import junit.framework.Assert;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.intermine.util.DynamicUtil;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
-
+import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Transcript;
-import org.flymine.model.genomic.Chromosome;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Tests for the PostProcessUtil class.

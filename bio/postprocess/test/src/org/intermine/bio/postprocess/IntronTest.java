@@ -10,45 +10,33 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SingletonResults;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.intermine.dataloader.IntegrationWriter;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.util.DynamicUtil;
+import junit.framework.TestCase;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Intron;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Synonym;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections.collection.CompositeCollection;
-
-import junit.framework.TestCase;
+import org.flymine.model.genomic.Transcript;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Tests for the IntronUtil class.
@@ -57,11 +45,8 @@ import junit.framework.TestCase;
 public class IntronTest extends TestCase{
 
     private ObjectStoreWriter osw;
-    private IntegrationWriter iw;
     private Organism organism = null;
     private DataSource dataSource;
-
-    private HashSet toStore = new HashSet();
     private HashSet locationSet1 = new HashSet();
     private HashSet locationSet2 = new HashSet();
     private HashSet locationSet3 = new HashSet();
@@ -89,7 +74,6 @@ public class IntronTest extends TestCase{
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
                                                     .getSequence());
         Iterator resIter = res.iterator();
@@ -121,9 +105,6 @@ public class IntronTest extends TestCase{
 
     public void testCreateIntronFeaturesRef() throws Exception {
         IntronUtil iru = new IntronUtil(osw);
-
-        Transcript t1 = createTranscriptT1(100);
-        Transcript t2 = createTranscriptT2(100);
 
         iru.createIntronFeatures();
 

@@ -10,33 +10,25 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 
+import junit.framework.TestCase;
+
+import org.apache.tools.ant.filters.StringInputStream;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Synonym;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
-
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Synonym;
-
-import java.io.File;
-import java.io.InputStream;
-
-import org.apache.tools.ant.filters.StringInputStream;
-import org.apache.tools.ant.taskdefs.TempFile;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the SynonymUpdater class.
@@ -46,7 +38,6 @@ public class SynonymUpdaterTest extends TestCase {
 
     private ObjectStoreWriter osw;
 
-    private HashSet toStore = new HashSet();
 
     public SynonymUpdaterTest(String arg) {
         super(arg);
@@ -65,7 +56,6 @@ public class SynonymUpdaterTest extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
                                                     .getSequence());
         Iterator resIter = res.iterator();

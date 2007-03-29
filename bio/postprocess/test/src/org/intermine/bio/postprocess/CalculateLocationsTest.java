@@ -15,12 +15,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.List;
-import java.util.Arrays;
+import java.util.Set;
 
-import junit.framework.TestCase;
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.BioEntity;
@@ -29,14 +28,13 @@ import org.flymine.model.genomic.ChromosomeBand;
 import org.flymine.model.genomic.Contig;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.OverlapRelation;
 import org.flymine.model.genomic.PartialLocation;
 import org.flymine.model.genomic.ReversePrimer;
 import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
-import org.flymine.model.genomic.OverlapRelation;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.intermine.dataloader.IntegrationWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -54,7 +52,6 @@ import org.intermine.xml.full.ItemFactory;
 public class CalculateLocationsTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    private IntegrationWriter iw;
     private Chromosome chromosome = null;
     private ChromosomeBand band = null;
     private Location bandOnChr = null;
@@ -79,7 +76,6 @@ public class CalculateLocationsTest extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
                                                     .getSequence());
         LOG.error("created results");
@@ -190,8 +186,6 @@ public class CalculateLocationsTest extends TestCase {
         classesToIgnore.add("Primer=Exon");
         cl.createOverlapRelations(classesToIgnore, false);
 
-        ObjectStore os = osw.getObjectStore();
-
         ///////////////////////////////
 
         int [][] expectedOverlaps = {
@@ -265,8 +259,6 @@ public class CalculateLocationsTest extends TestCase {
         List classesToIgnore = new ArrayList();
         classesToIgnore.add("Primer");
         cl.createOverlapRelations(classesToIgnore, true);
-
-        ObjectStore os = osw.getObjectStore();
 
         ///////////////////////////////
 
@@ -2497,7 +2489,6 @@ Iterator chrBandExonIter = results.iterator();
 
 
     public void testCreateLocationNormal() throws Exception {
-        Chromosome chr = getChromosome();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
         int parentId = 101;
         parent.setId(new Integer(parentId));
@@ -2585,7 +2576,6 @@ Iterator chrBandExonIter = results.iterator();
     }
 
     public void testCreateLocationPartialChildStart() throws Exception {
-        Chromosome chr = getChromosome();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
         int parentId = 101;
         parent.setId(new Integer(parentId));
@@ -2687,7 +2677,6 @@ Iterator chrBandExonIter = results.iterator();
     }
 
     public void testCreateLocationParentRev() throws Exception {
-        Chromosome chr = getChromosome();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
         int parentId = 101;
         parent.setId(new Integer(parentId));
@@ -2775,7 +2764,6 @@ Iterator chrBandExonIter = results.iterator();
     }
 
     public void testCreateLocationChildRev() throws Exception {
-        Chromosome chr = getChromosome();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
         int parentId = 101;
         parent.setId(new Integer(parentId));
@@ -2864,7 +2852,6 @@ Iterator chrBandExonIter = results.iterator();
 
 
     public void testCreateLocationBothRev() throws Exception {
-        Chromosome chr = getChromosome();
         BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
         int parentId = 101;
         parent.setId(new Integer(parentId));

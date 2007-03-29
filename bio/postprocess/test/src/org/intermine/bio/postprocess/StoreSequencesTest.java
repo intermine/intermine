@@ -1,38 +1,33 @@
 package org.intermine.bio.postprocess;
 
-import junit.framework.TestCase;
-import junit.framework.Assert;
-
-import java.sql.*;
-import java.util.Iterator;
+import java.sql.SQLException;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import org.flymine.model.genomic.Contig;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.DynamicUtil;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.Database;
-import org.intermine.model.InterMineObject;
-
-import org.flymine.model.genomic.*;
-import org.apache.log4j.Logger;
+import org.intermine.util.DynamicUtil;
 
 public class StoreSequencesTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    private String ensemblDb = "db.ensembl-human";
     private Database db = null;
-
-    private static final Logger LOG = Logger.getLogger(StoreSequencesTest.class);
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");

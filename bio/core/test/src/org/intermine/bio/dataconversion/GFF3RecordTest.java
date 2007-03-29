@@ -3,14 +3,13 @@ package org.intermine.bio.dataconversion;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.bio.io.gff3.GFF3Record;
-
 import junit.framework.TestCase;
+
+import org.intermine.bio.io.gff3.GFF3Record;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -66,6 +65,7 @@ public class GFF3RecordTest extends TestCase
 
         try {
             GFF3Record gff3Record = new GFF3Record(gff);
+            gff3Record.toString();  // avoid eclipse warning
             fail("expected an IOException");
         } catch (IOException e) {
             // expected
@@ -79,8 +79,6 @@ public class GFF3RecordTest extends TestCase
         List synonym2ndList = (List) gff3Record.getAttributes().get("synonym_2nd");
 
         assertEquals("tRNA<up>Tyr</up><down>1&gamma;</down>", synonym2ndList.get(3));
-
-        String newGff = gff3Record.toGFF3();
         
         assertEquals(gff, gff3Record.toGFF3());
     }
@@ -92,7 +90,6 @@ public class GFF3RecordTest extends TestCase
         String gff =
             "X%26gamma%3BY\t.\tgene\t21115389\t21115496\t.\t+\t.\tID=CR32525";
         GFF3Record gff3Record = new GFF3Record(gff);
-        String id = gff3Record.getId();
         assertEquals("X&gamma;Y", gff3Record.getSequenceID());
     }
 }
