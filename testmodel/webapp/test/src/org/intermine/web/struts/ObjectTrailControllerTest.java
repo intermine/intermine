@@ -1,4 +1,4 @@
-package org.intermine.web.results;
+package org.intermine.web.struts;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -24,7 +24,6 @@ import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.results.ObjectTrailController;
 
 import org.apache.struts.tiles.ComponentContext;
 
