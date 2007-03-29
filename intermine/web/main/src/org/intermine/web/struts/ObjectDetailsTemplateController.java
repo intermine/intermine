@@ -21,12 +21,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.InlineTemplateTable;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for an inline table created by running a template on an object details page.

@@ -46,9 +46,9 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
 import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
 
 /**
  * calculates p-values of goterms

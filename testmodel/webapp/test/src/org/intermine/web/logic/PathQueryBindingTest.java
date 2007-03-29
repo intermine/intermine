@@ -10,6 +10,9 @@ package org.intermine.web.logic;
  *
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,20 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constraint;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.PathQueryBinding;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 /**
  * Tests for the PathQueryBinding class

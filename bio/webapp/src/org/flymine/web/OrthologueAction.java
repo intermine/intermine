@@ -34,12 +34,12 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.WebCollection;
 

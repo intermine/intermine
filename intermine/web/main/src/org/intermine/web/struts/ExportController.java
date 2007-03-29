@@ -26,11 +26,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TableExporter;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 import org.apache.log4j.Logger;
 

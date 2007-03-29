@@ -26,7 +26,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Task to write an XML file of a webapp userprofile object store.

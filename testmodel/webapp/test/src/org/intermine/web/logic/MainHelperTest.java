@@ -10,6 +10,9 @@ package org.intermine.web.logic;
  *
  */
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +20,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -29,23 +38,11 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.LogicExpression;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.PathQueryBinding;
-
-import org.intermine.metadata.Model;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-
-import junit.framework.TestCase;
+import org.intermine.web.logic.query.LogicExpression;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 /**
  * Tests for the MainHelper class

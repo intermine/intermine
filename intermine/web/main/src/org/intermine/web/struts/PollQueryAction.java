@@ -17,13 +17,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.QueryMonitor;
-import org.intermine.web.logic.QueryMonitorTimeout;
-import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.query.QueryMonitor;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -37,9 +36,9 @@ import org.apache.struts.action.ActionMessage;
  * Repeatedly poll the status of a running query and forward client to appropriate page
  * each time.
  *
- * @see org.intermine.web.logic.QueryMonitor
- * @see org.intermine.web.logic.QueryMonitorTimeout
- * @see org.intermine.web.logic.SessionMethods#runQuery
+ * @see org.intermine.web.logic.query.QueryMonitor
+ * @see org.intermine.web.logic.query.QueryMonitorTimeout
+ * @see org.intermine.web.logic.session.SessionMethods#runQuery
  * @author Thomas Riley
  */
 public class PollQueryAction extends InterMineAction

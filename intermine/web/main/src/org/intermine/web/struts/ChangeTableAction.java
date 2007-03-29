@@ -19,11 +19,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PageOutOfRangeException;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the

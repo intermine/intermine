@@ -25,12 +25,11 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that builds a PagedCollection to view a bag. Redirects to results.do

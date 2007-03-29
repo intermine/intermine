@@ -27,8 +27,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.SavedQuery;
 
 /**
  * Form bean to used in combining bags

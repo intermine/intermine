@@ -26,10 +26,10 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TableExporter;
+import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * An implementation of TableExporter that exports Employee objects.

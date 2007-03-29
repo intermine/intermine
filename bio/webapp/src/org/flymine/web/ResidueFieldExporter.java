@@ -42,8 +42,8 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.ExportException;
-import org.intermine.web.logic.FieldExporter;
+import org.intermine.web.logic.export.ExportException;
+import org.intermine.web.logic.export.FieldExporter;
 
 import org.apache.log4j.Logger;
 

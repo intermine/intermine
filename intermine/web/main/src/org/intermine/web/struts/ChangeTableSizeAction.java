@@ -20,10 +20,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.results.PageOutOfRangeException;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Changes the size of the results displayed.

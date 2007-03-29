@@ -22,10 +22,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.PathQueryBinding;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.web.logic.query.SavedQuery;
 
 /**
  * Action that results from a button press on the user profile page.

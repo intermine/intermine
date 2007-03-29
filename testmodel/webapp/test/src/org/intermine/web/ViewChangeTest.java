@@ -15,8 +15,8 @@ import java.util.HashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
 
 import servletunit.struts.MockStrutsTestCase;
 

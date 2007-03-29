@@ -16,13 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -32,13 +26,16 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.InitialiserPlugin;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.TagChecker;
-
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.struts.InitialiserPlugin;
 
 /**
  *

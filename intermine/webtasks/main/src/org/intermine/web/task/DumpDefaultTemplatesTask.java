@@ -28,8 +28,8 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Dump templates and configuration tags.

@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.profile.Profile;
 
 /**
  * @author Xavier Watkins

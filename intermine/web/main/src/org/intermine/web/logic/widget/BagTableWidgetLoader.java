@@ -36,11 +36,11 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.MainHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.ResultElement;
 
 /**

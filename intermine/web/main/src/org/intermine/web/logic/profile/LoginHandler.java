@@ -24,12 +24,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.InterMineException;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.SavedQuery;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 
 /**

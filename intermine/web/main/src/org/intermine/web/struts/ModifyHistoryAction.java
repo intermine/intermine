@@ -21,11 +21,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SavedQuery;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Actions for links on the history page. There are bag and query specific

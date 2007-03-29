@@ -1,5 +1,5 @@
 <%@ tag body-content="scriptless" %>
-<%@ attribute name="node" type="org.intermine.web.logic.MetadataNode" required="false" %>
+<%@ attribute name="node" type="org.intermine.web.logic.query.MetadataNode" required="false" %>
 <%@ attribute name="viewPaths" type="java.util.Map" required="false" %>
 <%@ attribute name="path" required="true" %>
 <%@ attribute name="idPrefix" required="true" %>

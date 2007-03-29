@@ -20,7 +20,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ProfileManager;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Form bean to represent the inputs needed to change a password from user input.

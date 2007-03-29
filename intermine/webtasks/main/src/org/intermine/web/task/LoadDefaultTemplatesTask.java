@@ -29,9 +29,9 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.RequestPasswordAction;
 
 /**

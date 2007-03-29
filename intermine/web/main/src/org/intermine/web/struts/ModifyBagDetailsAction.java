@@ -21,11 +21,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author Xavier Watkins

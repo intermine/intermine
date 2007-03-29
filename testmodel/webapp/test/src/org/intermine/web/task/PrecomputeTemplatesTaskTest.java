@@ -27,8 +27,8 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 import java.io.InputStream;
 

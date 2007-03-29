@@ -24,10 +24,10 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TemplateQuery;
 import org.intermine.web.logic.results.PageOutOfRangeException;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Sets up PagedTable

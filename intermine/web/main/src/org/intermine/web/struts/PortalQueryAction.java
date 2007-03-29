@@ -28,13 +28,12 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.QueryMonitorTimeout;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * The portal query action handles links into flymine from external sites.

@@ -21,13 +21,13 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.SavedQueryHandler;
-import org.intermine.web.logic.TagHandler;
-import org.intermine.web.logic.TemplateQueryHandler;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.bag.InterMineBagHandler;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.SavedQueryHandler;
+import org.intermine.web.logic.tagging.TagHandler;
+import org.intermine.web.logic.template.TemplateQueryHandler;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.FullParser;
 import org.xml.sax.Attributes;

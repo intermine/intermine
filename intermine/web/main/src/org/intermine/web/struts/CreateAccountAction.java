@@ -22,9 +22,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * @author Xavier Watkins

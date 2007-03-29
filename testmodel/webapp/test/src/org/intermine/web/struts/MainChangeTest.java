@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.struts.MainChange;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.struts.QueryBuilderChange;
 
 import junit.framework.TestCase;
 
@@ -50,7 +50,7 @@ public class MainChangeTest  extends TestCase
         query.getView().add("Employee.department.manager.company.address.address");
         query.getView().add("Employee.department.manager.company.name");
         query.getView().add("Employee.department.manager.company.address");
-        MainChange.removeNode(query, "Employee");
+        QueryBuilderChange.removeNode(query, "Employee");
 
         assertEquals(0, query.getNodes().keySet().size());
 
@@ -83,7 +83,7 @@ public class MainChangeTest  extends TestCase
         query.getView().add("Employee.department.manager.company.address.address");
         query.getView().add("Employee.department.manager.company.name");
         query.getView().add("Employee.department.manager.company.address");
-        MainChange.removeNode(query, "Employee.department");
+        QueryBuilderChange.removeNode(query, "Employee.department");
 
         List expectedNodes = Arrays.asList(new Object[] {
                                                "Employee",
@@ -120,7 +120,7 @@ public class MainChangeTest  extends TestCase
         query.getView().add("Employee.department.manager.company.address.address");
         query.getView().add("Employee.department.manager.company.name");
         query.getView().add("Employee.department.manager.company.address");
-        MainChange.removeNode(query, "Employee.department.manager");
+        QueryBuilderChange.removeNode(query, "Employee.department.manager");
 
         List expectedView = Arrays.asList(new Object[] {
                                               "Employee",
@@ -151,7 +151,7 @@ public class MainChangeTest  extends TestCase
         query.getView().add("Employee.department.manager.company.address.address");
         query.getView().add("Employee.department.manager.company.name");
         query.getView().add("Employee.department.manager.company.address");
-        MainChange.removeNode(query, "Employee.department.manager.company");
+        QueryBuilderChange.removeNode(query, "Employee.department.manager.company");
 
         List expectedView = Arrays.asList(new Object[] {
                                               "Employee",

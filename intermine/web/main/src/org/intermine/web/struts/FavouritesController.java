@@ -28,10 +28,10 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the favourites tile responsible for getting and displaying the

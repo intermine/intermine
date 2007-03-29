@@ -33,7 +33,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.TypeConverter;
 
 import javax.servlet.ServletContext;
 

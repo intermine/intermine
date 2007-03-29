@@ -136,7 +136,7 @@ public class PIUtil
     /**
      * @param pt the PagedTable containing the results 
      * @return true if exportable results were found
-     * @see org.intermine.web.logic.TableExporter#canExport
+     * @see org.intermine.web.logic.export.TableExporter#canExport
      */
     public static boolean canExport(PagedTable pt) {
         List columns = pt.getColumns();
