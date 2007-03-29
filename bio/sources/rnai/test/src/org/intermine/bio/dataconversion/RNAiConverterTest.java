@@ -12,17 +12,18 @@ package org.intermine.bio.dataconversion;
 
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.intermine.dataconversion.DataTranslatorTestCase;
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.xml.full.FullParser;
 
-public class RNAiConverterTest extends TestCase
+public class RNAiConverterTest extends ItemsTestCase
 {
+    
+    public RNAiConverterTest(String arg) {
+        super(arg);
+    }
+
     public void testProcess() throws Exception {
         String ENDL = System.getProperty("line.separator");
         String input = "WB Gene ID\t6239\tPubMed ID\tPhenotype\tPhenotype Desc\tRemark" + ENDL
@@ -36,13 +37,9 @@ public class RNAiConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-//        java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("worm-rnai_tgt.xml"));
-//        fw.write(org.intermine.xml.full.FullRenderer.render(itemWriter.getItems()));
-//        fw.close();
+        //writeItemsFile(itemWriter.getItems(), "worm-rnai-tgt-xml");
 
-        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/RNAiConverterTest.xml")));
-
-        System.err.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(expected), itemWriter.getItems()));
+        Set expected = readItemSet("test/RNAiConverterTest.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }

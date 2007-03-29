@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<items>
+  <item id="3_5" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0012699"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="3_6" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="Dpse\Gld"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="name" value="zerknullt"/>
+    <attribute name="organismDbId" value="FBgn0004053"/>
+    <attribute name="symbol" value="zen"/>
+    <reference name="organism" ref_id="1_1"/>
+  </item>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7237"/>
+  </item>
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="name" value="Glucose dehydrogenas"/>
+    <attribute name="organismDbId" value="FBgn0012699"/>
+    <attribute name="symbol" value="Dpse\Gld"/>
+    <reference name="organism" ref_id="1_2"/>
+  </item>
+  <item id="3_4" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="zerknullt 1"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="FlyBase"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0004053"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_3" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="zerknullt"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_7" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="Glucose dehydrogenas"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="zen"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+</items>

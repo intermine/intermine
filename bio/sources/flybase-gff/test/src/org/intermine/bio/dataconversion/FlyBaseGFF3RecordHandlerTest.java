@@ -10,32 +10,29 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.dataconversion.DataTranslatorTestCase;
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ReferenceList;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 
-import junit.framework.TestCase;
-
-public class FlyBaseGFF3RecordHandlerTest extends TestCase
+public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
 {
 
     Model tgtModel;
@@ -48,6 +45,12 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
     GFF3Converter converter;
     String tgtNs;
     ItemFactory itemFactory;
+
+    
+    
+    public FlyBaseGFF3RecordHandlerTest(String arg) {
+        super(arg);
+    }
 
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
@@ -208,11 +211,8 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
         converter.store();
         converter.close();
         // uncomment to write out a new target items file
-//        java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("flybase_cds_tgt.xml"));
-//        fw.write(org.intermine.xml.full.FullRenderer.render(tgtIw.getItems()));
-//        fw.close();
-        LinkedHashSet expected = new LinkedHashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml")));
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(expected, tgtIw.getItems()));
+        writeItemsFile(tgtIw.getItems(), "flybase_cds_tgt.xml");
+        Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml"); 
         assertEquals(expected, tgtIw.getItems());
     }
 
@@ -270,7 +270,7 @@ public class FlyBaseGFF3RecordHandlerTest extends TestCase
     }
     
     public void testHandleSynonyms() throws Exception{
-        String ENDL = System.getProperty("line.separator");
+//        String ENDL = System.getProperty("line.separator");
 //        String gff = "4\tFlyBase\tCDS\t100\t200\t.\t+\t.\tID=CDS_CG17469:2_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
 //            + "4\tFlyBase\tCDS\t300\t400\t.\t+\t.\tID=CDS_CG17469:3_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
 //            + "4\tFlyBase\tmRNA\t1223426\t1223545\t.\t+\t.\tID=FBtr0100348;Name=tran-2;" + ENDL;
