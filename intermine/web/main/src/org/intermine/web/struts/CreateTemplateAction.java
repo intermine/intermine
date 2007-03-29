@@ -27,18 +27,18 @@ import org.intermine.cache.InterMineCache;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Constraint;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
 import org.intermine.web.logic.ServletMethods;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TemplateBuildState;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
-import org.intermine.web.logic.TemplateRepository;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateBuildState;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateRepository;
 
 /**
  * Action to create a new TemplateQuery from current query.

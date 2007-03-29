@@ -20,9 +20,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.QueryMonitorTimeout;
-import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to run constructed query.

@@ -22,14 +22,14 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constraint;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
-import org.intermine.web.logic.TemplateQueryBinding;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateQueryBinding;
 import org.intermine.web.struts.TemplateForm;
 
 import java.io.InputStreamReader;

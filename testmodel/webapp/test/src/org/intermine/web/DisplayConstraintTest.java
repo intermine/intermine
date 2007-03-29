@@ -16,9 +16,9 @@ import java.util.HashSet;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.DisplayConstraint;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
 
 import servletunit.struts.MockStrutsTestCase;
 

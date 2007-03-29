@@ -39,13 +39,13 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.SavedQuery;
-import org.intermine.web.logic.TemplateQuery;
 import org.intermine.web.logic.bag.BagElement;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.template.TemplateQuery;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

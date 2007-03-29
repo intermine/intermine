@@ -19,9 +19,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.PathQueryBinding;
-import org.intermine.web.logic.Profile;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 /**
  * Form bean representing feedback form.

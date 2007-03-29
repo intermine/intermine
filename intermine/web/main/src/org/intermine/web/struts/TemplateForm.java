@@ -25,12 +25,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Constraint;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Form to handle input from the template page
@@ -285,7 +285,7 @@ public class TemplateForm extends ActionForm
                 } else {
                     Integer opIndex = Integer.valueOf((String) getAttributeOps(key));
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
-                    Object parseVal = MainForm.parseValue((String) attributeValues.get(key),
+                    Object parseVal = QueryBuilderForm.parseValue((String) attributeValues.get(key),
                                                         fieldClass, constraintOp, locale, errors);
                     if (parseVal instanceof String && appendWildcard) {
                          parseVal = ((String) parseVal) + "%";

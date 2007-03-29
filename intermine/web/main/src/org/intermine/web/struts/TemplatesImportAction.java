@@ -24,11 +24,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
-import org.intermine.web.logic.TemplateRepository;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateRepository;
 
 /**
  * Imports templates in XML format.

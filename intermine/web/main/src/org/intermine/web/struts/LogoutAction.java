@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that invalidates the user session effectively logging the user out of

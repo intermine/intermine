@@ -37,20 +37,20 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TableExporter;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.TableExportConfig;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.TableExporter;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedCollection;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that allows the user to export a PagedTable to a file

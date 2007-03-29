@@ -23,10 +23,10 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
 import org.intermine.web.logic.bag.BagElement;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
 
 /**
  * Action to save a single object o an existing bag.

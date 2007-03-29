@@ -25,10 +25,10 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.

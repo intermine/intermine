@@ -18,8 +18,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.TemplateBuildState;
+import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Action invoked when user submits general template settings form.

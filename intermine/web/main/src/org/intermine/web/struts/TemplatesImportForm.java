@@ -22,8 +22,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.TemplateHelper;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Form bean representing template import form.

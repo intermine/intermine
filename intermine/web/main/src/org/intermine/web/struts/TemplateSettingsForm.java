@@ -19,9 +19,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.TemplateBuildState;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Form used when building a template.

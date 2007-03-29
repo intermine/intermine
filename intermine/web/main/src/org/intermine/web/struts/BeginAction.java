@@ -17,7 +17,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
 
 /**
  * Display the query builder (if there is a curernt query) or redirect to project.sitePrefix.

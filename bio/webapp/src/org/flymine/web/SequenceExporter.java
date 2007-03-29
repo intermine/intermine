@@ -45,12 +45,12 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TableExporter;
+import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.WebCollection;
 
@@ -344,7 +344,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
     }
 
     /**
-     * @see org.intermine.web.logic.TableExporter#canExport(PagedTable)
+     * @see org.intermine.web.logic.export.TableExporter#canExport(PagedTable)
      */
     public boolean canExport(PagedTable pt) {
         return getFeatureColumn(pt) != null;

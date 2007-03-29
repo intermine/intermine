@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.struts.config.ExceptionConfig;
-import org.intermine.web.logic.InterMineExceptionHandler;
+import org.intermine.web.struts.InterMineExceptionHandler;
 
 import servletunit.struts.MockStrutsTestCase;
 

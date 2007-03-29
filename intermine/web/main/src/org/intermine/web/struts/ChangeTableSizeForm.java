@@ -15,8 +15,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean for changing the page size.

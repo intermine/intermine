@@ -31,11 +31,11 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
+import org.intermine.web.logic.profile.Profile;
 
 /**
  * An action that makes a bag from text.

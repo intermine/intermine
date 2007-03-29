@@ -27,11 +27,11 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.TemplateQuery;
-import org.intermine.web.logic.TemplateRepository;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateRepository;
 
 /**
  * Action that results from a button press on the user profile page.

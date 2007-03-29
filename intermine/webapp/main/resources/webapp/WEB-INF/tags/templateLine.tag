@@ -1,7 +1,7 @@
 <%@ tag body-content="empty"  %>
 
 <%@ attribute name="type" required="true" %>
-<%@ attribute name="templateQuery" required="true" type="org.intermine.web.logic.TemplateQuery" %>
+<%@ attribute name="templateQuery" required="true" type="org.intermine.web.logic.template.TemplateQuery" %>
 <%@ attribute name="className" required="false" type="java.lang.String" %>
 <%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
 <%@ attribute name="desc" required="false" type="java.lang.String" %>

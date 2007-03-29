@@ -23,10 +23,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Imports query in XML format and forward user to the query builder.

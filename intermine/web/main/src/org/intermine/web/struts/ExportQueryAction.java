@@ -25,11 +25,11 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.PathQueryBinding;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.web.logic.query.SavedQuery;
 
 /**
  * Export the current query in XML format.

@@ -30,15 +30,15 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Constraint;
-import org.intermine.web.logic.DisplayConstraint;
-import org.intermine.web.logic.MainHelper;
-import org.intermine.web.logic.PathNode;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.TemplateBuildState;
-import org.intermine.web.logic.TemplateHelper;
-import org.intermine.web.logic.TemplateQuery;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.template.TemplateBuildState;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the template tile. This tile can be used for real template

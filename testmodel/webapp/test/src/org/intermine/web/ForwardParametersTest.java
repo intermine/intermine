@@ -13,7 +13,7 @@ package org.intermine.web;
 import junit.framework.TestCase;
 
 import org.apache.struts.action.ActionForward;
-import org.intermine.web.logic.ForwardParameters;
+import org.intermine.web.struts.ForwardParameters;
 
 public class ForwardParametersTest extends TestCase
 {

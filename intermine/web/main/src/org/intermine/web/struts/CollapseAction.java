@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.SessionMethods;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * This action collapses/expands sections of the user interface.

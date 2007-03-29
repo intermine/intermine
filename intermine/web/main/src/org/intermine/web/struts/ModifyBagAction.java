@@ -32,11 +32,11 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags

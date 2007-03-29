@@ -45,10 +45,10 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Tiles controller for history tile (page).

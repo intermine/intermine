@@ -25,11 +25,10 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.Profile;
-import org.intermine.web.logic.ProfileManager;
 import org.intermine.web.logic.bag.BagElement;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action class for saving a bag from the bagUploadConfirm page into the user profile.

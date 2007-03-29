@@ -29,10 +29,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.FieldExporter;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.FieldExporter;
 
 /**
  * Provide an attribute value as a file

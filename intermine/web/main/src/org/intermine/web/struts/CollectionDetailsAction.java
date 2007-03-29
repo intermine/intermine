@@ -32,10 +32,9 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ForwardParameters;
-import org.intermine.web.logic.SessionMethods;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that creates a table of collection elements for display.

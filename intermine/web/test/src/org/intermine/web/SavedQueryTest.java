@@ -13,8 +13,8 @@ package org.intermine.web;
 import java.util.Date;
 
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.PathQuery;
-import org.intermine.web.logic.SavedQuery;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.SavedQuery;
 
 import junit.framework.TestCase;
 

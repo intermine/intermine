@@ -33,14 +33,14 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ProfileManager;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.TemplateRepository;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateRepository;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.
