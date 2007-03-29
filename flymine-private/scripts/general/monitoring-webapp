@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Automatically update itself (next call)
+if [ -d ~/svn/trunk/flymine-private/scripts/general ]
+then
+    cd ~/svn/trunk/flymine-private/scripts/general
+    svn up
+fi
+
+# Check function
+check ()
+{
+    RES="$RES | $1 "
+    if [ "`curl -L -s $2/ping.do?type=webapp`" = "OK" ]
+    then
+        RES="$RES OK"
+    else
+        RES="$RES KO"
+        KO=1
+    fi
+}
+    
+RES="Webapps "
+KO=0
+KOSTATUSFILE="/tmp/monitoring-webapp.flag"
+
+# List of webapp to monitor
+check "Current release" "http://www.flymine.org/query"
+check "Release 6.0" "http://www.flymine.org/release-6.0" 
+check "Release 5.0" "http://www.flymine.org/release-5.0" 
+check "Release 4.0" "http://www.flymine.org/release-4.0" 
+
+# Send alert if needed
+if [ $KO -eq 1 ]
+then
+    # Alert already sent
+    if [ ! -f $KOSTATUSFILE ]
+    then
+        echo $RES | mail -s "monitoring-webapp" francois@flymine.org
+        echo $RES | mail -s "monitoring-webapp" rns@flymine.org
+        echo $RES | mail -s "monitoring-webapp" kmr@flymine.org
+    fi
+else
+    # Clear alert
+    if [ -f $KOSTATUSFILE ]
+    then
+        rm $KOSTATUSFILE
+    fi
+fi
