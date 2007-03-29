@@ -1,19 +1,5 @@
 package org.intermine.web.history;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.SavedQuery;
-import org.intermine.web.logic.SessionMethods;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.template.TemplateQuery;
-//import org.intermine.web.bag.InterMineBag;
-
 import servletunit.struts.MockStrutsTestCase;
 
 public class ModifyQueryChangeActionTest extends MockStrutsTestCase

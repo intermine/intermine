@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.web.logic;
 
 import java.util.Arrays;
 import java.util.HashMap;

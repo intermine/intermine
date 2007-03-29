@@ -10,32 +10,12 @@ package org.intermine.web.results;
  *
  */
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 import org.intermine.metadata.Model;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
+
+import junit.framework.TestCase;
 
 public class PagedResultsTest extends TestCase
 {
