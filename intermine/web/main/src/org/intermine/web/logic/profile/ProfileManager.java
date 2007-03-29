@@ -717,8 +717,8 @@ public class ProfileManager
     protected Map makeTagCheckers(final Model model) {
         Map newTagCheckers = new HashMap();
         TagChecker fieldChecker = new TagChecker() {
-            void isValid(String tagName, String objectIdentifier, String type,
-                         UserProfile userProfile) {
+            public void isValid(String tagName, String objectIdentifier, String type,
+                                UserProfile userProfile) {
                 int dotIndex = objectIdentifier.indexOf('.');
                 if (dotIndex == -1) {
                     throw new RuntimeException("tried to tag an unknown field: "
@@ -757,16 +757,16 @@ public class ProfileManager
         newTagCheckers.put("attribute", fieldChecker);
 
         TagChecker templateChecker = new TagChecker() {
-            void isValid(String tagName, String objectIdentifier, String type,
-                         UserProfile userProfile) {
+            public void isValid(String tagName, String objectIdentifier, String type,
+                                UserProfile userProfile) {
                 // OK
             }
         };
         newTagCheckers.put("template", templateChecker);
 
         TagChecker classChecker = new TagChecker() {
-            void isValid(String tagName, String objectIdentifier, String type,
-                         UserProfile userProfile) {
+            public void isValid(String tagName, String objectIdentifier, String type,
+                                UserProfile userProfile) {
                 String className = objectIdentifier;
                 ClassDescriptor cd = model.getClassDescriptorByName(className);
                 if (cd == null) {
@@ -779,23 +779,3 @@ public class ProfileManager
         return newTagCheckers;
     }
 }
-
-/**
- * A class for check the validity of tags.
- * @author kmr
- */
-abstract class TagChecker
-{
-    /**
-     * Returns true if and only the given arguments are valid fields for a tag of this type.
-     * @param tagName the name of the new tag
-     * @param type the tag type (eg. "collection", "bag")
-     * @param objectIdentifier the String version of the identifier of the object to tag (eg.
-     * "Department.name")
-     * @param userProfile the UserProfile to associate this tag with
-     * @throws RuntimeException if the this parameters are inconsistent
-     */
-    abstract void isValid(String tagName, String type, String objectIdentifier,
-                          UserProfile userProfile);
-}
-
