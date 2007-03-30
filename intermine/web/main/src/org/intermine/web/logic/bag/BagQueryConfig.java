@@ -46,7 +46,7 @@ public class BagQueryConfig
      * @see #getExtraConstraintClassName()
      * @param extraConstraintClassName the class name
      */
-    public void setExtraConstrintClassName(String extraConstraintClassName) {
+    public void setExtraConstraintClassName(String extraConstraintClassName) {
         this.extraConstraintClassName = extraConstraintClassName;
     }
     

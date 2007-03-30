@@ -84,7 +84,7 @@ public class BagQueryHandler extends DefaultHandler
             className = attrs.getValue("class-name");
             constrainField = attrs.getValue("constrain-field");
             bagQueryConfig.setConnectField(connectField);
-            bagQueryConfig.setExtraConstrintClassName(className);
+            bagQueryConfig.setExtraConstraintClassName(className);
             bagQueryConfig.setConstrainField(constrainField);
         }
         if (qName.equals("bag-type")) {
