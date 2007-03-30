@@ -10,24 +10,25 @@ package org.intermine.web.logic.profile;
  *
  */
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
+
+import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-//import org.intermine.web.bag.InterMineBag;
-//import org.intermine.web.bag.InterMinePrimitiveBag;
-
-import junit.framework.TestCase;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.template.TemplateQuery;
 
 public class ProfileTest extends TestCase
 {
-    /*
     PathQuery query;
     SavedQuery sq;
     Date date = new Date();
@@ -35,6 +36,7 @@ public class ProfileTest extends TestCase
     TemplateQuery template;
     private Integer bobId = new Integer(101);
     private ObjectStore userprofileOS;
+    private ObjectStore objectstoreOS;
     ProfileManager profileManager;
 
     public ProfileTest(String arg) {
@@ -44,7 +46,9 @@ public class ProfileTest extends TestCase
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         userprofileOS = ObjectStoreFactory.getObjectStore("os.userprofile-test");
-        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
+        objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");
+        bag = new InterMineBag(bobId, "bob", "String", userprofileOS, objectstoreOS, Collections.singleton("testElement"));
+//        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")), false,
@@ -167,12 +171,11 @@ public class ProfileTest extends TestCase
     class DummyProfileManager extends ProfileManager
     {
         public DummyProfileManager(ObjectStore os) throws ObjectStoreException {
-            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"));
+            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"), new HashMap());
         }
 
         public void saveProfile(Profile profile) {
             throw new UnsupportedOperationException();
         }
     }
-    */
 }
