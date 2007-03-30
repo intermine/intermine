@@ -10,15 +10,6 @@ package org.intermine.modelproduction;
  *
  */
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Properties;
 
 import org.intermine.metadata.Model;
@@ -26,6 +17,23 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * Class to handle persistence of an intermine objectstore's metadata to the objectstore's database
@@ -210,16 +218,22 @@ public class MetadataManager
             filename = modelName + "_" + key;
         }
         if (MODEL.equals(key)) {
-            return filename += ".xml";
+            return filename + ".xml";
         } else if (KEY_DEFINITIONS.equals(key)
                    || CLASS_KEYS.equals(key)
                    /* || CLASS_DESCRIPTIONS.equals(key)*/) {
-            return filename += ".properties";
+            return filename + ".properties";
         }
         throw new IllegalArgumentException("Unrecognised key '" + key + "'");
     }
 
     private static void write(String string, File file) throws IOException {
+        if (file.exists()
+            && IOUtils.contentEquals(new FileReader(file), new StringReader(string))) {
+            System.err .println("Not writing \"" + file.getName()
+                                + "\" as version in database is identical to local copy");
+            return;
+        }
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(string);
         writer.close();
