@@ -10,6 +10,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Department;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.bag.BagQuery;
 import org.intermine.web.logic.bag.BagQueryConfig;
@@ -19,10 +20,9 @@ public class BagQueryHelperTest extends TestCase {
 	
 	Model model;
 	Map classKeys;
-    BagQueryConfig bagQueryConfig = 
-        new BagQueryConfig(new HashMap());
-    BagQueryConfig bagQueryConfigWithExtraConstraint = 
-        new BagQueryConfig(new HashMap());
+    BagQueryConfig bagQueryConfig = new BagQueryConfig(new HashMap());
+    BagQueryConfig bagQueryConfigWithExtraConstraint = new BagQueryConfig(new HashMap());
+    
 	public BagQueryHelperTest(String arg0) {
 		super(arg0);
 	}
@@ -33,6 +33,9 @@ public class BagQueryHelperTest extends TestCase {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, props);
+        bagQueryConfigWithExtraConstraint.setConnectField("department");
+        bagQueryConfigWithExtraConstraint.setExtraConstraintClassName(Department.class.getName());
+        bagQueryConfigWithExtraConstraint.setConstrainField("name");
     }
 
 	public void testCreateDefaultBagQuerySingle() throws Exception {
