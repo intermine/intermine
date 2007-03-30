@@ -18,6 +18,7 @@ import java.util.Set;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -30,7 +31,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InterMineBagHandler extends DefaultHandler
 {
-
+    private static final Logger LOG = Logger.getLogger(InterMineBagHandler.class);
+    
     private ObjectStore uos;
     private ObjectStore os;
     private Map bags;
@@ -42,6 +44,7 @@ public class InterMineBagHandler extends DefaultHandler
     private InterMineBag bag;
     private Map idToObjectMap;
     private IdUpgrader idUpgrader;
+    private int elementsInOldBag;
     
     /**
      * Create a new InterMineBagHandler object.
@@ -82,6 +85,7 @@ public class InterMineBagHandler extends DefaultHandler
             }
 
             if (qName.equals("bagElement")) {
+                elementsInOldBag++;
                 String type = attrs.getValue("type");
                 Integer id = new Integer(attrs.getValue("id"));
 
@@ -116,7 +120,10 @@ public class InterMineBagHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("bag")) {
             bags.put(bagName, bag);
+            LOG.error("XML bag \"" + bagName + "\" contained " + elementsInOldBag 
+                      + " elements, created bag with " + bag.size() + " elements");
             bag = null;
+            elementsInOldBag = 0;
         }
     }
 }
