@@ -119,7 +119,9 @@ public class InterMineBagHandler extends DefaultHandler
      */
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("bag")) {
-            bags.put(bagName, bag);
+            if (bag.size() > 0) {
+                bags.put(bagName, bag);
+            }
             LOG.error("XML bag \"" + bagName + "\" contained " + elementsInOldBag 
                       + " elements, created bag with " + bag.size() + " elements");
             bag = null;
