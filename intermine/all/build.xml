@@ -1,5 +1,5 @@
 
-<project name="intermine-all" default="default" basedir="."
+<project name="test-all" default="default" basedir="."
   xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1">
   
   <description>wrapper project for build/testing/cleaning everything</description>
@@ -27,7 +27,7 @@
       <fileset dir="../.." includes="intermine/integrate/test/build.xml"/>
       <fileset dir="../.." includes="intermine/web/test/build.xml"/>
       <fileset dir="../.." includes="testmodel/webapp/test/build.xml"/>
-      <fileset dir="../.." includes="testmodel/webservice/test/build.xml"/>
+<!--      <fileset dir="../.." includes="testmodel/webservice/test/build.xml"/>-->
     </subant>
   </target>
   
