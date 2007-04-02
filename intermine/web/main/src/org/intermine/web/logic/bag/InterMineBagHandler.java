@@ -123,7 +123,8 @@ public class InterMineBagHandler extends DefaultHandler
                 bags.put(bagName, bag);
             }
             LOG.error("XML bag \"" + bagName + "\" contained " + elementsInOldBag 
-                      + " elements, created bag with " + bag.size() + " elements");
+                      + " elements, created bag with " + (bag == null ? "null" : "" + bag.size())
+                      + " elements");
             bag = null;
             elementsInOldBag = 0;
         }
