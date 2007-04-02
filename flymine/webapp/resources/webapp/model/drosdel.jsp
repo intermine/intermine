@@ -14,7 +14,10 @@
 
 	<p>
 	Note: The DrosDel data has been re-mapped to
-	genome sequence release 5.0 as of FlyMine release 7.0. 
+	genome sequence release 5.0 as of FlyMine release 7.0,
+	however, coordinates for the Exelixis set are still to genomce
+	sequence release 4.0.  These will be updated to release 5.0 in the
+	next release of FlyMine.
 	</p>
 
         <p>
