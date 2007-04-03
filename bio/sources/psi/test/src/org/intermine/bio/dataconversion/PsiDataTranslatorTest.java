@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import org.intermine.dataconversion.DataTranslator;
@@ -23,7 +22,6 @@ import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.XmlConverter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.FullParser;
 
 public class PsiDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
@@ -36,9 +34,7 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         Collection srcItems = getSrcItems();
 
         // print out source items XML - result of running XmlConverter on PSI XML
-//        java.io.FileWriter writer = new java.io.FileWriter(new java.io.File("src.xml"));
-//        writer.write(org.intermine.xml.full.FullRenderer.render(srcItems));
-//        writer.close();
+        //writeItemsFile(srcItems, "psi-src-items.xml");
         String organisms = "7227 4932";
         DataTranslator translator = new PsiDataTranslator(new MockItemReader(writeItems(srcItems)),
                                                           mapping, srcModel, getTargetModel(tgtNs));
@@ -46,19 +42,10 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
+        // uncomment to write a new target items file
+        //writeItemsFile(tgtIw.getItems(), "psi-tgt-items.xml");
 
-        //Use to write out the translated file if you want to make a new tgts file for testing
-
-//         java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("psi_tgts.xml"));
-//         fw.write("<items>");
-//         fw.write(tgtIw.getItems().toString());
-//         fw.write("</items>");
-//         fw.flush();
-//         fw.close();
-
-        System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
-
-        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
+        assertEquals(readItemSet("test/PsiDataTranslatorTest_tgt.xml"), tgtIw.getItems());
     }
 
 
@@ -68,11 +55,6 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
     protected String getSrcModelName() {
         return "psi";
-    }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream(
-                "test/PsiDataTranslatorTest_tgt.xml"));
     }
 
     protected Collection getSrcItems() throws Exception {
@@ -85,10 +67,6 @@ public class PsiDataTranslatorTest extends DataTranslatorTestCase {
 
         XmlConverter converter = new XmlConverter(psiModel, xsdReader, mockIw);
         converter.process(srcReader);
-//         FileWriter fw = new FileWriter(new File("psi_tmp.xml"));
-//         fw.write(mockIw.getItems());
-//         fw.flush();
-//         fw.close();
         return mockIw.getItems();
     }
 }

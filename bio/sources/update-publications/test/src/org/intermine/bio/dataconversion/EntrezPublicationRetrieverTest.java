@@ -10,29 +10,33 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import junit.framework.Assert;
+
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullParser;
-import org.intermine.dataconversion.DataTranslatorTestCase;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 /**
  * Tests for EntrezOrganismRetriever.
  */
-public class EntrezPublicationRetrieverTest extends TestCase
+public class EntrezPublicationRetrieverTest extends ItemsTestCase
 {
+    
+    
+    public EntrezPublicationRetrieverTest(String arg) {
+        super(arg);
+    }
+
     public void testEntrezPublicationRetriever() throws Exception {
         EntrezPublicationsRetriever eor = new TestEntrezPublicationsRetriever();
         eor.setOsAlias("os.bio-test");
@@ -46,12 +50,10 @@ public class EntrezPublicationRetrieverTest extends TestCase
 
         eor.execute();
 
-        List expected = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_tgt.xml"));
-
+        Set expected = readItemSet("EntrezPublicationsRetrieverTest_tgt.xml");
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(expected), new HashSet(actual)));
-        Assert.assertEquals(new HashSet(expected), new HashSet(actual));
+        Assert.assertEquals(expected, new HashSet(actual));
     }
 
     class TestEntrezPublicationsRetriever extends EntrezPublicationsRetriever

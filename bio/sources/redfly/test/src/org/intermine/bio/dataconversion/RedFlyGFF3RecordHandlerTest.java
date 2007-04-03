@@ -10,8 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -22,20 +23,10 @@ import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * Tests for the RedFlyGFF3RecordHandler class.
@@ -73,7 +64,10 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
 
     }
 
-
+    public void tearDown() throws Exception {
+        converter.close();
+    }
+    
     public void testFlyRegHandler() throws Exception {
         String gff =
             "2L\tREDfly\tregulatory_region\t12092691\t12095792\t.\t.\t.\tID=\"prd_A8_repressor\"; Dbxref=\"Flybase:FBgn0003145\", \"PMID:7873402\", \"REDfly:391\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00000111\",\"FBbt:00005427\",\"FBbt:00005414\"\n"

@@ -10,15 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.StringReader;
 import java.util.HashMap;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.xml.full.FullRenderer;
 
 public class FlyBaseGeneNamesConverterTest extends ItemsTestCase
 {

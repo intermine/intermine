@@ -10,9 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
+import org.intermine.dataconversion.ItemsTestCase;
 
-public class KeggPathwayConverterTest extends TestCase
+public class KeggPathwayConverterTest extends ItemsTestCase
 {
     private String ENDL = System.getProperty("line.separator");
 

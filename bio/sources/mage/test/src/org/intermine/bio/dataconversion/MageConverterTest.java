@@ -10,59 +10,35 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.*;
-
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.File;
-import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Iterator;
 
-import org.biomage.BioSequence.BioSequence;
-import org.biomage.Description.OntologyEntry;
-import org.biomage.Description.DatabaseEntry;
-import org.biomage.BioSequence.SeqFeature;
-import org.biomage.tools.xmlutils.*;
-import org.biomage.DesignElement.Feature;
-import org.biomage.BioAssayData.FeatureDimension;
-import org.biomage.DesignElement.FeatureLocation;
-import org.biomage.QuantitationType.MeasuredSignal;
-import org.biomage.BioAssayData.QuantitationTypeDimension;
-import org.biomage.BioAssayData.MeasuredBioAssayData;
-import org.biomage.BioAssayData.DerivedBioAssayData;
-import org.biomage.BioAssay.MeasuredBioAssay;
-import org.biomage.BioAssayData.BioAssayDimension;
-import org.biomage.BioAssayData.BioDataCube;
-import org.biomage.BioAssayData.DataExternal;
-import org.biomage.Common.MAGEJava;
-import org.biomage.BioSequence.BioSequence_package;
-import org.biomage.BioSequence.BioSequence;
-
+import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.bio.dataconversion.MageConverter;
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
 
-public class MageConverterTest extends TestCase
+public class MageConverterTest extends ItemsTestCase
 {
     MageConverter converter;
     String ns = "http://www.intermine.org/model/mage#";
     File f = null;
+
+    
+    
+    public MageConverterTest(String arg) {
+        super(arg);
+    }
 
     public void setUp() throws Exception {
         converter = new MageConverter(new MockItemWriter(new HashMap()));
@@ -95,15 +71,8 @@ public class MageConverterTest extends TestCase
         System.err.println("refMap " + mc.refMap);
         mc.close();
 
-        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().
-                 getResourceAsStream("MAGEConverterTest.xml")));
-        String expectedNotActual = "in expected, not actual: " + compareItemSets(expected, itemWriter.getItems());
-        String actualNotExpected = "in actual, not expected: " + compareItemSets(itemWriter.getItems(), expected);
+        Set expected = readItemSet("MAGEConverterTest.xml");
 
-        if (expectedNotActual.length() > 25) {
-            System.out.println(expectedNotActual);
-            System.out.println(actualNotExpected);
-        }
         assertEquals(expected, itemWriter.getItems());
     }
 
@@ -129,22 +98,6 @@ public class MageConverterTest extends TestCase
 
     }
 
-    //ignore this test, MAGEJava has deprecated setNameByValueBasis
-   //   public void testCreateItemReferenceInnerClass() throws Exception {
-//          converter.seenMap = new LinkedHashMap();
-
-//          SeqFeature s1 = new SeqFeature();
-//          s1.setNameByValueBasis(2);
-
-//          Item expected = new Item();
-//          expected.setClassName(ns + "SeqFeature");
-//          expected.setIdentifier("0_0");
-//          expected.setAttribute("basis", "both");
-//          expected.setAttribute("nameBasis", "both");
-//          expected.setAttribute("valueBasis", "2");
-
-//          assertEquals(expected, converter.createItem(s1));
-//      }
 
     public void testCreateItemReference() throws Exception {
         converter.seenMap = new LinkedHashMap();
@@ -383,26 +336,9 @@ public class MageConverterTest extends TestCase
         return item;
     }
 
-
     public void testDuplicateQuotes() throws Exception {
         String s1 = "something \"quoted\"";
         String s2 = converter.escapeQuotes(s1);
         assertEquals("something \\\"quoted\\\"", s2);
-    }
-
-    protected Set compareItemSets(Set a, Set b) {
-        Set diff = new HashSet(a);
-        Iterator i = a.iterator();
-        while (i.hasNext()) {
-            Item itemA = (Item) i.next();
-            Iterator j = b.iterator();
-            while (j.hasNext()) {
-                Item itemB = (Item) j.next();
-                if (itemA.equals(itemB)) {
-                    diff.remove(itemA);
-                }
-            }
-        }
-        return diff;
     }
 }

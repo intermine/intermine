@@ -10,23 +10,17 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
@@ -89,17 +83,10 @@ public class GoConverterTest extends ItemsTestCase
         converter.process(reader);
         converter.close();
 
-        if(verbose){
-            System.out.println(DataTranslatorTestCase.printCompareItemSets(
-                    new HashSet(getExpectedItems(tgtFile)), writer.getItems()));
-        }
-
-        assertEquals(new HashSet(getExpectedItems(tgtFile)), writer.getItems());
-
-        if(writeItemFile){
-            writeItemCollectionOutToFile(
-                    getExpectedItems(tgtFile), "GoConverterTestItemFile", "xml", true);
-        }
+        // uncomment to write a new target items file
+        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        
+        assertEquals(readItemSet(tgtFile), writer.getItems());
     }
 
 
@@ -121,40 +108,5 @@ public class GoConverterTest extends ItemsTestCase
         organism.setAttribute("taxonId", "7227");
         assertEquals(expected, converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10"));
-    }
-
-    protected Collection getExpectedItems(String targetFile) throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream(targetFile));
-    }
-
-    /*
-        Use this to write out a test file for comparing the source data with...
-    */
-    private void writeItemCollectionOutToFile(
-            Collection itemCollection, String fileName, String suffix, boolean includeItemsTag){
-
-        try {
-            File itemLogFile =File.createTempFile(fileName, suffix);
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(itemLogFile, true));
-
-            if(includeItemsTag){
-                writer.write("<items>\n");
-            }
-
-            for( Iterator icit = itemCollection.iterator(); icit.hasNext(); ){
-                writer.write(icit.next().toString() + "\n");
-            }
-
-            if(includeItemsTag){
-                writer.write("</items>\n\n");
-            }
-
-            writer.flush();
-            writer.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

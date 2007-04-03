@@ -9,25 +9,28 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  */
 
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
-
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.metadata.Model;
-//import org.intermine.modelproduction.xml.InterMineModelParser;
-import org.intermine.bio.dataconversion.EnsemblDataTranslator;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
-
-import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 
 public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
@@ -62,12 +65,9 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         translator.translate(tgtIw);
 
         // uncomment to write out a new target items file
-        //FileWriter writer = new FileWriter(new File("ensembl_tgt.xml"));
-        //writer.write(FullRenderer.render(tgtIw.getItems()));
-        //writer.close();
+        //writeItemsFile(tgtIw.getItems(), "ensembl-tgt-items.xml");
 
-        System.out.println(printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
-        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
+        assertEquals(readItemSet("EnsemblDataTranslatorFunctionalTest_tgt.xml"), tgtIw.getItems());
     }
 
 
@@ -124,12 +124,8 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(expected, translator.translateItem(gene));
     }
 
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("EnsemblDataTranslatorFunctionalTest_tgt.xml"));
-    }
-
     protected Collection getSrcItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("EnsemblDataTranslatorFunctionalTest_src.xml"));
+        return readItemSet("EnsemblDataTranslatorFunctionalTest_src.xml");
     }
 
     protected String getModelName() {
@@ -142,17 +138,11 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     private Item createSrcItem(String clsName, String identifier, String imps) {
         Item item = ensemblItemFactory.makeItem(identifier, clsName, imps);
-        item.setClassName(clsName);
-        item.setIdentifier(identifier);
-        item.setImplementations(imps);
         return item;
     }
 
     private Item createTgtItem(String clsName, String identifier, String imps) {
         Item item = genomicItemFactory.makeItem(identifier, clsName, imps);
-        item.setClassName(clsName);
-        item.setIdentifier(identifier);
-        item.setImplementations(imps);
         return item;
     }
 

@@ -10,28 +10,22 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.Properties;
-import java.util.Iterator;
+import java.util.TreeSet;
 
+import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemReader;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.bio.dataconversion.ArbeitmanAssayHandler;
-import org.intermine.bio.dataconversion.MageDataTranslator;
-import org.intermine.dataconversion.MockItemReader;
 
-public class ArbeitmanAssayHandlerTest extends TestCase
+public class ArbeitmanAssayHandlerTest extends ItemsTestCase
 {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
     private ItemFactory itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
@@ -81,7 +75,7 @@ public class ArbeitmanAssayHandlerTest extends TestCase
         // TODO this line should work but doesn't, possibly a problem with
         // class loaders - comparing and object created in parent class loader
         // to one from a class instantiated by reflection.
-        //assertEquals(expAssay1, (Item) translator.assays.get("0_1"));
+        assertEquals(expAssay1, (Item) translator.assays.get("0_1"));
     }
 
     public void testAssayOrder() throws Exception {
