@@ -6,33 +6,22 @@
 	<classpathentry exported="true" kind="lib" path="lib/castor-0.9.5.3-xml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/cglib-full-2.0.1-patched.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-beanutils-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-digester.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-discovery.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/icu4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jakarta-oro.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxrpc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jena-2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/libreadline-java.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/postgresql.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saaj.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/stax-ri-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/torque-3.2-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/torque-gen-3.2-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/wsdl4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xercesImpl-2.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/nsuml.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.1-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6-caching.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-3.0.17-ga-bin.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/biojava-1.4cvs.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

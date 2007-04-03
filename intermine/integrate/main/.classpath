@@ -5,6 +5,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="src" path="/fulldata"/>
 	<classpathentry exported="true" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry kind="lib" path="/ant-tasks/lib/ant-1.6.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="/ant-tasks/lib/ant-1.6.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/icu4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jakarta-oro.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jena-2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/stax-ri-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
