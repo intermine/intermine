@@ -1,25 +1,17 @@
 <userprofiles>
   <userprofile username="bob" password="bob_pass">
+    <items>
+      <item id="1" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+        <attribute name="name" value="DepartmentA1"/>
+      </item>
+      <item id="2" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+        <attribute name="name" value="DepartmentB1"/>
+      </item>
+    </items>
     <bags>
-      <bag name="bag1">
-        <row>
-          <element type="java.lang.String" value="foo1"/>
-        </row>
-        <row>
-        <element type="java.lang.String" value="foo2"/>
-        </row>
-        <row>
-        <element type="java.lang.String" value="foo3"/>
-        </row>
-        <row>
-        <element type="java.lang.Integer" value="100"/>
-        </row>
-        <row>
-        <element type="java.lang.Boolean" value="true"/>
-        </row>
-        <row>
-        <element type="java.lang.Float" value="1.1"/>
-        </row>
+      <bag name="bag1" type="org.intermine.model.testmodel.Department">
+        <bagElement id="1" type="org.intermine.model.testmodel.Department"/>
+        <bagElement id="2" type="org.intermine.model.testmodel.Department"/>
       </bag>
     </bags>
     <queries>
@@ -46,26 +38,10 @@
       <item id="2" class="" implements="http://www.intermine.org/model/testmodel#Company">
         <attribute name="name" value="CompanyB"/>
         <attribute name="vatNumber" value="5678"/>
-        <collection name="contractors">
-          <reference ref_id="3"/>
-          <reference ref_id="4"/>
-        </collection>
-        <collection name="departments">
-          <reference ref_id="1006"/>
-          <reference ref_id="7"/>
-        </collection>
-        <collection name="oldContracts">
-          <reference ref_id="3"/>
-          <reference ref_id="4"/>
-        </collection>
       </item>
       <item id="1006" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
         <attribute name="name" value="DepartmentB1"/>
         <reference name="company" ref_id="2"/>
-        <collection name="employees">
-          <reference ref_id="1011"/>
-          <reference ref_id="1012"/>
-        </collection>
       </item>
       <item id="1010" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
         <attribute name="age" value="30"/>
@@ -95,29 +71,15 @@
       </item>
     </items>
     <bags>
-      <bag name="sally_bag1">
-        <row>
-          <element type="java.lang.String" value="some value"/>
-        </row>
+      <bag name="sally_bag1" type="org.intermine.model.testmodel.Department">
+          <bagElement type="org.intermine.model.testmodel.Department" id="1006"/>
       </bag>
-      <bag name="sally_bag2">
-        <row>
-          <element type="java.lang.Integer" value="123"/>
-        </row>
+      <bag name="sally_bag2" type="org.intermine.model.testmodel.CEO">
+          <bagElement type="org.intermine.model.testmodel.CEO" id="1011"/>
       </bag>
-      <bag name="sally_bag3">
-        <row>
-          <element type="org.intermine.model.InterMineObject" value="1010"/>
-        </row>
-        <row>
-          <element type="org.intermine.model.InterMineObject" value="1011"/>
-        </row>
-        <row>
-          <element type="org.intermine.model.InterMineObject" value="1012"/>
-        </row>
-        <row>
-          <element type="org.intermine.model.InterMineObject" value="1006"/>
-        </row>
+      <bag name="sally_bag3" type="org.intermine.model.testmodel.Employee">
+          <bagElement type="org.intermine.model.testmodel.Employee" id="1010"/>
+          <bagElement type="org.intermine.model.testmodel.Employee" id="1012"/>
       </bag>
     </bags>
     <queries>
