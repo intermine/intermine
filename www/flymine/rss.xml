@@ -10,6 +10,21 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 7.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 7.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 7.0 updates the
+        &lt;i&gt;D. melanogaster&lt;/i&gt; genome to version 5.1.  All
+        dependent data sources have been remapped.  New viewers have been
+        added to the gene bag details pages.
+      </description>
+      <pubDate>Tue,  3rd Apr 2007 16:00 GMT</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine 6.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
