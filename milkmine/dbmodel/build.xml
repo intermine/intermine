@@ -13,8 +13,5 @@
     <merge-additions file="bio/sources/ensembl/ensembl_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/sources/milk_prots/milk_prots_additions.xml"/>
-    <merge-additions file="bio/sources/milk_peptides/milk_peptides_additions.xml"/> 
-    <merge-additions file="bio/sources/text-mining/text-mining_additions.xml"/> 
-    <merge-additions file="bio/sources/semantic_types/semantic_types_additions.xml"/>
   </target>
 </project>

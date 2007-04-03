@@ -11,6 +11,6 @@
 	<classpathentry kind="src" path="/fulldata"/>
 	<classpathentry kind="src" path="/testmodel"/>
 	<classpathentry kind="src" path="/intermine-objectstore-test"/>
-	<classpathentry kind="lib" path="/testmodel/dist/testmodel.jar"/>
+	<classpathentry exported="true" kind="lib" path="/testmodel/dist/testmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
