@@ -51,7 +51,6 @@ public abstract class ItemsTestCase extends TestCase
         if (!checkItemSet(a) || ! checkItemSet(b)) {
             TestCase.assertEquals(a, b);
             return;
-
         }
 
         String message = compareItemSets(a, b, false);
@@ -80,7 +79,6 @@ public abstract class ItemsTestCase extends TestCase
             throw new IllegalArgumentException("Comparing sets that contains objects that "
                                                + "aren't Items: a = " + a + ", b = " + b);
         }
-        
         
         // now have compatible collections of items, compare them
         StringBuffer message = new StringBuffer();

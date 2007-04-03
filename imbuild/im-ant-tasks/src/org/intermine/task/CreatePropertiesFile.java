@@ -116,10 +116,10 @@ public class CreatePropertiesFile extends Task
         fw.write(results.toString());
         fw.close();
         
-        System.out.println("" +
-                "### Done\n" +
-                "### I've also written these default property values:\n" +
-                others);
+        System.out .println(""
+                + "### Done\n"
+                + "### I've also written these default property values:\n"
+                + others);
         
     }
     

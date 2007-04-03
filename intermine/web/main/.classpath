@@ -10,19 +10,13 @@
 	<classpathentry exported="true" kind="lib" path="lib/mail.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jstl-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-validator.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/activation.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry exported="true" kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/struts.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/highlighter-dev.jar"/>
 	<classpathentry kind="src" path="build/gen/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/dwr.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/lucene-core-2.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/lucene-highlighter-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/taglibs-string.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xalan.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/base64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.6.jar"/>

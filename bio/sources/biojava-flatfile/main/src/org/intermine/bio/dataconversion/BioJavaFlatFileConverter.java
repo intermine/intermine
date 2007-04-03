@@ -171,7 +171,7 @@ public class BioJavaFlatFileConverter extends FileConverter
             getUniqueName(translationFeatures, geneIdentifier + "_translation");
         translation.setAttribute("identifier", translationName);
         translationFeatures.put(translationName, translation);
-        translation.setReference("transcript", mRNA);
+        translation.setReference("MRNA", mRNA);
         mRNA.setReference("translation", translation);
         cds.setReference("translation", translation);
 

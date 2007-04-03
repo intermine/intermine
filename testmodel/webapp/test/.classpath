@@ -14,23 +14,17 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry kind="lib" path="lib/jwebunit-core-1.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
-	<classpathentry kind="lib" path="lib/avalon-framework-4.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-io-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-1.9.jar"/>
-	<classpathentry kind="lib" path="lib/icu4j-2.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxen-1.1-beta-9.jar"/>
 	<classpathentry kind="lib" path="lib/js-1.6R2.jar"/>
 	<classpathentry kind="lib" path="lib/jwebunit-htmlunit-plugin-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/logkit-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/nekohtml-0.9.5.jar"/>
 	<classpathentry kind="lib" path="lib/regexp-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/tagsoup-0.9.7.jar"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="/testmodel-webapp-main/resources/webapp"/>
 	<classpathentry kind="lib" path="/testmodel-webapp-main/build/webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
