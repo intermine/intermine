@@ -10,27 +10,15 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.io.BufferedReader;
 import java.io.StringReader;
-import java.io.InputStreamReader;
-import java.io.FileWriter;
-import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.dataconversion.DataTranslatorTestCase;
-import org.intermine.dataconversion.MockItemWriter;
+
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemWriter;
 
-public class FlyAtlasConverterTest extends TestCase
+public class FlyAtlasConverterTest extends ItemsTestCase
 {
-    private String ENDL = System.getProperty("line.separator");
-
     public FlyAtlasConverterTest(String arg) {
         super(arg);
     }
@@ -50,15 +38,8 @@ public class FlyAtlasConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("flyatlas_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
-        //fw.close();
-
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
-        assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
-    }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("test/FlyAtlasConverterTest.xml"));
+        writeItemsFile(itemWriter.getItems(), "flyatlas-tgt-items.xml");
+            
+        assertEquals(readItemSet("test/FlyAtlasConverterTest.xml"), itemWriter.getItems());
     }
 }

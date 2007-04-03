@@ -10,24 +10,15 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import org.intermine.dataconversion.DataTranslatorTestCase;
-import org.intermine.dataconversion.FileConverter;
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-
-import java.io.File;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 
-import junit.framework.TestCase;
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemWriter;
 
-public class UniprotKeywordConverterTest extends TestCase
+public class UniprotKeywordConverterTest extends ItemsTestCase
 {
 
     public UniprotKeywordConverterTest(String arg) {
@@ -42,22 +33,14 @@ public class UniprotKeywordConverterTest extends TestCase
 
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UniprotKeywordImporterTest_src.xml"));
 
-
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new UniprotKeywordConverter(itemWriter);
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("uniprotKeyword_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
-        //fw.close();
+        //writeItemsFile(itemWriter.getItems(), "uniprotKeyword_tgt.xml");
 
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), itemWriter.getItems()));
-        assertEquals(new HashSet(getExpectedItems()), itemWriter.getItems());
-    }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("UniprotKeywordImporterTest_tgt.xml"));
+        assertEquals(readItemSet("UniprotKeywordImporterTest_tgt.xml"), itemWriter.getItems());
     }
 }

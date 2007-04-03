@@ -10,25 +10,24 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.apache.commons.io.IOUtils;
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.xml.full.FullParser;
 
 /**
  * BDGP clone converter functional test.
  * @author Richard Smith
  */
-public class BDGPCloneConverterTest extends TestCase
+public class BDGPCloneConverterTest extends ItemsTestCase
 {
+    
+    
+    public BDGPCloneConverterTest(String arg) {
+        super(arg);
+    }
 
     public void testProcess() throws Exception {
         String ENDL = System.getProperty("line.separator");
@@ -41,7 +40,7 @@ public class BDGPCloneConverterTest extends TestCase
         converter.process(new StringReader(input));
         converter.close();
 
-        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("BDGPCloneConverterTest.xml")));
+        Set expected = readItemSet("BDGPCloneConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }

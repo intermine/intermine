@@ -10,22 +10,22 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.HashSet;
 
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.dataconversion.DataTranslatorTestCase;
+import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 
-public class FlyRNAiScreenConverterTest extends TestCase
+public class FlyRNAiScreenConverterTest extends ItemsTestCase
 {
+    
+    
+    public FlyRNAiScreenConverterTest(String arg) {
+        super(arg);
+    }
+
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter);
@@ -37,16 +37,9 @@ public class FlyRNAiScreenConverterTest extends TestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("fly-rnai_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
-        //fw.close();
+        writeItemsFile(itemWriter.getItems(), "flyrnai-tgt-items.xml");
 
-        Set expected = new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("FlyRNAiConverterTest_tgt.xml")));
-
-        if (!expected.equals(itemWriter.getItems())) {
-            System.err.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(expected),
-                                                                           itemWriter.getItems()));
-        }
+        Set expected = readItemSet("FlyRNAiConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }

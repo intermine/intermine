@@ -97,9 +97,9 @@ public class ImageCloneConverter extends CDNACloneConverter
             // don't create gene
             if (geneId.length == 1 && geneId[0].length() > 1 && StringUtil.allDigits(cloneId)) {
                 Item gene = createGene("Gene", geneId[0], organism.getIdentifier(), writer);
-                Item clone = createClone("CDNAClone", cloneId, organism.getIdentifier(),
-                             gene.getIdentifier(), dataSource.getIdentifier(),
-                             dataSet.getIdentifier(), writer);
+                createClone("CDNAClone", cloneId, organism.getIdentifier(),
+                            gene.getIdentifier(), dataSource.getIdentifier(),
+                            dataSet.getIdentifier(), writer);
             }
         }
 
@@ -136,7 +136,7 @@ public class ImageCloneConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createClone(String clsName, String id, String orgId, String geneId,
+     private void createClone(String clsName, String id, String orgId, String geneId,
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item clone = (Item) cloneMap.get(id);
@@ -158,7 +158,6 @@ public class ImageCloneConverter extends CDNACloneConverter
             writer.store(ItemHelper.convert(synonym));
 
         }
-        return clone;
     }
 
 }

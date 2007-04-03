@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

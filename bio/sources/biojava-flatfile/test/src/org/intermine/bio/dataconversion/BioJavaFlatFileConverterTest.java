@@ -10,24 +10,21 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.StringReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.xml.full.FullParser;
-import org.intermine.xml.full.ItemFactory;
-
-import java.io.StringReader;
-
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
+import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemWriter;
 
-public class BioJavaFlatFileConverterTest extends TestCase {
+public class BioJavaFlatFileConverterTest extends ItemsTestCase {
+    
+    
+    public BioJavaFlatFileConverterTest(String arg) {
+        super(arg);
+    }
+
     public void testProcess1() throws Exception {
         String input = 
             IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_1.embl"));
@@ -37,8 +34,7 @@ public class BioJavaFlatFileConverterTest extends TestCase {
         converter.process(new StringReader(input));
         converter.close();
         System.out.println(itemWriter.getItems());
-        Set expected = 
-            new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("embl_test_1.xml")));
+        Set expected = readItemSet("embl_test_1.xml");
         assertEquals(expected, itemWriter.getItems());
     }
     
@@ -51,8 +47,7 @@ public class BioJavaFlatFileConverterTest extends TestCase {
         converter.process(new StringReader(input));
         converter.close();
         System.out.println(itemWriter.getItems());
-        Set expected = 
-            new HashSet(FullParser.parse(getClass().getClassLoader().getResourceAsStream("embl_test_2.xml")));
+        Set expected = readItemSet("embl_test_2.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }

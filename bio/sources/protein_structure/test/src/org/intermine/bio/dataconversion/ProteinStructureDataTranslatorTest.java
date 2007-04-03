@@ -11,14 +11,12 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
-import org.intermine.xml.full.FullParser;
 
 public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
     private String tgtNs = "http://www.flymine.org/model/genomic#";
@@ -40,24 +38,14 @@ public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-
-
-        System.out.println(DataTranslatorTestCase.printCompareItemSets(new HashSet(getExpectedItems()), tgtIw.getItems()));
-
         // uncomment to write a new target items file
-        //java.io.FileWriter fw = new java.io.FileWriter(new java.io.File("protein-structure_tgt.xml"));
-        //fw.write(org.intermine.xml.full.FullRenderer.render(tgtIw.getItems()));
-        //fw.close();
+        writeItemsFile(tgtIw.getItems(), "protein-structure_tgt.xml");
 
-        assertEquals(new HashSet(getExpectedItems()), tgtIw.getItems());
-    }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("ProteinStructureDataTranslatorFunctionalTest_tgt.xml"));
+        assertEquals(readItemSet("ProteinStructureDataTranslatorFunctionalTest_tgt.xml"), tgtIw.getItems());
     }
 
     protected Collection getSrcItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("ProteinStructureDataTranslatorFunctionalTest_src.xml"));
+        return readItemSet("ProteinStructureDataTranslatorFunctionalTest_src.xml");
     }
 
     protected String getModelName() {
