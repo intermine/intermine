@@ -110,7 +110,14 @@ public class QueryBuilderController extends TilesAction
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes
             String pathName = node.getPath();
-            String fullPath = prefix + "." + node.getFieldName();
+            int firstDot = pathName.indexOf('.');
+            String fullPath;
+            if (firstDot == -1) {
+                fullPath = prefix;
+            } else {
+                String pathNameWithoutClass = pathName.substring(firstDot + 1);
+                fullPath = prefix + "." + pathNameWithoutClass;
+            }
             if (view.contains(fullPath)) {
                 node.setSelected(true);
             } else {
@@ -118,17 +125,20 @@ public class QueryBuilderController extends TilesAction
                 // If an object has been selected, select its fields instead
                 if (path.getEndFieldDescriptor() == null || path.endIsReference()
                     || path.endIsCollection()) {
-                    ClassDescriptor cld = path.getEndClassDescriptor();
-                    List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-                    Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
-                    while (cldFieldConfigIter.hasNext()) {
-                        FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-                        String pathFromField = pathName + "." + fc.getFieldExpr();
-                        if (!view.contains(pathFromField)) {
-                            node.setSelected(false);
-                            break;
+                    if (view.contains(path)) {
+                        ClassDescriptor cld = path.getEndClassDescriptor();
+                        List cldFieldConfigs = 
+                            FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+                        Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
+                        while (cldFieldConfigIter.hasNext()) {
+                            FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+                            String pathFromField = pathName + "." + fc.getFieldExpr();
+                            if (view.contains(pathFromField)) {
+                                node.setSelected(true);
+                            } else {
+                                node.setSelected(false);
+                            }
                         }
-                        node.setSelected(true);
                     }
                 }
             }
