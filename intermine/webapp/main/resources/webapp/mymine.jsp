@@ -7,7 +7,7 @@
 <!-- mymine.jsp -->
 
   <div style="border-top: 9px solid white">
-  
+
   <c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
 
   <c:if test="${loggedin}">
@@ -97,7 +97,7 @@
        </td>
 
       <c:if test="${loggedin}">
-        <td width="1%" class="tab ${MYMINE_PAGE=='password'?'selected':'not-selected'}" 
+        <td width="1%" class="tab ${MYMINE_PAGE=='password'?'selected':'not-selected'}"
             nowrap="true">
           <c:choose>
             <c:when test="${MYMINE_PAGE=='password'}">
@@ -146,7 +146,7 @@
       <fmt:message key="mymine.login.help"/>
     </div>
   </c:if>
-  
+
   <div class="body">
     <c:if test="${IS_SUPERUSER}">
       <span class="smallnote">
@@ -161,60 +161,65 @@
       </span>
     </c:if>
   </div>
-  
+
 </div>
 
 
 <script type="text/javascript">
   <!--//<![CDATA[
-    var deleteButton = document.getElementById('delete_button');
-    var removeButton = document.getElementById('remove_button'); 
-    function selectColumnCheckbox(form, type) {
-      var columnCheckBox = 'selected_' + type;
-      var testString = columnCheckBox + '_';
-      var checked = document.getElementById(columnCheckBox).checked;
-      if (deleteButton != null) {
-        deleteButton.disabled = !checked;
-      }
-      if (removeButton != null) {
-        removeButton.disabled = !checked;
-      }
-      // document.getElementById('export_button').disabled = !checked;
-      with(form) {
-        for(var i=0;i < elements.length;i++) {
-          var thiselm = elements[i];
-          if(thiselm.id.indexOf(testString) != -1)
-            thiselm.checked = checked;
-        }
-      }
-    }
-	function setDeleteDisabledness(form, type) { 
-	 	      var checkBoxPrefix = 'selected_' + type + '_'; 
-	 	      var deleteDisable = true; 
-	 	      var columnCheckBoxChecked = true; 
-	 	      with(form) { 
-	 	        for(var i=0;i < elements.length;i++) { 
-	 	          var thiselm = elements[i]; 
-	 	          if (thiselm.id.indexOf(checkBoxPrefix) != -1) { 
-	 	            if (thiselm.checked) { 
-	 	              deleteDisable = false; 
-	 	            } else { 
-	 	              columnCheckBoxChecked = false; 
-	 	            }                
-	 	          } 
-	 	        } 
-	 	      } 
- 	      if (deleteButton != null) { 
-	 	        deleteButton.disabled = deleteDisable; 
-	 	      } 
-	 	      if (removeButton != null) { 
-        removeButton.disabled = deleteDisable;
-      }
-      // document.getElementById('export_button').disabled = deleteDisable;
-      document.getElementById('selected_' + type).checked = columnCheckBoxChecked;
-      return true;
-    }
-    //]]>-->
+   var deleteButton = document.getElementById('delete_button');
+   var removeButton = document.getElementById('remove_button');
+   var exportButton = document.getElementById('export_button');
+   function selectColumnCheckbox(form, type) {
+       var columnCheckBox = 'selected_' + type;
+       var testString = columnCheckBox + '_';
+       var checked = document.getElementById(columnCheckBox).checked;
+       if (deleteButton != null) {
+           deleteButton.disabled = !checked;
+       }
+       if (removeButton != null) {
+           removeButton.disabled = !checked;
+       }
+       if (exportButton != null) {
+           exportButton.disabled = !checked;
+       }
+       with(form) {
+           for(var i=0;i < elements.length;i++) {
+               var thiselm = elements[i];
+               if(thiselm.id.indexOf(testString) != -1)
+                   thiselm.checked = checked;
+           }
+       }
+   }
+   function setDeleteDisabledness(form, type) {
+       var checkBoxPrefix = 'selected_' + type + '_';
+       var deleteDisable = true;
+       var columnCheckBoxChecked = true;
+       with(form) {
+           for(var i=0;i < elements.length;i++) {
+               var thiselm = elements[i];
+               if (thiselm.id.indexOf(checkBoxPrefix) != -1) {
+                   if (thiselm.checked) {
+                       deleteDisable = false;
+                   } else {
+                       columnCheckBoxChecked = false;
+                   }
+               }
+           }
+       }
+       if (deleteButton != null) {
+           deleteButton.disabled = deleteDisable;
+       }
+       if (removeButton != null) {
+           removeButton.disabled = deleteDisable;
+       }
+       if (exportButton != null) {
+           exportButton.disabled = deleteDisable;
+       }
+       document.getElementById('selected_' + type).checked = columnCheckBoxChecked;
+       return true;
+   }
+   //]]>-->
 </script>
 
 
