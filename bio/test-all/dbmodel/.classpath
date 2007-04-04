@@ -6,5 +6,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry exported="true" kind="lib" path="build/main"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

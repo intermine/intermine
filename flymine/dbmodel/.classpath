@@ -5,5 +5,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

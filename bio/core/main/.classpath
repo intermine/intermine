@@ -8,5 +8,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry exported="true" kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xalan.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
