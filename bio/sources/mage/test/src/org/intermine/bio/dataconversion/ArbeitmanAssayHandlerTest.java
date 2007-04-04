@@ -62,9 +62,9 @@ public class ArbeitmanAssayHandlerTest extends ItemsTestCase
         translator.processMicroArrayAssays();
 
         Item expAssay1 = createItem("MicroArrayAssay", "0_1", "");
-        expAssay1.setAttribute("name", "assay_0_1");
+        expAssay1.setAttribute("name", "assay_0_1".intern());
         expAssay1.setAttribute("sample1", "N/A: Reference");
-        expAssay1.setAttribute("sample2", "stage: Embryo - 2 To 3 Hours");
+        expAssay1.setAttribute("sample2", "stage: Embryo - 2 To 3 hours");
         expAssay1.setAttribute("displayOrder", "0");
         expAssay1.setReference("experiment", "2_1");
         expAssay1.setCollection("samples", new ArrayList(Arrays.asList(new Object[] {"1_1", "1_10"})));
@@ -72,9 +72,6 @@ public class ArbeitmanAssayHandlerTest extends ItemsTestCase
         Map expected = new HashMap();
         expected.put("0_1", expAssay1);
 
-        // TODO this line should work but doesn't, possibly a problem with
-        // class loaders - comparing and object created in parent class loader
-        // to one from a class instantiated by reflection.
         assertEquals(expAssay1, (Item) translator.assays.get("0_1"));
     }
 
