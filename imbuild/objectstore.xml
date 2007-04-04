@@ -65,7 +65,7 @@
   <target name="analyse-db-production" depends="-init-properties, init, -init-deps, -init-task-xml">
     <analyse-db osName="os.production"/>
   </target>
-    
+
   <!-- CREATE INDEXES ON ALL NON-PRIMARY KEY ATTRIBUTES -->
 
   <target name="create-attribute-indexes" depends="-init-build-db">
@@ -81,19 +81,36 @@
     </condition>
   </target>
 
-  <target name="-pre-generate" 
-          depends="-init-properties, init, -init-deps, -init-task-xml" unless="doing.build.db">
+  <target name="-pre-generate-retrieve"
+          depends="-init-properties, init, -init-deps, -init-task-xml">
     <!-- Retrieve model from database -->
+    <echo message="Retrieving model from ${objectstore.name}..."/>
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
-    <!-- Copy retrieved files so that model generation and packaging tasks will find them -->
-    <copy file="${build.model.dir}/${model.name}_model.xml"
-          todir="${build.classes.dir}"/>
-    <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
-          todir="${build.classes.dir}"/>
-    <property name="regenerate.java" value="true"/>
+    <condition property="regenerate.java">
+      <not>
+        <uptodate srcfile="${build.model.dir}/${model.name}_model.xml"
+                  targetfile="${build.classes.dir}/${model.name}_model.xml"/>
+      </not>
+    </condition>
   </target>
 
-  <target name="-init-summarise-objectstore" 
+  <target name="-pre-generate-properties"
+          depends="-init-properties, init, -init-deps, -init-task-xml"
+          if="regenerate.java">
+    <!-- Copy retrieved files so that model generation and packaging tasks will find them -->
+    <copy file="${build.model.dir}/${model.name}_model.xml"
+          todir="${build.classes.dir}" preservelastmodified="true"/>
+  </target>
+
+  <target name="-pre-generate"
+          depends="-init-properties, init, -init-deps, -init-task-xml,
+                   -pre-generate-retrieve, -pre-generate-properties"
+          unless="doing.build.db">
+    <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
+          todir="${build.classes.dir}" preservelastmodified="true"/>
+  </target>
+
+  <target name="-init-summarise-objectstore"
           depends="init, -init-deps, -init-task-xml, -init-jar, -init-properties"/>
 
   <target name="summarise-objectstore" depends="-init-summarise-objectstore"

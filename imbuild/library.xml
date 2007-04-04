@@ -1,23 +1,23 @@
 
 <project name="library" default="default" basedir="." xmlns:lib="http://www.intermine.org/ns/im-lib-proj/1">
-  
+
   <dirname property="library.xml.basedir" file="${ant.file.library}"/>
-  
+
   <!-- Import antcontrib tasks -->
   <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${library.xml.basedir}/lib/ant-contrib.jar"/>
-  
+
   <!-- Import intermine build tasks -->
   <taskdef resource="org/intermine/task/antlib.xml" classpath="${library.xml.basedir}/lib/im-ant-tasks.jar"/>
-  
+
   <!-- INIT -->
-  
+
   <target name="-init-project">
     <property file="${user.home}/build.properties"/>
     <property file="project.properties"/>
   </target>
-  
+
   <target name="-pre-pre-init" depends="-init-project"/>
-  
+
   <target name="-pre-init" depends="-pre-pre-init">
     <!-- Directories -->
     <property name="build.dir" location="build"/>
@@ -51,21 +51,21 @@
       <and><istrue value="${generating.code}"/></and>
     </condition>
   </target>
-    
+
   <target name="init" depends="-pre-init"/>
 
   <target name="default" depends="compile, jar, action"/>
-  
+
   <target name="-init-deps-no-build" depends="skip-deps">
     <dependencies basedir="${library.xml.basedir}/.."/>
   </target>
-  
+
   <target name="skip-deps">
     <property name="no.dep" value="true"/>
   </target>
-  
+
   <target name="-pre-init-deps"/>
-  
+
   <target name="-init-deps" depends="-pre-init-deps">
     <dependencies basedir="${library.xml.basedir}/.."/>
     <!--
@@ -73,31 +73,31 @@
     <echo message="project.compile.path classpath is ${cp}"/>
     -->
   </target>
-  
+
   <!-- CODE GENERATION -->
-  
+
   <target name="-init-generate" if="gen.code" depends="init, -init-deps">
     <mkdir dir="${gen.src.dir}"/>
   </target>
-  
+
   <target name="-pre-generate"/>
-  
+
   <target name="-post-generate"/>
-  
+
   <target name="do-generate"/>
-  
+
   <target name="generate" depends="-init-generate, -pre-generate, do-generate, -post-generate"/>
-  
+
   <!-- COMPILE -->
-  
+
   <target name="-init-compile" depends="init, -init-deps">
     <mkdir dir="${build.classes.dir}"/>
   </target>
-  
+
   <target name="-pre-compile"/>
-  
+
   <target name="-post-compile"/>
-  
+
   <target name="do-compile-with-gen-src" if="gen.code">
     <lib:javac>
       <customize>
@@ -105,57 +105,59 @@
       </customize>
     </lib:javac>
   </target>
-  
+
   <target name="do-compile-without-gen-src" unless="gen.code">
     <lib:javac/>
   </target>
-  
-  <target name="do-compile" depends="-init-macrodef-javac, do-compile-with-gen-src, do-compile-without-gen-src">
+
+  <target name="do-compile"
+          depends="-init-macrodef-javac, do-compile-with-gen-src, do-compile-without-gen-src"
+          unless="nothing.to.compile">
     <copy todir="${build.classes.dir}">
       <fileset dir="${src.dir}" excludes="${build.classes.excludes}"/>
     </copy>
   </target>
-  
+
   <target name="compile" depends="-init-compile, generate, -pre-compile, do-compile, -post-compile"/>
-    
+
   <!-- JAR -->
-  
+
   <target name="-pre-jar"/>
-  
+
   <target name="-post-jar"/>
-  
+
   <target name="-init-jar" depends="init, -init-deps">
     <mkdir dir="${dist.dir}"/>
   </target>
-  
+
   <target name="do-jar" depends="-init-presetdef-jar">
     <lib:jar/>
   </target>
-  
+
   <target name="jar" depends="compile, -init-jar, -pre-jar, do-jar, -post-jar"/>
-  
+
 
   <!-- ACTION -->
-  
+
   <target name="-pre-action"/>
-  
+
   <target name="-post-action"/>
-  
+
   <target name="-init-action" depends="init, -init-deps"/>
-  
+
   <!-- a generic action target that can be overridden by projects that need to
        do something after compile and jar - an example is integrate -->
   <target name="do-action"/>
-  
+
   <target name="action" depends="compile, jar, -init-action, -pre-action, do-action, -post-action"/>
-  
+
 
   <!-- JAVADOC -->
-  
+
   <target name="-init-javadoc" depends="init, -init-deps">
     <mkdir dir="${build.javadoc.dir}"/>
   </target>
-  
+
   <target name="-javadoc-build" depends="-init-javadoc">
     <javadoc destdir="${build.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}"
             use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}"
@@ -169,15 +171,15 @@
       <fileset dir="${src.dir}"/>
     </javadoc>
   </target>
-  
+
   <target name="javadoc" depends="-init-javadoc,-javadoc-build"/>
-  
+
   <!-- CHECKSTYLE -->
-  
+
   <target name="-init-checkstyle" depends="init, -init-deps-no-build">
     <mkdir dir="${build.checkstyle.dir}"/>
   </target>
-  
+
   <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
     <lib:checkstyle>
       <customize>
@@ -185,9 +187,9 @@
       </customize>
     </lib:checkstyle>
   </target>
-  
+
   <target name="checkstyle" depends="-init-checkstyle, do-checkstyle"/>
-  
+
   <target name="-init-macrodef-checkstyle">
     <macrodef name="checkstyle" uri="http://www.intermine.org/ns/im-lib-proj/1">
       <attribute name="srcdir" default="${src.dir}"/>
@@ -210,9 +212,9 @@
     </macrodef>
   </target>
 
-  
+
   <!-- CLEAN -->
-  
+
   <target name="-pre-clean"/>
 
   <target name="clean" depends="-pre-clean, -pre-init">
@@ -222,24 +224,26 @@
       <fileset dir="." includes="velocity.log*, intermine.log*"/>
     </delete>
   </target>
-  
+
   <target name="-pre-clean-all"/>
 
   <target name="clean-all" depends="-pre-clean-all, clean">
     <property name="no.dep" value="false"/>
     <dependencies basedir="${library.xml.basedir}/.." target="clean"/>
   </target>
-  
+
   <target name="-init-macrodef-javac">
     <macrodef name="javac" uri="http://www.intermine.org/ns/im-lib-proj/1">
       <attribute name="srcdir" default="${src.dir}"/>
       <attribute name="destdir" default="${build.classes.dir}"/>
       <attribute name="classpath" default="project.compile.path"/>
+      <attribute name="executepath" default="project.execute.path"/>
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
-        <depend srcdir="@{srcdir}" destdir="@{destdir}" closure="yes" dump="yes">
-          <classpath refid="@{classpath}"/>
+        <depend srcdir="@{srcdir}" destdir="@{destdir}" closure="yes" dump="yes"
+                cache="${build.dir}/depend.cache">
+          <classpath refid="@{executepath}"/>
         </depend>
         <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="${javac.compiler}"
            source="${javac.source}" target="${javac.target}"
@@ -251,7 +255,7 @@
       </sequential>
     </macrodef>
   </target>
-  
+
   <target name="-init-presetdef-jar">
     <presetdef name="jar" uri="http://www.intermine.org/ns/im-lib-proj/1">
       <jar compress="${jar.compress}" jarfile="${dist.jar}">
@@ -260,7 +264,7 @@
       </jar>
     </presetdef>
   </target>
- 
+
   <target name="dot" depends="init, -init-deps">
     <path id="dot.class.path">
       <path refid="project.compile.path"/>
