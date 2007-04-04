@@ -75,11 +75,15 @@
     <echo>Found xml file in ${build.dir}</echo>
     <model:modeloutofdate source="${build.model.dir}/${model.name}_model.xml">
       <then>
-        <condition property="regenerate.java">
-          <uptodate srcfile="${build.model.dir}/${model.name}_model.xml"
-                    targetfile="${build.task.dir}/${model.name}_model.xml"/>
-        </condition>
-        <copy file="${build.model.dir}/${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
+        <outofdate>
+          <sourcefiles path="${build.model.dir}/${model.name}_model.xml"/>
+          <targetfiles path="${build.task.dir}/${model.name}_model.xml"/>
+          <sequential>
+            <property name="regenerate.java" value="true"/>
+            <copy file="${build.model.dir}/${model.name}_model.xml"
+                  tofile="${build.task.dir}/${model.name}_model.xml"/>
+          </sequential>
+        </outofdate>
       </then>
     </model:modeloutofdate>
   </target>
