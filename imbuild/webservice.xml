@@ -44,7 +44,6 @@
       <sequential>
         <war compress="${jar.compress}" destfile="${dist.war}" update="true">
           <classes dir="${build.classes.dir}"/>
-          <lib dir="${web.lib.dir}"/>
           <!--webinf dir="${webinf.dir}" excludes="web.xml"/>
           <webinf dir="${build.webinf.dir}"/>
           <fileset dir="${resources.dir}"/-->
