@@ -18,5 +18,5 @@
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/flymine-dbmodel"/>
-	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
