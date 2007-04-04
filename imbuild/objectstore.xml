@@ -82,7 +82,8 @@
   </target>
 
   <target name="-pre-generate-retrieve"
-          depends="-init-properties, init, -init-deps, -init-task-xml">
+          depends="-init-properties, init, -init-deps, -init-task-xml"
+          unless="doing.build.db">
     <!-- Retrieve model from database -->
     <echo message="Retrieving model from ${objectstore.name}..."/>
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
