@@ -87,12 +87,13 @@
     <!-- Retrieve model from database -->
     <echo message="Retrieving model from ${objectstore.name}..."/>
     <retrieve-metadata osName="${objectstore.name}" destDir="${build.model.dir}"/>
-    <condition property="regenerate.java">
-      <not>
-        <uptodate srcfile="${build.model.dir}/${model.name}_model.xml"
-                  targetfile="${build.classes.dir}/${model.name}_model.xml"/>
-      </not>
-    </condition>
+    <outofdate>
+      <sourcefiles path="${build.model.dir}/${model.name}_model.xml"/>
+      <targetfiles path="${build.classes.dir}/${model.name}_model.xml"/>
+    </outofdate>
+    <sequential>
+      <property name="regenerate.java" value="true"/>
+    </sequential>
   </target>
 
   <target name="-pre-generate-properties"
