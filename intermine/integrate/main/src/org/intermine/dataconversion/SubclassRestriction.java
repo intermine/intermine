@@ -1,4 +1,4 @@
-package org.intermine.ontology;
+package org.intermine.dataconversion;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
