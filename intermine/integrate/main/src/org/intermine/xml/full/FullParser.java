@@ -11,7 +11,7 @@ package org.intermine.xml.full;
  */
 
 import org.intermine.metadata.Model;
-import org.intermine.ontology.OntologyUtil;
+import org.intermine.dataconversion.OntologyUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;

@@ -31,8 +31,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.ontology.SubclassRestriction;
-import org.intermine.ontology.SubclassRestrictionComparator;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Attribute;
