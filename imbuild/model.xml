@@ -2,12 +2,12 @@
 <project name="model" default="default" basedir="." xmlns:model="http://www.intermine.org/ns/im-model-proj/1">
 
   <dirname property="model.xml.basedir" file="${ant.file.model}"/>
-  
+
   <property name="generating.code" value="true"/>
-  
+
   <import file="${model.xml.basedir}/library.xml"/>
   <import file="${model.xml.basedir}/task.xml"/>
-  
+
   <target name="-pre-init" depends="library.-pre-init">
     <!-- Model specific -->
     <property name="model.name" value="${ant.project.name}"/>
@@ -18,7 +18,7 @@
   </target>
 
   <!-- CODE GENERATION -->
-  
+
   <target name="unpack-xmi-model">
     <unzip src="${model.name}.zargo" dest="${build.dir}">
       <patternset>
@@ -27,12 +27,16 @@
     </unzip>
     <touch file="${build.dir}/${model.name}_.xmi" />
   </target>
-  
+
+  <target name="-generate-model-java-message" unless="regenerate.java">
+    <echo message="generated model java is up to date - not regenerating"/>
+  </target>
+
   <target name="generate-model-java" if="regenerate.java" depends="-init-macrodef-model-output">
     <model:model-output/>
   </target>
-  
-  <target name="build-model-from-zargo" if="have.zargo">
+
+ <target name="build-model-from-zargo" if="have.zargo">
     <echo>Found zargo file</echo>
     <model:modeloutofdate source="${model.name}.zargo">
       <then>
@@ -43,7 +47,7 @@
       </then>
     </model:modeloutofdate>
   </target>
-  
+
   <target name="build-model-from-xmi" if="have.xmi">
     <echo>Found xmi file</echo>
     <model:modeloutofdate source="${model.name}.xmi">
@@ -55,7 +59,7 @@
       </then>
     </model:modeloutofdate>
   </target>
-  
+
   <target name="build-model-from-xml-in-project-dir" if="have.xml.in.project.dir">
     <echo>Found xml file in project directory</echo>
     <model:modeloutofdate source="${model.name}_model.xml">
@@ -66,18 +70,20 @@
       </then>
     </model:modeloutofdate>
   </target>
-  
+
   <target name="build-model-from-xml-in-build-dir" if="have.xml.in.build.dir">
     <echo>Found xml file in ${build.dir}</echo>
     <model:modeloutofdate source="${build.model.dir}/${model.name}_model.xml">
       <then>
+        <condition property="regenerate.java">
+          <uptodate srcfile="${build.model.dir}/${model.name}_model.xml"
+                    targetfile="${build.task.dir}/${model.name}_model.xml"/>
+        </condition>
         <copy file="${build.model.dir}/${model.name}_model.xml" tofile="${build.task.dir}/${model.name}_model.xml"/>
-        <!--antcall target="copy-keydefs"/-->
-        <property name="regenerate.java" value="true"/>
       </then>
     </model:modeloutofdate>
   </target>
-  
+
   <target name="build-model-from-xmlschema" if="have.xmlschema">
     <echo>Found xml-schema file</echo>
     <model:modeloutofdate source="${model.name}.xsd">
@@ -88,7 +94,7 @@
       </then>
     </model:modeloutofdate>
   </target>
-  
+
   <target name="-init-generate" depends="library.-init-generate, -init-task-xml, -init-model-out-of-date, -init-macrodef-model-generation">
     <!-- Conditions -->
     <available file="${model.name}.zargo" property="have.zargo"/>
@@ -97,12 +103,13 @@
     <available file="${model.name}.xsd" property="have.xmlschema"/>
     <available file="${model.name}_additions.xml" property="have.additions"/>
   </target>
-  
+
   <target name="do-generate" depends="build-model-from-xml-in-build-dir,
                                       build-model-from-xml-in-project-dir,
                                       build-model-from-xmi,
                                       build-model-from-zargo,
                                       build-model-from-xmlschema,
+                                      -generate-model-java-message,
                                       generate-model-java"/>
 
   <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->
@@ -116,7 +123,7 @@
       </jar>
     </presetdef>
   </target>
-  
+
   <!-- MACRO DEFINITION -->
 
   <target name="-init-macrodef-model-output">
@@ -127,7 +134,7 @@
       </sequential>
     </macrodef>
   </target>
-  
+
   <target name="-init-macrodef-model-generation">
     <macrodef name="model-generation" uri="http://www.intermine.org/ns/im-model-proj/1">
       <attribute name="type"/>
@@ -143,7 +150,7 @@
       </sequential>
     </macrodef>
   </target>
-  
+
   <target name="-init-model-out-of-date">
     <macrodef name="modeloutofdate" uri="http://www.intermine.org/ns/im-model-proj/1">
       <attribute name="source"/>
@@ -161,7 +168,7 @@
       </sequential>
     </macrodef>
   </target>
-  
+
   <!-- exist so that default can be overridden -->
   <target name="default" depends="library.default"/>
 

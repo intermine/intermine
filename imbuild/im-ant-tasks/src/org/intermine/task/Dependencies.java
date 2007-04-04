@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -24,6 +25,7 @@ import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.util.StringUtils;
 
 /**
  *
@@ -139,6 +141,7 @@ public class Dependencies extends Task
 
         String compilePathId = type + ".compile.path";
         String executePathId = type + ".execute.path";
+        String artifactPathId = type + ".artifact.path";
 
         // Don't run twice if target not specified.
         if (getProject().getReference(compilePathId) != null && target == null) {
@@ -148,10 +151,12 @@ public class Dependencies extends Task
         if (getProject().getUserProperty("top.ant.project.name") == null) {
             getProject().setUserProperty("top.ant.project.name", getProject().getName());
         }
-        
+
         projectProperties = loadProjectProperties(getProject().getBaseDir());
 
         extraProjectDependencies = projectProperties.getProperty(EXTRA_DEPS);
+
+        List<String> extraProjectDepsList = new ArrayList<String>();
 
         if (getProject().getProperty(EXTRA_DEPS) != null) {
             // add the extra project dependencies from the project that is calling/executing this
@@ -163,8 +168,21 @@ public class Dependencies extends Task
             }
         }
 
+        if (extraProjectDependencies != null) {
+            Vector bits = StringUtils.split(extraProjectDependencies, ',');
+
+            for (Object bit: bits) {
+                String dep = ((String) bit).trim();
+
+                if (!extraProjectDepsList.contains(dep)) {
+                    extraProjectDepsList.add(dep);
+                }
+            }
+        }
+
         compilePath = new Path(getProject());
         executePath = new Path(getProject());
+        Path artifactPath = new Path(getProject());
         compileFileSet = new FileSet();
         compileFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
         compileFileSet.setProject(getProject());
@@ -182,14 +200,18 @@ public class Dependencies extends Task
 
         getProject().addReference(compilePathId, compilePath);
         getProject().addReference(executePathId, executePath);
+        getProject().addReference(artifactPathId, artifactPath);
 
         String projName = calcThisProjectName();
 
         // Gather list of projects, removing redundancy
-        List projects = new ArrayList();
-        followProjectDependencies(projName, projects, extraProjectDependencies);
+        List allProjectNames = new ArrayList();
+        followProjectDependencies(projName, allProjectNames, extraProjectDepsList);
 
-        List allProjects = projects;
+        // Make a List of dependent projects excluding those from extraProjectDepsList (and
+        // dependencies of it)
+        List projectNamesNoExtraDeps = new ArrayList();
+        followProjectDependencies(projName, projectNamesNoExtraDeps, new ArrayList());
 
         // Find out whether to run targets on dependencies
         // We only want the root level invocation to run targets
@@ -198,7 +220,7 @@ public class Dependencies extends Task
 
         // Describe complete dependency set
         if (executeTargets) {
-            describeDependencies(projects, "Dependency build order:");
+            describeDependencies(allProjectNames, "Dependency build order:");
         }
 
         // Deal with this projects libs
@@ -214,8 +236,8 @@ public class Dependencies extends Task
         compileIncludes += projName + "/lib/*.jar ";
         executeIncludes += projName + "/lib/*.jar ";
 
-        for (int i = 0; i < allProjects.size(); i++) {
-            String depName = (String) allProjects.get(i);
+        for (int i = 0; i < allProjectNames.size(); i++) {
+            String depName = (String) allProjectNames.get(i);
             File projDir = getProjectBaseDir(depName);
 
             String theTarget = target;
@@ -253,32 +275,35 @@ public class Dependencies extends Task
                 ant.execute();
             }
 
-            // Add dist/*.jar, dist/*.war
-            fileset = new FileSet();
-            fileset.setDir(projDir);
-            fileset.setIncludes("dist/*");
-            fileset.setProject(getProject());
-            executePath.addFileset(fileset);
-
             DirSet dirset = new DirSet();
             dirset.setDir(projDir);
             dirset.setIncludes("build/classes");
             compilePath.addDirset(dirset);
 
             executeIncludes += depName + "/dist/* ";
-            artifactIncludes += depName + "/dist/* ";
-            compileIncludes += depName + "/build/classes/ ";
 
             // Add lib/*.jar
-            fileset = new FileSet();
-            fileset.setDir(projDir);
-            fileset.setIncludes("lib/*.jar");
-            fileset.setProject(getProject());
-            executePath.addFileset(fileset);
-            compilePath.addFileset(fileset);
+            FileSet libFileSet = new FileSet();
+            libFileSet.setDir(projDir);
+            libFileSet.setIncludes("lib/*.jar");
+            libFileSet.setProject(getProject());
+            compilePath.addFileset(libFileSet);
 
             compileIncludes += depName + "/lib/*.jar ";
-            executeIncludes += depName + "/lib/*.jar ";
+            compileIncludes += depName + "/build/classes/ ";
+
+            if (projectNamesNoExtraDeps.contains(depName)) {
+                // Add dist/*.jar, dist/*.war
+                FileSet distFileSet = new FileSet();
+                distFileSet.setDir(projDir);
+                distFileSet.setIncludes("dist/*");
+                distFileSet.setProject(getProject());
+                executePath.addFileset(distFileSet);
+
+                executePath.addFileset(libFileSet);
+                executeIncludes += depName + "/lib/*.jar ";
+                artifactIncludes += depName + "/dist/* ";
+            }
         }
 
         if (compileIncludes.length() > 0) {
@@ -297,7 +322,9 @@ public class Dependencies extends Task
         } else {
             artifactFileSet.setIncludes("nothing");
         }
-        getProject().addReference(type + ".artifact.fileset", artifactFileSet);
+
+        getProject().addReference(artifactPathId + ".fileset", artifactFileSet);
+        getProject().addReference(artifactPathId + ".fileset.text", artifactIncludes);
     }
 
     /**
@@ -345,7 +372,8 @@ public class Dependencies extends Task
      * @param projName the name of the current project to example
      * @param projects accumulation of project names found
      */
-    protected void followProjectDependencies(String projName, List projects, String extraDeps) {
+    protected void followProjectDependencies(String projName, List projects,
+                                             List<String> extraDeps) {
         // System .out.println("following " + projDir.getAbsolutePath());
         // Load project properties
         File projDir = getProjectBaseDir(projName);
@@ -355,17 +383,19 @@ public class Dependencies extends Task
             projectType = "compile";
         }
 
-        String deps = properties.getProperty(projectType + ".dependencies");
+        String depString = properties.getProperty(projectType + ".dependencies");
 
-        if (extraDeps != null) {
-            if (deps != null) {
-                deps = extraDeps + ", " + deps;
-            } else {
-                deps = extraDeps;
-            }
+        List<String> deps = new ArrayList<String>();
+
+        Vector bits = StringUtils.split(depString, ',');
+
+        for (Object bit: bits) {
+            deps.add(((String) bit).trim());
         }
 
-        if (deps != null && deps.trim().length() > 0) {
+        deps.addAll(extraDeps);
+
+        if (deps.size() > 0) {
             // Visit dependencies
             iterateOverDependencies(projName, deps, projects);
         }
@@ -375,21 +405,18 @@ public class Dependencies extends Task
      * Step over each dependency mentioned in depsString and record it. Also follow
      * each project once.
      *
-     * @param depsString comma seperated list of project dependencies
+     * @param deps list of project dependencies
      * @param projects accumulation of project names found
      */
-    protected void iterateOverDependencies(String projName, String depsString, List projects) {
-        String deps[] = depsString.split(",");
-
-        for (int i = 0; i < deps.length; i++) {
-            String dep = deps[i].trim();
+    protected void iterateOverDependencies(String projName, List<String> deps, List projects) {
+        for (String dep: deps) {
             if (dep.length() > 0) {
                 if (projName.equals(dep)) {
                     continue;
                 }
 
                 if (!nofollow) {
-                    followProjectDependencies(dep, projects, "");
+                    followProjectDependencies(dep, projects, new ArrayList<String>());
                 }
 
                 if (projects.contains(dep)) {
