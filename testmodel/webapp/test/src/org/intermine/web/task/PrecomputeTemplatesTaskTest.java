@@ -83,13 +83,16 @@ public class PrecomputeTemplatesTaskTest extends TestCase
         q.addToSelect(qfAge);
         q.addToSelect(qfName);
         q.setConstraint(cc);
+        q.addToOrderBy(new QueryField(qcEmp, "name"));
+        q.addToOrderBy(qfAge);
+        q.addToOrderBy(qfName);
 
         System.out.println("query: " + q);
 
         List indexes = new ArrayList();
         Query actualQ = TemplateHelper.getPrecomputeQuery(template, indexes, null);
         assertEquals(q.toString(), actualQ.toString());
-        List expIndexes = new ArrayList(Arrays.asList(new Object[] {qfAge, qfName}));
+        List expIndexes = new ArrayList(Arrays.asList(new Object[] {qcEmp, qcDept, qfAge, qfName}));
         assertEquals(expIndexes.toString(), indexes.toString());
 
         task.precompute(os, actualQ, indexes, "template");
