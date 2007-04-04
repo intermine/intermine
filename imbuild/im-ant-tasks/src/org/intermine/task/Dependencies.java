@@ -68,7 +68,7 @@ public class Dependencies extends Task
     */
     private String extraProjectDependencies = "";
 
-    private String EXTRA_DEPS = "extra.project.dependencies";
+    private static final String EXTRA_DEPS = "extra.project.dependencies";
 
 
     /**
@@ -386,6 +386,7 @@ public class Dependencies extends Task
         String depString = properties.getProperty(projectType + ".dependencies");
 
         List<String> deps = new ArrayList<String>();
+        deps.addAll(extraDeps);
 
         Vector bits = StringUtils.split(depString, ',');
 
@@ -393,7 +394,6 @@ public class Dependencies extends Task
             deps.add(((String) bit).trim());
         }
 
-        deps.addAll(extraDeps);
 
         if (deps.size() > 0) {
             // Visit dependencies
