@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="main/resources"/>
 	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
@@ -11,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="lib" path="main/lib/MAGEstk-2004-11-29-v1.0-compatible.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
+	<classpathentry kind="lib" path="srcmodel/dist/mage.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
