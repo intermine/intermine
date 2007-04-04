@@ -15,6 +15,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="lib" path="lib/bytecode-0.92.jar"/>
+	<classpathentry kind="lib" path="main/lib/bytecode-0.92.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
