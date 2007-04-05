@@ -117,8 +117,10 @@ public class IntergenicRegionsTest extends TestCase
  
     public void testCreateIntergenicRegionFeaturesRefs() throws Exception {
         IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
-
+        
+        List chrXgeneLocList =  new ArrayList();
         Map chrXlocMap = new HashMap();
+        createChrX(chrXgeneLocList, chrXlocMap, 3000);
         List chr1geneLocList =  new ArrayList();
         Map chr1locMap = new HashMap();
         Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 4000);
