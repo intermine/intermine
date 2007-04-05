@@ -156,7 +156,7 @@ public class InitialiserPluginTest extends TestCase
         pm.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
         pm.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
         
-        List tags = pm.getTags(null, null, "class", null);
+        List tags = pm.getTags("test_tag_", null, "class", null);
         assertEquals(3, tags.size());
 
         // test that these go away
@@ -165,7 +165,7 @@ public class InitialiserPluginTest extends TestCase
 
         InitialiserPlugin.cleanTags(pm);
         
-        tags = pm.getTags(null, null, "class", null);
+        tags = pm.getTags("test_tag%", null, "class", null);
         assertEquals(3, tags.size());
     }
 }
