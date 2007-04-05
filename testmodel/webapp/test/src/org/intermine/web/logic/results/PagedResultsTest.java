@@ -10,12 +10,38 @@ package org.intermine.web.logic.results;
  *
  */
 
-import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
 
 public class PagedResultsTest extends TestCase
 {
@@ -26,15 +52,28 @@ public class PagedResultsTest extends TestCase
     private ObjectStoreDummyImpl os;
     private IqlQuery fq;
     private Model model;
+    private List columnPath;
+    private Map pathToQueryNode;
+    private Map classKeys;
 
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
         os.setResultsSize(15);
         fq = new IqlQuery("select c1, c2, d1, d2 from Company as c1, Company as c2, Department as d1, Department as d2", "org.intermine.model.testmodel");
         model = Model.getInstanceByName("testmodel");
+        columnPath = new ArrayList();
+        columnPath.addAll(Arrays.asList(new Object[] {new Path(model,"Company.name"), new Path(model,"Department.name"), new Path(model,"Company.name"), new Path(model,"Department.name")}));
+        pathToQueryNode = new HashMap();
+        pathToQueryNode.put("Company.name", new QueryField(new QueryClass(Company.class), "name"));
+        pathToQueryNode.put("Department.name", new QueryField(new QueryClass(Department.class) ,"name"));
+        classKeys = new HashMap();
+        Set defaultClassKeys = new HashSet();
+        defaultClassKeys.add(new HashSet(toList(new Object[]{new AttributeDescriptor("name","Employee")})));
+        classKeys.put("Employee", defaultClassKeys);
+        classKeys.put("Department", defaultClassKeys);
+        classKeys.put("Company", defaultClassKeys);
     }
 
- /*   
     private PagedResults getEmptyResults() throws Exception {
         os.setResultsSize(0);
         Results results = os.execute(fq.toQuery());
@@ -43,7 +82,8 @@ public class PagedResultsTest extends TestCase
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
-        return new PagedResults(results, model);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        return new PagedResults(webResults);
     }
 
     private PagedResults getExactResults() throws Exception {
@@ -51,21 +91,24 @@ public class PagedResultsTest extends TestCase
         // Make sure we definitely know the end
         results.setBatchSize(20);
         results.get(0);
-        return new PagedResults(results, model);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        return new PagedResults(webResults);
     }
 
     private PagedResults getEstimateTooHighResults() throws Exception {
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        return new PagedResults(results, model);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        return new PagedResults(webResults);
     }
 
     private PagedResults getEstimateTooLowResults() throws Exception {
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        return new PagedResults(results, model);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        return new PagedResults(webResults);
     }
 
     public void testConstructor() throws Exception {
@@ -107,46 +150,36 @@ public class PagedResultsTest extends TestCase
         c1.setName("Company1");
         c1.setId(new Integer(301));
 
+        e1.setDepartment(d1);
+        d1.setCompany(c1);
+        d1.setEmployees(new HashSet(toList(new Object [] {e2})));
+        
         ObjectStore os = new ObjectStoreDummyImpl();
-        results.put("employee", toList(new Object[][] { { e1 } }));
-        expected.put("employee", Arrays.asList(new ResultElement[] {new ResultElement(e1,e1.getId(), "Employee", false)}));
-        headers.put("employee", toList(new Object[] {"Employee"}));
-        
         results.put("employeeName", toList(new Object[][] { { e1 } }));
-        expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false)}));
-        headers.put("employeeName", toList(new Object[] {"Employee"}));
+        expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false)}));
+        headers.put("employeeName", toList(new Object[] {new Path(model, "Employee.name")}));
 
-        results.put("employeeAndName", toList(new Object[][] { { e1 } }));
-        expected.put("employeeAndName", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(),"Employee", false),
-            new ResultElement(e1,e1.getId(),"Employee", false)}));
-        headers.put("employeeAndName", toList(new Object[] {"Employee", "Employee"}));
- 
-        results.put("employeeDepartment", toList(new Object[][] { { e1, d1 } }));
-        expected.put("employeeDepartment", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false), 
-                new ResultElement(d1,d1.getId(),"Department", false)}));
-        headers.put("employeeDepartment", toList(new Object[] {"Employee", "Employee.department"}));
+        results.put("employeeDepartmentName", toList(new Object[][] { { e1, d1 } }));
+        expected.put("employeeDepartmentName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false), 
+                new ResultElement(os,e1.getDepartment().getName(),e1.getDepartment().getId(), "Department", new Path(model, "Employee.department.name"), false)}));
+        headers.put("employeeDepartmentName", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name")}));
 
-        results.put("employeeDepartmentReference", toList(new Object[][] { { e1, d1 } }));
-        expected.put("employeeDepartmentReference", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false), 
-                new ResultElement(d1, d1.getId(), "Department", false)}));
-        headers.put("employeeDepartmentReference", toList(new Object[] {"Employee", "Employee.department"}));
-        
         results.put("employeeDepartmentCompany", toList(new Object[][] { { e1, d1, c1 } }));
-        expected.put("employeeDepartmentCompany", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(),"Employee", false),
-                new ResultElement(d1,d1.getId(),"Department", false),
-                new ResultElement(c1,c1.getId(),"Company", false)}));
-        headers.put("employeeDepartmentCompany", toList(new Object[] {"Employee", "Employee.department", "Employee.department.company"}));
+        expected.put("employeeDepartmentCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false),
+                new ResultElement(os, e1.getDepartment().getName(),e1.getDepartment().getId(),"Department", new Path(model, "Department.name"), false),
+                new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(),"Company", new Path(model, "Company.name"), false)}));
+        headers.put("employeeDepartmentCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name"), new Path(model, "Employee.department.company.name")}));
         
         results.put("employeeCompany", toList(new Object[][] { { e1, c1 } }));
-        expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false),
-                new ResultElement(c1,c1.getId(),"Company", false)}));
-        headers.put("employeeCompany", toList(new Object[] {"Employee", "Employee.department.company"}));
+        expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false),
+                new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(),"Company", new Path(model, "Company.name"), false)}));
+        headers.put("employeeCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.company.name")}));
         
-        results.put("employeeDepartmentEmployees", toList(new Object[][] { { e1, d1, e2 } } ));
-        expected.put("employeeDepartmentEmployees", Arrays.asList(new Object[] {new ResultElement(e1,e1.getId(), "Employee", false),
-                new ResultElement(d1,d1.getId(),"Department", false),
-                new ResultElement(e2,e2.getId(),"Employee", false)}));
-        headers.put("employeeDepartmentEmployees", toList(new Object[] {"Employee", "Employee.department", "Employee.department.employees"}));
+//        results.put("employeeDepartmentEmployees", toList(new Object[][] { { e1, d1, e2 } } ));
+//        expected.put("employeeDepartmentEmployees", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false),
+//                new ResultElement(os, e1.getDepartment().getName(),e1.getDepartment().getId(),"Department", new Path(model, "Department.name"), false),
+//                new ResultElement(os, Employee (e1.getDepartment().getEmployees().iterator().next()).getName(),e2.getId(),"Employee", new Path(model, "Employee.name"), false)}));
+//        headers.put("employeeDepartmentEmployees", toList(new Object[] {new Path(model, "Employee"), new Path(model, "Employee.department"), new Path(model, "Employee.department.employees")}));
         
         // check all queries, fail if no expected values set
         Iterator queryIter = queries.entrySet().iterator();
@@ -162,7 +195,7 @@ public class PagedResultsTest extends TestCase
             Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode);
             Results r = new DummyResults(os, q, (List) results.get(queryName));
 //            PagedResults pr = new PagedResults(pq.getView(), r, model, pathToQueryNode, null);
-            WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, null);
+            WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, classKeys);
             PagedResults pr = new PagedResults(webResults);
             assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
          }
@@ -196,12 +229,11 @@ public class PagedResultsTest extends TestCase
         }
         return rows;
     }
-    
+
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is));
+        return PathQueryBinding.unmarshal(new InputStreamReader(is), null, null);
     }
-    */
     
 //     public void testSizeLow() throws Exception {
 //         PagedResults dr = getEstimateTooLowResults();
@@ -214,11 +246,11 @@ public class PagedResultsTest extends TestCase
 //         assertTrue(dr.getSize() <= 15);
 //     }
 
-//     public void testSizeEmpty() throws Exception {
-//         PagedResults dr = getEmptyResults();
-//         dr.setPageSize(10);
-//         assertEquals(0, dr.getSize());
-//     }
+     public void testSizeEmpty() throws Exception {
+         PagedResults dr = getEmptyResults();
+         dr.setPageSize(10);
+         assertEquals(0, dr.getSize());
+     }
 
 //     public void testEndExact() throws Exception {
 //         // At the beginning
@@ -286,15 +318,15 @@ public class PagedResultsTest extends TestCase
 //         PagedResults dr = getExactResults();
 //         dr.setPageSize(10);
 //         // At the beginning
-//         dr.setStartIndex(0);
+//         dr.setStartRow(0);
 //         assertTrue(dr.isFirstPage());
 //         assertFalse(dr.isLastPage());
 //         // Abutting the end
-//         dr.setStartIndex(5);
+//         dr.setStartRow(5);
 //         assertFalse(dr.isFirstPage());
 //         assertTrue(dr.isLastPage());
 //         // Overlapping the end
-//         dr.setStartIndex(10);
+//         dr.setStartRow(10);
 //         assertFalse(dr.isFirstPage());
 //         assertTrue(dr.isLastPage());
 //     }
@@ -303,15 +335,15 @@ public class PagedResultsTest extends TestCase
 //         PagedResults dr = getEstimateTooHighResults();
 //         dr.setPageSize(10);
 //         // At the beginning
-//         dr.setStartIndex(0);
+//         dr.setStartRow(0);
 //         assertTrue(dr.isFirstPage());
 //         assertFalse(dr.isLastPage());
 //         // Abutting the end
-//         dr.setStartIndex(5);
+//         dr.setStartRow(5);
 //         assertFalse(dr.isFirstPage());
 //         assertTrue(dr.isLastPage());
 //         // Overlapping the end
-//         dr.setStartIndex(10);
+//         dr.setStartRow(10);
 //         assertFalse(dr.isFirstPage());
 //         assertTrue(dr.isLastPage());
 //     }
@@ -320,35 +352,30 @@ public class PagedResultsTest extends TestCase
 //         PagedResults dr = getEstimateTooLowResults();
 //         dr.setPageSize(10);
 //         // At the beginning (this abuts the estimated end)
-//         dr.setStartIndex(0);
+//         dr.setStartRow(0);
 //         assertTrue(dr.isFirstPage());
 //         assertFalse(dr.isLastPage());
 //         // Abutting the end
-//         dr.setStartIndex(5);
+//         dr.setStartRow(5);
 //         assertFalse(dr.isFirstPage());
 //         assertTrue(dr.isLastPage());
 //         // Overlapping the end
-//         dr.setStartIndex(10);
+//         dr.setStartRow(10);
 //         assertFalse(dr.isFirstPage());
 //         assertTrue(dr.isLastPage());
-
+//
 //     }
 
-    /*
     public void testMoveColumnLeft1() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnLeft(0);
@@ -358,17 +385,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft2() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c2");
+        Column col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c1");
+        col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnLeft(1);
@@ -378,17 +401,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft3() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnLeft(2);
@@ -398,17 +417,14 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft4() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
 
         dr.moveColumnLeft(3);
@@ -418,17 +434,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft5() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnLeft(4);
@@ -438,17 +450,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight1() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c2");
+        Column col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c1");
+        col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnRight(0);
@@ -458,17 +466,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight2() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnRight(1);
@@ -478,17 +482,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight3() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
 
         dr.moveColumnRight(2);
@@ -498,17 +498,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight4() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnRight(3);
@@ -518,21 +514,17 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight5() throws Exception {
         PagedResults dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column();
-        col.setName("c1");
+        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("c2");
+        col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d1");
+        col = new Column(new Path(model,"Company.name"), 2, "Company");
         columns.add(col);
-        col = new Column();
-        col.setName("d2");
+        col = new Column(new Path(model,"Department.name"), 3, "Company");
         columns.add(col);
 
         dr.moveColumnRight(4);
         assertEquals(columns, dr.getColumns());
     }
-    */
+    
 }
