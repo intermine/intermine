@@ -84,7 +84,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectTrail");
 
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
-        addRequestParameter("trail", "_42_43_44");
+        addRequestParameter("trail", "|42|43|44");
 
         actionPerform();
         
@@ -100,9 +100,9 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertNotNull(e1);
         assertNotNull(e2);
         
-        assertEquals("_42", e0.getTrail());
-        assertEquals("_42_43", e1.getTrail());
-        assertEquals("_42_43_44", e2.getTrail());
+        assertEquals("|42", e0.getTrail());
+        assertEquals("|42|43", e1.getTrail());
+        assertEquals("|42|43|44", e2.getTrail());
         
         assertEquals("Department", e0.getLabel());
         assertEquals("Department", e1.getLabel());
@@ -185,10 +185,11 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         actionPerform();
         
         List c = (List) getRequest().getAttribute("trailElements");
-        assertEquals(1, c.size());
+        assertEquals(2, c.size());
         
-        ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(0);
-        assertFalse(e1.getType().equals("results"));
+        ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
+        assertTrue(e0.getType().equals("results"));
+        ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(1);
         assertEquals(42, e1.getObjectId());
         
         verifyNoActionErrors();
