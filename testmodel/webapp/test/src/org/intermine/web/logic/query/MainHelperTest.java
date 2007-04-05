@@ -192,20 +192,6 @@ public class MainHelperTest extends TestCase {
 
     }
 
-    // Select Employee
-    public void testMakeQueryOneClass() throws Exception {
-        Map queries = readQueries();
-        PathQuery pq = (PathQuery) queries.get("employee");
-
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        q.addToSelect(qc1);
-        q.addFrom(qc1);
-        q.addToOrderBy(qc1);
-
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
-    }
-
     // Select Employee.name
     public void testMakeQueryOneField() throws Exception {
         Map queries = readQueries();
@@ -220,64 +206,7 @@ public class MainHelperTest extends TestCase {
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
 
-    // Select Employee, Employee.name
-    public void testMakeQueryOneClassAndField() throws Exception {
-        Map queries = readQueries();
-        PathQuery pq = (PathQuery) queries.get("employeeAndName");
-
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        q.addToSelect(qc1);
-        q.addFrom(qc1);
-        q.addToOrderBy(qc1);
-        q.addToOrderBy(new QueryField(qc1, "name"));
-
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
-    }
-
-    // Select Employee.name, Employee.department.name
-    public void testMakeQueryTwoClasses() throws Exception {
-        Map queries = readQueries();
-        PathQuery pq = (PathQuery) queries.get("employeeDepartment");
-
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        q.addToSelect(qc1);
-        q.addFrom(qc1);
-        QueryClass qc2 = new QueryClass(Department.class);
-        q.addToSelect(qc2);
-        q.addFrom(qc2);
-        QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
-        ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
-        q.setConstraint(cc1);
-        q.addToOrderBy(new QueryField(qc1, "name"));
-        q.addToOrderBy(new QueryField(qc2, "name"));
-
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
-    }
-
-    // Select Employee.name, Employee.department
-    public void testMakeQueryTwoClassesReference() throws Exception {
-        Map queries = readQueries();
-        PathQuery pq = (PathQuery) queries.get("employeeDepartmentReference");
-
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        q.addToSelect(qc1);
-        q.addFrom(qc1);
-        QueryClass qc2 = new QueryClass(Department.class);
-        q.addToSelect(qc2);
-        q.addFrom(qc2);
-        QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
-        ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
-        q.setConstraint(cc1);
-        q.addToOrderBy(new QueryField(qc1, "name"));
-        q.addToOrderBy(qc2);
-
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
-    }
-
-    // Select Employee.name, Employee.departments.name, Employee.departments.company.name
+     // Select Employee.name, Employee.departments.name, Employee.departments.company.name
     // Constrain Employee.department.name = 'DepartmentA1'
     public void testMakeQueryThreeClasses() throws Exception {
         Map queries = readQueries();
@@ -344,52 +273,6 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(new QueryField(qc3, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
-    }
-
-    // Select Employee.name, Employee.departments.name, Employee.departments.employees.name
-    // Constrain Employee.department.name = 'DepartmentA1'
-    public void testMakeQuerySameClassTwice() throws Exception {
-        Map queries = readQueries();
-        PathQuery pq = (PathQuery) queries.get("employeeDepartmentEmployees");
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        Query q = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        q.addToSelect(qc1);
-        q.addFrom(qc1);
-        QueryField qf1 = new QueryField(qc1, "name");
-        QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
-        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.EQUALS, new QueryValue("employeea1"));
-        cs.addConstraint(sc1);
-        QueryClass qc2 = new QueryClass(Department.class);
-        q.addToSelect(qc2);
-        q.addFrom(qc2);
-        QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
-        ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
-        cs.addConstraint(cc1);
-        QueryClass qc3 = new QueryClass(Employee.class);
-        q.addToSelect(qc3);
-        q.addFrom(qc3);
-        QueryCollectionReference qor2 = new QueryCollectionReference(qc2, "employees");
-        ContainsConstraint cc2 = new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qc3);
-        cs.addConstraint(cc2);
-        q.setConstraint(cs);
-        q.addToOrderBy(qf1);
-        q.addToOrderBy(new QueryField(qc2, "name"));
-        q.addToOrderBy(new QueryField(qc3, "name"));
-
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
-
-        // Summarise Employee.department.name
-        q.clearSelect();
-        QueryField qf2 = new QueryField(qc2, "name");
-        q.addToGroupBy(qf2);
-        q.addToSelect(qf2);
-        q.addToSelect(new QueryFunction());
-
-        Map pathToQueryNode = new HashMap();
-        assertEquals(q.toString(), MainHelper.makeSummaryQuery(pq, new HashMap(), pathToQueryNode, "Employee.department.name").toString());
-        assertEquals(new HashSet(Arrays.asList(new String[] {"Employee.department.name", "Occurrences"})), pathToQueryNode.keySet());
     }
 
     private Map readQueries() throws Exception {
