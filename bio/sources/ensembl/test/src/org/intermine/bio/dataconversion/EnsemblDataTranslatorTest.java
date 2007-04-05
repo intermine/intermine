@@ -11,40 +11,26 @@ package org.intermine.bio.dataconversion;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 
 
 public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     protected static final Logger LOG=Logger.getLogger(EnsemblDataTranslatorTest.class);
     private String tgtNs = "http://www.flymine.org/model/genomic#";
-    private ItemFactory ensemblItemFactory;
-    private ItemFactory genomicItemFactory;
     private Properties ensemblProperties;
 
     public EnsemblDataTranslatorTest(String arg) throws Exception {
         super(arg, "osw.bio-fulldata-test");
-        ensemblItemFactory = new ItemFactory(Model.getInstanceByName("ensembl"));
-        genomicItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         ensemblProperties = getEnsemblProperties();
     }
 
@@ -57,7 +43,6 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
     public void testTranslate() throws Exception {
         Map itemMap = writeItems(getSrcItems());
 
-        System.out.println("itemMap: " + itemMap);
         EnsemblDataTranslator translator = new EnsemblDataTranslator(
                 new MockItemReader(itemMap), mapping, srcModel, getTargetModel(tgtNs), ensemblProperties, "AGP");
 
@@ -70,60 +55,6 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
         assertEquals(readItemSet("EnsemblDataTranslatorFunctionalTest_tgt.xml"), tgtIw.getItems());
     }
 
-
-    public void testSetOrganismDbId() throws Exception {
-        String srcNs = "http://www.intermine.org/model/ensembl#";
-        Item gene = createSrcItem(srcNs + "gene", "1_1", "");
-        gene.addReference(new Reference("seq_region", "1_99"));
-        gene.addAttribute(new Attribute("description", "Transcribed locus [Source:UniGene;Acc:Hs.429230]"));
-        gene.addReference(new Reference("analysis", "1_100"));
-
-
-        Item seq =  createSrcItem(srcNs + "seq_region", "1_99", "");
-        seq.addReference(new Reference("coord_system", "30_1"));
-        seq.addAttribute(new Attribute("name", "1"));
-        seq.addAttribute(new Attribute("length", "24612"));
-
-        Item coord = createSrcItem(srcNs + "coord_system", "30_1", "");
-        coord.addAttribute(new Attribute("name", "chromosome"));
-
-        Item transcript = createSrcItem(srcNs + "transcript", "2_1", "");
-        transcript.addReference(new Reference("gene", "1_1"));
-        Item stableId = createSrcItem(srcNs + "gene_stable_id", "3_1", "");
-        stableId.addAttribute(new Attribute("stable_id", "ENSG00000193436"));
-        stableId.addReference(new Reference("gene", "1_1"));
-
-        Map itemMap = writeItems(new HashSet(Arrays.asList(new Object[] {gene, stableId, transcript, seq, coord})));
-        EnsemblDataTranslator translator = new EnsemblDataTranslator(new
-            MockItemReader(itemMap), mapping, srcModel, getTargetModel(tgtNs), ensemblProperties, "HS");
-
-
-        Item exp1 = createTgtItem(tgtNs + "Gene", "1_1", "");
-        exp1.addAttribute(new Attribute("organismDbId", "ENSG00000193436"));
-        exp1.addAttribute(new Attribute("identifier", "ENSG00000193436"));
-        exp1.addReference(new Reference("organism", "-1_1"));
-        exp1.addReference(new Reference("comment", "-1_12"));
-        exp1.addCollection(new ReferenceList("evidence", new ArrayList(Arrays.asList(new Object[]{"-1_16", "-1_11"}))));
-        exp1.addCollection(new ReferenceList("objects", new ArrayList(Collections.singleton("-1_13"))));
-
-        Item exp2 = createTgtItem(tgtNs + "Location", "-1_13", "");
-        exp2.addAttribute(new Attribute("endIsPartial", "false"));
-        exp2.addAttribute(new Attribute("startIsPartial", "false"));
-        exp2.addReference(new Reference("object", "-1_14"));
-        exp2.addReference(new Reference("subject", "1_1"));
-
-        Item exp3 = createTgtItem(tgtNs + "ComputationalResult", "-1_16", "");
-        exp3.addReference(new Reference("source", "-1_11"));
-        exp3.addReference(new Reference("analysis", "1_100"));
-
-        Item exp4 = createTgtItem(tgtNs + "Comment", "-1_12", "");
-        exp4.addAttribute(new Attribute("text", "Transcribed locus [Source:UniGene;Acc:Hs.429230]"));
-
-        Set expected = new HashSet(Arrays.asList(new Object[] {exp1, exp2, exp3, exp4}));
-
-        assertEquals(expected, translator.translateItem(gene));
-    }
-
     protected Collection getSrcItems() throws Exception {
         return readItemSet("EnsemblDataTranslatorFunctionalTest_src.xml");
     }
@@ -134,16 +65,6 @@ public class EnsemblDataTranslatorTest extends DataTranslatorTestCase {
 
     protected String getSrcModelName() {
         return "ensembl";
-    }
-
-    private Item createSrcItem(String clsName, String identifier, String imps) {
-        Item item = ensemblItemFactory.makeItem(identifier, clsName, imps);
-        return item;
-    }
-
-    private Item createTgtItem(String clsName, String identifier, String imps) {
-        Item item = genomicItemFactory.makeItem(identifier, clsName, imps);
-        return item;
     }
 
     private Properties getEnsemblProperties() throws IOException {
