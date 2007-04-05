@@ -38,8 +38,8 @@ public class FlyAtlasConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "flyatlas-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "flyatlas-tgt-items.xml");
             
-        assertEquals(readItemSet("test/FlyAtlasConverterTest.xml"), itemWriter.getItems());
+        assertEquals(readItemSet("FlyAtlasConverterTest.xml"), itemWriter.getItems());
     }
 }

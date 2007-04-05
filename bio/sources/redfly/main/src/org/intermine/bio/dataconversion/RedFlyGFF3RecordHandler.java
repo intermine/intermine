@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 {
     private String tgtNs;
     private static final String REDFLY_PREFIX = "REDfly:";
-    private Map anatomyMap = new HashMap();
+    private Map anatomyMap = new LinkedHashMap();
     private Map geneMap = new HashMap();
     private Map publications = new HashMap();
 

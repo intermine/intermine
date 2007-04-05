@@ -46,7 +46,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
     private ItemFactory itemFactory;
     private List featureIdentifiers;
     private GFF3Converter converter;
-
+    private String ENDL = System.getProperty("line.separator");
 
     public RedFlyGFF3RecordHandlerTest(String arg) {
         super(arg);
@@ -70,9 +70,9 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
     
     public void testFlyRegHandler() throws Exception {
         String gff =
-            "2L\tREDfly\tregulatory_region\t12092691\t12095792\t.\t.\t.\tID=\"prd_A8_repressor\"; Dbxref=\"Flybase:FBgn0003145\", \"PMID:7873402\", \"REDfly:391\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00000111\",\"FBbt:00005427\",\"FBbt:00005414\"\n"
-            + "2L\tREDfly\tregulatory_region\t12087891\t12088492\t.\t.\t.\tID=\"prd_P1_enhancer\"; Dbxref=\"Flybase:FBgn0003145\", \"PMID:7873402\", \"REDfly:392\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:100000111\",\"FBbt:100005427\",\"FBbt:100005414\"\n"
-            + "3R\tREDfly\tregulatory_region\t2667896\t2676484\t.\t.\t.\tID=\"Scr_BSR\"; Dbxref=\"Flybase:FBgn0003339\", \"PMID:7713432\", \"REDfly:576\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00000090\",\"FBbt:00000111\",\"FBbt:00005245\",\"FBbt:00000169\",\"FBbt:00000170\",\"FBbt:00000158\",\"FBbt:00000168\"";
+            "2L\tREDfly\tregulatory_region\t12092691\t12095792\t.\t.\t.\tID=\"prd_A8_repressor\"; Dbxref=\"Flybase:FBgn0003145\", \"PMID:7873402\", \"REDfly:391\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00005427\",\"FBbt:00005414\"" + ENDL
+            + "2L\tREDfly\tregulatory_region\t12087891\t12088492\t.\t.\t.\tID=\"prd_P1_enhancer\"; Dbxref=\"Flybase:FBgn0003145\", \"PMID:7873402\", \"REDfly:392\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00000111\"" + ENDL
+            + "3R\tREDfly\tregulatory_region\t2667896\t2676484\t.\t.\t.\tID=\"Scr_BSR\"; Dbxref=\"Flybase:FBgn0003339\", \"PMID:7713432\", \"REDfly:576\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00000090\"";
 
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
@@ -99,8 +99,10 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
 
         // uncomment to write a new tgt items file
         //writeItemsFile(allItems, "redfly-tgt-items.xml");
-
+        
+        
         Set expected = readItemSet("RedFlyGFF3RecordHandlerTest.xml");
+        System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, allItems);
     }
 }

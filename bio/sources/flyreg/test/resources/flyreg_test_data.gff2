@@ -1,5 +1,0 @@
-##gff-version 2
-##source-version Bergman_data v2.0
-##date 2005-02-18
-X	Bergman_data	binding_site	15560	15624	.	.	.	Factor "BEAF-32A"; Target "unknown"; PMID "9819433"; FPID "003440"
-4	Bergman_data	binding_site	97312	97326	.	.	.	Factor "Unspecified"; Target "I-element"; PMID "8670818"; FPID "001282"

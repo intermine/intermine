@@ -56,14 +56,14 @@ public class DiseaseRegionGFF3HandlerTest extends ItemsTestCase
 
     public void testParse() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/diseaseregion.gff")));
+                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("diseaseregion.gff")));
         converter.parse(srcReader);
         converter.store();
 
         // uncomment to write a new items xml file
-        writeItemsFile(writer.getItems(), "diseaseregion_items.xml");
+        //writeItemsFile(writer.getItems(), "diseaseregion_items.xml");
 
-        Set expected = readItemSet("test/diseaseregiontgt.xml");
+        Set expected = readItemSet("DiseaseRegionGFF3HandlerTest.xml");
         assertEquals(expected, writer.getItems());
     }
 }

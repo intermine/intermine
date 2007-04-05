@@ -11,21 +11,21 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.HashSet;
-import java.util.Arrays;
+import java.util.Map;
 
-import org.intermine.util.TextFileUtil;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TextFileUtil;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
 
 /**
  * DataConverter to load WormBase gene identifiers from genes2molecular_names.txt.
@@ -68,12 +68,9 @@ public class WormBaseIdentifiersConverter extends FileConverter
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-        String arrayName;
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
-        int lineNo = 0;
-        boolean readingData = false;
 
-        // data is in format
+        // data is in format:
         // organismDbId | identifier | symbol
 
         while (lineIter.hasNext()) {
@@ -87,7 +84,6 @@ public class WormBaseIdentifiersConverter extends FileConverter
                 throw new RuntimeException("Line does not have enough elements: "
                                            + Arrays.asList(line));
             }
-            HashSet geneIds = new HashSet();
             String organismdbid = line[0];
             String identifier = line[1];
             String symbol = line[2];

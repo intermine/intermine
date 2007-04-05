@@ -219,8 +219,8 @@ public class FlyRNAiScreenConverter extends FileConverter
                 amplicons.put(ampliconIdentifier, amplicon);
                 writer.store(ItemHelper.convert(amplicon));
 
-                Item drscSynonym = newSynonym(ampliconIdentifier, amplicon, dataSource);
-                Item hfaSysnonym = newSynonym(hfaAmpliconIdentifier, amplicon, hfaSource);
+                newSynonym(ampliconIdentifier, amplicon, dataSource);
+                newSynonym(hfaAmpliconIdentifier, amplicon, hfaSource);
             }
 
             String numOffTargets =
@@ -439,16 +439,6 @@ public class FlyRNAiScreenConverter extends FileConverter
             }
         }
         return offtarget;
-    }
-
-    private String printRow(String[] row) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("" + row.length + ": ");
-        for (int i = 0; i < row.length; i++) {
-            sb.append(row[i]);
-            sb.append(",,,,");
-        }
-        return sb.toString();
     }
 }
 

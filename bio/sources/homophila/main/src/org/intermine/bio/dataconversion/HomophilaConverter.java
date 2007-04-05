@@ -22,9 +22,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 
 /**
@@ -64,6 +66,8 @@ public class HomophilaConverter extends FileConverter
     
     protected File diseaseFile;
     protected File proteinGeneFile;
+    
+    protected ItemFactory itemFactory;
 
     /**
      * Construct a new instance of HomophilaCnoverter.
@@ -74,6 +78,8 @@ public class HomophilaConverter extends FileConverter
     public HomophilaConverter(ItemWriter writer) throws ObjectStoreException {
         super(writer);
 
+        Model tgtModel = Model.getInstanceByName("genomic");
+        itemFactory = new ItemFactory(tgtModel);
         orgHuman = newItem("Organism");
         orgHuman.addAttribute(new Attribute("taxonId", "9606"));
         store(orgHuman);
@@ -368,11 +374,7 @@ public class HomophilaConverter extends FileConverter
      * @return a new Item
      */
     protected Item newItem(String className) {
-        Item item = new Item();
-        item.setIdentifier(alias(className) + "_" + (id++));
-        item.setClassName(GENOMIC_NS + className);
-        item.setImplementations("");
-        return item;
+        return itemFactory.makeItem(alias(className) + "_" + (id++), GENOMIC_NS + className, "");
     }
 }
 

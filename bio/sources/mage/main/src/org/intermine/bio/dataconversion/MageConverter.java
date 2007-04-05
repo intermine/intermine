@@ -187,10 +187,7 @@ public class MageConverter extends FileConverter
             String itemIdentifier = (String) refMap.get(mageObjId);
             String className = (String) classmap.get(itemIdentifier.substring(0,
                                itemIdentifier.indexOf("_")));
-            Item item = new Item();
-            item.setClassName(MAGE_NS + className);
-            item.setImplementations("");
-            item.setIdentifier(itemIdentifier);
+            Item item = itemFactory.makeItem(itemIdentifier, MAGE_NS + className, "");
             item.setAttribute("identifier", mageObjId);
             storeItem(item);
         }
@@ -228,9 +225,7 @@ public class MageConverter extends FileConverter
 
         Class cls = obj.getClass();
         String className = TypeUtil.unqualifiedName(cls.getName());
-        Item item = new Item();
-        item.setClassName(MAGE_NS + className);
-        item.setImplementations("");
+        Item item = null;
 
         if (!cls.getName().equals("org.biomage.Common.MAGEJava")
             && !className.endsWith("_package")) {
@@ -247,7 +242,7 @@ public class MageConverter extends FileConverter
                 itemIdentifier = alias(className) + "_" + itemId;
             }
 
-            item.setIdentifier(itemIdentifier);
+            item = itemFactory.makeItem(itemIdentifier, MAGE_NS + className, "");
             if (!classmap.containsKey(alias(className))) {
                 classmap.put(alias(className), className);
             }

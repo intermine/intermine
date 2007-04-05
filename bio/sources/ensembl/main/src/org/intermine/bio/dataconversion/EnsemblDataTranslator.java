@@ -294,7 +294,7 @@ public class EnsemblDataTranslator extends DataTranslator
             //simple_feature map to null, become TRNA/CpGIsland depending on analysis_id(logic_name)
         } else if ("simple_feature".equals(srcItemClassName)) {
             Item simpleFeature = createSimpleFeature(srcItem);
-            if (simpleFeature.getIdentifier() != null
+            if (simpleFeature != null && simpleFeature.getIdentifier() != null
                     && !simpleFeature.getIdentifier().equals("")) {
                 result.add(simpleFeature);
                 result.add(createLocation(srcItem, simpleFeature, true));
@@ -910,7 +910,7 @@ public class EnsemblDataTranslator extends DataTranslator
      *          when anything goes wrong.
      */
     protected Item createSimpleFeature(Item srcItem) throws ObjectStoreException {
-        Item simpleFeature = new Item();
+        Item simpleFeature = null;
         boolean createSynonym = true;
         String name = null;
         String idPrefix = null;

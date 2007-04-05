@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<items>
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="B0393.3"/>
+    <attribute name="organismDbId" value="WBGene00007168"/>
+    <reference name="organism" ref_id="1_1"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="WBGene00007167"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_3" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="rbg-3"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="B0393.2"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="6239"/>
+  </item>
+  <item id="3_4" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="WBGene00007168"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="WormBase"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="B0393.2"/>
+    <attribute name="organismDbId" value="WBGene00007167"/>
+    <attribute name="symbol" value="rbg-3"/>
+    <reference name="organism" ref_id="1_1"/>
+  </item>
+  <item id="3_5" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="B0393.3"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+</items>

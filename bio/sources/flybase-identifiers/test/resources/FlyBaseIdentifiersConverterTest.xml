@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<items>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7237"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="FlyBase"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0000451"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="GA10807"/>
+    <attribute name="organismDbId" value="FBgn0070863"/>
+    <attribute name="symbol" value="Dpse\GA10807"/>
+    <reference name="organism" ref_id="1_2"/>
+  </item>
+  <item id="3_9" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0070863"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="3_5" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0036073"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_3" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="ect"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_6" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0036074"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_4" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0010018"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="3_10" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="Dpse\GA10807"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="3_7" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="CG11965"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="CG6611"/>
+    <attribute name="organismDbId" value="FBgn0000451"/>
+    <attribute name="symbol" value="ect"/>
+    <reference name="organism" ref_id="1_1"/>
+  </item>
+  <item id="3_8" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="GA10807"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_2"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="CG6611"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="2_1"/>
+  </item>
+</items>

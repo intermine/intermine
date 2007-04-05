@@ -12,12 +12,10 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.intermine.bio.io.gff3.GFF3Parser;
@@ -39,7 +37,6 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 {
     private Model tgtModel;
     private FlyRegGFF3RecordHandler handler;
-    private List featureIdentifiers;
     private String seqClsName = "Chromosome";
     private String orgAbbrev = "DM";
     private String dataSourceName = "FlyReg";
@@ -77,8 +74,6 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         
         Iterator iter = GFF3Parser.parse(srcReader);
 
-        featureIdentifiers = new ArrayList();
-
         while (iter.hasNext()) {
             GFF3Record record = (GFF3Record) iter.next();
             String term = record.getType();
@@ -86,11 +81,11 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
             Item feature = itemFactory.makeItem(null, tgtNs + className, "");
 
             handler.setFeature(feature);
+            handler.clearEvidenceReferenceList();
             handler.process(record);
             feature.setAttribute("identifier", record.getId());
-            
-            featureIdentifiers.add(feature.getIdentifier());
-            
+            // evidence collection is normally set in GFF3Converter, we just want to check Publication
+            feature.addCollection(handler.getEvidenceReferenceList());
             allItems.addAll(handler.getItems());
         }
              
