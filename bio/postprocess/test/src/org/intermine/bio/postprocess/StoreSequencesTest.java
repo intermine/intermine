@@ -1,19 +1,10 @@
 package org.intermine.bio.postprocess;
 
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-import org.flymine.model.genomic.Contig;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -21,13 +12,21 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.sql.Database;
+
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
+
+import org.flymine.model.genomic.Contig;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class StoreSequencesTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    private Database db = null;
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -67,7 +66,7 @@ public class StoreSequencesTest extends TestCase {
 
     public void testStoreContigSequences() throws Exception {
         storeContigs();
-        StoreSequences ss = new MockStoreSequences(osw, db);
+        StoreSequences ss = new MockStoreSequences(osw);
         ss.storeContigSequences();
 
         Query q1 = new Query();
@@ -115,14 +114,13 @@ public class StoreSequencesTest extends TestCase {
     private class MockStoreSequences extends StoreSequences {
         Map seqs = new HashMap();
 
-        MockStoreSequences(ObjectStoreWriter osw, Database db) throws SQLException,
-        ClassNotFoundException {
-            super(osw, db);
+        MockStoreSequences(ObjectStoreWriter osw) {
+            super(osw, null);
             seqs.put("CR381709.1.2001.2054", "TTCCTAGGAGGTTCTAATCAATGCAACTATAGGTATTTTCTGCCAAGGTCTAGC");
             seqs.put("AADD01209098.1.15791.15883", "TAAGTCTCTCAAAAACCCCTGGAAGACTGTATCAAGGGGTTGTTGTTGGTGGCACTGGTGTGATAATGGATCTGATATTCATTGTGATAGCAG");
         }
 
-        protected String getSequence(String contigId) throws SQLException {
+        protected String getSequence(String contigId) {
             return (String) seqs.get(contigId);
         }
     }
