@@ -65,13 +65,13 @@ public class StoreSequences
         ObjectStore os = osw.getObjectStore();
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
-        Connection connection = db.getConnection();
+        
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             osw.beginTransaction();
             Contig contig = (Contig) PostProcessUtil.cloneInterMineObject((Contig) resIter.next());
 
-            String sequence = getSequence(connection, contig.getIdentifier());
+            String sequence = getSequence(contig.getIdentifier());
             Sequence seq = (Sequence) DynamicUtil.createObject(
                              Collections.singleton(Sequence.class));
             seq.setResidues(sequence);
@@ -85,12 +85,12 @@ public class StoreSequences
 
     /**
      * Get contig sequences from ensembl human src db by contigId
-     * @param connection the Connection to use when creating Statement objects
      * @param contigId the id for the contig
      * @throws SQLException if there are any problems
      * @return a sequence for this contig
      */
-    protected String getSequence(Connection connection, String contigId) throws SQLException {
+    protected String getSequence(String contigId) throws SQLException {
+        Connection connection = db.getConnection();
         String sequence = null;
         
         Statement statement = connection.createStatement();
