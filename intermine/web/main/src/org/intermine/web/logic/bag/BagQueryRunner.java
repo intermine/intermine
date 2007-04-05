@@ -308,7 +308,7 @@ public class BagQueryRunner
                     InterMineObject origObj = (InterMineObject) origObjIter.next();
                     List converterObjList = (List) convertedObjsMap.get(origObj);
                     Iterator convertedObjListIter = converterObjList.iterator();
-
+                    boolean toRemove = false;
                     // then for each new object ...
                     while (convertedObjListIter.hasNext()) {
                         InterMineObject convertedObj = (InterMineObject) convertedObjListIter
@@ -319,7 +319,7 @@ public class BagQueryRunner
                         Set origInputStringSet = (Set) objectToInput.get(origObj);
                         objPairList.add(convertedPair);
                         // remove this object so we don't try to convert it again
-                        objectToInput.remove(origObj);
+                        toRemove = true;
                         // make an issue for each input identifier that matched the objects in
                         // this old/new pair
                         Iterator inputStringIter = origInputStringSet.iterator();
@@ -330,6 +330,9 @@ public class BagQueryRunner
                                          origInputString, objPairList);
                             objsOfWrongType.remove(origInputString);
                         }
+                    }
+                    if (toRemove) {
+                        objectToInput.remove(origObj);
                     }
                 }
             }
