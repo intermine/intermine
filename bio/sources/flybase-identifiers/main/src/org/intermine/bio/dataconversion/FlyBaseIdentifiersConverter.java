@@ -74,10 +74,7 @@ public class FlyBaseIdentifiersConverter extends FileConverter
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-        String arrayName;
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
-        int lineNo = 0;
-        boolean readingData = false;
 
         // data is in format
         // symbol | primary FBGN | secondary FBGNs | primary CG | secondary CGs
@@ -93,7 +90,6 @@ public class FlyBaseIdentifiersConverter extends FileConverter
                 throw new RuntimeException("Line does not have enough elements: "
                                            + Arrays.asList(line));
             }
-            // get the name of the array.  TODO also version?
             HashSet geneIds = new HashSet();
             String symbol = line[0];
             String fbgn = line[1];

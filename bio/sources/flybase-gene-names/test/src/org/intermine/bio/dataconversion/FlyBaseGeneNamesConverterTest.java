@@ -37,9 +37,7 @@ public class FlyBaseGeneNamesConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //FileWriter fw = new FileWriter(new File("flybase-gene-names_tgt.xml"));
-        //fw.write(FullRenderer.render(itemWriter.getItems()));
-        //fw.close();
+        writeItemsFile(itemWriter.getItems(), "flybase-gene-names_tgt.xml");
 
         assertEquals(readItemSet("FlyBaseGeneNamesConverterTest.xml"),
                      itemWriter.getItems());

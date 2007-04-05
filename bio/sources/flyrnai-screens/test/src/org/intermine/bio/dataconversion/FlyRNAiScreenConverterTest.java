@@ -29,8 +29,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter);
-
-        File srcFile = new File("resources/FlyRNAiConverterTest.dataset");
+        File srcFile = new File(getClass().getClassLoader().getResource("FlyRNAiConverterTest.dataset").toURI());
         converter.setCurrentFile(srcFile);
         converter.taxonId = "7227";
         converter.process(new FileReader(srcFile));

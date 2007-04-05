@@ -75,4 +75,13 @@
   <item id="3_1" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
     <attribute name="name" value="Brain"/>
   </item>
+  <item id="3_10" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+    <attribute name="name" value="Tubule (larval)"/>
+  </item>
+  <item id="3_11" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+    <attribute name="name" value="Fat Body (larval)"/>
+  </item> 
+  <item id="3_9" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+    <attribute name="name" value="Accessory Gland"/>
+  </item>   
 </items>

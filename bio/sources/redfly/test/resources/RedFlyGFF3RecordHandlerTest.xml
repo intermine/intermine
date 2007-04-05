@@ -2,7 +2,7 @@
   <item id="1_2" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt:00005304"/>
   </item>
-  <item id="1_7" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="1_6" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7873402"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#TFmodule">
@@ -10,106 +10,55 @@
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
     <attribute name="identifier" value="prd_A8_repressor"/>
-    <reference name="gene" ref_id="1_6"/>
+    <reference name="gene" ref_id="1_5"/>
     <collection name="anatomyOntology">
       <reference ref_id="1_2"/>
       <reference ref_id="1_3"/>
       <reference ref_id="1_4"/>
-      <reference ref_id="1_5"/>
     </collection>
   </item>
-  <item id="1_4" class="http://www.flymine.org/model/genomic#AnatomyTerm">
+  <item id="1_3" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt:00005427"/>
   </item>
-  <item id="1_6" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="1_5" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="FBgn0003145"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
-  <item id="1_5" class="http://www.flymine.org/model/genomic#AnatomyTerm">
+  <item id="1_4" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt:00005414"/>
   </item>
-  <item id="1_8" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="prd_A8_repressor"/>
-    <reference name="source" ref_id="0_2"/>
-    <reference name="subject" ref_id="1_1"/>
-  </item>
-  <item id="1_3" class="http://www.flymine.org/model/genomic#AnatomyTerm">
+  <item id="1_8" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt:00000111"/>
   </item>
-  <item id="1_10" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:100000111"/>
-  </item>
-  <item id="1_12" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:100005414"/>
-  </item>
-  <item id="1_9" class="http://www.flymine.org/model/genomic#TFmodule">
+  <item id="1_7" class="http://www.flymine.org/model/genomic#TFmodule">
     <attribute name="accession" value="REDfly:392"/>
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
     <attribute name="identifier" value="prd_P1_enhancer"/>
-    <reference name="gene" ref_id="1_6"/>
+    <reference name="gene" ref_id="1_5"/>
     <collection name="anatomyOntology">
       <reference ref_id="1_2"/>
-      <reference ref_id="1_10"/>
-      <reference ref_id="1_11"/>
-      <reference ref_id="1_12"/>
+      <reference ref_id="1_8"/>
     </collection>
   </item>
-  <item id="1_13" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="prd_P1_enhancer"/>
-    <reference name="source" ref_id="0_2"/>
-    <reference name="subject" ref_id="1_9"/>
-  </item>
-  <item id="1_11" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:100005427"/>
-  </item>
-  <item id="1_22" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="1_12" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7713432"/>
   </item>
-  <item id="1_14" class="http://www.flymine.org/model/genomic#TFmodule">
+  <item id="1_9" class="http://www.flymine.org/model/genomic#TFmodule">
     <attribute name="accession" value="REDfly:576"/>
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
     <attribute name="identifier" value="Scr_BSR"/>
-    <reference name="gene" ref_id="1_21"/>
+    <reference name="gene" ref_id="1_11"/>
     <collection name="anatomyOntology">
-      <reference ref_id="1_15"/>
-      <reference ref_id="1_3"/>
-      <reference ref_id="1_16"/>
-      <reference ref_id="1_17"/>
-      <reference ref_id="1_18"/>
-      <reference ref_id="1_19"/>
-      <reference ref_id="1_20"/>
+      <reference ref_id="1_10"/>
     </collection>
   </item>
-  <item id="1_15" class="http://www.flymine.org/model/genomic#AnatomyTerm">
+  <item id="1_10" class="http://www.flymine.org/model/genomic#AnatomyTerm">
     <attribute name="identifier" value="FBbt:00000090"/>
   </item>
-  <item id="1_19" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00000158"/>
-  </item>
-  <item id="1_16" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00005245"/>
-  </item>
-  <item id="1_21" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="1_11" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="organismDbId" value="FBgn0003339"/>
     <reference name="organism" ref_id="0_0"/>
-  </item>
-  <item id="1_17" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00000169"/>
-  </item>
-  <item id="1_20" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00000168"/>
-  </item>
-  <item id="1_23" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="Scr_BSR"/>
-    <reference name="source" ref_id="0_2"/>
-    <reference name="subject" ref_id="1_14"/>
-  </item>
-  <item id="1_18" class="http://www.flymine.org/model/genomic#AnatomyTerm">
-    <attribute name="identifier" value="FBbt:00000170"/>
   </item>
 </items>
