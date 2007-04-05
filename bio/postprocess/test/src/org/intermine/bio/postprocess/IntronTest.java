@@ -106,6 +106,9 @@ public class IntronTest extends TestCase{
     public void testCreateIntronFeaturesRef() throws Exception {
         IntronUtil iru = new IntronUtil(osw);
 
+        createTranscriptT1(100);
+        createTranscriptT2(100);
+
         iru.createIntronFeatures();
 
         ObjectStore os = osw.getObjectStore();
@@ -132,7 +135,7 @@ public class IntronTest extends TestCase{
             assertNotNull(ir.getChromosome());
             assertNotNull(ir.getOrganism());
             assertNotNull(ir.getLength());
-            System.out.println("length " + ir.getLength().intValue());
+
             assertTrue(ir.getLength().intValue() > 0);
             assertEquals(1, ir.getEvidence().size());
 
