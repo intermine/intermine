@@ -11,13 +11,11 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -48,21 +46,21 @@ public class BioJavaFlatFileConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Map bioEntities = new HashMap();
+    protected LinkedHashMap bioEntities = new LinkedHashMap();
     protected Item db;
-    protected Map ids = new HashMap();
+    protected LinkedHashMap ids = new LinkedHashMap();
     protected ItemFactory itemFactory;
-    protected Map taxonIds = new HashMap();
+    protected LinkedHashMap taxonIds = new LinkedHashMap();
 
-    private Set itemsToStore = null;
+    private LinkedHashSet itemsToStore = null;
 
-    private Map organisms = new HashMap();
-    private Map chromosomes = new HashMap();
-    private Map genes = new HashMap();
-    private Map proteins = new HashMap();
-    private Map cdsFeatures = new HashMap();
-    private Map mrnaFeatures = new HashMap();
-    private Map translationFeatures = new HashMap();
+    private LinkedHashMap organisms = new LinkedHashMap();
+    private LinkedHashMap chromosomes = new LinkedHashMap();
+    private LinkedHashMap genes = new LinkedHashMap();
+    private LinkedHashMap proteins = new LinkedHashMap();
+    private LinkedHashMap cdsFeatures = new LinkedHashMap();
+    private LinkedHashMap mrnaFeatures = new LinkedHashMap();
+    private LinkedHashMap translationFeatures = new LinkedHashMap();
 
     private Item dataSource;
 
@@ -86,7 +84,7 @@ public class BioJavaFlatFileConverter extends FileConverter
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-        itemsToStore = new HashSet();
+        itemsToStore = new LinkedHashSet();
 
         BufferedReader br = new BufferedReader(reader);
         SequenceIterator sequences = SeqIOTools.readEmbl(br);
@@ -101,7 +99,6 @@ public class BioJavaFlatFileConverter extends FileConverter
                     Feature feature = (Feature) iter.next();
                     String type =  feature.getType();
 
-                    /*
                     System.err. println("got: " + feature);
                     System.err. println("type: " + type);
                     Location location = feature.getLocation();
@@ -112,7 +109,7 @@ public class BioJavaFlatFileConverter extends FileConverter
                         Object key = annoKeyIter.next();
                         System.err. println("  " + key + ": " + annotation.getProperty(key));
                     }
-                    */
+
                     if (type.equals("source")) {
                         org = handleSourceFeature(feature, chr);
                         continue;
@@ -211,7 +208,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         return cds;
     }
 
-    private String getUniqueName(Map features, String name) {
+    private String getUniqueName(LinkedHashMap features, String name) {
         if (features.containsKey(name)) {
             int maxIndex = 10000;
             int i = 2;
@@ -264,6 +261,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     private Item makeItem(String c) {
         Item item = itemFactory.makeItemForClass(GENOMIC_NS + c);
         itemsToStore.add(item);
+        System.err.println("made item: " + item);
         return item;
     }
 

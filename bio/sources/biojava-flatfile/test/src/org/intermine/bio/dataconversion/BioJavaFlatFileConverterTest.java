@@ -11,12 +11,15 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.StringReader;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.xml.full.ItemHelper;
 
 public class BioJavaFlatFileConverterTest extends ItemsTestCase {
     
@@ -25,6 +28,7 @@ public class BioJavaFlatFileConverterTest extends ItemsTestCase {
         super(arg);
     }
 
+    // test fails because biojava returns features in a random order
     public void testProcess1() throws Exception {
         String input = 
             IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_1.embl"));
@@ -38,6 +42,7 @@ public class BioJavaFlatFileConverterTest extends ItemsTestCase {
         assertEquals(expected, itemWriter.getItems());
     }
     
+    // test fails because biojava returns features in a random order
     public void testProcess2() throws Exception {
         String input = 
             IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_2.embl"));
