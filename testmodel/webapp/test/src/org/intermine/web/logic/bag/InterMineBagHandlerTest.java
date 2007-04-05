@@ -108,6 +108,10 @@ public class InterMineBagHandlerTest extends TestCase
         assertEquals(1, newIds.size());
     }
 
+    /**
+     * For the case when it returns two Objects
+     * @throws Exception
+     */
     public void testFindCompanyByNameAndDifferentVat() throws Exception {
         Address oldAddress =
             (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
@@ -119,12 +123,8 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setAddress(oldAddress);
         oldCompany.setVatNumber(1234);
 
-        try {
-            Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
-            fail("expected RuntimeException");
-        } catch (RuntimeException e) {
-            // expected
-        }
+        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        assertEquals(2, newIds.size());
     }
 
 }
