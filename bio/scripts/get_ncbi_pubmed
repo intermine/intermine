@@ -1,31 +1,32 @@
 #!/usr/bin/perl
-
 # script to download ncbi gene number and pubmed ID files
 
 use strict;
-use warnings;
-use Net::FTP;
 
-#connect to the ftp server
+use lib "../../intermine/perl/lib/InterMine/";
+use DataDownloader;
+
+print "\nReady to download NCBI gene and pubmed Id...\n";
+
+#for connecting to the ftp server
 my $ncbi_server = "ftp.ncbi.nlm.nih.gov";
 my $ncbi_dir = "gene/DATA";
+my $username = "anonymous";
+my $password = "philip\@flymine.org";
+
+#files to download
 my $gene_info_file = "gene_info.gz";
 my $pubmed_info_file = "gene2pubmed.gz";
 
-
-my $ncbi_ftp = Net::FTP->new($ncbi_server, Passive => 1)
-or die "Cannot connect to $ncbi_server: $@";
-
-$ncbi_ftp->login("anonymous","philip\@flymine.org")
-or die "Cannot login ", $ncbi_ftp->message;
-
-$ncbi_ftp->cwd($ncbi_dir);
+#connect to the server
+my $connection = &ftp_connect($ncbi_server,$ncbi_dir,$username,$password);
 
 #use the date stamp to create a version id for the output directory
-my $gene_date_string = &date_string($gene_info_file);
-my $pubmed_date_string = &date_string($pubmed_info_file);
+my $gene_date_string = &date_string($connection,$gene_info_file);
+my $pubmed_date_string = &date_string($connection, $pubmed_info_file);
 
-my $ncbi_main_dir = "pubmed";
+#destination directories
+my $ncbi_main_dir = "/shared/data/pubmed";
 my $ncbi_gene_dir = "$ncbi_main_dir/gene_info/$gene_date_string";
 my $pubmed_id_dir = "$ncbi_main_dir/gene2pubmed/$pubmed_date_string";
 
@@ -36,80 +37,17 @@ my $pubmed_id_dir = "$ncbi_main_dir/gene2pubmed/$pubmed_date_string";
 &checkdir("$ncbi_main_dir/current");
 
 #if a file is downloaded, update the links in the "current" directory
-if(&download($pubmed_id_dir,$pubmed_info_file) == 1){
-	my $pub_link = "pubmed/current/gene2pubmed";
-	my $pub_current_dir = "../gene2pubmed/$pubmed_date_string";
+if(&download($connection,$pubmed_id_dir,$pubmed_info_file) == 1){
+	my $pub_link = "/shared/data/pubmed/current/gene2pubmed";
+	my $pub_current_dir = "/shared/data/pubmed/gene2pubmed/$pubmed_date_string";
 	&make_link($pub_current_dir,$pub_link);
 }
-if(&download($ncbi_gene_dir,$gene_info_file) == 1){
-	my $gene_link = "pubmed/current/gene_info";
-	my $gene_current_dir = "../gene_info/$gene_date_string";
+if(&download($connection,$ncbi_gene_dir,$gene_info_file) == 1){
+	my $gene_link = "/shared/data/pubmed/current/gene_info";
+	my $gene_current_dir = "/shared/data/pubmed/gene_info/$gene_date_string";
 	&make_link($gene_current_dir,$gene_link);
   
 }
 
-$ncbi_ftp->quit;
+$connection->quit;
 
-#create symbolic links to the latest file
-sub make_link(){
-	my ($dir, $link) = @_;
-	unlink $link;
-	symlink ($dir, "$link") or die "can't create $link";
-}
-
-#download and unzip a file, unless the output directory already exists
-sub download(){
-my ($dir, $file) = @_;
-	
-	#if checkdir creates a new directory, download the file
-	if(&checkdir($dir) == 1){
-  		print STDERR "getting $ncbi_server/$ncbi_dir/$file to $dir\n";
-
-  		$ncbi_ftp->binary();
-  		$ncbi_ftp->get($file, "$dir/$file")or die "get failed ", $ncbi_ftp->message;
-  
-  		print"gzip -dr $dir\n";
-
-  		if ((system "gzip -dr $dir") != 0) {
-  		  die qq|system "gzip -dr $dir" failed: $?\n|;
-  		}
-		return 1;
-	}
-	else{
-	    warn " current version up to date - skipping download\n";
-		return 0;
-	}
-}
-
-#check if a directory exists, create it if it doesn't
-sub checkdir(){
-	my $dir = shift;
-	if (!(-d $dir)) {
-	    print STDERR "creating directory: $dir\n";
-	    mkdir $dir	
-	        or die "failed to create directory $dir";
-		return 1;	
-	}else{
-		print STDERR "$dir exists\n";
-		return 0;
-	}
-}
-#get the date stamp from a file to be downloaded
-sub date_string(){
-	my $file = shift;
-
-	my $gene_date_stamp = $ncbi_ftp->mdtm($file);
-	my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime($gene_date_stamp);
-
-print "$day $month $year\n";
-
-	$month += 1;
-	$year -= 100;
-	$year += 2000;
-
-print "$day $month $year\n";
-
-	my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
-
-	return $date_string;
-}
