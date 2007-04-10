@@ -41,7 +41,7 @@ public class WormBaseIdentifiersConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "flybase-ids_tgt.xml");
+        //writeItemsFile(itemWriter.getItems(), "flybase-ids_tgt.xml");
         
         assertEquals(readItemSet("WormBaseIdentifiersConverterTest.xml"), itemWriter.getItems());
     }

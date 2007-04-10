@@ -39,7 +39,7 @@ public class ProteinStructureDataTranslatorTest extends DataTranslatorTestCase {
         translator.translate(tgtIw);
 
         // uncomment to write a new target items file
-        writeItemsFile(tgtIw.getItems(), "protein-structure_tgt.xml");
+        //writeItemsFile(tgtIw.getItems(), "protein-structure_tgt.xml");
 
         assertEquals(readItemSet("ProteinStructureDataTranslatorFunctionalTest_tgt.xml"), tgtIw.getItems());
     }
