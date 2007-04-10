@@ -205,11 +205,6 @@ public class TemplateHelper
             }
         }
 
-        // Set the desired view list
-        if (!StringUtils.isEmpty(tf.getView())) {
-            queryCopy.setView(template.getAlternativeView(tf.getView()));
-        }
-
         queryCopy.setEdited(true);
         return queryCopy;
     }

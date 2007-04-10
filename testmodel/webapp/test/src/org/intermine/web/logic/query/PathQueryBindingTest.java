@@ -10,22 +10,23 @@ package org.intermine.web.logic.query;
  *
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
+import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.ClassKeyHelper;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for the PathQueryBinding class
@@ -80,8 +81,6 @@ public class PathQueryBindingTest extends TestCase
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
                                                 true, "age is greater than 10", null, "age_gt_10"));
-        employeesWithOldManagers.addAlternativeView("altView1", Arrays.asList(new Object[]{"Employee.name", "Employee.age"}));
-        employeesWithOldManagers.addAlternativeView("altView2", Arrays.asList(new Object[]{"Employee.name"}));
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
         
         //vatNumberInBag

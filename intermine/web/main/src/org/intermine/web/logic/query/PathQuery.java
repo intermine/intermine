@@ -10,9 +10,7 @@ package org.intermine.web.logic.query;
  *
  */
 
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -21,12 +19,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsInfo;
+
+import org.intermine.metadata.Model;
 import org.intermine.util.CollectionUtil;
+
+import java.io.StringReader;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Class to represent a path-based query.
@@ -40,7 +42,7 @@ public class PathQuery
     
     protected Model model;
     protected LinkedHashMap nodes = new LinkedHashMap();
-    protected List view = new ArrayList();
+    protected List<String> view = new ArrayList();
     protected ResultsInfo info;
     protected ArrayList problems = new ArrayList();
     protected LogicExpression constraintLogic = null;
@@ -185,6 +187,22 @@ public class PathQuery
         return view;
     }
     
+//    /**
+//     * Sets the value of view
+//     * @param view a List of Path
+//     */
+//    public void setView(List<Path> view) {
+//        this.view = view;
+//    }
+//
+//    /**
+//     * Gets the value of view
+//     * @return a List of String paths
+//     */
+//    public List<Path> getView() {
+//        return view;
+//    }
+//    
     /**
      * Returns the view as a List of Path objects.
      * @return the value of view as Paths
@@ -196,40 +214,6 @@ public class PathQuery
             returnList.add(MainHelper.makePath(model, this, (String) iter.next()));
         }
         return returnList;
-    }
-    
-    /**
-     * Get alternative select list by name.
-     * @param name view name
-     * @return List of Strings
-     */
-    public List getAlternativeView(String name) {
-        return (List) alternativeViews.get(name);
-    }
-    
-    /**
-     * Get alternative select lists as an unmodifiable Map from name to List.
-     * @return alternative select lists
-     */
-    public Map getAlternativeViews() {
-        return Collections.unmodifiableMap(alternativeViews);
-    }
-    
-    /**
-     * Add an alternative select list.
-     * @param name view name
-     * @param alternateView the select list
-     */
-    public void addAlternativeView(String name, List alternateView) {
-        alternativeViews.put(name, alternateView);
-    }
-    
-    /**
-     * Remove alternative select list by name
-     * @param name view name
-     */
-    public void removeAlternativeView(String name) {
-        alternativeViews.remove(name);
     }
 
     /**
@@ -346,10 +330,6 @@ public class PathQuery
         if (problems != null) {
             query.problems = new ArrayList(problems);
         }
-        for (Iterator i = getAlternativeViews().entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            query.addAlternativeView((String) entry.getKey(), (List) entry.getValue());
-        }
         query.setConstraintLogic(getConstraintLogic());
         return query;
     }
@@ -390,8 +370,7 @@ public class PathQuery
         return (o instanceof PathQuery)
             && model.equals(((PathQuery) o).model)
             && nodes.equals(((PathQuery) o).nodes)
-            && view.equals(((PathQuery) o).view)
-            && alternativeViews.equals(((PathQuery) o).getAlternativeViews());
+            && view.equals(((PathQuery) o).view);
     }
 
     /**

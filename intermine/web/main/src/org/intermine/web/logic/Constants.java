@@ -99,11 +99,6 @@ public interface Constants
     public static final String QUERY = "QUERY";
 
     /**
-     * Session attribute - name of current select list being edited or null for default.
-     */
-    public static final String EDITING_VIEW = "EDITING_VIEW";
-
-    /**
      * Session attribute set of type TemplateBuildState present when query
      * builder is in template building mode.
      */

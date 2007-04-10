@@ -258,7 +258,6 @@ public class SessionMethods
         }
         session.setAttribute("path", path);
         session.removeAttribute("prefix");
-        session.removeAttribute(Constants.EDITING_VIEW);
 
         setHasQueryCookie(session, response, true);
     }
@@ -324,12 +323,7 @@ public class SessionMethods
         if (query == null) {
             throw new IllegalStateException("No query on session");
         }
-        String viewName = (String) session.getAttribute(Constants.EDITING_VIEW);
-        if (StringUtils.isEmpty(viewName)) {
-            return query.getView();
-        } else {
-            return query.getAlternativeView(viewName);
-        }
+        return query.getView();
     }
     
     /**

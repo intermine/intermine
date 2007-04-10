@@ -83,7 +83,6 @@ public class QueryClassSelectAction extends InterMineAction
         session.setAttribute("path", TypeUtil.unqualifiedName(className));
         session.setAttribute("prefix", TypeUtil.unqualifiedName(className));
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
-        session.removeAttribute(Constants.EDITING_VIEW);
     }
 }
 

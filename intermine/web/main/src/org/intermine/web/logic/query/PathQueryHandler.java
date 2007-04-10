@@ -11,17 +11,18 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -38,7 +39,6 @@ public class PathQueryHandler extends DefaultHandler
     private String queryName;
     private char gencode;
     private PathNode node;
-    private Map alternativeViews = new HashMap();
     protected PathQuery query;
     private Model model = null;
     private Map savedBags;
@@ -61,15 +61,9 @@ public class PathQueryHandler extends DefaultHandler
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
     throws SAXException {
-        if (qName.equals("alternative-view")) {
-            String name = validateName(attrs.getValue("name"));
-            List view = StringUtil.tokenize(attrs.getValue("view"));
-            alternativeViews.put(name, view);
-        }
         if (qName.equals("query")) {
             // reset things
             gencode = 'A';
-            alternativeViews = new HashMap();
             queryName = validateName(attrs.getValue("name"));
             try {
                 model = Model.getInstanceByName(attrs.getValue("model"));
@@ -162,10 +156,6 @@ public class PathQueryHandler extends DefaultHandler
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
             query.checkValidity(savedBags);
-            for (Iterator iter = alternativeViews.entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                query.addAlternativeView((String) entry.getKey(), (List) entry.getValue());
-            }
             queries.put(queryName, query);
         }
     }

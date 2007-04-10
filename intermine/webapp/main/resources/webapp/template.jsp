@@ -223,44 +223,6 @@
       </c:forEach>
     </table>
 
-    <c:if test="${!empty templateQuery.alternativeViews}">
-      <p>
-        Select an output table format:
-      </p>
-      <table border="0" cellspacing="5">
-        <tr>
-          <td>
-            <html:radio property="view" value=""/>
-          </td>
-          <td>
-            <fmt:message key="view.defaultOutput"/>
-          </td>
-          <td>
-            <c:forEach items="${templateQuery.view}" var="item">
-              <im:unqualify className="${item}" var="text"/>
-              <span class="templateOutputSummaryItem">${text}</span>
-            </c:forEach>
-          </td>
-        </tr>
-        <c:forEach var="entry" items="${templateQuery.alternativeViews}">
-          <tr>
-            <td>
-              <html:radio property="view" value="${entry.key}"/>
-            </td>
-            <td>
-              ${entry.key}
-            </td>
-            <td>
-              <c:forEach items="${entry.value}" var="item">
-                <im:unqualify className="${item}" var="text"/>
-                <span class="templateOutputSummaryItem">${text}</span>
-              </c:forEach>
-            </td>
-          </tr>
-        </c:forEach>
-      </table>
-    </c:if>
-
     <c:if test="${empty previewTemplate}">
       <br/>
       <html:hidden property="templateName"/>

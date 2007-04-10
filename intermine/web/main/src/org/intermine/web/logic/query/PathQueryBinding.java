@@ -71,13 +71,6 @@ public class PathQueryBinding
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
             }
-            for (Iterator j = query.getAlternativeViews().entrySet().iterator(); j.hasNext();) {
-                Map.Entry entry = (Map.Entry) j.next();
-                writer.writeStartElement("alternative-view");
-                writer.writeAttribute("name", entry.getKey().toString());
-                writer.writeAttribute("view", StringUtil.join((List) entry.getValue(), " "));
-                writer.writeEndElement();
-            }
             for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
                 PathNode node = (PathNode) j.next();
                 writer.writeStartElement("node");
