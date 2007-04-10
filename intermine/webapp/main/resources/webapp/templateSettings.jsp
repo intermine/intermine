@@ -9,7 +9,7 @@
 <html:xhtml/>
 
 <c:if test="${TEMPLATE_BUILD_STATE != null}">
-    
+
   <im:heading>
   <c:choose>
     <c:when test="${TEMPLATE_BUILD_STATE.updatingTemplate != null}">
@@ -25,9 +25,9 @@
   </im:heading>
 
   <im:body>
-  
+
   <fmt:message key="templateBuilder.save.msg"/>
-  
+
   <html:form action="/templateSettingsAction">
     <div align="center">
     <p>
@@ -38,10 +38,6 @@
           <html:text property="name" size="32"/>
           <c:if test="${empty TEMPLATE_BUILD_STATE.name}">
             <span class="errors">(Required)</span>
-          </c:if>
-          <c:if test="${IS_SUPERUSER}">
-            &nbsp;&nbsp;
-            <fmt:message key="templateBuilder.important"/><html:checkbox property="important"/>
           </c:if>
         </td>
       </tr>
