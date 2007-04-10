@@ -80,7 +80,6 @@ public class TemplateQueryHandler extends PathQueryHandler
                                                           templateDesc,
                                                           templateComment,
                                                           query,
-                                                          important,
                                                           keywords));
             reset();
         }

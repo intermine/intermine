@@ -122,7 +122,7 @@ public class ProfileManagerTest extends XMLTestCase
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")),
-                              false, "");
+                              "");
         
         bobProfile = new Profile(pm, bobName, null, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
@@ -162,7 +162,7 @@ public class ProfileManagerTest extends XMLTestCase
         InterMineBag objectBag = new InterMineBag(sallyId, "bag2", "org.intermine.model.testmodel.Employee", userProfileOS, os, contents);
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")), true,
+                                     new PathQuery(Model.getInstanceByName("testmodel")),
                                      "some_keyword");
 
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,

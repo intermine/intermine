@@ -37,7 +37,6 @@ public class TemplateBuildState
         comment = template.getComment();
         name = template.getName();
         keywords = template.getKeywords();
-        important = template.isImportant();
         updating = template;
     }
     

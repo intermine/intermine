@@ -62,8 +62,6 @@ public class TemplateQuery extends PathQuery
     protected String comment;
     /** Map from node to editable constraint list. */
     protected Map constraints = new HashMap();
-    /** True if template is considered 'important' for a related class. */
-    protected boolean important = false;
     /** Keywords set for this template. */
     protected String keywords = "";
     /** Edited version of another template. */
@@ -85,7 +83,7 @@ public class TemplateQuery extends PathQuery
      * @param keywords keywords for this template
      */
     public TemplateQuery(String name, String title, String description, String comment,
-                         PathQuery query, boolean important, String keywords) {
+                         PathQuery query, String keywords) {
         super((PathQuery) query.clone());
         if (description != null) {
             this.description = description;
@@ -98,7 +96,6 @@ public class TemplateQuery extends PathQuery
         }
         this.title = title;
         this.comment = comment;
-        this.important = important;
     }
 
     /**
@@ -230,13 +227,6 @@ public class TemplateQuery extends PathQuery
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return true if template is important
-     */
-    public boolean isImportant() {
-        return important;
     }
 
     /**
@@ -376,7 +366,7 @@ public class TemplateQuery extends PathQuery
      */
     public Object clone() {
         TemplateQuery templateQuery = new TemplateQuery(name, title, description, comment,
-                                                        (PathQuery) super.clone(), important,
+                                                        (PathQuery) super.clone(),
                                                         keywords);
         templateQuery.edited = edited;
         return templateQuery;
