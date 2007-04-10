@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.ItemPath;
-import org.intermine.dataconversion.ItemPrefetchDescriptor;
 import org.intermine.dataconversion.ItemReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -110,7 +109,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map derivedBANameMap = new HashMap(); //dba itemId, dba name
     protected Map measuredBANameMap = new HashMap(); //mbaname, mba itemId
     protected Map dba2MbaMap = new HashMap(); //dbaId, mbaIds
-
+    protected String propertiesFileName = "mage_config.properties";
     // keep track of some item prefixes for re-hydrating MicroArrayResult Items
     String reporterNs = null;
     String compositeSeqNs = null;
@@ -128,14 +127,27 @@ public class MageDataTranslator extends DataTranslator
     public MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
                               Model tgtModel) throws Exception {
         super(srcItemReader, mapping, srcModel, tgtModel);
+        init(srcModel, tgtModel);
+    }
 
+    /**
+     * @see DataTranslator#DataTranslator
+     * Constructor used by tests to override properties
+     */
+    protected MageDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
+                              Model tgtModel, String propertiesFileName) throws Exception {
+        super(srcItemReader, mapping, srcModel, tgtModel);
+        this.propertiesFileName = propertiesFileName;
+        init(srcModel, tgtModel);
+    }
+    
+    private void init(Model srcModel, Model tgtModel) throws IOException {
         srcNs = srcModel.getNameSpace().toString();
         tgtNs = tgtModel.getNameSpace().toString();
 
         readConfig();
         LOG.info(config);
     }
-
     /**
      * Return the namespace of the target model.
      * @return the target namespace
@@ -152,7 +164,6 @@ public class MageDataTranslator extends DataTranslator
      */
     protected void readConfig() throws IOException {
         // create a map from experiment name to a map of config values
-        String propertiesFileName = "mage_config.properties";
         InputStream is =
             MageDataTranslator.class.getClassLoader().getResourceAsStream(propertiesFileName);
 
@@ -377,8 +388,6 @@ public class MageDataTranslator extends DataTranslator
             }
             List baList = new ArrayList();
             bioAssayMap.put(srcItem.getIdentifier(), setDerivedBAToMeasuredBA(srcItem, baList));
-            LOG.warn("bioAssayMap " + srcItem.getIdentifier()
-                      + " = " + setDerivedBAToMeasuredBA(srcItem, baList));
         }
 
         return result;
@@ -1563,7 +1572,6 @@ public class MageDataTranslator extends DataTranslator
         }
         return samplesById.values();
     }
-
 
 
     /**

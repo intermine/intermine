@@ -112,11 +112,15 @@ public class MageConverter extends FileConverter
         time = System.currentTimeMillis();
         start = time;
 
-        String fileName = getCurrentFile().getPath();
-        System.err. println("fileName: " + fileName);
-        if (!fileName.endsWith(".xml")) {
-            return;
+        // sometimes don't have a file set from tests
+        if (getCurrentFile() != null) {
+            String fileName = getCurrentFile().getPath();
+            System.err. println("fileName: " + fileName);
+            if (!fileName.endsWith(".xml")) {
+                return;
+            }
         }
+        
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());
@@ -187,7 +191,7 @@ public class MageConverter extends FileConverter
             String itemIdentifier = (String) refMap.get(mageObjId);
             String className = (String) classmap.get(itemIdentifier.substring(0,
                                itemIdentifier.indexOf("_")));
-            Item item = itemFactory.makeItem(itemIdentifier, MAGE_NS + className, "");
+            Item item = new Item(itemIdentifier, MAGE_NS + className, "");
             item.setAttribute("identifier", mageObjId);
             storeItem(item);
         }
@@ -242,7 +246,7 @@ public class MageConverter extends FileConverter
                 itemIdentifier = alias(className) + "_" + itemId;
             }
 
-            item = itemFactory.makeItem(itemIdentifier, MAGE_NS + className, "");
+            item = new Item(itemIdentifier, MAGE_NS + className, "");
             if (!classmap.containsKey(alias(className))) {
                 classmap.put(alias(className), className);
             }
@@ -258,6 +262,7 @@ public class MageConverter extends FileConverter
 
         } else {
             // don't store the MAGEJava object
+            item = new Item();
             storeItem = false;
         }
 

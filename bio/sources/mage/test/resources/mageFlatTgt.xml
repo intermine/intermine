@@ -26,10 +26,9 @@
 <attribute name="pubMedId" value="15967997"/>
 </item>
 
-<item id="-1_6" class="http://www.flymine.org/model/genomic#CompositeSequence">
+<item id="-1_6" class="http://www.flymine.org/model/genomic#ProbeSet">
 <attribute name="identifier" value="Affymetrix:CompositeSequence:Mouse430:1415904_at"/>
 <attribute name="name" value="1415904_at"/>
-<attribute name="url" value="https://www.affymetrix.com/LinkServlet?probeset=1415904_at"/>
 <reference name="organism" ref_id="-1_3"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>
@@ -54,10 +53,9 @@
 <reference name="experiment" ref_id="-1_4"/>
 </item>
 
-<item id="-1_9" class="http://www.flymine.org/model/genomic#CompositeSequence">
+<item id="-1_9" class="http://www.flymine.org/model/genomic#ProbeSet">
 <attribute name="identifier" value="Affymetrix:CompositeSequence:Mouse430:1415965_at"/>
 <attribute name="name" value="1415965_at"/>
-<attribute name="url" value="https://www.affymetrix.com/LinkServlet?probeset=1415965_at"/>
 <reference name="organism" ref_id="-1_3"/>
 <collection name="evidence">
 <reference ref_id="-1_2"/>

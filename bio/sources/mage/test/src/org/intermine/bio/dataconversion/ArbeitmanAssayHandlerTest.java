@@ -54,7 +54,7 @@ public class ArbeitmanAssayHandlerTest extends ItemsTestCase
         translator.addToMap(translator.sampleToChars, "1_1", "Age", "2 To 3");
         translator.addToMap(translator.sampleToChars, "1_1", "TimeUnit", "hours");
         translator.addToMap(translator.sampleToChars, "1_1", "DevelopmentalStage", "embryonic stage 1");
-        Item a1 = createAssay("0_1", "1_1", expt.getIdentifier());
+        createAssay("0_1", "1_1", expt.getIdentifier());
 
         // set config to use ArbeitmanAssayHandler
         translator.addToMap(translator.config, "E-FLYC-1", "assayHandlerClass",

@@ -11,7 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -54,21 +54,21 @@ public class MageConverterTest extends ItemsTestCase
     public void testConvertMageML() throws Exception {
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter);   
         mc.seenMap = new LinkedHashMap();
         mc.refMap = new LinkedHashMap();
-
-        Reader reader = new InputStreamReader(getClass().getClassLoader().
-                 getResourceAsStream("mage_ml_example.xml"));
-
+        File srcFile1 = new File(getClass().getClassLoader().getResource("mage_ml_example.xml").toURI());
+        Reader reader = new FileReader(srcFile1);
+        mc.setCurrentFile(srcFile1);
         mc.process(reader);
-        System.err.println("seenMap " + mc.seenMap);
-        System.err.println("refMap " + mc.refMap);
-        reader = new InputStreamReader(getClass().getClassLoader().
-                 getResourceAsStream("mage_ml_example1.xml"));
+        //System.err.println("seenMap " + mc.seenMap);
+        //System.err.println("refMap " + mc.refMap);
+        File srcFile2 = new File(getClass().getClassLoader().getResource("mage_ml_example1.xml").toURI());
+        reader = new FileReader(srcFile2);
+        mc.setCurrentFile(srcFile2);
         mc.process(reader);
-        System.err.println("seenMap " + mc.seenMap);
-        System.err.println("refMap " + mc.refMap);
+        //System.err.println("seenMap " + mc.seenMap);
+        //System.err.println("refMap " + mc.refMap);
         mc.close();
 
         Set expected = readItemSet("MAGEConverterTest.xml");
@@ -178,48 +178,10 @@ public class MageConverterTest extends ItemsTestCase
         mc.setQuantitationtypes("col1, col3");
 
         mc.seenMap = new LinkedHashMap();
-        String s = "<MAGE-ML>";
-        s += "<BioAssayData_package>";
-
-        s += "<BioAssayData_assnlist><DerivedBioAssayData identifier = \"dbad1\">" ;
-        s += "<BioDataValues_assn><BioDataCube order=\"DBQ\"><DataExternal_assn><DataExternal  filenameURI=\"mage_example_data\"/></DataExternal_assn></BioDataCube></BioDataValues_assn>" ;
-        s += "<BioAssayDimension_assnref><BioAssayDimension_ref identifier =\"bad1\"/></BioAssayDimension_assnref>";
-
-        s += "<QuantitationTypeDimension_assn><QuantitationTypeDimension identifier =\"qtd\">" +
-            "<QuantitationTypes_assnreflist>" +
-             "<MeasuredSignal_ref identifier=\"ms1\"/><MeasuredSignal_ref identifier=\"ms2\"/><MeasuredSignal_ref identifier=\"ms3\"/>" +
-            "</QuantitationTypes_assnreflist>" +
-            "</QuantitationTypeDimension></QuantitationTypeDimension_assn>" ;
-
-        s += "<DesignElementDimension_assn><FeatureDimension identifier=\"fd1\"><ContainedFeatures_assnlist>" +
-            "<Feature identifier = \"f1\"><FeatureLocation_assn><FeatureLocation row=\"1\"  column=\"1\"></FeatureLocation></FeatureLocation_assn></Feature>" +
-            "<Feature identifier = \"f2\"><FeatureLocation_assn><FeatureLocation row=\"1\"  column=\"2\"></FeatureLocation></FeatureLocation_assn></Feature>" +
-            "</ContainedFeatures_assnlist></FeatureDimension></DesignElementDimension_assn>" ;
-
-        s += "</DerivedBioAssayData></BioAssayData_assnlist>";
-
-        s += "<BioAssayDimension_assnlist><BioAssayDimension identifier=\"bad1\">" +
-            "<BioAssays_assnreflist>" +
-            // "<MeasuredBioAssay_ref identifier=\"mba1\"/>" +
-            "<DerivedBioAssay_ref identifier=\"dba1\"/>" +
-            "</BioAssays_assnreflist>" +
-            "</BioAssayDimension>";
-        s += "</BioAssayDimension_assnlist></BioAssayData_package>";
-
-        s += "<BioAssay_package><BioAssay_assnlist>"
-            // + "<MeasuredBioAssay identifier=\"mba1\"/>"
-            + "<DerivedBioAssay identifier=\"dba1\"><DerivedBioAssayData_assnreflist><DerivedBioAssayData_ref identifier=\"dbad1\"/></DerivedBioAssayData_assnreflist></DerivedBioAssay>"
-            +"</BioAssay_assnlist></BioAssay_package> ";
-
-        s += "<QuantitationType_package><QuantitationType_assnlist>";
-        s += "<MeasuredSignal identifier=\"ms1\" name=\"col1\"><DataType_assn><OntologyEntry category=\"DataType\" value=\"type1\"></OntologyEntry></DataType_assn></MeasuredSignal>";
-        s += "<MeasuredSignal identifier=\"ms2\" name=\"col2\"><DataType_assn><OntologyEntry category=\"DataType\" value=\"type2\"></OntologyEntry></DataType_assn></MeasuredSignal>";
-        s += "<MeasuredSignal identifier=\"ms3\" name=\"col3\"><DataType_assn><OntologyEntry category=\"DataType\" value=\"type3\"></OntologyEntry></DataType_assn></MeasuredSignal>";
-        s += "</QuantitationType_assnlist></QuantitationType_package>";
-
-        s += "</MAGE-ML>";
-        StringReader sr = new StringReader(s);
-        mc.process(sr);
+        File srcFile = new File(getClass().getClassLoader().getResource("mage_ml_bioassay_test.xml").toURI());
+        Reader reader = new FileReader(srcFile);
+        mc.setCurrentFile(srcFile);
+        mc.process(reader);
         mc.close();
 
 
