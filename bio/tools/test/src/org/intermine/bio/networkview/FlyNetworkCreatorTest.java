@@ -19,7 +19,7 @@ public class FlyNetworkCreatorTest extends TestCase
 {
     Model model;
 
-    String xmlResource = "test/FlyNetworkCreatorTest.xml";
+    String xmlResource = "FlyNetworkCreatorTest.xml";
 
     protected void setUp() throws Exception {
         model = Model.getInstanceByName("genomic");

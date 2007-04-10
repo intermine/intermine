@@ -21,7 +21,7 @@ import org.intermine.xml.full.FullParser;
 
 public class ProteinInteractionRetrieverTest extends TestCase {
 	Model model;
-	String xmlResource = "test/FlyNetworkCreatorTest.xml";
+	String xmlResource = "FlyNetworkCreatorTest.xml";
 	ObjectStore os;
 	ObjectStoreWriter osw;
 	
