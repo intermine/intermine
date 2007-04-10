@@ -84,7 +84,7 @@ public class TemplateHelperTest extends TestCase
 
         TemplateQuery expected = (TemplateQuery) template.clone();
         PathNode tmpNode = (PathNode) expected.getEditableNodes().get(0);
-        PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPath());
+        PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPathString());
         Constraint c = node.getConstraint(0);
         node.getConstraints().set(0, new Constraint(ConstraintOp.NOT_EQUALS,
                 "EmployeeA1", true, c.getDescription(), c.getCode(), c.getIdentifier()));
@@ -108,12 +108,12 @@ public class TemplateHelperTest extends TestCase
         
         TemplateQuery expected = (TemplateQuery) template.clone();
         PathNode tmpNode = (PathNode) expected.getEditableNodes().get(0);
-        PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPath());
-        PathNode parent = (PathNode) expected.getNodes().get(node.getParent().getPath());
+        PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPathString());
+        PathNode parent = (PathNode) expected.getNodes().get(node.getParent().getPathString());
         Constraint c = node.getConstraint(0);
         Constraint cc = new Constraint(ConstraintOp.IN,
                 "bag1", true, c.getDescription(), c.getCode(), c.getIdentifier());
-        expected.getNodes().remove(node.getPath());
+        expected.getNodes().remove(node.getPathString());
         parent.getConstraints().add(cc);
         expected.setEdited(true);
         TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, savedBags);

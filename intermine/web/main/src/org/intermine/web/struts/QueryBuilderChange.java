@@ -516,7 +516,7 @@ public class QueryBuilderChange extends DispatchAction
         Collection nodes = (Collection) request.getAttribute("nodes");
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             Node node = (Node) iter.next();
-            if (node.getPath().startsWith(request.getParameter("path") + ".")) {
+            if (node.getPathString().startsWith(request.getParameter("path") + ".")) {
                 newNodes.add(node);
             }
         }

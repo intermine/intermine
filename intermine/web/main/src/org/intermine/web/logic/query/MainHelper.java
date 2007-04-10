@@ -167,7 +167,7 @@ public class MainHelper
             MetadataNode node = new MetadataNode(parent, fieldName, button);
             node.setModel(cld.getModel());
 
-            nodes.put(node.getPath(), node);
+            nodes.put(node.getPathString(), node);
             if (fieldName.equals(head)) {
                 ClassDescriptor refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
                 makeNodes(refCld, tail, currentPath + "." + head, nodes, isSuperUser);
@@ -229,7 +229,7 @@ public class MainHelper
 
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            String path = node.getPath();
+            String path = node.getPathString();
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 if ((node.isReference() || node.isCollection())
@@ -267,7 +267,7 @@ public class MainHelper
 
         while (!queue.isEmpty()) {
             PathNode node = (PathNode) queue.removeFirst();
-            String path = node.getPath();
+            String path = node.getPathString();
             QueryReference qr = null;
             String finalPath = (String) loops.get(path);
 
@@ -372,7 +372,7 @@ public class MainHelper
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) { 
             PathNode node = (PathNode) i.next(); 
             if (node.isReference() || node.isCollection()) {
-                String path = node.getPath(); 
+                String path = node.getPathString(); 
                 QueryNode qn = (QueryNode) queryBits.get(path); 
 
                 for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
@@ -407,15 +407,15 @@ public class MainHelper
             if (pn.isAttribute()) {
                 QueryClass qc = ((QueryClass) queryBits.get(pn.getPrefix()));
                 QueryField qf = new QueryField(qc, pn.getFieldName());
-                queryBits.put(pn.getPath(), qf);
+                queryBits.put(pn.getPathString(), qf);
                 qn = qc;
             } else {
-                qn = ((QueryNode) queryBits.get(pn.getPath()));
+                qn = ((QueryNode) queryBits.get(pn.getPathString()));
             }
             if (!q.getSelect().contains(qn)) {
                 q.addToSelect(qn);
             }
-            QueryNode selectNode = ((QueryNode) queryBits.get(pn.getPath()));
+            QueryNode selectNode = ((QueryNode) queryBits.get(pn.getPathString()));
             if (!q.getOrderBy().contains(selectNode)) {
                 q.addToOrderBy(selectNode);
             }

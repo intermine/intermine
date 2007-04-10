@@ -24,7 +24,7 @@ import org.intermine.util.TypeUtil;
 public class Node
 {
     private Node parent;
-    private String fieldName, path, prefix, type;
+    private String fieldName, pathString, prefix, type;
     private boolean attribute = false, reference = false, collection = false;
     private int indentation;
 
@@ -34,7 +34,7 @@ public class Node
      */
     public Node(String type) {
         this.type = type;
-        path = type;
+        pathString = type;
         prefix = "";
         indentation = 0;
     }
@@ -47,10 +47,10 @@ public class Node
     public Node(Node parent, String fieldName) {
         this.fieldName = fieldName;
         this.parent = parent;
-        prefix = parent.getPath();
-        path = prefix + "." + fieldName;
+        prefix = parent.getPathString();
+        pathString = prefix + "." + fieldName;
         
-        indentation = path.split("[.]").length - 1;
+        indentation = pathString.split("[.]").length - 1;
     }
     
     /**
@@ -102,12 +102,12 @@ public class Node
     }
 
     /**
-     * Gets the value of path
+     * Gets the String value of pathString of this node (eg. "Department.manager.name")
      *
-     * @return the value of path
+     * @return the String value of pathString
      */
-    public String getPath()  {
-        return path;
+    public String getPathString()  {
+        return pathString;
     }
 
     /**
@@ -186,7 +186,7 @@ public class Node
      * @see Object#toString
      */
     public String toString() {
-        return path + ":" + type;
+        return pathString + ":" + type;
     }
 
     /**
@@ -194,7 +194,7 @@ public class Node
      */
     public boolean equals(Object o) {
         return (o instanceof Node)
-            && path.equals(((Node) o).path)
+            && pathString.equals(((Node) o).pathString)
             && type.equals(((Node) o).type);
     }
 
@@ -202,7 +202,7 @@ public class Node
      * @see Object#hashCode
      */
     public int hashCode() {
-        return 2 * path.hashCode()
+        return 2 * pathString.hashCode()
             + 3 * type.hashCode();
     }
 }

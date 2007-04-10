@@ -106,7 +106,7 @@ public class TemplateQuery extends PathQuery
      * @return      List of Constraints for Node
      */
     public List getEditableConstraints(PathNode node) {
-        return getEditableConstraints(node.getPath());
+        return getEditableConstraints(node.getPathString());
     }
 
     /**
@@ -245,7 +245,7 @@ public class TemplateQuery extends PathQuery
      * @return a List, or null if possible values have not been computed
      */
     public List getPossibleValues(PathNode node) {
-        return (List) possibleValues.get(node.getPath());
+        return (List) possibleValues.get(node.getPathString());
     }
 
     /**
@@ -304,7 +304,7 @@ public class TemplateQuery extends PathQuery
                 while (resIter.hasNext()) {
                     values.add(((List) resIter.next()).get(0));
                 }
-                possibleValues.put(node.getPath(), values);
+                possibleValues.put(node.getPathString(), values);
             }
         }
         LOG.error("New summary: " + possibleValues);
@@ -398,6 +398,13 @@ public class TemplateQuery extends PathQuery
      */
     public void setEdited(boolean edited) {
         this.edited = edited;
+    }
+
+    /**
+     * @param path
+     */
+    public void addPathString(String path) {
+        
     }
 
 }

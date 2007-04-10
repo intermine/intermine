@@ -74,8 +74,8 @@ public class TypeConverter
         Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
         // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
         // want to constraint. Just because our query builder has been crippled to only allow that.
-        PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPath());
-        tq.getNodes().remove(node.getPath());
+        PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPathString());
+        tq.getNodes().remove(node.getPathString());
         Collection bagElements = new ArrayList();
         Iterator objIter = objects.iterator();
         while (objIter.hasNext()) {
