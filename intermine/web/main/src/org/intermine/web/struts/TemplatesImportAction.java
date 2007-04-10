@@ -100,8 +100,7 @@ public class TemplatesImportAction extends InterMineAction
         TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(), 
                                                       template.getDescription(), 
                                                       template.getComment(), 
-                                                      template.getPathQuery(), 
-                                                      template.isImportant(),
+                                                      template.getPathQuery(),
                                                       template.getKeywords());
         
         return newTemplate;

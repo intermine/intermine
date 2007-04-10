@@ -53,7 +53,6 @@ public class TemplateQueryBinding
             } else {
                 writer.writeAttribute("comment", template.getComment());
             }
-            writer.writeAttribute("important", "" + template.isImportant());
             // writer.writeAttribute("keywords", template.getKeywords());
 
             PathQueryBinding.marshal(template, template.getName(), template.getModel()

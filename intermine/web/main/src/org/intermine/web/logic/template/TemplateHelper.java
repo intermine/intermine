@@ -285,7 +285,7 @@ public class TemplateHelper
                                                    tbs.getTitle(),
                                                    tbs.getDescription(),
                                                    tbs.getComment(),
-                                                   (PathQuery) query.clone(), tbs.isImportant(),
+                                                   (PathQuery) query.clone(),
                                                    tbs.getKeywords());
         return template;
     }

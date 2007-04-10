@@ -1,11 +1,44 @@
 package org.intermine.web.struts;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
+
+import javax.servlet.http.HttpSession;
+
 import servletunit.struts.MockStrutsTestCase;
 
 
 public class ModifyBagActionTest extends MockStrutsTestCase
 {
-    /*
     PathQuery query, queryBag;
     SavedQuery sq, sqBag, hist, hist2;
     Date date = new Date();
@@ -26,7 +59,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        profileManager = new ProfileManager(os, userProfileOSW);
+        profileManager = new ProfileManager(os, userProfileOSW, Collections.EMPTY_MAP);
         userId = new Integer(101);
 
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
@@ -44,7 +77,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")), false,
+                                     new PathQuery(Model.getInstanceByName("testmodel")),
                                      "");
 
         //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
@@ -184,5 +217,4 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         verifyForward("bag");
         assertEquals(2, getProfile().getSavedBags().size());
     }
-    */
 }
