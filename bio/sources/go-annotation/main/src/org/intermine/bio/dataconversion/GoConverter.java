@@ -410,10 +410,8 @@ public class GoConverter extends FileConverter
 
         // add item to gene go collections
         if (isProductTypeGene) {
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation",
-                                                                          currentGoItem);
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation",
-                                                                          currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation", currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation", currentGoItem);
         } else {
             LOG.debug("Skipping setting go & allGo annotation collection for a:"
                       + placeHolder.getGeneProductWrapper().getItem().getClassName() 
@@ -493,8 +491,11 @@ public class GoConverter extends FileConverter
 
             // add parent to collection
             if (isProductTypeGene) {
-                placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation",
-                                                                              parentItem);
+                if (!placeHolder.getGeneProductWrapper().getItem().getCollection("allGoAnnotation")
+                                .getRefIds().contains(parentItem.getIdentifier())) {
+                    placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation",
+                                                                                  parentItem);
+                }
             } else {
                 LOG.debug("Skipping adding a parent GoAnnotation ref to the "
                           + "allGoAnnotation collection of a non gene item.");
