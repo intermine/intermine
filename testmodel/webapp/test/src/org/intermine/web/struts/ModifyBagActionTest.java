@@ -4,15 +4,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
+import javax.servlet.http.HttpSession;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -22,6 +18,13 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
@@ -31,8 +34,6 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
-
-import javax.servlet.http.HttpSession;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -60,10 +61,21 @@ public class ModifyBagActionTest extends MockStrutsTestCase
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         profileManager = new ProfileManager(os, userProfileOSW, Collections.EMPTY_MAP);
-        userId = new Integer(101);
 
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());
+        profileManager.createProfile(profile);
+
+        //Get the realUserId
+        UserProfile realProfile = new UserProfile();
+        realProfile.setUsername("modifyBagActionTest");
+        Set fieldNames = new HashSet();
+        fieldNames.add("username");
+        ObjectStore uos = userProfileOSW.getObjectStore();
+        UserProfile profile4ID = (UserProfile) uos.getObjectByExample(realProfile, fieldNames);
+        userId = new Integer(profile4ID.getId());
+
+        
         HttpSession session = getSession();
         session.setAttribute(Constants.PROFILE, profile);
 
@@ -145,7 +157,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         actionPerform();
         verifyActionErrors(new String[]{"history.baginuse"});
         verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
+        assertEquals(1, getProfile().getSavedBags().size());
     }
 
     public void testDeleteNothingSelected() {
@@ -155,45 +167,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         actionPerform();
         verifyActionErrors(new String[]{"errors.modifyBag.none"});
         verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
-    public void testRenameBag() {
-        addRequestParameter("newBagName", ""); // always there
-        addRequestParameter("newName", "bagA"); // new name edit field
-        addRequestParameter("name", "bag1"); // hidden target bag name
-        addRequestParameter("type", "bag"); //
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        //System.out.println("actionMessages: " + getRequest().getAttribute("stacktrace"));
-        //System.out.println("error: " + getProfile().getSavedBags());
-        verifyNoActionErrors();
-        verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
-    public void testRenameBagNameInUse() {
-        addRequestParameter("newBagName", ""); // always there
-        addRequestParameter("newName", "bag2"); // new name edit field
-        addRequestParameter("name", "bag1"); // hidden target bag name
-        addRequestParameter("type", "bag"); //
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        //System.out.println("actionMessages: " + getRequest().getAttribute("stacktrace"));
-        verifyActionErrors(new String[]{"errors.modifyQuery.queryExists"});
-        assertEquals("/bag.do?action=rename&type=bag&name=bag1", getActualForward());
-        assertEquals(2, getProfile().getSavedBags().size());
-    }
-
-    public void testRenameBagEmptyName() {
-        addRequestParameter("newBagName", ""); // always there
-        addRequestParameter("newName", ""); // new name edit field
-        addRequestParameter("name", "bag1"); // hidden target bag name
-        addRequestParameter("type", "bag"); //
-        setRequestPathInfo("/modifyBag");
-        actionPerform();
-        verifyActionErrors(new String[]{"errors.required"});
-        assertEquals("/history.do?action=rename&type=bag&name=bag1", getActualForward());
+        assertEquals(1, getProfile().getSavedBags().size());
     }
 
     public void testUnionNoName() {
@@ -204,7 +178,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         actionPerform();
         verifyActionErrors(new String[]{"errors.required"});
         verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
+        assertEquals(1, getProfile().getSavedBags().size());
     }
 
     public void testIntersectNoName() {
@@ -215,6 +189,6 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         actionPerform();
         verifyActionErrors(new String[]{"errors.required"});
         verifyForward("bag");
-        assertEquals(2, getProfile().getSavedBags().size());
+        assertEquals(1, getProfile().getSavedBags().size());
     }
 }
