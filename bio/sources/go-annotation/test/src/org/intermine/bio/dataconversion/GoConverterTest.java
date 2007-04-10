@@ -27,7 +27,6 @@ import org.intermine.xml.full.ItemFactory;
 
 public class GoConverterTest extends ItemsTestCase
 {
-    private File goFile;
     private File goOboFile;
 
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
@@ -43,13 +42,10 @@ public class GoConverterTest extends ItemsTestCase
 //                getClass().getClassLoader().getResourceAsStream("go-tiny.ontology"));
 //        writeTempFile(goFile, goReader);
 
-      goOboFile = File.createTempFile("gene_ontology", ".obo");
-      Reader goOboReader = new InputStreamReader(
-              getClass().getClassLoader().getResourceAsStream("gene_ontology.obo"));
-        
-//        goOboFile = File.createTempFile("go-tiny", ".obo");
-//        Reader goOboReader = new InputStreamReader(
-//                getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
+
+        goOboFile = File.createTempFile("go-tiny", ".obo");
+        Reader goOboReader = new InputStreamReader(
+            getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
     }
 
@@ -111,7 +107,7 @@ public class GoConverterTest extends ItemsTestCase
         expected.add(gene2);
         Item organism = tgtItemFactory.makeItem("1_1", GENOMIC_NS + "Organism", "");
         organism.setAttribute("taxonId", "7227");
-        assertEquals(expected, converter.createWithObjects(
-                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10"));
+        assertEquals(expected, new HashSet(converter.createWithObjects(
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10")));
     }
 }
