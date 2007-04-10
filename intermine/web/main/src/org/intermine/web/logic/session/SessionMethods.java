@@ -68,7 +68,7 @@ public class SessionMethods
 {
     protected static final Logger LOG = Logger.getLogger(SessionMethods.class);
     private static int topQueryId = 0;
-    
+
     /**
      * Base class for query thread runnable.
      */
@@ -78,7 +78,7 @@ public class SessionMethods
         protected PagedResults pr;
         protected boolean done = false;
         protected boolean error = false;
-        
+
         protected Results getResults() {
             return r;
         }
@@ -92,14 +92,14 @@ public class SessionMethods
             return error;
         }
     }
-    
+
     /**
      * Executes current query and sets session attributes QUERY_RESULTS and RESULTS_TABLE. If the
      * query fails for some reason, this method returns false and ActionErrors are set on the
      * request. If the parameter <code>saveQuery</code> is true then the query is
      * automatically saved in the user's query history and a message is added to the
      * request. The <code>monitor</code> parameter is an optional callback interface that will be
-     * notified repeatedly (every 100 milliseconds) while the query executes. 
+     * notified repeatedly (every 100 milliseconds) while the query executes.
      *
      * @param session   the http session
      * @param resources message resources
@@ -122,17 +122,10 @@ public class SessionMethods
         final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         final ObjectStoreInterMineImpl ios = (os instanceof ObjectStoreInterMineImpl)
                                              ? (ObjectStoreInterMineImpl) os : null;
-        
-        // Support running queries from the template builder with alternative
-        // select lists
-        List view = SessionMethods.getEditingView(session);
-        if (view != null && view.size() > 0) {
-            query.setView(view);
-        }
-                                             
+
         // A reference to this runnable is used as a token for registering
         // a cancelling the running query
-        
+
         RunQueryThread runnable = new RunQueryThread() {
             public void run () {
                 try {
@@ -148,7 +141,7 @@ public class SessionMethods
                     }
                     r = rtmp; // set property - allow main request thread to progress
                     TableHelper.initResults(r);
-                    WebResults webResults = 
+                    WebResults webResults =
                         new WebResults(query.getViewAsPaths(), r, os.getModel(), pathToQueryNode,
                                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
                     pr = new PagedResults(webResults);
@@ -160,7 +153,7 @@ public class SessionMethods
 
                     // put stack trace in the log
                     LOG.error("Exception", e);
-                    
+
                     error = true;
                 } catch (Throwable err) {
                     StringWriter sw = new StringWriter();
@@ -184,14 +177,14 @@ public class SessionMethods
         Thread thread = null;
         thread = new Thread(runnable);
         thread.start();
-        
+
         // Wait for Results object to become available
         while (thread.isAlive() && runnable.getResults() == null) {
             Thread.sleep(25);
         }
-        
+
         Results r = runnable.getResults();
-        
+
         while (thread.isAlive()) {
             Thread.sleep(1000);
             if (monitor != null) {
@@ -213,7 +206,7 @@ public class SessionMethods
             }
             return false;
         }
-        
+
         PagedResults pr = runnable.getPagedResults();
         SessionMethods.setResultsTable(session, "results." + qid, pr);
 
@@ -223,21 +216,21 @@ public class SessionMethods
             saveQueryToHistory(session, queryName, query);
             recordMessage(resources.getMessage("saveQuery.message", queryName), session);
         }
-        
+
         if (monitor != null) {
             monitor.queryCompleted();
         }
-        
+
         return true;
     }
-    
+
     /**
      * Load a query into the session, cloning to avoid modifying the original
      * @param query the query
      * @param session the session
      * @param response the response
      */
-    public static void loadQuery(PathQuery query, HttpSession session, 
+    public static void loadQuery(PathQuery query, HttpSession session,
             HttpServletResponse response) {
         // Depending on the class, load PathQuery or TemplateQuery
         if (query instanceof TemplateQuery) {
@@ -261,7 +254,7 @@ public class SessionMethods
 
         setHasQueryCookie(session, response, true);
     }
-    
+
     /**
      * Give cookie to client to indicate that there is a current query (used by the
      * website to display the 'current query' link).
@@ -278,7 +271,7 @@ public class SessionMethods
         cookie.setPath("/");
         response.addCookie(cookie);
     }
-    
+
     /**
      * Give cookie to client to indicate that there user is logged in.
      * @param session session
@@ -287,7 +280,7 @@ public class SessionMethods
     public static void setLoggedInCookie(HttpSession session, HttpServletResponse response) {
         setLoggedInCookie(session, response, true);
     }
-    
+
     /**
      * Give cookie to client to indicate that there user is logged out.
      * @param session session
@@ -296,7 +289,7 @@ public class SessionMethods
     public static void setLoggedOutCookie(HttpSession session, HttpServletResponse response) {
         setLoggedInCookie(session, response, false);
     }
-    
+
     /**
      * Give cookie to client to indicate that there user is logged in.
      * @param session session
@@ -312,7 +305,7 @@ public class SessionMethods
         cookie.setPath("/");
         response.addCookie(cookie);
     }
-    
+
     /**
      * Get the view list that the user is currently editing.
      * @param session current session
@@ -325,10 +318,10 @@ public class SessionMethods
         }
         return query.getView();
     }
-    
+
     /**
      * Save a clone of a query to the user's Profile.
-     * 
+     *
      * @param session The HTTP session
      * @param queryName the name to save the query under
      * @param query the PathQuery
@@ -346,10 +339,10 @@ public class SessionMethods
         profile.saveQuery(sq.getName(), sq);
         return sq;
     }
-    
+
     /**
      * Save a clone of a query to the user's Profile.
-     * 
+     *
      * @param session The HTTP session
      * @param queryName the name to save the query under
      * @param query the PathQuery
@@ -359,10 +352,10 @@ public class SessionMethods
                                  PathQuery query) {
         saveQuery(session, queryName, query, null);
     }
-    
+
     /**
      * Save a clone of a query to the user's Profile history.
-     * 
+     *
      * @param session The HTTP session
      * @param queryName the name to save the query under
      * @param query the PathQuery
@@ -375,7 +368,7 @@ public class SessionMethods
         SavedQuery sq = new SavedQuery(queryName, new Date(), (PathQuery) query.clone());
         profile.saveHistory(sq);
     }
-    
+
     /**
      * Record a message that will be stored in the session until it is displayed to
      * the user. This allows actions that result in a redirect to display
@@ -394,7 +387,7 @@ public class SessionMethods
     public static void recordMessage(String message, HttpSession session) {
         recordMessage(message, Constants.MESSAGES, session);
     }
-    
+
     /**
      * @see SessionMethods#recordMessage()
      * @param error The error to store
@@ -403,7 +396,7 @@ public class SessionMethods
     public static void recordError(String error, HttpSession session) {
         recordMessage(error, Constants.ERRORS, session);
     }
-    
+
     /**
      * Record a message that will be stored in the session until it is displayed to
      * the user. This allows actions that result in a redirect to display
@@ -426,7 +419,7 @@ public class SessionMethods
         }
         set.add(message);
     }
-    
+
     /**
      * Log use of a template query.
      *
@@ -439,14 +432,14 @@ public class SessionMethods
         Logger log = Logger.getLogger(TemplateAction.class);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String username = profile.getUsername();
-        
+
         if (username == null) {
             username = "anonymous";
         }
-        
+
         log.info(username + "\t" + templateType + "\t" + templateName);
     }
-    
+
     /**
      * Log load of an example query. If user is not logged in then lo
      *
@@ -457,14 +450,14 @@ public class SessionMethods
         Logger log = Logger.getLogger(LoadQueryAction.class);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String username = profile.getUsername();
-        
+
         if (username == null) {
             username = "anonymous";
         }
-        
+
         log.info(username + "\t" + exampleName);
     }
-    
+
     /**
      * Get the COLLAPSED map from the session. If the attribute is not present then a new
      * map will be created.
@@ -480,7 +473,7 @@ public class SessionMethods
         }
         return collapsed;
     }
-    
+
     /**
      * Return the displayObjects Map from the session or create and return it if it doesn't exist.
      * @param session the HttpSession to get the displayObjects Map from
@@ -488,7 +481,7 @@ public class SessionMethods
      */
     public static Map getDisplayObjects(HttpSession session) {
         Map displayObjects = (Map) session.getAttribute("displayObjects");
-        
+
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
             displayObjects = new CacheMap();
@@ -500,7 +493,7 @@ public class SessionMethods
 
     /**
      * Initialise a new session. Adds a profile to the session.
-     * 
+     *
      * @param session the new session to initialise
      */
     public static void initSession(HttpSession session) {
@@ -513,8 +506,8 @@ public class SessionMethods
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param monitor the monitor for this query - controls cancelling and receives feedback
      *                about how the query concluded
      * @param session the current http session
@@ -534,7 +527,7 @@ public class SessionMethods
             }
             final String qid = "" + topQueryId++;
             queries.put(qid, monitor);
-            
+
             new Thread(new Runnable() {
                 public void run () {
                     try {
@@ -555,14 +548,14 @@ public class SessionMethods
                     }
                 }
             }).start();
-            
+
             return qid;
         }
     }
-    
+
     /**
      * Get the QueryMonitor object corresponding to a running query id (qid).
-     * 
+     *
      * @param qid the query id returned by startQuery
      * @param session the users session
      * @return QueryMonitor registered to the query id
@@ -577,7 +570,7 @@ public class SessionMethods
 
     /**
      * Given a table identifier, return the cached PagedTable.
-     * 
+     *
      * @param session the current session
      * @param identifier table identifier
      * @return PagedTable identified by identifier
@@ -590,10 +583,10 @@ public class SessionMethods
             return null;
         }
     }
-    
+
     /**
-     * 
-     * 
+     *
+     *
      * @param session the current session
      * @param identifier table identifier
      * @param table table to register
@@ -640,7 +633,7 @@ public class SessionMethods
     public static ProfileManager getProfileManager(ServletContext context) {
         return (ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER);
     }
-    
+
     /**
      * Get the superusers Profile.
      * @param context servlet context
