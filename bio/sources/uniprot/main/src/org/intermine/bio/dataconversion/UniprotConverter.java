@@ -11,10 +11,12 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -22,6 +24,7 @@ import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -30,6 +33,7 @@ import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
+import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.log4j.Logger;
@@ -48,17 +52,22 @@ public class UniprotConverter extends FileConverter
     private Map mapMaster = new HashMap();  // map of maps
     //TODO: This should come from props files!!!!
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
+    protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map pubMaster = new HashMap();
     private Map orgMaster = new HashMap();
     private Map dbMaster = new HashMap();
     private Map dsMaster = new HashMap();
     private Map ontoMaster = new HashMap();
-    private Map taxIdToDb = new HashMap();
+//    private Map taxIdToDb = new HashMap(); 
     private Map featureTypes = new HashMap();
     private Map geneMaster = new HashMap();
     private Map interproMaster = new HashMap();
     private Set geneIdentifiers = new HashSet();
+    private Map geneDataMaps = new HashMap();   // map of taxonId to object which determine
+                                                // which data to use for which organism
+    private Set geneSources = new HashSet();    // datasources that designate gene names
+                                                // e.g. WormBase, Ensembl
     private Map ids = new HashMap();
     private Map aliases = new HashMap();
     private Map keyMaster = new HashMap();
@@ -79,7 +88,8 @@ public class UniprotConverter extends FileConverter
     public void process(Reader reader) throws Exception {
 
         mapMaps();
-        mapDatabases();
+        readConfig();
+        //mapDatabases();
         mapFeatures();
         UniprotHandler handler = new UniprotHandler(writer, mapMaster, createInterpro);
 
@@ -91,20 +101,20 @@ public class UniprotConverter extends FileConverter
         }
     }
 
-
-
     private void mapMaps() {
 
         mapMaster.put("pubMaster", pubMaster);
         mapMaster.put("orgMaster", orgMaster);
         mapMaster.put("dbMaster", dbMaster);
-        mapMaster.put("taxIdToDb", taxIdToDb);
+        //mapMaster.put("taxIdToDb", taxIdToDb);
         mapMaster.put("featureTypes", featureTypes);
         mapMaster.put("dsMaster", dsMaster);
         mapMaster.put("ontoMaster", ontoMaster);
         mapMaster.put("geneMaster", geneMaster);
         mapMaster.put("interproMaster", interproMaster);
+        mapMaster.put("geneDataMaps", geneDataMaps);
         mapMaster.put("geneIdentifiers", geneIdentifiers);
+        mapMaster.put("geneSources", geneSources);
         mapMaster.put("ids", ids);
         mapMaster.put("aliases", aliases);
         mapMaster.put("keyMaster", keyMaster);
@@ -112,22 +122,22 @@ public class UniprotConverter extends FileConverter
     }
 
     // makes map so we know which datasource to use for each organism
-    private void mapDatabases() {
+    private void xxxmapDatabases() {
 
         //  this map is used to check if the value here should be saved:
         //   <dbReference type="FlyBase/UniProt/etc" id="*" key="12345">
-        taxIdToDb.put("7227", new String("FlyBase"));   // D. melanogaster
-        taxIdToDb.put("6239", new String("WormBase"));  // C. elegans
-        taxIdToDb.put("3702", new String("UniProt"));   // Arabidopsis thaliana
-        taxIdToDb.put("4896", new String("GeneDB"));    // S. pombe
-        taxIdToDb.put("180454", new String("Ensembl")); // A. gambiae str. PEST
-        taxIdToDb.put("7165", new String("Ensembl"));   // Anopheles gambiae
-        taxIdToDb.put("7460", new String("Ensembl"));   // Apis mellifera
-        taxIdToDb.put("9606", new String("Ensembl"));   // H. sapiens
-        taxIdToDb.put("4932", new String("SGD"));       // S. cerevisiae
-        taxIdToDb.put("36329", new String("GeneDB"));   // Malaria
-        taxIdToDb.put("10090", new String("Ensembl"));  // Mus musculus
-        taxIdToDb.put("10116", new String("Ensembl"));  // Rattus norvegicus
+//        taxIdToDb.put("7227", new String("FlyBase"));   // D. melanogaster
+//        taxIdToDb.put("6239", new String("WormBase"));  // C. elegans
+//        taxIdToDb.put("3702", new String("UniProt"));   // Arabidopsis thaliana
+//        taxIdToDb.put("4896", new String("GeneDB"));    // S. pombe
+//        taxIdToDb.put("180454", new String("Ensembl")); // A. gambiae str. PEST
+//        taxIdToDb.put("7165", new String("Ensembl"));   // Anopheles gambiae
+//        taxIdToDb.put("7460", new String("Ensembl"));   // Apis mellifera
+//        taxIdToDb.put("9606", new String("Ensembl"));   // H. sapiens
+//        taxIdToDb.put("4932", new String("SGD"));       // S. cerevisiae
+//        taxIdToDb.put("36329", new String("GeneDB"));   // Malaria
+//        taxIdToDb.put("10090", new String("Ensembl"));  // Mus musculus
+//        taxIdToDb.put("10116", new String("Ensembl"));  // Rattus norvegicus
 
 
         // a. these databases are used to obtain the geneOrganismDbId
@@ -135,9 +145,9 @@ public class UniprotConverter extends FileConverter
         // b. dummy taxonIDs are used
         // c. these are here because this map is used as a look up
         //    to see if the value in the dbreference's id field is an identifier
-        taxIdToDb.put("-1", new String("SGD")); // S. cerevisiae [geneOrganismDbId]
-        taxIdToDb.put("-2", new String("MGI")); // Mus musculus [geneOrganismDbId]
-        taxIdToDb.put("-3", new String("RGD")); // Rattus norvegicus [geneOrganismDbId]
+//        taxIdToDb.put("-1", new String("SGD")); // S. cerevisiae [geneOrganismDbId]
+//        taxIdToDb.put("-2", new String("MGI")); // Mus musculus [geneOrganismDbId]
+//        taxIdToDb.put("-3", new String("RGD")); // Rattus norvegicus [geneOrganismDbId]
     }
 
     private void mapFeatures() {
@@ -164,6 +174,82 @@ public class UniprotConverter extends FileConverter
 
     }
 
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+        Enumeration propNames = props.propertyNames();
+
+        while (propNames.hasMoreElements()) {
+            String code = (String) propNames.nextElement();
+            code = code.substring(0, code.indexOf("."));
+            Properties codeProps = PropertiesUtil.stripStart(code,
+                PropertiesUtil.getPropertiesStartingWith(code, props));
+            String taxonId = codeProps.getProperty("taxonid");
+            if (taxonId == null) {
+                throw new IllegalArgumentException("Unable to find 'taxonid' property for " 
+                                                 + "code: " + code + " in file: " + PROP_FILE);
+            }
+            taxonId = taxonId.trim();
+            
+            /* which variable to use as the uniqueGeneIdentifier */
+            String attribute = codeProps.getProperty("attribute");
+            if (attribute == null) {
+                throw new IllegalArgumentException("Unable to find 'attribute' property for " 
+                                                 + "code: " + code + " in file: " + PROP_FILE);
+            }
+            
+            attribute = attribute.trim();
+            UniProtGeneDataMap geneDataMap = new UniProtGeneDataMap(attribute);
+            
+            /* Sources appear as source for gene name synonym and 
+             * are used for links out from the webapp. */
+            String source = codeProps.getProperty("source");
+            if (source != null) {
+                source = source.trim();
+                geneDataMap.setSource(source);
+                geneSources.add(source);
+            }
+            
+            /* which variable to use as the geneOrganismDbId */
+            String organismDbIdSrcType = codeProps.getProperty("organismDbIdSrcType");
+            if (organismDbIdSrcType != null) {
+                organismDbIdSrcType = organismDbIdSrcType.trim();
+                String organismDbIdSrc = codeProps.getProperty("organismDbIdSrc");
+                if (organismDbIdSrc == null) {
+                    throw new IllegalArgumentException("Unable to find 'organismDbIdSrc' property " 
+                                                     + "for code: " + code + " in file: " 
+                                                     + PROP_FILE);
+                }
+                organismDbIdSrc = organismDbIdSrc.trim();
+                geneDataMap.setOrganismDbId(organismDbIdSrcType, organismDbIdSrc);
+                if (organismDbIdSrcType.equals("datasource")) {
+                    geneSources.add(organismDbIdSrc);
+                }
+            }
+            
+            /* which variable to use as the geneIdentifier */
+            String identifierSrcType = codeProps.getProperty("identifierSrcType");
+            if (identifierSrcType != null) {
+                identifierSrcType = identifierSrcType.trim();
+                String identifierSrc = codeProps.getProperty("identifierSrc");                
+                if (identifierSrc == null) {
+                    throw new IllegalArgumentException("Unable to find 'identifierSrc' property for"
+                                                     + " code: " + code + " in file: " + PROP_FILE);
+                }
+                identifierSrc = identifierSrc.trim();
+                geneDataMap.setIdentifier(identifierSrcType, identifierSrc);     
+                if (identifierSrcType.equals("datasource")) {
+                    geneSources.add(identifierSrc);
+                }
+            }            
+            geneDataMaps.put(taxonId, geneDataMap);          
+        }
+    }
+    
     /**
      * Toggle whether or not to import interpro data
      * @param createinterpro String whether or not to import interpro data (true/false)
@@ -225,12 +311,14 @@ public class UniprotConverter extends FileConverter
         private Map dsMaster;
         private Map ontoMaster;
         private Map interproMaster;
-        private Map taxIdToDb;        // which database to use for which organism
+        //private Map taxIdToDb;        // which database to use for which organism
         private Map featureTypes;
         private Item datasource;
         private Item dataset;
         private Map geneMaster;       // itemID to gene
         private Set geneIdentifiers;  // all gene identifiers
+        private Map geneDataMaps;
+        private Set geneSources;
         private Map ids;
         private Map aliases;
         private Map keyMaster;
@@ -259,10 +347,12 @@ public class UniprotConverter extends FileConverter
             this.dsMaster = (Map) mapMaster.get("dsMaster");
             this.ontoMaster = (Map) mapMaster.get("ontoMaster");
             this.interproMaster = (Map) mapMaster.get("interproMaster");
-            this.taxIdToDb = (Map) mapMaster.get("taxIdToDb");
+            //this.taxIdToDb = (Map) mapMaster.get("taxIdToDb");
             this.featureTypes = (Map) mapMaster.get("featureTypes");
             this.geneMaster = (Map) mapMaster.get("geneMaster");
             this.geneIdentifiers = (Set) mapMaster.get("geneIdentifiers");
+            this.geneDataMaps = (Map) mapMaster.get("geneDataMaps");
+            this.geneSources = (Set) mapMaster.get("geneSources");
             this.ids = (Map) mapMaster.get("ids");
             this.aliases = (Map) mapMaster.get("aliases");
             this.keyMaster = (Map) mapMaster.get("keyMaster");
@@ -398,15 +488,27 @@ public class UniprotConverter extends FileConverter
                     }
                     protein.setReference("organism", organism.getIdentifier());
                     // get relevant database for this organism
-                    dbName = (String) taxIdToDb.get(taxonId);
-                    if (dbName == null) {
-                        String message = "No gene source database defined for organism: "
-                            + taxonId + ", using UniProt.";
-                        System .err.println(message);
-                        LOG.warn(message);
-                        taxIdToDb.put(taxonId, "UniProt");
-                        dbName = "UniProt";
+                    // dbName = (String) taxIdToDb.get(taxonId);
+                    UniProtGeneDataMap geneDataMap = (UniProtGeneDataMap) geneDataMaps.get(taxonId);
+                    boolean noDatabase = false;
+                    if (geneDataMap != null) {
+                        dbName = geneDataMap.getSource();                        
+                        if (dbName == null) {
+                            noDatabase = true;
+                        }
+                    } else {
+                        // there was no data in the config file
+                        geneDataMap = new UniProtGeneDataMap("UniProt");
+                        noDatabase = true;
                     }
+                    if (noDatabase) {
+                        geneDataMap.setSource("UniProt"); 
+                        String message = "No gene source database defined for organism: "
+                            + taxonId + ", using UniProt.[" + geneDataMap.toString()  + "]";
+                        System.err.println(message);
+                        LOG.warn(message);
+                        dbName = "UniProt";
+                    } 
                 // <entry><reference><citation><dbreference>
                 } else if (hasPrimary  && qName.equals("dbReference")
                            && stack.peek().equals("citation")
@@ -451,7 +553,7 @@ public class UniprotConverter extends FileConverter
                     }
                 // <dbreference type="FlyBase/UniProt/etc.." id="*" key="12345">
                 } else if (qName.equals("dbReference")
-                           && taxIdToDb.containsValue(attrs.getValue("type"))) {
+                           && geneSources.contains(attrs.getValue("type"))) {
                     // could be identifier but check next tag to see if this is a gene designation
                     possibleGeneId = attrs.getValue("id");
                     possibleGeneIdSource = attrs.getValue("type");
@@ -466,7 +568,6 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("uniprot")) {
                    initData();
                 }
-
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -674,7 +775,6 @@ public class UniprotConverter extends FileConverter
                         if (hasPrimary) {
                             writer.store(ItemHelper.convert(syn));
                         }
-
                     }
                 }
 
@@ -870,75 +970,68 @@ public class UniprotConverter extends FileConverter
                         LOG.info("Found a Drosophila gene without a CG identifer: " + notCG);
                     }
                 }
+                
+                
                 // define a gene identifier we always expect to find that is unique to this gene
                 // is different for each organism
                 String uniqueGeneIdentifier = null;
                 // geneOrganismDbId = <entry><dbReference><type="FlyBase/WormBase/..">
                 //            where designation = primary gene name
                 String geneOrganismDbId = null;
-                if (taxonId.equals("7227")) { // D. melanogaster
-                    // UniProt has duplicate pairings of CGxxx and FBgnxxx, just get one id
-                    geneOrganismDbId = null;
-                    uniqueGeneIdentifier = geneIdentifier;
-                } else if (taxonId.equals("6239")) { // C. elegans
-                    // just get WBGeneXXX - ORF id is a gene *model* id,
-                    // i.e. effectively a transcript
-                    //geneOrganismDbId
-                    //           = getDataSourceReferenceValue(srcItem, "WormBase", geneNames);
-                    geneOrganismDbId = (String) designations.get("WormBase");
-                    uniqueGeneIdentifier = geneOrganismDbId;
-                    geneIdentifier = null;
-
-                } else if (taxonId.equals("3702")) { // Arabidopsis thaliana
-                    // may not have ordered locus?  what to do then?
-                    geneOrganismDbId = (String) nameTypeToName.get("ordered locus");
-                    if (geneOrganismDbId != null) {
-                        geneOrganismDbId = geneOrganismDbId.toUpperCase();
-                        uniqueGeneIdentifier = geneOrganismDbId;
+                
+                // use map to find out where to get ids
+                UniProtGeneDataMap geneDataMap = (UniProtGeneDataMap) geneDataMaps.get(taxonId);
+                
+                if (geneDataMap != null) {
+                
+                    /* set vars if they come from datasource or name */
+                    geneOrganismDbId = setGeneVars(designations, nameTypeToName, null,
+                                                 geneDataMap.getOrganismDbIdSrcType(),
+                                                 geneDataMap.getOrganismDbIdSrc(),
+                                                 geneOrganismDbId);
+    
+                    geneIdentifier = setGeneVars(designations, nameTypeToName, null,
+                                                   geneDataMap.getIdentifierSrcType(),
+                                                   geneDataMap.getIdentifierSrc(),
+                                                   geneIdentifier);
+                    
+                    /* set vars if they come from another variable */
+                    Map variableLookup = new HashMap();
+                    variableLookup.put("geneIdentifier", geneIdentifier);
+                    variableLookup.put("geneOrganismDbId", geneOrganismDbId);
+                    variableLookup.put("primaryGeneName", primaryGeneName);
+                    
+                    geneOrganismDbId = setGeneVars(null, null, variableLookup, 
+                                                   geneDataMap.getOrganismDbIdSrcType(),
+                                                   geneDataMap.getOrganismDbIdSrc(),
+                                                   geneOrganismDbId);
+    
+                    geneIdentifier = setGeneVars(null, null, variableLookup, 
+                                                 geneDataMap.getIdentifierSrcType(),
+                                                 geneDataMap.getIdentifierSrc(),
+                                                 geneIdentifier);
+                    
+                    /* organism specific */
+                    if (taxonId.equals("10116")) { // Rattus norvegicus
+                        if (geneOrganismDbId != null && !geneOrganismDbId.startsWith("RGD:")) {
+                            geneOrganismDbId = "RGD:" + geneOrganismDbId;
+                        }
+                    } else if (taxonId.equals("3702")) { // Arabidopsis thaliana                 
+                        if (geneOrganismDbId != null) {
+                            geneOrganismDbId = geneOrganismDbId.toUpperCase();
+                        }
                     }
-                } else if (taxonId.equals("4896")) {  // S. pombe
-                    geneOrganismDbId = (String) nameTypeToName.get("ORF");
-                    uniqueGeneIdentifier = geneOrganismDbId;
-                } else if (taxonId.equals("180454")) { // A. gambiae str. PEST
-                    // no organismDbId and no specific dbxref to ensembl - assume that
-                    // geneIdentifier is always ensembl gene stable id and set organismDbId
-                    // to be identifier
-                    uniqueGeneIdentifier = geneIdentifier;
-                    geneOrganismDbId = geneIdentifier;
-               } else if (taxonId.equals("7165") || taxonId.equals("7460")) { // bees
-                    uniqueGeneIdentifier = geneIdentifier;
-                    geneOrganismDbId = geneIdentifier;
-                } else if (taxonId.equals("9606")) { // H. sapiens
-                    //geneOrganismDbId = getDataSourceReferenceValue(srcItem, "Ensembl", null);
-                    geneOrganismDbId = (String) designations.get("Ensembl");
-                    geneIdentifier = geneOrganismDbId;
-                    uniqueGeneIdentifier = geneOrganismDbId;
-                } else if (taxonId.equals("4932")) { // S. cerevisiae
-                    // need to set SGD identifier to be SGD accession, also set organismDbId
-                    geneIdentifier = (String) designations.get("Ensembl");
-                    geneOrganismDbId = (String) designations.get("SGD");
-                    uniqueGeneIdentifier = geneOrganismDbId;
-                } else if (taxonId.equals("36329")) { // Malaria
-                    geneOrganismDbId = geneIdentifier;
-                    uniqueGeneIdentifier = geneIdentifier;
-                } else if (taxonId.equals("10090")) { // Mus musculus
-                    geneIdentifier = (String) designations.get("Ensembl");
-                    geneOrganismDbId = (String) designations.get("MGI");
-                    uniqueGeneIdentifier = geneOrganismDbId;
-                } else if (taxonId.equals("10116")) { // Rattus norvegicus
-                    geneIdentifier = (String) designations.get("Ensembl");
-                    geneOrganismDbId = (String) designations.get("RGD");
-                    // HACK in other places the RGD identifers start with 'RGD:'
-                    if (geneOrganismDbId != null && !geneOrganismDbId.startsWith("RGD:")) {
-                        geneOrganismDbId = "RGD:" + geneOrganismDbId;
-                    }
-                    uniqueGeneIdentifier = geneOrganismDbId;
-                } else if (taxonId.equals("9913") || taxonId.equals("9940")
-                           || taxonId.equals("9925")) {
-                    // cow, sheep and goat for MilkMine
-                    uniqueGeneIdentifier = primaryGeneName;
+                
+                    variableLookup = new HashMap();
+                    variableLookup.put("geneIdentifier", geneIdentifier);
+                    variableLookup.put("geneOrganismDbId", geneOrganismDbId);
+                    variableLookup.put("primaryGeneName", primaryGeneName);   
+                                    
+                    /* set unique identifier */
+                    uniqueGeneIdentifier = (String) variableLookup.get(geneDataMap.getAttribute());
+                    variableLookup = null;
                 }
-
+                
                 // uniprot data source has primary key of Gene.organismDbId
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
@@ -1031,9 +1124,24 @@ public class UniprotConverter extends FileConverter
             }
         }
 
-
-
-
+        private String setGeneVars(Map designations, Map nameTypeToName, Map variableLookup, 
+                                   String srcType, String src, String var) {  
+            if (srcType == null) {
+                return var;
+            }
+            if (srcType.equals("datasource") && designations != null) {
+                return (String) designations.get(src);
+            } else if (srcType.equals("name") && nameTypeToName != null) {
+                return (String) nameTypeToName.get(src);
+            } else if (srcType.equals("variable") && variableLookup != null) {
+                if (src.equals("NULL")) {
+                    return null;
+                }
+                return (String) variableLookup.get(src);
+            }
+            return var;            
+        }
+        
         /**
          * Convenience method for creating a new Item
          * @param className the name of the class
@@ -1071,5 +1179,109 @@ public class UniprotConverter extends FileConverter
             return nextIndex;
         }
     }
-}
+        /**
+         * Which datasource to use with which organism
+         * @author Julie Sullivan
+         */
+        public static class UniProtGeneDataMap
+        {    
+            private String attribute;
+            private String source;
+            private String organismDbIdSrc;
+            private String organismDbIdSrcType;
+            private String identifierSrcType;
+            private String identifierSrc;
+            
+            /**
+             * Constructor
+             * @param attribute Which variable to use for the gene's unique identifier
+             */
+            public UniProtGeneDataMap(String attribute) {
+                this.attribute = attribute;
+            }
+            
+            /**
+             * What to use as the uniqueGeneIdentifier
+             * e.g. geneOrganismDbId or geneIdentifier
+             * @return What to use as the uniqueGeneIdentifier
+             */        
+            public String getAttribute () {
+                return attribute;
+            }
+            
+            /**
+             * @param source Sources appear as source for gene name synonym and 
+             * are used for links out from the webapp
+             */
+            public void setSource (String source) {
+                this.source = source;
+            }
+            
+            /**
+             * @return Sources appear as source for gene name synonym and are used for links out 
+             * from the webapp
+             */
+            public String getSource () {
+                return source;
+            }
+                    
+            /**
+             * @param organismDbIdSrcType What kind of source to use, e.g. variable, datasource, or
+             * name
+             * @param organismDbIdSrc What source to use, e.g. WormBase or ORF
+             */
+            public void  setOrganismDbId(String organismDbIdSrcType, String organismDbIdSrc) {
+                this.organismDbIdSrcType = organismDbIdSrcType;
+                this.organismDbIdSrc = organismDbIdSrc;
+            }
+            
+            /**
+             * @return What type of source to use to set geneOrganismDbId, 
+             * e.g. variable, datasource, or name
+             */
+            public String getOrganismDbIdSrcType() {
+                return organismDbIdSrcType;
+            }
+            
+            /**
+             * @return What source to use to set geneOrganismDbId, e.g. WormBase, ORF, etc
+             */
+            public String getOrganismDbIdSrc() {
+                return organismDbIdSrc;
+            }
+            
+            /**
+             * @param identifierSrcType What kind of source to use, e.g. variable or datasource
+             * @param identifierSrc Which source to use, e.g. geneOrganismDbId, Ensembl
+             */
+            public void  setIdentifier(String identifierSrcType, String identifierSrc) {
+                this.identifierSrcType = identifierSrcType;
+                this.identifierSrc = identifierSrc;
+            }
 
+            /**
+             * @return What kind of source to use to set geneIdentifier, e.g. variable or datasource
+             */
+            public String getIdentifierSrcType() {
+                return identifierSrcType;
+            }
+            
+            /**
+             * @return Which source to use to set geneIdentifier, e.g. geneOrganismDbId, Ensembl
+             */
+            public String getIdentifierSrc() {
+                return identifierSrc;
+            }
+            
+            public String toString() {
+                return "attribute: " + attribute 
+                + ", source: " + source
+                + ", organismDbIdSrcType: " + organismDbIdSrcType
+                + ", organismDbIdSrc: " + organismDbIdSrc
+                + ", identifierSrcType: " + identifierSrcType
+                + ", identifierSrc: " + identifierSrc;
+
+            }
+        }
+    
+}
