@@ -133,12 +133,21 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
-      <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
+    
+      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.flymine.web.widget.ChromosomeDistributionDataSetLdr"
+      toolTipGen="org.flymine.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.flymine.web.widget.ChromosomeDistributionGraphURLGenerator"
+      description="If I knew how to describe this widget, this is exactly the place I would enter it." />
+      
+    
+  	  <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
       toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
       description="For each tissue in the adult fly, the number of genes from my bag for which the levels or expression are significantly high (Up) or low (Down) according to FlyAtlas AffyCall (see &lt;a href=&quot;http://www.flyatlas.org/&quot;&gt;here&lt;/a&gt;)." />
+   
       <!--<bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"/>-->
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways"
       description="Most common KEGG pathways for this bag (see &lt;a href=&quot;http://www.genome.jp/kegg/&quot;&gt;here&lt;/a&gt;)." />
+      
+
     </bagdisplayers>
   </class>
 
