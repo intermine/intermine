@@ -1,14 +1,28 @@
 package org.intermine.web.struts;
 
+import java.util.Arrays;
+import java.util.Date;
+
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import servletunit.struts.MockStrutsTestCase;
 
 public class ModifyQueryActionTest extends MockStrutsTestCase
 {
-    /*
     PathQuery query, queryBag;
     SavedQuery sq, sqBag, hist, hist2;
     Date date = new Date();
-    InterMineBag bag, bag2;
     TemplateQuery template;
     ObjectStoreDummyImpl userprofileOS = new ObjectStoreDummyImpl();
     Integer userId;
@@ -26,7 +40,6 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         queryBag = new PathQuery(Model.getInstanceByName("testmodel"));
         queryBag.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
-        bag = new InterMinePrimitiveBag(userId, "bag1", userprofileOS, Collections.singleton("entry1"));
         sq = new SavedQuery("query1", date, query);
         sqBag = new SavedQuery("query3", date, queryBag);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
@@ -39,8 +52,6 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
         profile.saveQuery(sq.getName(), sq);
         profile.saveQuery(sqBag.getName(), sqBag);
-        profile.saveBag("bag1", bag);
-        profile.saveBag("bag2", bag2);
         profile.saveHistory(hist);
         profile.saveHistory(hist2);
     }
@@ -82,43 +93,9 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         addRequestParameter("delete", "Delete");
         setRequestPathInfo("/modifyQuery");
         actionPerform();
-        verifyActionErrors(new String[]{"errors.modifyQuery.none"});
+        verifyActionErrors(new String[]{"errors.modifyQuery.noselect"});
         verifyForward("history");
         assertEquals(2, getProfile().getSavedQueries().size());
-    }
-
-    public void testRenameSavedQuery() {
-        addRequestParameter("newName", "queryA"); // new name edit field
-        addRequestParameter("name", "query1"); // hidden target bag name
-        addRequestParameter("type", "saved"); //
-        setRequestPathInfo("/modifyQuery");
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("history");
-        assertEquals(2, getProfile().getSavedQueries().size());
-        assertTrue(getProfile().getSavedQueries().containsKey("queryA"));
-        assertFalse(getProfile().getSavedQueries().containsKey("query1"));
-    }
-
-    public void testRenameHistory() {
-        addRequestParameter("newName", "queryA"); // new name edit field
-        addRequestParameter("name", "query1"); // hidden target bag name
-        addRequestParameter("type", "history"); //
-        setRequestPathInfo("/modifyQuery");
-        actionPerform();
-        verifyNoActionErrors();
-        verifyForward("history");
-        assertEquals(2, getProfile().getHistory().size());
-        assertTrue(getProfile().getHistory().containsKey("queryA"));
-        assertFalse(getProfile().getHistory().containsKey("query1"));
-    }
-
-    public void testRenameSavedQueryNameInUse() {
-        testRenameNameInUse("saved", "query1", "query3");
-    }
-
-    public void testRenameHistoryNameInUse() {
-        testRenameNameInUse("history", "query1", "query2");
     }
 
     private void testRenameNameInUse(String type, String name, String toName) {
@@ -132,22 +109,4 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         assertEquals(2, getProfile().getSavedQueries().size());
     }
 
-    public void testRenameSavedQueryEmptyName() {
-        testRenameEmptyName("saved", "query1");
-    }
-
-    public void testRenameHistoryEmptyName() {
-        testRenameEmptyName("history", "query1");
-    }
-
-    private void testRenameEmptyName(String type, String queryName) {
-        addRequestParameter("newName", ""); // new name edit field
-        addRequestParameter("name", queryName); // hidden target bag name
-        addRequestParameter("type", type); //
-        setRequestPathInfo("/modifyQuery");
-        actionPerform();
-        verifyActionErrors(new String[]{"errors.required"});
-        assertEquals("/history.do?action=rename&type=" + type + "&name=query1", getActualForward());
-    }
-    */
 }
