@@ -84,7 +84,7 @@ public class ModifyDetails extends DispatchAction
 
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPath());
+            PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPathString());
 
             name = TypeUtil.unqualifiedName(node.getParentType());
 
@@ -106,7 +106,7 @@ public class ModifyDetails extends DispatchAction
             } else if (useBagNode != null) { // && name.equals(useBagNode)) {
                 // bag details page - remove the identified constraint and constrain
                 // its parent to be in the bag
-                PathNode parent = (PathNode) query.getNodes().get(nodeCopy.getParent().getPath());
+                PathNode parent = (PathNode) query.getNodes().get(nodeCopy.getParent().getPathString());
                 for (int ci = 0; ci < node.getConstraints().size(); ci++) {
                     Constraint c = (Constraint) node.getConstraint(ci);
                     if (c.getIdentifier() != null) {
@@ -123,7 +123,7 @@ public class ModifyDetails extends DispatchAction
 
                         // remove the constraint on this node, possibly remove node
                         if (nodeCopy.getConstraints().size() == 1) {
-                            query.getNodes().remove(nodeCopy.getPath());
+                            query.getNodes().remove(nodeCopy.getPathString());
                         } else {
                             nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
                         }

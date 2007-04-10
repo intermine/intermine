@@ -108,8 +108,8 @@ public class QueryBuilderAction extends InterMineAction
             // constrain parent object of this node to be in bag or node
             // itself if an object or reference/collection
             PathNode parent;
-            if (node.isAttribute() && (node.getPath().indexOf('.')) >= 0) {
-                parent = (PathNode) query.getNodes().get(node.getParent().getPath());
+            if (node.isAttribute() && (node.getPathString().indexOf('.')) >= 0) {
+                parent = (PathNode) query.getNodes().get(node.getParent().getPathString());
             } else {
                 parent = node;
             }
@@ -119,7 +119,7 @@ public class QueryBuilderAction extends InterMineAction
 
             // if no other constraints on the original node, remove it
             if (node.getConstraints().size() == 0) {
-                query.getNodes().remove(node.getPath());
+                query.getNodes().remove(node.getPathString());
             } 
         }
 

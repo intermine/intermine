@@ -149,7 +149,7 @@ public class TemplateController extends TilesAction
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            PathNode displayNode = (PathNode) displayTemplate.getNodes().get(node.getPath());
+            PathNode displayNode = (PathNode) displayTemplate.getNodes().get(node.getPathString());
             int j = 1;
             for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator(); ci
                     .hasNext();) {
@@ -178,17 +178,17 @@ public class TemplateController extends TilesAction
                 
                 // create display name
                 PathNode parent;
-                if (displayNode.getPath().indexOf('.') >= 0) {
+                if (displayNode.getPathString().indexOf('.') >= 0) {
                     parent = (PathNode) displayTemplate.getNodes().get(
-                            displayNode.getPath().substring(0,
-                            displayNode.getPath().lastIndexOf(".")));
+                            displayNode.getPathString().substring(0,
+                            displayNode.getPathString().lastIndexOf(".")));
                 } else {
                     parent = displayNode;
                 }
                 names.put(c, parent.getType()
                         + " "
-                        + displayNode.getPath().substring(
-                                displayNode.getPath().lastIndexOf(".") + 1));
+                        + displayNode.getPathString().substring(
+                                displayNode.getPathString().lastIndexOf(".") + 1));
 
                 // check if this constraint can be used with bags and if any available
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode

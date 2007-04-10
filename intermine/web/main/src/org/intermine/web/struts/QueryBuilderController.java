@@ -109,7 +109,7 @@ public class QueryBuilderController extends TilesAction
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes
-            String pathName = node.getPath();
+            String pathName = node.getPathString();
             int firstDot = pathName.indexOf('.');
             String fullPath;
             if (firstDot == -1) {

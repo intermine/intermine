@@ -74,7 +74,7 @@ public class PathQueryBinding
             for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
                 PathNode node = (PathNode) j.next();
                 writer.writeStartElement("node");
-                writer.writeAttribute("path", node.getPath());
+                writer.writeAttribute("path", node.getPathString());
                 if (node.getType() != null) {
                     writer.writeAttribute("type", node.getType());
                 }

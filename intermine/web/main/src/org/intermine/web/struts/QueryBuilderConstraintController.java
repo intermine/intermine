@@ -73,7 +73,7 @@ public class QueryBuilderConstraintController extends TilesAction
             MainHelper.moveToRequest("editingConstraintValue", request);
             MainHelper.moveToRequest("editingConstraintOperand", request);
             
-            if (node.getPath().indexOf(".") != -1 && node.isAttribute()) {
+            if (node.getPathString().indexOf(".") != -1 && node.isAttribute()) {
                 request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                             null));
             } else {
@@ -83,7 +83,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 while (iter.hasNext()) {
                     PathNode anode = (PathNode) iter.next();
                     if (anode != node && anode.getType().equals(node.getType())) {
-                        paths.add(anode.getPath());
+                        paths.add(anode.getPathString());
                     }
                 }
 
@@ -96,16 +96,16 @@ public class QueryBuilderConstraintController extends TilesAction
             // of object/reference/collection
             String nodeType;
             boolean useBags;
-            if (node.isAttribute() && (node.getPath().indexOf('.')) >= 0) {
+            if (node.isAttribute() && (node.getPathString().indexOf('.')) >= 0) {
                 nodeType = ((PathNode) query.getNodes().get(
-                        node.getPath().substring(0,
-                        node.getPath().lastIndexOf(".")))).getType();
+                        node.getPathString().substring(0,
+                        node.getPathString().lastIndexOf(".")))).getType();
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
             } else {
-                if ((node.getPath().indexOf('.')) >= 0) {
+                if ((node.getPathString().indexOf('.')) >= 0) {
                         nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
-                                                node.getPath(), query));
+                                                node.getPathString(), query));
                 }  else {
                         nodeType = node.getType();
                 }

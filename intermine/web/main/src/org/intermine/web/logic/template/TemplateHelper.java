@@ -155,7 +155,7 @@ public class TemplateHelper
             for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
                 String key = "" + (j + 1);
-                PathNode nodeCopy = (PathNode) queryCopy.getNodes().get(node.getPath());
+                PathNode nodeCopy = (PathNode) queryCopy.getNodes().get(node.getPathString());
 
                 if (tf.getUseBagConstraint(key)) {
                     // Replace constraint with bag constraint
@@ -172,7 +172,7 @@ public class TemplateHelper
                     if (bag != null) {
                         // constrain parent object of this node to be in bag
                         PathNode parent = (PathNode) queryCopy.getNodes()
-                            .get(nodeCopy.getParent().getPath());
+                            .get(nodeCopy.getParent().getPathString());
                         Constraint bagConstraint = new Constraint(constraintOp, constraintValue,
                                 true, c.getDescription(), c.getCode(), c.getIdentifier());
                         parent.getConstraints().add(bagConstraint);
@@ -180,7 +180,7 @@ public class TemplateHelper
                         // remove the constraint on this node, possibly remove node
                         //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
                         if (nodeCopy.getConstraints().size() == 1) {
-                            queryCopy.getNodes().remove(nodeCopy.getPath());
+                            queryCopy.getNodes().remove(nodeCopy.getPathString());
                         }
                     } else {
                         nodeCopy.getConstraints().set(
@@ -621,7 +621,7 @@ public class TemplateHelper
             if (ecs != null && ecs.size() > 0) {
                 // NOTE: at one point this exhibited a bug where aliases were repeated
                 // in the generated query, seems to be fixed now though.
-                String path = node.getPath();
+                String path = node.getPathString();
                 Set view = new HashSet(templateClone.getView());
                 if (!view.contains(path)) {
                     templateClone.getView().add(path);
@@ -636,7 +636,7 @@ public class TemplateHelper
         if (groupByNode != null) {
             query.clearOrderBy();
             query.clearSelect();
-            QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPath());
+            QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPathString());
             query.addToSelect(qn);
             query.addToGroupBy(qn);
         } else {
