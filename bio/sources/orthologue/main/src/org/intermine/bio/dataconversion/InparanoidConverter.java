@@ -14,13 +14,11 @@ import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Set;
 import java.util.Properties;
 import java.util.Enumeration;
 
@@ -53,7 +51,7 @@ public class InparanoidConverter extends FileConverter
     protected Map orgSources = new HashMap();
     protected Map taxonIds = new HashMap();
     protected Map attributes = new HashMap();
-
+    protected Map createObjects = new HashMap(); // which objects to create from which source
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -75,6 +73,7 @@ public class InparanoidConverter extends FileConverter
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
         }
         Enumeration propNames = props.propertyNames();
+
         while (propNames.hasMoreElements()) {
             String code = (String) propNames.nextElement();
             code = code.substring(0, code.indexOf("."));
@@ -95,7 +94,12 @@ public class InparanoidConverter extends FileConverter
             if (attribute == null) {
                 attribute = "identifier";
             }
-
+            String object = codeProps.getProperty("object");
+            if (object == null) {
+                object = "transcript";
+            }
+            
+            
             source = source.trim();
             taxonId = taxonId.trim();
             attribute = attribute.trim();
@@ -103,6 +107,7 @@ public class InparanoidConverter extends FileConverter
             taxonIds.put(code, taxonId);
             orgSources.put(taxonId, source);
             attributes.put(code, attribute);
+            createObjects.put(code, object);
         }
     }
 
@@ -130,9 +135,7 @@ public class InparanoidConverter extends FileConverter
             String transId = null;
 
             String code = array[2].substring(0, array[2].indexOf('.'));
-            Set createGenes = new HashSet(Arrays.asList(new String[] {"modDROME", "modSACCE",
-                "sanSCHPO", "modCAEEL", "modMUSMU", "modDANRE", "modDICDI"}));
-            if (createGenes.contains(code)) {
+            if (createObjects.get(code) != null && createObjects.get(code).equals("Gene")) {
                 geneId = array[4];
             } else {
                 transId = array[4];
@@ -242,6 +245,7 @@ public class InparanoidConverter extends FileConverter
      */
     protected Item newBioEntity(String value, String attribute, Item organism, String type)
         throws ObjectStoreException {
+
         // lookup by identifier and type, sometimes same id for translation and gene
         String key = type + value;
         if (bioEntities.containsKey(key)) {

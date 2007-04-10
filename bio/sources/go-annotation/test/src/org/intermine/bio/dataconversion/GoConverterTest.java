@@ -37,14 +37,19 @@ public class GoConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-        goFile = File.createTempFile("go-tiny", ".ontology");
-        Reader goReader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("go-tiny.ontology"));
-        writeTempFile(goFile, goReader);
+//        goFile = File.createTempFile("go-tiny", ".ontology");
+//      
+//        Reader goReader = new InputStreamReader(
+//                getClass().getClassLoader().getResourceAsStream("go-tiny.ontology"));
+//        writeTempFile(goFile, goReader);
 
-        goOboFile = File.createTempFile("go-tiny", ".obo");
-        Reader goOboReader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
+      goOboFile = File.createTempFile("gene_ontology", ".obo");
+      Reader goOboReader = new InputStreamReader(
+              getClass().getClassLoader().getResourceAsStream("gene_ontology.obo"));
+        
+//        goOboFile = File.createTempFile("go-tiny", ".obo");
+//        Reader goOboReader = new InputStreamReader(
+//                getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
     }
 
@@ -58,14 +63,14 @@ public class GoConverterTest extends ItemsTestCase
     }
 
     public void tearDown() throws Exception {
-        goFile.delete();
-        goOboFile.delete();
+        //goFile.delete();
+        //goOboFile.delete();
     }
 
-    public void testTranslate() throws Exception {
-        translateCommon(goFile, "GoConverterTest_src.txt",
-                "GoConverterTest_tgt.xml", true, false);
-    }
+//    public void testTranslate() throws Exception {
+//        translateCommon(goFile, "GoConverterTest_src.txt",
+//                "GoConverterTest_tgt.xml", true, false);
+//    }
 
     public void testOboTranslate() throws Exception {
         translateCommon(goOboFile, "GoConverterOboTest_src.txt",

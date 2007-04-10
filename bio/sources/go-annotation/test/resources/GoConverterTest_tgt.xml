@@ -12,7 +12,6 @@
     <attribute name="pubMedId" value="9694802"/>
   </item>
   <item id="8_19" class="http://www.flymine.org/model/genomic#GOAnnotation">
-    <attribute name="evidenceCode" value="NAS"/>
     <attribute name="identifier" value="GO:0030122"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="AP-2 adaptor complex"/>
@@ -68,7 +67,6 @@
     <attribute name="name" value="FlyBase"/>
   </item>
   <item id="8_18" class="http://www.flymine.org/model/genomic#GOAnnotation">
-    <attribute name="evidenceCode" value="TAS"/>
     <attribute name="identifier" value="GO:0006901"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="vesicle coating"/>
@@ -96,7 +94,6 @@
     <attribute name="identifier" value="GO:0019825"/>
   </item>
   <item id="8_24" class="http://www.flymine.org/model/genomic#GOAnnotation">
-    <attribute name="evidenceCode" value="ISS"/>
     <attribute name="identifier" value="GO:0019825"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="oxygen binding"/>
@@ -110,7 +107,6 @@
     </collection>
   </item>
   <item id="8_25" class="http://www.flymine.org/model/genomic#GOAnnotation">
-    <attribute name="evidenceCode" value="TAS"/>
     <attribute name="identifier" value="GO:0008395"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="steroid hydroxylase activity"/>
