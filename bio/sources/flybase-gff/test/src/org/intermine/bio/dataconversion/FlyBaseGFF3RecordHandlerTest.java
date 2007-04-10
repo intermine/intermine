@@ -211,7 +211,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
         converter.store();
         converter.close();
         // uncomment to write out a new target items file
-        writeItemsFile(tgtIw.getItems(), "flybase_cds_tgt.xml");
+        //writeItemsFile(tgtIw.getItems(), "flybase_cds_tgt.xml");
         Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml"); 
         assertEquals(expected, tgtIw.getItems());
     }

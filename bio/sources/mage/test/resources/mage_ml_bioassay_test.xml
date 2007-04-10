@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<MAGE-ML>
+  <BioAssayData_package>
+    <BioAssayData_assnlist>
+      <DerivedBioAssayData identifier="dbad1">
+        <BioDataValues_assn>
+          <BioDataCube order="DBQ">
+            <DataExternal_assn>
+              <DataExternal filenameURI="mage_example_data"/>
+            </DataExternal_assn>
+          </BioDataCube>
+        </BioDataValues_assn>
+        <BioAssayDimension_assnref>
+          <BioAssayDimension_ref identifier="bad1"/>
+        </BioAssayDimension_assnref>
+        <QuantitationTypeDimension_assn>
+          <QuantitationTypeDimension identifier="qtd">
+            <QuantitationTypes_assnreflist>
+              <MeasuredSignal_ref identifier="ms1"/>
+              <MeasuredSignal_ref identifier="ms2"/>
+              <MeasuredSignal_ref identifier="ms3"/>
+            </QuantitationTypes_assnreflist>
+          </QuantitationTypeDimension>
+        </QuantitationTypeDimension_assn>
+        <DesignElementDimension_assn>
+          <FeatureDimension identifier="fd1">
+            <ContainedFeatures_assnlist>
+              <Feature identifier="f1">
+                <FeatureLocation_assn>
+                  <FeatureLocation row="1" column="1"/>
+                </FeatureLocation_assn>
+              </Feature>
+              <Feature identifier="f2">
+                <FeatureLocation_assn>
+                  <FeatureLocation row="1" column="2"/>
+                </FeatureLocation_assn>
+              </Feature>
+            </ContainedFeatures_assnlist>
+          </FeatureDimension>
+        </DesignElementDimension_assn>
+      </DerivedBioAssayData>
+    </BioAssayData_assnlist>
+    <BioAssayDimension_assnlist>
+      <BioAssayDimension identifier="bad1">
+        <BioAssays_assnreflist>
+            <DerivedBioAssay_ref identifier="dba1"/>
+            </BioAssays_assnreflist>
+      </BioAssayDimension>
+    </BioAssayDimension_assnlist>
+  </BioAssayData_package>
+  <BioAssay_package>
+    <BioAssay_assnlist>
+            <DerivedBioAssay identifier="dba1"><DerivedBioAssayData_assnreflist><DerivedBioAssayData_ref identifier="dbad1"/></DerivedBioAssayData_assnreflist></DerivedBioAssay>
+           </BioAssay_assnlist>
+  </BioAssay_package>
+  <QuantitationType_package>
+    <QuantitationType_assnlist>
+      <MeasuredSignal identifier="ms1" name="col1">
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="type1"/>
+        </DataType_assn>
+      </MeasuredSignal>
+      <MeasuredSignal identifier="ms2" name="col2">
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="type2"/>
+        </DataType_assn>
+      </MeasuredSignal>
+      <MeasuredSignal identifier="ms3" name="col3">
+        <DataType_assn>
+          <OntologyEntry category="DataType" value="type3"/>
+        </DataType_assn>
+      </MeasuredSignal>
+    </QuantitationType_assnlist>
+  </QuantitationType_package>
+</MAGE-ML>

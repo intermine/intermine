@@ -40,7 +40,7 @@ public class UniprotConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
 
         Set expected = readItemSet("UniprotConverterTest_tgt.xml");
         

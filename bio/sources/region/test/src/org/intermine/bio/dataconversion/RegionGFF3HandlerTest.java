@@ -52,14 +52,14 @@ public class RegionGFF3HandlerTest extends ItemsTestCase
 
     public void testParse() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-             InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/region.gff")));
+             InputStreamReader(getClass().getClassLoader().getResourceAsStream("region.gff")));
         converter.parse(srcReader);
         converter.store();
 
         // uncomment to write a new target items file
         //writeItemsFile(writer.getItems(), "region-tgt-items.xml");
 
-        Set expected = readItemSet("test/regiontgt.xml");
+        Set expected = readItemSet("regiontgt.xml");
         assertEquals(expected, writer.getItems());
     }
 }
