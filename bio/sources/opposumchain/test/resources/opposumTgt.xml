@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<items>
+  <item id="0_6" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="118529072"/>
+    <attribute name="start" value="115076073"/>
+    <attribute name="strand" value="1"/>
+    <reference name="object" ref_id="0_3"/>
+    <reference name="subject" ref_id="0_5"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_9" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="Opposumchain:176:scaffold_13572:5206..4578343"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_5"/>
+  </item>
+  <item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="7"/>
+    <reference name="source" ref_id="0_2"/>
+    <reference name="subject" ref_id="0_3"/>
+  </item>
+  <item id="1_0" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="abbreviation" value="MD"/>
+  </item>
+  <item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="UCSC"/>
+  </item>
+  <item id="0_5" class="http://www.flymine.org/model/genomic#CrossGenomeMatch">
+    <attribute name="identifier" value="Opposumchain:176:scaffold_13572:5206..4578343"/>
+    <reference name="chromosome" ref_id="0_3"/>
+    <reference name="chromosomeLocation" ref_id="0_6"/>
+    <reference name="organism" ref_id="0_0"/>
+    <reference name="targetLocatedSequenceFeature" ref_id="1_1"/>
+    <reference name="targetLocatedSequenceFeatureLocation" ref_id="1_2"/>
+    <reference name="targetOrganism" ref_id="1_0"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+      <reference ref_id="0_7"/>
+    </collection>
+  </item>
+  <item id="1_2" class="http://www.flymine.org/model/genomic#Location">
+    <attribute name="end" value="4578343"/>
+    <attribute name="start" value="5206"/>
+    <attribute name="strand" value="-1"/>
+    <reference name="object" ref_id="1_1"/>
+    <reference name="subject" ref_id="0_5"/>
+  </item>
+  <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="123"/>
+  </item>
+  <item id="0_3" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="7"/>
+    <reference name="organism" ref_id="0_0"/>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="UCSC opossum chain"/>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#Scaffold">
+    <attribute name="identifier" value="13572"/>
+    <reference name="organism" ref_id="1_0"/>
+  </item>
+  <item id="0_7" class="http://www.flymine.org/model/genomic#ComputationalResult">
+    <attribute name="score" value="1.033079E7"/>
+    <attribute name="type" value="score"/>
+    <reference name="analysis" ref_id="0_8"/>
+  </item>
+  <item id="0_8" class="http://www.flymine.org/model/genomic#ComputationalAnalysis">
+    <attribute name="algorithm" value="opposumChain"/>
+  </item>
+</items>

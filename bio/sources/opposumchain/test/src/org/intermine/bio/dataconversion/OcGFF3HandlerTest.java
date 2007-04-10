@@ -53,14 +53,14 @@ public class OcGFF3HandlerTest extends ItemsTestCase
 
     public void testParse() throws Exception {
         BufferedReader srcReader = new BufferedReader(new
-                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("test/opposumChain.gff")));
+                   InputStreamReader(getClass().getClassLoader().getResourceAsStream("opposumChain.gff")));
         converter.parse(srcReader);
         converter.store();
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "opposum-tgt-items.xml");
         
-        Set expected = readItemSet("test/opposumTgt.xml");
+        Set expected = readItemSet("opposumTgt.xml");
         assertEquals(expected, writer.getItems());
     }
 }

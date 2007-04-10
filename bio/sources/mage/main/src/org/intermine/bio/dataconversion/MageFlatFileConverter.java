@@ -43,12 +43,12 @@ public class MageFlatFileConverter extends FileConverter
     protected static final Logger LOG = Logger.getLogger(MageFlatFileConverter.class);
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:Mouse430:";
-    private static final String PROBEURL = "https://www.affymetrix.com/LinkServlet?probeset=";
 
     protected ItemFactory itemFactory;
     protected Map config = new HashMap();
     protected Item dataSource, dataSet, organismMM, experiment;
     protected String expName = "E-SMDB-3450";
+    private String propertiesFileName = "mage_config.properties";
 
     /**
      * Constructor
@@ -60,7 +60,18 @@ public class MageFlatFileConverter extends FileConverter
     public MageFlatFileConverter(ItemWriter writer)
         throws ObjectStoreException, MetaDataException, IOException {
         super(writer);
-        
+    
+        init(writer);
+    }
+    
+    protected MageFlatFileConverter(ItemWriter writer, String propertiesFileName)
+    throws ObjectStoreException, MetaDataException, IOException {
+        super(writer);
+        this.propertiesFileName = propertiesFileName;
+        init(writer);
+    }   
+    
+    private void init(ItemWriter writer) throws IOException, ObjectStoreException {
         readConfig();
         LOG.info("config " + config);
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
@@ -129,7 +140,7 @@ public class MageFlatFileConverter extends FileConverter
             String probeId = array[0].trim();
             String foldChange = array[1];
 
-            Item probe = createProbe("CompositeSequence", PROBEPREFIX, probeId,
+            Item probe = createProbe("ProbeSet", PROBEPREFIX, probeId,
                                      organismMM.getIdentifier(), dataSource.getIdentifier(), 
                                      dataSet.getIdentifier(), writer);
             Item result = createItem("MicroArrayResult");
@@ -164,7 +175,7 @@ public class MageFlatFileConverter extends FileConverter
         Item probe = createItem(clsName);
         probe.setAttribute("identifier", probePre + id);
         probe.setAttribute("name", id);
-        probe.setAttribute("url", PROBEURL + id);
+        //probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);
         probe.addCollection(new ReferenceList("evidence",
                             new ArrayList(Collections.singleton(datasetId))));
@@ -188,7 +199,6 @@ public class MageFlatFileConverter extends FileConverter
      */
     protected void readConfig() throws IOException {
         // create a map from experiment name to a map of config values
-        String propertiesFileName = "mage_config.properties";
         InputStream is =
             MageFlatFileConverter.class.getClassLoader().getResourceAsStream(propertiesFileName);
 

@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.flymine.model.genomic.ProteinInteraction;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.path.Path;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 
@@ -144,11 +145,11 @@ public class PIUtil
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
-                Object columnType = ((Column) columns.get(i)).getType();
-
-                if (columnType instanceof ClassDescriptor) {
-                    ClassDescriptor cd = (ClassDescriptor) columnType;
-                    if (PIUtil.validType(cd.getType())) {
+                
+                Path columnPath = column.getPath();
+                if (columnPath.endIsAttribute()) {
+                    ClassDescriptor columnCD = columnPath.getLastClassDescriptor();
+                    if (PIUtil.validType(columnCD.getType())) {
                         return true;
                     }
                 }

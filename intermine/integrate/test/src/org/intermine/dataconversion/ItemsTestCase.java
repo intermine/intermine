@@ -96,12 +96,16 @@ public abstract class ItemsTestCase extends TestCase
                 TreeSet ts = new TreeSet();
                 ts.addAll(inAnotB);
                 message.append(ts + ENDL);
+            } else if (a.isEmpty()) {
+                message.append("Expected set was empty. " + ENDL);
             }
             if (!inBnotA.isEmpty()) {
                 message.append("In actual, not expected: " + ENDL);
                 TreeSet ts = new TreeSet();
                 ts.addAll(inBnotA);
                 message.append(ts + ENDL);
+            } else if (b.isEmpty()) {
+                message.append("Actual set was empty. " + ENDL);
             }
         }
         return message.toString();

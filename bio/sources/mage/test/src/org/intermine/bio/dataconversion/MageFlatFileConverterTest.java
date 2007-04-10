@@ -40,7 +40,7 @@ public class MageFlatFileConverterTest extends ItemsTestCase {
         BufferedReader srcReader = new BufferedReader(new
             InputStreamReader(getClass().getClassLoader().getResourceAsStream("mageFlat.txt")));
 
-        MageFlatFileConverter converter = new MageFlatFileConverter(writer);
+        MageFlatFileConverter converter = new MageFlatFileConverter(writer, "mage_config_test.properties");
 
         converter.process(srcReader);
         converter.close();

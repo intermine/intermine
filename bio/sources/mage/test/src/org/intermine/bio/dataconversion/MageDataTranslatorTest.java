@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.bio.dataconversion.MageConverter;
-import org.intermine.bio.dataconversion.MageDataTranslator;
-import org.intermine.dataconversion.DataTranslator;
 import org.intermine.dataconversion.DataTranslatorTestCase;
 import org.intermine.dataconversion.MockItemReader;
 import org.intermine.dataconversion.MockItemWriter;
@@ -34,7 +31,6 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * Test for translating MAGE data in fulldata Item format conforming to a source OWL definition
@@ -121,8 +117,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs), 
+                                                               "mage_config_test.properties");
+        translator.propertiesFileName = "mage_config_test.properties";
         Item expectedItem = createTgtItem("MicroArrayExperiment", "-1_1", "");
         expectedItem.setAttribute("identifier", "E-FLYC-1");
         expectedItem.setAttribute("name", "Experiment 1");
@@ -178,8 +175,9 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
+        
         Item expItem1 = createTgtItem("MicroArrayAssay", "2_1", "");
         expItem1.setReference("experiment", "-1_1");
         expItem1.setAttribute("name", "Day0(3)");
@@ -208,7 +206,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         List mbaList = new ArrayList();
         mbaList = (List) translator.processDBA2MBA("57_709");
-        List expectedList = Arrays.asList(new Object[]{"2_1", "2_2"});
+        List expectedList = new ArrayList(Arrays.asList(new Object[]{"2_1", "2_2"}));
         assertEquals(expectedList, mbaList);
     }
 
@@ -241,7 +239,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(srcItems);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         translator.translateItem(srcItem1);
 
         // genomic:MicroArrayAssay to list of mage:LabeledExtract identifiers
@@ -288,8 +287,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         Item expItem1 = createTgtItem("Treatment", "0_1", "");
         expItem1.setAttribute("action", "labeling");
         expItem1.setCollection("protocols", new ArrayList(Collections.singleton("3_1")));
@@ -353,8 +352,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -378,8 +377,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -401,8 +400,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -437,8 +436,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
@@ -485,7 +484,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
 
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
@@ -524,7 +524,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(srcItems);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         // call with top level LabeledExtract and empty list
         List treatments = new ArrayList();
         translator.searchTreatments(srcItem1, treatments, false);
@@ -565,7 +566,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         translator.assayNs = "4_";
 
         Item expItem1 = createTgtItem("MicroArrayResult", "58_762", "");
@@ -592,7 +594,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testProcessMicroArrayResults() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
 
         MageDataTranslator.ResultHolder rh = translator.new ResultHolder(1);
         rh.measuredAssayId = 1;
@@ -632,7 +635,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testProcessMicroArrayResultsMaterialIds() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
 
         //Item result = createTgtItem("MicroArrayResult", "0_1", "");
         //result.setReference("assay", "5_1");
@@ -652,6 +656,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.featureToReporter.put("2_1", "3_1");
         translator.assayToExperiment.put("5_1", "6_1");
         translator.reporterToMaterial.put("3_1", "7_1");
+        translator.exptToDataSet.put("6_1", "-1_1");
         translator.expIdNames.put("6_1", "E-FLYC-1");
 
         Item clone = createTgtItem("Clone", "7_1", "");
@@ -673,7 +678,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testProcessSamples() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
 
         Item sample1 = createTgtItem("Sample", "0_1", "");
         translator.samplesById.put("0_1", sample1);
@@ -713,7 +719,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
     public void testProcessMicroArrayAssays() throws Exception {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(new HashMap()),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         // TODO need to test with numerical ids and mix of characters and numbers
         Item assay1 = createTgtItem("MicroArrayAssay", "0_1", "");
         assay1.setAttribute("name", "assay-B");
@@ -771,7 +778,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
 
         Item srcItem2 = createSrcItem("OntologyEntry", "1_1", "");
         srcItem2.setAttribute("category", "Organism");
-        srcItem2.setAttribute("value", "Giraffe");
+        srcItem2.setAttribute("value", "Drosophila melanogaster");
 
         Item srcItem3 = createSrcItem("OntologyEntry", "1_2", "");
         srcItem3.setAttribute("category", "height");
@@ -785,9 +792,8 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
-
-
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         Item expItem1 = createTgtItem("Sample", "0_1", "");
         expItem1.setAttribute("name", "BioSource name");
         expItem1.setAttribute("materialType", "genomic DNA");
@@ -795,7 +801,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expItem1.setCollection("characteristics", new ArrayList(Collections.singleton("-1_2")));
 
         Item expItem2 = createTgtItem("Organism", "-1_1", "");
-        expItem2.setAttribute("name", "Giraffe");
+        expItem2.setAttribute("taxonId", "7227");
 
         Item expItem3 = createTgtItem("SampleCharacteristic", "-1_2", "");
         expItem3.setAttribute("type", "height");
@@ -837,14 +843,15 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs));
+                                                               mapping, srcModel, getTargetModel(tgtNs),
+                                                               "mage_config_test.properties");
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
         Map expMap = new HashMap();
-        expMap.put("57_1", new ArrayList(Arrays.asList(new Object[]{"5_3", "5_2", "5_5", "5_4"})));
-        expMap.put("57_2", new ArrayList(Arrays.asList(new Object[]{"5_3", "5_2"})));
-        expMap.put("57_3", new ArrayList(Arrays.asList(new Object[]{"5_5", "5_4"})));
+        expMap.put("57_1", new ArrayList(Arrays.asList(new Object[]{"5_2", "5_3", "5_4", "5_5"})));
+        expMap.put("57_2", new ArrayList(Arrays.asList(new Object[]{"5_2", "5_3"})));
+        expMap.put("57_3", new ArrayList(Arrays.asList(new Object[]{"5_4", "5_5"})));
         assertEquals(expMap, translator.bioAssayMap);
 
     }
