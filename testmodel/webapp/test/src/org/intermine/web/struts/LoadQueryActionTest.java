@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -36,6 +37,9 @@ public class LoadQueryActionTest extends MockStrutsTestCase
         String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" +
                 "</query>";
 
+        getSession().setAttribute(Constants.PROFILE,
+                                  new Profile(null, null, null, null,
+                                              new HashMap(), new HashMap(), new HashMap()));        
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "false");
@@ -51,7 +55,9 @@ public class LoadQueryActionTest extends MockStrutsTestCase
     public void testLoadXmlSkipBuilder() {
         String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" +
                 "</query>";
-
+        getSession().setAttribute(Constants.PROFILE,
+                                  new Profile(null, null, null, null,
+                                              new HashMap(), new HashMap(), new HashMap()));
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "true");
@@ -60,7 +66,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
 
         actionPerform();
         verifyNoActionErrors();
-        assertEquals("/pollBrowseQuery.do?qid=0", getActualForward());
+        assertEquals("/pollQuery.do?qid=0", getActualForward());
         assertNotNull(getSession().getAttribute(Constants.QUERY));
     }
 }
