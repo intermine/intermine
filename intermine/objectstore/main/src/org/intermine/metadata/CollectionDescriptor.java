@@ -37,26 +37,6 @@ public class CollectionDescriptor extends ReferenceDescriptor
     }
 
     /**
-     * Returns a ClassDescriptor for the type of object contained in this collection.
-     * @return ClassDescriptor for the type of object contained within the collection
-     * @throws IllegalStateException if the model is not yet set
-     */
-    public ClassDescriptor getReferencedClassDescriptor() throws IllegalStateException {
-        return super.getReferencedClassDescriptor();
-    }
-
-    /**
-     * Gets the field in the referenced object (i.e. objects in the collection) that
-     * refers back to this class.  Note that this will be null in a unidirectional
-     * relationship, a ReferenceDescriptor in a N:1 and a CollectionDescriptor in a M:N.
-     * @return a FieldDescriptor referring back to this class.
-     * @throws IllegalStateException if the model is not yet set
-     */
-    public ReferenceDescriptor getReverseReferenceDescriptor() throws IllegalStateException {
-        return super.getReverseReferenceDescriptor();
-    }
-
-    /**
      * @see FieldDescriptor#relationType()
      */
     public int relationType() {

@@ -48,9 +48,13 @@ import java.util.Collection;
 import java.io.Reader;
 import org.xml.sax.InputSource;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.modelproduction.ModelParser;
 import org.intermine.util.StringUtil;
-import org.intermine.metadata.*;
 
 import org.apache.log4j.Logger;
 
@@ -63,8 +67,10 @@ public class XmiParser implements ModelParser
 {
     protected String modelName, pkgName, nameSpace;
 
-    private Set attributes, references, collections;
-    private Set classes = new LinkedHashSet();
+    private Set<AttributeDescriptor> attributes;
+    private Set<ReferenceDescriptor> references;
+    private Set<CollectionDescriptor> collections;
+    private Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
 
     private static final Logger LOG = Logger.getLogger(XmiParser.class);
 
@@ -146,9 +152,8 @@ public class XmiParser implements ModelParser
             generateAttribute((MAttribute) strIter.next());
         }
 
-        Iterator endIter = cls.getAssociationEnds().iterator();
-        while (endIter.hasNext()) {
-            generateAssociationEnd(((MAssociationEnd) endIter.next()).getOppositeEnd());
+        for (MAssociationEnd end : ((Iterable<MAssociationEnd>) cls.getAssociationEnds())) {
+            generateAssociationEnd(end.getOppositeEnd());
         }
 
         String supers = (extend == null ? "" : extend) + " " + (implement == null ? "" : implement);

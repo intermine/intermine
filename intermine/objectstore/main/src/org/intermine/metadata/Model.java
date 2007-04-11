@@ -12,14 +12,14 @@ package org.intermine.metadata;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -37,14 +37,18 @@ import org.intermine.util.XmlUtil;
 
 public class Model
 {
-    private static Map models = new HashMap();
+    private static Map<String, Model> models = new HashMap<String, Model>();
 
     private final String modelName;
     private final URI nameSpace;
-    private final Map cldMap = new LinkedHashMap();
-    private final Map subMap = new LinkedHashMap();
-    private final Map classToClassDescriptorSet = new HashMap();
-    private final Map classToFieldDescriptorMap = new HashMap();
+    private final Map<String, ClassDescriptor> cldMap = new LinkedHashMap<String,
+            ClassDescriptor>();
+    private final Map<ClassDescriptor, Set<ClassDescriptor>> subMap
+        = new LinkedHashMap<ClassDescriptor, Set<ClassDescriptor>>();
+    private final Map<Class, Set<ClassDescriptor>> classToClassDescriptorSet
+        = new HashMap<Class, Set<ClassDescriptor>>();
+    private final Map<Class, Map<String, FieldDescriptor>> classToFieldDescriptorMap
+        = new HashMap<Class, Map<String, FieldDescriptor>>();
 
     /**
      * Return a Model for specified model name (loading Model if necessary)
@@ -55,7 +59,7 @@ public class Model
         if (!models.containsKey(name)) {
             models.put(name, MetadataManager.loadModel(name));
         }
-        return (Model) models.get(name);
+        return models.get(name);
     }
 
     /**
@@ -69,8 +73,8 @@ public class Model
      * @throws MetaDataException if inconsistencies found in model
      * @throws URISyntaxException if nameSpace string is invalid
      */
-    public Model(String name, String nameSpace, Set clds) throws MetaDataException,
-                                                                 URISyntaxException  {
+    public Model(String name, String nameSpace, Set<ClassDescriptor> clds) throws MetaDataException,
+           URISyntaxException  {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
@@ -90,45 +94,39 @@ public class Model
         this.modelName = name;
 
         this.nameSpace = new URI(XmlUtil.correctNamespace(nameSpace));
-        LinkedHashSet orderedClds = new LinkedHashSet(clds);
+        LinkedHashSet<ClassDescriptor> orderedClds = new LinkedHashSet<ClassDescriptor>(clds);
 
+        Set<ReferenceDescriptor> emptyRefs = Collections.emptySet();
+        Set<CollectionDescriptor> emptyCols = Collections.emptySet();
         ClassDescriptor intermineObject = new ClassDescriptor(
                 "org.intermine.model.InterMineObject", null, true,
                 Collections.singleton(new AttributeDescriptor("id", "java.lang.Integer")),
-                Collections.EMPTY_SET, Collections.EMPTY_SET);
+                emptyRefs, emptyCols);
         orderedClds.add(intermineObject);
 
-        Iterator cldIter = orderedClds.iterator();
         // 1. Put all ClassDescriptors in model.
-        while (cldIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+        for (ClassDescriptor cld : orderedClds) {
             cldMap.put(cld.getName(), cld);
 
             // create maps of ClassDescriptor to empty sets for subclasses and implementors
-            subMap.put(cld, new LinkedHashSet());
+            subMap.put(cld, new LinkedHashSet<ClassDescriptor>());
         }
 
         // 2. Now set model in each ClassDescriptor, this sets up superDescriptors
         //    etc.  Set ClassDescriptors and reverse refs in ReferenceDescriptors.
-        cldIter = orderedClds.iterator();
-        while (cldIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+        for (ClassDescriptor cld : orderedClds) {
             cld.setModel(this);
 
             // add this class to subMap sets for any interfaces and superclasses
-            Set supers = cld.getSuperDescriptors();
-            Iterator iter = supers.iterator();
-            while (iter.hasNext()) {
-                ClassDescriptor iCld = (ClassDescriptor) iter.next();
-                Set subs = (Set) subMap.get(iCld);
+            Set<ClassDescriptor> supers = cld.getSuperDescriptors();
+            for (ClassDescriptor iCld : supers) {
+                Set<ClassDescriptor> subs = subMap.get(iCld);
                 subs.add(cld);
             }
         }
 
         // 3. Now run setAllFieldDescriptors on everything
-        cldIter = orderedClds.iterator();
-        while (cldIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+        for (ClassDescriptor cld : orderedClds) {
             cld.setAllFieldDescriptors();
         }
     }
@@ -147,8 +145,8 @@ public class Model
      * @param cld the parent ClassDescriptor
      * @return the ClassDescriptors of its children
      */
-    public Set getDirectSubs(ClassDescriptor cld) {
-        return (Set) subMap.get(cld);
+    public Set<ClassDescriptor> getDirectSubs(ClassDescriptor cld) {
+        return subMap.get(cld);
     }
 
     /**
@@ -156,17 +154,13 @@ public class Model
      * @param cld the parent ClassDescriptor
      * @return the ClassDescriptors of all decedents
      */
-    public Set getAllSubs(ClassDescriptor cld) {
-        Set returnSubs = new HashSet(); 
-        Set directSubs = getDirectSubs(cld);
-        if (directSubs != null) {
-            returnSubs.addAll(directSubs);
+    public Set<ClassDescriptor> getAllSubs(ClassDescriptor cld) {
+        Set<ClassDescriptor> returnSubs = new TreeSet<ClassDescriptor>(); 
+        Set<ClassDescriptor> directSubs = getDirectSubs(cld);
+        returnSubs.addAll(directSubs);
+        for (ClassDescriptor sub : directSubs) {
+            returnSubs.addAll(getAllSubs(sub));
         }
-        Iterator directSubsIterator = directSubs.iterator();
-        while (directSubsIterator.hasNext()) {
-            returnSubs.addAll(getAllSubs((ClassDescriptor) directSubsIterator.next()));
-        }
-
         return returnSubs;
     }
 
@@ -183,8 +177,8 @@ public class Model
      * Get all ClassDescriptors in this model.
      * @return a set of all ClassDescriptors in the model
      */
-    public Set getClassDescriptors() {
-        return new LinkedHashSet(cldMap.values());
+    public Set<ClassDescriptor> getClassDescriptors() {
+        return new LinkedHashSet<ClassDescriptor>(cldMap.values());
     }
 
     /**
@@ -197,11 +191,11 @@ public class Model
     }
 
     /**
-     * Get a Collection of fully qualified class names in this model (i.e. including
+     * Get a Set of fully qualified class names in this model (i.e. including
      * package name).
-     * @return Collection of fully qualified class names
+     * @return Set of fully qualified class names
      */
-    public Collection getClassNames() {
+    public Set<String> getClassNames() {
         return cldMap.keySet();
     }
 
@@ -210,7 +204,7 @@ public class Model
      * @return name of the model
      */
     public String getName() {
-        return this.modelName;
+        return modelName;
     }
 
     /**
@@ -218,7 +212,7 @@ public class Model
      * @return nameSpace URI of the model
      */
     public URI getNameSpace() {
-        return this.nameSpace;
+        return nameSpace;
     }
 
     /**
@@ -248,8 +242,7 @@ public class Model
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<model name=\"" + modelName + "\" namespace=\"" + nameSpace + "\">");
-        for (Iterator iter = getClassDescriptors().iterator(); iter.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
+        for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
             }
@@ -266,19 +259,19 @@ public class Model
      * @param c a Class
      * @return a Set of ClassDescriptor objects
      */
-    public Set getClassDescriptorsForClass(Class c) {
+    public Set<ClassDescriptor> getClassDescriptorsForClass(Class c) {
         if (!InterMineObject.class.isAssignableFrom(c)) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         synchronized (classToClassDescriptorSet) {
-            Set retval = (Set) classToClassDescriptorSet.get(c);
+            Set<ClassDescriptor> retval = classToClassDescriptorSet.get(c);
             if (retval == null) {
-                retval = new LinkedHashSet();
-                Stack stack = new Stack();
-                Set done = new HashSet();
-                stack.push(c);
-                while (!stack.empty()) {
-                    Class toAdd = (Class) stack.pop();
+                retval = new LinkedHashSet<ClassDescriptor>();
+                Stack<Class> todo = new Stack<Class>();
+                Set<Class> done = new HashSet<Class>();
+                todo.push(c);
+                while (!todo.empty()) {
+                    Class toAdd = todo.pop();
                     if (!done.contains(toAdd)) {
                         ClassDescriptor cld = getClassDescriptorByName(toAdd.getName());
                         if (cld != null) {
@@ -287,12 +280,12 @@ public class Model
                         Class superClass = toAdd.getSuperclass();
                         if ((superClass != null)
                                 && (InterMineObject.class.isAssignableFrom(superClass))) {
-                            stack.push(superClass);
+                            todo.push(superClass);
                         }
                         Class[] interfaces = toAdd.getInterfaces();
                         for (int i = 0; i < interfaces.length; i++) {
                             if (InterMineObject.class.isAssignableFrom(interfaces[i])) {
-                                stack.push(interfaces[i]);
+                                todo.push(interfaces[i]);
                             }
                         }
                         done.add(toAdd);
@@ -312,21 +305,16 @@ public class Model
      * @param c a Class
      * @return a Map of FieldDescriptor objects
      */
-    public Map getFieldDescriptorsForClass(Class c) {
+    public Map<String, FieldDescriptor> getFieldDescriptorsForClass(Class c) {
         if (!InterMineObject.class.isAssignableFrom(c)) {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
         synchronized (classToFieldDescriptorMap) {
-            Map retval = (Map) classToFieldDescriptorMap.get(c);
+            Map<String, FieldDescriptor> retval = classToFieldDescriptorMap.get(c);
             if (retval == null) {
-                retval = new HashMap();
-                Set clds = getClassDescriptorsForClass(c);
-                Iterator cldIter = clds.iterator();
-                while (cldIter.hasNext()) {
-                    ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                    Iterator fieldIter = cld.getFieldDescriptors().iterator();
-                    while (fieldIter.hasNext()) {
-                        FieldDescriptor fd = (FieldDescriptor) fieldIter.next();
+                retval = new HashMap<String, FieldDescriptor>();
+                for (ClassDescriptor cld : getClassDescriptorsForClass(c)) {
+                    for (FieldDescriptor fd : cld.getFieldDescriptors()) {
                         retval.put(fd.getName(), fd);
                     }
                 }

@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.TextTable;
@@ -28,21 +29,23 @@ import org.intermine.util.TypeUtil;
  *
  * @author Richard Smith
  */
-public class ClassDescriptor
+public class ClassDescriptor implements Comparable<ClassDescriptor>
 {
     private final String className;        // name of this class
 
     private final String supers;
-    private final Set superNames = new LinkedHashSet();
-    private final Set superDescriptors = new LinkedHashSet();
+    private final Set<String> superNames = new LinkedHashSet<String>();
+    private final Set<ClassDescriptor> superDescriptors = new LinkedHashSet<ClassDescriptor>();
     private ClassDescriptor superclassDescriptor;
 
     private final boolean isInterface;
-    private final Set attDescriptors;
-    private final Set refDescriptors;
-    private final Set colDescriptors;
-    private final Map fieldDescriptors = new LinkedHashMap();
-    private Map allFieldDescriptors = new LinkedHashMap();
+    private final Set<AttributeDescriptor> attDescriptors;
+    private final Set<ReferenceDescriptor> refDescriptors;
+    private final Set<CollectionDescriptor> colDescriptors;
+    private final Map<String, FieldDescriptor> fieldDescriptors
+        = new LinkedHashMap<String, FieldDescriptor>();
+    private Map<String, FieldDescriptor> allFieldDescriptors
+        = new LinkedHashMap<String, FieldDescriptor>();
 
     private Model model;  // set when ClassDescriptor added to DescriptorRespository
     private boolean modelSet = false;
@@ -58,8 +61,8 @@ public class ClassDescriptor
      * @throws IllegalArgumentException if fields are null
      */
     public ClassDescriptor(String name, String supers,
-            boolean isInterface, Set atts, Set refs, Set cols)
-        throws IllegalArgumentException {
+            boolean isInterface, Set<AttributeDescriptor> atts, Set<ReferenceDescriptor> refs,
+            Set<CollectionDescriptor> cols) throws IllegalArgumentException {
 
         if (name == null || name.equals("")) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
@@ -84,18 +87,16 @@ public class ClassDescriptor
 
         // build maps of names to FieldDescriptors
 
-        attDescriptors = new LinkedHashSet(atts);
-        refDescriptors = new LinkedHashSet(refs);
-        colDescriptors = new LinkedHashSet(cols);
+        attDescriptors = new LinkedHashSet<AttributeDescriptor>(atts);
+        refDescriptors = new LinkedHashSet<ReferenceDescriptor>(refs);
+        colDescriptors = new LinkedHashSet<CollectionDescriptor>(cols);
 
-        List fieldDescriptorList = new ArrayList();
+        List<FieldDescriptor> fieldDescriptorList = new ArrayList<FieldDescriptor>();
         fieldDescriptorList.addAll(atts);
         fieldDescriptorList.addAll(refs);
         fieldDescriptorList.addAll(cols);
 
-        Iterator fieldDescriptorIter = fieldDescriptorList.iterator();
-        while (fieldDescriptorIter.hasNext()) {
-            FieldDescriptor fieldDescriptor = (FieldDescriptor) fieldDescriptorIter.next();
+        for (FieldDescriptor fieldDescriptor : fieldDescriptorList) {
             try {
                 fieldDescriptor.setClassDescriptor(this);
                 fieldDescriptors.put(fieldDescriptor.getName(), fieldDescriptor);
@@ -131,8 +132,8 @@ public class ClassDescriptor
      * "org.intermine.model.InterMineObject".
      * @return set of superclass class names
      */
-    public Set getSuperclassNames() {
-        Set copy = new LinkedHashSet(superNames);
+    public Set<String> getSuperclassNames() {
+        Set<String> copy = new LinkedHashSet<String>(superNames);
         copy.remove("org.intermine.model.InterMineObject");
         return copy;
     }
@@ -149,16 +150,16 @@ public class ClassDescriptor
      * Gets the FieldDescriptors for this class (but not superclasses)
      * @return set of FieldDescriptors
      */
-    public Set getFieldDescriptors() {
-        return new LinkedHashSet(fieldDescriptors.values());
+    public Set<FieldDescriptor> getFieldDescriptors() {
+        return new LinkedHashSet<FieldDescriptor>(fieldDescriptors.values());
     }
 
     /**
      * Gets the FieldDescriptors for this class and all superclasses and interfaces.
      * @return set of FieldDescriptors
      */
-    public Set getAllFieldDescriptors() {
-        return new LinkedHashSet(allFieldDescriptors.values());
+    public Set<FieldDescriptor> getAllFieldDescriptors() {
+        return new LinkedHashSet<FieldDescriptor>(allFieldDescriptors.values());
     }
 
     /**
@@ -170,15 +171,14 @@ public class ClassDescriptor
         allFieldDescriptors = findAllFieldDescriptors();
     }
 
-    private LinkedHashMap findAllFieldDescriptors() throws MetaDataException {
-        LinkedHashMap map = new LinkedHashMap(fieldDescriptors);
-        Iterator superIter = superDescriptors.iterator();
-        while (superIter.hasNext()) {
-            Map toAdd = ((ClassDescriptor) superIter.next()).findAllFieldDescriptors();
-            Iterator addIter = toAdd.values().iterator();
-            while (addIter.hasNext()) {
-                FieldDescriptor fd = (FieldDescriptor) addIter.next();
-                FieldDescriptor fdAlready = (FieldDescriptor) map.get(fd.getName());
+    private LinkedHashMap<String, FieldDescriptor> findAllFieldDescriptors()
+    throws MetaDataException {
+        LinkedHashMap<String, FieldDescriptor> map
+            = new LinkedHashMap<String, FieldDescriptor>(fieldDescriptors);
+        for (ClassDescriptor superDesc : superDescriptors) {
+            Map<String, FieldDescriptor> toAdd = superDesc.findAllFieldDescriptors();
+            for (FieldDescriptor fd : toAdd.values()) {
+                FieldDescriptor fdAlready = map.get(fd.getName());
                 if ((fdAlready != null) && (fd != fdAlready)) {
                     if (!((fd instanceof AttributeDescriptor)
                                 && (fdAlready instanceof AttributeDescriptor)
@@ -207,7 +207,7 @@ public class ClassDescriptor
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        return (FieldDescriptor) allFieldDescriptors.get(name);
+        return allFieldDescriptors.get(name);
     }
 
     /**
@@ -215,21 +215,20 @@ public class ClassDescriptor
      * collections.
      * @return set of attributes for this Class
      */
-    public Set getAttributeDescriptors() {
+    public Set<AttributeDescriptor> getAttributeDescriptors() {
         return attDescriptors;
     }
 
     /**
-     * Gets all AttributeDescriptors for this class and it's super classes - i.e. fields that are
+     * Gets all AttributeDescriptors for this class and its super classes - i.e. fields that are
      * not references or collections.
      * @return set of attributes for this Class
      */
-    public Set getAllAttributeDescriptors() {
-        Set set = new LinkedHashSet(getAllFieldDescriptors());
-        Iterator fieldIter = set.iterator();
-        while (fieldIter.hasNext()) {
-            if (!(fieldIter.next() instanceof AttributeDescriptor)) {
-                fieldIter.remove();
+    public Set<AttributeDescriptor> getAllAttributeDescriptors() {
+        Set<AttributeDescriptor> set = new LinkedHashSet<AttributeDescriptor>();
+        for (FieldDescriptor fd : getAllFieldDescriptors()) {
+            if (fd instanceof AttributeDescriptor) {
+                set.add((AttributeDescriptor) fd);
             }
         }
         return set;
@@ -237,22 +236,21 @@ public class ClassDescriptor
 
     /**
      * Gets the descriptors for the external object references in this class.
-     * @return set ReferenceDescriptors for this Class
+     * @return a Set of ReferenceDescriptors for this Class
      */
-    public Set getReferenceDescriptors() {
+    public Set<ReferenceDescriptor> getReferenceDescriptors() {
         return refDescriptors;
     }
 
     /**
      * Gets all ReferenceDescriptors for this class - i.e. including those from superclass
-     * @return set of references for this Class
+     * @return a Set of references (but not CollectionDescriptors) for this Class
      */
-    public Set getAllReferenceDescriptors() {
-        Set set = new LinkedHashSet(getAllFieldDescriptors());
-        Iterator fieldIter = set.iterator();
-        while (fieldIter.hasNext()) {
-            if (!(((FieldDescriptor) fieldIter.next()).isReference())) {
-                fieldIter.remove();
+    public Set<ReferenceDescriptor> getAllReferenceDescriptors() {
+        Set<ReferenceDescriptor> set = new LinkedHashSet<ReferenceDescriptor>();
+        for (FieldDescriptor fd : getAllFieldDescriptors()) {
+            if (fd.isReference()) {
+                set.add((ReferenceDescriptor) fd);
             }
         }
         return set;
@@ -279,19 +277,18 @@ public class ClassDescriptor
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        Map map = null;
+        Map<String, FieldDescriptor> map = null;
         if (ascend) {
             map = allFieldDescriptors;
         } else {
             map = fieldDescriptors;
         }
-        if (map.containsKey(name)
-            && map.get(name) instanceof ReferenceDescriptor
-            && !(map.get(name) instanceof CollectionDescriptor)) {
-            return (ReferenceDescriptor) map.get(name);
-        } else {
-            return null;
+        FieldDescriptor fd = map.get(name);
+        if ((fd != null) && (fd instanceof ReferenceDescriptor)
+                && (!(fd instanceof CollectionDescriptor))) {
+            return (ReferenceDescriptor) fd;
         }
+        return null;
     }
 
     /**
@@ -301,15 +298,7 @@ public class ClassDescriptor
      * @return an AttributeDescriptor
      */
     public AttributeDescriptor getAttributeDescriptorByName(String name) {
-        if (name == null) {
-            throw new NullPointerException("Argument 'name' cannot be null");
-        }
-        if (fieldDescriptors.containsKey(name)
-            && fieldDescriptors.get(name) instanceof AttributeDescriptor) {
-            return (AttributeDescriptor) fieldDescriptors.get(name);
-        } else {
-            return null;
-        }
+        return getAttributeDescriptorByName(name, false);
     }
 
     /**
@@ -323,32 +312,27 @@ public class ClassDescriptor
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        Map map = null;
+        Map<String, FieldDescriptor> map = null;
         if (ascend) {
             map = allFieldDescriptors;
         } else {
             map = fieldDescriptors;
         }
-        if (map.containsKey(name)
-            && map.get(name) instanceof AttributeDescriptor) {
-            return (AttributeDescriptor) map.get(name);
-        } else {
-            return null;
+        FieldDescriptor fd = map.get(name);
+        if ((fd != null) && (fd instanceof AttributeDescriptor)) {
+            return (AttributeDescriptor) fd;
         }
+        return null;
     }
 
     private void configureReferenceDescriptors() throws MetaDataException {
         // ReferenceDescriptors need to find a ClassDescriptor for their referenced class
-        Iterator refIter = refDescriptors.iterator();
-        while (refIter.hasNext()) {
-            ReferenceDescriptor rfd = (ReferenceDescriptor) refIter.next();
+        for (ReferenceDescriptor rfd : refDescriptors) {
             rfd.findReferencedDescriptor();
         }
 
         // CollectionDescriptors need to find a ClassDescriptor for their referenced class
-        Iterator colIter = colDescriptors.iterator();
-        while (colIter.hasNext()) {
-            CollectionDescriptor cod = (CollectionDescriptor) colIter.next();
+        for (CollectionDescriptor cod : colDescriptors) {
             cod.findReferencedDescriptor();
         }
     }
@@ -357,12 +341,11 @@ public class ClassDescriptor
      * Gets all CollectionDescriptors for this class - i.e. including those from superclass
      * @return set of collections for this Class
      */
-    public Set getAllCollectionDescriptors() {
-        Set set = new LinkedHashSet(getAllFieldDescriptors());
-        Iterator fieldIter = set.iterator();
-        while (fieldIter.hasNext()) {
-            if (!(fieldIter.next() instanceof CollectionDescriptor)) {
-                fieldIter.remove();
+    public Set<CollectionDescriptor> getAllCollectionDescriptors() {
+        Set<CollectionDescriptor> set = new LinkedHashSet<CollectionDescriptor>();
+        for (FieldDescriptor fd : getAllFieldDescriptors()) {
+            if (fd instanceof CollectionDescriptor) {
+                set.add((CollectionDescriptor) fd);
             }
         }
         return set;
@@ -372,7 +355,7 @@ public class ClassDescriptor
      * Gets CollectionDescriptors for this class.
      * @return set of CollectionDescriptors for this Class
      */
-    public Set getCollectionDescriptors() {
+    public Set<CollectionDescriptor> getCollectionDescriptors() {
         return colDescriptors;
     }
 
@@ -397,18 +380,17 @@ public class ClassDescriptor
         if (name == null) {
             throw new NullPointerException("Argument 'name' cannot be null");
         }
-        Map map = null;
+        Map<String, FieldDescriptor> map = null;
         if (ascend) {
             map = allFieldDescriptors;
         } else {
             map = fieldDescriptors;
         }
-        if (map.containsKey(name)
-            && map.get(name) instanceof CollectionDescriptor) {
-            return (CollectionDescriptor) map.get(name);
-        } else {
-            return null;
+        FieldDescriptor fd = map.get(name);
+        if (fd instanceof CollectionDescriptor) {
+            return (CollectionDescriptor) fd;
         }
+        return null;
     }
 
 
@@ -425,13 +407,11 @@ public class ClassDescriptor
 
     private void findSuperclassDescriptor() throws MetaDataException {
         // descriptor for super class
-        Iterator superIter = superDescriptors.iterator();
-        while (superIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) superIter.next();
+        for (ClassDescriptor cld : superDescriptors) {
             if (!cld.isInterface()) {
                 if (this.isInterface()) {
-                    throw new MetaDataException("Cannot have a superclass of an interface for "
-                                                + this);
+                    throw new MetaDataException("An interface (" + this
+                            + " may not have a superclass (" + cld + ")");
                 }
                 if (superclassDescriptor != null) {
                     throw new MetaDataException("Cannot have multiple superclasses for: " + this);
@@ -449,7 +429,7 @@ public class ClassDescriptor
      * @return a Set of ClassDescriptors
      * @throws IllegalStateException if the model is not set
      */
-    public Set getSuperDescriptors() {
+    public Set<ClassDescriptor> getSuperDescriptors() {
         checkModel();
         return superDescriptors;
     }
@@ -465,12 +445,10 @@ public class ClassDescriptor
     private void findSuperDescriptors() throws MetaDataException {
         // descriptors for superclasses and interfaces
         if (superNames.size() > 0) {
-            Iterator iter = superNames.iterator();
-            while (iter.hasNext()) {
-                String superName = (String) iter.next();
+            for (String superName : superNames) {
                 if (!model.hasClassDescriptor(superName)) {
                     throw new MetaDataException("No ClassDescriptor for superclass or interface ( "
-                                                + superName + ") found in model.");
+                            + superName + ") found in model.");
                 }
                 ClassDescriptor superDescriptor = model.getClassDescriptorByName(superName);
                 superDescriptors.add(superDescriptor);
@@ -484,7 +462,7 @@ public class ClassDescriptor
      * @return set of subclass ClassDescriptors
      * @throws IllegalStateException if the set of subclasses has not been set
      */
-    public Set getSubDescriptors() throws IllegalStateException {
+    public Set<ClassDescriptor> getSubDescriptors() throws IllegalStateException {
         checkModel();
         return model.getDirectSubs(this);
     }
@@ -499,8 +477,7 @@ public class ClassDescriptor
      */
     protected void setModel(Model model) throws IllegalStateException, MetaDataException  {
         if (modelSet) {
-            throw new IllegalStateException("Model has already been set and "
-                                            + "may not be changed.");
+            throw new IllegalStateException("Model has already been set and may not be changed.");
         }
         this.model = model;
         findSuperDescriptors();
@@ -550,6 +527,23 @@ public class ClassDescriptor
     }
 
     /**
+     * @see Comparable#compareTo
+     */
+    public int compareTo(ClassDescriptor cld) {
+        int retval = className.compareTo(cld.className);
+        if (retval == 0) {
+            retval = superNames.toString().compareTo(cld.superNames.toString());
+        }
+        if (retval == 0) {
+            retval = (isInterface ? 1 : 0) - (cld.isInterface ? 1 : 0);
+        }
+        if (retval == 0) {
+            retval = fieldDescriptors.hashCode() - cld.fieldDescriptors.hashCode();
+        }
+        return retval;
+    }
+
+    /**
      * @see Object#toString()
      */
     public String toString() {
@@ -557,12 +551,12 @@ public class ClassDescriptor
         sb.append("<class name=\"" + className + "\"")
             .append(supers != null ? " extends=\"" + supers + "\"" : "")
             .append(" is-interface=\"" + isInterface + "\">");
-        Set l = new LinkedHashSet();
+        Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
         l.addAll(getCollectionDescriptors());
-        for (Iterator iter = l.iterator(); iter.hasNext();) {
-            sb.append(iter.next().toString());
+        for (FieldDescriptor fd : l) {
+            sb.append(fd.toString());
         }
         sb.append("</class>");
         return sb.toString();
@@ -583,25 +577,19 @@ public class ClassDescriptor
         retval.append("\n");
         TextTable table = new TextTable(true, true, true);
         table.addRow(TextTable.ROW_SEPARATOR);
-        Iterator iter = getAllAttributeDescriptors().iterator();
-        while (iter.hasNext()) {
-            AttributeDescriptor desc = (AttributeDescriptor) iter.next();
+        for (AttributeDescriptor desc : getAllAttributeDescriptors()) {
             ClassDescriptor cld = desc.getClassDescriptor();
             table.addRow(new String[] {desc.getName(), terseClass(desc.getType()),
                 (cld == this ? "" : "from " + terseClass(cld.getName()))});
         }
         table.addRow(TextTable.ROW_SEPARATOR);
-        iter = getAllReferenceDescriptors().iterator();
-        while (iter.hasNext()) {
-            ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
+        for (ReferenceDescriptor desc : getAllReferenceDescriptors()) {
             ClassDescriptor cld = desc.getClassDescriptor();
             table.addRow(new String[] {desc.getName(), terseClass(desc.getReferencedClassName()),
                 (cld == this ? "" : "from " + terseClass(cld.getName()))});
         }
         table.addRow(TextTable.ROW_SEPARATOR);
-        iter = getAllCollectionDescriptors().iterator();
-        while (iter.hasNext()) {
-            CollectionDescriptor desc = (CollectionDescriptor) iter.next();
+        for (CollectionDescriptor desc : getAllCollectionDescriptors()) {
             ClassDescriptor cld = desc.getClassDescriptor();
             table.addRow(new String[] {desc.getName(), "collection of "
                 + terseClass(desc.getReferencedClassName()),
@@ -618,7 +606,7 @@ public class ClassDescriptor
      * @param c a String
      * @return a String
      */
-    public String terseClass(String c) {
+    public static String terseClass(String c) {
         int p = c.lastIndexOf('.');
         if (p != -1) {
             return c.substring(p + 1);
@@ -632,7 +620,7 @@ public class ClassDescriptor
      * @param c a String
      * @return a String
      */
-    public String terseClasses(String c) {
+    public static String terseClasses(String c) {
         StringBuffer retval = new StringBuffer(c.length());
         String elements[] = StringUtil.split(c, ", ");
         for (int i = 0; i < elements.length; i++) {

@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 public class PrimaryKey
 {
     String name;
-    Set fieldNames = new LinkedHashSet();
+    Set<String> fieldNames = new LinkedHashSet<String>();
 
     /**
      * Constructor
@@ -58,7 +58,7 @@ public class PrimaryKey
      *
      * @return the Set of field names
      */
-    public Set getFieldNames() {
+    public Set<String> getFieldNames() {
         return fieldNames;
     }
 

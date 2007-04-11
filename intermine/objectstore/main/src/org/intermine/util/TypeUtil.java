@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import org.intermine.objectstore.proxy.ProxyReference;
 
@@ -234,7 +235,7 @@ public class TypeUtil
             infos = (Map) classToFieldnameToFieldInfo.get(c);
 
             if (infos == null) {
-                infos = new HashMap();
+                infos = new TreeMap();
 
                 Map methods = new HashMap();
                 Method methodArray[] = c.getMethods();

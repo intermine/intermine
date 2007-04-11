@@ -55,7 +55,7 @@ public class InterMineModelParser implements ModelParser
      * @return a set of
      * @throws Exception if Model not created successfully
      */
-    public Set generateClassDescriptors(Reader reader) throws Exception {
+    public Set<ClassDescriptor> generateClassDescriptors(Reader reader) throws Exception {
         ModelHandler handler = new ModelHandler();
         SAXParser.parse(new InputSource(reader), handler);
         return handler.classes;
@@ -68,7 +68,7 @@ public class InterMineModelParser implements ModelParser
     {
         String modelName;
         String modelNameSpace;
-        Set classes = new LinkedHashSet();
+        Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
         SkeletonClass cls;
 
         /**
@@ -126,9 +126,9 @@ public class InterMineModelParser implements ModelParser
     {
         String name, supers;
         boolean isInterface;
-        Set attributes = new LinkedHashSet();
-        Set references = new LinkedHashSet();
-        Set collections = new LinkedHashSet();
+        Set<AttributeDescriptor> attributes = new LinkedHashSet<AttributeDescriptor>();
+        Set<ReferenceDescriptor> references = new LinkedHashSet<ReferenceDescriptor>();
+        Set<CollectionDescriptor> collections = new LinkedHashSet<CollectionDescriptor>();
         
         /**
          * Constructor

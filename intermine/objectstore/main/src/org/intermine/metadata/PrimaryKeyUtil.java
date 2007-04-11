@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.util.PropertiesUtil;
@@ -33,7 +32,7 @@ import org.intermine.util.TypeUtil;
 
 public abstract class PrimaryKeyUtil
 {
-    protected static Map modelKeys = new HashMap();
+    protected static Map<Model, Properties> modelKeys = new HashMap<Model, Properties>();
     /**
      * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
      * that exist on a particular class, without performing any recursion.
@@ -41,17 +40,20 @@ public abstract class PrimaryKeyUtil
      * @param cld the ClassDescriptor to fetch primary keys for
      * @return the Map from key names to PrimaryKeys
      */
-    public static Map getPrimaryKeys(ClassDescriptor cld) {
-        Map keyMap = new LinkedHashMap();
+    public static Map<String, PrimaryKey> getPrimaryKeys(ClassDescriptor cld) {
+        Map<String, PrimaryKey> keyMap = new LinkedHashMap<String, PrimaryKey>();
         Properties keys = getKeyProperties(cld.getModel());
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
         cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
-        List keyNames = new ArrayList(cldKeys.keySet());
+        List<String> keyNames = new ArrayList<String>();
+        for (Object key : cldKeys.keySet()) {
+            if (key instanceof String) {
+                keyNames.add((String) key);
+            }
+        }
         Collections.sort(keyNames);
-        Iterator iter = keyNames.iterator();
-        while (iter.hasNext()) {
-            String keyName = (String) iter.next();
+        for (String keyName : keyNames) {
             PrimaryKey key = new PrimaryKey(keyName, (String) cldKeys.get(keyName));
             keyMap.put(keyName, key);
         }
@@ -83,15 +85,11 @@ public abstract class PrimaryKeyUtil
      * @param c the Class to fetch primary key fields from
      * @return a List of all fields that appear in any primary key
      */
-    public static Set getPrimaryKeyFields(Model model, Class c) {
-        Set pkFields = new HashSet();
-        for (Iterator i = model.getClassDescriptorsForClass(c).iterator(); i.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) i.next();
-            for (Iterator j = getPrimaryKeys(cld).values().iterator();
-                 j.hasNext();) {
-                PrimaryKey pk = (PrimaryKey) j.next();
-                for (Iterator k = pk.getFieldNames().iterator(); k.hasNext();) {
-                    String fieldName = (String) k.next();
+    public static Set<FieldDescriptor> getPrimaryKeyFields(Model model, Class c) {
+        Set<FieldDescriptor> pkFields = new HashSet<FieldDescriptor>();
+        for (ClassDescriptor cld : model.getClassDescriptorsForClass(c)) {
+            for (PrimaryKey pk : getPrimaryKeys(cld).values()) {
+                for (String fieldName : pk.getFieldNames()) {
                     pkFields.add(cld.getFieldDescriptorByName(fieldName));
                 }
             }

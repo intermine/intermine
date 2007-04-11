@@ -12,9 +12,9 @@ package org.intermine.util;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,10 +90,10 @@ public class MappingUtil
         for (int i = 0; i < arraySize; i++) {
             covered[i] = false;
         }
-        Set set = new HashSet(firstSet);
+        Set set = new LinkedHashSet(firstSet);
         Stack stack = new Stack();
         int state = TAKE_FROM_SET;
-        Set resultSet = new HashSet();
+        Set resultSet = new LinkedHashSet();
         int currentIndex = 0;
         Object obj = null;
 
@@ -104,7 +104,7 @@ public class MappingUtil
                     if (set.isEmpty()) {
                         // A possible combination is the contents of the stack.
                         Iterator stackIter = stack.iterator();
-                        Map result = new HashMap();
+                        Map result = new LinkedHashMap();
                         while (stackIter.hasNext()) {
                             int indexOfArray = ((Integer) stackIter.next()).intValue();
                             Object objFromSet = stackIter.next();
@@ -133,7 +133,7 @@ public class MappingUtil
                         // At this point we want to check whether this is a valid partial
                         // combination. So first, create the map:
                         Iterator stackIter = stack.iterator();
-                        Map result = new HashMap();
+                        Map result = new LinkedHashMap();
                         while (stackIter.hasNext()) {
                             int indexOfArray = ((Integer) stackIter.next()).intValue();
                             Object objFromSet = stackIter.next();
@@ -186,13 +186,13 @@ public class MappingUtil
      * items being mapped onto disjoint
      */
     public static Set findMultipleCombinations(Set combinations) {
-        Set retval = new HashSet(); // the result we will return.
-        Set newCombinations = new HashSet(combinations); // clone, so we don't alter.
+        Set retval = new LinkedHashSet(); // the result we will return.
+        Set newCombinations = new LinkedHashSet(combinations); // clone, so we don't alter.
                                                          // Actually, we don't need to do this as
                                                          // long as there isn't multi-threaded
                                                          // access, since we restore the Set in the
                                                          // end.
-        Set combinationsSoFar = new HashSet(); // An empty set.
+        Set combinationsSoFar = new LinkedHashSet(); // An empty set.
         recurseFindMultipleCombinations(retval, newCombinations, combinationsSoFar);
         return retval;
     }
@@ -207,7 +207,7 @@ public class MappingUtil
             // any value in combinationsSoFar.
             // First, put all values from currentCombination into a Set:
             Iterator valueIter = currentCombination.entrySet().iterator();
-            Set currentValues = new HashSet();
+            Set currentValues = new LinkedHashSet();
             while (valueIter.hasNext()) {
                 Map.Entry valueEntry = (Map.Entry) valueIter.next();
                 Object value = valueEntry.getValue();
@@ -229,7 +229,7 @@ public class MappingUtil
                 // In that case, we can add the currentCombination into combinationsSoFar, record
                 // the combination as possible, and recurse.
                 combinationsSoFar.add(currentCombination);
-                retval.add(new HashSet(combinationsSoFar));
+                retval.add(new LinkedHashSet(combinationsSoFar));
                 recurseFindMultipleCombinations(retval, combinations, combinationsSoFar);
                 // And then set combinationsSoFar back to how it was before.
                 combinationsSoFar.remove(currentCombination);

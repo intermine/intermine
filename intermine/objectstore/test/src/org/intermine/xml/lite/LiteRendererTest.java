@@ -41,8 +41,8 @@ public class LiteRendererTest extends TestCase
             + "org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress"
             + LiteRenderer.DELIM + "aage" + LiteRenderer.DELIM + "0"
             + LiteRenderer.DELIM + "afullTime" + LiteRenderer.DELIM + "false"
-            + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
             + LiteRenderer.DELIM + "aid" + LiteRenderer.DELIM + "1234"
+            + LiteRenderer.DELIM + "aname" + LiteRenderer.DELIM + "Employee1"
             + LiteRenderer.DELIM + "rdepartment" + LiteRenderer.DELIM + "5678";
 
         String got = LiteRenderer.render(e, model);
@@ -61,8 +61,8 @@ public class LiteRendererTest extends TestCase
         String expected = "<object class=\"org.intermine.model.testmodel.Employee\" implements=\"org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress\">"
             + "<field name=\"age\" value=\"0\"/>"
             + "<field name=\"fullTime\" value=\"false\"/>"
-            + "<field name=\"name\" value=\"Employee1\"/>"
             + "<field name=\"id\" value=\"1234\"/>"
+            + "<field name=\"name\" value=\"Employee1\"/>"
             + "<reference name=\"department\" value=\"5678\"/>"
             + "</object>";
 
@@ -94,14 +94,14 @@ public class LiteRendererTest extends TestCase
         Field f5 = new Field();
         f5.setName("id");
         f5.setValue("1234");
-        exp.addField(f1);
-        exp.addField(f3);
-        exp.addField(f4);
-        exp.addField(f5);
         Field f6 = new Field();
         f6.setName("department");
         f6.setValue("5678");
+        exp.addField(f1);
         exp.addReference(f6);
+        exp.addField(f3);
+        exp.addField(f5);
+        exp.addField(f4);
 
         assertEquals(LiteRenderer.renderXml(exp), LiteRenderer.renderXml(LiteRenderer.objectToItem(e, model)));
 
@@ -129,23 +129,23 @@ public class LiteRendererTest extends TestCase
         t.setStringObjType("A String");
 
         String expected = "<object class=\"org.intermine.model.testmodel.Types\" implements=\"org.intermine.model.InterMineObject\">"
-            + "<field name=\"booleanObjType\" value=\"true\"/>"
-            + "<field name=\"doubleType\" value=\"1.3\"/>"
-            + "<field name=\"floatType\" value=\"1.2\"/>"
-            + "<field name=\"longObjType\" value=\"876328471234\"/>"
-            + "<field name=\"booleanType\" value=\"true\"/>"
-            + "<field name=\"stringObjType\" value=\"A String\"/>"
-            + "<field name=\"intType\" value=\"2\"/>"
-            + "<field name=\"doubleObjType\" value=\"2.3\"/>"
-            + "<field name=\"id\" value=\"1234\"/>"
-            + "<field name=\"dateObjType\" value=\"7777777777\"/>"
-            + "<field name=\"intObjType\" value=\"4\"/>"
             + "<field name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>"
+            + "<field name=\"booleanObjType\" value=\"true\"/>"
+            + "<field name=\"booleanType\" value=\"true\"/>"
+            + "<field name=\"dateObjType\" value=\"7777777777\"/>"
+            + "<field name=\"doubleObjType\" value=\"2.3\"/>"
+            + "<field name=\"doubleType\" value=\"1.3\"/>"
             + "<field name=\"floatObjType\" value=\"2.2\"/>"
+            + "<field name=\"floatType\" value=\"1.2\"/>"
+            + "<field name=\"id\" value=\"1234\"/>"
+            + "<field name=\"intObjType\" value=\"4\"/>"
+            + "<field name=\"intType\" value=\"2\"/>"
+            + "<field name=\"longObjType\" value=\"876328471234\"/>"
             + "<field name=\"longType\" value=\"327641237623423\"/>"
+            + "<field name=\"name\" value=\"Types1\"/>"
             + "<field name=\"shortObjType\" value=\"786\"/>"
             + "<field name=\"shortType\" value=\"231\"/>"
-            + "<field name=\"name\" value=\"Types1\"/>"
+            + "<field name=\"stringObjType\" value=\"A String\"/>"
             + "</object>";
 
         assertEquals(expected, LiteRenderer.renderXml(t, model));
