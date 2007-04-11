@@ -24,7 +24,7 @@ public class GraphDisplayer
     private String toolTipGen;
     private String urlGen;
     private String description;
-    
+    private String graphType;
     
     
     /**
@@ -150,6 +150,24 @@ public class GraphDisplayer
         this.urlGen = urlGen;
     }
 
+    
+    /**
+     * @param graphType type of graph, e.g. BarChart, StackedBarChart
+     */
+    public void setGraphType(String graphType) {
+        this.graphType = graphType;
+    }
+
+
+    /**
+     * Get the type of this graph, e.g. BarChart, StackedBarChart
+     * @return the type of this graph
+     */
+    public String getGraphType() {
+        return graphType;
+    }
+    
+    
     /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object

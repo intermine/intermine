@@ -10,12 +10,15 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import org.intermine.util.TypeUtil;
+
 import java.awt.Font;
+
 import java.lang.reflect.Constructor;
 
 import javax.servlet.http.HttpSession;
 
-import org.intermine.util.TypeUtil;
+import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
@@ -27,11 +30,11 @@ import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
-
 /**
  * @author Xavier Watkins
  *
@@ -51,7 +54,7 @@ public class BagGraphWidget
      * @param session the HttpSession
      * @param dataSet the CategoryDataset as created by the DataSetLdr
      * @param geneCategoryArray the geneCategoryArray as created by the DataSetLdr
-     * @param bagName the ba name
+     * @param bagName the bag name
      * @param title the graph title
      * @param domain the graph domain (x azis)
      * @param range the graph range (y axis)
@@ -60,26 +63,22 @@ public class BagGraphWidget
      */
     public BagGraphWidget(HttpSession session, CategoryDataset dataSet, Object[] geneCategoryArray,
         String bagName, String title, String domain, String range, String toolTipGen, 
-        String urlGen) {
+        String urlGen, String graphType,  JFreeChart chart, CategoryPlot plot, BarRenderer renderer) 
+    {
         super();
         try {
-            JFreeChart chart = ChartFactory.createStackedBarChart(title, // chart title
-                                                                  domain, // domain axis label
-                                                                  range, // range axis label
-                                                                  dataSet, // data 
-                                                                  PlotOrientation.VERTICAL, true, 
-                                                                  true, // tooltips? 
-                                                                  false // URLs? 
-                );
 
-            CategoryPlot plot = chart.getCategoryPlot();
-            StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
-
+        
             // display values for each column
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
             renderer.setItemLabelsVisible(true);
             renderer.setItemLabelGenerator(generator);
 
+            // set colors for each data series
+            ChartColor lightPurple = new ChartColor(245, 240, 255);
+            renderer.setSeriesPaint(1, lightPurple);
+            renderer.setSeriesPaint(0, ChartColor.VERY_LIGHT_BLUE);
+                        
             // gene names as toolips
             Class clazz1 = TypeUtil.instantiate(toolTipGen);
             Constructor toolTipConstructor = clazz1.getConstructor(new Class[]
@@ -114,9 +113,8 @@ public class BagGraphWidget
                 .setCategoryLabelPositions(
                                            CategoryLabelPositions
                                                .createUpRotationLabelPositions(Math.PI / 6.0));
-
+        
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
-
            
             // generate the image and imagemap
             fileName = ServletUtilities.saveChartAsPNG(chart, WIDTH, HEIGHT, info, session);
