@@ -118,12 +118,13 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         int i = 0;
         for (Iterator iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
             String chromosome = (String) iterator.next();
-            dataSet.addValue(((int[]) resultsTable.get(chromosome))[0], "Gene Count", chromosome);
-
+            dataSet.addValue(((int[]) resultsTable.get(chromosome))[0], "Actual", chromosome);
+            //dataSet.addValue(((int[]) resultsTable.get(chromosome))[0], "Expected", chromosome);
             Object[] geneSeriesArray = new Object[2];
             geneSeriesArray[0] = geneMap.get(chromosome);
-
+            //geneSeriesArray[1] = geneMap.get(chromosome);
             geneCategoryArray[i] = geneSeriesArray;
+
             i++;
         }
     }

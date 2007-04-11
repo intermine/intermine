@@ -10,22 +10,11 @@ package org.intermine.web.struts;
  *
  */
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
@@ -40,6 +29,25 @@ import org.intermine.web.logic.results.PagedCollection;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
+
+import java.lang.reflect.Constructor;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
 
 /**
  * @author Xavier Watkins
@@ -83,16 +91,68 @@ public class BagDetailsController extends TilesAction
                 });
             //TODO use caching here
             if (dataSetLdr.getResultsSize() > 0) {
-                BagGraphWidget bagGraphWidget = new BagGraphWidget(session,
-                                                                   dataSetLdr.getDataSet(),
-                                                                   dataSetLdr
-                                                                       .getGeneCategoryArray(),
-                                                                   bagName, graphDisplayer
-                                                                       .getTitle(), graphDisplayer
-                                                                       .getDomainLabel(),
-                                                                   graphDisplayer.getRangeLabel(),
-                                                                   graphDisplayer.getToolTipGen(),
-                                                                   graphDisplayer.getUrlGen());
+                JFreeChart chart = null;
+                CategoryPlot plot = null;
+                BagGraphWidget bagGraphWidget = null;
+
+                
+                if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
+                    chart = ChartFactory.createStackedBarChart(
+                                       graphDisplayer.getTitle(), // chart title
+                                       graphDisplayer.getDomainLabel(), // domain axis label
+                                       graphDisplayer.getRangeLabel(), // range axis label
+                                       dataSetLdr.getDataSet(), // data 
+                                       PlotOrientation.VERTICAL, 
+                                       true, 
+                                       true, // tooltips? 
+                                       false // URLs? 
+                    );    
+
+                    plot = chart.getCategoryPlot();
+                    StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
+                    bagGraphWidget = new BagGraphWidget(session,
+                                                    dataSetLdr.getDataSet(),
+                                                    dataSetLdr.getGeneCategoryArray(),
+                                                    bagName, 
+                                                    graphDisplayer.getTitle(), 
+                                                    graphDisplayer.getDomainLabel(),
+                                                    graphDisplayer.getRangeLabel(),
+                                                    graphDisplayer.getToolTipGen(),
+                                                    graphDisplayer.getUrlGen(),
+                                                    graphDisplayer.getGraphType(),
+                                                    chart,
+                                                    plot,
+                                                    renderer);
+                } else {
+                    chart = ChartFactory.createBarChart(
+                            graphDisplayer.getTitle(), // chart title
+                            graphDisplayer.getDomainLabel(), // domain axis label
+                            graphDisplayer.getRangeLabel(), // range axis label
+                            dataSetLdr.getDataSet(), // data 
+                            PlotOrientation.VERTICAL, 
+                            true, 
+                            true, // tooltips? 
+                            false // URLs? 
+                    );    
+                    plot = chart.getCategoryPlot();
+                    BarRenderer renderer = (BarRenderer) plot.getRenderer();
+                    bagGraphWidget = new BagGraphWidget(session,
+                                                    dataSetLdr.getDataSet(),
+                                                    dataSetLdr.getGeneCategoryArray(),
+                                                    bagName, 
+                                                    graphDisplayer.getTitle(), 
+                                                    graphDisplayer.getDomainLabel(),
+                                                    graphDisplayer.getRangeLabel(),
+                                                    graphDisplayer.getToolTipGen(),
+                                                    graphDisplayer.getUrlGen(),
+                                                    graphDisplayer.getGraphType(),
+                                                    chart,
+                                                    plot,
+                                                    renderer);
+                }
+             
+
+  
                 graphDisplayerArray.add(new String[]
                     {
                         bagGraphWidget.getHTML(), graphDisplayer.getDescription()
