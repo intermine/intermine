@@ -22,6 +22,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -106,12 +107,14 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 ArrayList genesArray = new ArrayList();
                 genesArray.add(geneIdentifier);
                 geneMap.put(chromosome, genesArray);       
-                int[] count = new int[1];
+                int[] count = new int[2];
                 count[0] = 1;
                 resultsTable.put(chromosome, count);
             }
         }
 
+        // update results with expected results
+        addExpected(os, resultsTable, bag.getSize());
 
         // Build a map from chromosome to gene list
         geneCategoryArray = new Object[resultsTable.size()];
@@ -119,10 +122,10 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         for (Iterator iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
             String chromosome = (String) iterator.next();
             dataSet.addValue(((int[]) resultsTable.get(chromosome))[0], "Actual", chromosome);
-            //dataSet.addValue(((int[]) resultsTable.get(chromosome))[0], "Expected", chromosome);
+            dataSet.addValue(((int[]) resultsTable.get(chromosome))[1], "Expected", chromosome);
             Object[] geneSeriesArray = new Object[2];
             geneSeriesArray[0] = geneMap.get(chromosome);
-            //geneSeriesArray[1] = geneMap.get(chromosome);
+            geneSeriesArray[1] = geneMap.get(chromosome);
             geneCategoryArray[i] = geneSeriesArray;
 
             i++;
@@ -149,4 +152,89 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     public int getResultsSize() {
         return results.size();
     }
+    
+    /* select count(*) from genes where chromosomeLocation != null; */
+    private int getTotal(ObjectStore os) {
+
+        Query q = new Query();
+        QueryClass chromosomeQC = new QueryClass(Chromosome.class);
+        QueryClass geneQC = new QueryClass(Gene.class); 
+        
+
+        QueryFunction geneQF = new QueryFunction();
+        
+        q.addFrom(chromosomeQC);
+        q.addFrom(geneQC);
+
+        q.addToSelect(geneQF);
+        
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        
+        // gene.chromosome CONTAINS chromosome.identifier
+        QueryObjectReference r = new QueryObjectReference(geneQC, "chromosome");
+        ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC);
+        cs.addConstraint(cc);
+        
+        q.setConstraint(cs);
+        results = new Results(q, os, os.getSequence());
+        
+        Iterator it = results.iterator();
+        ResultsRow rr =  (ResultsRow) it.next();
+
+        Long n = (java.lang.Long) rr.get(0);
+        return n.intValue();
+
+    }
+
+    private void addExpected(ObjectStore os, HashMap resultsTable, int bagSize) {
+        
+        int total = getTotal(os);
+        
+        // select count(*) from genes where chromosomeLocation != null;
+        Query q = new Query();
+        QueryClass chromosomeQC = new QueryClass(Chromosome.class);
+        QueryClass geneQC = new QueryClass(Gene.class); 
+        
+        QueryField chromoQF = new QueryField(chromosomeQC, "identifier");
+        QueryFunction geneQF = new QueryFunction();
+        
+        q.addFrom(chromosomeQC);
+        q.addFrom(geneQC);
+        
+        q.addToSelect(chromoQF);
+        q.addToSelect(geneQF);
+        
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        
+        // gene.chromosome CONTAINS chromosome.identifier
+        QueryObjectReference r = new QueryObjectReference(geneQC, "chromosome");
+        ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC);
+        cs.addConstraint(cc);
+        
+        q.setConstraint(cs);
+        
+        q.addToGroupBy(chromoQF);
+        results = new Results(q, os, os.getSequence());
+        
+        Iterator iter = results.iterator();
+
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+        
+            String chromosome = (String) resRow.get(0);         // chromosome
+            Long geneCount = (java.lang.Long) resRow.get(1);    // genecount
+            
+            double expectedValue = 0;
+            double proportion = 0.0000000000; 
+            if (total > 0) { 
+                proportion = geneCount.intValue() / total;
+            } 
+            expectedValue = bagSize * proportion;
+
+            // if the chromosome isn't there, we aren't interested in it
+            if (resultsTable.get(chromosome) != null) {  
+                ((int[]) resultsTable.get(chromosome))[1] = (int) expectedValue;             
+            }
+        }
+    }    
 }
