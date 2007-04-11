@@ -6,12 +6,14 @@ BUILD_PROJ=$TRUNK_DIR/intermine/all
 ARCHIVED_DIR=~/public_html/tests/archived
 TIME_STAMP=`date '+%y%m%d_%H%M'`
 ARCHIVE_TO=$ARCHIVED_DIR/$TIME_STAMP
-LATEST_DIR=$ARCHIVED_DIR/latest
 STD_ERR=~/public_html/tests/stderr.log
 JUNIT_FAIL_FILE=~/public_html/tests/previous_junit_failures
 URL_PREFIX='http://bc.flymine.org'
+ANT_COMMAND='ant -lib /software/noarch/junit/'
 
 . ~/.bashrc
+
+echo "starting new build" > $ARCHIVE_TO/ant_log.txt
 
 # -------------------------------------------------------------------------- #
 # Check whether we really need to do anything at all
@@ -42,7 +44,8 @@ echo "$DIFF seconds since last change"
 if [ $DIFF -lt $((60*10)) ]; then
   echo "`date`: Need to wait $((60*10-$DIFF)) more seconds"
   if [ "$#" -eq "0" ]; then
-    exit
+  exit
+:
   fi
 else
   echo "`date`: 10 minutes have pasted since last update - lets do it..."
@@ -50,8 +53,6 @@ else
 fi
 
 touch "$RUNNING_FILE"
-
-echo new run > $STD_ERR
 
 # -------------------------------------------------------------------------- #
 # Find out who to blame when things go wrong
@@ -64,12 +65,11 @@ echo "BLAME = $BLAME"
 
 umask 0022
 mkdir -p "$ARCHIVE_TO"
-mkdir -p "$LATEST_DIR"
 
 UPDATE=$(svn update svn://svn.flymine.org/flymine/trunk $TRUNK_DIR)
 
 cd $BUILD_PROJ
-ant clean-all 
+ant clean-all >> $ARCHIVE_TO/ant_log.txt 2>&1
 
 if [ "$#" -eq "0" ]; then
   TARGET=fulltest
@@ -81,41 +81,45 @@ for i in bio-fulldata-test bio-test webservice-test unittest testmodel-webapp-us
 do
   dropdb $i
   createdb $i
-done
+done >> $ARCHIVE_TO/ant_log.txt 2>&1
 
 cd ../../testmodel/dbmodel
-ant build-db > $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
+ant build-db >> $ARCHIVE_TO/ant_log.txt 2>&1
 
 
 # intermine tests
 
 cd $BUILD_PROJ
-ant -lib /software/noarch/junit/ default >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
+date; $ANT_COMMAND default >> $ARCHIVE_TO/ant_log.txt 2>&1
 BUILD_RESULT=$?
 
-ant -lib /software/noarch/junit/ $TARGET >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
+#date; $ANT_COMMAND $TARGET >> $ARCHIVE_TO/ant_log.txt 2>&1
+#date; $ANT_COMMAND test-report >> $ARCHIVE_TO/ant_log.txt 2>&1
 
+# testmodel webapp tests
+
+cd $BUILD_PROJ/../../testmodel/webapp/test
+(cd ../../dbmodel; $ANT_COMMAND build-db >> $ARCHIVE_TO/ant_log.txt)
+ant clean
+date; $ANT_COMMAND >> $ARCHIVE_TO/ant_log.txt 2>&1
+date; $ANT_COMMAND test-report >> $ARCHIVE_TO/ant_log.txt
 
 # bio tests
 
 cd $BUILD_PROJ/../../bio/test-all
-INTERMINE_RESULTS_DIR=../intermine/all/build/test/results
-(cd dbmodel; ant -lib /software/noarch/junit/ build-db)
+(cd dbmodel; $ANT_COMMAND build-db >> $ARCHIVE_TO/ant_log.txt)
 ant clean
-ant -lib /software/noarch/junit/ fulltest -Dtest.results.dir=$INTERMINE_RESULTS_DIR -Dresults.junit=$INTERMINE_RESULTS_DIR >> $ARCHIVE_TO/ant_log.txt 2>> $STD_ERR
-
+date; $ANT_COMMAND fulltest >> $ARCHIVE_TO/ant_log.txt 2>&1
+date; $ANT_COMMAND test-report >> $ARCHIVE_TO/ant_log.txt
 
 
 cd $BUILD_PROJ
-grep '\[junit]' $STD_ERR | grep FAILED
+grep '\[junit]' $ARCHIVE_TO/ant_log.txt | grep FAILED | tee $ARCHIVE_TO/junit_failures.txt
 TEST_RESULT=$?
 grep 'BUILD FAILED' $STD_ERR
 BUILD_BROKEN_STATUS=$?
 echo "BUILD_RESULT=$BUILD_RESULT  TEST_RESULT=$TEST_RESULT"
 
-# if flymine build fails then report won't be generated so
-# we do it again here just to be safe
-ant -lib /software/noarch/junit/ test-report
 
 ant checkstyle >> $ARCHIVE_TO/ant_log.txt
 CHECKSTYLE_RESULT=$?
@@ -150,13 +154,27 @@ else
     CHECKSTYLE_STATUS=""
 fi
 
-rm -rf $LATEST_DIR/*
 if [ -f $BUILD_PROJ/build/test/results/index.html ]; then
   mkdir $ARCHIVE_TO/junit
   cp -R $BUILD_PROJ/build/test/results/* $ARCHIVE_TO/junit/
-  cp -R $BUILD_PROJ/build/test/results/* $LATEST_DIR/
 else
-  echo "There don't seem to be any results!"
+  echo "There don't seem to be any intermine results"
+fi
+
+TESTMODEL_RESULTS=$BUILD_PROJ/../../testmodel/webapp/test/build/test/results
+if [ -f $TESTMODEL_RESULTS/index.html ]; then
+  mkdir $ARCHIVE_TO/junit_testmodel
+  cp -R $BIO_RESULTS/* $ARCHIVE_TO/junit_testmodel
+else
+  echo "There don't seem to be any testmodel results"
+fi
+
+BIO_RESULTS=$BUILD_PROJ/../../bio/test-all/build/test/results
+if [ -f $BIO_RESULTS/index.html ]; then
+  mkdir $ARCHIVE_TO/junit_bio
+  cp -R $BIO_RESULTS/* $ARCHIVE_TO/junit_bio
+else
+  echo "There don't seem to be any bio results"
 fi
 
 
@@ -168,12 +186,13 @@ else
 fi
 
 # Blame people via email
-grep '\[junit]' $STD_ERR | grep FAILED > $ARCHIVE_TO/junit_failures.txt
 FAILED=$?
 
 touch $JUNIT_FAIL_FILE
 echo "Emailing $BLAME..."
 printf "JUnit results: $URL_PREFIX/$TIME_STAMP/junit/\n\n" > MSG
+printf "               $URL_PREFIX/$TIME_STAMP/junit_testmodel/\n\n" >> MSG
+printf "               $URL_PREFIX/$TIME_STAMP/junit_bio/\n\n" >> MSG
 printf "Checkstyle results: $URL_PREFIX/$TIME_STAMP/checkstyle/\n\n" >> MSG
 printf "Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt\n\n" >> MSG
 printf "Last update:\n\n" >> MSG
