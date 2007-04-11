@@ -7,19 +7,17 @@ use Net::FTP;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link download checkdir date_string);
+our @EXPORT = qw(ftp_connect make_link download checkdir_exists date_string_file unzip_dir);
 
 #connect to server
 sub ftp_connect(){
-my ($server,$dir,$user,$password) = @_;
+my ($server,$user,$password) = @_;
 
 my $ftp = Net::FTP->new($server, Passive => 1)
 or die "Cannot connect to $server: $@";
 
 $ftp->login($user,$password)
 or die "Cannot login ", $ftp->message;
-
-$ftp->cwd($dir);
 
 return $ftp;
 }
@@ -33,30 +31,15 @@ sub make_link(){
 
 #download and unzip a file, unless the output directory already exists
 sub download(){
-my ($ftp,$dir, $file) = @_;
-	
-	#if checkdir creates a new directory, download the file
-	if(&checkdir($dir) == 1){
-  		print STDERR "getting $file to $dir\n";
+	my ($ftp,$dir, $file) = @_;
+	print STDERR "getting $file to $dir\n";
 
-  		$ftp->binary();
-  		$ftp->get($file, "$dir/$file")or die "get failed ", $ftp->message;
-  
-  		print"gzip -dr $dir\n";
-
-  		if ((system "gzip -dr $dir") != 0) {
-  		  die qq|system "gzip -dr $dir" failed: $?\n|;
-  		}
-		return 1;
-	}
-	else{
-	    warn " current version up to date - skipping download\n";
-		return 0;
-	}
+  	$ftp->binary();
+  	$ftp->get($file, "$dir/$file")or die "get failed ", $ftp->message;
 }
 
 #check if a directory exists, create it if it doesn't
-sub checkdir(){
+sub checkdir_exists(){
 	my $dir = shift;
 	if (!(-d $dir)) {
 	    print STDERR "creating directory: $dir\n";
@@ -69,7 +52,7 @@ sub checkdir(){
 	}
 }
 #get the date stamp from a file to be downloaded
-sub date_string(){
+sub date_string_file(){
 	my ($ftp,$file) = @_;
 
 	my $gene_date_stamp = $ftp->mdtm($file);
@@ -85,4 +68,12 @@ sub date_string(){
 	return $date_string;
 }
 
+#unzip files
+sub unzip_dir(){
+	my $dir = shift;
+	print"gzip -dr $dir\n";
+	if ((system "gzip -dr $dir") != 0) {
+	  die qq|system "gzip -dr $dir" failed: $?\n|;
+	}
+}
 1;

@@ -6,15 +6,14 @@
 use strict;
 use warnings;
 
-use Net::FTP;
-
+use lib "../../intermine/perl/lib/InterMine/";
+use DataDownloader;
 
 my $ebi_server = "ftp.ebi.ac.uk";
-my $intact_dir = "pub/databases/intact";
-my $intact_current_link = "current";
+my $intact_dir = "pub/databases/intact/current/";
 my $species_dir = "psi1/species";
-my $psi_dir = "psi";
-my $download_dir = "$psi_dir/intact";
+my $username = "anonymous";
+my $password = "-anonymous\@";
 
 # list of organisms to get - this is the five letter abbreviation used as the
 # start of intact filenames.  Add more to this list to get more organisms
@@ -22,64 +21,42 @@ my $download_dir = "$psi_dir/intact";
 my @organisms = ("human", "mouse", "rat", "bovin", "sheep");
 
 #### Access EBI ftp server
-my $ebi_ftp = Net::FTP->new($ebi_server, Passive => 1)
-    or die "Cannot connect to $ebi_server: $@";
+my $connection = &ftp_connect($ebi_server,$username,$password);
+    
+$connection->cwd($intact_dir)
+	or die "Cannot change working directory ", $connection->message;
 
-$ebi_ftp->login("anonymous",'-anonymous@')
-    or die "Cannot login ", $ebi_ftp->message;
+#use the date stamp of a file in the $intact_dir to create a version id 
+#for the output directory
+my $check_file = "all.zip";
+my $date_string = &date_string_file($connection,$check_file);
 
-$ebi_ftp->cwd($intact_dir)
-    or die "Cannot change working directory ", $ebi_ftp->message;
+# check psi and intact directory exists
+my $psi_dir = "/shared/data/psi";
+my $intact_main_dir = "$psi_dir/intact";
+my $download_dir = "$intact_main_dir/$date_string";
 
-my $release_dir;
-my @dir_list = $ebi_ftp->dir();
+&checkdir_exists($psi_dir);
+&checkdir_exists($intact_main_dir);
 
-for my $dir (@dir_list) {
-    if (index($dir, "->") > 0) {
-        $release_dir = substr($dir, (index($dir, "->") + 3));
-    }
-} 
+#if download dir doesn't exist, create it and download data
+if(&checkdir_exists($download_dir)==1){
+	$connection->cwd($species_dir)
+ 	   or die "Cannot change working directory to $species_dir";
 
-# check psi directory exists
-if (!(-d $psi_dir)) {
-    mkdir $psi_dir
-        or die "failed to create directory: $psi_dir";
+	my @psi_files = $connection->ls();
+
+	for my $psi_file (@psi_files) {
+	    my $start = substr($psi_file, 0, index($psi_file, "_"));
+	    if (grep {$start eq $_} @organisms) {
+	        &download($connection,$download_dir,$psi_file);
+	    }
+	}
+}else{ 
+	warn " current version up to date - skipping download\n";
 }
 
-# check intact directory exists
-if (!(-d $download_dir)) {
-    mkdir $download_dir
-        or die "failed to create directory: $download_dir";
-}
+my $current_link = "/shared/data/psi/intact/current";
+&make_link($download_dir,$current_link);
 
-$download_dir .= "/$release_dir";
-
-if (-d "$download_dir") {
-    die "Directory $download_dir already exists - not downloading\n";
-} else {
-    print("Creating directory: $download_dir\n");
-    mkdir $download_dir
-        or die "unable to create $download_dir";
-}
-
-$ebi_ftp->cwd($release_dir)
-    or die "Cannot change working directory to $release_dir";
-
-$ebi_ftp->cwd($species_dir)
-    or die "Cannot change working directory to $species_dir";
-
-my @psi_files = $ebi_ftp->ls();
-
-for my $psi_file (@psi_files) {
-    my $start = substr($psi_file, 0, index($psi_file, "_"));
-    if (grep {$start eq $_} @organisms) {
-        print "getting $psi_file\n";
-        $ebi_ftp->get($psi_file, "$download_dir/$psi_file")
-            or die "can't get $psi_file from $ebi_server/ebi_ftp->pwd()/$psi_file: $?";
-    }
-}
-unlink "psi/intact/current";
-$release_dir = substr($release_dir,0,10);
-warn "created $release_dir\n";
-symlink $release_dir, "psi/intact/current" or die "can't create psi/intact/current";
-
+$connection->quit;
