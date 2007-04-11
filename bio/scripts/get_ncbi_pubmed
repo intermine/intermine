@@ -18,36 +18,33 @@ my $password = "philip\@flymine.org";
 my $gene_info_file = "gene_info.gz";
 my $pubmed_info_file = "gene2pubmed.gz";
 
-#connect to the server
-my $connection = &ftp_connect($ncbi_server,$ncbi_dir,$username,$password);
+#connect to the server and change to source directory
+my $connection = &ftp_connect($ncbi_server,$username,$password);
+	
+$connection->cwd($ncbi_dir)
+	or die "Cannot change working directory ", $connection->message;
 
 #use the date stamp to create a version id for the output directory
-my $gene_date_string = &date_string($connection,$gene_info_file);
-my $pubmed_date_string = &date_string($connection, $pubmed_info_file);
+my $date_string = &date_string_file($connection,$pubmed_info_file);
 
 #destination directories
 my $ncbi_main_dir = "/shared/data/pubmed";
-my $ncbi_gene_dir = "$ncbi_main_dir/gene_info/$gene_date_string";
-my $pubmed_id_dir = "$ncbi_main_dir/gene2pubmed/$pubmed_date_string";
+my $download_dir = "$ncbi_main_dir/$date_string";
 
 #make sure that the necessary directories exist
-&checkdir($ncbi_main_dir);
-&checkdir("$ncbi_main_dir/gene_info");
-&checkdir("$ncbi_main_dir/gene2pubmed");
-&checkdir("$ncbi_main_dir/current");
+&checkdir_exists($ncbi_main_dir);
 
-#if a file is downloaded, update the links in the "current" directory
-if(&download($connection,$pubmed_id_dir,$pubmed_info_file) == 1){
-	my $pub_link = "/shared/data/pubmed/current/gene2pubmed";
-	my $pub_current_dir = "/shared/data/pubmed/gene2pubmed/$pubmed_date_string";
-	&make_link($pub_current_dir,$pub_link);
+if(&checkdir_exists($download_dir)==1){
+	&download($connection,$download_dir,$gene_info_file);
+	&download($connection,$download_dir,$pubmed_info_file);
+}else{
+	warn " current version up to date - skipping download\n";
 }
-if(&download($connection,$ncbi_gene_dir,$gene_info_file) == 1){
-	my $gene_link = "/shared/data/pubmed/current/gene_info";
-	my $gene_current_dir = "/shared/data/pubmed/gene_info/$gene_date_string";
-	&make_link($gene_current_dir,$gene_link);
-  
-}
+
+&unzip_dir($download_dir);
+
+my $current_link = "/shared/data/pubmed/current_source";
+&make_link($download_dir,$current_link);
 
 $connection->quit;
 
