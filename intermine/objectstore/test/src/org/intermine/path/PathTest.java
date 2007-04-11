@@ -224,4 +224,10 @@ public class PathTest extends TestCase
         Path path = new Path(model, "Department.manager.name");
         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getLastClassDescriptor());
     }
+    
+    public void testEquals() {
+        Path path1 = new Path(model, "Department.manager.name");
+        Path path2 = new Path(model, "Department.manager.name");
+        assertEquals(path1, path2);
+    }
 }
