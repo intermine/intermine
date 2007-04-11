@@ -40,10 +40,10 @@ public class NotXmlTest extends TestCase
 
         String expected = NotXmlRenderer.DELIM + "org.intermine.model.testmodel.Employee"
             + NotXmlRenderer.DELIM + "aage" + NotXmlRenderer.DELIM + "0"
+            + NotXmlRenderer.DELIM + "rdepartment" + NotXmlRenderer.DELIM + "5678"
             + NotXmlRenderer.DELIM + "afullTime" + NotXmlRenderer.DELIM + "false"
-            + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "Employee1"
             + NotXmlRenderer.DELIM + "aid" + NotXmlRenderer.DELIM + "1234"
-            + NotXmlRenderer.DELIM + "rdepartment" + NotXmlRenderer.DELIM + "5678";
+            + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "Employee1";
 
         String got = NotXmlRenderer.render(e);
         assertEquals(got, expected, got);

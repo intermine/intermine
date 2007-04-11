@@ -109,7 +109,7 @@ public class PathQueryUtil
      */
     public static Set expandPath(Model model, String path) {
         Set paths = new LinkedHashSet();
-    
+
         String clsName;
         String refName = "";
         int refEnd = 0;

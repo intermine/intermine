@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Collection of commonly used String utilities
@@ -59,11 +58,13 @@ public class StringUtil
      */
     public static String join(Collection c, String delimiter) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator i = c.iterator(); i.hasNext(); ) {
-            sb.append(i.next().toString());
-            if (i.hasNext()) {
+        boolean needComma = false;
+        for (Object o : c) {
+            if (needComma) {
                 sb.append(delimiter);
             }
+            needComma = true;
+            sb.append(o.toString());
         }
         return sb.toString();
     }
@@ -75,12 +76,12 @@ public class StringUtil
      * @return the String tokens
      * @throws NullPointerException if  str is null
      */
-    public static List tokenize(String str) {
+    public static List<String> tokenize(String str) {
          if (str == null) {
             throw new NullPointerException("Cannot pass null arguments to tokenize");
         }
 
-        List l = new ArrayList();
+        List<String> l = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(str);
         while (st.hasMoreTokens()) {
             l.add(st.nextToken());
@@ -122,7 +123,7 @@ public class StringUtil
             throw new IllegalArgumentException("Delimiter can not be zero length");
         }
 
-        List l = new ArrayList();
+        List<Integer> l = new ArrayList<Integer>();
 
         int nextStartIndex = 0;
 
@@ -142,9 +143,8 @@ public class StringUtil
 
         int i = 0;
         int lastDelimStart = -delim.length();
-        Iterator iter = l.iterator();
-        while (iter.hasNext()) {
-            int thisDelimStart = ((Integer) iter.next()).intValue();
+        for (Integer thisDelimStartInteger : l) {
+            int thisDelimStart = thisDelimStartInteger.intValue();
             returnArray[i] = str.substring(lastDelimStart + delim.length(), thisDelimStart);
             lastDelimStart = thisDelimStart;
             i++;

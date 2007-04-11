@@ -13,7 +13,6 @@ package org.intermine.metadata.viewer;
 import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Iterator;
 import java.util.Set;
 
 
@@ -109,10 +108,8 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
     }
 
     private void createNodes(DefaultMutableTreeNode top) {
-        Iterator iter = model.getClassDescriptors().iterator();
-        while (iter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
-            Set supers = cld.getSuperDescriptors();
+        for (ClassDescriptor cld : model.getClassDescriptors()) {
+            Set<ClassDescriptor> supers = cld.getSuperDescriptors();
             // add any top level ClassDescriptors
             if (supers.size() == 0) {
                 top.add(createNode(cld));
@@ -123,9 +120,8 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
     private DefaultMutableTreeNode createNode(ClassDescriptor cld) {
         DefaultMutableTreeNode node =
             new DefaultMutableTreeNode(TypeUtil.unqualifiedName(cld.getName()));
-        Iterator subs = cld.getSubDescriptors().iterator();
-        while (subs.hasNext()) {
-            node.add(createNode((ClassDescriptor) subs.next()));
+        for (ClassDescriptor sub : cld.getSubDescriptors()) {
+            node.add(createNode(sub));
         }
         return node;
     }
@@ -134,22 +130,16 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
         String text;
         text = "<html><b>" + TypeUtil.unqualifiedName(cld.getName()) + "</b><br>";
         text += "<table>";
-        Iterator iter = cld.getAllAttributeDescriptors().iterator();
-        while (iter.hasNext()) {
-            AttributeDescriptor atd = (AttributeDescriptor) iter.next();
+        for (AttributeDescriptor atd : cld.getAllAttributeDescriptors()) {
             text += "<tr><td>" + atd.getName() + "</td><td>" + atd.getType()
                 + "</td></tr>";
         }
-        iter = cld.getAllReferenceDescriptors().iterator();
-        while (iter.hasNext()) {
-            ReferenceDescriptor rfd = (ReferenceDescriptor) iter.next();
+        for (ReferenceDescriptor rfd : cld.getAllReferenceDescriptors()) {
             text += "<tr><td>" + rfd.getName() + "</td><td>"
                 + TypeUtil.unqualifiedName(rfd.getReferencedClassDescriptor().getName())
                 + "</td></tr>";
         }
-        iter = cld.getAllCollectionDescriptors().iterator();
-        while (iter.hasNext()) {
-            CollectionDescriptor cod = (CollectionDescriptor) iter.next();
+        for (CollectionDescriptor cod : cld.getAllCollectionDescriptors()) {
             text += "<tr><td>" + cod.getName() + "</td><td>"
                 + TypeUtil.unqualifiedName(cod.getReferencedClassDescriptor().getName())
                 + "</td></tr>";

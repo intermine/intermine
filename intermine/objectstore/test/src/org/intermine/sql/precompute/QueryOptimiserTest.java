@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.HashSet;
 
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -590,11 +591,11 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b from table as table1, table as table2 WHERE table1.c = 'five' AND table2.c = 'five'");
         Query pq1 = new Query("SELECT table3.a AS kjfd, table3.b AS ddfw FROM table as table3 WHERE table3.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-        Query eq1 = new Query("SELECT P44.kjfd AS t1_a, P44.ddfw AS t1_b, P46.kjfd AS t2_a, P46.ddfw AS t2_b FROM precomp1 AS P44, precomp1 AS P46");
-        Query eq2 = new Query("SELECT P49.a AS t1_a, P49.b AS t1_b, P50.kjfd AS t2_a, P50.ddfw AS t2_b FROM table AS P49, precomp1 AS P50 WHERE P49.c = 'five'");
-        Query eq3 = new Query("SELECT P48.kjfd AS t1_a, P48.ddfw AS t1_b, table3.a AS t2_a, table3.b AS t2_b FROM precomp1 AS P48, table AS table3 WHERE table3.c = 'five'");
+        Query eq1 = new Query("SELECT P44.kjfd AS t1_a, P44.ddfw AS t1_b, table3.a AS t2_a, table3.b AS t2_b FROM precomp1 AS P44, table AS table3 WHERE table3.c = 'five'");
+        Query eq2 = new Query("SELECT P45.kjfd AS t1_a, P45.ddfw AS t1_b, P47.kjfd AS t2_a, P47.ddfw AS t2_b FROM precomp1 AS P47, precomp1 AS P45");
+        Query eq3 = new Query("SELECT P46.a AS t1_a, P46.b AS t1_b, P48.kjfd AS t2_a, P48.ddfw AS t2_b FROM precomp1 AS P48, table AS P46 WHERE P46.c = 'five'");
 
-        Set eSet = new HashSet();
+        Set eSet = new LinkedHashSet();
         eSet.add(eq1);
         eSet.add(eq2);
         eSet.add(eq3);
@@ -628,10 +629,10 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b, table4.a AS t4_a from table as table1, table as table2, anothertable AS table4 WHERE table1.c = 'five' AND table2.c = 'five' AND table4.a = table1.a AND table4.a = table2.a");
         Query pq1 = new Query("SELECT table3.a AS kjfd, table3.b AS ddfw, table5.a AS fhds FROM table as table3, anothertable AS table5 WHERE table3.c = 'five' AND table3.a = table5.a");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-        Query eq1 = new Query("SELECT P46.kjfd AS t1_a, P46.ddfw AS t1_b, P45.a AS t2_a, P45.b AS t2_b, P46.fhds AS t4_a FROM precomp1 AS P46, table AS P45 WHERE P45.a = P46.fhds AND P45.c = 'five'");
-        Query eq2 = new Query("SELECT table3.a AS t1_a, table3.b AS t1_b, P44.kjfd AS t2_a, P44.ddfw AS t2_b, P44.fhds AS t4_a FROM table AS table3, precomp1 AS P44 WHERE table3.a = P44.fhds AND table3.c = 'five'");
+        Query eq1 = new Query("SELECT P44.kjfd AS t1_a, P44.ddfw AS t1_b, table3.a AS t2_a, table3.b AS t2_b, P44.fhds AS t4_a FROM precomp1 AS P44, table AS table3 WHERE table3.c = 'five' AND P44.fhds = table3.a");
+        Query eq2 = new Query("SELECT P45.a AS t1_a, P45.b AS t1_b, P46.kjfd AS t2_a, P46.ddfw AS t2_b, P46.fhds AS t4_a FROM precomp1 AS P46, table AS P45 WHERE P45.c = 'five' AND P46.fhds = P45.a");
 
-        Set eSet = new HashSet();
+        Set eSet = new LinkedHashSet();
         eSet.add(eq1);
         eSet.add(eq2);
 
@@ -687,7 +688,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
         PrecomputedTable pt3 = new PrecomputedTable(pq3, pq3.getSQLString(), "precomp3", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
         precomps.add(pt2);
         precomps.add(pt3);
@@ -712,7 +713,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
         PrecomputedTable pt3 = new PrecomputedTable(pq3, pq3.getSQLString(), "precomp3", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
         precomps.add(pt2);
         precomps.add(pt3);
@@ -736,12 +737,12 @@ public class QueryOptimiserTest extends TestCase
         Query q1 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, table2.a AS t2_a, table2.b AS t2_b FROM table AS table1, table AS table2 WHERE table1.c = 'five' AND table2.c = 'five'");
         Query pq1 = new Query("SELECT table1.a AS fhjs, table1.b AS sjhf FROM table AS table1 WHERE table1.c = 'five'");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
 
-        Query eq1 = new Query("SELECT P51.fhjs AS t1_a, P51.sjhf AS t1_b, P50.a AS t2_a, P50.b AS t2_b FROM precomp1 AS P51, table AS P50 WHERE P50.c = 'five'");
-        Query eq2 = new Query("SELECT table1.a AS t1_a, table1.b AS t1_b, P49.fhjs AS t2_a, P49.sjhf AS t2_b FROM table AS table1, precomp1 AS P49 WHERE table1.c = 'five'");
-        Query eq3 = new Query("SELECT P47.fhjs AS t1_a, P47.sjhf AS t1_b, P45.fhjs AS t2_a, P45.sjhf AS t2_b FROM precomp1 AS P47, precomp1 AS P45");
+        Query eq3 = new Query("SELECT P44.fhjs AS t1_a, P44.sjhf AS t1_b, table1.a AS t2_a, table1.b AS t2_b FROM precomp1 AS P44, table AS table1 WHERE table1.c = 'five'");
+        Query eq1 = new Query("SELECT P45.fhjs AS t1_a, P45.sjhf AS t1_b, P47.fhjs AS t2_a, P47.sjhf AS t2_b FROM precomp1 AS P47, precomp1 AS P45");
+        Query eq2 = new Query("SELECT P46.a AS t1_a, P46.b AS t1_b, P48.fhjs AS t2_a, P48.sjhf AS t2_b FROM precomp1 AS P48, table AS P46 WHERE P46.c = 'five'");
         Set eSet = new ConsistentSet();
         eSet.add(eq1);
         eSet.add(eq2);
@@ -762,7 +763,7 @@ public class QueryOptimiserTest extends TestCase
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
         PrecomputedTable pt3 = new PrecomputedTable(pq3, pq3.getSQLString(), "precomp3", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
         precomps.add(pt2);
         precomps.add(pt3);
@@ -795,7 +796,7 @@ public class QueryOptimiserTest extends TestCase
     public void testOrderByField() throws Exception {
         Query pq1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.id AS c, tc.name AS name FROM Company AS ta, Department AS tb, Employee AS tc ORDER BY ta.id, tb.id, tc.id");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
 
         Query q, eq;
@@ -850,7 +851,7 @@ public class QueryOptimiserTest extends TestCase
         q = new Query("SELECT ta.id AS a, tb.id AS b, tc.age AS c FROM Company AS ta, Department AS tb, Employee AS tc WHERE ta.id > 25 ORDER BY ta.id, tc.id, tb.id");
         pq1 = new Query("SELECT ta.id AS a, tb.id AS b, tc.age AS c FROM Company AS ta, Department AS tb, Employee AS tc");
         pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-        precomps = new HashSet();
+        precomps = new LinkedHashSet();
         precomps.add(pt1);
 
         bestQuery = new BestQueryStorer();
@@ -865,7 +866,7 @@ public class QueryOptimiserTest extends TestCase
         Query pq2 = new Query("SELECT a1_.id AS a2_, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM Chromosome AS a1_, BioEntity AS a3_, Location AS a4_ WHERE a4_.objectId = a1_.id AND a4_.subjectId = a3_.id AND a1_.id = 10669827 ORDER BY a1_.id, a3_.id, a4_.id");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
         precomps.add(pt2);
 
@@ -899,7 +900,7 @@ public class QueryOptimiserTest extends TestCase
 
         Set set1 = Collections.singleton(c2);
         Set set2 = Collections.singleton(c1);
-        Set equalsSet = new HashSet();
+        Set equalsSet = new LinkedHashSet();
         assertFalse(QueryOptimiser.compareConstraints(set1, set2, equalsSet));
         assertTrue(equalsSet.isEmpty());
     }
@@ -911,7 +912,7 @@ public class QueryOptimiserTest extends TestCase
         Query pq2 = new Query("SELECT a1_.a AS a2_ FROM Chromosome AS a1_ WHERE a1_.a = 10669827 ORDER BY a1_.a");
         PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
         PrecomputedTable pt2 = new PrecomputedTable(pq2, pq2.getSQLString(), "precomp2", null, con);
-        Set precomps = new HashSet();
+        Set precomps = new LinkedHashSet();
         precomps.add(pt1);
         precomps.add(pt2);
 
@@ -939,7 +940,7 @@ public class QueryOptimiserTest extends TestCase
             Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
             Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
             PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-            Set precomps = new HashSet();
+            Set precomps = new LinkedHashSet();
             precomps.add(pt1);
 
             //System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
@@ -948,8 +949,8 @@ public class QueryOptimiserTest extends TestCase
             BestQueryStorer bestQuery = new BestQueryStorer();
             QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
             Set eSet = new ConsistentSet();
-            eSet.add(new Query("SELECT P48.a3_id AS a1_id, P48.a2_id, P48.a1_id AS a3_id FROM precomp1 AS P48 WHERE 24081631 < P48.a3_id ORDER BY P48.a3_id, P48.a2_id, P48.a1_id"));
-            eSet.add(new Query("SELECT P51.a1_id, P51.a2_id, P51.a3_id FROM precomp1 AS P51 WHERE 24081631 < P51.a1_id ORDER BY P51.orderby_field"));
+            eSet.add(new Query("SELECT P46.a1_id, P46.a2_id, P46.a3_id FROM precomp1 AS P46 WHERE 24081631 < P46.a1_id ORDER BY P46.orderby_field"));
+            eSet.add(new Query("SELECT P49.a3_id AS a1_id, P49.a2_id, P49.a1_id AS a3_id FROM precomp1 AS P49 WHERE 24081631 < P49.a3_id ORDER BY P49.a3_id, P49.a2_id, P49.a1_id"));
             assertEquals(eSet, bestQuery.getQueries());
         } finally {
             try {
@@ -970,7 +971,7 @@ public class QueryOptimiserTest extends TestCase
             Query q1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id AND a1_.id > 24081631 ORDER BY a1_.id, a2_.id, a3_.id");
             Query pq1 = new Query("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM LocatedSequenceFeature AS a1_, OverlapRelation AS a2_, LocatedSequenceFeature AS a3_, BioEntitiesRelations AS indirect0, BioEntitiesRelations AS indirect1 WHERE a2_.id = indirect0.BioEntities AND indirect0.Relations = a1_.id AND a2_.id = indirect1.BioEntities AND indirect1.Relations = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
             PrecomputedTable pt1 = new PrecomputedTable(pq1, pq1.getSQLString(), "precomp1", null, con);
-            Set precomps = new HashSet();
+            Set precomps = new LinkedHashSet();
             precomps.add(pt1);
 
             //System.out.println(pt1.getSQLString() + " ---- " + pt1.getOrderByField());
@@ -979,8 +980,8 @@ public class QueryOptimiserTest extends TestCase
             BestQueryStorer bestQuery = new BestQueryStorer();
             QueryOptimiser.recursiveOptimise(precomps, q1, bestQuery, q1);
             Set eSet = new ConsistentSet();
-            eSet.add(new Query("SELECT P48.a3_id AS a1_id, P48.a2_id, P48.a1_id AS a3_id FROM precomp1 AS P48 WHERE 24081631 < P48.a3_id ORDER BY P48.a3_id, P48.a2_id, P48.a1_id"));
-            eSet.add(new Query("SELECT P51.a1_id, P51.a2_id, P51.a3_id FROM precomp1 AS P51 WHERE 240816315000000000000000000050000000000000000000 < P51.orderby_field ORDER BY P51.orderby_field"));
+            eSet.add(new Query("SELECT P46.a1_id, P46.a2_id, P46.a3_id FROM precomp1 AS P46 WHERE 240816315000000000000000000050000000000000000000 < P46.orderby_field ORDER BY P46.orderby_field"));
+            eSet.add(new Query("SELECT P49.a3_id AS a1_id, P49.a2_id, P49.a1_id AS a3_id FROM precomp1 AS P49 WHERE 24081631 < P49.a3_id ORDER BY P49.a3_id, P49.a2_id, P49.a1_id"));
             assertEquals(eSet, bestQuery.getQueries());
         } finally {
             try {

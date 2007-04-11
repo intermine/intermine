@@ -17,8 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -426,7 +426,7 @@ public class QueryOptimiser
                 return Collections.EMPTY_SET;
             }
         }
-        Set retval = new HashSet();
+        Set retval = new LinkedHashSet();
 
         // Find the possible mappings from tables in the
         // PrecomputedTable query to tables in the Query
@@ -456,7 +456,7 @@ public class QueryOptimiser
             remapAliases(mapping, originalQuery.getFrom());
 
             // Compare the WHERE constraints.
-            Set whereConstraintEqualsSet = new HashSet();
+            Set whereConstraintEqualsSet = new LinkedHashSet();
             // NOTE: this if line has a side-effect... Careful.
             if (!compareConstraints(precompQuery.getWhere(), query.getWhere(),
                         whereConstraintEqualsSet)) {
@@ -490,7 +490,7 @@ public class QueryOptimiser
                     remapAliases(mapping, originalQuery.getFrom());
 
                     // Compare the WHERE constraints.
-                    Set whereConstraintEqualsSet = new HashSet();
+                    Set whereConstraintEqualsSet = new LinkedHashSet();
                     // NOTE: this if line has a side-effect... Careful.
                     compareConstraints(precompQuery.getWhere(), currentQuery.getWhere(),
                                 whereConstraintEqualsSet);
@@ -572,7 +572,7 @@ public class QueryOptimiser
                                 }
                             }
                             if ((matches || matchesDesc) && currentQuery.isDistinct()) {
-                                Set newS = new HashSet();
+                                Set newS = new LinkedHashSet();
                                 Iterator newSelectSVs = newQuery.getSelect().iterator();
                                 while (newSelectSVs.hasNext()) {
                                     SelectValue newSelectSV = (SelectValue) newSelectSVs.next();
@@ -693,7 +693,7 @@ public class QueryOptimiser
     protected static Set mergeGroupBy(PrecomputedTable precomputedTable, Query query,
             Query originalQuery) {
         Query precompQuery = precomputedTable.getQuery();
-        Set retval = new HashSet();
+        Set retval = new LinkedHashSet();
         if (precompQuery.getGroupBy().size() != query.getGroupBy().size()) {
             // GROUP BY clauses are unequal in size.
             return retval;
@@ -745,7 +745,7 @@ public class QueryOptimiser
 
             // Also, we must compare the HAVING clauses - each constraint in the PrecomputedTable
             // must EQUAL or IMPLIES some constraint in the Query.
-            Set constraintEqualsSet = new HashSet();
+            Set constraintEqualsSet = new LinkedHashSet();
             // NOTE: this if line has a side-effect... Careful.
             if (!compareConstraints(precompQuery.getHaving(), query.getHaving(),
                         constraintEqualsSet)) {
@@ -861,7 +861,7 @@ public class QueryOptimiser
      * TODO: take this function out - we don't need it.
      */
     protected static boolean compareSelectLists(List list1, List list2) {
-        Set allValues = new HashSet();
+        Set allValues = new LinkedHashSet();
         Iterator list2Iter = list2.iterator();
         while (list2Iter.hasNext()) {
             SelectValue selectValue = (SelectValue) list2Iter.next();

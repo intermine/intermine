@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.ModelMerger;
 import org.intermine.modelproduction.xml.InterMineModelParser;
@@ -69,7 +70,7 @@ public class ModelMergerTask extends Task
             FileReader reader = new FileReader(inputModelFile);
             Model model = parser.process(reader);
             reader.close();
-            Set additionClds = parser.generateClassDescriptors(new FileReader(additionsFile));
+            Set<ClassDescriptor> additionClds = parser.generateClassDescriptors(new FileReader(additionsFile));
             Model merged = ModelMerger.mergeModel(model, additionClds);
             FileWriter writer = new FileWriter(outputModelFile);
             writer.write(merged.toString());

@@ -83,17 +83,17 @@ public abstract class FieldDescriptor
      * @param cld the parent ClassDescriptor
      * @throws IllegalStateException if the parent ClassDescriptor is not set
      */
-     protected void setClassDescriptor(ClassDescriptor cld) throws IllegalStateException {
-         if (cld == null) {
-             throw new NullPointerException("cld cannot be null");
-         }
-         if (cldSet) {
+    protected void setClassDescriptor(ClassDescriptor cld) throws IllegalStateException {
+        if (cld == null) {
+            throw new NullPointerException("cld cannot be null");
+        }
+        if (cldSet) {
             throw new IllegalStateException("ClassDescriptor has already been set and "
-                                            + "may not be changed.");
+                    + "may not be changed.");
         }
         this.cld = cld;
         cldSet = true;
-     }
+    }
 
     /**
      * Return an integer describing the type of relationship this field represents,
@@ -129,6 +129,4 @@ public abstract class FieldDescriptor
     public boolean isCollection() {
         return (relationType() == ONE_N_RELATION) || (relationType() == M_N_RELATION);
     }
-
-
 }

@@ -11,7 +11,7 @@ package org.intermine.xml.lite;
  */
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,8 +24,8 @@ public class Item
     private String id;
     private String className;
     private String implementations;
-    private Map fields = new HashMap();
-    private Map references = new HashMap();
+    private Map fields = new LinkedHashMap();
+    private Map references = new LinkedHashMap();
 
     /**
      * Set the id of this item
