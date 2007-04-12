@@ -112,7 +112,7 @@
       <junit showoutput="true" reloading="false" printsummary="on"
              failureproperty="tests.failed" errorproperty="tests.failed"
              fork="@{fork}" forkmode="@{forkmode}">
-        <jvmarg value="${ENV.ANT_OPTS}"/>
+        <jvmarg line="${ENV.ANT_OPTS}"/>
         <customize/>
         <formatter type="xml"/>
         <batchtest todir="${test.results.dir}" fork="@{fork}">
