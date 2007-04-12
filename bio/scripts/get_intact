@@ -57,6 +57,6 @@ if(&checkdir_exists($download_dir)==1){
 }
 
 my $current_link = "/shared/data/psi/intact/current";
-&make_link($download_dir,$current_link);
+&make_link($date_string,$current_link);
 
 $connection->quit;
