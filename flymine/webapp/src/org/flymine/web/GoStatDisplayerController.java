@@ -15,22 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -45,10 +29,30 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.flymine.web.logic.FlymineUtil;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * calculates p-values of goterms
@@ -56,8 +60,6 @@ import org.intermine.web.logic.profile.Profile;
  */
 public class GoStatDisplayerController extends TilesAction
 {
-
-    String organismNames;
 
     /**
      *
@@ -84,10 +86,6 @@ public class GoStatDisplayerController extends TilesAction
             ObjectStoreSummary oss =
                 (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
-            session.removeAttribute("goStatPvalues");
-            session.removeAttribute("goStatGeneTotals");
-            session.removeAttribute("goStatGoTermToId");
-            session.removeAttribute("goStatOrganisms");
 
             String significanceValue = null;
             significanceValue = request.getParameter("significanceValue");
@@ -107,7 +105,7 @@ public class GoStatDisplayerController extends TilesAction
             request.setAttribute("bagName", bagName);
             request.setAttribute("ontology", namespace);
 
-            Collection organisms = getOrganisms(os, bag);
+           // Collection organisms = getOrganisms(os, bag);
             Collection badOntologies = getOntologies(); // list of ontologies to ignore
 
             // ~~~~~~~~~~~~~~~~~~ BAG QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,10 +119,10 @@ public class GoStatDisplayerController extends TilesAction
             QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
             QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
             QueryField qfGeneId = new QueryField(qcGene, "id");
-            QueryField qfOrganism = new QueryField(qcOrganism, "id");
             QueryField qfNamespace = new QueryField(qcGo, "namespace");
             QueryField qfGoTermId = new QueryField(qcGo, "identifier");
-
+            QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+            
             QueryFunction geneCount = new QueryFunction();
 
             q.addFrom(qcGene);
@@ -145,8 +143,11 @@ public class GoStatDisplayerController extends TilesAction
                 cs.addConstraint(bc1);
             }
 
+            // get organisms
+            ArrayList organisms = (ArrayList) FlymineUtil.getOrganisms(os, bag);
+            
             // limit to organisms in the bag
-            BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
+            BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
             cs.addConstraint(bc2);
 
             // ignore main 3 ontologies
@@ -180,12 +181,10 @@ public class GoStatDisplayerController extends TilesAction
                                                        ConstraintOp.EQUALS,
                                                        new QueryValue(namespace));
             cs.addConstraint(sc2);
-
             q.setConstraint(cs);
-
             q.addToGroupBy(qfGoTerm);
             q.addToGroupBy(qfGoTermId);
-
+            
             Results rBag = new Results(q, os, os.getSequence());
 
             Iterator itBag = rBag.iterator();
@@ -199,8 +198,9 @@ public class GoStatDisplayerController extends TilesAction
                 ResultsRow rrBag =  (ResultsRow) itBag.next();
 
                 String goTermIdBag = (String) rrBag.get(0);
-                Long countBag = (java.lang.Long) rrBag.get(1);  // put all vars in request for getting on the .jsp page
-
+//              put all vars in request for getting on the .jsp page
+                Long countBag = (java.lang.Long) rrBag.get(1);  
+                
                 // put in our map
                 geneCountMap.put(goTermIdBag, countBag);
 
@@ -278,11 +278,12 @@ public class GoStatDisplayerController extends TilesAction
             request.setAttribute("goStatPvalues", sortedMap);
             request.setAttribute("goStatGeneTotals", goGeneCountBagMap);
             request.setAttribute("goStatGoTermToId", goTermToIdMap);
-            request.setAttribute("goStatOrganisms", organismNames);
+            request.setAttribute("goStatOrganisms", organisms.toString());
+           
             return null;
         }
 
-        // gets total number of genes.
+        /* gets total number of genes */
         private int getGeneTotal(ObjectStore os, Collection organisms) {
 
             Query q = new Query();
@@ -290,7 +291,7 @@ public class GoStatDisplayerController extends TilesAction
             QueryClass qcGene = new QueryClass(Gene.class);
             QueryClass qcOrganism = new QueryClass(Organism.class);
 
-            QueryField qfOrganism = new QueryField(qcOrganism, "id");
+            QueryField qfOrganism = new QueryField(qcOrganism, "name");
             QueryFunction geneCount = new QueryFunction();
 
             q.addFrom(qcGene);
@@ -302,11 +303,11 @@ public class GoStatDisplayerController extends TilesAction
             ConstraintSet cs;
             cs = new ConstraintSet(ConstraintOp.AND);
 
-
+            /* organism is in bag */
             BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
             cs.addConstraint(bc2);
 
-            // gene is from organism
+            /* gene is from organism */
             QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
             ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
             cs.addConstraint(cc2);
@@ -321,57 +322,7 @@ public class GoStatDisplayerController extends TilesAction
             return n;
         }
 
-        // gets organisms in bag
-        private Collection getOrganisms(ObjectStoreInterMineImpl os, InterMineBag bag) {
 
-            Query q = new Query();
-
-            QueryClass qcGene = new QueryClass(Gene.class);
-            QueryClass qcOrganism = new QueryClass(Organism.class);
-
-            QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-            QueryField qfOrganism = new QueryField(qcOrganism, "id");
-            QueryField qfGeneId = new QueryField(qcGene, "id");
-
-            q.addFrom(qcGene);
-            q.addFrom(qcOrganism);
-
-            q.addToSelect(qfOrganism);
-            q.addToSelect(qfOrganismName);
-
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            if (bag != null) {
-                BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
-                cs.addConstraint(bc);
-            }
-
-            QueryObjectReference qr = new QueryObjectReference(qcGene, "organism");
-            ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
-            cs.addConstraint(cc);
-
-            q.setConstraint(cs);
-
-            Results r = new Results(q, os, os.getSequence());
-            Iterator it = r.iterator();
-            Collection ids = new ArrayList();
-            organismNames = null;
-
-            while (it.hasNext()) {
-
-                ResultsRow rr =  (ResultsRow) it.next();
-                ids.add(rr.get(0));
-
-                if (organismNames == null) {
-                    organismNames = (String) rr.get(1);
-                } else {
-                    organismNames += ", " + rr.get(1);
-                }
-
-            }
-
-            return ids;
-
-        }
 
         // adds 3 main ontologies to array.  these 3 will be excluded from the query
         private Collection getOntologies() {
