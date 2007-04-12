@@ -357,6 +357,8 @@
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
     </action>
+    <!-- don't (re)move this - it's used for importing any model-specific actions -->
+    <!--@MODEL_INCLUDE@-->
   </action-mappings>
   <controller nocache="true" processorClass="org.intermine.web.struts.InterMineRequestProcessor">
     <set-property property="inputForward" value="true"/>
