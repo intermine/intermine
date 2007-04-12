@@ -1,6 +1,6 @@
 <%
 String path = request.getContextPath();
-String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+path+"/display.jsp";
+String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+path+"/layout.jsp";
 %>
 
 
