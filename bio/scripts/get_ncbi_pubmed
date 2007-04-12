@@ -37,14 +37,12 @@ my $download_dir = "$ncbi_main_dir/$date_string";
 if(&checkdir_exists($download_dir)==1){
 	&download($connection,$download_dir,$gene_info_file);
 	&download($connection,$download_dir,$pubmed_info_file);
+	&unzip_dir($download_dir);
 }else{
 	warn " current version up to date - skipping download\n";
 }
-
-&unzip_dir($download_dir);
-
 my $current_link = "/shared/data/pubmed/current_source";
-&make_link($download_dir,$current_link);
+&make_link($date_string,$current_link);
 
 $connection->quit;
 

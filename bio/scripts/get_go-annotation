@@ -5,7 +5,7 @@
 # This script gets the latest Uniprot go-annotation release into a directory
 # like go-annotation/uniprot/2005-06-09.
 # The date used in the directory name is the date on the file on the
-# FTP server the script should be run in /shared/data
+# FTP server 
 
 # The script also gets the latest go association files for fly and worm from
 # godatabase.org into go-annotation/flybase and go-annotation/wormbase
@@ -13,7 +13,8 @@
 use strict;
 use warnings;
 
-use Net::FTP;
+use lib "../../intermine/perl/lib/InterMine/";
+use DataDownloader;
 
 my $uniprot_go_server = "ftp.ebi.ac.uk";
 my $uniprot_go_dir = "pub/databases/GO/goa/UNIPROT";
@@ -34,7 +35,8 @@ my $godatabase_server = "ftp.geneontology.org";
 my $godatabase_dir = "pub/go/gene-associations";
 my $go_dir = "pub/go/ontology";
 my $go_file = "gene_ontology.obo";
-my $gene_association_prefix = "gene_association";
+my $username = "anonymous";
+my $password = "-anonymous\@";
 
 # the key is the name of the directory to put the gene association file in, the
 # suffix is used to find the file on the server
@@ -48,81 +50,47 @@ my %gene_association_map =
    malaria => {suffix => 'GeneDB_Pfalciparum'});
 
 # Get latest version of the gene ontology - is updated every 30 mins
-my $go_ftp = Net::FTP->new($godatabase_server, Passive => 1)
-or die "Cannot connect to $godatabase_server: $@";
+my $go_connection = &ftp_connect($godatabase_server,$username,$password);
+$go_connection->cwd($go_dir)
+	or die "Cannot change working directory ", $go_connection->message;
 
-$go_ftp->login("anonymous",'-anonymous@')
-or die "Cannot login ", $go_ftp->message;
-
-$go_ftp->cwd($go_dir);
-
-my $go_download_dir = "gene_ontology";
-
-print STDERR "Getting $godatabase_server/$go_dir/$go_file to $go_download_dir\n";
-$go_ftp->get($go_file, "$go_download_dir/$go_file")
-    or die "failed to get $godatabase_server/$go_dir/$go_file";
+my $go_download_dir = "/shared/data/gene_ontology";
+&download($go_connection,$go_download_dir,$go_file);
 
 ### Get goa files
-my $goa_ftp = Net::FTP->new($uniprot_go_server, Passive => 1)
-  or die "Cannot connect to $uniprot_go_server: $@";
+my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
+$goa_connection->cwd($uniprot_go_dir)
+	or die "Cannot change working directory ", $goa_connection->message;
+#use the date stamp of a file in the $intact_dir to create a version id 
+#for the output directory
+my $uniprot_date_string = &date_string_file($goa_connection,$goa_file_gz);
 
-$goa_ftp->login("anonymous",'-anonymous@')
-  or die "Cannot login ", $goa_ftp->message;
+# make uniprot directory if necessary and download file
+my $uniprot_dir = "/shared/data/go-annotation/uniprot";
+my $uniprot_download_dir = "$uniprot_dir/$uniprot_date_string";
 
-$goa_ftp->cwd($uniprot_go_dir);
-
-my $date_stamp = $goa_ftp->mdtm($goa_file_gz);
-
-my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) =
-  localtime($date_stamp);
-
-$month += 1;
-$year -= 100;
-$year += 2000;
-
-my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
-
-# make uniprot directory if necessary
-my $uniprot_dir = "go-annotation/uniprot";
-if (!(-d $uniprot_dir)) {
-    print STDERR "creating directory: $uniprot_dir\n";
-    mkdir $uniprot_dir
-        or die "failed to create directory $uniprot_dir";
-}
-
-my $uniprot_download_dir = "$uniprot_dir/$date_string";
-
-if (!(-d $uniprot_download_dir)) {
-  mkdir $uniprot_download_dir;
-
-  print STDERR "getting $uniprot_go_server/$uniprot_go_dir/$goa_file_gz to $uniprot_download_dir\n";
-
-  $goa_ftp->binary();
-  $goa_ftp->get($goa_file_gz, "$uniprot_download_dir/$goa_file_gz");
-
-  print STDERR "getting $uniprot_go_server/$uniprot_go_dir/README to $uniprot_download_dir\n";
-
-  $goa_ftp->get("README", "$uniprot_download_dir/README");
-
-  print"gzip -dr $uniprot_download_dir\n";
-
-  if ((system "gzip -dr $uniprot_download_dir") != 0) {
-    die qq|system "gzip -dr $uniprot_download_dir" failed: $?\n|;
-  }
-
-  open GOA_FILE, "$uniprot_download_dir/$goa_file"
-      or die "can't open $uniprot_download_dir/$goa_file";
+&checkdir_exists($uniprot_dir);
+if(&checkdir_exists($uniprot_download_dir)==1){
+  	&download($goa_connection,$uniprot_download_dir,$goa_file_gz);
+	&download($goa_connection,$uniprot_download_dir,"README");
+	&unzip_dir($uniprot_download_dir);
   
-  while (my $line = <GOA_FILE>) {
-      for my $taxon_id (keys %taxon_map) {
-          if ($line =~ /\ttaxon\:$taxon_id\t/) {
-              push @{$taxon_map{$taxon_id}{lines}}, $line;
-          }
-      }
-  }
+  	open GOA_FILE, "$uniprot_download_dir/$goa_file"
+		or die "can't open $uniprot_download_dir/$goa_file";
   
-  close GOA_FILE or die;
+ 	#put the lines from the taxons we are interested in into separate buffers
+	print "Filling taxon buffers...";
+  	while (my $line = <GOA_FILE>) {
+    	for my $taxon_id (keys %taxon_map) {
+        	if ($line =~ /\ttaxon\:$taxon_id\t/) {
+            	push @{$taxon_map{$taxon_id}{lines}}, $line;
+        	}
+    	}
+	}
+	close GOA_FILE or die;
   
+  #print each buffer out to a file
+  print "writing files.\n";
   for my $taxon_id (keys %taxon_map) {
       my $suffix = $taxon_map{$taxon_id}{suffix};
       open OUT_FILE, ">$uniprot_download_dir/gene_association_$suffix"
@@ -131,82 +99,53 @@ if (!(-d $uniprot_download_dir)) {
       for my $line (@{$taxon_map{$taxon_id}{lines}}) {
           print OUT_FILE $line;
       }
-      
       close OUT_FILE or die;
   }
-	unlink "$uniprot_dir/current";
-	symlink $date_string, "$uniprot_dir/current" or die "can't create $uniprot_dir/current";
-	unlink "go-annotation/current/uniprot";
-	symlink ("../uniprot/$date_string", "go-annotation/current/uniprot") or die "can't create go-annotation/current";
+ 	#make links for the current data
+	my $uniprot_link = "/shared/data/go-annotation/uniprot/current";
+	&make_link($uniprot_date_string,$uniprot_link);
+	my $go_uniprot_link = "/shared/data/go-annotation/current/uniprot";
+	my $go_link_dir = "../uniprot/$uniprot_date_string";
+	&make_link($go_link_dir,$go_uniprot_link);
 	system "chmod -R a+r,g+w $uniprot_download_dir";
-
 } else {
-    warn "$uniprot_download_dir already exists - skipping download\n";
+    warn " current version up to date - skipping download\n";
 }
-return;
-
+$goa_connection->quit;
 
 #### Get other gene association files
-my $godatabase_ftp = Net::FTP->new($godatabase_server, Passive => 1)
-or die "Cannot connect to $godatabase_server: $@";
+my $gene_association_prefix = "gene_association";
+$go_connection->cwd("../../../")
+	or die "Cannot change working directory ", $go_connection->message;
+$go_connection->cwd($godatabase_dir)
+	or die "Cannot change working directory ", $go_connection->message;
 
-$godatabase_ftp->login("anonymous",'-anonymous@')
-or die "Cannot login ", $godatabase_ftp->message;
-
-$godatabase_ftp->cwd($godatabase_dir);
-
+#download file for each organism in the gene association map
 for my $source_database (keys %gene_association_map) {
-  my $suffix = $gene_association_map{$source_database}{suffix};
-
-  my $gene_association_file = "$gene_association_prefix.$suffix";
-  my $gene_association_file_gz = "$gene_association_file.gz";
-
-  my $date_stamp = $godatabase_ftp->mdtm($gene_association_file_gz);
-
-  my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) =
-    localtime($date_stamp);
-
-  $month += 1;
-  $year -= 100;
-  $year += 2000;
-
-  my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
-
-  # create directory for source if necessary
-  my $source_dir = "go-annotation/$source_database";
-  if (!(-d $source_dir)) {
-      print STDERR "creating directory: $source_dir\n";
-      mkdir $source_dir
-          or die "failed to create directory $source_dir";
-  }
-
-  my $gene_association_download_dir = "$source_dir/$date_string";
-
-  if (-d $gene_association_download_dir) {
-    warn "$gene_association_download_dir already exists - skipping download\n";
-  } else {
-    mkdir $gene_association_download_dir;
-
-    print STDERR "getting $godatabase_server/$godatabase_dir/$gene_association_file_gz to $gene_association_download_dir\n";
-
-    $godatabase_ftp->get($gene_association_file_gz,
-                         "$gene_association_download_dir/$gene_association_file_gz");
-
-
-    print"gzip -dr $gene_association_download_dir\n";
-
-    if ((system "gzip -dr $gene_association_download_dir") != 0) {
-      die qq|system "gzip -dr $gene_association_download_dir" failed: $?\n|;
-    }
-	unlink "$source_dir/current";
-	symlink $date_string, "$source_dir/current" or die "can't create $source_dir/current";
-	unlink "go-annotation/current/$source_database";
-	symlink "../$source_database/$date_string", "go-annotation/current/$source_database" or die "can't create go-annotation/current/$source_dir";
+	my $suffix = $gene_association_map{$source_database}{suffix};
+	my $gene_association_file_gz = "$gene_association_prefix.$suffix.gz";
+	my $date_string = &date_string_file($go_connection,$gene_association_file_gz);
   
-  }
-
-  system "chmod -R a+r,g+w $gene_association_download_dir";
+	# create directory for source if necessary
+	my $source_dir = "/shared/data/go-annotation/$source_database";
+	&checkdir_exists($source_dir);
+	#create download directory and download if necessary
+	my $gene_association_download_dir = "$source_dir/$date_string";
+	if(&checkdir_exists($gene_association_download_dir)==1){
+		&download($go_connection,$gene_association_download_dir,$gene_association_file_gz);
+		&unzip_dir($gene_association_download_dir);
+    	
+		#make links to current data
+		my $source_dir_link = "$source_dir/current";
+		&make_link($date_string,$source_dir_link);
+		my $current_link = "/shared/data/go-annotation/current/$source_database";
+		my $current_link_dir = "../$source_database/$date_string";
+		&make_link($current_link_dir,$current_link);
+		system "chmod -R a+r,g+w $gene_association_download_dir";
+	}else {
+		warn " current version up to date - skipping download\n";
+	}
 }
-
-
 system "chmod -R a+r,g+w $uniprot_download_dir";
+$go_connection->quit;
+
