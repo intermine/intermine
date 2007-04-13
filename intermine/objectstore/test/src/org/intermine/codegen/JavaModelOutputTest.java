@@ -69,7 +69,7 @@ public class JavaModelOutputTest extends TestCase
                 + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
                 + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
                 + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-                + INDENT + "public String toString() { return \"Class1 [Id=\\\"\" + id + \"\\\"]\"; }" + ENDL
+                + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL
                 + "}" + ENDL;
             assertEquals(expected, buffer.toString());
         } finally {
@@ -94,7 +94,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class1 [Id=\\\"\" + id + \"\\\"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
@@ -120,7 +120,7 @@ public class JavaModelOutputTest extends TestCase
             + "public class Class2 extends package.name.Class1" + ENDL + "{" + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class2 && id != null) ? id.equals(((Class2)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class2 [Id=\\\"\" + id + \"\\\"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class2 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld2));
@@ -139,7 +139,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class1 [Id=\\\"\" + id + \"\\\"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
@@ -159,7 +159,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class1 [Id=\\\"\" + id + \"\\\"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld3));
@@ -199,7 +199,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class1 [Atd1=\\\"\" + atd1 + \"\\\", Cod1:Collection, Id=\\\"\" + id + \"\\\", Rfd1=\" + (rfd1 == null ? \"null\" : (rfd1.getId() == null ? \"no id\" : rfd1.getId().toString())) + \"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class1 [atd1=\\\"\" + atd1 + \"\\\", cod1:Collection, id=\\\"\" + id + \"\\\", rfd1=\" + (rfd1 == null ? \"null\" : (rfd1.getId() == null ? \"no id\" : rfd1.getId().toString())) + \"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld1));
@@ -291,7 +291,7 @@ public class JavaModelOutputTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", uri, new LinkedHashSet(Collections.singleton(cld1)));
 
-        String expected = INDENT + "public String toString() { return \"Class1 [Atd1=\\\"\" + atd1 + \"\\\", Atd2=\\\"\" + atd2 + \"\\\", Id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
+        String expected = INDENT + "public String toString() { return \"Class1 [atd1=\\\"\" + atd1 + \"\\\", atd2=\\\"\" + atd2 + \"\\\", id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
 
         assertEquals(expected, mo.generateToString(cld1));
     }
@@ -334,7 +334,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "public void setId(java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
             + INDENT + "public boolean equals(Object o) { return (o instanceof Class3 && id != null) ? id.equals(((Class3)o).getId()) : false; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
-            + INDENT + "public String toString() { return \"Class3 [Atd1=\\\"\" + atd1 + \"\\\", Id=\\\"\" + id + \"\\\"]\"; }" + ENDL
+            + INDENT + "public String toString() { return \"Class3 [atd1=\\\"\" + atd1 + \"\\\", id=\\\"\" + id + \"\\\"]\"; }" + ENDL
             + "}" + ENDL;
 
         assertEquals(expected, mo.generate(cld3));

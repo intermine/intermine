@@ -181,7 +181,7 @@ public class WriteGFFTask extends Task
 
             if (feature instanceof CDS) {
                 // ignore for now as it interferes with the CDS GFF records created by
-                // writeTranscriptsAndExons() for use by the processed_transcript 
+                // writeTranscriptsAndExons() for use by the processed_transcript
                 // aggregator
                 continue;
             }
@@ -190,11 +190,11 @@ public class WriteGFFTask extends Task
             if (feature.getChromosome() == null) {
                 continue;
             }
-            
+
             if (feature.getChromosome().getIdentifier() == null) {
                 continue;
             }
-            
+
             if (currentChrId == null || !currentChrId.equals(resultChrId)) {
                 if (currentChrId != null) {
                     writeTranscriptsAndExons(gffWriter, currentChr, seenTranscripts,
@@ -211,17 +211,17 @@ public class WriteGFFTask extends Task
                 if (currentChr == null) {
                     throw new RuntimeException("get null from getObjectById()");
                 }
-                
+
                 if (currentChr.getIdentifier() == null) {
                     LOG.error("chromosome has no identifier: " + currentChr);
                     continue;
                 }
-                
+
                 if (currentChr.getOrganism() == null) {
                     LOG.error("chromosome has no organism: " + currentChr);
                     continue;
                 }
-                
+
                 if (currentChr.getOrganism().getAbbreviation() == null
                     || !currentChr.getIdentifier().endsWith("_random")
                     && !currentChr.getIdentifier().equals("M")
@@ -283,7 +283,7 @@ public class WriteGFFTask extends Task
                 List evidenceList = (List) evidenceMap.get(feature.getId());
 
                 Map extraAttributes = new HashMap();
-                    
+
                 if (feature instanceof ChromosomeBand) {
                     ArrayList indexList = new ArrayList();
                     indexList.add(objectCounts.get(feature.getClass()));
@@ -363,7 +363,7 @@ public class WriteGFFTask extends Task
             if (transcript instanceof MRNA) {
                 // special case for CDS objects - display them as MRNA as GBrowse uses the CDS class
                 // for displaying MRNAs
-                Iterator cdsIter = ((MRNA) transcript).getCDSs().iterator();
+                Iterator cdsIter = ((MRNA) transcript).getcDSs().iterator();
                 while (cdsIter.hasNext()) {
                     CDS cds = (CDS) cdsIter.next();
                     synonymList.add(makeIdString(cds.getId()));
@@ -395,7 +395,7 @@ public class WriteGFFTask extends Task
                              "CDS", "mRNA", null, exonSynonymValues, exonEvidence,
                              transcript.getId());
             }
-            
+
             /*
 
             --- we need correct CDS locations before this can work properly
@@ -410,11 +410,11 @@ public class WriteGFFTask extends Task
                 List fivePrimeUTRSynonymValues = (List) synonymMap.get(fivePrimeUTR.getId());
                 List fivePrimeUTREvidence = (List) evidenceMap.get(fivePrimeUTR.getId());
 
-                writeFeature(gffWriter, chr, fivePrimeUTR, fivePrimeUTRLocation, 
+                writeFeature(gffWriter, chr, fivePrimeUTR, fivePrimeUTRLocation,
                              transcript.getIdentifier(), "5'-UTR", "mRNA", null,
                              fivePrimeUTRSynonymValues, fivePrimeUTREvidence, transcript.getId());
             }
-            
+
             ThreePrimeUTR threePrimeUTR = mRNA.getThreePrimeUTR();
             if (threePrimeUTR != null) {
                 Location threePrimeUTRLocation = (Location) seenTranscriptParts.get(threePrimeUTR);
@@ -422,8 +422,8 @@ public class WriteGFFTask extends Task
                 List threePrimeUTRSynonymValues = (List) synonymMap.get(threePrimeUTR.getId());
                 List threePrimeUTREvidence = (List) evidenceMap.get(threePrimeUTR.getId());
 
-                writeFeature(gffWriter, chr, threePrimeUTR, threePrimeUTRLocation, 
-                             transcript.getIdentifier(), "3'-UTR", "mRNA", null, 
+                writeFeature(gffWriter, chr, threePrimeUTR, threePrimeUTRLocation,
+                             transcript.getIdentifier(), "3'-UTR", "mRNA", null,
                              threePrimeUTRSynonymValues, threePrimeUTREvidence, transcript.getId());
             }
             }
@@ -442,7 +442,7 @@ public class WriteGFFTask extends Task
 
     /**
      * @param bioEntity the obejct to write
-     * @param chromosomeLocation the location of the object on the chromosome 
+     * @param chromosomeLocation the location of the object on the chromosome
      * @param featureType the type (third output column) to be used when writing - null means create
      * the featureType automatically from the java class name on the object to write
      * @param idType the type tag to use when storing the ID in the attributes Map - null means use
@@ -489,7 +489,7 @@ public class WriteGFFTask extends Task
         }
 
         lineBuffer.append(0).append("\t");
-        
+
         if (chromosomeLocation == null) {
             lineBuffer.append(".");
         } else {
@@ -631,7 +631,7 @@ public class WriteGFFTask extends Task
      * @param os the ObjectStore to read from
      * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
      * @return a Map from id to synonym List
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException
      */
     private Map makeSynonymMap(ObjectStore os, Integer chromosomeId) throws ObjectStoreException {
         Query q = new Query();
@@ -679,7 +679,7 @@ public class WriteGFFTask extends Task
         indexesToCreate.add(qfSyn);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());        
+        Results res = new Results(q, os, os.getSequence());
         res.setBatchSize(50000);
 
         Iterator resIter = res.iterator();
@@ -710,7 +710,7 @@ public class WriteGFFTask extends Task
      * @param os the ObjectStore to read from
      * @param chromosomeId the chromosome ID of the LocatedSequenceFeature objects to examine
      * @return a Map from id to Evidence List
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException
      */
     private Map makeEvidenceMap(ObjectStore os, Integer chromosomeId)
         throws ObjectStoreException {
@@ -755,7 +755,7 @@ public class WriteGFFTask extends Task
         indexesToCreate.add(qfEnt);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        
+
         Results res = new Results(q, os, os.getSequence());
 
         res.setBatchSize(50000);

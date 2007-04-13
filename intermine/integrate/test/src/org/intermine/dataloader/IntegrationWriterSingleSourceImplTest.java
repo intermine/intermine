@@ -106,7 +106,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         c.setAddress(a);
         c.setName("CompanyA");
         c.setVatNumber(100);
-        c.setCEO(ceo);
+        c.setcEO(ceo);
         a2.setAddress("Employee Street, BVille");
         ceo.setName("EmployeeB1");
         ceo.setSeniority(new Integer(76321));
@@ -129,7 +129,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertNotNull("Object from db should not be null", rc);
 
         assertEquals(c.getVatNumber(), rc.getVatNumber());
-        CEO rceo = rc.getCEO();
+        CEO rceo = rc.getcEO();
         assertNotNull(rceo);
         assertEquals(ceo.getName(), rceo.getName());
         assertNotNull(rceo.getCompany());
@@ -140,7 +140,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Company oc = (Company) iw.getObjectByExample(exampleOC, Collections.singleton("name"));
 
         assertNotNull(oc);
-        assertNull(oc.getCEO());
+        assertNull(oc.getcEO());
     }
 
     public void testUpdateObjectOneToOne2() throws Exception {
@@ -160,7 +160,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
             companyA.setAddress(companyAAddress);
             companyA.setName("CompanyA");
             companyA.setVatNumber(1234);
-            companyA.setCEO(ceoA);
+            companyA.setcEO(ceoA);
             ceoAAddress.setAddress("Employee Street, AVille");
             ceoA.setAddress(ceoAAddress);
             ceoA.setSeniority(new Integer(876234));
@@ -194,8 +194,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertNotNull(rCEOB);
         assertEquals(rCompanyA, rCEOA.getCompany());
         assertEquals(rCompanyB, rCEOB.getCompany());
-        assertEquals(rCEOA, rCompanyA.getCEO());
-        assertEquals(rCEOB, rCompanyB.getCEO());
+        assertEquals(rCEOA, rCompanyA.getcEO());
+        assertEquals(rCEOB, rCompanyB.getcEO());
         
         {
             Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -206,7 +206,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
             c.setAddress(a);
             c.setName("CompanyA");
             c.setVatNumber(100);
-            c.setCEO(ceo);
+            c.setcEO(ceo);
             a2.setAddress("Employee Street, BVille");
             ceo.setName("EmployeeB1");
             ceo.setSeniority(new Integer(76321));
@@ -234,8 +234,8 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertNotNull(rCEOB);
         assertEquals(null, rCEOA.getCompany());
         assertEquals(rCompanyA, rCEOB.getCompany());
-        assertEquals(rCEOB, rCompanyA.getCEO());
-        assertEquals(null, rCompanyB.getCEO());
+        assertEquals(rCEOB, rCompanyA.getcEO());
+        assertEquals(null, rCompanyB.getcEO());
     }
 
     public void testUpdateObjectOneToOneNull() throws Exception {
@@ -259,7 +259,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertNotNull("Object from db should not be null", result);
 
         assertEquals(c.getVatNumber(), result.getVatNumber());
-        assertNull(result.getCEO());
+        assertNull(result.getcEO());
 
         CEO ceo = new CEO();
         ceo.setName("EmployeeB1");

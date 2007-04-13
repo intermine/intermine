@@ -263,7 +263,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         companyB.setSecretarys(new HashSet(Arrays.asList(new Secretary[] {secretary1, secretary2})));
         companyB.setContractors(new HashSet(Arrays.asList(new Contractor[] {contractorA, contractorB})));
         companyB.setOldContracts(new HashSet(Arrays.asList(new Contractor[] {contractorA, contractorB})));
-        companyB.setCEO(employeeB1);
+        companyB.setcEO(employeeB1);
 
         contractorB.setPersonalAddress(address2);
         contractorB.setBusinessAddress(address1);

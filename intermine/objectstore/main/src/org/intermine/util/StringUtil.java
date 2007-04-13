@@ -185,6 +185,30 @@ public class StringUtil
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
+    public static String reverseCapitalisation(String str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() >= 1) {
+            if (Character.isLowerCase(str.charAt(0))) {
+                String newStr = str.substring(0, 1).toUpperCase();
+                if (str.length() > 1) {
+                    newStr += str.substring(1);
+                }
+                return newStr;
+
+            }
+            if (Character.isUpperCase(str.charAt(0))) {
+                String newStr = str.substring(0, 1).toLowerCase();
+                if (str.length() > 1) {
+                    newStr += str.substring(1);
+                }
+                return newStr;
+            }
+        }
+        return str;
+    }
+    
     /**
      * Returns a pluralised version of the given String
      *
@@ -212,7 +236,7 @@ public class StringUtil
         if (template == null) {
             return n;
         }
-        Character first = new Character(template.charAt(0));
+
         StringBuffer sb = new StringBuffer();
 
         if (Character.isUpperCase(template.charAt(0))) {
