@@ -19,7 +19,6 @@ import java.lang.reflect.Constructor;
 import javax.servlet.http.HttpSession;
 
 import org.jfree.chart.ChartColor;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -29,12 +28,9 @@ import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.urls.CategoryURLGenerator;
-import org.jfree.data.category.CategoryDataset;
 /**
  * @author Xavier Watkins
  *
@@ -52,19 +48,17 @@ public class BagGraphWidget
      * the creation of thhe JFreeChart for the given
      * webconfig
      * @param session the HttpSession
-     * @param dataSet the CategoryDataset as created by the DataSetLdr
      * @param geneCategoryArray the geneCategoryArray as created by the DataSetLdr
-     * @param bagName the bag name
-     * @param title the graph title
-     * @param domain the graph domain (x azis)
-     * @param range the graph range (y axis)
+     * @param bagName the bag name     
      * @param toolTipGen the ToolTipGenerator to use
      * @param urlGen the UrlGenerator to use
+     * @param chart the chart
+     * @param plot the plot
+     * @param renderer the renderer
      */
-    public BagGraphWidget(HttpSession session, CategoryDataset dataSet, Object[] geneCategoryArray,
-        String bagName, String title, String domain, String range, String toolTipGen, 
-        String urlGen, String graphType,  JFreeChart chart, CategoryPlot plot, BarRenderer renderer) 
-    {
+    public BagGraphWidget(HttpSession session, Object[] geneCategoryArray, String bagName, 
+                          String toolTipGen, String urlGen, JFreeChart chart, CategoryPlot plot, 
+                          BarRenderer renderer) {
         super();
         try {
 

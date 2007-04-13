@@ -29,6 +29,7 @@ import org.intermine.web.logic.results.PagedCollection;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
+import org.intermine.web.logic.widget.GraphDataSet;
 
 import java.lang.reflect.Constructor;
 
@@ -48,6 +49,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.title.TextTitle;
 
 /**
  * @author Xavier Watkins
@@ -82,81 +84,30 @@ public class BagDetailsController extends TilesAction
             String dataSetLoader = graphDisplayer.getDataSetLoader();
             Class clazz = TypeUtil.instantiate(dataSetLoader);
             Constructor constr = clazz.getConstructor(new Class[]
-                {
-                    InterMineBag.class, ObjectStore.class
-                });
+            {
+                InterMineBag.class, ObjectStore.class
+            });
+
             DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
-                {
-                    imBag, os
-                });
+            {
+                imBag, os
+            });
+
             //TODO use caching here
-            if (dataSetLdr.getResultsSize() > 0) {
-                JFreeChart chart = null;
-                CategoryPlot plot = null;
-                BagGraphWidget bagGraphWidget = null;
-
-                
-                if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
-                    chart = ChartFactory.createStackedBarChart(
-                                       graphDisplayer.getTitle(), // chart title
-                                       graphDisplayer.getDomainLabel(), // domain axis label
-                                       graphDisplayer.getRangeLabel(), // range axis label
-                                       dataSetLdr.getDataSet(), // data 
-                                       PlotOrientation.VERTICAL, 
-                                       true, 
-                                       true, // tooltips? 
-                                       false // URLs? 
-                    );    
-
-                    plot = chart.getCategoryPlot();
-                    StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
-                    bagGraphWidget = new BagGraphWidget(session,
-                                                    dataSetLdr.getDataSet(),
-                                                    dataSetLdr.getGeneCategoryArray(),
-                                                    bagName, 
-                                                    graphDisplayer.getTitle(), 
-                                                    graphDisplayer.getDomainLabel(),
-                                                    graphDisplayer.getRangeLabel(),
-                                                    graphDisplayer.getToolTipGen(),
-                                                    graphDisplayer.getUrlGen(),
-                                                    graphDisplayer.getGraphType(),
-                                                    chart,
-                                                    plot,
-                                                    renderer);
-                } else {
-                    chart = ChartFactory.createBarChart(
-                            graphDisplayer.getTitle(), // chart title
-                            graphDisplayer.getDomainLabel(), // domain axis label
-                            graphDisplayer.getRangeLabel(), // range axis label
-                            dataSetLdr.getDataSet(), // data 
-                            PlotOrientation.VERTICAL, 
-                            true, 
-                            true, // tooltips? 
-                            false // URLs? 
-                    );    
-                    plot = chart.getCategoryPlot();
-                    BarRenderer renderer = (BarRenderer) plot.getRenderer();
-                    bagGraphWidget = new BagGraphWidget(session,
-                                                    dataSetLdr.getDataSet(),
-                                                    dataSetLdr.getGeneCategoryArray(),
-                                                    bagName, 
-                                                    graphDisplayer.getTitle(), 
-                                                    graphDisplayer.getDomainLabel(),
-                                                    graphDisplayer.getRangeLabel(),
-                                                    graphDisplayer.getToolTipGen(),
-                                                    graphDisplayer.getUrlGen(),
-                                                    graphDisplayer.getGraphType(),
-                                                    chart,
-                                                    plot,
-                                                    renderer);
+            if (!dataSetLdr.getDataSets().isEmpty()) {
+                for (Iterator it = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
+                    String key = (String) it.next();            
+                    GraphDataSet graphDataSet = (GraphDataSet) dataSetLdr.getDataSets().get(key);
+                    /* stacked bar chart */
+                    if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
+                        setStackedBarGraph(session, graphDisplayer, graphDataSet, 
+                                           graphDisplayerArray, bagName);
+                    /* regular bar chart */
+                    } else {
+                        setBarGraph(session, graphDisplayer, graphDataSet, 
+                                    graphDisplayerArray, bagName, key);
+                    } 
                 }
-             
-
-  
-                graphDisplayerArray.add(new String[]
-                    {
-                        bagGraphWidget.getHTML(), graphDisplayer.getDescription()
-                    });
             }
         }
 
@@ -185,4 +136,86 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("tableDisplayerArray", tableDisplayerArray);
         return null;
     }
+
+
+    private void setBarGraph(HttpSession session, 
+                             GraphDisplayer graphDisplayer, 
+                             GraphDataSet graphDataSet,                          
+                             ArrayList graphDisplayerArray,
+                             String bagName,
+                             String subtitle) {
+        JFreeChart chart = null;
+        CategoryPlot plot = null;
+        BagGraphWidget bagGraphWidget = null;
+
+        chart = ChartFactory.createBarChart(
+                graphDisplayer.getTitle(),          // chart title
+                graphDisplayer.getDomainLabel(),    // domain axis label
+                graphDisplayer.getRangeLabel(),     // range axis label
+                graphDataSet.getDataSet(),            // data 
+                PlotOrientation.VERTICAL, 
+                true, 
+                true,                               // tooltips? 
+                false                               // URLs? 
+        );    
+        
+        TextTitle subtitleText = new TextTitle(subtitle);
+        chart.addSubtitle(subtitleText);
+       
+        plot = chart.getCategoryPlot();
+    
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setItemMargin(0);
+        bagGraphWidget = new BagGraphWidget(session, 
+                         graphDataSet.getCategoryArray(),
+                         bagName,
+                         graphDisplayer.getToolTipGen(),
+                         graphDisplayer.getUrlGen(), 
+                         chart,
+                         plot,
+                         renderer);
+
+        graphDisplayerArray.add(new String[] 
+        {
+            bagGraphWidget.getHTML(), graphDisplayer.getDescription()
+        });        
+    }
+    
+    private void setStackedBarGraph(HttpSession session, 
+                                    GraphDisplayer graphDisplayer, 
+                                    GraphDataSet graphDataSet,                                  
+                                    ArrayList graphDisplayerArray,
+                                    String bagName) {
+        
+        JFreeChart chart = null;
+        CategoryPlot plot = null;
+        BagGraphWidget bagGraphWidget = null;
+        
+        chart = ChartFactory.createStackedBarChart(
+                graphDisplayer.getTitle(),       // chart title
+                graphDisplayer.getDomainLabel(), // domain axis label
+                graphDisplayer.getRangeLabel(),  // range axis label
+                graphDataSet.getDataSet(),         // data 
+                PlotOrientation.VERTICAL, 
+                true, 
+                true,                            // tooltips? 
+                false                            // URLs? 
+        );    
+        plot = chart.getCategoryPlot();
+        StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
+        bagGraphWidget = new BagGraphWidget(session,
+                         graphDataSet.getCategoryArray(),
+                         bagName, 
+                         graphDisplayer.getToolTipGen(),
+                         graphDisplayer.getUrlGen(), 
+                         chart,
+                         plot,
+                         renderer);
+        
+        graphDisplayerArray.add(new String[] 
+        {
+            bagGraphWidget.getHTML(), graphDisplayer.getDescription()
+        });  
+    }
 }
+
