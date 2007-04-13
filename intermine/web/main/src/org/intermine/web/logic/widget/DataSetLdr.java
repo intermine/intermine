@@ -10,7 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import org.jfree.data.category.DefaultCategoryDataset;
+import java.util.Map;
 
 
 /**
@@ -21,26 +21,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  */
 public interface DataSetLdr
-{
+{    
     /**
-     * Get the DefaultCategoryDataset to be used in the
-     * JFreeChart
-     * @return the DefaultCategoryDataset
+     * @return the map [String, GraphDataSet]
      */
-    public DefaultCategoryDataset getDataSet();
-    
-    /**
-     * Get the datastructure containing the genes for given domain 
-     * and range
-     * 
-     * @return an Object[]
-     */
-    public Object[] getGeneCategoryArray();
-    
-    /**
-     * Get the results size
-     * 
-     * @return the results size
-     */
-    public int getResultsSize();
+    public Map getDataSets();
 }

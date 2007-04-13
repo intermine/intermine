@@ -14,11 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -29,8 +26,16 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
+import org.intermine.web.logic.widget.GraphDataSet;
+
+import org.flymine.model.genomic.FlyAtlasResult;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MicroArrayAssay;
+
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -39,10 +44,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class FlyAtlasDataSetLdr implements DataSetLdr
 {
-    private DefaultCategoryDataset dataSet;
+
     private Results results;
     private Object[] geneCategoryArray;
-
+    private HashMap dataSets = new HashMap();
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -51,7 +56,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
      */
     public FlyAtlasDataSetLdr(InterMineBag bag, ObjectStore os) {
         super();
-        dataSet = new DefaultCategoryDataset();
+        DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
         Collection geneList = bag.getListOfIds();
 
         Query q = new Query();
@@ -138,27 +143,17 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             geneCategoryArray[i] = geneSeriesArray;
             i++;
         }
+        GraphDataSet graphDataSet = new GraphDataSet(dataSet, geneCategoryArray);
+        if (results.size() > 0) {
+            dataSets.put("anyOrganism", graphDataSet);
+        }
     }
 
     /**
      * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
      */
-    public DefaultCategoryDataset getDataSet() {
-        return dataSet;
-    }
-
-    /**
-     * @see org.intermine.web.logic.widget.DataSetLdr#getGeneCategoryArray()
-     */
-    public Object[] getGeneCategoryArray() {
-        return geneCategoryArray;
-    }
-    
-    /**
-     * @see org.intermine.web.logic.widget.DataSetLdr#getResultsSize()
-     */
-    public int getResultsSize() {
-        return results.size();
+    public Map getDataSets() {
+        return dataSets;
     }
 
 }

@@ -26,7 +26,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 
 import org.flymine.model.genomic.Gene;
@@ -46,7 +46,7 @@ public abstract class FlymineUtil
      * @param bag InterMineBag
      * @return collection of organism names
      */
-    public static Collection getOrganisms(ObjectStoreInterMineImpl os, InterMineBag bag) {
+    public static Collection getOrganisms(ObjectStore os, InterMineBag bag) {
 
         Query q = new Query();
 
@@ -72,7 +72,9 @@ public abstract class FlymineUtil
         cs.addConstraint(cc);
 
         q.setConstraint(cs);
-
+        
+        q.addToOrderBy(qfOrganismName);
+        
         Results r = new Results(q, os, os.getSequence());
         Iterator it = r.iterator();
         Collection organismNames = new ArrayList();
@@ -81,7 +83,6 @@ public abstract class FlymineUtil
             ResultsRow rr =  (ResultsRow) it.next();
             organismNames.add(rr.get(0));
         }
-
         return organismNames;
     }   
 }

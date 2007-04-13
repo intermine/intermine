@@ -25,7 +25,7 @@ public class GraphDisplayer
     private String urlGen;
     private String description;
     private String graphType;
-    
+    private String groupBy;
     
     /**
      * @return the description
@@ -158,7 +158,7 @@ public class GraphDisplayer
         this.graphType = graphType;
     }
 
-
+    
     /**
      * Get the type of this graph, e.g. BarChart, StackedBarChart
      * @return the type of this graph
@@ -166,7 +166,9 @@ public class GraphDisplayer
     public String getGraphType() {
         return graphType;
     }
+        
     
+
     
     /**
      * Return an XML String of this Type object
