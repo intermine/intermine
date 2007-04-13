@@ -260,7 +260,7 @@ public class JavaModelOutput extends ModelOutput
             .append("public ")
             .append(type)
             .append(" get")
-            .append(StringUtil.capitalise(name))
+            .append(StringUtil.reverseCapitalisation(name))
             .append("()");
         if (!fieldPresent) {
             sb.append(";" + ENDL);
@@ -291,7 +291,7 @@ public class JavaModelOutput extends ModelOutput
         sb.append(INDENT)
             .append("public void ")
             .append("set")
-            .append(StringUtil.capitalise(name))
+            .append(StringUtil.reverseCapitalisation(name))
             .append("(")
             .append(type)
             .append(" ")
@@ -312,7 +312,7 @@ public class JavaModelOutput extends ModelOutput
             if (field instanceof CollectionDescriptor) {
                 sb.append(INDENT)
                     .append("public void add")
-                    .append(StringUtil.capitalise(name))
+                    .append(StringUtil.reverseCapitalisation(name))
                     .append("(")
                     .append(((CollectionDescriptor) field).getReferencedClassDescriptor().getName())
                     .append(" arg)");
@@ -327,7 +327,7 @@ public class JavaModelOutput extends ModelOutput
                 // This is an object reference.
                 sb.append(INDENT)
                     .append("public void proxy")
-                    .append(StringUtil.capitalise(name))
+                    .append(StringUtil.reverseCapitalisation(name))
                     .append("(org.intermine.objectstore.proxy.ProxyReference ")
                     .append(name)
                     .append(")");
@@ -342,7 +342,7 @@ public class JavaModelOutput extends ModelOutput
                 }
                 sb.append(INDENT)
                     .append("public org.intermine.model.InterMineObject proxGet")
-                    .append(StringUtil.capitalise(name))
+                    .append(StringUtil.reverseCapitalisation(name))
                     .append("()");
                 if (fieldPresent) {
                     sb.append(" { return ")
@@ -420,7 +420,7 @@ public class JavaModelOutput extends ModelOutput
                     sb.append(", ");
                 }
                 needComma = true;
-                sb.append(StringUtil.capitalise(field.getName()));
+                sb.append(field.getName());
                 if (field instanceof AttributeDescriptor) {
                     sb.append("=\\\"\" + " + field.getName() + " + \"\\\"");
                 } else if (field instanceof CollectionDescriptor) {

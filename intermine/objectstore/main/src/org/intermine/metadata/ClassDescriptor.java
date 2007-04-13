@@ -11,13 +11,11 @@ package org.intermine.metadata;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.TextTable;
@@ -67,7 +65,20 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         if (name == null || name.equals("")) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
-
+        // Java only accepts names that start with a character, $ or _, some characters
+        // not allowed anywhere in name.
+        if (!Character.isJavaIdentifierStart(name.charAt(0))) {
+            throw new IllegalArgumentException("Java field names must start with a character, "
+                                               + "'$' or '_' but class name was: " + name);
+        }
+        String unqualified = name.substring(name.lastIndexOf('.') + 1);
+        for (int i = 0; i < unqualified.length(); i++) {
+            if (!Character.isJavaIdentifierPart(unqualified.charAt(i))) {
+                throw new IllegalArgumentException("Java field names may not contain character: "
+                                                   + unqualified.charAt(i) 
+                                                   + " but class name was: " + unqualified);
+            }
+        }
         this.className = name;
 
         if (supers != null && supers.equals("")) {

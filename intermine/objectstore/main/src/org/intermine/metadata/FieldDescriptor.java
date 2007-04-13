@@ -48,7 +48,7 @@ public abstract class FieldDescriptor
     private boolean cldSet = false;
 
     /**
-     * Construct, name of field must not be null
+     * Construct, name of field must not be null and must be a valid Java variable name.
      * @param name name of field in class
      * @throws IllegalArgumentException if name argument is null
      */
@@ -56,6 +56,19 @@ public abstract class FieldDescriptor
         throws IllegalArgumentException {
         if (name == null || name.equals("")) {
             throw new IllegalArgumentException("name cannot be null or empty");
+        }
+        // Java only accepts names that start with a character, $ or _, some characters
+        // not allowed anywhere in name.
+        if (!Character.isJavaIdentifierStart(name.charAt(0))) {
+            throw new IllegalArgumentException("Java field names must start with a character, "
+                                               + "'$' or '_' but field name was: " + name);
+        }
+        for (int i = 0; i < name.length(); i++) {
+            if (!Character.isJavaIdentifierPart(name.charAt(i))) {
+                throw new IllegalArgumentException("Java field names may not contain character: "
+                                                   + name.charAt(i) + " but field name was: " 
+                                                   + name);
+            }
         }
         this.name = name;
     }

@@ -186,5 +186,14 @@ public class StringUtilTest extends TestCase
         assertFalse(StringUtil.allDigits(""));
         assertFalse(StringUtil.allDigits(null));
     }
+    
+    public void testReverseCapitalisation() throws Exception {
+        assertEquals("a", StringUtil.reverseCapitalisation("A"));
+        assertEquals("A", StringUtil.reverseCapitalisation("a"));
+        assertEquals("aa", StringUtil.reverseCapitalisation("Aa"));
+        assertEquals("AA", StringUtil.reverseCapitalisation("aA"));
+        assertEquals("", StringUtil.reverseCapitalisation(""));
+        assertNull(StringUtil.reverseCapitalisation(null));
+    }
 
 }

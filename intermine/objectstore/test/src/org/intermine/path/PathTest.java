@@ -52,13 +52,13 @@ public class PathTest extends TestCase
         assertEquals(cld, path.getStartClassDescriptor());
         FieldDescriptor fld = cld.getFieldDescriptorByName("company");
         assertEquals(fld, path.getEndFieldDescriptor());
-        ClassDescriptor compDesc = 
+        ClassDescriptor compDesc =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         assertEquals(compDesc, path.getEndClassDescriptor());
         assertFalse(path.containsCollections());
         assertEquals(stringPath, path.toString());
     }
-    
+
     public void testValid2() {
         String stringPath = "Department.company.name";
         Path path = new Path(model, stringPath);
@@ -71,7 +71,7 @@ public class PathTest extends TestCase
     public void testValidWithClassConstraint() {
         String stringPath = "Department.manager[CEO].company.departments.employees[Manager].seniority";
         Path path = new Path(model, stringPath);
-        
+
         checkConstrainedPath(path);
     }
 
@@ -79,7 +79,7 @@ public class PathTest extends TestCase
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
-        
+
         String stringPath = "Department.manager.company.departments.employees.seniority";
         Path path = new Path(model, stringPath, constraintMap);
 
@@ -99,7 +99,7 @@ public class PathTest extends TestCase
         assertEquals(deptCld, path.getStartClassDescriptor());
         assertEquals(String.class, path.getEndType());
     }
-    
+
     public void testNullPath() {
         try {
             Path path = new Path(model, null);
@@ -114,7 +114,7 @@ public class PathTest extends TestCase
             // expected
         }
     }
-    
+
     public void testShortPath() {
         String stringPath = "Department";
         Path path = new Path(model, stringPath);
@@ -122,23 +122,23 @@ public class PathTest extends TestCase
             model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
         assertEquals(cld, path.getStartClassDescriptor());
         assertEquals(cld, path.getEndClassDescriptor());
-        assertNull(path.getEndFieldDescriptor()); 
+        assertNull(path.getEndFieldDescriptor());
         assertNull(path.getEndType());
     }
-    
+
     public void testResolveShort() {
         Path path = new Path(model, "Department.name");
-        Department department = 
+        Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department.setName("department name");
         assertEquals("department name", path.resolve(department));
     }
-    
+
     public void testResolve() {
         Path path = new Path(model, "Department.company.name");
-        Department department = 
+        Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
-        Company company = 
+        Company company =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         department.setName("department name");
         company.setName("company name");
@@ -148,44 +148,44 @@ public class PathTest extends TestCase
 
     public void testResolveLong() {
         Path path = new Path(model, "Department.company.CEO.name");
-        Department department = 
+        Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
-        Company company = 
+        Company company =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        CEO ceo = 
+        CEO ceo =
             (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
         department.setName("department name");
         company.setName("company name");
         ceo.setName("ceo name");
         department.setCompany(company);
-        company.setCEO(ceo);
+        company.setcEO(ceo);
         assertEquals("ceo name", path.resolve(department));
     }
-    
+
     public void testResolveReference() {
         Path path = new Path(model, "Department.company.CEO");
-        Department department = 
+        Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
-        Company company = 
+        Company company =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        CEO ceo = 
+        CEO ceo =
             (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
         department.setName("department name");
         company.setName("company name");
         ceo.setName("ceo name");
         department.setCompany(company);
-        company.setCEO(ceo);
+        company.setcEO(ceo);
         CEO resCEO = (CEO) path.resolve(department);
         assertEquals("ceo name", resCEO.getName());
     }
-    
+
     public void testResolveReferenceWithClassConstraint() {
         Path path = new Path(model, "Department.manager[CEO].company");
-        Department department = 
+        Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
-        CEO ceo = 
+        CEO ceo =
             (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
-        Company company = 
+        Company company =
             (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         department.setName("department name");
         ceo.setName("ceo name");
@@ -195,15 +195,15 @@ public class PathTest extends TestCase
         Company resCompany = (Company) path.resolve(department);
         assertEquals("company name", resCompany.getName());
     }
-    
+
     public void testToString() {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
-        
+
         String stringPath = "Department.manager.company.departments.employees.seniority";
         Path path = new Path(model, stringPath, constraintMap);
-        
+
         assertEquals("Department.manager[CEO].company.departments.employees[Manager].seniority",
                      path.toString());
     }
@@ -212,10 +212,10 @@ public class PathTest extends TestCase
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
-        
+
         String stringPath = "Department.manager.company.departments.employees.seniority";
         Path path = new Path(model, stringPath, constraintMap);
-        
+
         assertEquals("Department.manager.company.departments.employees.seniority",
                      path.toStringNoConstraints());
     }
@@ -224,7 +224,7 @@ public class PathTest extends TestCase
         Path path = new Path(model, "Department.manager.name");
         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getLastClassDescriptor());
     }
-    
+
     public void testEquals() {
         Path path1 = new Path(model, "Department.manager.name");
         Path path2 = new Path(model, "Department.manager.name");

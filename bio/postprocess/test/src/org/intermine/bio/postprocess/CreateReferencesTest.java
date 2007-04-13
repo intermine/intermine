@@ -245,10 +245,10 @@ public class CreateReferencesTest extends TestCase {
         storedUTR4 = (UTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedUTR4.setIdentifier("utr4-fivePrimeUTR");
 
-        storedMRNA1.setUTRs(new HashSet(Arrays.asList(new Object[] {
+        storedMRNA1.setuTRs(new HashSet(Arrays.asList(new Object[] {
                                                           storedUTR1, storedUTR2
                                                       })));
-        storedMRNA2.setUTRs(new HashSet(Arrays.asList(new Object[] {
+        storedMRNA2.setuTRs(new HashSet(Arrays.asList(new Object[] {
                                                           storedUTR3, storedUTR4
                                                       })));
 
