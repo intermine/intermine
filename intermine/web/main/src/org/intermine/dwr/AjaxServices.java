@@ -11,6 +11,7 @@ package org.intermine.dwr;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,15 +22,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -208,5 +213,20 @@ public class AjaxServices
         }
         bag.setDescription(description);
         return description;
+    }
+    
+    public static Results getColumnSummary(String summaryPath) throws Exception {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+
+        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        Query query = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
+                                                  new HashMap(), summaryPath);
+        
+        Results results = os.execute(query);
+        return results;
     }
 }
