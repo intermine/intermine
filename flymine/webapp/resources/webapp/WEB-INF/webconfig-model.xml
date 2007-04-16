@@ -136,7 +136,7 @@
     
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.flymine.web.widget.ChromosomeDistributionDataSetLdr"
       toolTipGen="org.flymine.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.flymine.web.widget.ChromosomeDistributionGraphURLGenerator"
-      description="If I knew how to describe this widget, this is exactly the place I would enter it." graphType="BarChart"
+      description="Actual: number of genes in your bag found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in your bag, the number of genes expected to be found on each chromosome." graphType="BarChart"
       groupBy="organism" />
           
   	  <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"

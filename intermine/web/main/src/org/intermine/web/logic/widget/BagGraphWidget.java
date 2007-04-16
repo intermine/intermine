@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 import org.intermine.util.TypeUtil;
 
+import java.awt.BasicStroke;
 import java.awt.Font;
 
 import java.lang.reflect.Constructor;
@@ -22,15 +23,19 @@ import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.imagemap.ImageMapUtilities;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.CategoryToolTipGenerator;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.urls.CategoryURLGenerator;
+import org.jfree.ui.TextAnchor;
 /**
  * @author Xavier Watkins
  *
@@ -62,17 +67,24 @@ public class BagGraphWidget
         super();
         try {
 
-        
             // display values for each column
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
             renderer.setItemLabelsVisible(true);
             renderer.setItemLabelGenerator(generator);
-
+           
+            renderer.setPositiveItemLabelPosition(new ItemLabelPosition(
+                                        ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+            
             // set colors for each data series
-            ChartColor lightPurple = new ChartColor(245, 240, 255);
-            renderer.setSeriesPaint(1, lightPurple);
-            renderer.setSeriesPaint(0, ChartColor.VERY_LIGHT_BLUE);
+            ChartColor blue = new ChartColor(47, 114,  255);
+            renderer.setSeriesPaint(0, blue); 
+            
+            ChartColor lightBlue = new ChartColor(159, 192,  255);
+            renderer.setSeriesPaint(1, lightBlue); 
                         
+            //renderer.setDrawBarOutline(false);
+            renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
+            
             // gene names as toolips
             Class clazz1 = TypeUtil.instantiate(toolTipGen);
             Constructor toolTipConstructor = clazz1.getConstructor(new Class[]
@@ -99,9 +111,12 @@ public class BagGraphWidget
                     });
             renderer.setItemURLGenerator(categoryUrlGen);
 
+            NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setUpperMargin(0.15);
+            
             Font labelFont = new Font("SansSerif", Font.BOLD, 12);
             plot.getDomainAxis().setLabelFont(labelFont);
-            plot.getRangeAxis().setLabelFont(labelFont);
+            rangeAxis.setLabelFont(labelFont);
             plot.getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
             plot.getDomainAxis()
                 .setCategoryLabelPositions(
