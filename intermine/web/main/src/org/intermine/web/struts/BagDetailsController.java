@@ -45,11 +45,13 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.LayeredBarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.util.SortOrder;
 
 /**
  * @author Xavier Watkins
@@ -104,7 +106,7 @@ public class BagDetailsController extends TilesAction
                                            graphDisplayerArray, bagName);
                     /* regular bar chart */
                     } else {
-                        setBarGraph(session, graphDisplayer, graphDataSet, 
+                        setLayeredBarGraph(session, graphDisplayer, graphDataSet, 
                                     graphDisplayerArray, bagName, key);
                     } 
                 }
@@ -138,7 +140,7 @@ public class BagDetailsController extends TilesAction
     }
 
 
-    private void setBarGraph(HttpSession session, 
+    private void setLayeredBarGraph(HttpSession session, 
                              GraphDisplayer graphDisplayer, 
                              GraphDataSet graphDataSet,                          
                              ArrayList graphDisplayerArray,
@@ -148,7 +150,7 @@ public class BagDetailsController extends TilesAction
         CategoryPlot plot = null;
         BagGraphWidget bagGraphWidget = null;
 
-        chart = ChartFactory.createBarChart(
+        chart = ChartFactory.createBarChart3D(
                 graphDisplayer.getTitle(),          // chart title
                 graphDisplayer.getDomainLabel(),    // domain axis label
                 graphDisplayer.getRangeLabel(),     // range axis label
@@ -158,14 +160,22 @@ public class BagDetailsController extends TilesAction
                 true,                               // tooltips? 
                 false                               // URLs? 
         );    
-        
+       
         TextTitle subtitleText = new TextTitle(subtitle);
         chart.addSubtitle(subtitleText);
        
         plot = chart.getCategoryPlot();
-    
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setItemMargin(0);
+
+        LayeredBarRenderer renderer = new LayeredBarRenderer();
+        plot.setRenderer(renderer);
+                
+        // integers only
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        
+        // first series last
+        plot.setRowRenderingOrder(SortOrder.DESCENDING);
+        
         bagGraphWidget = new BagGraphWidget(session, 
                          graphDataSet.getCategoryArray(),
                          bagName,
