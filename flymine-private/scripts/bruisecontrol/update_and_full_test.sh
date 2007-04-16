@@ -13,7 +13,7 @@ ANT_COMMAND='ant -lib /software/noarch/junit/'
 
 . ~/.bashrc
 
-echo "starting new build" > $ARCHIVE_TO/ant_log.txt
+echo "trying new build"
 
 # -------------------------------------------------------------------------- #
 # Check whether we really need to do anything at all
@@ -65,6 +65,8 @@ echo "BLAME = $BLAME"
 
 umask 0022
 mkdir -p "$ARCHIVE_TO"
+
+echo "trying new build" > $ARCHIVE_TO/ant_log.txt 2>&1
 
 UPDATE=$(svn update svn://svn.flymine.org/flymine/trunk $TRUNK_DIR)
 
