@@ -1,0 +1,57 @@
+#!/bin/sh
+
+cd tmp
+
+echo "Filtering Spiders (pass 2)"
+cat FL2 |
+grep -v "Googlebot/" | \
+grep -v "Scooter/" | \
+grep -v "Zao/" | \
+grep -v "Gigabot/" | \
+grep -v "TurnitinBot/" | \
+grep -v "Bot/" | \
+grep -v "bot/" | \
+grep -v "ZyBorg/" | \
+grep -v "Googlebot-Image/" | \
+grep -v ".inktomisearch.com" | \
+grep -v "Slurp;" | \
+grep -v "^host" | \
+grep -v "^139.18." | \
+grep -v "^193.218.115.7" | \
+grep -v "^202.160.180.195" | \
+grep -v "^206.169.110.66" | \
+grep -v "^208.66.195.2" | \
+grep -v "^219.142.118." | \
+grep -v "^63.201.114.200" | \
+grep -v "^64.246.0.17" | \
+grep -v "^67.15.74.15" | \
+grep -v "^68.17.150.18" | \
+grep -v "^72.147.105.175" | \
+grep -v "^80.175.38.106" | \
+grep -v "^81.19.66.8" | \
+grep -v "/robots" | \
+grep -v "grub-client-" > FL3
+
+
+echo "Filtering virus/worms/other"
+cat FL3 | \
+grep -v "/default.ida?X" | \
+grep -v "/NULL.ida?xx" | \
+grep -v " /scripts/..%255" | \
+grep -v "CONNECT 1.3.3.7" | \
+grep -v "SEARCH /" | 
+grep -v "GET http" | 
+grep -v "HEAD /" > FL4
+
+grep -v "internal dummy connection" FL4 > FL5
+fgrep 'HTTP/1.'  FL5 > FL6
+
+cp FL6 FL100
+
+# FL3 filtered (2nd pass)
+# FL4 filtered (worms)
+
+# FL100 is the base data file
+
+
+
