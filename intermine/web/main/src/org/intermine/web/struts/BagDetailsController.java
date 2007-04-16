@@ -31,6 +31,8 @@ import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
 
+import java.awt.Font;
+
 import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletContext;
@@ -150,7 +152,7 @@ public class BagDetailsController extends TilesAction
         CategoryPlot plot = null;
         BagGraphWidget bagGraphWidget = null;
 
-        chart = ChartFactory.createBarChart3D(
+        chart = ChartFactory.createBarChart(
                 graphDisplayer.getTitle(),          // chart title
                 graphDisplayer.getDomainLabel(),    // domain axis label
                 graphDisplayer.getRangeLabel(),     // range axis label
@@ -162,11 +164,13 @@ public class BagDetailsController extends TilesAction
         );    
        
         TextTitle subtitleText = new TextTitle(subtitle);
+        subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
         chart.addSubtitle(subtitleText);
-       
+                
         plot = chart.getCategoryPlot();
 
         LayeredBarRenderer renderer = new LayeredBarRenderer();
+        renderer.setItemLabelsVisible(true);
         plot.setRenderer(renderer);
                 
         // integers only
@@ -175,7 +179,7 @@ public class BagDetailsController extends TilesAction
         
         // first series last
         plot.setRowRenderingOrder(SortOrder.DESCENDING);
-        
+                       
         bagGraphWidget = new BagGraphWidget(session, 
                          graphDataSet.getCategoryArray(),
                          bagName,
