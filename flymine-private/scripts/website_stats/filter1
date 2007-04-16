@@ -1,0 +1,24 @@
+#!/bin/sh
+
+cd tmp
+
+echo "Filtering FlyMine"
+gunzip -c ../data/flymine_access_log-*gz | grep -v "^192.168.128" | grep -v "^131.111.12." > FL1
+
+grep robots.txt FL1 | awk '{ print $1; }' > IP_ROBOTS_
+cat IP_ROBOTS >> IP_ROBOTS_
+sort IP_ROBOTS_ | uniq > IP_ROBOTS
+
+cp FL1 FL2
+
+echo "Filtering robots IPs (it takes a long while)";
+
+for i in `cat IP_ROBOTS`
+do
+    fgrep -v $i FL2 > FLR
+    mv FLR FL2
+done
+
+# FL1: Raw data
+# FL2: Filtered data
+# IP_ROBOTS: IP address of robots
