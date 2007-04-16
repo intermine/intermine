@@ -237,13 +237,13 @@
       <attribute name="srcdir" default="${src.dir}"/>
       <attribute name="destdir" default="${build.classes.dir}"/>
       <attribute name="classpath" default="project.compile.path"/>
-      <attribute name="executepath" default="project.execute.path"/>
+      <attribute name="dependpath" default="project.depend.path"/>
       <attribute name="debug" default="${javac.debug}"/>
       <element name="customize" optional="true"/>
       <sequential>
         <depend srcdir="@{srcdir}" destdir="@{destdir}" closure="yes" dump="yes"
                 cache="${build.dir}/depend.cache">
-          <classpath refid="@{executepath}"/>
+          <classpath refid="@{dependpath}"/>
         </depend>
         <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" compiler="${javac.compiler}"
            source="${javac.source}" target="${javac.target}"

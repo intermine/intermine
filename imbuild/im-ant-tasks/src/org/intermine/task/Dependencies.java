@@ -38,10 +38,16 @@ public class Dependencies extends Task
     private String workspaceBaseDir;
     /** Compile classpath (does not include artifacts, includes class files and libs). */
     private Path compilePath;
+    /** classpath for the Depend task (does not include artifacts, includes class files and libs) -
+     * same as compileFileSet, without any extra.depenencies. */
+    private Path dependPath;
     /** Execute classpath (includes libs and artifacts) */
     private Path executePath;
     /** Main classpath represented as FileSet. */
     private FileSet compileFileSet;
+    /** classpath used by the Depend task represented as FileSet - same as compileFileSet, without
+     * any extra.depenencies. */
+    private FileSet dependFileSet;
     /** Deploy classpath represented as FileSet. */
     private FileSet executeFileSet;
     /** Target to run for each dependent project (optional). */
@@ -140,6 +146,7 @@ public class Dependencies extends Task
         }
 
         String compilePathId = type + ".compile.path";
+        String dependPathId = type + ".depend.path";
         String executePathId = type + ".execute.path";
         String artifactPathId = type + ".artifact.path";
 
@@ -181,16 +188,21 @@ public class Dependencies extends Task
         }
 
         compilePath = new Path(getProject());
+        dependPath = new Path(getProject());
         executePath = new Path(getProject());
         Path artifactPath = new Path(getProject());
         compileFileSet = new FileSet();
         compileFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
         compileFileSet.setProject(getProject());
+        dependFileSet = new FileSet();
+        dependFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
+        dependFileSet.setProject(getProject());
         executeFileSet = new FileSet();
         executeFileSet.setDir(new File(workspaceBaseDir.replace('/', File.separatorChar)));
         executeFileSet.setProject(getProject());
 
         String compileIncludes = "";
+        String dependIncludes = "";
         String executeIncludes = "";
 
         FileSet artifactFileSet = new FileSet();
@@ -199,6 +211,7 @@ public class Dependencies extends Task
         String artifactIncludes = "";
 
         getProject().addReference(compilePathId, compilePath);
+        getProject().addReference(dependPathId, dependPath);
         getProject().addReference(executePathId, executePath);
         getProject().addReference(artifactPathId, artifactPath);
 
@@ -231,9 +244,11 @@ public class Dependencies extends Task
         fileset.setIncludes("lib/*.jar");
         fileset.setProject(getProject());
         compilePath.addFileset(fileset);
+        dependPath.addFileset(fileset);
         executePath.addFileset(fileset);
 
         compileIncludes += projName + "/lib/*.jar ";
+        dependIncludes += projName + "/lib/*.jar ";
         executeIncludes += projName + "/lib/*.jar ";
 
         for (int i = 0; i < allProjectNames.size(); i++) {
@@ -288,20 +303,27 @@ public class Dependencies extends Task
             libFileSet.setIncludes("lib/*.jar");
             libFileSet.setProject(getProject());
             compilePath.addFileset(libFileSet);
-
+            
             compileIncludes += depName + "/lib/*.jar ";
             compileIncludes += depName + "/build/classes/ ";
 
-            if (projectNamesNoExtraDeps.contains(depName)) {
-                // Add dist/*.jar, dist/*.war
-                FileSet distFileSet = new FileSet();
-                distFileSet.setDir(projDir);
-                distFileSet.setIncludes("dist/*");
-                distFileSet.setProject(getProject());
-                executePath.addFileset(distFileSet);
+            // Add dist/*.jar, dist/*.war
+            FileSet distFileSet = new FileSet();
+            distFileSet.setDir(projDir);
+            distFileSet.setIncludes("dist/*");
+            distFileSet.setProject(getProject());
 
-                executePath.addFileset(libFileSet);
-                executeIncludes += depName + "/lib/*.jar ";
+            executePath.addFileset(distFileSet);
+            executePath.addFileset(libFileSet);
+
+            executeIncludes += depName + "/lib/*.jar ";
+
+            if (projectNamesNoExtraDeps.contains(depName)) {
+                dependPath.addFileset(distFileSet);
+                dependPath.addFileset(libFileSet);
+
+                dependIncludes += depName + "/lib/*.jar ";
+
                 artifactIncludes += depName + "/dist/* ";
             }
         }
@@ -309,6 +331,10 @@ public class Dependencies extends Task
         if (compileIncludes.length() > 0) {
             compileFileSet.setIncludes(compileIncludes);
             getProject().addReference(compilePathId + ".fileset", compileFileSet);
+        }
+        if (dependIncludes.length() > 0) {
+            dependFileSet.setIncludes(dependIncludes);
+            getProject().addReference(dependPathId + ".fileset", dependFileSet);
         }
 
         if (executeIncludes.length() > 0) {
