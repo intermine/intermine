@@ -36,17 +36,17 @@ sub new {
   }
 
   my $self = {
-              id => $opts{id}, _model => $opts{model}, _classname => $classname,
-              _implements => $implements_arg
+              id => $opts{id}, ':model' => $opts{model}, ':classname' => $classname,
+              ':implements' => $implements_arg
              };
 
   if ($classname ne '') {
-    my $classdesc = $self->{_model}->get_classdescriptor_by_name($classname);
-    $self->{_classdesc} = $classdesc;
+    my $classdesc = $self->{':model'}->get_classdescriptor_by_name($classname);
+    $self->{':classdesc'} = $classdesc;
   }
 
   my @implements_classdescs = map {
-    my $imp_classdesc = $self->{_model}->get_classdescriptor_by_name($_);
+    my $imp_classdesc = $self->{':model'}->get_classdescriptor_by_name($_);
     if (!defined $imp_classdesc) {
       die "interface '$_' is not in the model\n";
     }
@@ -57,9 +57,9 @@ sub new {
     die "no '$classname' and no implementations for object\n";
   }
 
-  $self->{_implements} = $implements_arg;
-  $self->{_implements_classdescs} = [@implements_classdescs];
-  $self->{_classname} = $classname;
+  $self->{':implements'} = $implements_arg;
+  $self->{':implements_classdescs'} = [@implements_classdescs];
+  $self->{':classname'} = $classname;
 
   bless $self, $class;
 
@@ -165,25 +165,25 @@ sub get
 sub model
 {
   my $self = shift;
-  return $self->{_model};
+  return $self->{':model'};
 }
 
 sub classname
 {
   my $self = shift;
-  return $self->{_classname};
+  return $self->{':classname'};
 }
 
 sub classdescriptor
 {
   my $self = shift;
-  return $self->{_classdesc};
+  return $self->{':classdesc'};
 }
 
 sub implements_classdescriptors
 {
   my $self = shift;
-  return @{$self->{_implements_classdescs}};
+  return @{$self->{':implements_classdescs'}};
 }
 
 sub all_class_descriptors
@@ -230,7 +230,7 @@ sub instance_of
 sub to_string
 {
   my $self = shift;
-  my $implements = join (' ', $self->{_implements});
+  my $implements = join (' ', $self->{':implements'});
   my $classname = $self->classname();
   if (defined $classname and length $classname > 0) {
     return "[classname: " . $classname . "  implements: $implements]";
@@ -244,8 +244,8 @@ sub as_xml
   my $self = shift;
   my $writer = shift;
   my $id = $self->{id};
-  my $classname = $self->{_classname} || "";
-  my $implements = $self->{_implements} || "";
+  my $classname = $self->{':classname'} || "";
+  my $implements = $self->{':implements'} || "";
 
   $classname = package_name_to_namespace($classname);
   my @implements_list = split ' ', $implements;
@@ -255,7 +255,7 @@ sub as_xml
                     class => $classname, implements => $implements);
 
   for my $key (keys %$self) {
-    next if $key =~ /^_/;
+    next if $key =~ /^:/;
     if ($key ne 'id' && $key ne 'class') {
       my $val = $self->{$key};
 
