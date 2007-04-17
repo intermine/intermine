@@ -124,12 +124,12 @@ public class ClassKeyHelper
      *            the field name to look up
      * @return true if the field is an 'identifying' field for the class.
      */
-    public static boolean isKeyField(Map classKeys, String clsName,
-            String fieldName) {
+    public static boolean isKeyField(Map<String, Set> classKeys, String clsName,
+                                     String fieldName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set keys = (Set) classKeys.get(clsName);
+        Set keys = classKeys.get(clsName);
         if (keys != null) {
             Iterator i = keys.iterator();
             while (i.hasNext()) {
