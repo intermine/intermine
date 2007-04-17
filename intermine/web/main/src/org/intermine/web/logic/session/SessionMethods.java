@@ -323,6 +323,19 @@ public class SessionMethods
     }
 
     /**
+     * Get the sort order for the query the user is currently editing
+     * @param session current session
+     * @return sort by list
+     */
+    public static List<Path> getEditingSortOrder(HttpSession session) {
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        if (query == null) {
+            throw new IllegalStateException("No query on session");
+        }
+        return query.getSortOrder();
+    }
+    
+    /**
      * Save a clone of a query to the user's Profile.
      *
      * @param session The HTTP session
