@@ -109,8 +109,7 @@ public class QueryBuilderController extends TilesAction
         
         String prefix = (String) session.getAttribute("prefix");
         Collection nodes = 
-            MainHelper.makeNodes(((Path) session.getAttribute("path")).toStringNoConstraints(),
-                                 model, isSuperUser);
+            MainHelper.makeNodes((String) session.getAttribute("path"), model, isSuperUser);
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
             // Update view nodes

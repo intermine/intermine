@@ -218,7 +218,39 @@ public class PathQuery
             problems.add(e);
         }
     }
-    
+
+    /**
+     * Remove the Path with the given String representation from the view.
+     * @param pathString the path to remove
+     */
+    public void removePathStringFromView(String pathString) {
+        Iterator<Path> iter = view.iterator();
+        while (iter.hasNext()) {
+            Path viewPath = iter.next();
+            if (viewPath.toStringNoConstraints().equals(pathString)
+                || viewPath.toString().equals(pathString)) {
+                iter.remove();
+                return;
+            }
+        }
+    }
+
+    /**
+     * Return true if and only if the view contains a Path that has pathString as its String
+     * representation.
+     * @param pathString the path to test
+     * @return true if found
+     */
+    public boolean viewContains(String pathString) {
+        for (Path viewPath: getView()) {
+            if (viewPath.toStringNoConstraints().equals(pathString)
+                || viewPath.toString().equals(pathString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Get info regarding this query
      * @return the info

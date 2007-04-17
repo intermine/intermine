@@ -399,12 +399,4 @@ public class TemplateQuery extends PathQuery
     public void setEdited(boolean edited) {
         this.edited = edited;
     }
-
-    /**
-     * @param path
-     */
-    public void addPathString(String path) {
-        
-    }
-
 }

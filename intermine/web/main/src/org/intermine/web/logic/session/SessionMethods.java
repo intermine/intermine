@@ -252,7 +252,7 @@ public class SessionMethods
         if (pathString.indexOf(".") != -1) {
             pathString = pathString.substring(0, pathString.indexOf("."));
         }
-        session.setAttribute("path", path);
+        session.setAttribute("path", pathString);
         session.removeAttribute("prefix");
 
         setHasQueryCookie(session, response, true);

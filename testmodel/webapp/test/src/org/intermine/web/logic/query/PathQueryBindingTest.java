@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
+import org.intermine.path.Path;
 import org.intermine.web.logic.ClassKeyHelper;
 
 import java.io.ByteArrayInputStream;
@@ -56,27 +57,29 @@ public class PathQueryBindingTest extends TestCase
     public Map getExpectedQueries() {
         Map expected = new LinkedHashMap();
         
+        Model model = Model.getInstanceByName("testmodel");
         //allCompanies
-        PathQuery allCompanies = new PathQuery(Model.getInstanceByName("testmodel"));
-        List view = new ArrayList();
-        view.add("Company");
+        PathQuery allCompanies = new PathQuery(model);
+        List<Path> view = new ArrayList();
+        view.add(MainHelper.makePath(model, allCompanies, "Company"));
         allCompanies.setView(view);
         expected.put("allCompanies", allCompanies);
         
         //managers
-        PathQuery managers = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathQuery managers = new PathQuery(model);
         PathNode employee = managers.addNode("Employee");
         employee.setType("Manager");
         expected.put("managers", managers);
         
         view = new ArrayList();
         //employeesWithOldManagers
-        PathQuery employeesWithOldManagers = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathQuery employeesWithOldManagers = new PathQuery(model);
         view = new ArrayList();
-        view.add("Employee.name");
-        view.add("Employee.age");
-        view.add("Employee.department.name");
-        view.add("Employee.department.manager.age");
+        view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.name"));
+        view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.age"));
+        view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.department.name"));
+        view.add(MainHelper.makePath(model, employeesWithOldManagers, 
+                                     "Employee.department.manager.age"));
         employeesWithOldManagers.setView(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
@@ -84,9 +87,9 @@ public class PathQueryBindingTest extends TestCase
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
         
         //vatNumberInBag
-        PathQuery vatNumberInBag = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathQuery vatNumberInBag = new PathQuery(model);
         view = new ArrayList();
-        view.add("Company");
+        view.add(MainHelper.makePath(model, vatNumberInBag, "Company"));
         vatNumberInBag.setView(view);
         PathNode company = vatNumberInBag.addNode("Company");
         company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
@@ -94,9 +97,9 @@ public class PathQueryBindingTest extends TestCase
         expected.put("vatNumberInBag", vatNumberInBag);
         
         // employeesInBag
-        PathQuery employeesInBag = new PathQuery(Model.getInstanceByName("testmodel"));
+        PathQuery employeesInBag = new PathQuery(model);
         view = new ArrayList();
-        view.add("Employee.name");
+        view.add(MainHelper.makePath(model, employeesInBag, "Employee.name"));
         employeesInBag.setView(view);
         PathNode employeeEnd = employeesInBag.addNode("Employee.end");
         employeeEnd.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));

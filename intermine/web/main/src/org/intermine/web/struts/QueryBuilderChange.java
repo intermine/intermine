@@ -134,7 +134,7 @@ public class QueryBuilderChange extends DispatchAction
         // eg. Department.employees.salary where salary is only defined in a subclass of Employee
         // note that we first have to find out what type Department thinks the employees field is
         // and then check if any of the view nodes assume the field is constrained to a subclass
-        String parentType = ((PathNode) pathQuery.getNodes().get(path)).getParentType();
+        String parentType = pathQuery.getNodes().get(path).getParentType();
 
         Model model = pathQuery.getModel();
 
@@ -147,10 +147,10 @@ public class QueryBuilderChange extends DispatchAction
                 ReferenceDescriptor rf = (ReferenceDescriptor) fd;
                 ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
 
-                Iterator viewPathIter = pathQuery.getView().iterator();
+                Iterator<Path> viewPathIter = pathQuery.getView().iterator();
 
                 while (viewPathIter.hasNext()) {
-                    String viewPath = (String) viewPathIter.next();
+                    String viewPath = viewPathIter.next().toStringNoConstraints();
 
                     if (viewPath.startsWith(path) && !viewPath.equals(path)) {
                         String fieldName = viewPath.substring(path.length() + 1);
@@ -226,7 +226,7 @@ public class QueryBuilderChange extends DispatchAction
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
-        ((PathNode) query.getNodes().get(path)).getConstraints().remove(index);
+        query.getNodes().get(path).getConstraints().remove(index);
         query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
         
         return mapping.findForward("query");
