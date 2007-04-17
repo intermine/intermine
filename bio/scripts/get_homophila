@@ -10,6 +10,11 @@ use strict;
 use warnings;
 
 use IO::All;
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
 
 my $homophila_server = "http://superfly.ucsd.edu/homophila";
 my $homophila_data_file = "homophila_all.txt";
@@ -17,48 +22,42 @@ my $homophila_matches_file = "homophila_matches.txt";
 my $homophila_diseases_file = "homophila_diseases.txt";
 my $protein_ids_file = "protein_ids.txt";
 
-my $version;
+my ($day,$month,$year);
 
+#get text from homophila homepage
 my $homophila_page = io($homophila_server)->slurp();
 
-if ($homophila_page =~ /Version ([\d\.]+)/) {
-  $version = $1;
+#get last update date and convert it to standard /shared/data/ date format
+if ($homophila_page =~ /Last update:\s([\S]+)\s([\d]+)\s([\S]+)\s([\d]+)/) {
+  $day = $2;
+  $month = &convert_month($3);
+  $year = $4;
 } else {
-  die "can't find version number in page read from $homophila_server\n";
+  die "can't find last update in page read from $homophila_server\n";
 }
-
-my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime;
-
-$month += 1;
-$year -= 100;
-$year += 2000;
-
 my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
-my $download_dir = "${version}_$date_string";
 
-if (-d "homophila/$download_dir") {
-  die "homophila/$download_dir already exists - exiting\n";
+#destination directories
+my $homophila_main_dir = "/shared/data/homophila";
+my $download_dir = "$homophila_main_dir/$date_string";
+
+#make sure that the necessary directories exist and download the file
+&checkdir_exists($homophila_main_dir);
+if(&checkdir_exists($download_dir)==1){
+	my $file_to_get = "$homophila_server/$homophila_data_file.gz";
+	my $destination = "$download_dir/$homophila_data_file.gz";
+	&http_download($file_to_get,$destination);
+	&unzip_dir($download_dir);
+}else{
+	die " current version up to date - skipping download\n";
 }
-
-mkdir "homophila/$download_dir";
-
-my $file_to_get = "$homophila_server/$homophila_data_file.gz";
-
-print "getting $file_to_get\n";
-
-io($file_to_get) > io("homophila/$download_dir/$homophila_data_file.gz");
-
-if ((system "gzip -dr homophila/$download_dir") != 0) {
-  die qq|system "gzip -dr homophila/$download_dir" failed: $?\n|;
-}
-
-open HOMOPHILA_DATA, "homophila/$download_dir/$homophila_data_file"
-  or die "can't open homophila/$download_dir/$homophila_data_file\n";
+#process the downloaded file
+open HOMOPHILA_DATA, "$download_dir/$homophila_data_file"
+  or die "can't open $download_dir/$homophila_data_file\n";
 
 my $line = <HOMOPHILA_DATA>;
-
 if ($line !~ /CG\tOMIM_ID/) {
-  die "expected first line of homophila/$download_dir/$homophila_data_file to be a header\n";
+  die "expected first line of $download_dir/$homophila_data_file to be a header\n";
 }
 
 my %homophila_matches = ();
@@ -66,38 +65,61 @@ my %homophila_diseases = ();
 my %proteinID = ();
 
 while ($line = <HOMOPHILA_DATA>) {
-  chomp $line;
-  my @bits = split /\t/, $line;
-  # get unique matches and diseases
-  $homophila_matches{join "\t", @bits[0..3]}++;
-  if(@bits[1,6]){
-  $homophila_diseases{join "\t", @bits[1,6]}++;
-  }
-  #and protein Ids
+	chomp $line;
+	my @bits = split /\t/, $line;
+	
+	#get unique matches and diseases
+	$homophila_matches{join "\t", @bits[0..3]}++;
+	if(@bits[1,6]){
+		$homophila_diseases{join "\t", @bits[1,6]}++;
+	}
+	#and protein Ids
 	$proteinID{$bits[2]} = $bits[2];
 }
-
-open HOMOPHILA_MATCHES, ">homophila/$download_dir/$homophila_matches_file"
-   or die "can't open homophila/$download_dir/$homophila_matches_file\n";
-
-open HOMOPHILA_DISEASES, ">homophila/$download_dir/$homophila_diseases_file"
-   or die "can't open homophila/$download_dir/$homophila_diseases_file\n";
-
-for my $match (sort keys %homophila_matches) {
-  print HOMOPHILA_MATCHES "$match\n";
-}
-
-for my $disease (sort keys %homophila_diseases) {
-  print HOMOPHILA_DISEASES "$disease\n";
-}
-
 close HOMOPHILA_DATA;
-close HOMOPHILA_MATCHES;
-close HOMOPHILA_DISEASES;
 
+#write processed data to file
+my $matches = "$download_dir/$homophila_matches_file";
+&print_hash2file($matches,%homophila_matches);
+my $diseases = "$download_dir/$homophila_diseases_file";
+&print_hash2file($diseases,%homophila_diseases);
+
+#print file
+sub print_hash2file{
+my ($file, %hash) = @_;
+
+open FH, ">$file"
+   or die "can't open $file\n";
+for my $line (sort keys %hash) {
+  print FH "$line\n";
+}
+close FH;
+}
+
+#convert text based Jan/Feb to 01/02
+sub convert_month{
+my $month = shift;
+my $digit;
+
+for($month){
+	if(/^Jan/)	{$digit = "01";}
+	if(/^Feb/)	{$digit = "02";}
+	if(/^Mar/)	{$digit = "03";}
+	if(/^Apr/)	{$digit = "04";}
+	if(/^May/)	{$digit = "05";}
+	if(/^Jun/)	{$digit = "06";}
+	if(/^Jul/)	{$digit = "07";}
+	if(/^Aug/)	{$digit = "08";}
+	if(/^Sep/)	{$digit = "09";}
+	if(/^Oct/)	{$digit = "10";}
+	if(/^Nov/)	{$digit = "11";}
+	if(/^Dec/)	{$digit = "12";}
+}
+return $digit;
+}
 #===================================================================================
 # this part replaces the manual batch upload of protein ids to ncbi entrez
-# use eutils to access ncbi with the protein Ids and retrieve the GenPept entries.
+# uses eutils to access ncbi with the protein Ids and retrieve the GenPept entries.
 
 use LWP::Simple;
 
@@ -115,8 +137,8 @@ my $report = "gp";
 my $esearch = "$utils/esearch.fcgi?" .
               "db=$db&retmax=1&usehistory=y&term=";
 
-open SEQUENCES, ">homophila/$download_dir/$sequences_file"
-   or die "can't open homophila/$download_dir/$sequences_file\n";
+open SEQUENCES, ">$download_dir/$sequences_file"
+   or die "can't open $download_dir/$sequences_file\n";
 
 for my $prot (sort keys %proteinID) {
 	# id to be queried by esearch and final esearch URL
@@ -160,14 +182,12 @@ my $future = (time + 3);
 
 # output file
 my $prot_gene_file = "protein_gene.txt";
-
+my $source = "$download_dir/$sequences_file";
 my $more = 0;
 my $cds = 0;
 
-my $source = "homophila/$download_dir/$sequences_file";
-
-open PROT_GENES, ">homophila/$download_dir/$prot_gene_file"
-   or die "can't open homophila/$download_dir/$prot_gene_file\n";
+open PROT_GENES, ">$download_dir/$prot_gene_file"
+   or die "can't open $download_dir/$prot_gene_file\n";
 
 open(FILE, "<$source") or die "$!";
 while (<FILE>) {
@@ -192,7 +212,5 @@ close (FILE) or die "$!";
 close PROT_GENES;
 
 # create the current@ link
-unlink "homophila/current";
-warn "created $download_dir\n";
-symlink $download_dir, "homophila/current" or die "can't create homophila/current";
-
+my $current_link = "/shared/data/homophila/current";
+&make_link($date_string,$current_link);
