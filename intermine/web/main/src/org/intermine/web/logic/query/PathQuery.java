@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -42,12 +43,11 @@ public class PathQuery
     private static final Logger LOG = Logger.getLogger(PathQuery.class);
     
     protected Model model;
-    protected LinkedHashMap nodes = new LinkedHashMap();
-    protected List<Path> view = new ArrayList();
+    protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
+    protected List<Path> view = new ArrayList<Path>();
     protected ResultsInfo info;
-    protected ArrayList problems = new ArrayList();
+    protected ArrayList<Exception> problems = new ArrayList<Exception>();
     protected LogicExpression constraintLogic = null;
-    protected Map alternativeViews = new TreeMap();
 
     /**
      * Construct a new instance of PathQuery.
@@ -69,7 +69,6 @@ public class PathQuery
         this.info = query.info;
         this.problems = query.problems;
         this.constraintLogic = query.constraintLogic;
-        this.alternativeViews = query.alternativeViews;
     }
 
     /**
@@ -111,7 +110,7 @@ public class PathQuery
         if (getAllConstraints().size() <= 1) {
             setConstraintLogic(null);
         } else {
-            Set codes = getConstraintCodes();            
+            Set<String> codes = getConstraintCodes();            
             if (constraintLogic != null) {
                 // limit to the actual variables
                 constraintLogic.removeAllVariablesExcept(getConstraintCodes());
@@ -126,10 +125,10 @@ public class PathQuery
      * Get all constraint codes.
      * @return all present constraint codes
      */
-    private Set getConstraintCodes() {
-        Set codes = new HashSet();
-        for (Iterator iter = getAllConstraints().iterator(); iter.hasNext(); ) {
-            codes.add(((Constraint) iter.next()).getCode());
+    private Set<String> getConstraintCodes() {
+        Set<String> codes = new HashSet<String>();
+        for (Iterator<Constraint> iter = getAllConstraints().iterator(); iter.hasNext(); ) {
+            codes.add(iter.next().getCode());
         }
         return codes;
     }
@@ -146,7 +145,7 @@ public class PathQuery
      * Gets the value of nodes
      * @return the value of nodes
      */
-    public Map getNodes() {
+    public Map<String, PathNode> getNodes() {
         return nodes;
     }
     
@@ -156,17 +155,17 @@ public class PathQuery
      * @return the PathNode for path path
      */
     public PathNode getNode(String path) {
-        return (PathNode) nodes.get(path);
+        return nodes.get(path);
     }
     
     /**
      * Get all constraints.
      * @return all constraints
      */
-    public List getAllConstraints() {
-        ArrayList list = new ArrayList();
-        for (Iterator iter = nodes.values().iterator(); iter.hasNext(); ) {
-            PathNode node = (PathNode) iter.next();
+    public List<Constraint> getAllConstraints() {
+        List<Constraint> list = new ArrayList<Constraint>();
+        for (Iterator<PathNode> iter = nodes.values().iterator(); iter.hasNext(); ) {
+            PathNode node = iter.next();
             list.addAll(node.getConstraints());
         }
         return list;
@@ -208,10 +207,10 @@ public class PathQuery
      * Provide a list of the names of bags mentioned in the query
      * @return the list of bag names
      */
-    public List getBagNames() {
-        List bagNames = new ArrayList();
-        for (Iterator i = nodes.values().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
+    public List<Object> getBagNames() {
+        List<Object> bagNames = new ArrayList<Object>();
+        for (Iterator<PathNode> i = nodes.values().iterator(); i.hasNext();) {
+            PathNode node = i.next();
             for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
                 Constraint c = (Constraint) j.next();
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
@@ -244,16 +243,16 @@ public class PathQuery
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
             if (nodes.containsKey(prefix)) {
-                Iterator pathsIter = nodes.keySet().iterator();
+                Iterator<String> pathsIter = nodes.keySet().iterator();
 
                 while (pathsIter.hasNext()) {
-                    String pathFromMap = (String) pathsIter.next(); 
+                    String pathFromMap = pathsIter.next(); 
                     if (pathFromMap.startsWith(prefix)) {
                         previousNodePath = pathFromMap;
                     }
                 }
 
-                PathNode parent = (PathNode) nodes.get(prefix);
+                PathNode parent = nodes.get(prefix);
                 String fieldName = path.substring(path.lastIndexOf(".") + 1);
                 node = new PathNode(parent, fieldName);
                 try {
@@ -277,7 +276,7 @@ public class PathQuery
      * @return exceptions relating to this path query
      */
     public Exception[] getProblems() {
-        return (Exception[]) problems.toArray(new Exception[0]);
+        return problems.toArray(new Exception[0]);
     }
     
     /**
@@ -294,13 +293,13 @@ public class PathQuery
      */
     public Object clone() {
         PathQuery query = new PathQuery(model);
-        for (Iterator i = nodes.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            query.getNodes().put(entry.getKey(), clone(query, (PathNode) entry.getValue()));
+        for (Iterator<Entry<String, PathNode>> i = nodes.entrySet().iterator(); i.hasNext();) {
+            Entry<String, PathNode> entry = i.next();
+            query.getNodes().put(entry.getKey(), clone(query, entry.getValue()));
         }
         query.getView().addAll(view);
         if (problems != null) {
-            query.problems = new ArrayList(problems);
+            query.problems = new ArrayList<Exception>(problems);
         }
         query.setConstraintLogic(getConstraintLogic());
         return query;
@@ -314,7 +313,7 @@ public class PathQuery
      */
     protected PathNode clone(PathQuery query, PathNode node) {
         PathNode newNode;
-        PathNode parent = (PathNode) nodes.get(node.getPrefix());
+        PathNode parent = nodes.get(node.getPrefix());
         if (parent == null) {
             newNode = new PathNode(node.getType());
         } else {
@@ -393,9 +392,9 @@ public class PathQuery
      * @return the Constraint with matching code or null
      */
     public Constraint getConstraintByCode(String string) {
-        Iterator iter = getAllConstraints().iterator();
+        Iterator<Constraint> iter = getAllConstraints().iterator();
         while (iter.hasNext()) {
-            Constraint c = (Constraint) iter.next();
+            Constraint c = iter.next();
             if (string.equals(c.getCode())) {
                 return c;
             }
@@ -408,18 +407,18 @@ public class PathQuery
      * @param codes Set of codes (Strings)
      * @param operator operator to add with
      */
-    protected void addCodesToLogic(Set codes, String operator) {
+    protected void addCodesToLogic(Set<String> codes, String operator) {
         String logic = getConstraintLogic();
         if (logic == null) {
             logic = "";
         } else {
             logic = "(" + logic + ")";
         }
-        for (Iterator iter = codes.iterator(); iter.hasNext(); ) {
+        for (Iterator<String> iter = codes.iterator(); iter.hasNext(); ) {
             if (!StringUtils.isEmpty(logic)) {
                 logic += " " + operator + " ";
             }
-            logic += (String) iter.next();
+            logic += iter.next();
         }
         setConstraintLogic(logic);
     }
