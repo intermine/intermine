@@ -13,8 +13,11 @@
 use strict;
 use warnings;
 
-use lib "../../intermine/perl/lib/InterMine/";
-use DataDownloader;
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
 
 my $uniprot_go_server = "ftp.ebi.ac.uk";
 my $uniprot_go_dir = "pub/databases/GO/goa/UNIPROT";
@@ -55,7 +58,7 @@ $go_connection->cwd($go_dir)
 	or die "Cannot change working directory ", $go_connection->message;
 
 my $go_download_dir = "/shared/data/gene_ontology";
-&download($go_connection,$go_download_dir,$go_file);
+&ftp_download($go_connection,$go_download_dir,$go_file);
 
 ### Get goa files
 my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
@@ -71,8 +74,8 @@ my $uniprot_download_dir = "$uniprot_dir/$uniprot_date_string";
 
 &checkdir_exists($uniprot_dir);
 if(&checkdir_exists($uniprot_download_dir)==1){
-  	&download($goa_connection,$uniprot_download_dir,$goa_file_gz);
-	&download($goa_connection,$uniprot_download_dir,"README");
+  	&ftp_download($goa_connection,$uniprot_download_dir,$goa_file_gz);
+	&ftp_download($goa_connection,$uniprot_download_dir,"README");
 	&unzip_dir($uniprot_download_dir);
   
   	open GOA_FILE, "$uniprot_download_dir/$goa_file"
@@ -132,7 +135,7 @@ for my $source_database (keys %gene_association_map) {
 	#create download directory and download if necessary
 	my $gene_association_download_dir = "$source_dir/$date_string";
 	if(&checkdir_exists($gene_association_download_dir)==1){
-		&download($go_connection,$gene_association_download_dir,$gene_association_file_gz);
+		&ftp_download($go_connection,$gene_association_download_dir,$gene_association_file_gz);
 		&unzip_dir($gene_association_download_dir);
     	
 		#make links to current data

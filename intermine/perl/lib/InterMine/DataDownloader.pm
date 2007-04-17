@@ -1,13 +1,13 @@
-package DataDownloader;
+package InterMine::DataDownloader;
 
 use strict;
 use warnings;
 use Net::FTP;
-
+use IO::All;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link download checkdir_exists date_string_file unzip_dir);
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download checkdir_exists date_string_file unzip_dir);
 
 #connect to server
 sub ftp_connect(){
@@ -29,13 +29,21 @@ sub make_link(){
 	symlink ($dir, "$link") or die "can't create $link";
 }
 
-#download and unzip a file, unless the output directory already exists
-sub download(){
+#download file from ftp server
+sub ftp_download(){
 	my ($ftp,$dir, $file) = @_;
 	print STDERR "getting $file to $dir\n";
 
   	$ftp->binary();
   	$ftp->get($file, "$dir/$file")or die "get failed ", $ftp->message;
+}
+
+#download file from http server
+sub http_download(){
+	my ($source, $destination) = @_;
+	
+	print "getting $source\n";
+	io($source) > io($destination);
 }
 
 #check if a directory exists, create it if it doesn't

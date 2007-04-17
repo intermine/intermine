@@ -6,8 +6,11 @@
 use strict;
 use warnings;
 
-use lib "../../intermine/perl/lib/InterMine/";
-use DataDownloader;
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
 
 my $ebi_server = "ftp.ebi.ac.uk";
 my $intact_dir = "pub/databases/intact/current/";
@@ -49,11 +52,11 @@ if(&checkdir_exists($download_dir)==1){
 	for my $psi_file (@psi_files) {
 	    my $start = substr($psi_file, 0, index($psi_file, "_"));
 	    if (grep {$start eq $_} @organisms) {
-	        &download($connection,$download_dir,$psi_file);
+	        &ftp_download($connection,$download_dir,$psi_file);
 	    }
 	}
 }else{ 
-	warn " current version up to date - skipping download\n";
+	die " current version up to date - skipping download\n";
 }
 
 my $current_link = "/shared/data/psi/intact/current";
