@@ -25,9 +25,9 @@
       </div>
     </noscript>
     <script type="text/javascript">
-    <!--
-    document.write('<p><fmt:message key="view.columnOrderingTip.jscript"/></p>');
-    // -->
+       <!--
+       document.write('<p><fmt:message key="view.columnOrderingTip.jscript"/></p>');
+       // -->
     </script>
   </c:if>
 
@@ -53,7 +53,7 @@
       </p>
     </div>
 
-     <script type="text/javascript">
+    <script type="text/javascript">
      <!--
        var previousOrder = '';
 
@@ -83,7 +83,7 @@
          recordCurrentOrder();
        }
      //-->
-     </script>
+    </script>
   </c:if>
 </div>
 

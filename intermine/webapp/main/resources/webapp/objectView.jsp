@@ -28,8 +28,8 @@
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
           <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
- 	        [<c:out value="${resultElement.type}" />]
- 	      </c:if>
+ 	    [<c:out value="${resultElement.type}" />]
+ 	  </c:if>
         </c:when>
         <c:otherwise>
           <c:out value="${object}" default="${nullFieldText}"/>
@@ -37,8 +37,8 @@
       </c:choose>
     </c:when>
     <c:otherwise>
-        
-  
+
+
       <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
       <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">

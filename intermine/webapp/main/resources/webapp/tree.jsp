@@ -33,36 +33,36 @@
   class="treeOpen"
          </c:if>
       >
-      <span   
+      <span
          <c:if test="${node.selected}">
   class="treeSelected"
          </c:if>
       >
-      <a name="${node.object.name}"/>
-      <c:choose>
-        <c:when test="${node.object.name == 'org.intermine.model.InterMineObject'}">
-          <im:unqualify className="${node.object.name}" var="name"/>${name}
-        </c:when>
-        <c:otherwise>
-          <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
+        <a name="${node.object.name}"/>
+        <c:choose>
+          <c:when test="${node.object.name == 'org.intermine.model.InterMineObject'}">
             <im:unqualify className="${node.object.name}" var="name"/>${name}
-          </html:link>
-        </c:otherwise>
-      </c:choose>
-      <im:typehelp type="${name}"/>
+          </c:when>
+          <c:otherwise>
+            <html:link action="/changeTree?method=select&amp;node=${node.object.name}">
+              <im:unqualify className="${node.object.name}" var="name"/>${name}
+            </html:link>
+          </c:otherwise>
+        </c:choose>
+        <im:typehelp type="${name}"/>
       </span>
       </span>
       ${node.text}
-      
+
       <c:if test="${IS_SUPERUSER}">
-        
+
         <c:set var="descriptor" value="${node.object}"/>
         <tiles:insert name="inlineTagEditor.tile">
           <tiles:put name="taggable" beanName="descriptor"/>
           <tiles:put name="show" value="true"/>
         </tiles:insert>
       </c:if>
-      
+
     </div>
   </c:forEach>
 </div>

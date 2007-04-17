@@ -11,36 +11,36 @@
 
 
 <script type="text/javascript">
-<!--//<![CDATA[
-  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
-  var detailsType = 'bag';
-//]]>-->
+   <!--//<![CDATA[
+     var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
+     var detailsType = 'bag';
+   //]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
 </script>
 
 <div class="heading">
-    Bag Contents
+  Bag Contents
 </div>
 
 <div class="body" >
-<p>The bag <b>${bag.name}</b> contains ${bag.size} elements of type: <b>${bag.type}</b>.</p>
-<html:form action="/modifyBagDetailsAction">
-<html:hidden property="bagName" value="${bag.name}"/>
+  <p>The bag <b>${bag.name}</b> contains ${bag.size} elements of type: <b>${bag.type}</b>.</p>
+  <html:form action="/modifyBagDetailsAction">
+    <html:hidden property="bagName" value="${bag.name}"/>
 
-<table><tr><td width="50%">
-<table class="results" cellspacing="0">
+    <table><tr><td width="50%">
+          <table class="results" cellspacing="0">
   <tr>
     <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
       <th align="center" valign="top">
-	<div>              
-	  <c:out value="${fn:replace(column.path, '.', '&nbsp;> ')}" escapeXml="false"/>
-	</div>
+        <div>
+          <c:out value="${fn:replace(column.path, '.', '&nbsp;> ')}" escapeXml="false"/>
+        </div>
       </th>
     </c:forEach>
   </tr>
- 
+
   <c:forEach items="${pagedColl.rows}" var="row" varStatus="status">
     <c:set var="object" value="${row[0]}" scope="request"/>
        <c:set var="rowClass">
@@ -56,15 +56,15 @@
           <c:choose>
             <c:when test="${pagedColl.columnNames[column.index] == 'Gene.chromosomeLocation'}">
            </c:when>
-	        <c:when test="${resultElement.keyField}">
-	          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=|bag.${bag.name}|${resultElement.id}">
-		        <c:out value="${resultElement.field}" />
-	          </html:link>
-	        </c:when>
-	        <c:otherwise>
-		        <c:out value="${resultElement.field}" />
-		    </c:otherwise>
-		  </c:choose>
+                <c:when test="${resultElement.keyField}">
+                  <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=|bag.${bag.name}|${resultElement.id}">
+                        <c:out value="${resultElement.field}" />
+                  </html:link>
+                </c:when>
+                <c:otherwise>
+                        <c:out value="${resultElement.field}" />
+                    </c:otherwise>
+                  </c:choose>
        </td>
      </c:forEach>
     </tr>
@@ -118,7 +118,7 @@
     <div class="heading">
         Viewers
     </div>
-    <div class="body">        
+    <div class="body">
             <c:forEach items="${graphDisplayerArray}" var="htmlContent">
                 <c:choose>
                     <c:when test="${widgetCount % 2 == 0}">
@@ -144,7 +144,7 @@
             </c:forEach>
 
             <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
-                
+
                     <c:choose>
                         <c:when test="${widgetCount % 2 == 0}">
                             <tr valign="top"><td>
@@ -156,7 +156,7 @@
 
                             <div class="widget">
                             <c:choose>
-								<c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
+                                                                <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
                                 <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
                                 <div class="widget_slide" align="center">
                                 <table class="results" cellspacing="0">
@@ -217,44 +217,44 @@
                                 <c:set var="widgetCount" value="${widgetCount+1}" />
 
                         </c:forEach>
-                 
+
                 </div>
             </c:if>
 
 <c:if test="${bag.type == 'Gene'}">
 
- 	<c:choose>
-		<c:when test="${widgetCount % 2 == 0}">
-    	    <tr valign="top"><td>
+        <c:choose>
+                <c:when test="${widgetCount % 2 == 0}">
+            <tr valign="top"><td>
         </c:when>
         <c:otherwise>
              <td>
         </c:otherwise>
     </c:choose>
 
-	<%-- go stats --%>	
+        <%-- go stats --%>
     <table cellpadding="0" cellspacing="10">
     <tr>
-    	<td><iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe></td>
+        <td><iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe></td>
     </tr>
     </table>
     <br>
 
-	<c:choose>
-		<c:when test="${widgetCount % 2 == 0}">
-			</td>	
-		</c:when>
-		<c:otherwise>
-			</td></tr>
-		</c:otherwise>
-	</c:choose>
-	<c:set var="widgetCount" value="${widgetCount+1}" />
+        <c:choose>
+                <c:when test="${widgetCount % 2 == 0}">
+                        </td>
+                </c:when>
+                <c:otherwise>
+                        </td></tr>
+                </c:otherwise>
+        </c:choose>
+        <c:set var="widgetCount" value="${widgetCount+1}" />
 </c:if>
 
 </table>
-<!-- /widget table -->   
-   
-   
+<!-- /widget table -->
+
+
 <div class="heading">
   Templates
 </div>
@@ -266,7 +266,7 @@
       <tiles:insert name="objectDetailsAspect.tile">
         <tiles:put name="placement" value="aspect:${aspect}"/>
         <tiles:put name="trail" value="|bag${bag.name}"/>
-        <tiles:put name="interMineIdBag" beanName="bag"/>      
+        <tiles:put name="interMineIdBag" beanName="bag"/>
       </tiles:insert>
     </c:forEach>
 </div>

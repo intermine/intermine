@@ -6,23 +6,23 @@
 <html:xhtml/>
 
 <html>
-<head>
-<title><fmt:message key="waiting.title"/></title>
+  <head>
+    <title><fmt:message key="waiting.title"/></title>
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <noscript>
       <meta http-equiv="Refresh" content="${POLL_REFRESH_SECONDS}; URL=<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}"/>">
     </noscript>
-</head>
-<body>
-  <tiles:insert page="/header.jsp"/>
-  <div class="waitmsg">
-    <fmt:message key="waiting.message"/>
-    <p>
-      <img border="0" src="model/progress${imgnum}.gif" alt="progress"/>
-    </p>
-  </div>
-  <script language="JavaScript">
+  </head>
+  <body>
+    <tiles:insert page="/header.jsp"/>
+    <div class="waitmsg">
+      <fmt:message key="waiting.message"/>
+      <p>
+        <img border="0" src="model/progress${imgnum}.gif" alt="progress"/>
+      </p>
+    </div>
+    <script language="JavaScript">
   <!--
     function timedredirect()
     {
@@ -31,5 +31,6 @@
     setTimeout("timedredirect()", ${POLL_REFRESH_SECONDS}*1000 );
     window.status = '';
   //-->
-  </script>
-</body>
+    </script>
+  </body>
+</html>
