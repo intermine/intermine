@@ -15,49 +15,49 @@
     <tr>
       <td width="99%">
 	<div class="body">
-      		<c:choose>
-	      	  <c:when test="${!empty ASPECTS}">
-	            <p><fmt:message key="begin.aspect.intro"/></p>
-	      	    <tiles:insert page="/aspectIcons.jsp"/>
-	      	  </c:when>
-	      	  <c:otherwise>
-	      	  	<c:forEach items="${CATEGORIES}" var="category">
-	              <c:if test="${!empty CATEGORY_CLASSES[category]}">
-	                <div class="heading"><c:out value="${category}"/></div>
-	                <div class="body">
-	                  <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-	                  <c:forEach items="${classes}" var="classname" varStatus="status">
-	                    <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-	                    ${classname}</a><c:if test="${!status.last}">,</c:if>
-	                  </c:forEach>
-	                  <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-	                    <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-	                  </c:if>
-	                </div>
-	                <im:vspacer height="5"/>
-	              </c:if>
-	            </c:forEach>
-	      	  </c:otherwise>
-	      	</c:choose>
-	</div>
-	        <%--
-	        <c:forEach items="${CATEGORIES}" var="category">
-	          <c:if test="${!empty CATEGORY_CLASSES[category]}">
-	            <div class="heading"><c:out value="${category}"/></div>
-	            <div class="body">
-	              <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-	              <c:forEach items="${classes}" var="classname" varStatus="status">
-	                <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
+      	  <c:choose>
+	    <c:when test="${!empty ASPECTS}">
+	      <p><fmt:message key="begin.aspect.intro"/></p>
+	      <tiles:insert page="/aspectIcons.jsp"/>
+	    </c:when>
+	    <c:otherwise>
+	      <c:forEach items="${CATEGORIES}" var="category">
+	        <c:if test="${!empty CATEGORY_CLASSES[category]}">
+	          <div class="heading"><c:out value="${category}"/></div>
+	          <div class="body">
+	            <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
+	            <c:forEach items="${classes}" var="classname" varStatus="status">
+	              <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
 	                ${classname}</a><c:if test="${!status.last}">,</c:if>
-	              </c:forEach>
-	              <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-	                <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-	              </c:if>
-	            </div>
-	            <im:vspacer height="5"/>
+	            </c:forEach>
+	            <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+	              <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
+	            </c:if>
+	          </div>
+	          <im:vspacer height="5"/>
+	        </c:if>
+	      </c:forEach>
+	    </c:otherwise>
+	  </c:choose>
+	</div>
+	<%--
+	    <c:forEach items="${CATEGORIES}" var="category">
+	      <c:if test="${!empty CATEGORY_CLASSES[category]}">
+	        <div class="heading"><c:out value="${category}"/></div>
+	        <div class="body">
+	          <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
+	          <c:forEach items="${classes}" var="classname" varStatus="status">
+	            <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
+	              ${classname}</a><c:if test="${!status.last}">,</c:if>
+	          </c:forEach>
+	          <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+	            <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
 	          </c:if>
-	        </c:forEach>
-	        --%>
+	        </div>
+	        <im:vspacer height="5"/>
+	      </c:if>
+	    </c:forEach>
+	    --%>
 
       </td>
       <td valign="top" align="right" nowrap="nowrap" width="1%" class="buildmenu">
@@ -97,7 +97,7 @@
     <div class="body" align="center">
       <tiles:insert name="browse.tile">
         <%--<tiles:put name="prompt" value="${WEB_PROPERTIES['begin.browse.prompt']}"/>
-        <tiles:put name="templateName" value="${browseTemplateName}"/>--%>
+            <tiles:put name="templateName" value="${browseTemplateName}"/>--%>
       </tiles:insert>
       <br/>
       <p class="smallnote">
@@ -121,22 +121,22 @@
 
 <%-- Search templates --%>
 <im:vspacer height="12"/>
-  <im:box titleKey="begin.heading.searchtemplates">
+<im:box titleKey="begin.heading.searchtemplates">
   <div class="body" align="center">
-  <html:form action="/templateSearch" method="get">
-    <fmt:message key="templateSearch.search.label"/>
-    <html:text property="queryString" size="40" styleId="queryString"/>
-    <html:select property="type">
-      <html:option key="templateSearch.form.global" value="global"/>
-      <html:option key="templateSearch.form.user" value="user"/>
-      <html:option key="templateSearch.form.all" value="ALL"/>
-    </html:select>
-    <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
-    <br/>
-    <p class="smallnote">
-       <fmt:message key="begin.searchtemplates.help.message"/>
-    </p>
-  </html:form>
+    <html:form action="/templateSearch" method="get">
+      <fmt:message key="templateSearch.search.label"/>
+      <html:text property="queryString" size="40" styleId="queryString"/>
+      <html:select property="type">
+        <html:option key="templateSearch.form.global" value="global"/>
+        <html:option key="templateSearch.form.user" value="user"/>
+        <html:option key="templateSearch.form.all" value="ALL"/>
+      </html:select>
+      <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
+      <br/>
+      <p class="smallnote">
+        <fmt:message key="begin.searchtemplates.help.message"/>
+      </p>
+    </html:form>
   </div>
 </im:box>
 <%-- /Search templates --%>

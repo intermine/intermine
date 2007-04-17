@@ -53,11 +53,11 @@
       <fmt:message key="bagBuild.bagType"/>
       <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
     	<c:forEach items="${preferredTypeList}" var="type">
-         <html:option value="${type}" style="font-weight:bold">${type}</html:option>
+          <html:option value="${type}" style="font-weight:bold">${type}</html:option>
     	</c:forEach>
         <html:option value="" style="text-align:center">----------------</html:option>
       	<c:forEach items="${typeList}" var="type">
-           <html:option value="${type}">${type}</html:option>
+          <html:option value="${type}">${type}</html:option>
       	</c:forEach>
       </html:select>
       <c:if test="${!empty extraBagQueryClass}">
@@ -73,49 +73,49 @@
           </html:select>
         </p>
       </c:if>
-      </p>
-      <h4>
-        <a href="javascript:switchInputs('paste', 'file');">
-          <img id='pasteToggle' src="images/disclosed.gif"/>
-          <fmt:message key="bagBuild.bagPaste"/>
-        </a>
-      </h4>
-      <table>
-        <tr><td>
+    </p>
+    <h4>
+      <a href="javascript:switchInputs('paste', 'file');">
+        <img id='pasteToggle' src="images/disclosed.gif"/>
+        <fmt:message key="bagBuild.bagPaste"/>
+      </a>
+    </h4>
+    <table>
+      <tr><td>
           <html:textarea styleId="pasteInput" disabled="false" property="text" rows="10" cols="40"/>
-        </td></tr>
-        <tr>
-          <td align="right">
-            <html:submit styleId="pasteSubmit" property="paste">
+      </td></tr>
+      <tr>
+        <td align="right">
+          <html:submit styleId="pasteSubmit" property="paste">
             <fmt:message key="bagBuild.makeBag"/>
           </html:submit>
-       </tr>
-       <tr>
-       <td>
-       <p>
-         <fmt:message key="bagBuild.or"/>
-       </p>
+      </tr>
+      <tr>
+        <td>
+          <p>
+            <fmt:message key="bagBuild.or"/>
+          </p>
 
-       <h4>
-         <a href="javascript:switchInputs('file', 'paste');">
-          <img id='fileToggle' src="images/undisclosed.gif"/>
-          <fmt:message key="bagBuild.bagFromFile"/>
-         </a>
-       </h4>
-       </td>
-       </tr>
-        <tr><td>
+          <h4>
+            <a href="javascript:switchInputs('file', 'paste');">
+              <img id='fileToggle' src="images/undisclosed.gif"/>
+              <fmt:message key="bagBuild.bagFromFile"/>
+            </a>
+          </h4>
+        </td>
+      </tr>
+      <tr><td>
           <fmt:message key="bagBuild.bagFromFile"/>:
           <br/>
           <html:file styleId="fileInput" property="formFile" disabled="true"/>
-        </td></tr>
-        <tr>
-          <td align="right">
+      </td></tr>
+      <tr>
+        <td align="right">
           <html:submit styleId="fileSubmit" property="file" disabled="true">
             <fmt:message key="bagBuild.makeBag"/>
           </html:submit>
-          </td>
-       </tr></table>
+        </td>
+    </tr></table>
   </html:form>
 </div>
 <!-- /bagBuild.jsp -->
