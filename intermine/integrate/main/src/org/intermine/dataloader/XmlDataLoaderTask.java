@@ -12,6 +12,7 @@ package org.intermine.dataloader;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ public class XmlDataLoaderTask extends Task
     protected FileSet fileSet;
     protected String sourceName;
     protected boolean ignoreDuplicates = false;
-    protected String file;
+    protected String file, xmlRes;
     
     /**
      * Set the IntegrationWriter.
@@ -57,11 +58,19 @@ public class XmlDataLoaderTask extends Task
     }
     
     /**
-     * Set XML resource name (to load data from classloader).
-     * @param resName classloader resource name
+     * Set a file name to load from
+     * @param file name of file to load
      */
     public void setFile(String file) {
         this.file = file;
+    }
+    
+    /**
+     * Set XML resource name (to load data from classloader).
+     * @param resName classloader resource name
+     */
+    public void setXmlResource(String xmlRes) {
+        this.xmlRes = xmlRes;
     }
     
     /**
@@ -101,28 +110,42 @@ public class XmlDataLoaderTask extends Task
             loader = new XmlDataLoader(iw);
             List<File> files = new ArrayList<File>();
 
-            if (file != null && !file.equals("")) {
-                files = new ArrayList<File>(Collections.singleton(new File(file)));
+            // read an InputStream from the classpath
+            if (xmlRes != null) {
+                InputStream is = getClass().getClassLoader().getResourceAsStream(xmlRes);
+                if (is == null) {
+                    throw new BuildException("Failed to find resource '" + xmlRes 
+                                             + "' on classpath.");
+                }
+                loader.processXml(is,
+                                  iw.getMainSource(sourceName),
+                                  iw.getSkeletonSource(sourceName));  
+
             } else {
-                DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
-                String[] fileArray = ds.getIncludedFiles();
-                for (int i = 0; i < fileArray.length; i++) {
-                    files.add(new File(ds.getBasedir(), fileArray[i]));
+
+                if (file != null && !file.equals("")) {
+                    files = new ArrayList<File>(Collections.singleton(new File(file)));
+                } else {
+                    DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
+                    String[] fileArray = ds.getIncludedFiles();
+                    for (int i = 0; i < fileArray.length; i++) {
+                        files.add(new File(ds.getBasedir(), fileArray[i]));
+                    }
+                    if (files.isEmpty()) {
+                        throw new BuildException("No xml files read from: " + fileSet.toString());
+                    }
                 }
                 if (files.isEmpty()) {
-                    throw new BuildException("No xml files read from: " + fileSet.toString());
+                    throw new BuildException("No files found to load for source: " + sourceName);
                 }
-            }
-            if (files.isEmpty()) {
-                throw new BuildException("No files found to load for source: " + sourceName);
-            }
-            Iterator<File> fileIter = files.iterator();
-            while (fileIter.hasNext()) {
-                toRead = fileIter.next();              
-                System.out .println("Processing file " + toRead.toString());
-                loader.processXml(new FileInputStream(toRead),
-                                  iw.getMainSource(sourceName),
-                                  iw.getSkeletonSource(sourceName)); 
+                Iterator<File> fileIter = files.iterator();
+                while (fileIter.hasNext()) {
+                    toRead = fileIter.next();              
+                    System.out .println("Processing file " + toRead.toString());
+                    loader.processXml(new FileInputStream(toRead),
+                                      iw.getMainSource(sourceName),
+                                      iw.getSkeletonSource(sourceName)); 
+                }
             }
         } catch (Exception e) {
             if (toRead == null) {
