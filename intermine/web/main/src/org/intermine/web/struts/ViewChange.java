@@ -24,6 +24,9 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -50,9 +53,9 @@ public class ViewChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
-
-        List view = SessionMethods.getEditingView(session);
-        view.remove(path);
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        
+        query.removePathStringFromView(path);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();

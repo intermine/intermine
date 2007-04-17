@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.intermine.metadata.Model;
+import org.intermine.path.Path;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
@@ -56,14 +57,14 @@ public class MainChangeTest  extends TestCase
 
         assertEquals(0, query.getNodes().keySet().size());
 
-        List expectedView = Arrays.asList(new Object[] {
-                                              "Employee",
-                                              "Employee.end",
-                                              "Employee.age",
-                                              "Employee.department",
-                                              "Employee.department.manager",
-                                              "Employee.department.manager.seniority"
-                                          });
+        List expectedView = Arrays.asList(new Path[] {
+            MainHelper.makePath(model, query, "Employee"),
+            MainHelper.makePath(model, query, "Employee.end"),
+            MainHelper.makePath(model, query, "Employee.age"),
+            MainHelper.makePath(model, query, "Employee.department"),
+            MainHelper.makePath(model, query, "Employee.department.manager"),
+            MainHelper.makePath(model, query, "Employee.department.manager.seniority")
+        });
 
         assertEquals(expectedView, query.getView());
     }
@@ -95,13 +96,13 @@ public class MainChangeTest  extends TestCase
         assertEquals(expectedNodes, new ArrayList(query.getNodes().keySet()));
 
         List expectedView = Arrays.asList(new Object[] {
-                                              "Employee",
-                                              "Employee.end",
-                                              "Employee.age",
-                                              "Employee.department",
-                                              "Employee.department.manager",
-                                              "Employee.department.manager.seniority"
-                                          });
+            MainHelper.makePath(model, query, "Employee"),
+            MainHelper.makePath(model, query, "Employee.end"),
+            MainHelper.makePath(model, query, "Employee.age"),
+            MainHelper.makePath(model, query, "Employee.department"),
+            MainHelper.makePath(model, query, "Employee.department.manager"),
+            MainHelper.makePath(model, query, "Employee.department.manager.seniority")
+        });
 
         assertEquals(expectedView, query.getView());
     }
@@ -127,13 +128,13 @@ public class MainChangeTest  extends TestCase
         QueryBuilderChange.removeNode(query, "Employee.department.manager");
 
         List expectedView = Arrays.asList(new Object[] {
-                                              "Employee",
-                                              "Employee.end",
-                                              "Employee.age",
-                                              "Employee.department",
-                                              "Employee.department.manager",
-                                              "Employee.department.manager.seniority"
-                                          });
+            MainHelper.makePath(model, query, "Employee"),
+            MainHelper.makePath(model, query, "Employee.end"),
+            MainHelper.makePath(model, query, "Employee.age"),
+            MainHelper.makePath(model, query, "Employee.department"),
+            MainHelper.makePath(model, query, "Employee.department.manager"),
+            MainHelper.makePath(model, query, "Employee.department.manager.seniority")
+        });
 
         assertEquals(expectedView, query.getView());
     }
@@ -159,16 +160,16 @@ public class MainChangeTest  extends TestCase
         QueryBuilderChange.removeNode(query, "Employee.department.manager.company");
 
         List expectedView = Arrays.asList(new Object[] {
-                                              "Employee",
-                                              "Employee.end",
-                                              "Employee.age",
-                                              "Employee.department",
-                                              "Employee.department.manager",
-                                              "Employee.department.manager.seniority",
-                                              "Employee.department.manager.company.address.address",
-                                              "Employee.department.manager.company.name",
-                                              "Employee.department.manager.company.address"
-                                          });
+            MainHelper.makePath(model, query, "Employee"),
+            MainHelper.makePath(model, query, "Employee.end"),
+            MainHelper.makePath(model, query, "Employee.age"),
+            MainHelper.makePath(model, query, "Employee.department"),
+            MainHelper.makePath(model, query, "Employee.department.manager"),
+            MainHelper.makePath(model, query, "Employee.department.manager.seniority"),
+            MainHelper.makePath(model, query, "Employee.department.manager.company.address.address"),
+            MainHelper.makePath(model, query, "Employee.department.manager.company.name"),
+            MainHelper.makePath(model, query, "Employee.department.manager.company.address")
+        });
 
         assertEquals(expectedView, query.getView());
     }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.intermine.metadata.Model;
+import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
@@ -58,8 +59,8 @@ public class ViewChangeTest extends MockStrutsTestCase
         verifyNoActionErrors();
         //verifyForward("query");
 
-        ArrayList expected = new ArrayList();
-        expected.add("Employee.name");
+        ArrayList<Path> expected = new ArrayList<Path>();
+        expected.add(MainHelper.makePath(model, query, "Employee.name"));
         assertEquals(expected, ((PathQuery) getSession().getAttribute(Constants.QUERY)).getView());
     }
 }

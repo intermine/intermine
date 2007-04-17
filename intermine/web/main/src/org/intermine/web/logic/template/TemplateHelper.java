@@ -39,6 +39,8 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.path.Path;
+
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -622,8 +624,7 @@ public class TemplateHelper
                 // NOTE: at one point this exhibited a bug where aliases were repeated
                 // in the generated query, seems to be fixed now though.
                 String path = node.getPathString();
-                Set view = new HashSet(templateClone.getView());
-                if (!view.contains(path)) {
+                if (!templateClone.viewContains(path)) {
                     templateClone.getView().add(MainHelper.makePath(templateClone.getModel(),
                                                                     templateClone, path));
                 }

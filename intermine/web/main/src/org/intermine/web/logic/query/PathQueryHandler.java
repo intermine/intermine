@@ -166,6 +166,7 @@ public class PathQueryHandler extends DefaultHandler
                 query.addPathStringToView(viewElement);
             }
             queries.put(queryName, query);
+            viewStrings = new ArrayList<String>();
         }
     }
     
