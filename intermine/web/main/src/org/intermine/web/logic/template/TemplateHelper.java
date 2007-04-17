@@ -393,7 +393,7 @@ public class TemplateHelper
             Results results = os.execute(query);
             Model model = os.getModel();
             WebResults webResults =
-                new WebResults(pathQuery.getViewAsPaths(), results, model, pathToQueryNode,
+                new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
                                (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
             PagedResults pagedResults = new PagedResults(webResults);
 
@@ -624,7 +624,8 @@ public class TemplateHelper
                 String path = node.getPathString();
                 Set view = new HashSet(templateClone.getView());
                 if (!view.contains(path)) {
-                    templateClone.getView().add(path);
+                    templateClone.getView().add(MainHelper.makePath(templateClone.getModel(),
+                                                                    templateClone, path));
                 }
                 indexPaths.add(path);
             }

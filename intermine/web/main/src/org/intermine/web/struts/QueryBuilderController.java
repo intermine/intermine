@@ -87,11 +87,15 @@ public class QueryBuilderController extends TilesAction
 
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
-        List view = SessionMethods.getEditingView(session);
-
-        request.setAttribute("viewPaths", listToMap(view));
-        request.setAttribute("viewPathOrder", createIndexMap(view));
-        request.setAttribute("viewPathTypes", getPathTypes(view, query));
+        List<Path> pathView = SessionMethods.getEditingView(session);
+        List<String> viewStrings = new ArrayList<String>();
+        for (Path viewPath: pathView) {
+            viewStrings.add(viewPath.toStringNoConstraints());
+        }
+        request.setAttribute("viewStrings", viewStrings);
+        request.setAttribute("viewPaths", listToMap(viewStrings));
+        request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
+        request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
 
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -118,14 +122,14 @@ public class QueryBuilderController extends TilesAction
                 String pathNameWithoutClass = pathName.substring(firstDot + 1);
                 fullPath = prefix + "." + pathNameWithoutClass;
             }
-            if (view.contains(fullPath)) {
+            if (viewStrings.contains(fullPath)) {
                 node.setSelected(true);
             } else {
                 Path path = new Path(model, pathName);
                 // If an object has been selected, select its fields instead
                 if (path.getEndFieldDescriptor() == null || path.endIsReference()
                     || path.endIsCollection()) {
-                    if (view.contains(path)) {
+                    if (viewStrings.contains(path)) {
                         ClassDescriptor cld = path.getEndClassDescriptor();
                         List cldFieldConfigs = 
                             FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
@@ -133,7 +137,7 @@ public class QueryBuilderController extends TilesAction
                         while (cldFieldConfigIter.hasNext()) {
                             FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                             String pathFromField = pathName + "." + fc.getFieldExpr();
-                            if (view.contains(pathFromField)) {
+                            if (viewStrings.contains(pathFromField)) {
                                 node.setSelected(true);
                             } else {
                                 node.setSelected(false);
@@ -145,14 +149,14 @@ public class QueryBuilderController extends TilesAction
         }
         request.setAttribute("nodes", nodes);
 
-        Map prefixes = getViewPathLinkPaths(query);
+        Map<String, String> prefixes = getViewPathLinkPaths(query);
         request.setAttribute("viewPathLinkPrefixes", prefixes);
         request.setAttribute("viewPathLinkPaths", getPathTypes(prefixes.values(), query));
 
         // set up the navigation links (eg. Department > employees > department)
         String current = null;
-        Map navigation = new LinkedHashMap();
-        Map navigationPaths = new LinkedHashMap();
+        Map<String, String> navigation = new LinkedHashMap<String, String>();
+        Map<String, String> navigationPaths = new LinkedHashMap<String, String>();
         if (prefix != null && prefix.indexOf(".") != -1) {
             for (StringTokenizer st = new StringTokenizer(prefix, "."); st.hasMoreTokens();) {
                 String token = st.nextToken();
@@ -225,7 +229,7 @@ public class QueryBuilderController extends TilesAction
      * @return Map from path to type
      */
     protected static Map getPathTypes(Collection paths, PathQuery pathquery) {
-        Map viewPathTypes = new HashMap();
+        Map<String, String> viewPathTypes = new HashMap<String, String>();
 
         Iterator iter = paths.iterator();
 
@@ -248,16 +252,17 @@ public class QueryBuilderController extends TilesAction
      *            the path query
      * @return mapping from select list path to non-attribute path
      */
-    protected static Map getViewPathLinkPaths(PathQuery pathquery) {
-        Map linkPaths = new HashMap();
-        Iterator iter = pathquery.getView().iterator();
+    protected static Map<String, String> getViewPathLinkPaths(PathQuery pathquery) {
+        Map<String, String> linkPaths = new HashMap<String, String>();
+        Iterator<Path> iter = pathquery.getView().iterator();
 
         while (iter.hasNext()) {
-            String path = (String) iter.next();
-            if (MainHelper.isPathAttribute(path, pathquery)) {
-                linkPaths.put(path, path.substring(0, path.lastIndexOf(".")));
+            Path path = iter.next();
+            String pathString = path.toStringNoConstraints();
+            if (path.endIsAttribute()) {
+                linkPaths.put(pathString, pathString.substring(0, pathString.lastIndexOf(".")));
             } else {
-                linkPaths.put(path, path);
+                linkPaths.put(pathString, pathString);
             }
         }
 

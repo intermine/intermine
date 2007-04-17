@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class PathNode extends Node
 {
-    List constraints = new ArrayList();
+    List<Constraint> constraints = new ArrayList<Constraint>();
 
     /**
      * Constructor for a root node
@@ -46,7 +46,7 @@ public class PathNode extends Node
      *
      * @return the value of constraints
      */
-    public List getConstraints()  {
+    public List<Constraint> getConstraints()  {
         return constraints;
     }
 
@@ -56,7 +56,7 @@ public class PathNode extends Node
      * @return Constraint
      */
     public Constraint getConstraint(int index) {
-        return (Constraint) constraints.get(index);
+        return constraints.get(index);
     }
     
     /**
@@ -64,7 +64,7 @@ public class PathNode extends Node
      *
      * @param constraints value to assign to constraints
      */
-    public void setConstraints(List constraints) {
+    public void setConstraints(List<Constraint> constraints) {
         this.constraints = constraints;
     }
     
@@ -83,7 +83,7 @@ public class PathNode extends Node
         constraints.set(index, new Constraint(constraint.getOp(), value, constraint.isEditable(),
                         constraint.getDescription(), constraint.getCode(),
                         constraint.getIdentifier()));
-        return (Constraint) constraints.get(index);
+        return constraints.get(index);
     }
 
     /**

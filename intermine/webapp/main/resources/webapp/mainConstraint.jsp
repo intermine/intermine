@@ -11,7 +11,7 @@
 
 <html:form action="/mainAction" styleId="mainForm">
 
-  <html:hidden property="path" value="${editingNode.path}"/>
+  <html:hidden property="path" value="${editingNode.pathString}"/>
 
   <c:if test="${editingConstraintIndex != null}">
     <html:hidden property="cindex" value="${editingConstraintIndex}"/>
@@ -56,7 +56,7 @@
       <c:choose>
         <c:when test="${empty editingNode.fieldName}">
           <span class="type">
-            <c:out value="${editingNode.path}"/>
+            <c:out value="${editingNode.pathString}"/>
           </span>
         </c:when>
         <c:otherwise>

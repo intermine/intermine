@@ -24,9 +24,9 @@
   </c:if>
   <c:set var="indent" value="${node.indentation}"/>
   <c:set var="node" value="${node}" scope="request"/>
-  <!--browser line ${node.path} indent ${node.indentation}-->
+  <!--browser line ${node.pathString} indent ${node.indentation}-->
   <tiles:insert page="/mainBrowserLine.jsp"/>
-  <c:set var="previousNodePath" value="${node.path}"/>
+  <c:set var="previousNodePath" value="${node.pathString}"/>
 </c:forEach>
   <%-- see above --%>
   <c:if test="${!noTreeIds}">

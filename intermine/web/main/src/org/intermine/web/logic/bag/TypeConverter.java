@@ -62,8 +62,11 @@ public class TypeConverter
      * possible (because no suitable template is available)
      * @throws InterMineException if an error occurs
      */
-    public static Map convertObjects(ServletContext servletContext, Class typeA, Class typeB,
-                                     Collection objects) throws InterMineException {
+    public static Map<InterMineObject, List<InterMineObject>> 
+               convertObjects(ServletContext servletContext,
+                              Class typeA, Class typeB,
+                              Collection objects) 
+        throws InterMineException {
         TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
         if (tq == null) {
             return null;
@@ -76,7 +79,7 @@ public class TypeConverter
         // want to constraint. Just because our query builder has been crippled to only allow that.
         PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPathString());
         tq.getNodes().remove(node.getPathString());
-        Collection bagElements = new ArrayList();
+        Collection<BagElement> bagElements = new ArrayList<BagElement>();
         Iterator objIter = objects.iterator();
         while (objIter.hasNext()) {
             InterMineObject object = (InterMineObject) objIter.next();
@@ -89,7 +92,8 @@ public class TypeConverter
         Query q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Results r;
-        Map retval = new HashMap();
+        Map<InterMineObject, List<InterMineObject>> retval = 
+            new HashMap<InterMineObject, List<InterMineObject>>();
         try {
             r = os.execute(q);
             Iterator iter = r.iterator();
@@ -97,9 +101,9 @@ public class TypeConverter
                 List row = (List) iter.next();
                 InterMineObject orig = (InterMineObject) row.get(0);
                 InterMineObject derived = (InterMineObject) row.get(1);
-                List ders = (List) retval.get(orig);
+                List<InterMineObject> ders = retval.get(orig);
                 if (ders == null) {
-                    ders = new ArrayList();
+                    ders = new ArrayList<InterMineObject>();
                     retval.put(orig, ders);
                 }
                 ders.add(derived);
@@ -122,8 +126,8 @@ public class TypeConverter
      * @return a TemplateQuery, or null if one cannot be found
      */
     public static TemplateQuery getConversionTemplate(ServletContext servletContext, Class typeA,
-            Class typeB) {
-        return (TemplateQuery) (getConversionTemplate(servletContext, typeA).get(typeB));
+                                                      Class typeB) {
+        return (getConversionTemplate(servletContext, typeA).get(typeB));
     }
 
     /**
@@ -133,13 +137,14 @@ public class TypeConverter
      * @param typeA the type to convert from
      * @return a Map from Class to TemplateQuery
      */
-    public static Map getConversionTemplate(ServletContext servletContext, Class typeA) {
+    public static Map<Class, TemplateQuery> getConversionTemplate(ServletContext servletContext, 
+                                                                  Class typeA) {
         String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         Profile p = pm.getProfile(sup);
 
         List tags = pm.getTags(CONVERTER, null, TagTypes.TEMPLATE, sup);
-        Map retval = new HashMap();
+        Map<Class, TemplateQuery> retval = new HashMap<Class, TemplateQuery>();
         Iterator iter = tags.iterator();
         while (iter.hasNext()) {
             Tag tag = (Tag) iter.next();
@@ -147,20 +152,20 @@ public class TypeConverter
             TemplateQuery tq = (TemplateQuery) p.getSavedTemplates().get(oid);
             if (tq != null) {
                 // Find conversion types
-                List view = tq.getViewAsPaths();
+                List<Path> view = tq.getView();
                 if (view.size() == 2) {
                     // Correct number of SELECT list items
-                    Path select1 = (Path) view.get(0);
+                    Path select1 = view.get(0);
                     Class tqTypeA = select1.getLastClassDescriptor().getType();
                     if (tqTypeA.isAssignableFrom(typeA)) {
                         // Correct typeA in SELECT list. Now check for editable constraint.
                         if ((tq.getEditableConstraints(select1.toStringNoConstraints()).size() == 1)
                                 && (tq.getAllEditableConstraints().size() == 1)) {
                             // Editable constraint is okay.
-                            Class typeB = ((Path) view.get(1)).getLastClassDescriptor().getType();
-                            TemplateQuery prevTq = (TemplateQuery) retval.get(typeB);
+                            Class typeB = view.get(1).getLastClassDescriptor().getType();
+                            TemplateQuery prevTq = retval.get(typeB);
                             if (prevTq != null) {
-                                Class prevTypeA = ((Path) prevTq.getViewAsPaths().get(0))
+                                Class prevTypeA = prevTq.getView().get(0)
                                     .getLastClassDescriptor().getType();
                                 if (prevTypeA.isAssignableFrom(tqTypeA)) {
                                     // This tq is more specific

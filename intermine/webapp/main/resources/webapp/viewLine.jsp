@@ -8,80 +8,81 @@
 <!-- viewLine.jsp -->
 
       <div id="viewDivs">
-        <c:forEach var="path" items="${viewList}" varStatus="status">
-          <im:viewableDiv path="${path}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}">
+        <c:forEach var="path" items="${viewStrings}" varStatus="status">
+          <c:set var="pathString" value="${path}"/>
+          <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}">
             <div>
-                  <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[path]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[path]]}">
-                    ${fn:replace(path, ".", " > ")}
+                  <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}">
+                    ${fn:replace(pathString, ".", " > ")}
                   </html:link>
             </div>
             <div>
-              <span class="type"><small>${viewPathTypes[path]}</small></span>
+              <span class="type"><small>${viewPathTypes[pathString]}</small></span>
             </div>
             <div style="white-space:nowrap;">
               <noscript>
               <c:choose>
                 <c:when test="${status.first}">
-                    <img style="margin-right: 5px" border="0" align="middle" 
+                    <img style="margin-right: 5px" border="0" align="middle"
                        src="images/blank13x13.gif" alt=" " width="13" height="13"/>
                 </c:when>
                 <c:otherwise>
                   <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
-                    <fmt:param value="${path}"/>
+                    <fmt:param value="${pathString}"/>
                   </fmt:message>
                   <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
-                  
+
                       <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
                              title="${moveLeftTitle}">
-                        <img style="margin-right: 5px" border="0" align="middle" 
-                            src="images/left-arrow-square.gif" width="13" height="13" 
+                        <img style="margin-right: 5px" border="0" align="middle"
+                            src="images/left-arrow-square.gif" width="13" height="13"
                             alt="${moveRightString}"/>
                       </html:link>
-                  
+
                 </c:otherwise>
-              </c:choose>                
+              </c:choose>
               </noscript>
 
               <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
-                <fmt:param value="${path}"/>
+                <fmt:param value="${pathString}"/>
               </fmt:message>
               <fmt:message key="view.removeFromViewSymbol" var="removeFromViewString"/>
-              
-                  <html:link action="/viewChange?method=removeFromView&amp;path=${path}"
+
+                  <html:link action="/viewChange?method=removeFromView&amp;path=${pathString}"
                              title="${removeFromViewTitle}">
-                    <img border="0" align="middle" 
-                         src="images/cross.gif" width="13" height="13" 
+                    <img border="0" align="middle"
+                         src="images/cross.gif" width="13" height="13"
                          alt="${removeFromViewString}" style="margin-top: 3px;"/>
                   </html:link>
-              
+
               <noscript>
               <c:choose>
                 <c:when test="${status.last}">
-                  <img style="margin-left: 5px" border="0" align="middle" 
+                  <img style="margin-left: 5px" border="0" align="middle"
                        src="images/blank13x13.gif" alt=" " width="13" height="13" />
                 </c:when>
                 <c:otherwise>
                   <fmt:message key="view.moveRightHelp" var="moveRightTitle">
-                    <fmt:param value="${path}"/>
+                    <fmt:param value="${pathString}"/>
                   </fmt:message>
                   <fmt:message key="view.moveRightSymbol" var="moveRightString"/>
-                  
+
                       <html:link action="/viewChange?method=moveRight&amp;index=${status.index}"
                                  title="${moveRightTitle}">
                         <img style="margin-left: 5px" border="0" align="middle"
-                             src="images/right-arrow-square.gif" width="13" height="13" 
+                             src="images/right-arrow-square.gif" width="13" height="13"
                              alt="${moveRightString}"/>
                       </html:link>
-                      
+
                 </c:otherwise>
               </c:choose>
               </noscript>
-              
+
             </div>
           </im:viewableDiv>
         </c:forEach>
       </div>
-      
-      
+
+
 <!-- viewLine.jsp -->
 
