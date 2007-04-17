@@ -41,6 +41,7 @@ public class XmlDataLoaderTest extends TestCase
     protected File file;
     protected XmlBinding binding;
     protected ArrayList toDelete;
+    protected XmlDataLoader loader;
 
     public XmlDataLoaderTest(String arg) {
         super(arg);
@@ -49,7 +50,7 @@ public class XmlDataLoaderTest extends TestCase
     public void setUp() throws Exception {
         writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestsingle");
-
+        loader = new XmlDataLoader(iw);
         binding = new XmlBinding(writer.getModel());
         toDelete = new ArrayList();
     }
@@ -63,7 +64,7 @@ public class XmlDataLoaderTest extends TestCase
         if (file != null) {
             file.delete();
         }
-        writer.close();
+        loader.close();
     }
 
 
@@ -120,10 +121,9 @@ public class XmlDataLoaderTest extends TestCase
 
         InputStream is = new FileInputStream(file);
 
-        XmlDataLoader dl = new XmlDataLoader(iw);
         Source source = iw.getMainSource("testsource");
         Source skelSource = iw.getSkeletonSource("testsource");
-        dl.processXml(is, source, skelSource);
+        loader.processXml(is, source, skelSource);
 
         // check address was stored
         Address a2 = (Address) writer.getObjectByExample(a1, Collections.singleton("address"));

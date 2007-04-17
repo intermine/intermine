@@ -101,9 +101,16 @@ public class XmlDataLoader extends DataLoader
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
                         / ((new Date()).getTime() - startTime)) + " object per minute");
             getIntegrationWriter().commitTransaction();
-            getIntegrationWriter().close();
         } catch (ObjectStoreException e) {
             throw new InterMineException("Problem with store method", e);
         }
+    }
+    
+    /**
+     * Perform any necessary clean-up and close the integration writer
+     * @throws Exception if an error occurs
+     */
+    public void close() throws Exception {
+        getIntegrationWriter().close();    
     }
 }

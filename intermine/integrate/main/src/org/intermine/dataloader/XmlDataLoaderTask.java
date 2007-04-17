@@ -12,12 +12,16 @@ package org.intermine.dataloader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
 
 /**
  * Uses an IntegrationWriter to load data from XML format
@@ -30,10 +34,10 @@ public class XmlDataLoaderTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(XmlDataLoaderTask.class);
     protected String integrationWriter;
-    protected File xmlFile;
+    protected FileSet fileSet;
     protected String sourceName;
     protected boolean ignoreDuplicates = false;
-    protected String xmlRes;
+    protected String file;
     
     /**
      * Set the IntegrationWriter.
@@ -45,20 +49,19 @@ public class XmlDataLoaderTask extends Task
     }
 
     /**
-     * Set the XML file to load data from.
-     *
-     * @param xmlFile the XML file
+     * Set the data fileset
+     * @param fileSet the fileset
      */
-    public void setXmlFile(File xmlFile) {
-        this.xmlFile = xmlFile;
+    public void addFileSet(FileSet fileSet) {
+        this.fileSet = fileSet;
     }
-
+    
     /**
      * Set XML resource name (to load data from classloader).
      * @param resName classloader resource name
      */
-    public void setXmlResource(String resName) {
-        this.xmlRes = resName;
+    public void setFile(String file) {
+        this.file = file;
     }
     
     /**
@@ -87,28 +90,52 @@ public class XmlDataLoaderTask extends Task
         if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
         }
-        if (xmlFile == null && xmlRes == null) {
-            throw new BuildException("neither xmlRes or xmlFile attributes set");
-        }
         if (sourceName == null) {
             throw new BuildException("sourceName attribute is not set");
         }
+        XmlDataLoader loader = null;
+        File toRead = null;
         try {
-            InputStream is = null;
-            if (xmlRes != null) {
-                is = getClass().getClassLoader().getResourceAsStream(xmlRes);
-            } else {
-                is = new FileInputStream(xmlFile);
-            }
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
             iw.setIgnoreDuplicates(ignoreDuplicates);
-            new XmlDataLoader(iw).processXml(is,
-                                             iw.getMainSource(sourceName),
-                                             iw.getSkeletonSource(sourceName));
+            loader = new XmlDataLoader(iw);
+            List<File> files = new ArrayList<File>();
+
+            if (file != null && !file.equals("")) {
+                files = new ArrayList<File>(Collections.singleton(new File(file)));
+            } else {
+                DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
+                String[] fileArray = ds.getIncludedFiles();
+                for (int i = 0; i < fileArray.length; i++) {
+                    files.add(new File(ds.getBasedir(), fileArray[i]));
+                }
+                if (files.isEmpty()) {
+                    throw new BuildException("No xml files read from: " + fileSet.toString());
+                }
+            }
+            if (files.isEmpty()) {
+                throw new BuildException("No files found to load for source: " + sourceName);
+            }
+            Iterator<File> fileIter = files.iterator();
+            while (fileIter.hasNext()) {
+                toRead = fileIter.next();              
+                System.out .println("Processing file " + toRead.toString());
+                loader.processXml(new FileInputStream(toRead),
+                                  iw.getMainSource(sourceName),
+                                  iw.getSkeletonSource(sourceName)); 
+            }
         } catch (Exception e) {
-            throw new BuildException("Exception while reading from: "
-                    + (xmlRes != null ? xmlRes : xmlFile.toString()) + " with source "
-                                     + sourceName, e);
+            if (toRead == null) {
+                throw new BuildException("Exception in XmlDataLoaderTask", e);
+            } else {
+                throw new BuildException("Exception while reading from: " + toRead, e);
+            }
+        } finally {
+            try {
+                loader.close();
+            } catch (Exception e) {
+                throw new BuildException("Exception while closing XmlDataLoader", e);
+            }
         }
     }
 }

@@ -222,26 +222,48 @@
     </convert-xml-file>
   </target>
 
+  <target name="-set-xml-tgt-file-includes" unless="src.data.dir.includes">
+    <!-- include all xml files by default --> 
+    <property name="src.data.dir.includes" value="*.xml"/>
+  </target>
+
+  <target name="-set-xml-tgt-file" unless="src.data.file">
+    <!-- if src.data.file not specified, make it an empty string --> 
+    <property name="src.data.file" value=""/>
+  </target>
+
+
   <!--
     Retrieve from an XML file in InterMine format into a production db using
     XmlDataLoaderTask.
   -->
-  <target name="-retrieve-tgt-from-xml-file" if="have.file.xml.tgt">
+  <target name="-retrieve-tgt-from-xml-file" depends="-set-xml-tgt-file-includes, -set-xml-tgt-file"
+          if="have.file.xml.tgt">
     <insert-xml-data
        integrationWriter="integration.production"
-       xmlFile="${tgt.xml.file}"
        sourceName="${source.name}"
-       ignoreDuplicates="${ignore.duplicates}"/>
+       file="${src.data.file}"
+       ignoreDuplicates="${ignore.duplicates}">
+      <fileset dir="${src.data.dir}">
+        <include name="${src.data.dir.includes}"/>
+        <exclude name="${src.data.dir.excludes}"/>
+      </fileset>
+    </insert-xml-data>
   </target>
 
   <!--
     Retrieve from an XML file in InterMine format into a target Items database
     using FullXmlConverterTask.
   -->
-  <target name="-retrieve-tgt-from-large-xml-file" if="have.large.file.xml.tgt">
+  <target name="-retrieve-tgt-from-large-xml-file" depends="-set-xml-tgt-file-includes, -set-xml-tgt-file"
+          if="have.large.file.xml.tgt">
     <convert-fullxml-file
       osName="osw.${common.os.prefix}-tgt-items"
-      xmlFile="${tgt.xml.file}">
+      file="${src.data.file}">
+      <fileset dir="${src.data.dir}">
+        <include name="${src.data.dir.includes}"/>
+        <exclude name="${src.data.dir.excludes}"/>
+      </fileset>
     </convert-fullxml-file>
   </target>
 
