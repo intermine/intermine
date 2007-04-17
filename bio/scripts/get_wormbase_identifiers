@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+#downloads genes2molecular_names.txt from http://www.sanger.ac.uk/Projects/C_elegans/LOCI
+#and compares it to the version pointed to by the current link in /shared/data/wormbase
+#as a current version id is not avaiable for genes2molecular_names.txt prior to download.
+
+use strict;
+use warnings;
+
+use IO::All;
+use File::Compare;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+my $wb_id_server = "http://www.sanger.ac.uk/Projects/C_elegans/LOCI";
+my $wb_id_data_file = "genes2molecular_names.txt";
+
+my $wb_main_dir = "/shared/data/wormbase";
+my $download_dir = "$wb_main_dir/temp";
+my $file_to_get = "$wb_id_server/$wb_id_data_file";
+my $temp_file = "$download_dir/temp.txt";
+my $tab_delim_file = "$download_dir/$wb_id_data_file";
+
+#create directories and download the file
+&checkdir_exists($wb_main_dir);
+&checkdir_exists($download_dir);
+&http_download($file_to_get,$temp_file);
+
+#convert is from a space delimited to tab delimited file
+open(F,"<$temp_file") or die "$!";
+open(FH,">$tab_delim_file") or die "$!";
+while(<F>){
+	s/ /\t/g;
+    print FH; 
+}
+close(F) or die "$!";
+close(FH) or die "$!";
+
+my $current_link = "/shared/data/wormbase/current";
+my $old_file = "$wb_main_dir/current/genes2molecular_names.txt";
+
+#compare the files, create version directory if it is a new version or
+#the current data link is missing
+if ($current_link && compare("$old_file","$tab_delim_file") == 1){
+	print "New version found or current link missing\n";
+	my $date_string = &convert_date();
+	my $new_dir = "$wb_main_dir/$date_string";
+	my $newfile = "$new_dir/$wb_id_data_file";
+	&checkdir_exists($new_dir);
+	system("mv $tab_delim_file $newfile");
+	&make_link($date_string,$current_link);
+}
+#delete the downloaded files if there are no differences
+else{
+	unlink $temp_file;
+	unlink $tab_delim_file;
+	die " current version up to date\n";
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+

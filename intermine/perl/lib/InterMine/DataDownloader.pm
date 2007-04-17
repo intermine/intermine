@@ -7,7 +7,7 @@ use IO::All;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link ftp_download http_download checkdir_exists date_string_file unzip_dir);
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download checkdir_exists date_string_file unzip_dir convert_date);
 
 #connect to server
 sub ftp_connect(){
@@ -64,17 +64,31 @@ sub date_string_file(){
 	my ($ftp,$file) = @_;
 
 	my $gene_date_stamp = $ftp->mdtm($file);
-	my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime($gene_date_stamp);
+	print "file creation ";
+	my $date_string = &convert_date($gene_date_stamp);
+	return $date_string;
+}
 
+#convert date string into day/month/year
+sub convert_date(){
+	my $string = shift;
+	my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst);
+	
+	if($string){
+		($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime($string);
+	}else{
+		($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime;
+	}
 	$month += 1;
 	$year -= 100;
 	$year += 2000;
-
-	print "$file was created on $day $month $year\n";
+	print "date is $day $month $year\n";
 	my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
 
 	return $date_string;
 }
+
+
 
 #unzip files
 sub unzip_dir(){
