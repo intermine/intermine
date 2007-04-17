@@ -209,8 +209,8 @@ public class MainHelper
         }
 
         //first merge the query and the view
-        for (Iterator i = view.iterator(); i.hasNext();) {
-            String path = (String) i.next();
+        for (Iterator<Path> i = view.iterator(); i.hasNext();) {
+            String path = (String) i.next().toStringNoConstraints();
             if (!qNodes.containsKey(path)) {
                 pathQuery.addNode(path);
             }

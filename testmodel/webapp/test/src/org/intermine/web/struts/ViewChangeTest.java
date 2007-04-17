@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 
 import servletunit.struts.MockStrutsTestCase;
@@ -37,9 +38,10 @@ public class ViewChangeTest extends MockStrutsTestCase
     }
 
     public void testRemove() throws Exception {
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
-        query.getView().add("Employee.age");
-        query.getView().add("Employee.name");
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery query = new PathQuery(model);
+        query.getView().add(MainHelper.makePath(model, query, "Employee.name"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.age"));
         getSession().setAttribute(Constants.QUERY, query);
 
         addRequestParameter("path", "Employee.age");

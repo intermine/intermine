@@ -34,6 +34,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.path.Path;
+
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.util.CacheMap;
@@ -142,7 +144,7 @@ public class SessionMethods
                     r = rtmp; // set property - allow main request thread to progress
                     TableHelper.initResults(r);
                     WebResults webResults =
-                        new WebResults(query.getViewAsPaths(), r, os.getModel(), pathToQueryNode,
+                        new WebResults(query.getView(), r, os.getModel(), pathToQueryNode,
                                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
                     pr = new PagedResults(webResults);
                 } catch (ObjectStoreException e) {
@@ -245,9 +247,10 @@ public class SessionMethods
             session.setAttribute(Constants.QUERY, query.clone());
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         }
-        String path = (String) query.getView().iterator().next();
-        if (path.indexOf(".") != -1) {
-            path = path.substring(0, path.indexOf("."));
+        Path path = query.getView().iterator().next();
+        String pathString = path.toStringNoConstraints();
+        if (pathString.indexOf(".") != -1) {
+            pathString = pathString.substring(0, pathString.indexOf("."));
         }
         session.setAttribute("path", path);
         session.removeAttribute("prefix");
@@ -311,7 +314,7 @@ public class SessionMethods
      * @param session current session
      * @return view list
      */
-    public static List getEditingView(HttpSession session) {
+    public static List<Path> getEditingView(HttpSession session) {
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query == null) {
             throw new IllegalStateException("No query on session");

@@ -89,20 +89,21 @@ public class MainHelperTest extends TestCase {
     }
 
     public void testGetTypeForPath() throws Exception {
-        PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery query = new PathQuery(model);
         PathNode employeeNode = query.addNode("Employee");
         employeeNode.setType("Employee");
         query.addNode("Employee.department");
         query.addNode("Employee.age");
         PathNode managerNode = query.addNode("Employee.department.manager");
         managerNode.setType("CEO");
-        query.getView().add("Employee");
-        query.getView().add("Employee.end");
-        query.getView().add("Employee.age");
-        query.getView().add("Employee.department.manager");
-        query.getView().add("Employee.department.manager.seniority");
-        query.getView().add("Employee.department.manager.secretarys.name");
-        query.getView().add("Employee.address.address");
+        query.getView().add(MainHelper.makePath(model, query, "Employee"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.end"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.age"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.department.manager"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.department.manager.seniority"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.department.manager.secretarys.name"));
+        query.getView().add(MainHelper.makePath(model, query, "Employee.address.address"));
 
         assertEquals("org.intermine.model.testmodel.Employee",
                      MainHelper.getTypeForPath("Employee", query));

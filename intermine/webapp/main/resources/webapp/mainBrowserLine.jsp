@@ -14,7 +14,7 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </c:forEach>
       </c:if>
-      <a name="${node.path}"></a>
+      <a name="${node.pathString}"></a>
       <c:set var="isNull" value="${EMPTY_FIELD_MAP[node.parentType][node.fieldName]}"/>
       <c:if test="${isNull}">
         <span class="nullStrike">
@@ -22,13 +22,13 @@
       <%-- construct the real path for this node --%>
       <c:choose>
         <c:when test="${prefix == null}">
-          <c:set var="fullpath" value="${node.path}"/>
+          <c:set var="fullpath" value="${node.pathString}"/>
         </c:when>
         <c:when test="${prefix != null && node.indentation == 0}">
           <c:set var="fullpath" value="${prefix}"/>
         </c:when>
         <c:otherwise>
-          <c:set var="fullpath" value="${prefix}.${fn:substringAfter(node.path,'.')}"/>
+          <c:set var="fullpath" value="${prefix}.${fn:substringAfter(node.pathString,'.')}"/>
         </c:otherwise>
       </c:choose>
       <c:choose>
@@ -36,15 +36,15 @@
           <img border="0" src="images/plus-disabled.gif" width="11" height="11" alt="+"/>
         </c:when>
         <c:when test="${node.button == '+'}">
-          <html:link action="/mainChange?method=changePath&amp;path=${node.path}"
-            onclick="return toggle('${node.path}', '${node.path}')">
-            <img id="img_${node.path}" border="0" src="images/plus.gif" width="11" height="11" alt="+"/>
+          <html:link action="/mainChange?method=changePath&amp;path=${node.pathString}"
+            onclick="return toggle('${node.pathString}', '${node.pathString}')">
+            <img id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" alt="+"/>
           </html:link>
         </c:when>
         <c:when test="${node.button == '-'}">
           <html:link action="/mainChange?method=changePath&amp;path=${node.prefix}"
-            onclick="return toggle('${node.path}', '${node.path}');">
-            <img id="img_${node.path}" border="0" src="images/minus.gif" width="11" height="11" alt="-"/>
+            onclick="return toggle('${node.pathString}', '${node.pathString}');">
+            <img id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" alt="-"/>
           </html:link>
         </c:when>
         <c:otherwise>
@@ -102,7 +102,7 @@
       <c:set var="summary" value="${node.reference || node.collection || (!node.reference && !node.collection && !node.attribute)}" />
       <c:choose>
         <c:when test="${!node.selected && !isNull && summary}">
-          <html:link action="/mainChange?method=addToView&amp;path=${node.path}" title="${selectNodeTitle}">
+          <html:link action="/mainChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
             <img class="arrow" src="images/show-ref.gif" width="60" height="13" alt="show" style="margin-right:-0.5ex"/>
           </html:link>
         </c:when>
@@ -110,7 +110,7 @@
             <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" alt="show" style="margin-right:-0.5ex"/>
         </c:when>
         <c:when test="${!node.selected && !isNull}">
-          <html:link action="/mainChange?method=addToView&amp;path=${node.path}" title="${selectNodeTitle}">
+          <html:link action="/mainChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
             <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
           </html:link>
         </c:when>
@@ -131,8 +131,8 @@
                height="13" alt="constrain"/> 
         </c:when>
         <c:otherwise>
-          <html:link action="/mainChange?method=addPath&path=${node.path}" title="${addConstraintToTitle}"
-            onclick="return addConstraint('${node.path}');">
+          <html:link action="/mainChange?method=addPath&path=${node.pathString}" title="${addConstraintToTitle}"
+            onclick="return addConstraint('${node.pathString}');">
             <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain"/>
           </html:link>
         </c:otherwise>
@@ -161,7 +161,7 @@
     </div>
     <%-- this if preserves correct interaction with statically rendered tree --%>
     <c:if test="${node.button == '+'}">
-      <div id="${node.path}"></div><!-- div+ ${node.path} -->
+      <div id="${node.pathString}"></div><!-- div+ ${node.pathString} -->
     </c:if>
 
 <!-- /mainBrowserLine.jsp -->

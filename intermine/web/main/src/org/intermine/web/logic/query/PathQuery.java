@@ -23,6 +23,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsInfo;
 
 import org.intermine.metadata.Model;
+import org.intermine.path.Path;
 import org.intermine.util.CollectionUtil;
 
 import java.io.StringReader;
@@ -42,7 +43,7 @@ public class PathQuery
     
     protected Model model;
     protected LinkedHashMap nodes = new LinkedHashMap();
-    protected List<String> view = new ArrayList();
+    protected List<Path> view = new ArrayList();
     protected ResultsInfo info;
     protected ArrayList problems = new ArrayList();
     protected LogicExpression constraintLogic = null;
@@ -173,9 +174,9 @@ public class PathQuery
     
     /**
      * Sets the value of view
-     * @param view a List of String paths
+     * @param view a List of Path
      */
-    public void setView(List view) {
+    public void setView(List<Path> view) {
         this.view = view;
     }
 
@@ -183,37 +184,8 @@ public class PathQuery
      * Gets the value of view
      * @return a List of String paths
      */
-    public List getView() {
+    public List<Path> getView() {
         return view;
-    }
-    
-//    /**
-//     * Sets the value of view
-//     * @param view a List of Path
-//     */
-//    public void setView(List<Path> view) {
-//        this.view = view;
-//    }
-//
-//    /**
-//     * Gets the value of view
-//     * @return a List of String paths
-//     */
-//    public List<Path> getView() {
-//        return view;
-//    }
-//    
-    /**
-     * Returns the view as a List of Path objects.
-     * @return the value of view as Paths
-     */
-    public List getViewAsPaths() {
-        List returnList = new ArrayList();
-        Iterator iter = getView().iterator();
-        while (iter.hasNext()) {
-            returnList.add(MainHelper.makePath(model, this, (String) iter.next()));
-        }
-        return returnList;
     }
 
     /**

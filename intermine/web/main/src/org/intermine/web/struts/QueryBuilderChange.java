@@ -458,7 +458,7 @@ public class QueryBuilderChange extends DispatchAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        List view = SessionMethods.getEditingView(session);
+        List<Path> view = SessionMethods.getEditingView(session);
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
@@ -474,14 +474,13 @@ public class QueryBuilderChange extends DispatchAction
             while (cldFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                 Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
-                String fullPathNoConstraints = pathToAdd.toStringNoConstraints();
                 if (pathToAdd.getEndClassDescriptor() == null
-                    && !view.contains(fullPathNoConstraints)) {
-                    view.add(fullPathNoConstraints);
+                    && !view.contains(pathToAdd)) {
+                    view.add(pathToAdd);
                 }
             }
         } else {
-            view.add(fullPathName);
+            view.add(path);
         }
 
         ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));

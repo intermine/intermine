@@ -19,6 +19,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
+import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
@@ -42,7 +43,8 @@ public class PathQueryHandler extends DefaultHandler
     protected PathQuery query;
     private Model model = null;
     private Map savedBags;
-
+    private List<String> viewStrings = new ArrayList<String>();
+    
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
@@ -72,7 +74,7 @@ public class PathQueryHandler extends DefaultHandler
             }
             query = new PathQuery(model);
             if (attrs.getValue("view") != null) {
-                query.setView(StringUtil.tokenize(attrs.getValue("view")));
+                viewStrings = StringUtil.tokenize(attrs.getValue("view"));
             }
             if (attrs.getValue("constraintLogic") != null) {
                 query.setConstraintLogic(attrs.getValue("constraintLogic"));
@@ -156,6 +158,10 @@ public class PathQueryHandler extends DefaultHandler
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
             query.checkValidity(savedBags);
+            List<Path> viewPaths = new ArrayList<Path>();
+            for (String viewElement: viewStrings) {
+                viewPaths.add(MainHelper.makePath(model, query, viewElement));
+            }
             queries.put(queryName, query);
         }
     }

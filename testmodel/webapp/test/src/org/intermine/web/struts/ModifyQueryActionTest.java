@@ -11,6 +11,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
@@ -35,17 +36,22 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         super.setUp();
 
         userprofileOS.setModel(Model.getInstanceByName("userprofile"));
-        query = new PathQuery(Model.getInstanceByName("testmodel"));
-        query.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
-        queryBag = new PathQuery(Model.getInstanceByName("testmodel"));
-        queryBag.setView(Arrays.asList(new String[]{"Employee", "Employee.name"}));
+        Model testmodel = Model.getInstanceByName("testmodel");
+        query = new PathQuery(testmodel);
+        
+        query.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
+        query.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
+        queryBag = new PathQuery(testmodel);
+        
+        queryBag.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
+        queryBag.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));
         sq = new SavedQuery("query1", date, query);
         sqBag = new SavedQuery("query3", date, queryBag);
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")),
+                                     new PathQuery(testmodel),
                                      "");
 
         SessionMethods.initSession(this.getSession());

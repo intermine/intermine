@@ -16,11 +16,9 @@
   <fmt:message key="view.notEmpty.description"/><im:manualLink section="manualPageQB.shtml#manualOutputListQB"/>
 </div>
 
-<c:set var="viewList" value="${QUERY.view}" scope="request"/>
-
 <div class="body">
 
-  <c:if test="${fn:length(viewList) > 1}">
+  <c:if test="${fn:length(viewStrings) > 1}">
     <noscript>
       <div>
         <fmt:message key="view.columnOrderingTip"/>
@@ -34,7 +32,7 @@
   </c:if>
 
   <c:choose>
-    <c:when test="${empty viewList}">
+    <c:when test="${empty viewStrings}">
       <div class="body">
 	<p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
       </div>
@@ -44,7 +42,7 @@
     </c:otherwise>
   </c:choose>
 
-  <c:if test="${!empty viewList}">
+  <c:if test="${!empty viewStrings}">
     <div style="clear:left; margin-bottom: 18px">
       <p>
         <html:form action="/viewAction">
