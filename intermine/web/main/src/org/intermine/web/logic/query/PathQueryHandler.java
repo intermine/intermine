@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.path.Path;
+import org.intermine.path.PathError;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
@@ -36,7 +38,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathQueryHandler extends DefaultHandler
 {
-    private Map queries, classKeys;
+    private Map<String, PathQuery> queries;
+    private Map<String, Set> classKeys;
     private String queryName;
     private char gencode;
     private PathNode node;
@@ -52,14 +55,15 @@ public class PathQueryHandler extends DefaultHandler
      * @param classKeys class key fields for the model
      */
 
-    public PathQueryHandler(Map queries, Map savedBags, Map classKeys) {
+    public PathQueryHandler(Map<String, PathQuery> queries, Map savedBags,
+                            Map<String, Set> classKeys) {
         this.queries = queries;
         this.classKeys = classKeys;
         this.savedBags = savedBags;
     }
 
     /**
-     * @see DefaultHandler#startElement
+     * @see DefaultHandler#startElement(String, String, String, Attributes)
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
     throws SAXException {
@@ -152,15 +156,14 @@ public class PathQueryHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement
+     * @see DefaultHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {
             query.syncLogicExpression("and"); // always and for old queries
             query.checkValidity(savedBags);
-            List<Path> viewPaths = new ArrayList<Path>();
             for (String viewElement: viewStrings) {
-                viewPaths.add(MainHelper.makePath(model, query, viewElement));
+                query.addPathStringToView(viewElement);
             }
             queries.put(queryName, query);
         }
@@ -171,8 +174,8 @@ public class PathQueryHandler extends DefaultHandler
      * @param list the Object List
      * @return the String list
      */
-    protected List toStrings(List list) {
-        List strings = new ArrayList();
+    protected List<String> toStrings(List list) {
+        List<String> strings = new ArrayList<String>();
         for (Iterator i = list.iterator(); i.hasNext();) {
             strings.add(i.next().toString());
         }

@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.intermine.objectstore.query.BagConstraint;
@@ -25,6 +24,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 
 import org.intermine.metadata.Model;
 import org.intermine.path.Path;
+import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
 
 import java.io.StringReader;
@@ -46,7 +46,7 @@ public class PathQuery
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     protected List<Path> view = new ArrayList<Path>();
     protected ResultsInfo info;
-    protected ArrayList<Exception> problems = new ArrayList<Exception>();
+    protected ArrayList<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
 
     /**
@@ -188,6 +188,19 @@ public class PathQuery
     }
 
     /**
+     * Add a path to the view
+     * @param viewString the String version of the path to add - should not include any class
+     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
+     */
+    public void addPathStringToView(String viewString) {
+        try {
+            view.add(MainHelper.makePath(model, this, viewString));
+        } catch (PathError e) {
+            problems.add(e);
+        }
+    }
+    
+    /**
      * Get info regarding this query
      * @return the info
      */
@@ -299,7 +312,7 @@ public class PathQuery
         }
         query.getView().addAll(view);
         if (problems != null) {
-            query.problems = new ArrayList<Exception>(problems);
+            query.problems = new ArrayList<Throwable>(problems);
         }
         query.setConstraintLogic(getConstraintLogic());
         return query;
