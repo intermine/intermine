@@ -45,6 +45,7 @@ public class PathQuery
     protected Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     protected List<Path> view = new ArrayList<Path>();
+    protected List<Path> sortOrder = new ArrayList<Path>();
     protected ResultsInfo info;
     protected ArrayList<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
@@ -66,6 +67,7 @@ public class PathQuery
         this.model = query.model;
         this.nodes = query.nodes;
         this.view = query.view;
+        this.sortOrder = query.sortOrder;
         this.info = query.info;
         this.problems = query.problems;
         this.constraintLogic = query.constraintLogic;
@@ -181,12 +183,29 @@ public class PathQuery
 
     /**
      * Gets the value of view
-     * @return a List of String paths
+     * @return a List of paths
      */
     public List<Path> getView() {
         return view;
     }
 
+    /**
+     * Sets the sort order
+     * @param sortOrder list of paths
+     */
+    public void setSortOrder(List<Path> sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    /**
+     * Gets the sort order
+     * @return a List of paths
+     */
+    public List<Path> getSortOrder() {
+        return sortOrder;
+    }
+    
+    
     /**
      * Add a path to the view
      * @param viewString the String version of the path to add - should not include any class
@@ -311,6 +330,7 @@ public class PathQuery
             query.getNodes().put(entry.getKey(), clone(query, entry.getValue()));
         }
         query.getView().addAll(view);
+        query.getSortOrder().addAll(sortOrder);
         if (problems != null) {
             query.problems = new ArrayList<Throwable>(problems);
         }
@@ -354,7 +374,8 @@ public class PathQuery
         return (o instanceof PathQuery)
             && model.equals(((PathQuery) o).model)
             && nodes.equals(((PathQuery) o).nodes)
-            && view.equals(((PathQuery) o).view);
+            && view.equals(((PathQuery) o).view)
+            && sortOrder.equals(((PathQuery) o).sortOrder);
     }
 
     /**
@@ -363,14 +384,18 @@ public class PathQuery
     public int hashCode() {
         return 2 * model.hashCode()
             + 3 * nodes.hashCode()
-            + 5 * view.hashCode();
+            + 5 * view.hashCode()
+            + 7 * sortOrder.hashCode();
     }
 
     /**
      * @see Object#toString()
      */
     public String toString() {
-        return "{PathQuery: model=" + model.getName() + ", " + nodes + ", " + view + "}";
+        return "{PathQuery: model=" + model.getName() + ", " 
+                                    + nodes + ", " 
+                                    + view + ", " 
+                                    + sortOrder + "}";
     }
 
     /**
