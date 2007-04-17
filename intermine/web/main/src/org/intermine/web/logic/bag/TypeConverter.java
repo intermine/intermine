@@ -127,7 +127,7 @@ public class TypeConverter
      */
     public static TemplateQuery getConversionTemplate(ServletContext servletContext, Class typeA,
                                                       Class typeB) {
-        return (getConversionTemplate(servletContext, typeA).get(typeB));
+        return getConversionTemplate(servletContext, typeA).get(typeB);
     }
 
     /**
