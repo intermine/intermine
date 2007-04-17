@@ -13,8 +13,8 @@
       <classpath refid="task.class.path"/>
     </taskdef>
     
-    <echo message="retrieving from ${tgt.xml.file}"/>
+    <echo message="retrieving from ${src.data.file}"/>
 
-    <retrieve-organisms osAlias="os.production" outputFile="${tgt.xml.file}"/>
+    <retrieve-organisms osAlias="os.production" outputFile="${src.data.file}"/>
   </target>
 </project>

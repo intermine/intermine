@@ -10,8 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
 import org.apache.tools.ant.BuildException;
@@ -27,7 +25,6 @@ public class XmlDataLoaderTaskTest extends TestCase
     public void setUp() {
         task = new XmlDataLoaderTask();
         task.setIntegrationWriter("integration.test");
-        task.setXmlFile(new File("file"));
         task.setSourceName("sourceName");
     }
 
@@ -40,14 +37,6 @@ public class XmlDataLoaderTaskTest extends TestCase
         }
     }
 
-    public void testNoFile() {
-        task.setXmlFile(null);
-        try {
-            task.execute();
-            fail("Expected: BuildException");
-        } catch (BuildException e) {
-        }
-    }
 
     public void testNoSourceName() {
         task.setSourceName(null);

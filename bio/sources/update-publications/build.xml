@@ -2,7 +2,7 @@
   <description>update-publications retrieve, translate and load tasks</description>
   <import file="../../../imbuild/source.xml"/> 
 
-  <!-- special case to create a ${tgt.xml.file} (in InterMine XML format) by
+  <!-- special case to create a ${src.data.file} (in InterMine XML format) by
        finding the pubmed ids in the objectstore, then retrieving the details
        from Entrez into the file -->
   <target name="-pre-retrieve" depends="source.-pre-retrieve">
@@ -13,8 +13,8 @@
       <classpath refid="task.class.path"/>
     </taskdef>
     
-    <echo message="retrieving from ${tgt.xml.file}"/>
+    <echo message="retrieving from ${src.data.file}"/>
 
-    <retrieve-publications osAlias="os.production" outputFile="${tgt.xml.file}"/>
+    <retrieve-publications osAlias="os.production" outputFile="${src.data.file}"/>
   </target>
 </project>

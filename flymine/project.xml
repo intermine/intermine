@@ -177,14 +177,14 @@
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="geneid-translationid" type="intermine-items-large-xml-file">
-      <property name="tgt.xml.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId_good.xml"/>
+      <property name="src.data.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source> 
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/2007-01-04/toload"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-	  <property name="tgt.xml.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
+	<property name="src.data.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
     <source name="tiling_path" type="tiling_path" dump="true">
@@ -212,17 +212,17 @@
            species name and genus from Entrez into an InterMine format XML
            file, loads that file into a target items DB, then into the final
            objectstore -->
-      <property name="tgt.xml.file" location="build/organisms.xml"/>
+      <property name="src.data.file" location="build/organisms.xml"/>
     </source>
     <source name="flymine-static" type="intermine-items-xml-file">
-      <property name="tgt.xml.file" location="datasets.xml"/>
+      <property name="src.data.file" location="datasets.xml"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the
            objectstore, retrieves the details of the publication from Entrez
            into an InterMine format XML file, loads that file into a target
            items DB, then into the final objectstore -->
-      <property name="tgt.xml.file" location="build/publications.xml"/>
+      <property name="src.data.file" location="build/publications.xml"/>
     </source>
   </sources>
 
