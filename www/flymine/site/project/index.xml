@@ -6,11 +6,12 @@
   expression and protein data for <emphasis>Drosophila</emphasis> and
   <emphasis>Anopheles</emphasis> and making this available to the worldwide
   research community via web and bioinformatics interfaces. The FlyMine
-  project is based at the <ulink url="http://www.gen.cam.ac.uk">Department of
-  Genetics</ulink>, <ulink url="http://www.cam.ac.uk">University of
-  Cambridge</ulink> and is a collaboration between the Genetics and <ulink
-  url="http://www.bioc.cam.ac.uk">Biochemistry</ulink> departments of the
-  University of Cambridge.</para>
+  project is based at the <ulink url="http://www.sysbiol.cam.ac.uk/">Systems
+  Biology Centre</ulink>, <ulink url="http://www.cam.ac.uk/">University of
+  Cambridge</ulink> and is a collaboration between the
+  <ulink url="http://www.gen.cam.ac.uk/">Genetics</ulink> and
+  <ulink url="http://www.bioc.cam.ac.uk/">Biochemistry</ulink>
+  departments of the University of Cambridge.</para>
 
   <section>
     <title>Main aims of the project</title>
@@ -71,8 +72,7 @@
       </listitem>
 
       <listitem>
-        <para><ulink url="jobs.xml">Potiential job
-        opportunities</ulink></para>
+        <para><ulink url="jobs.xml">Potential job opportunities</ulink></para>
       </listitem>
     </itemizedlist>
   </section>

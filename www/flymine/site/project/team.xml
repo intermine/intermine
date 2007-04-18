@@ -39,21 +39,15 @@
           </row>
 
           <row>
-            <entry>Wenyan Ji</entry>
-            <entry>Software Developer</entry>
-            <entry><email>wenyan [at] flymine.org</email></entry>
-          </row>
-
-          <row>
             <entry>Xavier Watkins</entry>
             <entry>Software Developer</entry>
             <entry><email>xavier [at] flymine.org</email></entry>
           </row>
 
           <row>
-            <entry>Peter Mclaren</entry>
+            <entry>Julie Sullivan</entry>
             <entry>Software Developer</entry>
-            <entry><email>peter [at] flymine.org</email></entry>
+            <entry><email>julie [at] flymine.org</email></entry>
           </row>
 
           <row>
@@ -74,6 +68,12 @@
             <entry><email>hilde [at] flymine.org</email></entry>
           </row>
 
+          <row>
+            <entry>Philip North</entry>
+            <entry>Analysis/User support [Maternity cover]</entry>
+            <entry><email>philip [at] flymine.org</email></entry>
+          </row>
+
         </tbody>
       </tgroup>
     </table>
@@ -83,6 +83,19 @@
       <title>team_members</title>
       <tgroup cols="2">
         <tbody>
+
+          <row>
+            <entry>Wenyan Ji</entry>
+            <entry>Software Developer</entry>
+            <entry><email>wenyan [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Peter Mclaren</entry>
+            <entry>Software Developer</entry>
+            <entry><email>peter [at] flymine.org</email></entry>
+          </row>
+
           <row>
             <entry>Debashis Rana</entry>
             <entry>Postdoctoral Research Associate</entry>
