@@ -4,10 +4,11 @@ use strict;
 use warnings;
 use Net::FTP;
 use IO::All;
+use File::Compare;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link ftp_download http_download checkdir_exists date_string_file unzip_dir convert_date);
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_http_files checkdir_exists date_string_file unzip_dir convert_date);
 
 #connect to server
 sub ftp_connect(){
@@ -46,7 +47,28 @@ sub http_download(){
 	io($source) > io($destination);
 }
 
-#check if a directory exists, create it if it doesn't
+#compare http files, return 1 if it is a new version or if
+#the current data link is missing. Otherwise return 0
+sub compare_http_files(){
+my ($old,$new,$main_dir,$filename,$link)=@_;
+
+	if(compare("$old","$new") == 1){
+		print "New version found.\n";
+		return 1;
+	}
+	#delete the downloaded files if there are no differences
+	elsif(compare("$old","$new") == 0){
+		print "Current version up to date - ";
+		return 0;
+	#download anyway if no comparison can be made
+	}else{
+		print "Current data file not found - current link missing? ";
+		return 1;
+	}
+}
+
+#check if a directory exists and return 0 if it does, 
+#create it and return 1 if it doesn't
 sub checkdir_exists(){
 	my $dir = shift;
 	if (!(-d $dir)) {
@@ -69,7 +91,7 @@ sub date_string_file(){
 	return $date_string;
 }
 
-#convert date string into day/month/year
+#convert date string into day/month/year, if no string, use current date
 sub convert_date(){
 	my $string = shift;
 	my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst);
@@ -87,8 +109,6 @@ sub convert_date(){
 
 	return $date_string;
 }
-
-
 
 #unzip files
 sub unzip_dir(){
