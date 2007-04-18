@@ -126,7 +126,7 @@ public class Path
         this.startCld = cld;
         if (cld == null) {
             throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
-                                + "' not found in model '" + model.getName() + "'");
+                                + "' not found in model '" + model.getName() + "'", path);
         }
         
         StringBuffer currentPath = new StringBuffer(parts[0]);
@@ -140,7 +140,7 @@ public class Path
             if (fld == null) {
                 throw new PathError("Unable to resolve path '" + path + "': field '"
                                     + thisPart + "' of class '" + cld.getName()
-                                    + "' not found in model '" + model.getName() + "'");
+                                    + "' not found in model '" + model.getName() + "'", path);
             }
             // if this is a collection then mark the whole path as containing collections
             if (fld.isCollection()) {
@@ -156,7 +156,7 @@ public class Path
                                         + cld.getName()
                                         + "' is not a reference/collection field in "
                                         + "the model '"
-                                        + model.getName() + "'");
+                                        + model.getName() + "'", path);
                 }
             } else {
                 this.endFld = fld; 
@@ -302,7 +302,7 @@ public class Path
         if (!clds.contains(getStartClassDescriptor())) {
             throw new PathError("ClassDescriptor from the start of path: " + path
                                 + " is not a superclass of the class: " + o.getClass()
-                                + " while resolving object: " + o);
+                                + " while resolving object: " + o, path);
         }
 
         Iterator iter = elements.iterator();

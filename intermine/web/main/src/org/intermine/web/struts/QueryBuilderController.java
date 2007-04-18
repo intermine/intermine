@@ -29,6 +29,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.path.Path;
+import org.intermine.path.PathError;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
@@ -93,6 +94,16 @@ public class QueryBuilderController extends TilesAction
             viewStrings.add(viewPath.toStringNoConstraints());
         }
         request.setAttribute("viewStrings", viewStrings);
+
+        List<String> errorPaths = new ArrayList<String>();
+        Throwable[] messages = query.getProblems();
+        for (Throwable thr: messages) {
+            if (thr instanceof PathError) {
+                errorPaths.add(((PathError) thr).getPathString());
+            }
+        }
+        request.setAttribute("errorPaths", errorPaths);
+        
         request.setAttribute("viewPaths", listToMap(viewStrings));
         request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
         request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
