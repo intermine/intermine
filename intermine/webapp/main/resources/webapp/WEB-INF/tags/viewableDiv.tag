@@ -25,7 +25,7 @@
 
 <c:choose>
   <c:when test="${errorPath}">
-    <div class="errorPath" title="this path doesn't match the current model">
+    <div class="errorPath" title="error - this path doesn't match the current model">
       <jsp:doBody/>
     </div>
   </c:when>
