@@ -334,9 +334,15 @@ public class MainHelper
                     InterMineBag bag;
                     if (c.getValue() instanceof InterMineBag) {
                         bag = (InterMineBag) c.getValue();
-                        
+                        if (bag == null) {
+                            throw new RuntimeException("a bag used by this query no longer exists");
+                        }
                     } else {
                         bag = (InterMineBag) savedBags.get(c.getValue());
+                        if (bag == null) {
+                            throw new RuntimeException("a bag (" + c.getValue() 
+                                                       + ") used by this query no longer exists");
+                        }
                     }
                     QueryField qf = new QueryField((QueryClass) qn, "id");
                     cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getListOfIds()));
