@@ -9,13 +9,12 @@
             use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}"
             splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}"
             windowtitle="${javadoc.windowtitle}" private="${javadoc.private}"
-            additionalparam="${javadoc.additionalparam}" failonerror="true" breakiterator="yes">
+            additionalparam="${javadoc.additionalparam}" failonerror="false" breakiterator="yes">
       <classpath refid="project.compile.path"/>
       <sourcepath>
         <pathelement location="../../bio/core/main/src"/>
         <pathelement location="../../bio/postprocess/main/src"/>
         <pathelement location="../../bio/sources/affy-probes/main/src"/>
-        <pathelement location="../../bio/sources/biojava-flatfile/main/src"/>
         <pathelement location="../../bio/sources/diseaseregion/main/src"/>
         <pathelement location="../../bio/sources/drosdel/main/src"/>
         <pathelement location="../../bio/sources/ensembl/main/src"/>
@@ -24,7 +23,6 @@
         <pathelement location="../../bio/sources/firstef/main/src"/>
         <pathelement location="../../bio/sources/flyatlas/main/src"/>
         <pathelement location="../../bio/sources/flybase-gff/main/src"/>
-        <pathelement location="../../bio/sources/flybase-proteinbindingsites/main/src"/>
         <pathelement location="../../bio/sources/flyreg/main/src"/>
         <pathelement location="../../bio/sources/flyrnai-screens/main/src"/>
         <pathelement location="../../bio/sources/go-annotation/main/src"/>
@@ -55,7 +53,6 @@
       <fileset dir="../../bio/core/main/src"/>
       <fileset dir="../../bio/postprocess/main/src"/>
       <fileset dir="../../bio/sources/affy-probes/main/src"/>
-      <fileset dir="../../bio/sources/biojava-flatfile/main/src"/>
       <fileset dir="../../bio/sources/diseaseregion/main/src"/>
       <fileset dir="../../bio/sources/drosdel/main/src"/>
       <fileset dir="../../bio/sources/ensembl/main/src"/>
@@ -64,7 +61,6 @@
       <fileset dir="../../bio/sources/firstef/main/src"/>
       <fileset dir="../../bio/sources/flyatlas/main/src"/>
       <fileset dir="../../bio/sources/flybase-gff/main/src"/>
-      <fileset dir="../../bio/sources/flybase-proteinbindingsites/main/src"/>
       <fileset dir="../../bio/sources/flyreg/main/src"/>
       <fileset dir="../../bio/sources/flyrnai-screens/main/src"/>
       <fileset dir="../../bio/sources/go-annotation/main/src"/>
