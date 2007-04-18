@@ -13,6 +13,9 @@
     <tiles:insert page="/viewElement.jsp">
       <tiles:put name="pathString" value="${pathString}"/>
       <tiles:put name="errorPath" value="false"/>
+      <tiles:put name="viewIndex" value="${status.index}"/>
+      <tiles:put name="isFirst" value="${status.first}"/>
+      <tiles:put name="isLast" value="${status.last}"/>
     </tiles:insert>
   </c:forEach>
 </div>
