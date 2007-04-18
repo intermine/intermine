@@ -29,9 +29,9 @@ import junit.framework.TestCase;
  * @author Kim Rutherford
  */
 
-public class MainChangeTest  extends TestCase
+public class QueryBuilderChangeTest  extends TestCase
 {
-    public MainChangeTest(String arg) {
+    public QueryBuilderChangeTest(String arg) {
         super(arg);
     }
 
