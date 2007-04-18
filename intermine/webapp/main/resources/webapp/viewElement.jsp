@@ -11,19 +11,10 @@
 <html:xhtml/>
 <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}" errorPath="${errorPath}">
   <div>
-    <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}">
+    <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}"
+               title="${viewPathTypes[pathString]}">
       ${fn:replace(pathString, ".", " > ")}
     </html:link>
-  </div>
-  <div>
-    <c:choose>
-      <c:when test="${empty viewPathTypes[pathString]}">
-        <span class="type"><small>Error</small></span>
-      </c:when>
-      <c:otherwise>
-        <span class="type"><small>${viewPathTypes[pathString]}</small></span>
-      </c:otherwise>
-    </c:choose>
   </div>
   <div style="white-space:nowrap;">
     <noscript>
