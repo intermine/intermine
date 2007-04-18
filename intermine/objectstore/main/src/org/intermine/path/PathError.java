@@ -16,11 +16,24 @@ package org.intermine.path;
  */
 public class PathError extends Error
 {
+    private final String pathString;
+
     /**
      * Create a new PathError with the given message
      * @param message the message
+     * @param pathString the String representation of the Path that generated this Error - used
+     * when the Path constructor is past a string that isn't a valid path
      */
-    public PathError(String message) {
+    public PathError(String message, String pathString) {
         super(message);
+        this.pathString = pathString;
+    }
+
+    /**
+     * Return the path String that was passed to the constructor
+     * @return the path string
+     */
+    public String getPathString() {
+        return pathString;
     }
 }

@@ -365,6 +365,17 @@ div.viewpath {
   cursor: pointer;
   cursor: hand;
 }
+/* a path in the view that has an error */
+div.errorPath {
+  background: #FBB;
+  border: 1px solid #eaa;
+  padding: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  float: left;
+  text-align: center;
+  font-size: 11px;
+}
 div.viewpathDisabled {
   background: #bbb;
 }

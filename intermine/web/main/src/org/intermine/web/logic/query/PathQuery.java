@@ -339,8 +339,8 @@ public class PathQuery
      * Get the exceptions generated while deserialising this path query query.
      * @return exceptions relating to this path query
      */
-    public Exception[] getProblems() {
-        return problems.toArray(new Exception[0]);
+    public Throwable[] getProblems() {
+        return problems.toArray(new Throwable[0]);
     }
     
     /**
