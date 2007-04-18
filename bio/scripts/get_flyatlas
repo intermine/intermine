@@ -1,0 +1,75 @@
+#!/usr/bin/perl
+
+#downloads all.txt from http://130.209.132.177/atlas and compares it to the version pointed
+#to by the current link in /shared/data/flyatlas as a current version id for
+#genes2molecular_names.txt is not available prior to download.
+
+use strict;
+use warnings;
+use IO::All;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+my $flyatlas_server = "http://130.209.132.177/atlas";
+my $flyatlas_data_file = "all.txt";
+
+my $flyatlas_main_dir = "/shared/data/flyatlas";
+my $download_dir = "$flyatlas_main_dir/temp";
+my $file_to_get = "$flyatlas_server/$flyatlas_data_file";
+my $temp_file = "$download_dir/temp.txt";
+
+#create directories and download the file
+&checkdir_exists($flyatlas_main_dir);
+&checkdir_exists($download_dir);
+&http_download($file_to_get,$temp_file);
+
+my $current_link = "/shared/data/flyatlas/current";
+my $old_file = "$current_link/../orig/all.txt";
+
+#compare the files, create version directory if it is a new version or
+#the current data link is missing
+my $result = &compare_http_files($old_file,$temp_file);
+if($result == 1){
+	print "Keeping downloaded files.\n";
+	&update_files($flyatlas_main_dir,$flyatlas_data_file,$temp_file,$current_link);
+}elsif($result == 0 ){
+	print "Downloaded files deleted.\n";
+	unlink $temp_file;
+}
+
+#create data directory, move files, make link	
+sub update_files(){
+	my ($dir,$new_name,$oldfile,$link) = @_;
+	
+	my $date = &convert_date();
+	my $new_dir = "$dir/$date";
+	my $orig_file = "$new_dir/orig/$new_name";
+	my $fixed_file = "$new_dir/fixed/$new_name";
+	&checkdir_exists($new_dir);
+	&checkdir_exists("$new_dir/orig/");
+	&checkdir_exists("$new_dir/fixed/");
+	system("mv $oldfile $orig_file");
+	&fix_file($orig_file,$fixed_file);
+	&make_link("$date/fixed",$link);
+}
+#correct the column names
+sub fix_file(){
+	my ($old_file,$fixed_file) = @_;
+
+	open(F,"<$old_file") or die "$!";
+	open(FH,">$fixed_file") or die "$!";
+	while(<F>){	
+		s/FakeCall/tubule vs whole fly - T-Test_Change Direction/g;
+		s/Grandmean/TubuleMean/g;
+		s/GrandSEM/TubuleSEM/g;
+		s/fakepresent/TubuleCall/g;
+		print FH;
+	}
+	close(F) or die "$!";
+	close(FH) or die "$!";
+}
+
