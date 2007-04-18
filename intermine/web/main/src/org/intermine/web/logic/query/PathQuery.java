@@ -220,7 +220,8 @@ public class PathQuery
     }
 
     /**
-     * Remove the Path with the given String representation from the view.
+     * Remove the Path with the given String representation from the view.  If the pathString 
+     * refers to a path that appears in a PathError in the problems collection, remove that problem.
      * @param pathString the path to remove
      */
     public void removePathStringFromView(String pathString) {
@@ -230,7 +231,16 @@ public class PathQuery
             if (viewPath.toStringNoConstraints().equals(pathString)
                 || viewPath.toString().equals(pathString)) {
                 iter.remove();
-                return;
+            }
+        }
+        Iterator<Throwable> throwIter = problems.iterator();
+        while (throwIter.hasNext()) {
+            Throwable thr = throwIter.next();
+            if (thr instanceof PathError) {
+                PathError pe = (PathError) thr;
+                if (pe.getPathString().equals(pathString)) {
+                    throwIter.remove();
+                }
             }
         }
     }

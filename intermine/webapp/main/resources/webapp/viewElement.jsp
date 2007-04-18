@@ -9,7 +9,8 @@
 
 <!-- viewElement.jsp -->
 <html:xhtml/>
-<im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}" errorPath="${errorPath}">
+<im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing"
+                idPostfix="_${viewIndex}" errorPath="${errorPath}">
   <div>
     <c:choose>
       <c:when test="${errorPath}">
@@ -26,7 +27,7 @@
   <div style="white-space:nowrap;">
     <noscript>
       <c:choose>
-        <c:when test="${status.first}">
+        <c:when test="${isFirst || errorPath}">
           <img style="margin-right: 5px" border="0" align="middle"
                src="images/blank13x13.gif" alt=" " width="13" height="13"/>
         </c:when>
@@ -36,7 +37,7 @@
           </fmt:message>
           <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
 
-          <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
+          <html:link action="/viewChange?method=moveLeft&amp;index=${viewIndex}"
                      title="${moveLeftTitle}">
             <img style="margin-right: 5px" border="0" align="middle"
                  src="images/left-arrow-square.gif" width="13" height="13"
@@ -61,7 +62,7 @@
 
     <noscript>
       <c:choose>
-        <c:when test="${status.last}">
+        <c:when test="${isLast || errorPath}">
           <img style="margin-left: 5px" border="0" align="middle"
                src="images/blank13x13.gif" alt=" " width="13" height="13" />
         </c:when>
@@ -71,7 +72,7 @@
           </fmt:message>
           <fmt:message key="view.moveRightSymbol" var="moveRightString"/>
 
-          <html:link action="/viewChange?method=moveRight&amp;index=${status.index}"
+          <html:link action="/viewChange?method=moveRight&amp;index=${viewIndex}"
                      title="${moveRightTitle}">
             <img style="margin-left: 5px" border="0" align="middle"
                  src="images/right-arrow-square.gif" width="13" height="13"
