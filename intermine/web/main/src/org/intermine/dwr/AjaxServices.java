@@ -26,6 +26,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.path.Path;
+
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
@@ -212,6 +214,20 @@ public class AjaxServices
             throw new InterMineException("Bag \"" + bagName + "\" not found.");
         }
         bag.setDescription(description);
+        return description;
+    }
+
+    /**
+     * Set the description of a view path.
+     * @param pathString the string representation of the path
+     * @param description the new description
+     */
+    public String changeViewPathDescription(String pathString, String description) {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        Path path = MainHelper.makePath(query.getModel(), query, pathString);
+        query.getPathDescriptions().put(path, description);
         return description;
     }
     

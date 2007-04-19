@@ -11,6 +11,7 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,13 +43,14 @@ public class PathQuery
 {
     private static final Logger LOG = Logger.getLogger(PathQuery.class);
     
-    protected Model model;
+    private Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
-    protected List<Path> view = new ArrayList<Path>();
-    protected List<Path> sortOrder = new ArrayList<Path>();
-    protected ResultsInfo info;
-    protected ArrayList<Throwable> problems = new ArrayList<Throwable>();
+    private List<Path> view = new ArrayList<Path>();
+    private List<Path> sortOrder = new ArrayList<Path>();
+    private ResultsInfo info;
+    ArrayList<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
+    private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
 
     /**
      * Construct a new instance of PathQuery.
@@ -434,10 +436,8 @@ public class PathQuery
      * @see Object#toString()
      */
     public String toString() {
-        return "{PathQuery: model=" + model.getName() + ", " 
-                                    + nodes + ", " 
-                                    + view + ", " 
-                                    + sortOrder + "}";
+        return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view 
+            + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
     }
 
     /**
@@ -547,5 +547,42 @@ public class PathQuery
     public static PathQuery fromXml(String xml, Map savedBags, Map classKeys) {
         Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, classKeys);
         return (PathQuery) queries.values().iterator().next();
+    }
+
+    /**
+     * Return the map from Path objects (from the view) to their descriptions.
+     * @return the path descriptions map
+     */
+    public Map<Path, String> getPathDescriptions() {
+        return pathDescriptions;
+    }
+    
+    /**
+     * Return the description for the given path from the view.
+     * @param pathString the path as a string
+     * @return the description
+     */
+    public String getPathDescription(String pathString) {
+        for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
+            if (entry.getKey().toStringNoConstraints().equals(pathString)
+                || entry.getKey().toString().equals(pathString)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Return the description for the given path from the view.
+     * @return the description Map
+     */
+    public Map<String, String> getPathStringDescriptions() {
+        Map<String, String> retMap = new HashMap<String, String>();
+        for (Map.Entry<Path, String> entry: pathDescriptions.entrySet()) {
+            retMap.put(entry.getKey().toString(), entry.getValue());
+            retMap.put(entry.getKey().toStringNoConstraints(), entry.getValue());
+        }
+        return retMap;
+
     }
 }
