@@ -33,9 +33,10 @@
 	</div>
 	
   <c:if test="${!empty path}">
+    <im:prefixSubstring str="${pathString}" outVar="pathPrefix" delimiter="."/>
     <tiles:insert name="viewElementDescription.jsp">
       <tiles:put name="pathString" value="${pathString}"/>
-      <tiles:put name="description" value="${QUERY.pathStringDescriptions[pathString]}"/>
+      <tiles:put name="description" value="${QUERY.pathStringDescriptions[pathPrefix]}"/>
     </tiles:insert>
   </c:if>
 

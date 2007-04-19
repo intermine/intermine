@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <tiles:useAttribute id="pathString" name="pathString"/>
 <tiles:useAttribute id="description" name="description"/>
@@ -17,6 +18,9 @@
   }
 //]]>-->
 </script>
+
+<im:unqualify className="${pathString}" var="pathEnd"/>
+<im:prefixSubstring str="${pathString}" outVar="pathPrefix" delimiter="."/>
 
 <!-- viewElementDescription.jsp -->
 <html:xhtml/>
@@ -33,12 +37,13 @@
         <fmt:message key="view.noViewPathDescription"/>
       </c:when>
       <c:otherwise>
-        <c:out value="${description}"/>
+        <span class="viewPathDescription"><c:out value="${description}"/></span>
+        &gt; ${pathEnd}
       </c:otherwise>
     </c:choose>
   </span>
   <a href="javascript:editName('${pathName}');" title="change description">
-    <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
+    <img border="0" src="images/edit.gif" width="13" height="13" alt="change description"/>
   </a>
 </span>
 <!-- /viewElementDescription.jsp -->
