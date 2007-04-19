@@ -12,6 +12,9 @@
 
 <tiles:get name="objectTrail.tile"/><im:vspacer height="3"/>
 
+<c:set var="isPagedResults" 
+       value="${resultsTable.class.name == 'org.intermine.web.logic.results.PagedResults'}"/>
+
 <script type="text/javascript" src="js/table.js" ></script>
 <script type="text/javascript">
 <!--//<![CDATA[
@@ -39,8 +42,8 @@
 
       <%-- show the description only if we've run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${(resultsTable.class.name == 'org.intermine.web.logic.results.PagedResults')
-                  && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
+      <c:if test="${isPagedResults
+                    && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
             <div>
@@ -291,7 +294,8 @@
         </c:if>
 
         <%-- Return to main results link
-             <c:if test="${resultsTable.class.name != 'org.intermine.web.logic.results.PagedResults' && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
+             <c:if test="${!isPagedResults
+                           && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
                <p>
                  <html:link action="/results?table=results">
                    <fmt:message key="results.return"/>
