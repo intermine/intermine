@@ -23,6 +23,5 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
