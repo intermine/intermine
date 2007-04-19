@@ -6,8 +6,6 @@
     </node>
   </query>
   <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
-    <alternative-view name="altView1" view="Employee.name Employee.age"/>
-    <alternative-view name="altView2" view="Employee.name"/>
     <node path="Employee.department.manager.age">
       <constraint op=">" value="10" editable="true" 
                   description="age is greater than 10" identifier="age_gt_10"/>
