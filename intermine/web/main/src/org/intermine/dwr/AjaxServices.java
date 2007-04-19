@@ -231,10 +231,11 @@ public class AjaxServices
         HttpSession session = ctx.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         Path path = MainHelper.makePath(query.getModel(), query, pathString);
+        Path prefixPath = path.getPrefix();
         if (description == null) {
-            query.getPathDescriptions().remove(path);
+            query.getPathDescriptions().remove(prefixPath);
         } else {
-            query.getPathDescriptions().put(path, description);
+            query.getPathDescriptions().put(prefixPath, description);
         }
         return description;
     }

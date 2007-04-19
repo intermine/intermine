@@ -39,15 +39,18 @@ function renameElement(name, type, index){
 
 function changeViewPathDescription(pathName){
     var pathString = pathName.replace(/\_/g,".");
+    var pathEnd = pathString.substring(pathString.lastIndexOf('.') + 1);
     document.getElementById('form_'+pathName).style.display = "none";
     document.getElementById('name_'+pathName+'_inner').innerHTML = "<i>saving...</i>";
     document.getElementById('name_'+pathName).style.display = "block";
     var newDescription = document.getElementById('newName_' + pathName).value;
-    var callBack = function(str){
-        if (str == null) {
-            str = '(no description)';
+    var callBack = function(prefixDescription){
+        if (prefixDescription == null) {
+            prefixDescription = '(no description)';
         }
-        document.getElementById('name_' + pathName + '_inner').innerHTML = str;
+        document.getElementById('name_' + pathName + '_inner').innerHTML =
+          '<span  class="viewPathDescription">' + prefixDescription +
+          '</span> &gt; ' + pathEnd;
     }
     AjaxServices.changeViewPathDescription(pathString, newDescription, callBack);
 }

@@ -369,6 +369,7 @@ div.viewpath {
   font-size: 11px;
   cursor: pointer;
   cursor: hand;
+  height: 9ex;
 }
 /* a path in the view that has an error */
 div.errorPath {
@@ -390,7 +391,9 @@ div.viewListEdit {
   padding-right: 6px;
   padding-top: 1.5em;
 }
-
+span.viewPathDescription {
+  font-style: italic;
+}
 
 /* surrounds sort order section */
 div.sortorderBorder {

@@ -110,11 +110,23 @@
                       </html:multibox>
                     </th>
                   </c:if>
-                  
+
                   <th align="center" valign="top" >
-                    
-                    <div>              
-                      <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
+                    <div>
+                      <c:set var="displayPath" value="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
+                      <im:unqualify className="${column.name}" var="pathEnd"/>
+                      <im:prefixSubstring str="${column.name}" outVar="pathPrefix" delimiter="."/>
+                      <c:choose>
+                        <c:when test="${!empty QUERY
+                                      && !empty QUERY.pathStringDescriptions[pathPrefix]}">
+                          <span class="viewPathDescription"
+                                title="${displayPath}">${QUERY.pathStringDescriptions[pathPrefix]}</span>
+                          &gt; ${pathEnd}
+                        </c:when>
+                        <c:otherwise>
+                          <c:out value="${displayPath}" escapeXml="false"/>
+                        </c:otherwise>
+                      </c:choose>
                     </div>
                     <%-- put in left, right, hide and show buttons --%>
                     <table class="toolbox">
