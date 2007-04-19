@@ -17,16 +17,18 @@
 </div>
 
 <div class="body">
-<h3>Columns to Display</h3>
+
+	<h3><fmt:message key="view.heading"/></h3>
+
   <c:if test="${fn:length(viewStrings) > 1}">
     <noscript>
       <div>
-        <fmt:message key="view.columnOrderingTip"/>
+        <fmt:message key="view.intro"/>
       </div>
     </noscript>
     <script type="text/javascript">
        <!--
-       document.write('<p><fmt:message key="view.columnOrderingTip.jscript"/></p>');
+       document.write('<p><fmt:message key="view.intro.jscript"/></p>');
        // -->
     </script>
   </c:if>
@@ -44,26 +46,27 @@
 
 
 <br clear="all"><br>
-<h3>Sort Data By</h3>
-				<!-- sort by -->
-  				<c:choose>
-    				<c:when test="${empty sortOrderStrings}">
-				      <div class="body">
-						<p><i><fmt:message key="sortOrder.empty.description"/></i>&nbsp;</p>
-				      </div>
-				    </c:when>
-			    <c:otherwise>
-			    	<div class="sortorderBorder">
-				      <tiles:insert page="/sortOrderLine.jsp"/>
-				    </div>
-			    </c:otherwise>
-			  </c:choose>
+	<h3><fmt:message key="sortOrder.heading"/></h3>
 
-
-
-
-
-
+	  <c:if test="${fn:length(sortOrderStrings) > 1}">
+    <noscript>
+      <div>
+        <fmt:message key="sortOrder.intro"/>
+      </div>
+    </noscript>
+    <script type="text/javascript">
+       <!--
+       document.write('<p><fmt:message key="sortOrder.intro.jscript"/></p>');
+       // -->
+    </script>
+  </c:if>
+	
+		<!-- sort by -->
+    	<c:if test="${!empty sortOrderStrings}">
+			<div class="sortorderBorder">
+		     	 <tiles:insert page="/sortOrderLine.jsp"/>
+	    	</div>
+	    </c:if>
 
   <c:if test="${!empty viewStrings}">
   <br clear="all"><br>
