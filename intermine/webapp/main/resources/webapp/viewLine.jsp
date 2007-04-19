@@ -7,6 +7,10 @@
 
 <!-- viewLine.jsp -->
 
+  <c:forEach var="sortOrder" items="${sortOrderStrings}">
+    <c:set var="sortOrderString" value="${sortOrder}"/>
+  </c:forEach>
+  
 <div id="viewDivs">
   <c:forEach var="path" items="${viewStrings}" varStatus="status">
     <c:set var="pathString" value="${path}"/>
@@ -16,6 +20,7 @@
       <tiles:put name="viewIndex" value="${status.index}"/>
       <tiles:put name="isFirst" value="${status.first}"/>
       <tiles:put name="isLast" value="${status.last}"/>
+      <tiles:put name="sortOrderString" value="${sortOrderString}"/>
     </tiles:insert>
   </c:forEach>
 </div>

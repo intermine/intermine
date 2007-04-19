@@ -9,22 +9,29 @@
 
 <!-- viewElement.jsp -->
 <html:xhtml/>
-<im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing"
-                idPostfix="_${viewIndex}" errorPath="${errorPath}">
-  <div>
-    <c:choose>
-      <c:when test="${errorPath}">
-          ${fn:replace(pathString, ".", " > ")}
-      </c:when>
-      <c:otherwise>
-        <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}"
-                   title="${viewPathTypes[pathString]}">
+   <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}">
+   
+      <%-- class name --%>   
+      <div>
+        <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}">
           ${fn:replace(pathString, ".", " > ")}
         </html:link>
-      </c:otherwise>
-    </c:choose>
-  </div>
+            
+      <%-- (x) img --%>
+       <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
+          <fmt:param value="${pathString}"/>
+        </fmt:message>
+        <fmt:message key="view.removeFromViewSymbol" var="removeFromViewString"/>
 
+        <html:link action="/viewChange?method=removeFromView&amp;path=${pathString}"
+                   title="${removeFromViewTitle}">
+          <img border="0" align="middle"
+               src="images/cross.gif" width="13" height="13"
+               alt="${removeFromViewString}" style="margin-top: 3px;"/>
+        </html:link>
+        
+	</div>
+	
   <c:if test="${!empty path}">
     <tiles:insert name="viewElementDescription.jsp">
       <tiles:put name="pathString" value="${pathString}"/>
@@ -32,65 +39,50 @@
     </tiles:insert>
   </c:if>
 
-  <div style="white-space:nowrap;">
-    <noscript>
-      <c:choose>
-        <c:when test="${isFirst || errorPath}">
-          <img style="margin-right: 5px" border="0" align="middle"
-               src="images/blank13x13.gif" alt=" " width="13" height="13"/>
-        </c:when>
-        <c:otherwise>
-          <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
-            <fmt:param value="${pathString}"/>
-          </fmt:message>
-          <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
+      <div style="white-space:nowrap;">
+        <noscript>
+          <c:choose>
+            <c:when test="${status.first}">
+              <img style="margin-right: 5px" border="0" align="middle"
+                   src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+            </c:when>
+            <c:otherwise>
+              <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
+                <fmt:param value="${pathString}"/>
+              </fmt:message>
+              <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
 
-          <html:link action="/viewChange?method=moveLeft&amp;index=${viewIndex}"
-                     title="${moveLeftTitle}">
-            <img style="margin-right: 5px" border="0" align="middle"
-                 src="images/left-arrow-square.gif" width="13" height="13"
-                 alt="${moveRightString}"/>
-          </html:link>
+              <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
+                         title="${moveLeftTitle}">
+                <img style="margin-right: 5px" border="0" align="middle"
+                     src="images/left-arrow-square.gif" width="13" height="13"
+                     alt="${moveRightString}"/>
+              </html:link>
 
-        </c:otherwise>
-      </c:choose>
-    </noscript>
+            </c:otherwise>
+          </c:choose>
+        </noscript>
 
-    <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
-      <fmt:param value="${pathString}"/>
-    </fmt:message>
-    <fmt:message key="view.removeFromViewSymbol" var="removeFromViewString"/>
+		<%-- sort button --%>
+           <c:choose>
+            <c:when test="${sortOrderString != pathString}">
+                <a href="javascript:updateSortOrder('${pathString}');">
+                	<img style="margin-left: 5px" border="0" align="middle"
+                    	 src="images/sort.gif" width="43" height="13"
+                     	alt="${pathString}"/>
+              </a>
+		
+            </c:when>
+            <c:otherwise>    
+                <a href="javascript:updateSortOrder('${pathString}');">
+                	<img style="margin-left: 5px" border="0" align="middle"
+                    	 src="images/sort.gif" width="43" height="13"
+                     	alt="${pathString}"/>
+              </a>
+			</c:otherwise>
+          </c:choose>
+		
 
-    <html:link action="/viewChange?method=removeFromView&amp;path=${pathString}"
-               title="${removeFromViewTitle}">
-      <img border="0" align="middle"
-           src="images/cross.gif" width="13" height="13"
-           alt="${removeFromViewString}" style="margin-top: 3px;"/>
-    </html:link>
-
-    <noscript>
-      <c:choose>
-        <c:when test="${isLast || errorPath}">
-          <img style="margin-left: 5px" border="0" align="middle"
-               src="images/blank13x13.gif" alt=" " width="13" height="13" />
-        </c:when>
-        <c:otherwise>
-          <fmt:message key="view.moveRightHelp" var="moveRightTitle">
-            <fmt:param value="${pathString}"/>
-          </fmt:message>
-          <fmt:message key="view.moveRightSymbol" var="moveRightString"/>
-
-          <html:link action="/viewChange?method=moveRight&amp;index=${viewIndex}"
-                     title="${moveRightTitle}">
-            <img style="margin-left: 5px" border="0" align="middle"
-                 src="images/right-arrow-square.gif" width="13" height="13"
-                 alt="${moveRightString}"/>
-          </html:link>
-
-        </c:otherwise>
-      </c:choose>
-    </noscript>
-
-  </div>
-</im:viewableDiv>
+      </div>
+    </im:viewableDiv>
 <!-- /viewElement.jsp -->

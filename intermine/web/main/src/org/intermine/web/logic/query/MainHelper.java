@@ -196,6 +196,7 @@ public class MainHelper
         pathQuery = (PathQuery) pathQuery.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
+        List<Path> sortOrder = pathQuery.getSortOrder();
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
         ConstraintSet rootcs = null;
@@ -406,7 +407,7 @@ public class MainHelper
                     (andcs.getConstraints().iterator().next()));
         }
 
-        //build the SELECT list, put all elements in ORDER BY list
+        //build the SELECT list
         for (Iterator<Path> i = view.iterator(); i.hasNext();) {
             PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
             QueryNode qn = null;
@@ -421,9 +422,14 @@ public class MainHelper
             if (!q.getSelect().contains(qn)) {
                 q.addToSelect(qn);
             }
-            QueryNode selectNode = queryBits.get(pn.getPathString());
-            if (!q.getOrderBy().contains(selectNode)) {
-                q.addToOrderBy(selectNode);
+        }
+
+        // build ORDER BY list
+        for (Iterator<Path> i = sortOrder.iterator(); i.hasNext();) {
+            PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
+            QueryNode sortByNode = queryBits.get(pn.getPathString());
+            if (!q.getOrderBy().contains(sortByNode)) {
+                q.addToOrderBy(sortByNode);
             }
         }
 

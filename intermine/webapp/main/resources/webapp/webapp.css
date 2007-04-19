@@ -330,6 +330,8 @@ table.toolbox, table.toolbox td, table.toolbox th {
   spacing:0px;
   align:center;
 }
+
+
 .showing {
   background: #E7F1FB;
   border: 1px solid #bbb;
@@ -340,6 +342,7 @@ table.toolbox, table.toolbox td, table.toolbox th {
   margin-right: 3px;
   line-height: 25px;
 }
+
 /* move away from plus/minus image on left */
 .browserline .showing {
   margin-left: 0px;
@@ -347,6 +350,8 @@ table.toolbox, table.toolbox td, table.toolbox th {
 .browserline {
   white-space: nowrap;
 }
+
+
 /* surrounds view paths */
 div.view {
   padding: 4px;
@@ -385,6 +390,42 @@ div.viewListEdit {
   padding-right: 6px;
   padding-top: 1.5em;
 }
+
+
+/* surrounds sort order section */
+div.sortorderBorder {
+  border: 1px dashed #888;
+  background-color: #ccc;
+  float: left;
+  width: 250px;
+}
+
+/* surrounds sort order paths */
+div.sortorder {
+  padding: 4px;
+  padding-bottom: 14px;
+}
+
+/* one path added to the sort order area */
+div.sortorderpath {
+  background: #F5F0FF;
+  border: 1px solid #bbb;  
+  float: center;
+  text-align: center;
+  font-size: 10px;
+  cursor: pointer;
+  cursor: hand;
+}
+div.sortorderpathDisabled {
+  background: #bbb;
+}
+div.sortorderListEdit {
+  color: #555;
+  float: left;
+  padding-right: 6px;
+  padding-top: 1.5em;
+}
+
 table.results tr.even {
   background: #F5F0FF;
 }

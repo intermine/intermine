@@ -106,8 +106,21 @@ public class QueryBuilderController extends TilesAction
         
         request.setAttribute("viewPaths", listToMap(viewStrings));
         request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
-        request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
+        //request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
 
+        List<Path> sortOrder = SessionMethods.getEditingSortOrder(session);
+        List<String> sortOrderStrings = new ArrayList<String>();
+        
+        if (sortOrder != null) {
+            for (Path sortOrderString: sortOrder) {
+                sortOrderStrings.add(sortOrderString.toStringNoConstraints());
+            }
+            request.setAttribute("sortOrderStrings", sortOrderStrings);
+            request.setAttribute("sortOrderPaths", listToMap(sortOrderStrings));
+            //request.setAttribute("sortOrderPathOrder", createIndexMap(sortOrderStrings));
+            //request.setAttribute("sortOrderPathTypes", getPathTypes(sortOrderStrings, query));
+        }
+        
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         boolean isSuperUser;

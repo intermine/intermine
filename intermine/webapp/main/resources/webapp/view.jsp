@@ -17,7 +17,7 @@
 </div>
 
 <div class="body">
-
+<h3>Columns to Display</h3>
   <c:if test="${fn:length(viewStrings) > 1}">
     <noscript>
       <div>
@@ -42,7 +42,32 @@
     </c:otherwise>
   </c:choose>
 
+
+<br clear="all"><br>
+<h3>Sort Data By</h3>
+				<!-- sort by -->
+  				<c:choose>
+    				<c:when test="${empty sortOrderStrings}">
+				      <div class="body">
+						<p><i><fmt:message key="sortOrder.empty.description"/></i>&nbsp;</p>
+				      </div>
+				    </c:when>
+			    <c:otherwise>
+			    	<div class="sortorderBorder">
+				      <tiles:insert page="/sortOrderLine.jsp"/>
+				    </div>
+			    </c:otherwise>
+			  </c:choose>
+
+
+
+
+
+
+
   <c:if test="${!empty viewStrings}">
+  <br clear="all"><br>
+  
     <div style="clear:left; margin-bottom: 18px">
       <p>
         <html:form action="/viewAction">
@@ -58,17 +83,29 @@
        var previousOrder = '';
 
        Sortable.create('viewDivs', {
-         tag:'div', constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
+         tag:'div', dropOnEmpty:true,  constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
            reorderOnServer();
          }
        });
+
+       Sortable.create('sortOrderDivs', {
+         tag:'div', dropOnEmpty:true, constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
+           updateSortOrder();
+         }
+       });
+
 
        recordCurrentOrder();
 
        function recordCurrentOrder() {
          previousOrder = Sortable.serialize('viewDivs');
          previousOrder = previousOrder.replace(/viewDivs/g, 'oldOrder');
+         
+         //previousSortOrder = Sortable.serialize('sortOrderDivs');
+         //previousSortOrder = previousSortOrder.replace(/sortOrderDivs/g, 'oldSortOrder');
        }
+
+		
 
        /**
         * Send the previous order and the new order to the server.
@@ -82,12 +119,30 @@
          });
          recordCurrentOrder();
        }
+
+	  /* called from viewLine.jsp for now */
+      function updateSortOrder(pathString) {
+         new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
+           parameters:'method=addToSortOrder&pathString='+pathString,
+           asynchronous:true
+         });
+         // replace . with > 
+         s = new String(pathString);
+         s = s.replace(/\./g," > ");
+         document.getElementById('querySortOrder').innerHTML = s;
+         //recordCurrentOrder();        
+       }
      //-->
     </script>
   </c:if>
-</div>
+ </div>
+
+
 
 <c:if test="${!empty PROFILE.username && TEMPLATE_BUILD_STATE == null}">
+
+
+
   <div align="center">
     <p>
       <form action="<html:rewrite action="/mainChange"/>" method="post">
