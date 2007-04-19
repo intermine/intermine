@@ -369,7 +369,6 @@ div.viewpath {
   font-size: 11px;
   cursor: pointer;
   cursor: hand;
-  height: 9ex;
 }
 /* a path in the view that has an error */
 div.errorPath {
