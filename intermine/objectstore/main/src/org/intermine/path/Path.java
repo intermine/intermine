@@ -108,7 +108,7 @@ public class Path
         throws PathError {
         this.model = model;
         this.path = stringPath;
-        this.subClassConstraintPaths = constraintMap;
+        this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
         if (path.indexOf("[") != -1) {
             throw new IllegalArgumentException("path: " + stringPath 
                                                + " contains illegal character '['");
@@ -263,6 +263,20 @@ public class Path
         return null;
     }
 
+    /**
+     * Return a Path object that represents the prefix of this path, ie this Path without the
+     * last element.  If the Path contains only one element, an exception is thrown.
+     * @return the prefix Path
+     */
+    public Path getPrefix() {
+        if (getElements().size() == 0) {
+            throw new RuntimeException("path (" + this + ") has only one element");
+        } else {
+            String pathString = toString();
+            return new Path(model, pathString.substring(0, pathString.lastIndexOf('.')));
+        }
+    }
+    
     /**
      * If the last element in the path is an attribute, return the Class of the attribute,
      * otherwise return null
