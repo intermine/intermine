@@ -7,7 +7,7 @@
   <xsl:import href="/software/noarch/docbook-xsl/html/chunk.xsl"/>
 
   <xsl:include href="../../common/xslt/ulink.xsl"/>
-  <xsl:include href="../../common/xslt/menu.xsl"/>
+  <xsl:include href="../../common/xslt/main.xsl"/>
   <xsl:include href="../../common/xslt/page_template.xsl"/>
 
   <!-- copied so that we can add header, sidebar and pagecontent DIVs -->
