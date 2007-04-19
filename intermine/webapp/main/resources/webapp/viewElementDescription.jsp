@@ -27,14 +27,16 @@
          onclick="changeViewPathDescription('${pathName}')"/>
 </span>
 <span id="name_${pathName}">
-  <c:choose>
-    <c:when test="${empty description}">
-      <fmt:message key="view.noViewPathDescription"/>
-    </c:when>
-    <c:otherwise>
-      <c:out value="${description}"/>
-    </c:otherwise>
-  </c:choose>
+  <span id="name_${pathName}_inner">
+    <c:choose>
+      <c:when test="${empty description}">
+        <fmt:message key="view.noViewPathDescription"/>
+      </c:when>
+      <c:otherwise>
+        <c:out value="${description}"/>
+      </c:otherwise>
+    </c:choose>
+  </span>
   <a href="javascript:editName('${pathName}');" title="change description">
     <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
   </a>

@@ -221,13 +221,21 @@ public class AjaxServices
      * Set the description of a view path.
      * @param pathString the string representation of the path
      * @param description the new description
+     * @return the description, or null if the description was empty
      */
     public String changeViewPathDescription(String pathString, String description) {
+        if (description.trim().length() == 0) {
+            description = null;
+        }
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         Path path = MainHelper.makePath(query.getModel(), query, pathString);
-        query.getPathDescriptions().put(path, description);
+        if (description == null) {
+            query.getPathDescriptions().remove(path);
+        } else {
+            query.getPathDescriptions().put(path, description);
+        }
         return description;
     }
     
