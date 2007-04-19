@@ -39,14 +39,17 @@ function renameElement(name, type, index){
 
 function changeViewPathDescription(pathName){
     var pathString = pathName.replace(/\_/g,".");
-    document.getElementById('form_'+pathName).style.display="none";
-    document.getElementById('name_'+pathName).innerHTML="<i>saving...</i>";
-    document.getElementById('name_'+pathName).style.display="block";
-    var newDescription = document.getElementById('newName_'+pathName).value;
-    AjaxServices.changeViewPathDescription(pathString, newDescription,
-                                           function(str){
-                                               document.getElementById('name_'+pathName).innerHTML=newDescription;
-                                           });
+    document.getElementById('form_'+pathName).style.display = "none";
+    document.getElementById('name_'+pathName+'_inner').innerHTML = "<i>saving...</i>";
+    document.getElementById('name_'+pathName).style.display = "block";
+    var newDescription = document.getElementById('newName_' + pathName).value;
+    var callBack = function(str){
+        if (str == null) {
+            str = '(no description)';
+        }
+        document.getElementById('name_' + pathName + '_inner').innerHTML = str;
+    }
+    AjaxServices.changeViewPathDescription(pathString, newDescription, callBack);
 }
 
 function saveBagDescription(bagName){
