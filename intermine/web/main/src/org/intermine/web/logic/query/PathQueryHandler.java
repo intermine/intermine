@@ -47,7 +47,7 @@ public class PathQueryHandler extends DefaultHandler
     private Model model = null;
     private Map savedBags;
     private List<String> viewStrings = new ArrayList<String>();
-    
+    private List<String> sortOrderStrings = new ArrayList<String>();
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
@@ -79,6 +79,11 @@ public class PathQueryHandler extends DefaultHandler
             query = new PathQuery(model);
             if (attrs.getValue("view") != null) {
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
+                
+            }
+            if (attrs.getValue("sortOrder") != null) {
+                sortOrderStrings = StringUtil.tokenize(attrs.getValue("sortOrder"));
+                
             }
             if (attrs.getValue("constraintLogic") != null) {
                 query.setConstraintLogic(attrs.getValue("constraintLogic"));
@@ -165,8 +170,13 @@ public class PathQueryHandler extends DefaultHandler
             for (String viewElement: viewStrings) {
                 query.addPathStringToView(viewElement);
             }
-            queries.put(queryName, query);
+            for (String sortOrderElement: sortOrderStrings) {
+                query.addPathStringToSortOrder(sortOrderElement);
+            }
+            
+            queries.put(queryName, query);            
             viewStrings = new ArrayList<String>();
+            sortOrderStrings = new ArrayList<String>();
         }
     }
     

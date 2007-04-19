@@ -138,6 +138,9 @@
     <action path="/viewChange" type="org.intermine.web.struts.ViewChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
+    <action path="/sortOrderChange" type="org.intermine.web.struts.SortOrderChange" parameter="method">
+      <forward name="query" redirect="true" path="/query.do"/>
+    </action>
     <action path="/exportAction" type="org.intermine.web.struts.ExportAction" parameter="method">
       <forward name="results" path="results.page"/>
     </action>

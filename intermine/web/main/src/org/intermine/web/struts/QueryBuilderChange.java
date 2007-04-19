@@ -459,12 +459,14 @@ public class QueryBuilderChange extends DispatchAction
         Model model = os.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = SessionMethods.getEditingView(session);
+        List<Path> sortOrder = SessionMethods.getEditingSortOrder(session);
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
         String fullPathName = MainHelper.toPath(prefix, pathName);
-
         Path path = MainHelper.makePath(model, query, fullPathName);
+        boolean addToSortOrder = false;
+        
         // If an object has been selected, select its fields instead
         if (path.getEndFieldDescriptor() == null || path.endIsReference()
             || path.endIsCollection()) {
@@ -478,10 +480,18 @@ public class QueryBuilderChange extends DispatchAction
                     && !view.contains(pathToAdd)) {
                     view.add(pathToAdd);
                 }
+//              if sort order is empty, then add first element to sort order 
+               if (sortOrder.isEmpty()) {
+                    sortOrder.add(pathToAdd);
+                }
             }
         } else {
             view.add(path);
-        }
+//         if sort order is empty, then add first element to sort order 
+         if (sortOrder.isEmpty()) {
+                sortOrder.add(path);
+         }
+      }
 
         ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));
         fp.addAnchor(pathName);

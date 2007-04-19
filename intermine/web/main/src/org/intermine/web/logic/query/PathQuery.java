@@ -247,6 +247,59 @@ public class PathQuery
         }
     }
 
+    private Path getFirstPathFromView() {
+        Path viewPath = null;
+        if (!view.isEmpty()) {
+            Iterator<Path> iter = view.iterator();
+             viewPath = iter.next();
+        } 
+        return viewPath;          
+    }
+    
+    private void addPathToSortOrder(Path sortOrderPath) {
+        try {
+            sortOrder.clear(); // there can only be one sort column
+            if (sortOrderPath != null) {
+                sortOrder.add(sortOrderPath);
+            }                
+        } catch (PathError e) {
+            problems.add(e);
+        }
+    }
+    
+    /**
+     * Add a path to the sort order
+     * @param sortOrderString the String version of the path to add - should not include any class
+     * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
+     */
+    public void addPathStringToSortOrder(String sortOrderString) {
+        try {
+            sortOrder.clear(); // there can only be one sort column
+            sortOrder.add(MainHelper.makePath(model, this, sortOrderString));
+        } catch (PathError e) {
+            problems.add(e);
+        }
+    }
+
+    /**
+     * Remove the Path with the given String representation from the sort order.
+     * @param sortOrderString the path to remove
+     */
+    public void removePathStringFromSortOrder(String sortOrderString) {
+        addPathToSortOrder(getFirstPathFromView());
+        Iterator<Path> iter = sortOrder.iterator();
+        while (iter.hasNext()) {
+            Path sortOrderPath = iter.next();
+            if (sortOrderPath.toStringNoConstraints().equals(sortOrderString)
+                || sortOrderPath.toString().equals(sortOrderString)) {
+                iter.remove();
+                return;
+            }
+        }       
+    }
+    
+
+    
     /**
      * Return true if and only if the view contains a Path that has pathString as its String
      * representation.
