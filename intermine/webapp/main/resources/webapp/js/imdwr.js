@@ -8,7 +8,7 @@ function setFavouriteTemplate(templateName, image){
 
 function precomputeTemplate(templateName){
 	document.getElementById('precompute_'+templateName).innerHTML="Precomputing..";
-	AjaxServices.preCompute(templateName,function(str) { 
+	AjaxServices.preCompute(templateName,function(str) {
 		document.getElementById('precompute_'+templateName).style.color="#777";
 		document.getElementById('precompute_'+templateName).innerHTML="Precomputed";
 	 });
@@ -26,7 +26,7 @@ function editName(name){
   document.getElementById('form_'+name).style.display="block";
   document.getElementById('name_'+name).style.display="none";
 }
-  
+
 function renameElement(name, type, index){
 	document.getElementById('form_'+name).style.display="none";
 	document.getElementById('name_'+name).innerHTML="<i>saving...</i>";
@@ -35,6 +35,18 @@ function renameElement(name, type, index){
 		document.getElementById('name_'+name).innerHTML=str;
 		document.getElementById('selected_' + type + '_' + index).value=str;
 	});
+}
+
+function changeViewPathDescription(pathName){
+    var pathString = pathName.replace(/\_/g,".");
+    document.getElementById('form_'+pathName).style.display="none";
+    document.getElementById('name_'+pathName).innerHTML="<i>saving...</i>";
+    document.getElementById('name_'+pathName).style.display="block";
+    var newDescription = document.getElementById('newName_'+pathName).value;
+    AjaxServices.changeViewPathDescription(pathString, newDescription,
+                                           function(str){
+                                               document.getElementById('name_'+pathName).innerHTML=newDescription;
+                                           });
 }
 
 function saveBagDescription(bagName){

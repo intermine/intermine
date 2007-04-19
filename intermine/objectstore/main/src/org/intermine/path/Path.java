@@ -40,13 +40,13 @@ import org.apache.commons.lang.StringUtils;
 public class Path
 {
     private ClassDescriptor startCld;
-    private List elements;
+    private List<FieldDescriptor> elements;
     private FieldDescriptor endFld;
     private Model model;
     private String path;
     private boolean containsCollections = false;
-    private Map subClassConstraintPaths;
-    private List elementClassDescriptors;
+    private Map<String, String> subClassConstraintPaths;
+    private List<ClassDescriptor> elementClassDescriptors;
     
     /**
      * Create a new Path object. The Path must start with a class name.
@@ -68,11 +68,11 @@ public class Path
         if (StringUtils.isBlank(path)) {
             throw new IllegalArgumentException("path argument is blank");
         }
-        subClassConstraintPaths = new HashMap();
+        subClassConstraintPaths = new HashMap<String, String>();
         
         Pattern p = Pattern.compile("([^\\[\\]]+)\\[(.*)\\]");
         
-        List newPathBits = new ArrayList();
+        List<String> newPathBits = new ArrayList<String>();
         String[] bits = StringUtil.split(path, ".");
         for (int i = 0; i < bits.length; i++) {
             String thisBit = bits[i];
@@ -104,7 +104,8 @@ public class Path
      * @throws PathError thrown if there is a problem resolving the path eg. a reference doesn't
      * exist in the model
       */
-    public Path(Model model, String stringPath, Map constraintMap) throws PathError {
+    public Path(Model model, String stringPath, Map<String, String> constraintMap)
+        throws PathError {
         this.model = model;
         this.path = stringPath;
         this.subClassConstraintPaths = constraintMap;
@@ -116,8 +117,8 @@ public class Path
     }
 
     private void initialise() throws PathError {
-        elements = new ArrayList();
-        elementClassDescriptors = new ArrayList();
+        elements = new ArrayList<FieldDescriptor>();
+        elementClassDescriptors = new ArrayList<ClassDescriptor>();
         String[] parts = path.split("[.]");
         String clsName = parts[0];
         ClassDescriptor cld =
@@ -163,7 +164,7 @@ public class Path
             }
             if (!fld.isAttribute()) {
                 String constrainedClassName =
-                    (String) subClassConstraintPaths.get(currentPath.toString());
+                    subClassConstraintPaths.get(currentPath.toString());
                 if (constrainedClassName == null) {
                     // the class of this reference/collection is not constrained so get the
                     // class name from the model
@@ -288,8 +289,8 @@ public class Path
      * @return the ClassDescriptor
      */
     public ClassDescriptor getLastClassDescriptor() {
-        List l = getElementClassDescriptors();
-        return (ClassDescriptor) l.get(l.size() - 1);
+        List<ClassDescriptor> l = getElementClassDescriptors();
+        return l.get(l.size() - 1);
     }
     
     /**
@@ -305,12 +306,12 @@ public class Path
                                 + " while resolving object: " + o, path);
         }
 
-        Iterator iter = elements.iterator();
+        Iterator<FieldDescriptor> iter = elements.iterator();
 
         Object current = o;
         
         while (iter.hasNext()) {
-            FieldDescriptor element = (FieldDescriptor) iter.next();
+            FieldDescriptor element = iter.next();
             String fieldName = element.getName();
             try {
                 if (current == null) {
@@ -351,11 +352,11 @@ public class Path
         for (int i = 0; i < elements.size(); i++) {
             returnStringBuffer.append(".");
             simplePath.append(".");
-            FieldDescriptor fieldDescriptor = (FieldDescriptor) elements.get(i);
+            FieldDescriptor fieldDescriptor = elements.get(i);
             returnStringBuffer.append(fieldDescriptor.getName());
             simplePath.append(fieldDescriptor.getName());
             String constraintClassName = 
-                (String) subClassConstraintPaths.get(simplePath.toString());
+                subClassConstraintPaths.get(simplePath.toString());
             if (constraintClassName != null
                 && (fieldDescriptor.isReference() || fieldDescriptor.isCollection())) {
                 String referencedClassName = 
@@ -383,7 +384,7 @@ public class Path
      * class).
      * @return the FieldDescriptor
      */
-    public List getElements() {
+    public List<FieldDescriptor> getElements() {
         return elements;
     }
 
@@ -391,7 +392,7 @@ public class Path
      * Return a List of the ClassDescriptor objects for each element of the path.
      * @return the ClassDescriptors
      */
-    public List getElementClassDescriptors() {
+    public List<ClassDescriptor> getElementClassDescriptors() {
         return elementClassDescriptors;
     }
     
@@ -404,7 +405,7 @@ public class Path
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < elements.size(); i++) {
             sb.append(".");
-            sb.append(((FieldDescriptor) elements.get(i)).getName());
+            sb.append(elements.get(i).getName());
         }
         return getStartClassDescriptor().getUnqualifiedName() + sb.toString();
     }

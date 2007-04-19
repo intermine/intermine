@@ -24,6 +24,14 @@
       </c:otherwise>
     </c:choose>
   </div>
+
+  <c:if test="${!empty path}">
+    <tiles:insert name="viewElementDescription.jsp">
+      <tiles:put name="pathString" value="${pathString}"/>
+      <tiles:put name="description" value="${QUERY.pathStringDescriptions[pathString]}"/>
+    </tiles:insert>
+  </c:if>
+
   <div style="white-space:nowrap;">
     <noscript>
       <c:choose>
