@@ -18,6 +18,7 @@
   <fail message="${runtime.properties.local} not found" unless="runtime.properties.local.present"/>
   
   <property name="common" location="../common"/>
+  <property name="common.lib" location="${common}/lib"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="${common}/site"/>
   <property name="src.doc" location="../../flymine/doc"/>
@@ -30,6 +31,10 @@
   <property name="cache.dtd" location="${common}/dtd"/>
   <property name="output.extension" value="shtml"/>
   <property name="branding" value="flymine"/>
+
+  <path id="xslt.class.path">
+    <fileset dir="${common.lib}" includes="*.jar"/>
+  </path>
 
   <target name="prepare">
     <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
@@ -74,9 +79,10 @@
   </target>
 
   <target name="style-site" depends="prepare">
-    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
+    <xslt basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${common.xslt}/main.xsl" includes="**/*.xml"
            force="false">
+      <classpath refid="xslt.class.path"/>
       <exclude name="doc/manual/webapp_manual.xml"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
@@ -85,7 +91,7 @@
       <param name="releaseversion" expression="${project.releaseVersion}"/>
       <param name="webapppath" expression="${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
-    </style>
+    </xslt>
   </target>
 
   <target name="validate-site-xml" depends="prepare">
@@ -211,11 +217,15 @@
   </target>
 
   <target name="webapp-manual-html" depends="prepare">
+    <property name="cp" refid="xslt.class.path"/>
+    <echo message="xslt.path classpath is ${cp}"/>
+
     <xslt basedir="${dist.www}/doc/manual/"
           in="${build.www}/doc/manual/webapp_manual.xml"
           out="${dist.www}/doc/manual/webapp_manual.log"
           style="xslt/webapp_manual.xsl"
           force="false">
+      <classpath refid="xslt.class.path"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
@@ -240,6 +250,7 @@
           out="${dist.www}/doc/manual/webapp_manual.html"
           style="xslt/webapp_manual_one_page.xsl"
           force="false">
+      <classpath refid="xslt.class.path"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
@@ -266,6 +277,7 @@
           out="${dist.www}/doc/help/webapp_manual.log"
           style="xslt/webapp_help.xsl"
           force="false">
+      <classpath refid="xslt.class.path"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>

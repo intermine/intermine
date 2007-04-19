@@ -4,8 +4,6 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns="http://www.w3.org/1999/xhtml">
 
-  <xsl:param name="releaseversion"/>
-
   <!--
       <xsl:template match="section/title">
         <div class="heading2"><xsl:apply-templates/></div>

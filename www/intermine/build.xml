@@ -1,5 +1,6 @@
 <project name="intermine-www" default="transform-site" basedir=".">
   <property name="common" location="../common"/>
+  <property name="common.lib" location="${common}/lib"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="${common}/site"/>
   <property name="src.doc" location="../../intermine/doc"/>
@@ -11,6 +12,10 @@
   <property name="output.extension" value="html"/>
   <property name="runtime.properties.local" value="${user.home}/${ant.project.name}.properties" />
   <property name="branding" value="intermine"/>
+
+  <path id="xslt.class.path">
+    <fileset dir="${common.lib}" includes="*.jar"/>
+  </path>
 
   <target name="prepare">
     <property name="build.properties.local" value="${user.home}/build.properties.testmodel-webapp" />
@@ -39,14 +44,15 @@
   </target>
   
   <target name="style-site" depends="prepare">
-    <style basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
+    <xslt basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
            style="${common.xslt}/main.xsl" includes="**/*.xml"
            force="false">
+      <classpath refid="xslt.class.path"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${www.location}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
       <param name="outputext" expression="${output.extension}" />
-    </style>
+    </xslt>
   </target>
 
   <target name="validate-site-xml" depends="prepare">

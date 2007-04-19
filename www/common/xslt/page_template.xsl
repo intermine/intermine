@@ -12,14 +12,7 @@
     doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
-  <xsl:param name="basedir"/>
-  <xsl:param name="branding"/>
-  <xsl:param name="webappprefix"/>
   <xsl:param name="projectcontact"/>
-  <xsl:param name="releaseversion"/>
-  <xsl:param name="outputext"/>
-
-  <xsl:variable name="brand" select="document(concat('../../',$branding,'/branding.xml'))/brand"/>
 
   <xsl:template match="/">
     <html>
