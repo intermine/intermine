@@ -25,7 +25,7 @@
 
         <html:link action="/viewChange?method=removeFromView&amp;path=${pathString}"
                    title="${removeFromViewTitle}">
-          <img border="0" align="middle"
+          <img border="0" align="top"
                src="images/cross.gif" width="13" height="13"
                alt="${removeFromViewString}" style="margin-top: 3px;"/>
         </html:link>
