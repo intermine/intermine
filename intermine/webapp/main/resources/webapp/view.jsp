@@ -48,7 +48,7 @@
 <br clear="all"><br>
 
 
-<c:if test="${fn:length(sortOrderStrings) > 1}">
+<c:if test="${fn:length(viewStrings) > 1}">
 
 	<h3><fmt:message key="sortOrder.heading"/></h3>
 
@@ -62,7 +62,7 @@
        document.write('<p><fmt:message key="sortOrder.intro.jscript"/></p>');
        // -->
     </script>
-  </c:if>
+ 
 	
 		<!-- sort by -->
     	<c:if test="${!empty sortOrderStrings}">
@@ -70,8 +70,21 @@
 		     	 <tiles:insert page="/sortOrderLine.jsp"/>
 	    	</div>
 	    </c:if>
+ </c:if>
+ 
+ 
+<c:if test="${!empty viewStrings}">
 
-  <c:if test="${!empty viewStrings}">
+
+  <c:forEach var="sortOrder" items="${sortOrderStrings}">
+    <c:set var="sortOrderString" value="${sortOrder}"/>
+  </c:forEach>
+  <c:forEach var="path" items="${viewStrings}" varStatus="status">
+   <c:if test="${sortOrderString == path}">
+    <c:set var="sortByIndex" value="${status.index}"/>   
+   </c:if>
+  </c:forEach>
+
   <br clear="all"><br>
   
     <div style="clear:left; margin-bottom: 18px">
@@ -100,8 +113,8 @@
          }
        });
 
-
        recordCurrentOrder();
+       updateSortImgs("${sortByIndex}");
 
        function recordCurrentOrder() {
          previousOrder = Sortable.serialize('viewDivs');
@@ -126,8 +139,8 @@
          recordCurrentOrder();
        }
 
-	  /* called from viewLine.jsp for now */
-      function updateSortOrder(pathString) {
+	  // called from viewElement.jsp
+      function updateSortOrder(pathString, index) {
          new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
            parameters:'method=addToSortOrder&pathString='+pathString,
            asynchronous:true
@@ -136,7 +149,29 @@
          s = new String(pathString);
          s = s.replace(/\./g," > ");
          document.getElementById('querySortOrder').innerHTML = s;
-         //recordCurrentOrder();        
+	     updateSortImgs(index);
+       }
+       
+       // enable all imgs, disable the one the user just selected 
+       function updateSortImgs(index) {
+       	for (i=0;true;i++) {
+       		if (!document.getElementById("btn_" + i)) return;
+    		var b = document.getElementById("btn_" + i);
+    		if(i==index) {
+				disable(b);
+			} else {
+				enable(b);
+			}
+		}
+       }
+       
+       function disable(b) {
+		b.src = "images/sort-disabled.gif";
+		b.disabled = true;
+       }
+	   function enable(b) {
+		b.src = "images/sort.gif";
+		b.disabled = false;
        }
      //-->
     </script>
