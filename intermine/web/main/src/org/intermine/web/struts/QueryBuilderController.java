@@ -89,12 +89,33 @@ public class QueryBuilderController extends TilesAction
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         List<Path> pathView = SessionMethods.getEditingView(session);
+        
+        // sort order
+        List<Path> sortOrder = SessionMethods.getEditingSortOrder(session);
+        List<String> sortOrderStrings = new ArrayList<String>();
+        
+        if (sortOrder != null) {
+            for (Path sortOrderString: sortOrder) {
+                sortOrderStrings.add(sortOrderString.toStringNoConstraints());
+            }
+            request.setAttribute("sortOrderStrings", sortOrderStrings);
+            request.setAttribute("sortOrderPaths", listToMap(sortOrderStrings));
+            //request.setAttribute("sortOrderPathOrder", createIndexMap(sortOrderStrings));
+            //request.setAttribute("sortOrderPathTypes", getPathTypes(sortOrderStrings, query));
+        }
+        
+        Integer sortByIndex = new Integer(0); // sort by field's index in the select list
+        // select list
         List<String> viewStrings = new ArrayList<String>();
         for (Path viewPath: pathView) {
-            viewStrings.add(viewPath.toStringNoConstraints());
+            String viewPathString = viewPath.toStringNoConstraints();
+            viewStrings.add(viewPathString);
+            if (sortOrderStrings.contains(viewPathString)) {
+                sortByIndex = new Integer(pathView.indexOf(viewPath));
+            }
         }
         request.setAttribute("viewStrings", viewStrings);
-
+        request.setAttribute("sortByIndex", sortByIndex);
         List<String> errorPaths = new ArrayList<String>();
         Throwable[] messages = query.getProblems();
         for (Throwable thr: messages) {
@@ -108,18 +129,7 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
         //request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
 
-        List<Path> sortOrder = SessionMethods.getEditingSortOrder(session);
-        List<String> sortOrderStrings = new ArrayList<String>();
-        
-        if (sortOrder != null) {
-            for (Path sortOrderString: sortOrder) {
-                sortOrderStrings.add(sortOrderString.toStringNoConstraints());
-            }
-            request.setAttribute("sortOrderStrings", sortOrderStrings);
-            request.setAttribute("sortOrderPaths", listToMap(sortOrderStrings));
-            //request.setAttribute("sortOrderPathOrder", createIndexMap(sortOrderStrings));
-            //request.setAttribute("sortOrderPathTypes", getPathTypes(sortOrderStrings, query));
-        }
+
         
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
