@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
@@ -100,8 +101,14 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             }
 
             // update results with expected results
-            addExpected(os, resultsTable, bag.getSize(), organismName);
-
+            try {
+                // TODO handle this exception more sensibly, changes need to be made to
+                // BagDetailsController
+                addExpected(os, resultsTable, bag.getSize(), organismName);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Error getting size of bag. ", e);
+            }
+            
             // Build a map from chromosome to gene list
             geneCategoryArray = new Object[resultsTable.size()];
             int i = 0;
@@ -216,7 +223,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
        
         if (resultsType.equals("actual")) {
             QueryField qf = new QueryField(geneQC, "id");
-            BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds()); 
+            BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()); 
             cs.addConstraint(bagC);
         }
         
