@@ -35,14 +35,14 @@ import org.apache.log4j.Logger;
 
 /**
  * Class to represent a path-based query.
- * 
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
 public class PathQuery
 {
     private static final Logger LOG = Logger.getLogger(PathQuery.class);
-    
+
     private Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     private List<Path> view = new ArrayList<Path>();
@@ -104,7 +104,7 @@ public class PathQuery
             LOG.error("Failed to parse constraintLogic: " + constraintLogic, err);
         }
     }
-    
+
     /**
      * Make sure that the logic expression is valid for the current query. Remove
      * any unknown constraint codes and add any constraints that aren't included
@@ -115,7 +115,7 @@ public class PathQuery
         if (getAllConstraints().size() <= 1) {
             setConstraintLogic(null);
         } else {
-            Set<String> codes = getConstraintCodes();            
+            Set<String> codes = getConstraintCodes();
             if (constraintLogic != null) {
                 // limit to the actual variables
                 constraintLogic.removeAllVariablesExcept(getConstraintCodes());
@@ -125,7 +125,7 @@ public class PathQuery
             addCodesToLogic(codes, defaultOperator);
         }
     }
-    
+
     /**
      * Get all constraint codes.
      * @return all present constraint codes
@@ -137,7 +137,7 @@ public class PathQuery
         }
         return codes;
     }
-    
+
     /**
      * Gets the value of model
      * @return the value of model
@@ -153,7 +153,7 @@ public class PathQuery
     public Map<String, PathNode> getNodes() {
         return nodes;
     }
-    
+
     /**
      * Get a PathNode by path.
      * @param path a path
@@ -162,7 +162,7 @@ public class PathQuery
     public PathNode getNode(String path) {
         return nodes.get(path);
     }
-    
+
     /**
      * Get all constraints.
      * @return all constraints
@@ -175,7 +175,7 @@ public class PathQuery
         }
         return list;
     }
-    
+
     /**
      * Sets the value of view
      * @param view a List of Path
@@ -207,8 +207,8 @@ public class PathQuery
     public List<Path> getSortOrder() {
         return sortOrder;
     }
-    
-    
+
+
     /**
      * Add a path to the view
      * @param viewString the String version of the path to add - should not include any class
@@ -223,7 +223,7 @@ public class PathQuery
     }
 
     /**
-     * Remove the Path with the given String representation from the view.  If the pathString 
+     * Remove the Path with the given String representation from the view.  If the pathString
      * refers to a path that appears in a PathError in the problems collection, remove that problem.
      * @param pathString the path to remove
      */
@@ -253,21 +253,21 @@ public class PathQuery
         if (!view.isEmpty()) {
             Iterator<Path> iter = view.iterator();
              viewPath = iter.next();
-        } 
-        return viewPath;          
+        }
+        return viewPath;
     }
-    
+
     private void addPathToSortOrder(Path sortOrderPath) {
         try {
             sortOrder.clear(); // there can only be one sort column
             if (sortOrderPath != null) {
                 sortOrder.add(sortOrderPath);
-            }                
+            }
         } catch (PathError e) {
             problems.add(e);
         }
     }
-    
+
     /**
      * Add a path to the sort order
      * @param sortOrderString the String version of the path to add - should not include any class
@@ -296,11 +296,11 @@ public class PathQuery
                 iter.remove();
                 return;
             }
-        }       
+        }
     }
-    
 
-    
+
+
     /**
      * Return true if and only if the view contains a Path that has pathString as its String
      * representation.
@@ -376,7 +376,7 @@ public class PathQuery
                 Iterator<String> pathsIter = nodes.keySet().iterator();
 
                 while (pathsIter.hasNext()) {
-                    String pathFromMap = pathsIter.next(); 
+                    String pathFromMap = pathsIter.next();
                     if (pathFromMap.startsWith(prefix)) {
                         previousNodePath = pathFromMap;
                     }
@@ -400,7 +400,7 @@ public class PathQuery
 
         return node;
     }
-    
+
     /**
      * Get the exceptions generated while deserialising this path query query.
      * @return exceptions relating to this path query
@@ -408,7 +408,7 @@ public class PathQuery
     public Throwable[] getProblems() {
         return problems.toArray(new Throwable[0]);
     }
-    
+
     /**
      * Find out whether the path query is valid against the current model.
      * @return true if query is valid, false if not
@@ -421,7 +421,7 @@ public class PathQuery
      * Clone this PathQuery
      * @return a PathQuery
      */
-    public Object clone() {
+    public PathQuery clone() {
         PathQuery query = new PathQuery(model);
         for (Iterator<Entry<String, PathNode>> i = nodes.entrySet().iterator(); i.hasNext();) {
             Entry<String, PathNode> entry = i.next();
@@ -492,7 +492,7 @@ public class PathQuery
      * @see Object#toString()
      */
     public String toString() {
-        return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view 
+        return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view
             + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
     }
 
@@ -537,7 +537,7 @@ public class PathQuery
         }
         return null;
     }
-    
+
     /**
      * Add a set of codes to the logical expression using the given operator.
      * @param codes Set of codes (Strings)
@@ -558,7 +558,7 @@ public class PathQuery
         }
         setConstraintLogic(logic);
     }
-    
+
     /**
      * Remove some constraint code from the logic expression.
      * @param code the code to remove
@@ -575,7 +575,7 @@ public class PathQuery
     public LogicExpression getLogic() {
         return constraintLogic;
     }
-    
+
     /**
      * Serialise this query in XML format.
      * @param name query name to put in xml
@@ -584,7 +584,7 @@ public class PathQuery
     public String toXml(String name) {
         return PathQueryBinding.marshal(this, name, model.getName());
     }
-    
+
     /**
      * Serialise to XML with no name.
      * @return the XML
@@ -592,7 +592,7 @@ public class PathQuery
     public String toXml() {
         return PathQueryBinding.marshal(this, "", model.getName());
     }
-    
+
     /**
      * Rematerialise single query from XML.
      * @param xml PathQuery XML
@@ -612,7 +612,7 @@ public class PathQuery
     public Map<Path, String> getPathDescriptions() {
         return pathDescriptions;
     }
-    
+
     /**
      * Return the description for the given path from the view.
      * @param pathString the path as a string
@@ -627,7 +627,7 @@ public class PathQuery
         }
         return null;
     }
-    
+
     /**
      * Return the description for the given path from the view.
      * @return the description Map
