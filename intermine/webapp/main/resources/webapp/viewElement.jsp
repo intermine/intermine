@@ -9,7 +9,7 @@
 
 <!-- viewElement.jsp -->
 <html:xhtml/>
-   <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${status.index}">
+   <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${viewIndex}">
    
       <%-- class name --%>   
       <div>
@@ -53,7 +53,7 @@
               </fmt:message>
               <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
 
-              <html:link action="/viewChange?method=moveLeft&amp;index=${status.index}"
+              <html:link action="/viewChange?method=moveLeft&amp;index=${viewIndex}"
                          title="${moveLeftTitle}">
                 <img style="margin-right: 5px" border="0" align="middle"
                      src="images/left-arrow-square.gif" width="13" height="13"
@@ -65,25 +65,9 @@
         </noscript>
 
 		<%-- sort button --%>
-           <c:choose>
-            <c:when test="${sortOrderString != pathString}">
-                <a href="javascript:updateSortOrder('${pathString}');">
-                	<img style="margin-left: 5px" border="0" align="middle"
-                    	 src="images/sort.gif" width="43" height="13"
-                     	alt="${pathString}"/>
-              </a>
-		
-            </c:when>
-            <c:otherwise>    
-                <a href="javascript:updateSortOrder('${pathString}');">
-                	<img style="margin-left: 5px" border="0" align="middle"
-                    	 src="images/sort.gif" width="43" height="13"
-                     	alt="${pathString}"/>
-              </a>
-			</c:otherwise>
-          </c:choose>
-		
-
+		<input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
+               width="43" height="13" alt="${pathString}" src="images/sort.gif">
+    
       </div>
     </im:viewableDiv>
 <!-- /viewElement.jsp -->
