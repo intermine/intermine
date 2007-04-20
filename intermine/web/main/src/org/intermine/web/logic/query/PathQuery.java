@@ -67,12 +67,13 @@ public class PathQuery
      */
     public PathQuery(PathQuery query) {
         this.model = query.model;
-        this.nodes = query.nodes;
-        this.view = query.view;
-        this.sortOrder = query.sortOrder;
+        this.nodes = new LinkedHashMap<String, PathNode>(query.nodes);
+        this.view = new ArrayList<Path>(query.view);
+        this.sortOrder = new ArrayList<Path>(query.sortOrder);
         this.info = query.info;
-        this.problems = query.problems;
+        this.problems = new ArrayList<Throwable>(query.problems);
         this.constraintLogic = query.constraintLogic;
+        this.pathDescriptions = new HashMap<Path, String>(query.pathDescriptions);
     }
 
     /**
@@ -431,6 +432,7 @@ public class PathQuery
         if (problems != null) {
             query.problems = new ArrayList<Throwable>(problems);
         }
+        query.pathDescriptions = new HashMap<Path, String>(pathDescriptions);
         query.setConstraintLogic(getConstraintLogic());
         return query;
     }
@@ -472,7 +474,8 @@ public class PathQuery
             && model.equals(((PathQuery) o).model)
             && nodes.equals(((PathQuery) o).nodes)
             && view.equals(((PathQuery) o).view)
-            && sortOrder.equals(((PathQuery) o).sortOrder);
+            && sortOrder.equals(((PathQuery) o).sortOrder)
+            && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
     }
 
     /**
@@ -636,6 +639,20 @@ public class PathQuery
             retMap.put(entry.getKey().toStringNoConstraints(), entry.getValue());
         }
         return retMap;
-
+    }
+    
+    /**
+     * Add a description to a path in the view.  If the viewString isn't a valid view path, add an
+     * exception to the problems list.
+     * @param viewString the string form of a path in the view
+     * @param description the description
+     */
+    public void addPathStringDescription(String viewString, String description) {
+        try {
+            Path path = MainHelper.makePath(model, this, viewString);
+            pathDescriptions.put(path, description);
+        } catch (PathError e) {
+            problems.add(e);
+        }
     }
 }

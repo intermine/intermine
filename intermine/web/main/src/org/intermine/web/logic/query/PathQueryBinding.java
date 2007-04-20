@@ -10,19 +10,21 @@ package org.intermine.web.logic.query;
  *
  */
 
-import java.io.Reader;
-import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+
+import org.intermine.path.Path;
+import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
+
+import java.io.Reader;
+import java.io.StringWriter;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
 import org.xml.sax.InputSource;
 
 /**
@@ -71,6 +73,7 @@ public class PathQueryBinding
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
             }
+            marshalPathQueryDescriptions(query, writer);
             for (Iterator j = query.getNodes().values().iterator(); j.hasNext();) {
                 PathNode node = (PathNode) j.next();
                 writer.writeStartElement("node");
@@ -112,6 +115,22 @@ public class PathQueryBinding
     }
 
     
+    /**
+     * Create XML for the path descriptions in a PathQuery.
+     */
+    private static void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer) 
+        throws XMLStreamException {
+        for (Map.Entry<Path, String> entry: query.getPathDescriptions().entrySet()) {
+            Path path = entry.getKey();
+            String description = entry.getValue();
+            
+            writer.writeStartElement("pathDescription");
+            writer.writeAttribute("pathString", path.toString());
+            writer.writeAttribute("description", description);
+            writer.writeEndElement();
+        }
+    }
+
     /**
      * Parse PathQueries from XML
      * @param reader the saved queries

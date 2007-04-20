@@ -6,6 +6,7 @@
     </node>
   </query>
   <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
+    <pathDescription pathString="Employee.department" description="Department of the Employee"/>
     <node path="Employee.department.manager.age">
       <constraint op=">" value="10" editable="true" 
                   description="age is greater than 10" identifier="age_gt_10"/>
