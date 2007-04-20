@@ -15,6 +15,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.actions.TilesAction;
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.flymine.web.logic.FlymineUtil;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -29,30 +45,10 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.web.logic.FlymineUtil;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * calculates p-values of goterms
@@ -83,9 +79,6 @@ public class GoStatDisplayerController extends TilesAction
             ServletContext servletContext = session.getServletContext();
             ObjectStoreInterMineImpl os =
                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-            ObjectStoreSummary oss =
-                (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
-
 
             String significanceValue = null;
             significanceValue = request.getParameter("significanceValue");
@@ -139,7 +132,7 @@ public class GoStatDisplayerController extends TilesAction
             if (bag != null) {
                 // genes must be in bag
                 BagConstraint bc1 =
-                    new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
+                    new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
                 cs.addConstraint(bc1);
             }
 

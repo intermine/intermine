@@ -63,7 +63,7 @@ public abstract class FlymineUtil
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         if (bag != null) {
-            BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
+            BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
             cs.addConstraint(bc);
         }
 

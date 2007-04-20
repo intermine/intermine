@@ -106,7 +106,7 @@ public class GoStatAction extends InterMineAction
 
         if (bag != null) {
             // genes must be in bag
-            BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getListOfIds());
+            BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
             cs.addConstraint(bc1);
         }
 

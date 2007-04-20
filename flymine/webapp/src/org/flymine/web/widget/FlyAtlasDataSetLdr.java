@@ -11,11 +11,14 @@ package org.flymine.web.widget;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.flymine.model.genomic.FlyAtlasResult;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MicroArrayAssay;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -26,16 +29,9 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
-
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
-
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -57,7 +53,6 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
     public FlyAtlasDataSetLdr(InterMineBag bag, ObjectStore os) {
         super();
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-        Collection geneList = bag.getListOfIds();
 
         Query q = new Query();
         QueryClass far = new QueryClass(FlyAtlasResult.class);
@@ -74,7 +69,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf = new QueryField(gene, "id");
-        BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, geneList); 
+        BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()); 
         cs.addConstraint(bagC);
 
         QueryCollectionReference r = new QueryCollectionReference(far, "genes");
