@@ -20,23 +20,26 @@
 
 	<h3><fmt:message key="view.heading"/></h3>
 
-  <c:if test="${fn:length(viewStrings) > 1}">
-    <noscript>
-      <div>
-        <fmt:message key="view.intro"/>
-      </div>
-    </noscript>
-    <script type="text/javascript">
-       <!--
-       document.write('<p><fmt:message key="view.intro.jscript"/></p>');
-       // -->
-    </script>
-  </c:if>
+	<div>
+        <fmt:message key="view.instructions"/>
+  		<c:if test="${fn:length(viewStrings) > 1}">
+	    <noscript>
+    	    <fmt:message key="view.intro"/>
+	    </noscript>
+    	<script type="text/javascript">
+	       <!--
+    	   document.write('<fmt:message key="view.intro.jscript"/>');
+	       // -->
+	    </script>
+		</c:if>
+    </div>
 
+<br><br clear="left">
+      
   <c:choose>
     <c:when test="${empty viewStrings}">
       <div class="body">
-	<p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
+		<p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
       </div>
     </c:when>
     <c:otherwise>
@@ -45,37 +48,27 @@
   </c:choose>
 
 
-<br clear="all"><br>
+<br clear="left"><br>
 
 
-<c:if test="${fn:length(viewStrings) > 1}">
+<c:if test="${fn:length(viewStrings) > 0}">
 
 	<h3><fmt:message key="sortOrder.heading"/></h3>
 
-    <noscript>
-      <div>
-        <fmt:message key="sortOrder.intro"/>
-      </div>
-    </noscript>
-    <script type="text/javascript">
-       <!--
-       document.write('<p><fmt:message key="sortOrder.intro.jscript"/></p>');
-       // -->
-    </script>
- 
-	
-		<!-- sort by -->
-    	<c:if test="${!empty sortOrderStrings}">
-			<div class="sortorderBorder">
-		     	 <tiles:insert page="/sortOrderLine.jsp"/>
-	    	</div>
-	    </c:if>
- </c:if>
- 
- 
-<c:if test="${!empty viewStrings}">
+	<div>
+		<fmt:message key="sortOrder.instructions"/>
+	</div>
 
+<br clear="left"><br>
 
+	<!-- sort by -->
+    <c:if test="${!empty sortOrderStrings}">
+		<div class="sortorderBorder">
+	    	 <tiles:insert page="/sortOrderLine.jsp"/>
+	   	</div>
+	</c:if>
+
+ <!-- TODO put this in the controller -->
   <c:forEach var="sortOrder" items="${sortOrderStrings}">
     <c:set var="sortOrderString" value="${sortOrder}"/>
   </c:forEach>
@@ -85,7 +78,7 @@
    </c:if>
   </c:forEach>
 
-  <br clear="all"><br>
+	<br clear="all"><br>
   
     <div style="clear:left; margin-bottom: 18px">
       <p>
@@ -123,8 +116,6 @@
          //previousSortOrder = Sortable.serialize('sortOrderDivs');
          //previousSortOrder = previousSortOrder.replace(/sortOrderDivs/g, 'oldSortOrder');
        }
-
-		
 
        /**
         * Send the previous order and the new order to the server.
