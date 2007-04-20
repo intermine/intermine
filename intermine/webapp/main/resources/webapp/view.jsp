@@ -46,9 +46,12 @@
 
 
 <br clear="all"><br>
+
+
+<c:if test="${fn:length(sortOrderStrings) > 1}">
+
 	<h3><fmt:message key="sortOrder.heading"/></h3>
 
-	  <c:if test="${fn:length(sortOrderStrings) > 1}">
     <noscript>
       <div>
         <fmt:message key="sortOrder.intro"/>
