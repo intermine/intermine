@@ -50,6 +50,9 @@
     <condition property="gen.code">
       <and><istrue value="${generating.code}"/></and>
     </condition>
+    <path id="xslt.class.path">
+      <fileset dir="${library.xml.basedir}/im-ant-tasks/lib" includes="*.jar"/>
+    </path>
   </target>
 
   <target name="init" depends="-pre-init"/>
@@ -195,7 +198,7 @@
       <attribute name="srcdir" default="${src.dir}"/>
       <element name="customize" optional="true"/>
       <sequential>
-        <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-all-3.0b1.jar"/>
+        <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-all-4.3.jar"/>
         <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
@@ -206,7 +209,8 @@
         </checkstyle>
         <style in="${build.checkstyle.dir}/checkstyle_report.xml"
                out="${build.checkstyle.dir}/checkstyle_report.html"
-               style="${library.xml.basedir}/checkstyle/checkstyle-frames.xsl"/>
+               style="${library.xml.basedir}/checkstyle/checkstyle-frames.xsl"
+               classpathref="xslt.class.path"/>
         <fail message="Some files do not adhere to InterMine coding standards" if="checkstyle.failure"/>
       </sequential>
     </macrodef>

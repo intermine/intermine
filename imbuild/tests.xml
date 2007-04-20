@@ -109,7 +109,7 @@
       <echo>ANT_OPTS = ${ENV.ANT_OPTS}</echo>
       <echo>fork = @{fork}</echo>
     	-->
-      <junit showoutput="true" reloading="false" printsummary="on"
+      <junit showoutput="false" reloading="false" printsummary="on"
              failureproperty="tests.failed" errorproperty="tests.failed"
              fork="@{fork}" forkmode="@{forkmode}">
         <jvmarg line="${ENV.ANT_OPTS}"/>
