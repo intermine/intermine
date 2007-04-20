@@ -186,14 +186,14 @@ public class MainHelper
 
     /**
      * Make an InterMine query from a path query
-     * @param pathQuery the PathQuery
+     * @param pathQueryOrig the PathQuery
      * @param savedBags the current saved bags map
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
      * @return an InterMine Query
      */
-    public static Query makeQuery(PathQuery pathQuery, Map savedBags,
+    public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
                                   Map<String, QueryNode> pathToQueryNode) {
-        pathQuery = (PathQuery) pathQuery.clone();
+        PathQuery pathQuery = (PathQuery) pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
         List<Path> sortOrder = pathQuery.getSortOrder();
@@ -406,8 +406,8 @@ public class MainHelper
             q.setConstraint((org.intermine.objectstore.query.Constraint)
                     (andcs.getConstraints().iterator().next()));
         }
-
-        //build the SELECT list
+        
+        // build the SELECT list
         for (Iterator<Path> i = view.iterator(); i.hasNext();) {
             PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
             QueryNode qn = null;
@@ -427,13 +427,24 @@ public class MainHelper
         // build ORDER BY list
         for (Iterator<Path> i = sortOrder.iterator(); i.hasNext();) {
             PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
-            QueryNode sortByNode = queryBits.get(pn.getPathString());
-            if (!q.getOrderBy().contains(sortByNode)) {
-                q.addToOrderBy(sortByNode);
+            QueryNode qn = queryBits.get(pn.getPathString());
+            if (!q.getOrderBy().contains(qn)) {
+                q.addToOrderBy(qn);
+            }
+        }
+        
+
+        
+        for (Iterator<Path> i = view.iterator(); i.hasNext();) {
+            PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
+            QueryNode selectNode = queryBits.get(pn.getPathString()); 
+            if (!q.getOrderBy().contains(selectNode)) { 
+                q.addToOrderBy(selectNode); 
             }
         }
 
-        //caller might want path to query node map (e.g. PrecomputeTask)
+            
+        // caller might want path to query node map (e.g. PrecomputeTask)
         if (pathToQueryNode != null) {
             pathToQueryNode.putAll(queryBits);
         }
