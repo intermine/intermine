@@ -68,16 +68,6 @@
 	   	</div>
 	</c:if>
 
- <!-- TODO put this in the controller -->
-  <c:forEach var="sortOrder" items="${sortOrderStrings}">
-    <c:set var="sortOrderString" value="${sortOrder}"/>
-  </c:forEach>
-  <c:forEach var="path" items="${viewStrings}" varStatus="status">
-   <c:if test="${sortOrderString == path}">
-    <c:set var="sortByIndex" value="${status.index}"/>   
-   </c:if>
-  </c:forEach>
-
 	<br clear="all"><br>
   
     <div style="clear:left; margin-bottom: 18px">
