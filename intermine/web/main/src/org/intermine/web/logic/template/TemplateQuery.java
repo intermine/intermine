@@ -119,7 +119,7 @@ public class TemplateQuery extends PathQuery
      */
     public List getEditableConstraints(String path) {
         if (nodes.get(path) == null) {
-            return Collections.EMPTY_LIST;          
+            return Collections.EMPTY_LIST;
         } else {
             List ecs = new ArrayList();
             Iterator cIter = ((PathNode) nodes.get(path)).getConstraints().iterator();
@@ -185,7 +185,7 @@ public class TemplateQuery extends PathQuery
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Get the template description.
      *
@@ -364,7 +364,7 @@ public class TemplateQuery extends PathQuery
      *
      * @return a TemplateQuery
      */
-    public Object clone() {
+    public PathQuery clone() {
         TemplateQuery templateQuery = new TemplateQuery(name, title, description, comment,
                                                         (PathQuery) super.clone(),
                                                         keywords);
@@ -380,7 +380,7 @@ public class TemplateQuery extends PathQuery
     public PathQuery getPathQuery() {
         return (PathQuery) super.clone();
     }
-    
+
     /**
      * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
      * the query history.
@@ -390,7 +390,7 @@ public class TemplateQuery extends PathQuery
     public boolean isEdited() {
         return edited;
     }
-    
+
     /**
      * Set the query as being edited.
      *
