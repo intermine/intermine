@@ -9,8 +9,13 @@
   -- ".", return "foo.bar" --%>
 
 <%
-    String str = (String) jspContext.getAttribute("str");
-    String delimiter = (String) jspContext.getAttribute("delimiter");
-    String outVar = (String) jspContext.getAttribute("outVar");
-    request.setAttribute(outVar, str.substring(0, str.lastIndexOf(delimiter)));
+   String str = (String) jspContext.getAttribute("str");
+   String delimiter = (String) jspContext.getAttribute("delimiter");
+   String outVar = (String) jspContext.getAttribute("outVar");
+   int index = str.lastIndexOf(delimiter);
+   if (index == -1) {
+      request.setAttribute(outVar, str);
+   } else {
+      request.setAttribute(outVar, str.substring(0, index));
+   }
 %>
