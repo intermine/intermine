@@ -67,38 +67,20 @@ public class QueryTestCase extends OneTimeTestCase
             if (qc1 instanceof QueryNode) {
                 if (qc2 instanceof QueryNode) {
                     checkQueryNodes(msg + ": query nodes are not the same", (QueryNode) qc1, (QueryNode) qc2, q1, q2);
-                } else if (qc2 instanceof Query) {
-                    fail(msg + ": QueryNode does not match Subquery");
-                } else if (qc2 instanceof QueryClassBag) {
-                    fail(msg + ": QueryNode does not match QueryClassBag");
-                } else if (qc2 instanceof ObjectStoreBag) {
-                    fail(msg + ": QueryNode does not match ObjectStoreBag");
                 } else {
-                    fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
+                    fail(msg + ": QueryNode does not match " + qc2.getClass().getName());
                 }
             } else if (qc1 instanceof Query) {
-                if (qc2 instanceof QueryNode) {
-                    fail(msg + ": Subquery does not match QueryNode");
-                } else if (qc2 instanceof Query) {
+                if (qc2 instanceof Query) {
                     assertEquals(msg + ": subquery", (Query) qc1, (Query) qc2);
-                } else if (qc2 instanceof QueryClassBag) {
-                    fail(msg + ": Subquery does not match QueryClassBag");
-                } else if (qc2 instanceof ObjectStoreBag) {
-                    fail(msg + ": Subquery does not match ObjectStoreBag");
                 } else {
-                    fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
+                    fail(msg + ": Subquery does not match " + qc2.getClass().getName());
                 }
             } else if (qc1 instanceof QueryClassBag) {
                 if (qc2 instanceof QueryClassBag) {
                     checkQueryClassBags(msg + ": QueryClassBags are not equivalent", (QueryClassBag) qc1, (QueryClassBag) qc2, q1, q2);
-                } else if (qc2 instanceof QueryNode) {
-                    fail(msg + ": QueryClassBag does not match QueryNode");
-                } else if (qc2 instanceof Query) {
-                    fail(msg + ": QueryClassBag does not match Subquery");
-                } else if (qc2 instanceof ObjectStoreBag) {
-                    fail(msg + ": QueryClassBag does not match ObjectStoreBag");
                 } else {
-                    fail(msg + ": Unknown type of Object in list: " + qc2.getClass().getName());
+                    fail(msg + ": QueryClassBag does not match  " + qc2.getClass().getName());
                 }
             } else if (qc1 instanceof QueryObjectPathExpression) {
                 if (qc2 instanceof QueryObjectPathExpression) {
@@ -139,6 +121,14 @@ public class QueryTestCase extends OneTimeTestCase
                     checkQueryReferences(msg, (QueryReference) qc1, (QueryReference) qc2, q1, q2);
                 } else {
                     fail(msg + ": QueryReference does not match " + qc2.getClass().getName());
+                }
+            } else if (qc1 instanceof ObjectStoreBagCombination) {
+                if (qc2 instanceof ObjectStoreBagCombination) {
+                    if (!qc1.equals(qc2)) {
+                        fail(msg + ": ObjectStoreBagCombinations are not equal");
+                    }
+                } else {
+                    fail(msg + ": ObjectStoreBagCombination does not match " + qc2.getClass().getName());
                 }
             } else {
                 fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());

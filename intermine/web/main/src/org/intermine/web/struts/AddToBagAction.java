@@ -22,11 +22,14 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagElement;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action to save a single object o an existing bag.
@@ -35,7 +38,8 @@ import org.intermine.web.logic.profile.Profile;
 public class AddToBagAction extends InterMineAction
 {
     /**
-     * Save a single object o an existing bag.
+     * Save a single object to an existing bag.
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -51,16 +55,18 @@ public class AddToBagAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ObjectStoreWriter uosw = ((ProfileManager) session.getAttribute(Constants.PROFILE_MANAGER))
+            .getUserProfileObjectStore();
         String bagName = request.getParameter("bag");
         
         InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (existingBag != null) {
+            ObjectStoreWriter osw = null;
             try {
                 InterMineObject o = (InterMineObject) os.getObjectById(new Integer(id));
                 if (BagHelper.isOfBagType(existingBag, o, os)) {
-                    BagElement bagElement = new BagElement(new Integer(id),
-                                                                    existingBag.getType());
-                    existingBag.add(bagElement);
+                    osw = new ObjectStoreWriterInterMineImpl(os);
+                    osw.addToBag(existingBag.getOsb(), new Integer(id));
                     recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName())
                                     , request);
                 } else {
@@ -71,6 +77,13 @@ public class AddToBagAction extends InterMineAction
                 recordError(new ActionMessage("bag.error"), request, e);
 
                 return mapping.findForward("objectDetails");
+            } finally {
+                try {
+                    if (osw != null) {
+                        osw.close();
+                    }
+                } catch (ObjectStoreException e) {
+                }
             }
         } else {
             recordError(new ActionMessage("bag.noSuchBag"), request);

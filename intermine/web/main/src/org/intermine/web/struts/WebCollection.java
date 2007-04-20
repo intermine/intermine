@@ -69,15 +69,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
         if (collection instanceof List) {
               list = (List) collection;
           } else {
-              if (collection instanceof InterMineBag) {
-                  try {
-                      list = ((InterMineBag) collection).getInterMineObjects();
-                  } catch (ObjectStoreException e) {
-                      throw new RuntimeException(e.getMessage());
-                  }
-              } else {
-                  list = new ArrayList(collection);
-              }
+              list = new ArrayList(collection);
           }
         this.classKeys = classKeys;
     }

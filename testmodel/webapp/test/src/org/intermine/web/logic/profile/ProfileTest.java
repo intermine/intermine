@@ -21,6 +21,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
@@ -35,7 +36,7 @@ public class ProfileTest extends TestCase
     InterMineBag bag;
     TemplateQuery template;
     private Integer bobId = new Integer(101);
-    private ObjectStore userprofileOS;
+    private ObjectStoreWriter userprofileOS;
     private ObjectStore objectstoreOS;
     ProfileManager profileManager;
 
@@ -45,9 +46,10 @@ public class ProfileTest extends TestCase
 
     public void setUp() throws Exception {
         query = new PathQuery(Model.getInstanceByName("testmodel"));
-        userprofileOS = ObjectStoreFactory.getObjectStore("os.userprofile-test");
+        userprofileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");
-        bag = new InterMineBag(bobId, "bob", "String", userprofileOS, objectstoreOS, Collections.singleton("testElement"));
+        bag = new InterMineBag("bob", "String", "Description", objectstoreOS, bobId, userprofileOS);
+        //Collections.singleton("testElement"));
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
@@ -120,24 +122,16 @@ public class ProfileTest extends TestCase
         }
 
         try {
-            profile.saveBag("bag1", bag);
-            fail("Expected UnsupportedOperationException");
-        } catch (UnsupportedOperationException e) {
-        }
-
-        try {
             profile.saveTemplate("tmpl1", template);
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
         }
 
         assertEquals(1, profile.getSavedQueries().size());
-        assertEquals(profile.getSavedQueries().get("query1"), sq);
-        assertEquals(1, profile.getSavedBags().size());
-        assertEquals(profile.getSavedBags().get("bag1"), bag);
+        assertEquals(sq, profile.getSavedQueries().get("query1"));
+        assertEquals(0, profile.getSavedBags().size());
         assertEquals(1, profile.getSavedTemplates().size());
-        assertEquals(profile.getSavedTemplates().get("tmpl1"), template);
-
+        assertEquals(template, profile.getSavedTemplates().get("tmpl1"));
     }
 
     public void testDeleteWithManager() throws Exception {

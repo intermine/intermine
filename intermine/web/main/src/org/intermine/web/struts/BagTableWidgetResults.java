@@ -108,7 +108,7 @@ public class BagTableWidgetResults extends InterMineAction
         cstSet.addConstraint(simpleConstraint);
 
         QueryField qf = new QueryField(qClassA, "id");
-        BagConstraint bagCstr = new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds());
+        BagConstraint bagCstr = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb());
         cstSet.addConstraint(bagCstr);
         
         q.setConstraint(cstSet);

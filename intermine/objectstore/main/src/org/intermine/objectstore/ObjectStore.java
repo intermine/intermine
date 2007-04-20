@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -225,4 +226,20 @@ public interface ObjectStore
      * @return the maximum query time
      */
     public long getMaxTime();
+
+    /**
+     * Gets an ID number which is unique in the database.
+     *
+     * @return an Integer
+     * @throws ObjectStoreException if a problem occurs
+     */
+    public Integer getSerial() throws ObjectStoreException;
+    
+    /**
+     * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
+     *
+     * @return an ObjectStoreBag
+     * @throws ObjectStoreException if an error occurs fetching a new ID
+     */
+    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException;
 }

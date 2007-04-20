@@ -92,7 +92,7 @@ public class QueryForGraphAction extends InterMineAction
         }
         QueryField qf = new QueryField(queryClass, "id");
         ((ConstraintSet) query.getConstraint())
-            .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds()));
+            .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
         Results results = new Results(query, os, os.getSequence());
 

@@ -345,6 +345,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("ObjectStoreBagQueryClass", NO_RESULT);
         results.put("OrderDescending", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id DESC");
         results2.put("OrderDescending", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results.put("ObjectStoreBagCombination", "SELECT DISTINCT value AS a1_ FROM osbag_int WHERE bagid IN (5, 6) ORDER BY value");
+        results2.put("ObjectStoreBagCombination", Collections.singleton("osbag_int"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

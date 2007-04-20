@@ -15,10 +15,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -33,8 +34,8 @@ public class InterMineBagHandler extends DefaultHandler
 {
     private static final Logger LOG = Logger.getLogger(InterMineBagHandler.class);
     
-    private ObjectStore uos;
-    private ObjectStore os;
+    private ObjectStoreWriter uosw;
+    private ObjectStoreWriter osw;
     private Map bags;
     private Integer userId;
 
@@ -48,24 +49,19 @@ public class InterMineBagHandler extends DefaultHandler
     
     /**
      * Create a new InterMineBagHandler object.
-     * @param uos
-     *            UserProfile ObjectStore
-     * @param os
-     *            ObjectStore used to resolve object ids
-     * @param bags
-     *            Map from bag name to InterMineIdBag - results are added to this
-     *            Map
+     *
+     * @param uosw UserProfile ObjectStoreWriter
+     * @param osw ObjectStoreWriter used to resolve object ids and write to the objectstore bag
+     * @param bags Map from bag name to InterMineIdBag - results are added to this Map
      * @param userId the id of the user
      * @param idUpgrader bag object id upgrader
-     * @param idToObjectMap
-     *            a Map from id to InterMineObject. This is used to create
-     *            template objects to pass to createPKQuery() so that old bags
-     *            can be used with new ObjectStores.
+     * @param idToObjectMap a Map from id to InterMineObject. This is used to create template
+     * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
      */
-    public InterMineBagHandler(ObjectStore uos, ObjectStore os, Map bags, Integer userId,
-                               Map idToObjectMap, IdUpgrader idUpgrader) {
-        this.uos = uos;
-        this.os = os;
+    public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw, Map bags,
+            Integer userId, Map idToObjectMap, IdUpgrader idUpgrader) {
+        this.uosw = uosw;
+        this.osw = osw;
         this.bags = bags;
         this.userId = userId;
         this.idUpgrader = idUpgrader;
@@ -82,34 +78,30 @@ public class InterMineBagHandler extends DefaultHandler
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
+                bag = new InterMineBag(bagName, bagType, bagDescription, osw.getObjectStore(),
+                        userId, uosw);
             }
 
             if (qName.equals("bagElement")) {
                 elementsInOldBag++;
-                String type = attrs.getValue("type");
                 Integer id = new Integer(attrs.getValue("id"));
 
-                if (bag == null) {
-                    bag = new InterMineBag(userId, bagName, bagType, uos, os,
-                                           Collections.EMPTY_SET);
-                    bag.setDescription(bagDescription);
-                }
-
-                if (os.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
+                // TODO: This looks slow.
+                if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
                     // the id isn't in the database and we have an Item representing the object from
                     // a previous database
                     InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
 
-                    Set newIds = idUpgrader.getNewIds(oldObject, os);
+                    Set newIds = idUpgrader.getNewIds(oldObject, osw);
                     Iterator newIdIter = newIds.iterator();
                     while (newIdIter.hasNext()) {
-                        bag.add(new BagElement((Integer) newIdIter.next(), type));
+                        osw.addToBag(bag.getOsb(), (Integer) newIdIter.next());
                     }
                 } else {
-                    bag.add(new BagElement(id, type));
+                    osw.addToBag(bag.getOsb(), id);
                 }
             }
-        } catch (Exception e) {
+        } catch (ObjectStoreException e) {
             throw new SAXException(e);
         }
     }
@@ -117,16 +109,20 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * @see DefaultHandler#endElement(String, String, String)
      */
-    public void endElement(String uri, String localName, String qName) {
-        if (qName.equals("bag")) {
-            if (bag.size() > 0) {
-                bags.put(bagName, bag);
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        try {
+            if (qName.equals("bag")) {
+                //if (bag.size() > 0) {
+                    bags.put(bagName, bag);
+                //}
+                LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag 
+                          + " elements, created bag with " + (bag == null ? "null"
+                              : "" + bag.size()) + " elements");
+                bag = null;
+                elementsInOldBag = 0;
             }
-            LOG.error("XML bag \"" + bagName + "\" contained " + elementsInOldBag 
-                      + " elements, created bag with " + (bag == null ? "null" : "" + bag.size())
-                      + " elements");
-            bag = null;
-            elementsInOldBag = 0;
+        } catch (ObjectStoreException e) {
+            throw new SAXException(e);
         }
     }
 }

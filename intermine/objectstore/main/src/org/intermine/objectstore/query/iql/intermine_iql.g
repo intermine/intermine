@@ -94,7 +94,7 @@ select_value:
             | constant "as"! field_alias
             | safe_function "as"! field_alias
             | paren_value "as"! field_alias
-            | objectstorebag
+            | objectstorebag (( "union" | "intersect" | "except" ) objectstorebag )*
         )
         { #select_value = #([SELECT_VALUE, "SELECT_VALUE"], #select_value); }
     ;

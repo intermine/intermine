@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.InterMineException;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -60,6 +61,8 @@ public abstract class LoginHandler extends InterMineAction
             String password) {
         // Merge current history into loaded profile
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
+                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         Map mergeQueries = Collections.EMPTY_MAP;
         Map mergeBags = Collections.EMPTY_MAP;
@@ -95,19 +98,16 @@ public abstract class LoginHandler extends InterMineAction
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
             // Make sure the userId gets set to be the profile one
-            bag.setUserId(profile.getUserId());
-            String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
-                    .keySet());
             try {
-                int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
-                                              "max.bag.size.notloggedin",
-                                              Constants.MAX_NOT_LOGGED_BAG_SIZE);
-                profile.saveBag(name, bag, maxNotLoggedSize);
-            } catch (InterMineException iex) {
+                bag.setProfileId(profile.getUserId(), uosw);
+                String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
+                        .keySet());
+                bag.setName(name, uosw);
+                profile.saveBag(name, bag);
+            } catch (ObjectStoreException iex) {
                 throw new RuntimeException(iex.getMessage());
             }
         }
-
         SessionMethods.setLoggedInCookie(session, response);
     }
 

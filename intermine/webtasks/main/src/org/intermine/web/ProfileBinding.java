@@ -32,6 +32,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
@@ -130,7 +131,7 @@ public class ProfileBinding
                     InterMineBag bag = (InterMineBag) entry.getValue();
 
                     if (bag != null) {
-                        InterMineBagBinding.marshal(bag, bagName, writer);
+                        InterMineBagBinding.marshal(bag, writer);
                     } else {
                         LOG.error("bag was null for bagName: " + bagName
                                   + " username: " + profile.getUsername());
@@ -194,47 +195,40 @@ public class ProfileBinding
      */
     private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
         List idsToPreFetch = new ArrayList();
-        
-        for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            InterMineBag bag = (InterMineBag) entry.getValue();
-
-            Iterator iter = bag.iterator();
-
-
-            while (iter.hasNext()) {
-                BagElement bagElement = (BagElement) iter.next();
-                idsToPreFetch.add(bagElement.getId());
-            }
-        }
-
-        // pre-fetch objects from all bags into the cache
         try {
+            
+            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+                Map.Entry entry = (Map.Entry) i.next();
+                InterMineBag bag = (InterMineBag) entry.getValue();
+
+                idsToPreFetch.addAll(bag.getContentsAsIds());
+            }
+
+            // pre-fetch objects from all bags into the cache
             os.getObjectsByIds(idsToPreFetch);
+        
+            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
+                Map.Entry entry = (Map.Entry) i.next();
+                InterMineBag bag = (InterMineBag) entry.getValue();
+                
+                Iterator iter = bag.getContentsAsIds().iterator();
+                
+                while (iter.hasNext()) {
+                    Integer id = (Integer) iter.next();
+                    InterMineObject object;
+                    try {
+                        object = os.getObjectById(id);
+                    } catch (ObjectStoreException e) {
+                        throw new RuntimeException("Unable to find object for id: " + id, e);
+                    }
+                    if (object == null) {
+                        throw new RuntimeException("Unable to find object for id: " + id);
+                    }
+                    getIdsFromObject(object, os.getModel(), idsToSerialise);
+                }
+            }
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to find object for ids: " + idsToPreFetch, e);
-        }
-        
-        for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            InterMineBag bag = (InterMineBag) entry.getValue();
-            
-            Iterator iter = bag.iterator();
-            
-            while (iter.hasNext()) {
-                BagElement bagElement = (BagElement) iter.next();
-                InterMineObject object;
-                Integer id = bagElement.getId();
-                try {
-                    object = os.getObjectById(id);
-                } catch (ObjectStoreException e) {
-                    throw new RuntimeException("Unable to find object for id: " + id, e);
-                }
-                if (object == null) {
-                    throw new RuntimeException("Unable to find object for id: " + id);
-                }
-                getIdsFromObject(object, os.getModel(), idsToSerialise);
-            }
         }
     }
 
@@ -294,10 +288,11 @@ public class ProfileBinding
      * @param password default password
      * @param tags a set to populate with user tags
      * @param classKeys class key fields in model
+     * @param osw an ObjectStoreWriter for the production database, to write bags
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
-                                    String password, Set tags, Map classKeys) {
+            String password, Set tags, Map classKeys, ObjectStoreWriter osw) {
         try {
             IdUpgrader idUpgrader = new IdUpgrader() {
                 public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
@@ -306,7 +301,7 @@ public class ProfileBinding
                 }
             };
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password, tags, classKeys);
+                new ProfileHandler(profileManager, idUpgrader, username, password, tags, classKeys, osw);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

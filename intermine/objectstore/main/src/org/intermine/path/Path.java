@@ -172,6 +172,11 @@ public class Path
                 } else {
                     String qualifiedClassName = model.getPackageName() + "." + constrainedClassName;
                     cld = model.getClassDescriptorByName(qualifiedClassName);
+                    if (cld == null) {
+                        throw new PathError("Unable to resolve path '" + path + "': class '"
+                                + qualifiedClassName + "' not found in model '" + model.getName()
+                                + "'", path);
+                    }
                 }
                 elementClassDescriptors.add(cld);
             }

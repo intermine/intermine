@@ -283,4 +283,8 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     public int getSequence() {
         return 0;
     }
+
+    public Integer getSerial() throws ObjectStoreException {
+        throw new ObjectStoreException();
+    }
 }

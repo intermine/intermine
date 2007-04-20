@@ -20,9 +20,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -113,7 +115,10 @@ public abstract class ModifyHistoryAction extends InterMineAction
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
             profile.deleteBag(name);
             SessionMethods.invalidateBagTable(session, name);
-            profile.saveBag(newName, bag, Constants.MAX_NOT_LOGGED_BAG_SIZE);
+            ObjectStoreWriter uosw = ((ProfileManager) session.getServletContext().getAttribute(
+                        Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
+            bag.setName(newName, uosw);
+            profile.saveBag(newName, bag);
         } else {
             LOG.error("Don't understand type parameter: " + type);
         }

@@ -15,7 +15,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
@@ -72,8 +71,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Connection conn = null;
     protected boolean connInUse = false;
     protected ObjectStoreInterMineImpl os;
-    protected int sequenceBase = 0;
-    protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected Batch batch;
     protected String createSituation;
     protected String closeSituation;
@@ -84,7 +81,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected String connectionTakenBy = null;
     protected Set tablesAltered = new HashSet();
 
-    protected static final int SEQUENCE_MULTIPLE = 1000000;
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
      * Connection, grabbed from the provided ObjectStore.
@@ -791,16 +787,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * Creates a new empty ObjectStoreBag object that is valid for this ObjectStore.
-     *
-     * @return an ObjectStoreBag
-     * @throws ObjectStoreException if an error occurs fetching a new ID
-     */
-    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
-        return new ObjectStoreBag(getSerial().intValue());
-    }
-
-    /**
      * @see ObjectStoreWriter#addToBag
      */
     public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
@@ -1017,54 +1003,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
             }
         }
-    }
-
-    /**
-     * Gets an ID number which is unique in the database.
-     *
-     * @return an Integer
-     * @throws ObjectStoreException if a problem occurs
-     */
-    public Integer getSerial() throws ObjectStoreException {
-        try {
-            Connection c = null;
-            try {
-                c = getConnection();
-                return getSerialWithConnection(c);
-            } finally {
-                releaseConnection(c);
-            }
-        } catch (SQLException e) {
-            throw new ObjectStoreException("Error generating serial number", e);
-        }
-    }
-
-    /**
-     * Gets an ID number which is unique in the database, given a Connection.
-     *
-     * @param c the Connection
-     * @return an Integer
-     * @throws SQLException if a problem occurs
-     */
-    protected Integer getSerialWithConnection(Connection c) throws SQLException {
-        if (sequenceOffset >= SEQUENCE_MULTIPLE) {
-            long start = System.currentTimeMillis();
-            sequenceOffset = 0;
-            Statement s = c.createStatement();
-            ResultSet r = s.executeQuery("SELECT nextval('serial');");
-            //System//.out.println(getModel().getName()
-            //        + ": Executed SQL: SELECT nextval('serial');");
-            if (!r.next()) {
-                throw new SQLException("No result while attempting to get a unique id");
-            }
-            long nextSequence = r.getLong(1);
-            sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
-            long end = System.currentTimeMillis();
-            LOG.info("Got new set of serial numbers - took " + (end - start) + " ms");
-        }
-        Integer retval = new Integer(sequenceBase + (sequenceOffset++));
-        recentSequences.put(retval, retval);
-        return retval;
     }
 
     /**
@@ -1358,6 +1296,19 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     public boolean isMultiConnection() {
         return false;
+    }
+
+    /**
+     * Overrides, in order to store recentSequences.
+     *
+     * @param c the Connection
+     * @return an Integer
+     * @throws SQLException if an error occurs
+     */
+    protected Integer getSerialWithConnection(Connection c) throws SQLException {
+        Integer retval = super.getSerialWithConnection(c);
+        recentSequences.put(retval, retval);
+        return retval;
     }
 
     private static class TableInfo

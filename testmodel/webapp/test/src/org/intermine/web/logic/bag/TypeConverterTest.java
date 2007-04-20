@@ -26,17 +26,20 @@ import servletunit.struts.MockStrutsTestCase;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.TypeConverter;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * @author Matthew Wakeling
@@ -55,6 +58,7 @@ public class TypeConverterTest extends MockStrutsTestCase
         ServletContext context = getActionServlet().getServletContext();
 
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        ObjectStoreWriter uosw = ((ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         List names = Arrays.asList(new String[] {"EmployeeA2", "EmployeeB2"});
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Employee.class);
@@ -70,14 +74,16 @@ public class TypeConverterTest extends MockStrutsTestCase
                     ConstraintOp.CONTAINS, qc2));
         Results r = os.execute(q);
         assertEquals("Results: " + r, 2, r.size());
-        List employees = new ArrayList();
-        employees.add(((List) r.get(0)).get(0));
-        employees.add(((List) r.get(1)).get(0));
+        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+        InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", os, null, uosw);
+        ObjectStoreBag osb = imb.getOsb();
+        osw.addToBag(osb, ((Employee) ((List) r.get(0)).get(0)).getId());
+        osw.addToBag(osb, ((Employee) ((List) r.get(1)).get(0)).getId());
         Map expected = new HashMap();
         expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
         expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));
 
-        Map got = TypeConverter.convertObjects(context, Employee.class, Address.class, employees);
+        Map got = TypeConverter.convertObjects(context, Employee.class, Address.class, imb);
 
         assertEquals(expected, got);
     }

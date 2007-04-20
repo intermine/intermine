@@ -22,11 +22,13 @@ import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.store.Directory;
 
+import org.intermine.InterMineException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-
-import org.intermine.InterMineException;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -237,6 +239,17 @@ public class Profile
     }
     
     /**
+     * Stores a new bag in the profile. Note that bags are always present in the user profile
+     * database, so this just adds the bag to the in-memory list of this profile.
+     *
+     * @param name the name of the bag
+     * @param bag the InterMineBag object
+     */
+    public void saveBag(String name, InterMineBag bag) {
+        savedBags.put(name, bag);
+    }
+
+    /**
      * Returns all bags of a given type
      * @param type the type
      * @param model the Model
@@ -262,37 +275,23 @@ public class Profile
         return map;
     
     }
-    
-    /**
-     * Save a bag
-     * @param name the bag name
-     * @param bag the bag
-     * @param maxNotLoggedSize the maximum bag size allowed when user not logged in, or -1 to allow
-     * any bag size
-     * @exception InterMineException thrown when the bag size is to high
-     */
-    public void saveBag(String name, InterMineBag bag, int maxNotLoggedSize)
-                    throws InterMineException {
-        if (maxNotLoggedSize != -1 && StringUtils.isEmpty(username)
-            && bag.getSize() > maxNotLoggedSize) {
-            throw new InterMineException("bag.bigNotLoggedIn");
-        }
-        savedBags.put(name, bag);
-        if (manager != null && !StringUtils.isEmpty(username)) {
-            manager.saveProfile(this);
-        }
-    }
-    
-    /**
-     * Save a bag without checking the bag size
-     * @param name the bag name
-     * @param bag the bag
-     * @exception InterMineException thrown when the bag size is to high
-     */
-    public void saveBag(String name, InterMineBag bag) throws InterMineException {
-        saveBag(name, bag, -1);
-    }
 
+    /**
+     * Create a bag - saves it to the user profile database too.
+     *
+     * @param name the bag name
+     * @param type the bag type
+     * @param description the bag description
+     * @param os the production ObjectStore
+     * @param uosw the ObjectStoreWriter of the userprofile database
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void createBag(String name, String type, String description, ObjectStore os,
+            ObjectStoreWriter uosw) throws ObjectStoreException {
+        InterMineBag bag = new InterMineBag(name, type, description, os, userId, uosw);
+        savedBags.put(name, bag);
+    }
+    
     /**
      * Delete a bag
      * @param name the bag name

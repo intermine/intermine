@@ -235,4 +235,11 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         }
         return retval;
     }
+
+    /**
+     * @see ObjectStore#getSerial
+     */
+    public Integer getSerial() throws ObjectStoreException {
+        return os.getSerial();
+    }
 }

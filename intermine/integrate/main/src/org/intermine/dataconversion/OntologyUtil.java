@@ -16,8 +16,6 @@ import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * General purpose ontology methods.
  *

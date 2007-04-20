@@ -348,7 +348,61 @@ public class IqlQueryParser
                     node = processNewQueryFieldPathExpression(ast.getFirstChild(), q);
                     break;
                 case IqlTokenTypes.OBJECTSTOREBAG:
-                    node = processNewObjectStoreBag(ast.getFirstChild());
+                    if (node instanceof ObjectStoreBagCombination) {
+                        ((ObjectStoreBagCombination) node).addBag(processNewObjectStoreBag(ast
+                                .getFirstChild()));
+                    } else {
+                        node = processNewObjectStoreBag(ast.getFirstChild());
+                    }
+                    break;
+                case IqlTokenTypes.LITERAL_union:
+                    if (node instanceof ObjectStoreBag) {
+                        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(
+                                ObjectStoreBagCombination.UNION);
+                        osbc.addBag((ObjectStoreBag) node);
+                        node = osbc;
+                    } else if (node instanceof ObjectStoreBagCombination) {
+                        if (((ObjectStoreBagCombination) node).getOp()
+                                != ObjectStoreBagCombination.UNION) {
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, and "
+                                    + "EXCEPT in a bag fetch query");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("UNION can only apply to bag fetches");
+                    }
+                    break;
+                case IqlTokenTypes.LITERAL_intersect:
+                    if (node instanceof ObjectStoreBag) {
+                        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(
+                                ObjectStoreBagCombination.INTERSECT);
+                        osbc.addBag((ObjectStoreBag) node);
+                        node = osbc;
+                    } else if (node instanceof ObjectStoreBagCombination) {
+                        if (((ObjectStoreBagCombination) node).getOp()
+                                != ObjectStoreBagCombination.INTERSECT) {
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, and "
+                                    + "EXCEPT in a bag fetch query");
+                        }
+                    } else {
+                        throw new IllegalArgumentException(
+                                "INTERSECT can only apply to bag fetches");
+                    }
+                    break;
+                case IqlTokenTypes.LITERAL_except:
+                    if (node instanceof ObjectStoreBag) {
+                        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(
+                                ObjectStoreBagCombination.EXCEPT);
+                        osbc.addBag((ObjectStoreBag) node);
+                        node = osbc;
+                    } else if (node instanceof ObjectStoreBagCombination) {
+                        if (((ObjectStoreBagCombination) node).getOp()
+                                != ObjectStoreBagCombination.EXCEPT) {
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, and "
+                                    + "EXCEPT in a bag fetch query");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("EXCEPT can only apply to bag fetches");
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -356,8 +410,9 @@ public class IqlQueryParser
             }
             ast = ast.getNextSibling();
         } while (ast != null);
-        if ((nodeAlias == null) != ((node instanceof QueryClass)
-                    || node instanceof ObjectStoreBag)) {
+        if ((nodeAlias == null) != (node instanceof QueryClass
+                    || node instanceof ObjectStoreBag
+                    || node instanceof ObjectStoreBagCombination)) {
             throw new IllegalArgumentException("No alias for item in SELECT list, or an alias "
                     + "present for a QueryClass");
         }

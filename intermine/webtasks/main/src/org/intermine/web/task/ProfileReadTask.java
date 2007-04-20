@@ -18,9 +18,11 @@ import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.ClassKeyHelper;
@@ -98,6 +100,7 @@ public class ProfileReadTask extends Task
             throw new BuildException("failed to open input file: " + fileName, e);
         }
 
+        ObjectStoreWriter osw = null;
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
@@ -107,6 +110,7 @@ public class ProfileReadTask extends Task
                                .getResourceAsStream("class_keys.properties"));
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
             ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
+            osw = new ObjectStoreWriterInterMineImpl(os);
 
             PkQueryIdUpgrader upgrader;
             if (source == null) {
@@ -114,7 +118,7 @@ public class ProfileReadTask extends Task
             } else {
                 upgrader = new PkQueryIdUpgrader(this.source);
             }
-            ProfileManagerBinding.unmarshal(reader, pm, os, upgrader, classKeys);
+            ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, classKeys);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
@@ -122,7 +126,13 @@ public class ProfileReadTask extends Task
             try {
                 reader.close();
             } catch (IOException e) {
-                throw new BuildException("failed to close output file: " + fileName, e);
+                throw new BuildException("failed to close input file: " + fileName, e);
+            }
+            try {
+                if (osw != null) {
+                    osw.close();
+                }
+            } catch (ObjectStoreException e) {
             }
         }
     }

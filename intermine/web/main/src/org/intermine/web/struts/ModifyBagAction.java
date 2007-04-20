@@ -30,6 +30,11 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.Query;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -62,11 +67,11 @@ public class ModifyBagAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         if (request.getParameter("union") != null) {
-            union(mapping, form, request, response);
+            combine(mapping, form, request, response, ObjectStoreBagCombination.UNION);
         } else if (request.getParameter("intersect") != null) {
-            intersect(mapping, form, request, response);
+            combine(mapping, form, request, response, ObjectStoreBagCombination.INTERSECT);
         } else if (request.getParameter("subtract") != null) {
-            subtract(mapping, form, request, response);
+            combine(mapping, form, request, response, ObjectStoreBagCombination.EXCEPT);
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request, response);
         }
@@ -83,18 +88,15 @@ public class ModifyBagAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward union(ActionMapping mapping,
-                               ActionForm form,
-                               HttpServletRequest request,
-                               HttpServletResponse response)
-        throws Exception {
+    public ActionForward combine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response, int op) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        Map savedBags = profile.getSavedBags();
+        Map<String, InterMineBag> savedBags = (Map<String, InterMineBag>) profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
 
         String type = getTypesMatch(savedBags, selectedBags, os);
@@ -105,17 +107,35 @@ public class ModifyBagAction extends InterMineAction
 
         // Now combine
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
-        ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-        Collection union = new ArrayList();
-        union.addAll((Collection) savedBags.get(selectedBags[0]));
-        for (int i = 1; i < selectedBags.length; i++) {
-            union.addAll((Collection) savedBags.get(selectedBags[i]));
+        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
+        InterMineBag combined = new InterMineBag(name, type, null, os, profile.getUserId(), uosw);
+        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
+        for (int i = 0; i < selectedBags.length; i++) {
+            osbc.addBag(savedBags.get(selectedBags[i]).getOsb());
         }
-        InterMineBag combined =
-            new InterMineBag(profile.getUserId(), name, type, profileOs, os, union);
+        Query q = new Query();
+        q.addToSelect(osbc);
+        ObjectStoreWriter osw = null;
+        try {
+            osw = new ObjectStoreWriterInterMineImpl(os);
+            LOG.error("Combining bags with query: " + q);
+            osw.addToBagFromQuery(combined.getOsb(), q);
+        } catch (ObjectStoreException e) {
+            LOG.error(e);
+            ActionMessage actionMessage = new ActionMessage(
+                    "An error occurred while saving the bag");
+            recordError(actionMessage, request);
+            return mapping.findForward("bag");
+        } finally {
+            try {
+                if (osw != null) {
+                    osw.close();
+                }
+            } catch (ObjectStoreException e) {
+            }
+        }
 
-        int defaultMax = 10000;
-
+/*        int defaultMax = 10000;
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
 
         if (combined.size () > maxBagSize) {
@@ -129,7 +149,8 @@ public class ModifyBagAction extends InterMineAction
         int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
                                                              Constants.MAX_NOT_LOGGED_BAG_SIZE);
         profile.saveBag(name, combined, maxNotLoggedSize);
-
+*/
+        profile.saveBag(name, combined);
         return mapping.findForward("bag");
     }
 
@@ -167,130 +188,6 @@ public class ModifyBagAction extends InterMineAction
             LOG.error("error while matching bag types", e);
         }
        return type;
-    }
-
-    /**
-     * Intersect the selected bags
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward intersect(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ModifyBagForm mbf = (ModifyBagForm) form;
-
-        Map savedBags = profile.getSavedBags();
-        String[] selectedBags = mbf.getSelectedBags();
-
-        String type = getTypesMatch(savedBags, selectedBags, os);
-        if (type == null) {
-            recordError(new ActionMessage("bag.typesDontMatch"), request);
-            return mapping.findForward("bag");
-        }
-
-        Collection intersect = new ArrayList();
-        intersect.addAll((Collection) savedBags.get(selectedBags[0]));
-        for (int i = 1; i < selectedBags.length; i++) {
-            intersect.retainAll((Collection) savedBags.get(selectedBags[i]));
-        }
-
-        if (intersect.size() > 0) {
-            String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
-            ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-            InterMineBag combined =
-                new InterMineBag(profile.getUserId(), name, type, profileOs, os, intersect);
-
-            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
-                                                                 "max.bag.size.notloggedin",
-                                                                 Constants.MAX_NOT_LOGGED_BAG_SIZE);
-            profile.saveBag(name, combined, maxNotLoggedSize);
-        } else {
-            recordError(new ActionMessage("bag.noIntersection"), request);
-        }
-        return mapping.findForward("bag");
-    }
-
-    /**
-     * Compute the set of objects that are in only one of the selected bags.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    public ActionForward subtract(ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response)
-        throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ModifyBagForm mbf = (ModifyBagForm) form;
-
-        Map savedBags = profile.getSavedBags();
-        String[] selectedBags = mbf.getSelectedBags();
-        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
-
-        String type = getTypesMatch(savedBags, selectedBags, os);
-        if (type == null) {
-            recordError(new ActionMessage("bag.typesDontMatch"), request);
-            return mapping.findForward("bag");
-        }
-
-        // A map from objects to the number of occurrences of that object
-        Map countMap = new HashMap();
-
-        for (int i = 0; i < selectedBags.length; i++) {
-            Iterator iter = ((Collection) savedBags.get(selectedBags[i])).iterator();
-            while (iter.hasNext()) {
-                Object thisObj = iter.next();
-                if (countMap.containsKey(thisObj)) {
-                    int newVal = ((Integer) countMap.get(thisObj)).intValue() + 1;
-                    countMap.put(thisObj, new Integer (newVal));
-                } else {
-                    countMap.put(thisObj, new Integer(1));
-                }
-            }
-        }
-
-        Collection subtract = new ArrayList();
-        Iterator iter = countMap.keySet().iterator();
-        while (iter.hasNext()) {
-            Object thisObj = iter.next();
-            if (countMap.get(thisObj).equals(new Integer(1))) {
-                subtract.add(thisObj);
-            }
-        }
-
-        if (subtract.size() > 0) {
-            ObjectStore profileOs = profile.getProfileManager().getUserProfileObjectStore();
-            InterMineBag resultBag =
-                new InterMineBag(profile.getUserId(), name, type, profileOs, os, subtract);
-            int defaultMaxNotLoggedSize = 3;
-            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, 
-                                                                 "max.bag.size.notloggedin",
-                                                                 defaultMaxNotLoggedSize);
-            profile.saveBag(name, resultBag, maxNotLoggedSize);
-        } else {
-            recordError(new ActionMessage("bag.emptySubtraction"), request);
-        }
-       
-        return mapping.findForward("bag");
     }
 
     /**

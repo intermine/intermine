@@ -269,11 +269,11 @@ public class TemplateListHelper
                             String fieldExpr =
                                 TypeUtil.unqualifiedName(className) + "." + fieldName;
 
-                            if (allNull(os, bag, fieldName)) {
+                            /*if (allNull(os, bag, fieldName)) {
                                 // ignore this template because putting a null into a template isn't
                                 // a good idea
                                 continue TAGS;
-                            }
+                            }*/
                             Class identifierClass;
                             try {
                                 identifierClass = Class.forName(className);
@@ -304,7 +304,7 @@ public class TemplateListHelper
      * Return true if and only if the ba 
      * @throws IllegalAccessException 
      */
-    private static boolean allNull(ObjectStore os, InterMineBag bag, String fieldName) {
+    /*private static boolean allNull(ObjectStore os, InterMineBag bag, String fieldName) {
 
         Iterator iter = bag.iterator();
 
@@ -325,5 +325,5 @@ public class TemplateListHelper
         }
 
         return true;
-    }
+    }*/
 }

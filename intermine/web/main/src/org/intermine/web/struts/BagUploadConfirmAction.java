@@ -23,6 +23,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagElement;
@@ -78,12 +80,12 @@ public class BagUploadConfirmAction extends InterMineAction
                 continue;
             }
             int id = Integer.parseInt(idString);
-            contents.add(new BagElement(new Integer(id), bagType));
+            contents.add(new Integer(id));
         }
         for (int i = 0; i < confirmForm.getSelectedObjects().length; i++) {
             String idString = confirmForm.getSelectedObjects()[i];
             int id = Integer.parseInt(idString);
-            contents.add(new BagElement(new Integer(id), bagType));
+            contents.add(new Integer(id));
         }
         
         if (contents.size() == 0) {
@@ -93,12 +95,21 @@ public class BagUploadConfirmAction extends InterMineAction
         
         ProfileManager profileManager =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        ObjectStore profileOs = profileManager.getUserProfileObjectStore();
+        ObjectStoreWriter profileOs = profileManager.getUserProfileObjectStore();
                                                                       
-        InterMineBag bag =
-            new InterMineBag(profile.getUserId(), bagName, bagType, profileOs, os, contents);
+        InterMineBag bag = new InterMineBag(bagName, bagType, null, os, profile.getUserId(),
+                profileOs);
+        ObjectStoreWriter osw = null;
+        try {
+            osw = new ObjectStoreWriterInterMineImpl(os);
+            osw.addAllToBag(bag.getOsb(), contents);
+        } finally {
+            if (osw != null) {
+                osw.close();
+            }
+        }
         
-        profile.saveBag(bagName, bag, -1);
+        profile.saveBag(bagName, bag);
 
         session.removeAttribute("bagQueryResult");
         

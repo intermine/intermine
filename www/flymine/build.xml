@@ -33,7 +33,7 @@
   <property name="branding" value="flymine"/>
 
   <path id="xslt.class.path">
-    <fileset dir="${common.lib}" includes="*.jar"/>
+    <fileset dir="${library.xml.basedir}/im-ant-tasks/lib" includes="*.jar"/>
   </path>
 
   <target name="prepare">

@@ -53,6 +53,7 @@ public class WebResults extends AbstractList implements WebColumnTable
     private Results osResults;
     private List columnNames;
     private Map classKeys;
+    private Map pathToQueryNode;
     
     /**
      * Create a new WebResults object.
@@ -70,6 +71,7 @@ public class WebResults extends AbstractList implements WebColumnTable
         this.model = model;
         this.columnPaths = columnPaths;
         this.classKeys = classKeys;
+        this.pathToQueryNode = pathToQueryNode;
         
         pathToIndex = getPathToIndex(pathToQueryNode);
         setColumns(columnPaths);
@@ -176,6 +178,14 @@ public class WebResults extends AbstractList implements WebColumnTable
         return osResults;
     }
 
+    /**
+     * Returns the pathToQueryNode Map.
+     *
+     * @return a Map
+     */
+    public Map getPathToQueryNode() {
+        return pathToQueryNode;
+    }
     
     /**
      * The batch size to use when we need to iterate through the whole result set.

@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
@@ -172,5 +173,19 @@ public class ObjectStorePassthruImpl implements ObjectStore
      */
     public long getMaxTime() {
         return os.getMaxTime();
+    }
+
+    /**
+     * @see ObjectStore#getSerial
+     */
+    public Integer getSerial() throws ObjectStoreException {
+        return os.getSerial();
+    }
+
+    /**
+     * @see ObjectStore#createObjectStoreBag
+     */
+    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
+        return os.createObjectStoreBag();
     }
 }

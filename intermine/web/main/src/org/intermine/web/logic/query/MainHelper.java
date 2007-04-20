@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -332,21 +334,24 @@ public class MainHelper
                 String code = c.getCode();
                 ConstraintSet cs = codeToCS.get(code);
                 if (BagConstraint.VALID_OPS.contains(c.getOp())) {
-                    InterMineBag bag;
-                    if (c.getValue() instanceof InterMineBag) {
-                        bag = (InterMineBag) c.getValue();
-                        if (bag == null) {
-                            throw new RuntimeException("a bag used by this query no longer exists");
-                        }
-                    } else {
-                        bag = (InterMineBag) savedBags.get(c.getValue());
-                        if (bag == null) {
-                            throw new RuntimeException("a bag (" + c.getValue() 
-                                                       + ") used by this query no longer exists");
-                        }
-                    }
                     QueryField qf = new QueryField((QueryClass) qn, "id");
-                    cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getListOfIds()));
+                    if (c.getValue() instanceof InterMineBag) {
+                        cs.addConstraint(new BagConstraint(qf, c.getOp(),
+                                    ((InterMineBag) c.getValue()).getOsb()));
+                    } else if (c.getValue() instanceof Collection) {
+                        Collection idBag = new LinkedHashSet();
+                        for (InterMineObject imo : ((Iterable<InterMineObject>) c.getValue())) {
+                            idBag.add(imo.getId());
+                        }
+                        cs.addConstraint(new BagConstraint(qf, c.getOp(), idBag));
+                    } else {
+                        InterMineBag bag = (InterMineBag) savedBags.get(c.getValue());
+                        if (bag == null) {
+                            throw new RuntimeException("a bag (" + c.getValue()
+                                    + ") used by this query no longer exists");
+                        }
+                        cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getOsb()));
+                    }
                 } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
                     if (c.getOp() == ConstraintOp.IS_NOT_NULL
                         || c.getOp() == ConstraintOp.IS_NULL) {

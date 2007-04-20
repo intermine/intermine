@@ -24,9 +24,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.profile.Profile;
@@ -90,10 +92,11 @@ public class LoadDefaultTemplatesTask extends Task
     public void execute() throws BuildException {
         log("Loading default templates and tags into profile " + username);
 
-        // Needed so that STAX can find it's implementation classes
+        // Needed so that STAX can find its implementation classes
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
+        ObjectStoreWriter osw = null;
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
@@ -125,8 +128,9 @@ public class LoadDefaultTemplatesTask extends Task
 
             // Unmarshal
             Set tags = new HashSet();
-            Profile profileSrc = ProfileBinding.unmarshal(reader, pm,
-                    profileDest.getUsername(), profileDest.getPassword(), tags, classKeys);
+            osw = new ObjectStoreWriterInterMineImpl(os);
+            Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
+                    profileDest.getPassword(), tags, classKeys, osw);
 
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();
@@ -157,6 +161,12 @@ public class LoadDefaultTemplatesTask extends Task
             throw new BuildException(e);
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
+            try {
+                if (osw != null) {
+                    osw.close();
+                }
+            } catch (ObjectStoreException e) {
+            }
         }
     }
 }
