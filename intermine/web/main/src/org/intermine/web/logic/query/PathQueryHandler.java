@@ -11,6 +11,7 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ public class PathQueryHandler extends DefaultHandler
     private Map savedBags;
     private List<String> viewStrings = new ArrayList<String>();
     private List<String> sortOrderStrings = new ArrayList<String>();
+    private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
+    
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
@@ -158,6 +161,11 @@ public class PathQueryHandler extends DefaultHandler
                                                          identifier));
             }
         }
+        if (qName.equals("pathDescription")) {
+            String pathString = attrs.getValue("pathString");
+            String description = attrs.getValue("description");
+            pathStringDescriptions.put(pathString, description);
+        }
     }
 
     /**
@@ -173,10 +181,13 @@ public class PathQueryHandler extends DefaultHandler
             for (String sortOrderElement: sortOrderStrings) {
                 query.addPathStringToSortOrder(sortOrderElement);
             }
-            
-            queries.put(queryName, query);            
+            for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
+                query.addPathStringDescription(entry.getKey(), entry.getValue());
+            }
+            queries.put(queryName, query);
             viewStrings = new ArrayList<String>();
             sortOrderStrings = new ArrayList<String>();
+            pathStringDescriptions = new HashMap<String, String>();
         }
     }
     
