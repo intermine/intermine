@@ -12,21 +12,19 @@ package org.intermine.web.struts;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -47,7 +45,6 @@ public class PollQueryAction extends InterMineAction
 
     /**
      * Handle request from client.
-     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -57,9 +54,9 @@ public class PollQueryAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String qid = request.getParameter("qid");
