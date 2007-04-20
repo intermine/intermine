@@ -32,7 +32,7 @@
         
 	</div>
 	
-  <c:if test="${!empty path}">
+  <c:if test="${!empty path && IS_SUPERUSER}">
     <im:prefixSubstring str="${pathString}" outVar="pathPrefix" delimiter="."/>
     <tiles:insert name="viewElementDescription.jsp">
       <tiles:put name="pathString" value="${pathString}"/>
