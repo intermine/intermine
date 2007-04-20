@@ -11,5 +11,6 @@
       <!--<include method="getName"/>-->
     </create>
     <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
+    <convert converter="bean" match="org.intermine.web.logic.results.*"/>
   </allow>
 </dwr>
