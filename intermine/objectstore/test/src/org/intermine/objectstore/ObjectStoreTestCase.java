@@ -488,6 +488,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeA2") },
                              { data.get("EmployeeA1") } };
         results.put("OrderDescending", toList(r));
+        results.put("ObjectStoreBagCombination", Collections.EMPTY_LIST);
     }
 
     /**

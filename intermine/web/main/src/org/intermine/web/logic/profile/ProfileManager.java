@@ -52,7 +52,6 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.bag.InterMineBagBinding;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.logic.query.SavedQueryBinding;
@@ -72,7 +71,6 @@ public class ProfileManager
 
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
-    protected InterMineBagBinding bagBinding = new InterMineBagBinding();
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
     private Map tagCheckers = null;
@@ -195,32 +193,28 @@ public class ProfileManager
             return null;
         }
 
-        
-        
         Map savedBags = new HashMap();
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
         q.addFrom(qc);
-        q.addToSelect(new QueryField(qc, "name"));
-        q.addToSelect(new QueryField(qc, "size"));
-        q.addToSelect(new QueryField(qc, "objects"));
-        q.addToSelect(new QueryField(qc, "type"));
+        q.addToSelect(new QueryField(qc, "id"));
+        q.addToSelect(qc); // This loads the objects into the cache
         q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "userProfile"),
                     ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
                         UserProfile.class)));
         Results bags;
         try {
             bags = osw.execute(q);
+            bags.setNoOptimise();
+            bags.setNoExplain();
+            for (Iterator i = bags.iterator(); i.hasNext();) {
+                List row = (List) i.next();
+                Integer bagId = (Integer) row.get(0);
+                InterMineBag bag = new InterMineBag(os, bagId, osw);
+                savedBags.put(bag.getName(), bag);
+            }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
-        }
-        for (Iterator i = bags.iterator(); i.hasNext();) {
-            List row = (List) i.next();
-            String bagName = (String) row.get(0);
-            int bagSize = ((Integer) row.get(1)).intValue();
-            String type = (String) row.get(3);
-            savedBags.put(bagName, new InterMineBag(userProfile.getId(), bagName, type,
-                        bagSize, osw, os));
         }
         Map savedQueries = new HashMap();
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
@@ -334,52 +328,6 @@ public class ProfileManager
 //                 userProfile.setId(userId);
             }
 
-            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                InterMineBag bag = null;
-                try {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    String bagName = (String) entry.getKey();
-                    bag = (InterMineBag) entry.getValue();
-                    if (bag.needsWrite()) {
-                        SavedBag savedBag = null;
-                        if (bag.getSavedBagId() != null) {
-                            // TODO fix problem with missing InterMineObject table
-                            // at the moment making query but should use
-                            // getObjectById()
-                            // savedBag= (SavedBag) osw.getObjectById(bag.getSavedBagId());
-                            try {
-                                Query q = new Query();
-                                QueryClass qc = new QueryClass(SavedBag.class);
-                                q.addFrom(qc);
-                                q.addToSelect(qc);
-                                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                                cs.addConstraint(new SimpleConstraint(new QueryField(qc, "id"),
-                                            ConstraintOp.EQUALS, new QueryValue
-                                            (bag.getSavedBagId())));
-                                q.setConstraint(cs);
-                                Results res = osw.execute(q);
-                                savedBag = (SavedBag) ((List) res.get(0)).get(0);
-                            } catch (ObjectStoreException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        if (savedBag == null) {
-                            savedBag = new SavedBag();
-                        }
-                        savedBag.setBag(bagBinding.marshal(bag, bagName));
-                        savedBag.setUserProfile(userProfile);
-                        savedBag.setName(bagName);
-                        savedBag.setSize(bag.size());
-                        savedBag.setType(bag.getType());
-                        osw.store(savedBag);
-                        bag.setSavedBagId(savedBag.getId());
-                        bag.resetToDatabase();
-                    }
-                } catch (Exception e) {
-                    LOG.error("Failed to marshal and save bag: " + bag, e);
-                }
-            }
-
             for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
                 org.intermine.web.logic.query.SavedQuery query = null;
                 try {
@@ -429,10 +377,13 @@ public class ProfileManager
 
         try {
             osw.store(userProfile);
+            profile.setUserId(userProfile.getId());
+            for (InterMineBag bag : ((Iterable<InterMineBag>) profile.getSavedBags().values())) {
+                bag.setProfileId(userProfile.getId(), osw);
+            }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-        profile.setUserId(userProfile.getId());
         saveProfile(profile);
     }
 

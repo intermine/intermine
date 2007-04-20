@@ -23,7 +23,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
@@ -61,23 +67,22 @@ public class BagDetailsAction extends Action
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         String bagName = request.getParameter("bagName");
-        Collection bag = (Collection) profile.getSavedBags().get(bagName);
-        
-        Collection collection;
-        InterMineBag interMineBag;
-        if (bag instanceof InterMineBag) {
-            interMineBag = (InterMineBag) bag;
-            collection = interMineBag.toObjectCollection();
-        } else {
-            throw new RuntimeException("bag " + bagName + " isn't an InterMineBag");
-        }
+        InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
         
         String identifier = "bag." + bagName;
         PagedCollection pc = (PagedCollection) SessionMethods.getResultsTable(session, identifier);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, bag.getOsb()));
+        q.setDistinct(false);
+        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+
         WebCollection webCollection = 
-            new WebCollection(os, interMineBag.getType(), bag, model, webConfig, classKeys);
+            new WebCollection(os, bag.getType(), res, model, webConfig, classKeys);
 
         if (pc == null) {
             pc = new PagedCollection(webCollection);

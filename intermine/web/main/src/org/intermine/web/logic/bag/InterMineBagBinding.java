@@ -25,6 +25,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;
 
@@ -43,13 +45,13 @@ public class InterMineBagBinding
      * @param bagName the name of the bag
      * @return the corresponding XML String
      */
-    public String marshal(InterMineBag bag, String bagName) {
+    public String marshal(InterMineBag bag) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-            marshal(bag, bagName, writer);
+            marshal(bag, writer);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
@@ -61,66 +63,45 @@ public class InterMineBagBinding
      * Convert a InterMineIdBag to XML and write XML to given writer.
      *
      * @param bag the InterMineIdBag
-     * @param bagName the bag name to serialise
      * @param writer the XMLStreamWriter to write to
      */
-    public static void marshal(InterMineBag bag, String bagName, XMLStreamWriter writer) {
+    public static void marshal(InterMineBag bag, XMLStreamWriter writer) {
         try {
             writer.writeStartElement("bag");
-            writer.writeAttribute("name", bagName);
+            writer.writeAttribute("name", bag.getName());
             writer.writeAttribute("type", bag.getType());
             if (bag.getDescription() != null) {
                 writer.writeAttribute("description", bag.getDescription());
             }
 
-            if (bag.width() == 1) {
-                for (Iterator j = bag.iterator(); j.hasNext();) {
-                    writeOneBagElement((BagElement) j.next(), writer);
-                }
-            } else {
-                List listOfLists = bag.asListOfLists();
-                Iterator columnIter = listOfLists.iterator();
-                while (columnIter.hasNext()) {
-                    List row = (List) columnIter.next();
-                    Iterator rowIter = row.iterator();
-                    while (rowIter.hasNext()) {
-                        BagElement o = (BagElement) rowIter.next();
-                        writeOneBagElement(o, writer);
-                    }
-                }
+            List<Integer> ids = (List<Integer>) bag.getContentsAsIds();
+            for (Integer id : ids) {
+                writer.writeEmptyElement("bagElement");
+                writer.writeAttribute("id", id.toString());
             }
             writer.writeEndElement();
-
         } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void writeOneBagElement(BagElement bagElement,
-                                           XMLStreamWriter writer) throws XMLStreamException {
-        //        String type = thisObject.getClass().getName();
-        writer.writeEmptyElement("bagElement");
-        writer.writeAttribute("type", bagElement.getType());
-        writer.writeAttribute("id", bagElement.getId().toString());
-    }
-        
     /**
      * Parse saved queries from a Reader
      * @param reader the saved bags
-     * @param uos UserProfile ObjectStore
-     * @param os ObjectStore used to resolve object ids
+     * @param uosw UserProfile ObjectStoreWriter
+     * @param osw ObjectStoreWriter used to resolve object ids and write to ObjectStoreBags
      * @param idUpgrader bag object id upgrader
      * @param userId an Integer
      * @return a Map from bag name to InterMineIdBag
      */
-    public static Map unmarshal(final Reader reader, final ObjectStore uos, final ObjectStore os,
-                                IdUpgrader idUpgrader,
-            Integer userId) {
+    public static Map unmarshal(final Reader reader, final ObjectStoreWriter uosw,
+            final ObjectStoreWriter osw, IdUpgrader idUpgrader, Integer userId) {
         final Map bags = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader),
-                            new InterMineBagHandler(uos, os, bags, userId, new HashMap(),
-                                                    idUpgrader.ERROR_UPGRADER));
+            SAXParser.parse(new InputSource(reader), new InterMineBagHandler(uosw, osw, bags,
+                        userId, new HashMap(), idUpgrader.ERROR_UPGRADER));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

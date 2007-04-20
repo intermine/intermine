@@ -100,7 +100,8 @@ public class IqlQuery
             }
             needComma = true;
             String nodeAlias = (String) q.getAliases().get(qn);
-            if ((qn instanceof QueryClass) || (qn instanceof ObjectStoreBag)) {
+            if ((qn instanceof QueryClass) || (qn instanceof ObjectStoreBag)
+                    || (qn instanceof ObjectStoreBagCombination)) {
                 retval.append(nodeToString(q, qn));
             } else {
                 retval.append(nodeToString(q, qn))
@@ -270,6 +271,30 @@ public class IqlQuery
                 + ref.getFieldName() + "(DEF " + objRepresentation + ")";
         } else if (qn instanceof ObjectStoreBag) {
             return "BAG(" + ((ObjectStoreBag) qn).getBagId() + ")";
+        } else if (qn instanceof ObjectStoreBagCombination) {
+            StringBuffer retval = new StringBuffer();
+            ObjectStoreBagCombination osbc = (ObjectStoreBagCombination) qn;
+            boolean needComma = false;
+            for (ObjectStoreBag osb : osbc.getBags()) {
+                if (needComma) {
+                    switch(osbc.getOp()) {
+                        case ObjectStoreBagCombination.UNION:
+                            retval.append(" UNION ");
+                            break;
+                        case ObjectStoreBagCombination.INTERSECT:
+                            retval.append(" INTERSECT ");
+                            break;
+                        case ObjectStoreBagCombination.EXCEPT:
+                            retval.append(" EXCEPT ");
+                            break;
+                        default:
+                            throw new IllegalStateException("Illegal op: " + osbc.getOp());
+                    }
+                }
+                needComma = true;
+                retval.append(nodeToString(q, osb));
+            }
+            return retval.toString();
         } else if (qn instanceof OrderDescending) {
             return nodeToString(q, ((OrderDescending) qn).getQueryOrderable()) + " DESC";
         } else {

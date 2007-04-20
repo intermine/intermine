@@ -229,4 +229,11 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     public int getSequence() {
         return 0;
     }
+
+    /**
+     * @see ObjectStore#getSerial
+     */
+    public Integer getSerial() throws ObjectStoreException {
+        throw new ObjectStoreException("Cannot getSerial() on an ObjectStoreClient");
+    }
 }

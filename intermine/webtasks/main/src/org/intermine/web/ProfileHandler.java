@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.bag.InterMineBagHandler;
 import org.intermine.web.logic.profile.Profile;
@@ -51,6 +52,7 @@ class ProfileHandler extends DefaultHandler
     private List items;
     private Map idObjectMap;
     private IdUpgrader idUpgrader;
+    private ObjectStoreWriter osw;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -67,9 +69,11 @@ class ProfileHandler extends DefaultHandler
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param classKeys class key fields in model
+     * @param osw an ObjectStoreWriter to the production database, to write bags
      */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, Map classKeys) {
-        this(profileManager, idUpgrader, null, null, new HashSet(), classKeys);
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, Map classKeys,
+            ObjectStoreWriter osw) {
+        this(profileManager, idUpgrader, null, null, new HashSet(), classKeys, osw);
     }
 
     /**
@@ -81,9 +85,11 @@ class ProfileHandler extends DefaultHandler
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
      * @param classKeys class key fields in model
+     * @param osw an ObjectStoreWriter to the production database, to write bags
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set tags, Map classKeys) {
+            String defaultUsername, String defaultPassword, Set tags, Map classKeys,
+            ObjectStoreWriter osw) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
@@ -92,6 +98,7 @@ class ProfileHandler extends DefaultHandler
         this.password = defaultPassword;
         this.tags = tags;
         this.classKeys = classKeys;
+        this.osw = osw;
     }
 
     /**
@@ -99,8 +106,11 @@ class ProfileHandler extends DefaultHandler
      * @return the new Profile
      */
     public Profile getProfile() {
-        return new Profile(profileManager, username, null, password, savedQueries, savedBags,
+        System.out.println("Making new profile bags map contains " + savedBags.keySet());
+        Profile retval = new Profile(profileManager, username, null, password, savedQueries, savedBags,
                            savedTemplates);
+        System.out.println("Made profile with hashCode " + System.identityHashCode(retval));
+        return retval;
     }
 
     /**
@@ -130,18 +140,15 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("bags")) {
             savedBags = new LinkedHashMap();
             subHandler = new InterMineBagHandler(profileManager.getUserProfileObjectStore(),
-                                                 profileManager.getObjectStore(), savedBags, null,
-                                                 idObjectMap, idUpgrader);
+                    osw, savedBags, null, idObjectMap, idUpgrader);
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryHandler(savedTemplates, savedBags,
-                                                                       classKeys);
+            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, classKeys);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryHandler(savedQueries, savedBags,
-                                                                 classKeys);
+            subHandler = new SavedQueryHandler(savedQueries, savedBags, classKeys);
         }
         if (qName.equals("tags")) {
             subHandler = new TagHandler(username, tags);

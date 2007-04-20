@@ -150,6 +150,9 @@ public class AjaxServices
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = ctx.getServletContext();
+        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
+                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         SavedQuery sq;
         if (name.equals(newName) || StringUtils.isEmpty(newName)) {
             return name;
@@ -186,12 +189,7 @@ public class AjaxServices
                 return "<i>" + newName + " already exists</i>";
             }
             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
-            profile.deleteBag(name);
-            SessionMethods.invalidateBagTable(session, name);
-            int maxNotLoggedSize = WebUtil.getIntSessionProperty(session,
-                    "max.bag.size.notloggedin", Constants.MAX_NOT_LOGGED_BAG_SIZE);
-            bag.setName(newName);
-            profile.saveBag(newName, bag, maxNotLoggedSize);
+            bag.setName(newName, uosw);
         } else {
             return "Type unknown";
         }
@@ -209,11 +207,14 @@ public class AjaxServices
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = ctx.getServletContext();
+        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
+                    Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
         if (bag == null) {
             throw new InterMineException("Bag \"" + bagName + "\" not found.");
         }
-        bag.setDescription(description);
+        bag.setDescription(description, uosw);
         return description;
     }
 

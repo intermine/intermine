@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.bag.IdUpgrader;
@@ -64,16 +65,16 @@ public class ProfileManagerBinding
      * Read a ProfileManager from an XML stream Reader
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
-     * @param os ObjectStore used to resolve object ids
+     * @param osw ObjectStoreWriter used to resolve object ids and write bags
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param classKeys class key fields in model
      */
-    public static void unmarshal(Reader reader, ProfileManager profileManager, ObjectStore os,
-                                 PkQueryIdUpgrader idUpgrader, Map classKeys) {
+    public static void unmarshal(Reader reader, ProfileManager profileManager,
+            ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader, Map classKeys) {
         try {
             ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader, classKeys);
+                new ProfileManagerHandler(profileManager, idUpgrader, classKeys, osw);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,6 +94,7 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileManager profileManager = null;
     private IdUpgrader idUpgrader;
     private Map classKeys;
+    private ObjectStoreWriter osw;
     
     /**
      * Create a new ProfileManagerHandler
@@ -102,11 +104,12 @@ class ProfileManagerHandler extends DefaultHandler
      * @param classKeys class key fields in model
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                                 Map classKeys) {
+            Map classKeys, ObjectStoreWriter osw) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
         this.classKeys = classKeys;
+        this.osw = osw;
     }
 
     /**
@@ -115,7 +118,7 @@ class ProfileManagerHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, classKeys);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader, classKeys, osw);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);

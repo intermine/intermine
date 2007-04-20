@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<bag-list>
-  <bag name="objects" type="Gene">
-      <bagElement type="Gene" id="10" />
-      <bagElement type="Gene" id="20" />
-      <bagElement type="Gene" id="30" />
-  </bag>
-</bag-list>

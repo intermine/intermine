@@ -70,7 +70,8 @@ public class ModelMergerTask extends Task
             FileReader reader = new FileReader(inputModelFile);
             Model model = parser.process(reader);
             reader.close();
-            Set<ClassDescriptor> additionClds = parser.generateClassDescriptors(new FileReader(additionsFile));
+            Set<ClassDescriptor> additionClds = parser.generateClassDescriptors(
+                    new FileReader(additionsFile));
             Model merged = ModelMerger.mergeModel(model, additionClds);
             FileWriter writer = new FileWriter(outputModelFile);
             writer.write(merged.toString());

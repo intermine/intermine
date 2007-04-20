@@ -81,14 +81,6 @@ public interface ObjectStoreWriter extends ObjectStore
      */
     public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
         throws ObjectStoreException;
-    
-    /**
-     * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
-     *
-     * @return an ObjectStoreBag
-     * @throws ObjectStoreException if an error occurs fetching a new ID
-     */
-    public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException;
 
     /**
      * Adds an element to an ObjectStoreBag.
@@ -137,14 +129,6 @@ public interface ObjectStoreWriter extends ObjectStore
      * @throws ObjectStoreException if something goes wrong
      */
     public void addToBagFromQuery(ObjectStoreBag osb, Query q) throws ObjectStoreException;
-
-    /**
-     * Gets an ID number which is unique in the database.
-     *
-     * @return an Integer
-     * @throws ObjectStoreException if a problem occurs
-     */
-    public Integer getSerial() throws ObjectStoreException;
 
     /**
      * Check whether the ObjectStoreWriter is performing a transaction

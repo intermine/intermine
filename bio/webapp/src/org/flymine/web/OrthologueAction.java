@@ -94,19 +94,19 @@ public class OrthologueAction extends InterMineAction
         InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
         Set queryFrom = query.getFrom();
         QueryClass queryClass = null;
-        if (bag != null && !bag.isEmpty()) {
+        if (bag != null && !(bag.size() == 0)) {
             for (Iterator iter = queryFrom.iterator(); iter.hasNext();) {
                 FromElement fromElt = (FromElement) iter.next();
                 if ((fromElt instanceof QueryClass)
-                                && (((QueryClass) fromElt).getType().isAssignableFrom((Class
-                                                .forName(os.getModel().getPackageName() 
-                                                         + "." + bag.getType()))))) {
+                        && (((QueryClass) fromElt).getType().isAssignableFrom((Class
+                                    .forName(os.getModel().getPackageName() 
+                                        + "." + bag.getType()))))) {
                     queryClass = (QueryClass) fromElt;
                 }
             }
             QueryField qf = new QueryField(queryClass, "id");
             ((ConstraintSet) query.getConstraint())
-            .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getListOfIds()));
+                .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
             columnName = bag.getType();
         }
         Results results = new Results(query, os, os.getSequence());

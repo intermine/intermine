@@ -34,6 +34,11 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TextFileUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -97,8 +102,16 @@ public class ExportAction extends InterMineAction
                 WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
                 Model model = os.getModel();
                 
+                Query q = new Query();
+                QueryClass qc = new QueryClass(InterMineObject.class);
+                q.addFrom(qc);
+                q.addToSelect(qc);
+                q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
+                q.setDistinct(false);
+                SingletonResults res = new SingletonResults(q, os, os.getSequence());
+
                 WebCollection webCollection = 
-                    new WebCollection(os, imBag.getType(), imBag, model, webConfig, classKeys);
+                    new WebCollection(os, imBag.getType(), res, model, webConfig, classKeys);
                 pt = new PagedCollection(webCollection);
                 
             } else {

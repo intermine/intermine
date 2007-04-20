@@ -36,6 +36,9 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
@@ -44,6 +47,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
@@ -398,11 +402,42 @@ public class SqlGenerator
         List selectList = q.getSelect();
         if ((selectList.size() == 1) && (selectList.get(0) instanceof ObjectStoreBag)) {
             // Special case - we are fetching the contents of an ObjectStoreBag.
-            return "SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN + " AS a1_ FROM "
-                + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " WHERE "
-                + ObjectStoreInterMineImpl.BAGID_COLUMN + " = "
-                + ((ObjectStoreBag) selectList.get(0)).getBagId() + " ORDER BY "
-                + ObjectStoreInterMineImpl.BAGVAL_COLUMN;
+            return "SELECT " + BAGVAL_COLUMN + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE "
+                + BAGID_COLUMN + " = " + ((ObjectStoreBag) selectList.get(0)).getBagId()
+                + " ORDER BY " + BAGVAL_COLUMN;
+        } else if ((selectList.size() == 1)
+                && (selectList.get(0) instanceof ObjectStoreBagCombination)) {
+            // Another special case.
+            ObjectStoreBagCombination osbc = (ObjectStoreBagCombination) selectList.get(0);
+            if (osbc.getOp() == ObjectStoreBagCombination.UNION) {
+                StringBuffer retval = new StringBuffer("SELECT DISTINCT " + BAGVAL_COLUMN
+                        + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
+                        + " IN (");
+                boolean needComma = false;
+                for (ObjectStoreBag osb : osbc.getBags()) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    retval.append(osb.getBagId() + "");
+                }
+                retval.append(") ORDER BY " + BAGVAL_COLUMN);
+                return retval.toString();
+            } else {
+                StringBuffer retval = new StringBuffer();
+                boolean needComma = false;
+                for (ObjectStoreBag osb : osbc.getBags()) {
+                    if (needComma) {
+                        retval.append(osbc.getOp() == ObjectStoreBagCombination.INTERSECT
+                                ? " INTERSECT " : " EXCEPT ");
+                    }
+                    needComma = true;
+                    retval.append("SELECT " + BAGVAL_COLUMN + " AS a1_ FROM " + INT_BAG_TABLE_NAME
+                            + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId());
+                }
+                retval.append(" ORDER BY a1_");
+                return retval.toString();
+            }
         }
         state.setDb(db);
         state.setBagTableNames(bagTableNames);
@@ -552,6 +587,8 @@ public class SqlGenerator
                     && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
                 // Do nothing
             } else if (selectable instanceof ObjectStoreBag) {
+                tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+            } else if (selectable instanceof ObjectStoreBagCombination) {
                 tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "

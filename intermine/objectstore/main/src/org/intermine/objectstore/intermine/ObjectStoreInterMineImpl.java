@@ -105,6 +105,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected long statsConTime = 0;
     protected QueryOptimiserContext limitedContext;
     protected boolean verboseQueryLog = false;
+    protected int sequenceBase = 0;
+    protected int sequenceOffset = SEQUENCE_MULTIPLE;
+    protected static final int SEQUENCE_MULTIPLE = 1000000;
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
@@ -1560,5 +1563,51 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         public String toString() {
             return dropSql;
         }
+    }
+
+    /**
+     * Gets an ID number which is unique in the database.
+     *
+     * @return an Integer
+     * @throws ObjectStoreException if a problem occurs
+     */
+    public Integer getSerial() throws ObjectStoreException {
+        try {
+            Connection c = null;
+            try {
+                c = getConnection();
+                return getSerialWithConnection(c);
+            } finally {
+                releaseConnection(c);
+            }
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error generating serial number", e);
+        }
+    }
+
+    /**
+     * Gets an ID number which is unique in the database, given a Connection.
+     *
+     * @param c the Connection
+     * @return an Integer
+     * @throws SQLException if a problem occurs
+     */
+    protected Integer getSerialWithConnection(Connection c) throws SQLException {
+        if (sequenceOffset >= SEQUENCE_MULTIPLE) {
+            long start = System.currentTimeMillis();
+            sequenceOffset = 0;
+            Statement s = c.createStatement();
+            ResultSet r = s.executeQuery("SELECT nextval('serial');");
+            //System//.out.println(getModel().getName()
+            //        + ": Executed SQL: SELECT nextval('serial');");
+            if (!r.next()) {
+                throw new SQLException("No result while attempting to get a unique id");
+            }
+            long nextSequence = r.getLong(1);
+            sequenceBase = (int) (nextSequence * SEQUENCE_MULTIPLE);
+            long end = System.currentTimeMillis();
+            LOG.info("Got new set of serial numbers - took " + (end - start) + " ms");
+        }
+        return new Integer(sequenceBase + (sequenceOffset++));
     }
 }

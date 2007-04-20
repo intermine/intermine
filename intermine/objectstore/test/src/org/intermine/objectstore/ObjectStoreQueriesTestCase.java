@@ -240,6 +240,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectStoreBag", objectStoreBag());
         queries.put("ObjectStoreBagQueryClass", objectStoreBagQueryClass());
         queries.put("OrderDescending", orderDescending());
+        queries.put("ObjectStoreBagCombination", objectStoreBagCombination());
     }
 
     /*
@@ -1670,6 +1671,21 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.addToOrderBy(new OrderDescending(qc));
+        return q;
+    }
+
+    /*
+     * SELECT BAG(5) UNION BAG(6)
+     */
+    public static Query objectStoreBagCombination() throws Exception {
+        Query q = new Query();
+        ObjectStoreBag osb1 = new ObjectStoreBag(5);
+        ObjectStoreBag osb2 = new ObjectStoreBag(6);
+        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(ObjectStoreBagCombination.UNION);
+        osbc.addBag(osb1);
+        osbc.addBag(osb2);
+        q.addToSelect(osbc);
+        q.setDistinct(false);
         return q;
     }
 }

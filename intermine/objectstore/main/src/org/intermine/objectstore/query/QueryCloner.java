@@ -42,7 +42,7 @@ public class QueryCloner
                 FromElement origFrom = (FromElement) fromIter.next();
                 FromElement newFrom = null;
                 if (origFrom instanceof QueryClass) {
-                    newFrom = new QueryClass(((QueryClass) origFrom).getType());
+                    newFrom = origFrom;
                 } else if (origFrom instanceof Query) {
                     newFrom = cloneQuery((Query) origFrom);
                 } else if (origFrom instanceof QueryClassBag) {
@@ -233,6 +233,11 @@ public class QueryCloner
         } else if (orig instanceof ObjectStoreBag) {
             // Immutable
             return orig;
+        } else if (orig instanceof ObjectStoreBagCombination) {
+            ObjectStoreBagCombination origO = (ObjectStoreBagCombination) orig;
+            ObjectStoreBagCombination retval = new ObjectStoreBagCombination(origO.getOp());
+            retval.getBags().addAll(origO.getBags());
+            return retval;
         } else if (orig instanceof OrderDescending) {
             return new OrderDescending((QueryOrderable) cloneThing(((OrderDescending) orig)
                         .getQueryOrderable(), fromElementMap));

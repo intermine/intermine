@@ -16,7 +16,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -131,10 +137,19 @@ public class BagDetailsController extends TilesAction
             tableDisplayerArray.add(bagWidgLdr);
         }
 
-        WebCollection webCollection = new WebCollection(os, imBag.getType(), imBag, model,
-                                                        webConfig, classKeys);
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
+        q.setDistinct(false);
+        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+
+        WebCollection webCollection = new WebCollection(os, imBag.getType(), res, model,
+                webConfig, classKeys);
         PagedCollection pagedColl = new PagedCollection(webCollection);
         request.setAttribute("bag", imBag);
+        request.setAttribute("bagSize", imBag.size());
         request.setAttribute("pagedColl", pagedColl);
         request.setAttribute("graphDisplayerArray", graphDisplayerArray);
         request.setAttribute("tableDisplayerArray", tableDisplayerArray);

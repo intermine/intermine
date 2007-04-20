@@ -57,16 +57,14 @@ public class TypeConverter
      * @param servletContext the ServletContext
      * @param typeA the type to convert from
      * @param typeB the type to convert to
-     * @param objects a Collection of objects of type typeA
+     * @param bag an InterMineBag or Collection of objects of type typeA
      * @return a Map from original object to a List of converted objects, or null if conversion is
      * possible (because no suitable template is available)
      * @throws InterMineException if an error occurs
      */
-    public static Map<InterMineObject, List<InterMineObject>> 
-               convertObjects(ServletContext servletContext,
-                              Class typeA, Class typeB,
-                              Collection objects) 
-        throws InterMineException {
+    public static Map<InterMineObject, List<InterMineObject>>
+    convertObjects(ServletContext servletContext, Class typeA, Class typeB, Object bag) 
+    throws InterMineException {
         TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
         if (tq == null) {
             return null;
@@ -76,17 +74,10 @@ public class TypeConverter
         PathNode node = (PathNode) tq.getEditableNodes().iterator().next();
         Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
         // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
-        // want to constraint. Just because our query builder has been crippled to only allow that.
+        // want to constrain. Just because our query builder has been crippled to only allow that.
         PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPathString());
         tq.getNodes().remove(node.getPathString());
-        Collection<BagElement> bagElements = new ArrayList<BagElement>();
-        Iterator objIter = objects.iterator();
-        while (objIter.hasNext()) {
-            InterMineObject object = (InterMineObject) objIter.next();
-            bagElements.add(new BagElement(object.getId(), object.getClass().getName()));
-        }
-        Constraint newC = new Constraint(ConstraintOp.IN, new InterMineBag(null, null, null, null, 
-                    null, bagElements), false, "", c.getCode(), null);
+        Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null);
         parent.getConstraints().add(newC);
 
         Query q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null);

@@ -67,8 +67,8 @@ public class ProfileManagerTest extends XMLTestCase
 {
     private Profile bobProfile, sallyProfile;
     private ProfileManager pm;
-    private ObjectStore os, userProfileOS;
-    private ObjectStoreWriter osw, userProfileOSW;
+    private ObjectStore os, uos;
+    private ObjectStoreWriter osw, uosw;
     private Integer bobId = new Integer(101);
     private Integer sallyId = new Integer(102);
     private String bobPass = "bob_pass";
@@ -84,14 +84,14 @@ public class ProfileManagerTest extends XMLTestCase
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
 
-        userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-        userProfileOS = userProfileOSW.getObjectStore();
+        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        uos = uosw.getObjectStore();
 
         Properties classKeyProps = new Properties();
         classKeyProps.load(getClass().getClassLoader()
                            .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-        pm = new ProfileManager(os, userProfileOSW, classKeys);
+        pm = new ProfileManager(os, uosw, classKeys);
     }
 
     private void setUpUserProfiles() throws Exception {
@@ -104,36 +104,28 @@ public class ProfileManagerTest extends XMLTestCase
         String bobName = "bob";
 
         Set contents = new HashSet();
-        InterMineBag bag = new InterMineBag(bobId, "bag1", "org.intermine.model.testmodel.Department", userProfileOS,os, contents);
-        bag.setDescription("This is some description");
+        InterMineBag bag = new InterMineBag("bag1", "org.intermine.model.testmodel.Department", "This is some description", os, bobId, uosw);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
         Set fieldNames = new HashSet();
         fieldNames.add("name");
         Department departmentA1 = (Department) os.getObjectByExample(deptEx, fieldNames);
-        bag.add(new BagElement(departmentA1.getId(), "org.intermine.model.testmodel.Department"));
+        osw.addToBag(bag.getOsb(), departmentA1.getId());
 
         Department deptEx2 = new Department();
         deptEx2.setName("DepartmentB1");
         Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
-        bag.add(new BagElement(departmentB1.getId(), "org.intermine.model.testmodel.Department"));
+        osw.addToBag(bag.getOsb(), departmentB1.getId());
        
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               "");
         
-        bobProfile = new Profile(pm, bobName, null, bobPass,
+        bobProfile = new Profile(pm, bobName, bobId, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(bobProfile);
-        UserProfile realBobProfile = new UserProfile();
-        realBobProfile.setUsername(bobName);
-        fieldNames = new HashSet();
-        fieldNames.add("username");
-        UserProfile bobProfile4ID = (UserProfile) userProfileOS.getObjectByExample(realBobProfile, fieldNames);
-        bag.setUserId(bobProfile4ID.getId());
-        bobProfile.setUserId(bobProfile4ID.getId());
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
         bobProfile.saveTemplate("template", template);
@@ -145,8 +137,6 @@ public class ProfileManagerTest extends XMLTestCase
         // sally details
         String sallyName = "sally";
 
-        Set objectContents = new HashSet();
-
         // employees and managers
 //        <bag name="sally_bag2" type="org.intermine.model.CEO">
 //        <bagElement type="org.intermine.model.CEO" id="1011"/>
@@ -157,9 +147,9 @@ public class ProfileManagerTest extends XMLTestCase
         fieldNames = new HashSet();
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
-        objectContents.add(ceoB1);
 
-        InterMineBag objectBag = new InterMineBag(sallyId, "bag2", "org.intermine.model.testmodel.Employee", userProfileOS, os, contents);
+        InterMineBag objectBag = new InterMineBag("bag2", "org.intermine.model.testmodel.Employee", "description", os, sallyId, uosw);
+        osw.addToBag(objectBag.getOsb(), ceoB1.getId());
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")),
@@ -168,13 +158,6 @@ public class ProfileManagerTest extends XMLTestCase
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(sallyProfile);
-        UserProfile realSallyProfile = new UserProfile();
-        realSallyProfile.setUsername(sallyName);
-        fieldNames = new HashSet();
-        fieldNames.add("username");
-        UserProfile sallyProfile4ID = (UserProfile) userProfileOS.getObjectByExample(realSallyProfile, fieldNames);
-        objectBag.setUserId(sallyProfile4ID.getId());
-        bobProfile.setUserId(sallyProfile4ID.getId());
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", objectBag);
 
@@ -187,28 +170,27 @@ public class ProfileManagerTest extends XMLTestCase
     }
 
     private void cleanUserProfile() throws ObjectStoreException {
-        if (userProfileOSW.isInTransaction()) {
-            userProfileOSW.abortTransaction();
+        if (uosw.isInTransaction()) {
+            uosw.abortTransaction();
         }
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "tagName"), ConstraintOp.MATCHES, new QueryValue("test%")));
-        SingletonResults res = new SingletonResults(q, userProfileOS,
-                                                    userProfileOS.getSequence());
+        SingletonResults res = new SingletonResults(q, uos, uos.getSequence());
         Iterator resIter = res.iterator();
-        userProfileOSW.beginTransaction();
+        uosw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            userProfileOSW.delete(o);
+            uosw.delete(o);
         }
 
         removeUserProfile("bob");
         removeUserProfile("sally");
 
-        userProfileOSW.commitTransaction();
-        userProfileOSW.close();
+        uosw.commitTransaction();
+        uosw.close();
     }
 
     private void removeUserProfile(String username) throws ObjectStoreException {
@@ -219,12 +201,11 @@ public class ProfileManagerTest extends XMLTestCase
         QueryField qf = new QueryField(qc, "username");
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
         q.setConstraint(sc);
-        SingletonResults res = new SingletonResults(q, userProfileOS,
-                                                    userProfileOS.getSequence());
+        SingletonResults res = new SingletonResults(q, uos, uos.getSequence());
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            userProfileOSW.delete(o);
+            uosw.delete(o);
         }
     }
 
@@ -275,7 +256,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader(), classKeys);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), classKeys);
 
         assertEquals(3, pm.getProfileUserNames().size());
 
@@ -293,10 +274,12 @@ public class ProfileManagerTest extends XMLTestCase
         Employee employeeB2 = (Employee) os.getObjectByExample(employeeEx2, fieldNames);
         Set expectedBagContents = new HashSet();
 
-        expectedBagContents.add(new BagElement(employeeA3.getId(), "org.intermine.model.testmodel.Employee"));
-        expectedBagContents.add(new BagElement(employeeB2.getId(), "org.intermine.model.testmodel.Employee"));
+        expectedBagContents.add(employeeA3.getId());
+        expectedBagContents.add(employeeB2.getId());
         
-        assertEquals(expectedBagContents, sallyProfile.getSavedBags().get("sally_bag3"));
+        System.out.println("Testing profile with hashCode " + System.identityHashCode(sallyProfile));
+        assertEquals(3, sallyProfile.getSavedBags().size());
+        assertEquals(expectedBagContents, ((InterMineBag) sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsIds());
 
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());
@@ -365,7 +348,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader(), classKeys);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), classKeys);
 
         pm.addTag("test-tag", "Department.name", "attribute", "bob");
         pm.addTag("test-tag", "Department.company", "reference", "bob");
@@ -453,7 +436,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, os, new PkQueryIdUpgrader(), classKeys);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), classKeys);
 
         pm.addTag("test_tag1", "Department.name", "attribute", "bob");
         pm.addTag("test_tag1", "Department.company", "reference", "bob");
