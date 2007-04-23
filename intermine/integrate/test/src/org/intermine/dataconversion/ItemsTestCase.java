@@ -13,10 +13,14 @@ package org.intermine.dataconversion;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import junit.framework.TestCase;
@@ -33,7 +37,7 @@ import org.intermine.xml.full.Item;
  */
 public abstract class ItemsTestCase extends TestCase
 {
-
+    public static final String ENDL = System.getProperty("line.separator");
     public ItemsTestCase(String arg) {
         super(arg);
     }
@@ -88,7 +92,6 @@ public abstract class ItemsTestCase extends TestCase
             // should be success, let TestCase handle it
             TestCase.assertEquals(a, b);
         } else {
-            String ENDL = System.getProperty("line.separator");
             // fail with a helpful message
             message.append("Item collections do not match." + ENDL);
             if (!inAnotB.isEmpty()) {
@@ -96,6 +99,8 @@ public abstract class ItemsTestCase extends TestCase
                 TreeSet ts = new TreeSet();
                 ts.addAll(inAnotB);
                 message.append(ts + ENDL);
+                message.append("Summary of expected: " + ENDL);
+                message.append(countItemClasses(inAnotB));
             } else if (a.isEmpty()) {
                 message.append("Expected set was empty. " + ENDL);
             }
@@ -104,6 +109,8 @@ public abstract class ItemsTestCase extends TestCase
                 TreeSet ts = new TreeSet();
                 ts.addAll(inBnotA);
                 message.append(ts + ENDL);
+                message.append("Summary of actual: " + ENDL);
+                message.append(countItemClasses(inBnotA));
             } else if (b.isEmpty()) {
                 message.append("Actual set was empty. " + ENDL);
             }
@@ -134,6 +141,32 @@ public abstract class ItemsTestCase extends TestCase
         return diff;
     }
 
+    /**
+     * For a collection of items return a string containing counts of each
+     * item classname - useful for degugging tests.
+     * @param items the Item collection to count
+     * @return a formatted string with counts for each classname in the collection
+     */
+    public static String countItemClasses(Collection<Item> items) {
+        Map<String, List> counts = new TreeMap<String, List>();
+        for(Item item : items) {
+            List clsItems = counts.get(item.getClassName());
+            if (clsItems == null) {
+                clsItems = new ArrayList();
+                counts.put(item.getClassName(), clsItems);
+            }
+            clsItems.add(item.getIdentifier());
+        }
+        
+        StringBuffer sb = new StringBuffer();
+        for (Map.Entry<String, List> entry : counts.entrySet()) {
+            sb.append(entry.getKey() + " - " + entry.getValue().size() + " " 
+                      + entry.getValue() + ENDL);
+        }
+        return sb.toString();
+    }
+    
+    
     // fail with helpful message if e.g. we are asserting a Set .equals a List
     private static void compatibleCollections(Collection a, Collection b) {
         if (a.getClass().isAssignableFrom(b.getClass())

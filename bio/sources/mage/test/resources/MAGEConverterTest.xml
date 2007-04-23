@@ -1,110 +1,109 @@
 <?xml version="1.0"?>
 <items>
-   <item id="0_0" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:38"/>
-    <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_2" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:39"/>
-    <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_4" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:40"/>
-    <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_5" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="name" value="900303 "/>
-    <attribute name="identifier" value="AR:41"/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_6" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="identifier" value="AR:42"/>
-    <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_7" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="name" value="900303 "/>
-    <attribute name="identifier" value="AR:43"/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_8" class="http://www.intermine.org/model/mage#Array">
+  <item id="1_8" class="http://www.intermine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
     <attribute name="identifier" value="AR:44"/>
     <attribute name="name" value="900303 "/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
   </item>
-  <item id="0_9" class="http://www.intermine.org/model/mage#Array">
+  <item id="1_10" class="http://www.intermine.org/model/mage#Array">
     <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="name" value="900303 "/>
-    <attribute name="identifier" value="AR:45"/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
-  </item>
-  <item id="0_10" class="http://www.intermine.org/model/mage#Array">
-    <attribute name="arrayIdentifier" value="900303"/>
-    <attribute name="name" value="900303 "/>
     <attribute name="identifier" value="AR:46"/>
-    <reference name="arrayDesign" ref_id="2_3"/>
-    <reference name="information" ref_id="1_1"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
   </item>
-  <item id="1_1" class="http://www.intermine.org/model/mage#ArrayManufacture">
-    <attribute name="name" value="Affymetrix"/>
+  <item id="0_0" class="http://www.intermine.org/model/mage#ArrayManufacture">
     <attribute name="identifier" value="Affymetrix"/>
+    <attribute name="name" value="Affymetrix"/>
     <collection name="arrays">
-      <reference ref_id="0_0"/>
-      <reference ref_id="0_2"/>
-      <reference ref_id="0_4"/> 
-      <reference ref_id="0_5"/>
-      <reference ref_id="0_6"/>
-      <reference ref_id="0_7"/>
-      <reference ref_id="0_8"/>
-      <reference ref_id="0_9"/>
-      <reference ref_id="0_10"/> 
+      <reference ref_id="1_1"/>
+      <reference ref_id="1_3"/>
+      <reference ref_id="1_4"/>
+      <reference ref_id="1_5"/>
+      <reference ref_id="1_6"/>
+      <reference ref_id="1_7"/>
+      <reference ref_id="1_8"/>
+      <reference ref_id="1_9"/>
+      <reference ref_id="1_10"/>
     </collection>
   </item>
-  <item id="2_3" class="http://www.intermine.org/model/mage#PhysicalArrayDesign">
-    <attribute name="identifier" value="A-AFFY-1"/> 
-    <attribute name="name" value="EMBL H. sapiens HU51_A_001 array"/> 
-    <attribute name="version" value="1"/> 
+  <item id="1_1" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:38"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
+  </item>
+  <item id="4_11" class="http://www.intermine.org/model/mage#FeatureGroup">
+    <attribute name="identifier" value="Affymetrix:FeatureGroups:HG-U133A"/>
+    <collection name="features">
+      <reference ref_id="5_12"/>
+    </collection>
+  </item>
+  <item id="6_14" class="http://www.intermine.org/model/mage#OntologyEntry">
+    <attribute name="category" value="Affymetrix:OligoMatchType"/>
+    <attribute name="value" value="PM"/>
+  </item>
+  <item id="1_7" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:43"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
+  </item>
+  <item id="1_4" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:40"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
+  </item>
+  <item id="2_2" class="http://www.intermine.org/model/mage#PhysicalArrayDesign">
+    <attribute name="identifier" value="A-AFFY-1"/>
+    <attribute name="name" value="EMBL H. sapiens HU51_A_001 array"/>
+    <attribute name="version" value="1"/>
     <collection name="featureGroups">
-     <reference ref_id="4_11"/>
+      <reference ref_id="4_11"/>
     </collection>
   </item>
- <item id="4_11" class="http://www.intermine.org/model/mage#FeatureGroup"> 
-  <attribute name="identifier" value="Affymetrix:FeatureGroups:HG-U133A"/> 
-  <collection name="features">
-   <reference ref_id="5_12"/>
-   </collection> 
+  <item id="1_9" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:45"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
   </item>
- <item id="5_12" class="http://www.intermine.org/model/mage#Feature">
-  <attribute name="identifier" value="Affymetrix:Feature:HG-U133A:Probe(161,377)"/>
-  <reference name="controlType" ref_id="6_13"/>
-  <collection name="controlFeatures">
-   <reference ref_id="5_14"/>
-  </collection>
- </item>
- <item id="6_13" class="http://www.intermine.org/model/mage#OntologyEntry">
-  <attribute name="category" value="Affymetrix:OligoMatchType"/>
-  <attribute name="value" value="PM"/>
- </item>
- <item id="5_14" class="http://www.intermine.org/model/mage#Feature">
-  <attribute name="identifier" value="Affymetrix:Feature:HG-U133A:Probe(161,378)"/>
- </item>
+  <item id="5_12" class="http://www.intermine.org/model/mage#Feature">
+    <attribute name="identifier" value="Affymetrix:Feature:HG-U133A:Probe(161,377)"/>
+    <reference name="controlType" ref_id="6_14"/>
+    <collection name="controlFeatures">
+      <reference ref_id="5_13"/>
+    </collection>
+  </item>
+  <item id="1_3" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:39"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
+  </item>
+  <item id="1_5" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:41"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
+  </item>
+  <item id="5_13" class="http://www.intermine.org/model/mage#Feature">
+    <attribute name="identifier" value="Affymetrix:Feature:HG-U133A:Probe(161,378)"/>
+  </item>
+  <item id="1_6" class="http://www.intermine.org/model/mage#Array">
+    <attribute name="arrayIdentifier" value="900303"/>
+    <attribute name="identifier" value="AR:42"/>
+    <attribute name="name" value="900303 "/>
+    <reference name="arrayDesign" ref_id="2_2"/>
+    <reference name="information" ref_id="0_0"/>
+  </item>
 </items>
-
