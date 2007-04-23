@@ -69,7 +69,7 @@ public class PathQueryBinding
             writer.writeStartElement("query");
             writer.writeAttribute("name", queryName);
             writer.writeAttribute("model", modelName);
-            writer.writeAttribute("view", StringUtil.join(query.getView(), " "));
+            writer.writeAttribute("view", StringUtil.join(query.getViewStrings(), " "));
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
             }

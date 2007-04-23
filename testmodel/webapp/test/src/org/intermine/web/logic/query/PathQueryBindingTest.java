@@ -58,21 +58,21 @@ public class PathQueryBindingTest extends TestCase
         Map expected = new LinkedHashMap();
         
         Model model = Model.getInstanceByName("testmodel");
-        //allCompanies
+        // allCompanies
         PathQuery allCompanies = new PathQuery(model);
         List<Path> view = new ArrayList();
         view.add(MainHelper.makePath(model, allCompanies, "Company"));
         allCompanies.setView(view);
         expected.put("allCompanies", allCompanies);
         
-        //managers
+        // managers
         PathQuery managers = new PathQuery(model);
         PathNode employee = managers.addNode("Employee");
         employee.setType("Manager");
         expected.put("managers", managers);
         
         view = new ArrayList();
-        //employeesWithOldManagers
+        // employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(model);
         view = new ArrayList();
         view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.name"));
@@ -88,7 +88,7 @@ public class PathQueryBindingTest extends TestCase
                                                           "Department of the Employee");
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
         
-        //vatNumberInBag
+        // vatNumberInBag
         PathQuery vatNumberInBag = new PathQuery(model);
         view = new ArrayList();
         view.add(MainHelper.makePath(model, vatNumberInBag, "Company"));
@@ -97,6 +97,21 @@ public class PathQueryBindingTest extends TestCase
         company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
         PathNode vatNumber = vatNumberInBag.addNode("Company.vatNumber");
         expected.put("vatNumberInBag", vatNumberInBag);
+        
+        // queryWithConstraint
+        PathQuery queryWithConstraint = new PathQuery(model);
+        view = new ArrayList();
+        queryWithConstraint.addNode("Company");
+        queryWithConstraint.addNode("Company.departments");
+        PathNode pathNode = queryWithConstraint.addNode("Company.departments.employees");
+        pathNode.setType("CEO");
+        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.name"));
+        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.departments.name"));
+        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.departments.employees.name"));
+        view.add(MainHelper.makePath(model, queryWithConstraint, "Company.departments.employees.title"));
+
+        queryWithConstraint.setView(view);
+        expected.put("queryWithConstraint", queryWithConstraint);
         
         // employeesInBag
         PathQuery employeesInBag = new PathQuery(model);
@@ -138,14 +153,24 @@ public class PathQueryBindingTest extends TestCase
     
     public void testMarshallings() throws Exception {
         // Test marshallings
-        String xml = PathQueryBinding.marshal((PathQuery) expected.get("employeesWithOldManagers"), "employeesWithOldManagers", "testmodel");
+        String xml = PathQueryBinding.marshal((PathQuery) expected.get("employeesWithOldManagers"),
+                                              "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
                                                  new HashMap(), classKeys);
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
+        assertEquals(expectedQuery, readFromXml);
         
+        xml = PathQueryBinding.marshal((PathQuery) expected.get("queryWithConstraint"),
+                                       "queryWithConstraint", "testmodel");
+        readFromXml = new LinkedHashMap();
+        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
+                                                 new HashMap(), classKeys);
+        expectedQuery = new LinkedHashMap();
+        expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
+
         assertEquals(expectedQuery, readFromXml);
     }
 }

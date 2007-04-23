@@ -11,6 +11,7 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +33,8 @@ import java.io.StringReader;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import sun.rmi.log.ReliableLog;
 
 /**
  * Class to represent a path-based query.
@@ -190,6 +193,18 @@ public class PathQuery
      */
     public List<Path> getView() {
         return view;
+    }
+
+    /**
+     * Return the view as a List of Strings.
+     * @return the view as Strings
+     */
+    public List<String> getViewStrings() {
+        List<String> retList = new ArrayList<String>();
+        for (Path path: view) {
+            retList.add(path.toStringNoConstraints());
+        }
+        return retList;
     }
 
     /**
