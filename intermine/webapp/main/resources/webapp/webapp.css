@@ -396,10 +396,11 @@ span.viewPathDescription {
 
 /* surrounds sort order section */
 div.sortorderBorder {
-  border: 1px dashed #888;
+  border: 1px solid #888;
   background-color: #ccc;
   float: left;
   width: 250px;
+  
 }
 
 /* surrounds sort order paths */
@@ -410,13 +411,19 @@ div.sortorder {
 
 /* one path added to the sort order area */
 div.sortorderpath {
-  background: #F5F0FF;
-  border: 1px solid #bbb;  
-  float: center;
-  text-align: center;
-  font-size: 10px;
-  cursor: pointer;
-  cursor: hand;
+  	BORDER-RIGHT: #bbb 1px solid; 
+	BORDER-TOP: #bbb 1px solid; 
+	FONT-SIZE: 10px; 
+	COLOR:  #660099;
+	BACKGROUND: #F5F0FF; 
+	BORDER-LEFT: #bbb 1px solid; 
+	CURSOR: hand; 
+	BORDER-BOTTOM: #bbb 1px solid; 
+	TEXT-ALIGN: center;
+	PADDING-RIGHT: 4px; 
+	PADDING-LEFT: 4px; 
+	PADDING-BOTTOM: 14px; 
+	PADDING-TOP: 4px
 }
 div.sortorderpathDisabled {
   background: #bbb;
