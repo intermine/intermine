@@ -366,8 +366,7 @@ public class TemplateQuery extends PathQuery
      */
     public PathQuery clone() {
         TemplateQuery templateQuery = new TemplateQuery(name, title, description, comment,
-                                                        (PathQuery) super.clone(),
-                                                        keywords);
+                                                        super.clone(), keywords);
         templateQuery.edited = edited;
         return templateQuery;
     }
