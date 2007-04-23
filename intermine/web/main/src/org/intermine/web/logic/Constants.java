@@ -189,6 +189,11 @@ public interface Constants
     public static final String EMPTY_FIELD_MAP = "EMPTY_FIELD_MAP";
 
     /**
+     * Session attribute.  A Map from query id to QueryMonitor.
+     */
+    public static final String RUNNING_QUERIES = "RUNNING_QUERIES";
+
+    /**
      * Servlet attribute. Map from class name to Set of leaf class descriptors.
      */
     public static final String LEAF_DESCRIPTORS_MAP = "LEAF_DESCRIPTORS_MAP";
