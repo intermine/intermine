@@ -72,8 +72,11 @@ function swapDivs(div1,div2){
 
 function getColumnSummary(columnName) {
 	DWRUtil.removeAllRows('summary_table');
+    document.getElementById('summary_loaded').style.display = "none";
+    document.getElementById('summary_loading').style.display = "block";
+    Effect.Appear('summary');
 	AjaxServices.getColumnSummary(columnName, function(str){
-	    var rows = str.rows;
+	    var rows = str;
 	    var cellFuncs = new Array();
 	    for (var i=0;i<rows[0].length;i++){
 	      cellFuncs[i] = eval('function(data) { return data['+i+']; }');
@@ -84,6 +87,7 @@ function getColumnSummary(columnName) {
 	      document.getElementById('summary_head').innerHTML = '<tr><th>Min</th><th>Max</th><th>Average</th><th>Deviation</th></tr>';
 	    }
 		DWRUtil.addRows("summary_table", rows, cellFuncs);
-	    Effect.Appear('summary');
+		document.getElementById('summary_loading').style.display = "none";
+		document.getElementById('summary_loaded').style.display = "block";
 	});
 }

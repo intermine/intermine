@@ -260,11 +260,14 @@
         <div>
           <div align="right" ><img onclick="javascript:Effect.Fade('summary');" src="images/close.png" title="Close" 
           onmouseout="this.style.cursor='normal';" onmouseover="this.style.cursor='pointer';"></div>
+        <div id="summary_loading">Loading...</div>
+        <div id="summary_loaded" style="display:none;" >
           <p style="margin-top:5px;"><strong>Column Summary</strong></p>
           <table class="results" cellpadding="0" cellspacing="0">
             <thead id="summary_head"></thead>
             <tbody id="summary_table"></tbody>
           </table>
+        </div>
        </div></div>
        
         <c:if test="${resultsTable.size > 1}">
