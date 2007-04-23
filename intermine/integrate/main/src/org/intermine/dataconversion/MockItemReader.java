@@ -35,14 +35,14 @@ public class MockItemReader extends AbstractItemReader
     }
 
     /**
-     * @see ItemReader#getItemById
+     * {@inheritDoc}
      */
     public Item getItemById(String objectId) {
         return (Item) storedItems.get(objectId);
     }
 
     /**
-     * @see ItemReader#itemIterator
+     * {@inheritDoc}
      */
     public Iterator itemIterator() {
         return storedItems.values().iterator();
@@ -59,7 +59,7 @@ public class MockItemReader extends AbstractItemReader
     }
 
     /**
-     * @see ItemReader#getItemsByDescription
+     * {@inheritDoc}
      */
     public List getItemsByDescription(Set constraints) {
         List items = new ArrayList();

@@ -59,7 +59,7 @@ public class SummariseObjectStoreTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (outputFile.exists() && outputFile.lastModified() > inputFile.lastModified()) {

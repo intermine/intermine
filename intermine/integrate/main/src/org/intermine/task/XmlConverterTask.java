@@ -53,7 +53,7 @@ public class XmlConverterTask extends ConverterTask
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (fileSet == null) {

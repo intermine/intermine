@@ -44,7 +44,7 @@ public class HintingFetcher implements EquivalentObjectFetcher
     }
 
     /**
-     * @see EquivalentObjectFetcher#queryEquivalentObjects
+     * {@inheritDoc}
      */
     public Set queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {

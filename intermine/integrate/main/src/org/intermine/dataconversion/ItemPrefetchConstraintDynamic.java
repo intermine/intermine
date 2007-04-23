@@ -189,7 +189,7 @@ public class ItemPrefetchConstraintDynamic implements ItemPrefetchConstraint
 
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "(near." + nearFieldName + " = far." + farFieldName + ")";

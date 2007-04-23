@@ -29,6 +29,10 @@ public class DataTrackerFirstSource extends DataTracker
 
     /**
      * @see DataTracker#DataTracker
+     *
+     * @param db a Database to back the tracker
+     * @param maxSize maximum number of cache entries
+     * @param commitSize number of entries to write to the database at a time
      */
     public DataTrackerFirstSource(Database db, int maxSize, int commitSize) {
         super(db, maxSize, commitSize);

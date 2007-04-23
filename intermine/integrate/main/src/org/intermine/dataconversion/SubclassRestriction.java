@@ -49,7 +49,7 @@ public class SubclassRestriction
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof SubclassRestriction) {
@@ -60,14 +60,14 @@ public class SubclassRestriction
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return restrictions.hashCode();
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return restrictions.toString();

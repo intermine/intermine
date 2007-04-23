@@ -190,7 +190,7 @@ public class ItemPrefetchDescriptor
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return name + constraints.toString();

@@ -37,6 +37,8 @@ public class XmlDataLoader extends DataLoader
     
     /**
      * @see DataLoader#DataLoader(IntegrationWriter)
+     *
+     * @param iw an IntegrationWriter to use to write objects
      */
     public XmlDataLoader(IntegrationWriter iw) {
         super(iw);

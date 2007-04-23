@@ -35,6 +35,12 @@ public class OboConverter extends DagConverter
     /**
      * Construct a new instance of OboConverter.
      * @see DagConverter#DagConverter(ItemWriter, String, String, String, String)
+     *
+     * @param writer an ItemWriter used to handle the resultant Items
+     * @param dagFilename the name of the OBO file
+     * @param dagName the title of the dag, as present in any static data
+     * @param url the URL of the source of this ontology
+     * @param termClass the class of the Term
      */
     public OboConverter(ItemWriter writer, String dagFilename, String dagName, String url,
             String termClass) {
@@ -44,7 +50,7 @@ public class OboConverter extends DagConverter
     /**
      * Cast the DagTerm to an OboTerm and set the namespace, description and obsolete attributes.
      * 
-     * @see DagConverter#configureItem(String, Item, DagTerm)
+     * {@inheritDoc}
      */
     protected void configureItem(String termId, Item item, DagTerm term)
         throws ObjectStoreException {
@@ -59,7 +65,7 @@ public class OboConverter extends DagConverter
      * Cast DagTermSynonym to OboTermSynonym and set the type attribute on the
      * synonym item.
      * 
-     * @see DagConverter#configureSynonymItem(DagTermSynonym, Item, DagTerm)
+     * {@inheritDoc}
      */
     protected void configureSynonymItem(DagTermSynonym syn, Item item, DagTerm term)
         throws ObjectStoreException {

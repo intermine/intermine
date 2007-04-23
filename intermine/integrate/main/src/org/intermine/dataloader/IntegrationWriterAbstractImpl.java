@@ -78,7 +78,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see IntegrationWriter#setIgnoreDuplicates
+     * {@inheritDoc}
      */
     public void setIgnoreDuplicates(boolean ignoreDuplicates) {
         this.ignoreDuplicates = ignoreDuplicates;
@@ -189,7 +189,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 
 
     /**
-     * @see IntegrationWriter#store
+     * {@inheritDoc}
      */
     public void store(InterMineObject o, Source source, Source skelSource)
             throws ObjectStoreException {
@@ -426,7 +426,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see ObjectStore#getObjectsByIds(Collection)
+     * {@inheritDoc}
      */
     public List getObjectsByIds(Collection ids) throws ObjectStoreException {
         return osw.getObjectsByIds(ids);
@@ -585,21 +585,21 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStoreWriter#getObjectStore
+     * {@inheritDoc}
      */
     public ObjectStore getObjectStore() {
         return osw.getObjectStore();
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#execute
+     * {@inheritDoc}
      */
     public Results execute(Query q) throws ObjectStoreException {
         return osw.execute(q);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -607,63 +607,63 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#prefetchObjectById
+     * {@inheritDoc}
      */
     public void prefetchObjectById(Integer id) {
         osw.prefetchObjectById(id);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#invalidateObjectById
+     * {@inheritDoc}
      */
     public void invalidateObjectById(Integer id) {
         osw.invalidateObjectById(id);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#cacheObjectById
+     * {@inheritDoc}
      */
     public Object cacheObjectById(Integer id, InterMineObject obj) {
         return osw.cacheObjectById(id, obj);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#flushObjectById
+     * {@inheritDoc}
      */
     public void flushObjectById() {
         osw.flushObjectById();
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#pilferObjectById
+     * {@inheritDoc}
      */
     public InterMineObject pilferObjectById(Integer id) {
         return osw.pilferObjectById(id);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#estimate
+     * {@inheritDoc}
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return osw.estimate(q);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#count
+     * {@inheritDoc}
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return osw.count(q, sequence);
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#getModel
+     * {@inheritDoc}
      */
     public Model getModel() {
         return osw.getModel();
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#getObjectByExample
+     * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
@@ -671,7 +671,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStoreWriter#close
+     * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
         osw.close();
@@ -688,35 +688,35 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * @see ObjectStore#isMultiConnection
+     * {@inheritDoc}
      */
     public boolean isMultiConnection() {
         return osw.isMultiConnection();
     }
 
     /**
-     * @see ObjectStore#getSequence
+     * {@inheritDoc}
      */
     public int getSequence() {
         return osw.getSequence();
     }
 
     /**
-     * @see ObjectStore#getMaxLimit
+     * {@inheritDoc}
      */
     public int getMaxLimit() {
         return osw.getMaxLimit();
     }
 
     /**
-     * @see ObjectStore#getMaxOffset
+     * {@inheritDoc}
      */
     public int getMaxOffset() {
         return osw.getMaxOffset();
     }
 
     /**
-     * @see ObjectStore#getMaxTime
+     * {@inheritDoc}
      */
     public long getMaxTime() {
         return osw.getMaxTime();

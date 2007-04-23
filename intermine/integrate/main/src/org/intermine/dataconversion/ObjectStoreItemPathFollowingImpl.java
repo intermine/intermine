@@ -97,14 +97,14 @@ public class ObjectStoreItemPathFollowingImpl extends ObjectStorePassthruImpl
     }
 
     /**
-     * @see ObjectStore#execute(Query)
+     * {@inheritDoc}
      */
     public Results execute(Query q) {
         return new Results(q, this, getSequence());
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {

@@ -47,7 +47,7 @@ public class ObjectStoreItemWriter implements ItemWriter
     }
 
     /**
-     * @see ItemWriter#store
+     * {@inheritDoc}
      */
     public void store(Item item) throws ObjectStoreException {
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
@@ -77,7 +77,7 @@ public class ObjectStoreItemWriter implements ItemWriter
     }
 
     /**
-     * @see ItemWriter#storeAll
+     * {@inheritDoc}
      */
     public void storeAll(Collection items) throws ObjectStoreException {
         Iterator i = items.iterator();
@@ -96,7 +96,7 @@ public class ObjectStoreItemWriter implements ItemWriter
     }
 
     /**
-     * @see ItemWriter#close
+     * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
         if (osw.isInTransaction()) {

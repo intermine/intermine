@@ -49,7 +49,7 @@ public class FullHandler extends DefaultHandler
     
 
     /**
-     * @see DefaultHandler#startElement
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
@@ -79,7 +79,7 @@ public class FullHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("item")) {

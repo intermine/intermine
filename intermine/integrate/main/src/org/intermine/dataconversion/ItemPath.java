@@ -434,7 +434,7 @@ public class ItemPath
     /**
      * Test two ItemPaths for equality.
      * 
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (!(obj instanceof ItemPath)) {
@@ -447,7 +447,7 @@ public class ItemPath
     }
     
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return getItemPrefetchDescriptor().hashCode() + 3 * namespace.hashCode();

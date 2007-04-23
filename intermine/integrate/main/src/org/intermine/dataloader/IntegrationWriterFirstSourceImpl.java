@@ -58,7 +58,7 @@ public class IntegrationWriterFirstSourceImpl extends IntegrationWriterDataTrack
     }
 
     /**
-     * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
+     * {@inheritDoc}
      */
     protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
             int type) throws ObjectStoreException {

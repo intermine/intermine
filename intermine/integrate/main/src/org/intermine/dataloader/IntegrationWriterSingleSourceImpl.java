@@ -64,7 +64,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriter#getMainSource
+     * {@inheritDoc}
      */
     public Source getMainSource(String name) throws ObjectStoreException {
         Source retval = new Source();
@@ -74,7 +74,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriter#getSkeletonSource
+     * {@inheritDoc}
      */
     public Source getSkeletonSource(String name) throws ObjectStoreException {
         Source retval = new Source();
@@ -84,7 +84,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
+     * {@inheritDoc}
      */
     protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
             int type) throws ObjectStoreException {

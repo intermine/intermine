@@ -29,7 +29,7 @@ public abstract class AbstractItemReader implements ItemReader
     private static final Logger LOG = Logger.getLogger(AbstractItemReader.class);
     
     /**
-     * @see ItemReader#getItemsByPath(ItemPath, Item, Object[])
+     * {@inheritDoc}
      */
     public Item getItemByPath(ItemPath path, Item startingPoint, Object variables[])
             throws ObjectStoreException {
@@ -48,7 +48,7 @@ public abstract class AbstractItemReader implements ItemReader
     }
     
     /**
-     * @see ItemReader#getItemsByPath(ItemPath, Item)
+     * {@inheritDoc}
      */
     public Item getItemByPath(ItemPath path, Item startingPoint)
             throws ObjectStoreException {
@@ -118,7 +118,7 @@ public abstract class AbstractItemReader implements ItemReader
     }
     
     /**
-     * @see ItemReader#getItemsByPath(ItemPath, Item, Object[])
+     * {@inheritDoc}
      */
     public List getItemsByPath(ItemPath path, Item startingPoint, Object variables[])
             throws ObjectStoreException {
@@ -127,7 +127,7 @@ public abstract class AbstractItemReader implements ItemReader
     }
     
     /**
-     * @see ItemReader#getItemsByPath(ItemPath, Item)
+     * {@inheritDoc}
      */
     public List getItemsByPath(ItemPath path, Item startingPoint)
             throws ObjectStoreException {

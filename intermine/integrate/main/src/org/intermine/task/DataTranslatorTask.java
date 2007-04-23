@@ -92,7 +92,7 @@ public class DataTranslatorTask extends DynamicAttributeTask
     }
 
     /**
-     * @see org.apache.tools.ant.Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (translator == null) {
