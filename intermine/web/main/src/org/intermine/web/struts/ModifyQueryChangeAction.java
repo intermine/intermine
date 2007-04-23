@@ -10,7 +10,14 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.query.SaveQueryHelper;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,14 +29,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.SaveQueryHelper;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a saved query or bag.
@@ -51,12 +50,11 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward load(ActionMapping mapping,
-                              ActionForm form,
+                              @SuppressWarnings("unused") ActionForm form,
                               HttpServletRequest request,
                               HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
         SavedQuery sq;
@@ -90,12 +88,11 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward run(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
+                             @SuppressWarnings("unused") ActionForm form,
+                             HttpServletRequest request,
+                             HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
         SavedQuery sq;
@@ -111,11 +108,12 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
             return null;
         }
         
-        SessionMethods.loadQuery((PathQuery) sq.getPathQuery(), session, response);
+        SessionMethods.loadQuery(sq.getPathQuery(), session, response);
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, false);
+        MessageResources messageResources = 
+            (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startQuery(clientState, session, messageResources, false);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
                     .addParameter("qid", qid).forward();
@@ -132,12 +130,11 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward save(ActionMapping mapping,
-                              ActionForm form,
+                              @SuppressWarnings("unused") ActionForm form,
                               HttpServletRequest request,
-                              HttpServletResponse response)
+                              @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
         SavedQuery sq = (SavedQuery) profile.getHistory().get(queryName);
