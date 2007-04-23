@@ -137,7 +137,7 @@ public class QueryFieldPathExpression implements QueryPathExpression
     }
     
     /**
-     * @see QueryPathExpression#getType
+     * {@inheritDoc}
      */
     public Class getType() {
         return type;

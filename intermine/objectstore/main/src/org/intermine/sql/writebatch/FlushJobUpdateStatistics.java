@@ -39,7 +39,7 @@ public class FlushJobUpdateStatistics implements FlushJob
     }
 
     /**
-     * @see FlushJob#flush
+     * {@inheritDoc}
      */
     public void flush() throws SQLException {
         batchWriter.updateStatistics(activity, con);

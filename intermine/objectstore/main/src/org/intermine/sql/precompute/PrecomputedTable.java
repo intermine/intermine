@@ -345,7 +345,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return name + "/" + category + " (" + q.getFrom().size() + " tables)";

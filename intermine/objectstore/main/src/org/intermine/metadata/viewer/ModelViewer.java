@@ -89,7 +89,7 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
     }
 
     /**
-     * @see TreeSelectionListener#valueChanged(TreeSelectionEvent)
+     * {@inheritDoc}
      */
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)

@@ -52,7 +52,7 @@ public class InterMineString implements Serializable
     }
 
     /**
-       * @see Object#toString
+       * {@inheritDoc}
        */
     public String toString() {
         return string;

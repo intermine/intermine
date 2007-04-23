@@ -98,7 +98,7 @@ public class UnknownTypeValue
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return value;

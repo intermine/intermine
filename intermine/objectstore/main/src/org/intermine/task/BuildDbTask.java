@@ -81,8 +81,7 @@ public class BuildDbTask extends Task
     }
 
     /**
-     * @see Task#execute
-     * @throws BuildException
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (tempDir == null) {

@@ -124,7 +124,7 @@ public class QueryCollectionReference extends QueryReference
     }
 
     /**
-     * @see QueryReference#getQcType
+     * {@inheritDoc}
      */
     public Class getQcType() {
         if (qc != null) {

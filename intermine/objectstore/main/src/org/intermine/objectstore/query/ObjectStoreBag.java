@@ -42,7 +42,7 @@ public class ObjectStoreBag implements QuerySelectable
     }
 
     /**
-     * @see QuerySelectable#getType
+     * {@inheritDoc}
      */
     public Class getType() {
         return Integer.class;

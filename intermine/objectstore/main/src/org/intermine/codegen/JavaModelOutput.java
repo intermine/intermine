@@ -33,6 +33,7 @@ public class JavaModelOutput extends ModelOutput
      *
      * @param model a Model
      * @param file a File
+     * @throws Exception if something goes wrong
      */
     public JavaModelOutput(Model model, File file) throws Exception {
         super(model, file);
