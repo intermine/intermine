@@ -38,7 +38,7 @@ public class SavedQueryHandler extends PathQueryHandler
     }
 
     /**
-     * @see DefaultHandler#startElement
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
@@ -52,7 +52,7 @@ public class SavedQueryHandler extends PathQueryHandler
     }
     
     /**
-     * @see DefaultHandler#endElement
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) {
         super.endElement(uri, localName, qName);

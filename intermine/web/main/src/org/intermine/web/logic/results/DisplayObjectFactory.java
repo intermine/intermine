@@ -37,7 +37,7 @@ public class DisplayObjectFactory extends CacheMap
     
     /**
      * Always returns true because get always returns an Object.
-     * @see Map#containsKey
+     * {@inheritDoc}
      */
     public boolean containsKey(Object key) {
         return true;
@@ -46,7 +46,7 @@ public class DisplayObjectFactory extends CacheMap
     /**
      * Get a DisplayObject for the given InterMineObject.  If there is no existing DisplayObject for
      * the argument InterMineObject, one is created, saved and returned.
-     * @see Map#get
+     * {@inheritDoc}
      * @param object an InterMineObject to make a DisplayObject for
      * @return a DisplayObject
      */

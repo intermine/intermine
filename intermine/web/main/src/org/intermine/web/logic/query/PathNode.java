@@ -95,14 +95,14 @@ public class PathNode extends Node
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return super.toString() + " " + constraints;
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         return super.equals(o)
@@ -111,7 +111,7 @@ public class PathNode extends Node
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 2 * super.hashCode()

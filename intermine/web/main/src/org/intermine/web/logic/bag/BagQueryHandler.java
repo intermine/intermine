@@ -75,7 +75,7 @@ public class BagQueryHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#startElement
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
                     throws SAXException {
@@ -105,7 +105,7 @@ public class BagQueryHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement
+     * {@inheritDoc}
      */
     public void characters(char[] ch, int start, int length) {
         // DefaultHandler may call this method more than once for a single
@@ -135,7 +135,7 @@ public class BagQueryHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement(String, String, String)
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {

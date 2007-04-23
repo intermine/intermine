@@ -63,7 +63,7 @@ public class SavedQuery
     
     /**
      * Test receiver for equality with passed object.
-     * @see Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj == null || !getClass().equals(obj.getClass())) {
@@ -77,7 +77,7 @@ public class SavedQuery
 
     /**
      * Hash code.
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return (name.hashCode() + 3 * dateCreated.hashCode() + 5 * query.hashCode());

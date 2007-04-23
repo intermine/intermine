@@ -183,14 +183,14 @@ public class Node
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return pathString + ":" + type;
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         return (o instanceof Node)
@@ -199,7 +199,7 @@ public class Node
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 2 * pathString.hashCode()

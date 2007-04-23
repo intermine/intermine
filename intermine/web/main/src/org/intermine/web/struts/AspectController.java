@@ -43,7 +43,7 @@ public class AspectController extends TilesAction
     private static final Logger LOG = Logger.getLogger(AspectController.class);
     
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionMapping;
 public class HeartbeatAction extends InterMineAction
 {
     /**
-     * @see InterMineAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,

@@ -48,7 +48,7 @@ public class ImportTagsForm extends ActionForm
     }
     
     /**
-     * @see ActionForm#reset
+     * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);

@@ -132,7 +132,7 @@ public class FieldConfig
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object otherObject) {
         if (otherObject instanceof FieldConfig) {
@@ -159,14 +159,14 @@ public class FieldConfig
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return toString().hashCode();
     }
     
     /**
-     * @see java.lang.String#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer

@@ -381,14 +381,14 @@ public class SessionMethods
      *
      * @param session The Session object in which to store the message
      * @param message The message to store
-     * @see InterMineRequestProcessor#processForwardConfig
+     * {@inheritDoc}
      */
     public static void recordMessage(String message, HttpSession session) {
         recordMessage(message, Constants.MESSAGES, session);
     }
 
     /**
-     * @see SessionMethods#recordMessage()
+     * {@inheritDoc}
      * @param error The error to store
      * @param session The Session object in which to store the message
      */

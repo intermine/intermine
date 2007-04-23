@@ -68,8 +68,7 @@ public class BagDetailsController extends TilesAction
 {
 
     /**
-     * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
-     *      HttpServletResponse)
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)

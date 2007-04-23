@@ -66,7 +66,7 @@ public class PathQueryHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#startElement(String, String, String, Attributes)
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
     throws SAXException {
@@ -169,7 +169,7 @@ public class PathQueryHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement(String, String, String)
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("query")) {

@@ -100,7 +100,7 @@ public class ChangePasswordForm extends ActionForm
     }
 
     /**
-     * @see ActionForm#validate
+     * {@inheritDoc}
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -126,7 +126,7 @@ public class ChangePasswordForm extends ActionForm
     }
 
     /**
-     * @see ActionForm#reset
+     * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         username = null;

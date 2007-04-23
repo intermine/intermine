@@ -39,7 +39,7 @@ public class StarTemplateController extends TilesAction
 {
 
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {

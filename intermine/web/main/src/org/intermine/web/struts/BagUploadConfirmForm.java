@@ -113,7 +113,7 @@ public class BagUploadConfirmForm extends ActionForm
    }
    
    /**
-    * @see ActionForm#validate(ActionMapping, HttpServletRequest)
+    * {@inheritDoc}
     */
    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
        ActionErrors errors = new ActionErrors();

@@ -90,7 +90,7 @@ public class ModifyBagForm extends ActionForm
     }
 
     /**
-     * @see ActionForm#validate
+     * {@inheritDoc}
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();

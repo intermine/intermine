@@ -69,7 +69,7 @@ public class TableExportConfig
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      *
      * @param obj the Object to compare with
      * @return true if this is equal to obj
@@ -85,7 +85,7 @@ public class TableExportConfig
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      *
      * @return the hashCode for this TableExportConfig object
      */
@@ -94,7 +94,7 @@ public class TableExportConfig
     }
 
     /**
-     * @see java.lang.String#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "<tableExportConfig id=\"" + id + "\" actionPath=\"" + actionPath

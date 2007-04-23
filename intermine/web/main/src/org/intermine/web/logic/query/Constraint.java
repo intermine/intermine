@@ -139,7 +139,7 @@ public class Constraint
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "<Constraint: " + op + ", " + value
@@ -149,7 +149,7 @@ public class Constraint
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof Constraint) {
@@ -182,7 +182,7 @@ public class Constraint
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 2 * op.hashCode()

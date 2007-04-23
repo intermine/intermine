@@ -271,7 +271,7 @@ public class LogicExpression
         }
         
         /** 
-         * @see Operator#getOperator()
+         * {@inheritDoc}
          */
         protected String getOperator() {
             return "and";
@@ -292,7 +292,7 @@ public class LogicExpression
         }
         
         /** 
-         * @see Operator#getOperator()
+         * {@inheritDoc}
          */
         protected String getOperator() {
             return "or";

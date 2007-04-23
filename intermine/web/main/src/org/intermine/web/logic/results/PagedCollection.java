@@ -34,35 +34,35 @@ public class PagedCollection extends PagedTable
     }
     
     /**
-     * @see PagedTable#getAllRows
+     * {@inheritDoc}
      */
     public WebColumnTable getAllRows() {
         return webCollection;
     }
 
     /**
-     * @see PagedTable#getSize
+     * {@inheritDoc}
      */
     public int getSize() {
         return getExactSize();
     }
 
     /**
-     * @see PagedTable#isSizeEstimate
+     * {@inheritDoc}
      */
     public boolean isSizeEstimate() {
         return false;
     }
 
     /**
-     * @see PagedTable#getExactSize
+     * {@inheritDoc}
      */
     public int getExactSize() {
         return webCollection.size();
     }
 
     /**
-     * @see PagedTable#updateRows
+     * {@inheritDoc}
      */
     protected void updateRows() {
         List newRows = new ArrayList();
@@ -79,7 +79,7 @@ public class PagedCollection extends PagedTable
     }
 
     /**
-     * @see PagedTable#getMaxRetrievableIndex
+     * {@inheritDoc}
      */
     public int getMaxRetrievableIndex() {
         return Integer.MAX_VALUE;

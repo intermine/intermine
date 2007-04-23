@@ -37,7 +37,7 @@ public class InlineTagEditorController extends TilesAction
     private static final Logger LOG = Logger.getLogger(InlineTagEditorController.class);
     
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

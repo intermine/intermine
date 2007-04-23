@@ -86,7 +86,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
 
     /**
      * Return the given row as a List of primatives (rather than a List of ResultElement objects)
-     * @see java.util.AbstractList#get(int)
+     * {@inheritDoc}
      */
     public Object get(int index) {
         return getElementsInternal(index, false);
@@ -127,7 +127,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
     }
 
     /**
-     * @see java.util.AbstractCollection#size()
+     * {@inheritDoc}
      */
     public int size() {
         return list.size();

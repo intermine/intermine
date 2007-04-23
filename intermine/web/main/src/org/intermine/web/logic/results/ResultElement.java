@@ -185,7 +185,7 @@ public class ResultElement implements Serializable
     
     /**
      * (non-Javadoc)
-     * @see java.lang.Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         try {
@@ -203,7 +203,7 @@ public class ResultElement implements Serializable
     
     /**
      * (non-Javadoc)
-     * @see java.lang.Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return (field == null ? 0 : field.hashCode()) + 3 * id.hashCode() + 7 * type.hashCode();

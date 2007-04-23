@@ -165,7 +165,7 @@ public class Type
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      * @param obj the Object to compare with
      * @return true if this is equal to obj
      */
@@ -182,7 +182,7 @@ public class Type
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      * @return the hashCode for this Type object
      */
     public int hashCode() {

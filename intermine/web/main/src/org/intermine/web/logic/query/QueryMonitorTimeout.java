@@ -53,7 +53,7 @@ public class QueryMonitorTimeout implements QueryMonitor
      * Return true if tickle has not been called in a period of time greater than the
      * timeout value.
      *
-     * @see QueryMonitor#shouldCancelQuery()
+     * {@inheritDoc}
      */
     public boolean shouldCancelQuery() {
         return ((System.currentTimeMillis() - lastTickle) > n);
@@ -79,7 +79,7 @@ public class QueryMonitorTimeout implements QueryMonitor
     }
     
     /**
-     * @see QueryMonitor#queryCompleted()
+     * {@inheritDoc}
      */
     public void queryCompleted() {
         complete = true;
@@ -95,7 +95,7 @@ public class QueryMonitorTimeout implements QueryMonitor
     }
 
     /**
-     * @see QueryMonitor#queryCancelledWithError
+     * {@inheritDoc}
      */
     public void queryCancelledWithError() {
         error = true;
@@ -120,7 +120,7 @@ public class QueryMonitorTimeout implements QueryMonitor
     }
     
     /**
-     * @see QueryMonitor#queryCancelled
+     * {@inheritDoc}
      */
     public void queryCancelled() {
         cancelled = true;

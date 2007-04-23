@@ -45,7 +45,7 @@ import org.intermine.web.logic.query.PathQuery;
 public class QueryBuilderConstraintController extends TilesAction
 {
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

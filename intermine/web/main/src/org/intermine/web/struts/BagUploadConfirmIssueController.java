@@ -47,7 +47,7 @@ public class BagUploadConfirmIssueController extends TilesAction
 {
     /**
      * Initialise attributes for the bagUploadConfirmIssue.
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

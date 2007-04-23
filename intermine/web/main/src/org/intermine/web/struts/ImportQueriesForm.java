@@ -99,7 +99,7 @@ public class ImportQueriesForm extends ValidatorForm
     }
     
     /**
-     * @see ActionForm#reset
+     * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
@@ -117,7 +117,7 @@ public class ImportQueriesForm extends ValidatorForm
     /**
      * Call inherited method then check whether xml is valid.
      *
-     * @see ValidatorForm#validate
+     * {@inheritDoc}
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = super.validate(mapping, request);

@@ -35,8 +35,7 @@ public class InlineTagEditorChange extends DispatchAction
     private static final Logger LOG = Logger.getLogger(InlineTagEditorChange.class);
     
     /**
-     * Add a tag.
-     * @see DispatchAction#execute
+     * {@inheritDoc}
      */
     public ActionForward add(ActionMapping mapping,
             ActionForm form,
@@ -62,8 +61,7 @@ public class InlineTagEditorChange extends DispatchAction
     }
     
     /**
-     * Delete a tag.
-     * @see DispatchAction#execute
+     * {@inheritDoc}
      */
     public ActionForward delete(ActionMapping mapping,
             ActionForm form,
@@ -86,8 +84,7 @@ public class InlineTagEditorChange extends DispatchAction
     }
     
     /**
-     * Render the current tags.
-     * @see DispatchAction#execute
+     * {@inheritDoc}
      */
     public ActionForward currentTags(ActionMapping mapping,
             ActionForm form,

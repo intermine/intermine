@@ -20,7 +20,7 @@ public class TemplateComparator implements Comparator
 {
     /**
      * Compare two TemplateQuery objects by length of description.
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     * {@inheritDoc}
      */
     public int compare(Object arg0, Object arg1) {
         TemplateQuery template0 = (TemplateQuery) arg0;

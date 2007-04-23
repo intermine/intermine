@@ -141,7 +141,7 @@ public class Column
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object other) {
         if (other instanceof Column) {
@@ -151,14 +151,14 @@ public class Column
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return getName().hashCode();
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "[Column " + getPath() + " " + (visible ? "visible" : "not visible") + "]";
