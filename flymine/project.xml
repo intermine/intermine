@@ -26,7 +26,7 @@
     </source>
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 6239 180454 7460 4932"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/9.6"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
        <property name="createinterpro" value="false"/>
     </source>
    <source name="uniprot-keywords" type="uniprot-keywords">
@@ -39,11 +39,11 @@
       <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/psi/intact/2007-02-09"/>
+      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/shared/data/ontologies/psi-mi/psi-mi.obo"/>
+      <property name="src.data.file" location="/shared/data/psi/ontolgy/psi-mi.obo"/>
     </source>
     <source name="mage" type="mage" dump="true">
       <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
