@@ -3340,8 +3340,8 @@
   </tag>
   <tag name="placement:summary" objectIdentifier="Protein.comments" type="collection">
   </tag>
-  <tag name="placement:summary" objectIdentifier="GOAnnotation.actualGoTerm" type="reference">
-  </tag>
+ <!-- <tag name="placement:summary" objectIdentifier="GOAnnotation.actualGoTerm" type="collection">
+  </tag> -->
   <tag name="placement:summary" objectIdentifier="MicroarrayOligo.transcript" type="reference">
   </tag>
   <tag name="placement:summary" objectIdentifier="Gene.proteins" type="collection">
