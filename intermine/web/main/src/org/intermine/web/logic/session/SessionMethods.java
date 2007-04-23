@@ -10,8 +10,6 @@ package org.intermine.web.logic.session;
  *
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,23 +19,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.util.MessageResources;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.path.Path;
-
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
@@ -54,9 +45,20 @@ import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.struts.InterMineRequestProcessor;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.log4j.Logger;
+import org.apache.struts.util.MessageResources;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -76,17 +78,9 @@ public class SessionMethods
      */
     private abstract static class RunQueryThread implements Runnable
     {
-        protected Results r;
-        protected PagedResults pr;
         protected boolean done = false;
         protected boolean error = false;
 
-        protected Results getResults() {
-            return r;
-        }
-        protected PagedResults getPagedResults() {
-            return pr;
-        }
         protected boolean isDone() {
             return done;
         }
@@ -107,46 +101,46 @@ public class SessionMethods
      * @param resources message resources
      * @param saveQuery if true, query will be saved automatically
      * @param monitor   object that will receive a periodic call while the query runs
-     * @param qid      the query id
+     * @param qid       the query id
+     * @param pathQuery the path query used to ceate the Query - can be null if the Query was not
+     *                  created from a PathQuery
+     * @param pr        the paged results object for the query
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */
     public static boolean runQuery(final HttpSession session,
                                    final MessageResources resources,
                                    final boolean saveQuery,
-                                   final QueryMonitor monitor,
-                                   final String qid)
+                                   final String qid,
+                                   final PathQuery pathQuery,
+                                   final PagedResults pr)
         throws Exception {
         final ServletContext servletContext = session.getServletContext();
-        final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        final PathQuery query = (PathQuery) ((PathQuery) session.getAttribute(Constants.QUERY))
-                                                            .clone();
         final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        final ObjectStoreInterMineImpl ios = (os instanceof ObjectStoreInterMineImpl)
-                                             ? (ObjectStoreInterMineImpl) os : null;
-
+        final ObjectStoreInterMineImpl ios;
+        if (os instanceof ObjectStoreInterMineImpl) {
+            ios = (ObjectStoreInterMineImpl) os;
+        } else {
+            ios = null;
+        }
+        Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
+        QueryMonitor monitor = (QueryMonitor) queries.get(qid);
         // A reference to this runnable is used as a token for registering
         // a cancelling the running query
 
         RunQueryThread runnable = new RunQueryThread() {
             public void run () {
                 try {
-                    Map pathToQueryNode = new HashMap();
-                    Query q = MainHelper.makeQuery(query, profile.getSavedBags(), pathToQueryNode);
-                    Results rtmp = TableHelper.makeResults(os, q);
-                    rtmp.setNoPrefetch();
+                    Results results = pr.getAllRows().getInterMineResults();
+                    Query q = results.getQuery();
+
                     // Register request id for query on this thread
                     // We do this before setting r
                     if (ios != null) {
                         LOG.debug("Registering request id " + this);
                         ios.registerRequestId(this);
                     }
-                    r = rtmp; // set property - allow main request thread to progress
-                    TableHelper.initResults(r);
-                    WebResults webResults =
-                        new WebResults(query.getView(), r, os.getModel(), pathToQueryNode,
-                                       (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
-                    pr = new PagedResults(webResults);
+                    TableHelper.initResults(results);
                 } catch (ObjectStoreException e) {
                     String key = (e instanceof ObjectStoreQueryDurationException)
                         ? "errors.query.estimatetimetoolong"
@@ -164,14 +158,12 @@ public class SessionMethods
                     LOG.error("Exception", err);
                     error = true;
                 } finally {
-                    if (r != null) {
-                        try {
-                            LOG.debug("Deregistering request id " + this);
-                            ((ObjectStoreInterMineImpl) os).deregisterRequestId(this);
-                        } catch (ObjectStoreException e1) {
-                            LOG.error("Exception", e1);
-                            error = true;
-                        }
+                    try {
+                        LOG.debug("Deregistering request id " + this);
+                        ((ObjectStoreInterMineImpl) os).deregisterRequestId(this);
+                    } catch (ObjectStoreException e1) {
+                        LOG.error("Exception", e1);
+                        error = true;
                     }
                 }
             }
@@ -180,13 +172,6 @@ public class SessionMethods
         thread = new Thread(runnable);
         thread.start();
 
-        // Wait for Results object to become available
-        while (thread.isAlive() && runnable.getResults() == null) {
-            Thread.sleep(25);
-        }
-
-        Results r = runnable.getResults();
-
         while (thread.isAlive()) {
             Thread.sleep(1000);
             if (monitor != null) {
@@ -194,9 +179,7 @@ public class SessionMethods
                 if (cancelled && ios != null) {
                     LOG.debug("Cancelling request " + runnable);
                     ios.cancelRequest(runnable);
-                    if (monitor != null) {
-                        monitor.queryCancelled();
-                    }
+                    monitor.queryCancelled();
                     return false;
                 }
             }
@@ -209,13 +192,13 @@ public class SessionMethods
             return false;
         }
 
-        PagedResults pr = runnable.getPagedResults();
         SessionMethods.setResultsTable(session, "results." + qid, pr);
 
         if (saveQuery) {
+            final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             String queryName = SaveQueryHelper.findNewQueryName(profile.getHistory());
-            query.setInfo(pr.getResultsInfo());
-            saveQueryToHistory(session, queryName, query);
+            pathQuery.setInfo(pr.getResultsInfo());
+            saveQueryToHistory(session, queryName, pathQuery);
             recordMessage(resources.getMessage("saveQuery.message", queryName), session);
         }
 
@@ -334,7 +317,7 @@ public class SessionMethods
         }
         return query.getSortOrder();
     }
-    
+
     /**
      * Save a clone of a query to the user's Profile.
      *
@@ -351,7 +334,7 @@ public class SessionMethods
         LOG.debug("saving query " + queryName);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         SavedQuery sq = new SavedQuery(queryName, (created != null ? created : new Date()),
-                (PathQuery) query.clone());
+                                       query.clone());
         profile.saveQuery(sq.getName(), sq);
         return sq;
     }
@@ -381,7 +364,7 @@ public class SessionMethods
                                           PathQuery query) {
         LOG.debug("saving history " + queryName);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        SavedQuery sq = new SavedQuery(queryName, new Date(), (PathQuery) query.clone());
+        SavedQuery sq = new SavedQuery(queryName, new Date(), query.clone());
         profile.saveHistory(sq);
     }
 
@@ -428,9 +411,9 @@ public class SessionMethods
      * @param message The message to store
      */
     private static void recordMessage(String message, String attrib, HttpSession session) {
-        Set set = (Set) session.getAttribute(attrib);
+        Set<String> set = (Set<String>) session.getAttribute(attrib);
         if (set == null) {
-            set = Collections.synchronizedSet(new HashSet());
+            set = Collections.synchronizedSet(new HashSet<String>());
             session.setAttribute(attrib, set);
         }
         set.add(message);
@@ -522,8 +505,9 @@ public class SessionMethods
     }
 
     /**
-     *
-     *
+     * Start the current query running in the background, then return.  A new query id will be
+     * created and added to the RUNNING_QUERIES session attriute.  That attribute is a Map from
+     * query id to QueryMonitor.  A Thread will be created to update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
      *                about how the query concluded
      * @param session the current http session
@@ -536,6 +520,12 @@ public class SessionMethods
                                     final MessageResources messages,
                                     final boolean saveQuery) {
         synchronized (session) {
+            final ServletContext servletContext = session.getServletContext();
+            final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            final Model model = os.getModel();
+            final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            final PathQuery pathQuery = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
+
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
             if (queries == null) {
                 queries = new HashMap();
@@ -546,9 +536,23 @@ public class SessionMethods
 
             new Thread(new Runnable() {
                 public void run () {
+                    final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
-                        SessionMethods.runQuery(session, messages, saveQuery, monitor, qid);
+
+                        Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+                        Query q =
+                            MainHelper.makeQuery(pathQuery, profile.getSavedBags(),
+                                                 pathToQueryNode);
+                        Results results = TableHelper.makeResults(os, q);
+                        results.setNoPrefetch();
+
+                        WebResults webResults =
+                            new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
+                                           (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
+                        PagedResults pr = new PagedResults(webResults);
+                        SessionMethods.runQuery(session, messages, saveQuery, qid, pathQuery, pr);
+
                         // pause because we don't want to remove the monitor from the
                         // session until client has retrieved it in order to work out
                         // where to go next
