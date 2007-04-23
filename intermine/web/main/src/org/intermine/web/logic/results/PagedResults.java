@@ -37,14 +37,12 @@ public class PagedResults extends PagedTable implements Serializable
     public PagedResults(WebResults results) {
         super(results.getColumns());
         this.results = results;
-
-        updateRows();
     }
 
     /**
      * @see PagedTable#getAllRows()
      */
-    public WebColumnTable getAllRows() {
+    public WebResults getAllRows() {
         return results;
     }
 

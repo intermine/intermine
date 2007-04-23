@@ -29,7 +29,7 @@ public abstract class PagedTable
 
     private List columns = new ArrayList();
     private List columnNames = null;
-    private List rows;
+    private List rows = null;
     private int startRow = 0;
     private int pageSize = 10;
     private boolean summary = true;
@@ -192,7 +192,7 @@ public abstract class PagedTable
      * @return the index
      */
     public int getEndRow() {
-        return startRow + rows.size() - 1;
+        return startRow + getRows().size() - 1;
     }
 
     /**
@@ -282,6 +282,13 @@ public abstract class PagedTable
      * @return the rows of the table
      */    
     public List getRows() {
+        if (rows == null) {
+            try {
+                updateRows();
+            } catch (PageOutOfRangeException e) {
+                throw new RuntimeException("unexpected exception while getting rows", e);
+            }
+        }
         return rows;
     }
 
