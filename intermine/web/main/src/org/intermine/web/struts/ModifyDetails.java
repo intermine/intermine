@@ -67,7 +67,8 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward runTemplate(ActionMapping mapping, ActionForm form,
+    public ActionForward runTemplate(ActionMapping mapping, 
+                                     @SuppressWarnings("unused") ActionForm form,
                                      HttpServletRequest request, HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
@@ -79,19 +80,19 @@ public class ModifyDetails extends DispatchAction
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, type);
-        PathQuery query = (PathQuery) template.clone();
+        PathQuery query = template.clone();
         String trail = request.getParameter("trail");
 
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            PathNode nodeCopy = (PathNode) query.getNodes().get(node.getPathString());
+            PathNode nodeCopy = query.getNodes().get(node.getPathString());
 
             name = TypeUtil.unqualifiedName(node.getParentType());
 
             // object details page - fill in identified constraint with value from object
             if (bagName == null || bagName.length() == 0) {
                 for (int ci = 0; ci < node.getConstraints().size(); ci++) {
-                    Constraint c = (Constraint) node.getConstraint(ci);
+                    Constraint c = node.getConstraint(ci);
                     if (c.getIdentifier() != null) {
                         // If special request parameter key is present then we initialise
                         // the form bean with the parameter value
@@ -106,9 +107,9 @@ public class ModifyDetails extends DispatchAction
             } else if (useBagNode != null) { // && name.equals(useBagNode)) {
                 // bag details page - remove the identified constraint and constrain
                 // its parent to be in the bag
-                PathNode parent = (PathNode) query.getNodes().get(nodeCopy.getParent().getPathString());
+                PathNode parent = query.getNodes().get(nodeCopy.getParent().getPathString());
                 for (int ci = 0; ci < node.getConstraints().size(); ci++) {
-                    Constraint c = (Constraint) node.getConstraint(ci);
+                    Constraint c = node.getConstraint(ci);
                     if (c.getIdentifier() != null) {
                         // Constraint c = (Constraint) node.getConstraint(0);
                         ConstraintOp constraintOp = ConstraintOp.IN;
@@ -134,13 +135,14 @@ public class ModifyDetails extends DispatchAction
         SessionMethods.loadQuery(query, request.getSession(), response);
         QueryMonitorTimeout clientState =
             new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, false);
+        MessageResources messageResources = 
+            (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startQuery(clientState, session, messageResources, false);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
-                                                                    .addParameter("qid", qid)
-                                                                    .addParameter("trail", trail)
-                                                                    .forward();
+                                            .addParameter("qid", qid)
+                                            .addParameter("trail", trail)
+                                            .forward();
     }
 
     /**
@@ -156,8 +158,10 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward verbosify(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    public ActionForward verbosify(ActionMapping mapping, 
+                                   @SuppressWarnings("unused") ActionForm form,
+                                   HttpServletRequest request, 
+                                   @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
@@ -185,8 +189,10 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward unverbosify(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward unverbosify(ActionMapping mapping,
+                                     @SuppressWarnings("unused") ActionForm form,
+                                     HttpServletRequest request,
+                                     @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
@@ -212,8 +218,10 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward ajaxVerbosify(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward ajaxVerbosify(ActionMapping mapping, 
+                                       @SuppressWarnings("unused") ActionForm form,
+                                       HttpServletRequest request, 
+                                       @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
