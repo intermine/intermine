@@ -824,6 +824,7 @@ public class MainHelper
         Map<String, QueryNode> origPathToQueryNode = new HashMap<String, QueryNode>();
         Query q = makeQuery(pathQuery, savedBags, origPathToQueryNode);
         q.clearSelect();
+        q.clearOrderBy();
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
         if (qf == null) {
             throw new NullPointerException("Error - path " + summaryPath + " is not in map "

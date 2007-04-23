@@ -11,6 +11,7 @@ package org.intermine.dwr;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +34,15 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.results.PagedResultsSimple;
+import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -241,7 +246,7 @@ public class AjaxServices
         return description;
     }
     
-    public static Results getColumnSummary(String summaryPath) throws Exception {
+    public static PagedResultsSimple getColumnSummary(String summaryPath) throws Exception {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -253,6 +258,18 @@ public class AjaxServices
                                                   new HashMap(), summaryPath);
         
         Results results = os.execute(query);
-        return results;
+//        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+//        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+//        Object [] resultsArray = new Object [results.size()];
+        List columns = Arrays.asList(new String[] {"col1", "col2"});
+        WebResultsSimple webResults = new WebResultsSimple(results, columns);
+        PagedResultsSimple pagedTable = new PagedResultsSimple(columns, webResults);
+//        int i = 0;
+//        for (Iterator iter = results.iterator(); iter.hasNext();) {
+//            ResultsRow resRow = (ResultsRow) iter.next();
+//            resultsArray[i] = new Object [] {resRow.get(0), resRow.get(1)};
+//            i++;
+//        }
+        return pagedTable;
     }
 }
