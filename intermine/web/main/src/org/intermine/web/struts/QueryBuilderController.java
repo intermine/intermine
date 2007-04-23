@@ -115,7 +115,7 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("sortByIndex", sortByIndex);
         
         /* if sortOrderStrings are empty (probably a template), add first item in select */
-        if (sortOrderStrings.isEmpty()) {
+        if (sortOrderStrings.isEmpty() && !viewStrings.isEmpty()) {
             sortOrderStrings.add(viewStrings.get(0));
         }
         
