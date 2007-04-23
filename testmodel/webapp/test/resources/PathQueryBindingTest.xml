@@ -17,6 +17,15 @@
       <constraint op="IN" value="bag1"/>
     </node>
   </query>
+  <query name="queryWithConstraint" model="testmodel"
+  		 view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
+    <node path="Company" type="Company">
+    </node>
+    <node path="Company.departments" type="Department">
+    </node>
+    <node path="Company.departments.employees" type="CEO">
+    </node>
+  </query>
   <query name="employeeEndInBag" model="testmodel" view="Employee.name">
     <node path="Employee" type="Employee">
     </node>
