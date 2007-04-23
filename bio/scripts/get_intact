@@ -55,11 +55,28 @@ if(&checkdir_exists($download_dir)==1){
 	        &ftp_download($connection,$download_dir,$psi_file);
 	    }
 	}
+	
+	my $current_link = "/shared/data/psi/intact/current";
+	&make_link($date_string,$current_link);
 }else{ 
-	die " current version up to date - skipping download\n";
+	warn " current version up to date - skipping download\n";
 }
 
-my $current_link = "/shared/data/psi/intact/current";
-&make_link($date_string,$current_link);
-
 $connection->quit;
+
+#================================================================================
+#download psi-mi.obo from http://www.berkeleybop.org/ontologies/obo-all/psi-mi/
+#to /shared/psi/data/ontology/
+#seems to be updated every week
+
+#NOTE: eventually the data might be moved to http://www.bioontology.org/ncbo/faces/index.xhtml
+
+my $psi_mi_server = "http://www.berkeleybop.org/ontologies/obo-all/psi-mi";
+my $psi_mi_data_file = "psi-mi.obo";
+
+my $psi_mi_download_dir = "$psi_dir/ontology";
+my $file_to_get = "$psi_mi_server/$psi_mi_data_file";
+my $data_file = "$psi_mi_download_dir/$psi_mi_data_file";
+
+&checkdir_exists($psi_mi_download_dir);
+&http_download($file_to_get,$data_file);
