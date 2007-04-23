@@ -107,7 +107,7 @@ public class BagConstraint extends Constraint
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof BagConstraint) {
@@ -120,7 +120,7 @@ public class BagConstraint extends Constraint
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return (bag == null ? osb.hashCode() : bag.hashCode()) + 5 * qn.hashCode();

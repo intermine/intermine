@@ -90,14 +90,14 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see List#iterator
+     * {@inheritDoc}
      */
     public Iterator iterator() {
         return getCollection().iterator();
     }
 
     /**
-     * @see LazyCollection#getQuery
+     * {@inheritDoc}
      */
     public Query getQuery() {
         try {
@@ -108,7 +108,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see LazyCollection#getInfo
+     * {@inheritDoc}
      */
     public ResultsInfo getInfo() throws ObjectStoreException {
         Collection coll = getCollection();
@@ -120,7 +120,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see LazyCollection#setNoOptimise
+     * {@inheritDoc}
      */
     public synchronized void setNoOptimise() {
         noOptimise = true;
@@ -133,7 +133,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see LazyCollection#setNoExplain
+     * {@inheritDoc}
      */
     public synchronized void setNoExplain() {
         noExplain = true;
@@ -146,7 +146,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see LazyCollection#setBatchSize
+     * {@inheritDoc}
      */
     public void setBatchSize(int size) {
         batchSize = size;
@@ -190,7 +190,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see LazyCollection#asList()
+     * {@inheritDoc}
      */
     public List asList() {
         Collection collection = getCollection();
@@ -247,7 +247,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      *
      * We override this here in order to prevent possible infinite recursion.
      */

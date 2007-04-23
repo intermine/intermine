@@ -117,7 +117,7 @@ public class ObjectPipe implements Iterator
     }
 
     /**
-     * @see Iterator#hasNext
+     * {@inheritDoc}
      */
     public synchronized boolean hasNext() {
         while ((!finished) && list.isEmpty()) {
@@ -130,7 +130,7 @@ public class ObjectPipe implements Iterator
     }
 
     /**
-     * @see Iterator#next
+     * {@inheritDoc}
      */
     public synchronized Object next() throws NoSuchElementException {
         while ((!finished) && list.isEmpty()) {
@@ -144,7 +144,7 @@ public class ObjectPipe implements Iterator
     }
 
     /**
-     * @see Iterator#remove
+     * {@inheritDoc}
      */
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported on an ObjectPipe");

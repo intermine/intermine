@@ -44,14 +44,14 @@ public class OrderDescending extends AbstractValue
     }
 
     /**
-     * @see SQLStringable#getSQLString
+     * {@inheritDoc}
      */
     public String getSQLString() {
         return value.getSQLString() + " DESC";
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof OrderDescending) {
@@ -61,28 +61,28 @@ public class OrderDescending extends AbstractValue
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return value.hashCode() + 1;
     }
 
     /**
-     * @see AbstractValue#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
         throw new UnsupportedOperationException("Cannot compare OrderDescending objects");
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return getSQLString();
     }
 
     /**
-     * @see AbstractValue#isAggregate
+     * {@inheritDoc}
      */
     public boolean isAggregate() {
         return value.isAggregate();

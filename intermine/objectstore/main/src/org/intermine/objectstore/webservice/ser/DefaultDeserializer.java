@@ -56,7 +56,7 @@ public class DefaultDeserializer extends DeserializerImpl
     }
 
     /**
-     * @see DeserializerImpl#onStartChild
+     * {@inheritDoc}
      */
     public SOAPHandler onStartChild(String namespace, String localName, String prefix,
                                     Attributes attributes, DeserializationContext context)
@@ -91,7 +91,7 @@ public class DefaultDeserializer extends DeserializerImpl
     }
 
     /**
-     * @see DeserializerImpl#getDeserializer
+     * {@inheritDoc}
      */
     protected Deserializer getDeserializer(QName xmlType, 
                                            Class javaType, 
@@ -115,7 +115,7 @@ public class DefaultDeserializer extends DeserializerImpl
     }
 
     /**
-     * @see DeserializerTarget#setChildValue
+     * {@inheritDoc}
      */
     public void setChildValue(Object value, Object hint) throws SAXException {
         try {

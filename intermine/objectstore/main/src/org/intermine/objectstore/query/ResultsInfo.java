@@ -200,7 +200,7 @@ public class ResultsInfo
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof ResultsInfo) {
@@ -215,7 +215,7 @@ public class ResultsInfo
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return  (int) (2 * start
@@ -226,7 +226,7 @@ public class ResultsInfo
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "ResultsInfo(start=" + start + ", complete=" + complete + ", rows=" + rows

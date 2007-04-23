@@ -53,6 +53,10 @@
     <path id="xslt.class.path">
       <fileset dir="${library.xml.basedir}/im-ant-tasks/lib" includes="*.jar"/>
     </path>
+    <path id="checkstyle.classpath">
+      <path refid="project.compile.path"/>
+      <pathelement location="${build.classes.dir}"/>
+    </path>
   </target>
 
   <target name="init" depends="-pre-init"/>
@@ -202,7 +206,7 @@
         <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">
-          <classpath refid="project.compile.path"/>
+          <classpath refid="checkstyle.classpath"/>
           <formatter type="xml" tofile="${build.checkstyle.dir}/checkstyle_report.xml" />
           <customize/>
           <property key="checkstyle.header.file" value="${library.xml.basedir}/checkstyle/copyright_header.txt"/>
@@ -273,7 +277,8 @@
     <path id="dot.class.path">
       <path refid="project.compile.path"/>
       <pathelement location="${library.xml.basedir}/lib/ant-tasks.jar"/>
-      <pathelement location="${main.build.classes.dir}"/>
+      <pathelement location="${build.classes.dir}"/>
+      <pathelement location="${library.xml.basedir}/lib/im-ant-tasks.jar"/>
     </path>
 
     <taskdef name="dot" classname="org.intermine.task.InheritanceDotTask">

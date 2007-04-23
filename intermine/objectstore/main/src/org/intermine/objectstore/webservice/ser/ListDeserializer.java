@@ -25,7 +25,7 @@ import java.util.Vector;
 public class ListDeserializer extends VectorDeserializer
 {
     /**
-     * @see DeserializerImpl#onEndElement
+     * {@inheritDoc}
      */
     public final void onEndElement(String namespace, String localName,
                                    DeserializationContext context) throws SAXException {

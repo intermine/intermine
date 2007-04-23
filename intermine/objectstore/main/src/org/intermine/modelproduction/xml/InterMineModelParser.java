@@ -72,7 +72,7 @@ public class InterMineModelParser implements ModelParser
         SkeletonClass cls;
 
         /**
-         * @see DefaultHandler#startElement(String, String, String, Attributes)
+         * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if (qName.equals("model")) {
@@ -108,7 +108,7 @@ public class InterMineModelParser implements ModelParser
         }
 
         /**
-         * @see DefaultHandler#endElement(String, String, String)
+         * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName) {
             if (qName.equals("class")) {

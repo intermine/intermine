@@ -30,13 +30,16 @@ public class JavaModelOutput extends ModelOutput
 {
     /**
      * @see ModelOutput#ModelOutput(Model, File)
+     *
+     * @param model a Model
+     * @param file a File
      */
     public JavaModelOutput(Model model, File file) throws Exception {
         super(model, file);
     }
 
     /**
-     * @see ModelOutput#process
+     * {@inheritDoc}
      */
     public void process() {
         Iterator iter = model.getClassDescriptors().iterator();
@@ -62,14 +65,14 @@ public class JavaModelOutput extends ModelOutput
 
     /**
      * This mapping generates one file per ClassDescriptor, so nothing output for the Model itself
-     * @see ModelOutput#generate(Model)
+     * {@inheritDoc}
      */
     protected String generate(Model model) {
         return null;
     }
 
     /**
-     * @see ModelOutput#generate(ClassDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
@@ -161,26 +164,26 @@ public class JavaModelOutput extends ModelOutput
         return sb.toString();
     }
     /**
-     * @see ModelOutput#generate(AttributeDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(AttributeDescriptor attr) {
         return generate(attr, false);
     }
     /**
-     * @see ModelOutput#generate(ReferenceDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(ReferenceDescriptor attr) {
         return generate(attr, false);
     }
     /**
-     * @see ModelOutput#generate(CollectionDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(CollectionDescriptor attr) {
         return generate(attr, false);
     }
 
     /**
-     * @see ModelOutput#generate(AttributeDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(AttributeDescriptor attr, boolean field) {
         StringBuffer sb = new StringBuffer();
@@ -199,7 +202,7 @@ public class JavaModelOutput extends ModelOutput
     }
 
     /**
-     * @see ModelOutput#generate(ReferenceDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(ReferenceDescriptor ref, boolean field) {
         StringBuffer sb = new StringBuffer();
@@ -217,7 +220,7 @@ public class JavaModelOutput extends ModelOutput
     }
 
     /**
-     * @see ModelOutput#generate(CollectionDescriptor)
+     * {@inheritDoc}
      */
     protected String generate(CollectionDescriptor col, boolean field) {
         String type = "java.util.Set";

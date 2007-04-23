@@ -105,7 +105,7 @@ public class InListConstraint extends AbstractConstraint
      * Compare this InListConstraint with another AbstractConstraint, ignoring aliases in member
      * fields and tables.
      *
-     * @see AbstractConstraint#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof InListConstraint) {

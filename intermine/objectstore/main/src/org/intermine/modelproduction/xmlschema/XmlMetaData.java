@@ -549,7 +549,7 @@ public class XmlMetaData
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         String endl = System.getProperty("line.separator");

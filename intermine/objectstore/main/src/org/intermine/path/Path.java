@@ -347,7 +347,7 @@ public class Path
     }
     
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof Path) {
@@ -361,7 +361,7 @@ public class Path
     /**
      * Returns a representation of the Path as a String, with class constraint markers.  eg.
      * "Department.employees[Manager].seniority"
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         String cdUnqualifiedName = getStartClassDescriptor().getUnqualifiedName();
@@ -392,7 +392,7 @@ public class Path
 
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 0;

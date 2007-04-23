@@ -27,7 +27,7 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 public class ModelDeserializer extends DeserializerImpl
 {
     /**
-     * @see DeserializerImpl#onEndElement
+     * {@inheritDoc}
      */
     public final void onEndElement(String namespace, String localName,
                                    DeserializationContext context) throws SAXException {

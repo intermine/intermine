@@ -514,7 +514,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * @see Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof ClassDescriptor) {
@@ -528,7 +528,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 3 * className.hashCode()
@@ -538,7 +538,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * @see Comparable#compareTo
+     * {@inheritDoc}
      */
     public int compareTo(ClassDescriptor cld) {
         int retval = className.compareTo(cld.className);
@@ -555,7 +555,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

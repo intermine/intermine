@@ -148,7 +148,7 @@ public class ExplainResult
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return "ExplainResult: rows=" + rows + " start=" + start + " complete=" + complete
@@ -156,7 +156,7 @@ public class ExplainResult
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (!(o instanceof ExplainResult)) {
@@ -170,7 +170,7 @@ public class ExplainResult
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return (int) (2 * rows

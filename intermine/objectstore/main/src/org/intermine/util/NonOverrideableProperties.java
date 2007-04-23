@@ -38,7 +38,7 @@ public class NonOverrideableProperties extends Properties
     /**
      * Override put, but do not allow existing values to be changed.
      *
-     * @see java.util.Properties#put
+     * {@inheritDoc}
      */
     public Object put(Object key, Object value) {
         Object old = get(key);

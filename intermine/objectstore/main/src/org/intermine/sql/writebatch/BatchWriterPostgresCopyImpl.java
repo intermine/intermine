@@ -43,7 +43,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     protected static final BigInteger TEN_THOUSAND = new BigInteger("10000");
 
     /**
-     * @see BatchWriterSimpleImpl#doInserts
+     * {@inheritDoc}
      */
     protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
         String colNames[] = table.getColNames();
@@ -194,7 +194,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     }
 
     /**
-     * @see BatchWriterSimpleImpl#doIndirectionInserts
+     * {@inheritDoc}
      */
     protected int doIndirectionInserts(String name,
             IndirectionTableBatch table, List batches) throws SQLException {
@@ -241,7 +241,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
     }
 
     /**
-     * @see BatchWriterSimpleImpl#getTableSize
+     * {@inheritDoc}
      */
     protected int getTableSize(String name, Connection conn) throws SQLException {
         Statement s = conn.createStatement();

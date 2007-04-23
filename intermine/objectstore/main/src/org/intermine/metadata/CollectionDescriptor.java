@@ -37,7 +37,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     }
 
     /**
-     * @see FieldDescriptor#relationType()
+     * {@inheritDoc}
      */
     public int relationType() {
         ReferenceDescriptor rd = getReverseReferenceDescriptor();
@@ -49,7 +49,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     }
 
     /**
-     * @see Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof CollectionDescriptor) {
@@ -63,7 +63,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     }
 
     /**
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 2 * (cld == null ? 0 : cld.getName().hashCode())
@@ -73,7 +73,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

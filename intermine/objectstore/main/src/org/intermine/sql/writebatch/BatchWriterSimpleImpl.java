@@ -56,7 +56,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
     }
 
     /**
-     * @see BatchWriter#write
+     * {@inheritDoc}
      */
     public List write(Connection con, Map tables, Set filter) throws SQLException {
         this.con = con;
@@ -398,7 +398,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
     protected Map stats = new HashMap();
 
     /**
-     * @see BatchWriter#updateStatistics
+     * {@inheritDoc}
      */
     public void updateStatistics(Map activity, Connection conn) throws SQLException {
         Iterator iter = activity.entrySet().iterator();

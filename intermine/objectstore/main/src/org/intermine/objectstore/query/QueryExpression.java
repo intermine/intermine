@@ -204,7 +204,7 @@ public class QueryExpression implements QueryEvaluable
     }
     
     /**
-       * @see QueryEvaluable
+       * {@inheritDoc}
        */
     public Class getType() {
         return type;
@@ -247,7 +247,7 @@ public class QueryExpression implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#youAreType
+     * {@inheritDoc}
      */
     public void youAreType(Class cls) {
         if (type.equals(UnknownTypeValue.class)) {
@@ -262,7 +262,7 @@ public class QueryExpression implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#getApproximateType
+     * {@inheritDoc}
      */
     public int getApproximateType() {
         if (type.equals(UnknownTypeValue.class)) {

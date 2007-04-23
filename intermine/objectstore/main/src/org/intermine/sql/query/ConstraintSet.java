@@ -80,7 +80,7 @@ public class ConstraintSet extends AbstractConstraint
      * Compare this ConstraintSet with another AbstractConstraint, ignoring aliases in member
      * fields and tables.
      *
-     * @see AbstractConstraint#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof ConstraintSet) {

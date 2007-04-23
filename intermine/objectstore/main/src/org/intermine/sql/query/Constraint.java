@@ -65,7 +65,7 @@ public class Constraint extends AbstractConstraint
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return getSQLString();
@@ -105,7 +105,7 @@ public class Constraint extends AbstractConstraint
      * Compare this Constraint with another AbstractConstraint, ignoring aliases in member fields
      * and tables.
      *
-     * @see AbstractConstraint#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof Constraint) {

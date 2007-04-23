@@ -619,7 +619,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -1060,7 +1060,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#estimate(Query)
+     * {@inheritDoc}
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         Connection c = null;
@@ -1105,7 +1105,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#count(Query, int)
+     * {@inheritDoc}
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         Connection c = null;
@@ -1185,7 +1185,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStoreAbstractImpl#flushObjectById
+     * {@inheritDoc}
      */
     public void flushObjectById() {
         super.flushObjectById();
@@ -1199,7 +1199,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see ObjectStoreAbstractImpl#internalGetObjectById(Integer, Class)
+     * {@inheritDoc}
      *
      * This method is overridden in order to improve the performance of the operation - this
      * implementation does not bother with the EXPLAIN call to the underlying SQL database.
@@ -1275,7 +1275,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * @see org.intermine.objectstore.ObjectStore#isMultiConnection()
+     * {@inheritDoc}
      */
     public boolean isMultiConnection() {
         return true;

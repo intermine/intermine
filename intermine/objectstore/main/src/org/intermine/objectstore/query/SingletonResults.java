@@ -44,7 +44,7 @@ public class SingletonResults extends Results implements Set
      }
 
     /**
-     * @see Results#range
+     * {@inheritDoc}
      */
     public List range(int start, int end) throws ObjectStoreException {
         List rows = super.range(start, end);

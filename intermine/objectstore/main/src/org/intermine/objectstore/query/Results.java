@@ -322,7 +322,7 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * @see AbstractList#get
+     * {@inheritDoc}
      * @param index of the ResultsRow required
      * @return the relevant ResultsRow as an Object
      */
@@ -343,7 +343,7 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * @see List#subList
+     * {@inheritDoc}
      * @param start the index to start from (inclusive)
      * @param end the index to end at (exclusive)
      * @return the sub-list
@@ -367,7 +367,7 @@ public class Results extends AbstractList implements LazyCollection
     /**
      * Gets the number of results rows in this Results object
      *
-     * @see AbstractList#size
+     * {@inheritDoc}
      * @return the number of rows in this Results object
      */
     public int size() {
@@ -423,7 +423,7 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * @see List#isEmpty
+     * {@inheritDoc}
      */
     public boolean isEmpty() {
         if (minSize > 0) {
@@ -481,14 +481,14 @@ public class Results extends AbstractList implements LazyCollection
     }
     
     /**
-     * @see LazyCollection#asList()
+     * {@inheritDoc}
      */
     public List asList() {
         return this;
     }
     
     /**
-     * @see AbstractList#iterator
+     * {@inheritDoc}
      */
     public Iterator iterator() {
         return new Iter();

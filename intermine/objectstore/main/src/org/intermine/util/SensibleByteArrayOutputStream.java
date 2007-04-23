@@ -29,13 +29,15 @@ public class SensibleByteArrayOutputStream extends ByteArrayOutputStream
 
     /**
      * @see ByteArrayOutputStream
+     *
+     * @param size the initial size of the byte array
      */
     public SensibleByteArrayOutputStream(int size) {
         super(size);
     }
 
     /**
-     * @see ByteArrayOutputStream#write(int)
+     * {@inheritDoc}
      */
     public synchronized void write(int b) {
         assureSize(count + 1);
@@ -43,7 +45,7 @@ public class SensibleByteArrayOutputStream extends ByteArrayOutputStream
     }
 
     /**
-     * @see ByteArrayOutputStream#write(byte[], int, int)
+     * {@inheritDoc}
      */
     public synchronized void write(byte b[], int off, int len) {
         assureSize(count + len);

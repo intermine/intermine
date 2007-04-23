@@ -10,7 +10,6 @@ package org.intermine.metadata;
  *
  */
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
@@ -216,7 +215,7 @@ public class Model
     }
 
     /**
-     * @see Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof Model) {
@@ -229,7 +228,7 @@ public class Model
     }
 
     /**
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 3 * modelName.hashCode()
@@ -237,7 +236,7 @@ public class Model
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();

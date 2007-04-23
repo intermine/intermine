@@ -49,7 +49,7 @@ public class Row implements Comparable
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if ((o instanceof Row) && (((Row) o).left == left) && (((Row) o).right == right)) {
@@ -59,14 +59,14 @@ public class Row implements Comparable
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return left + (1013 * right);
     }
 
     /**
-     * @see Comparable#compareTo
+     * {@inheritDoc}
      */
     public int compareTo(Object o) {
         Row r = (Row) o;

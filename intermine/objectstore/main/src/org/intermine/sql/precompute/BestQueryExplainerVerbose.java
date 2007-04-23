@@ -36,7 +36,7 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     }
 
     /**
-     * @see BestQueryExplainer#getExplainResult(Query)
+     * {@inheritDoc}
      */
     protected ExplainResult getExplainResult(Query q) throws SQLException {
         if (unexplained != 0) {
@@ -54,7 +54,7 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     }
 
     /**
-     * @see BestQueryExplainer#getExplainResult(String)
+     * {@inheritDoc}
      */
     protected ExplainResult getExplainResult(String q) throws SQLException {
         if (unexplained != 0) {
@@ -69,7 +69,7 @@ public class BestQueryExplainerVerbose extends BestQueryExplainer
     }
 
     /**
-     * @see BestQueryExplainer#didNotExplain
+     * {@inheritDoc}
      */
     protected void didNotExplain(Candidate c) {
         //if (c.getQuery() == null) {

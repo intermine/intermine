@@ -149,7 +149,7 @@ public class Database implements Shutdownable
     }
 
     /**
-     * @see Object#finalize
+     * {@inheritDoc}
      */
     public void finalize() {
         if (datasource instanceof org.postgresql.jdbc3.Jdbc3PoolingDataSource) {
@@ -348,7 +348,7 @@ public class Database implements Shutdownable
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return "" + settings + " " + driver + " " + platform;

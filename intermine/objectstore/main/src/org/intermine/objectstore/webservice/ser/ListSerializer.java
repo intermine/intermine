@@ -27,7 +27,7 @@ import java.util.Collection;
 public class ListSerializer extends VectorSerializer
 {
     /**
-     * @see VectorSerializer#serialize
+     * {@inheritDoc}
      */
     public void serialize(QName name, Attributes attributes, Object value,
                           SerializationContext context) throws IOException {

@@ -153,7 +153,7 @@ public class QueryField implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable
+     * {@inheritDoc}
      */
     public Class getType() {
         return type;
@@ -187,14 +187,14 @@ public class QueryField implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#youAreType
+     * {@inheritDoc}
      */
     public void youAreType(Class cls) {
         throw new ClassCastException("youAreType called on a QueryField");
     }
 
     /**
-     * @see QueryEvaluable#getApproximateType
+     * {@inheritDoc}
      */
     public int getApproximateType() {
         throw new ClassCastException("getApproximateType called on a QueryField");

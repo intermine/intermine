@@ -86,7 +86,7 @@ public class QueryFunction implements QueryEvaluable
     }
 
     /**
-       * @see QueryEvaluable
+       * {@inheritDoc}
        */
     public Class getType() {
         if (op == COUNT) {
@@ -126,7 +126,7 @@ public class QueryFunction implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#youAreType
+     * {@inheritDoc}
      */
     public void youAreType(Class cls) {
         if (obj.getType().equals(UnknownTypeValue.class)) {
@@ -137,7 +137,7 @@ public class QueryFunction implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#getApproximateType
+     * {@inheritDoc}
      */
     public int getApproximateType() {
         if (obj.getType().equals(UnknownTypeValue.class)) {

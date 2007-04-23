@@ -28,7 +28,7 @@ import java.io.IOException;
 public class ModelSerializer implements Serializer
 {
     /**
-     * @see Serializer#serialize
+     * {@inheritDoc}
      */
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
@@ -39,12 +39,12 @@ public class ModelSerializer implements Serializer
     }
 
     /**
-     * @see Serializer#getMechanismType
+     * {@inheritDoc}
      */
     public String getMechanismType() { return Constants.AXIS_SAX; }
 
     /**
-     * @see Serializer#writeSchema
+     * {@inheritDoc}
      */
     public Element writeSchema(Class javaType, Types types) throws Exception {
         return null;

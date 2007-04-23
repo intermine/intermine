@@ -44,7 +44,7 @@ public class QueryValue implements QueryEvaluable
     }
 
     /**
-       * @see QueryEvaluable
+       * {@inheritDoc}
        */
     public Class getType() {
         return value.getClass();
@@ -109,7 +109,7 @@ public class QueryValue implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#youAreType
+     * {@inheritDoc}
      */
     public void youAreType(Class cls) {
         if (value.getClass().equals(UnknownTypeValue.class)) {
@@ -120,7 +120,7 @@ public class QueryValue implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#getApproximateType
+     * {@inheritDoc}
      */
     public int getApproximateType() {
         if (value.getClass().equals(UnknownTypeValue.class)) {
@@ -131,7 +131,7 @@ public class QueryValue implements QueryEvaluable
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return value.getClass().getName() + ": \"" + value + "\"";

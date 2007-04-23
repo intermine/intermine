@@ -70,7 +70,7 @@ public class NotConstraint extends AbstractConstraint
      * Compare this NotConstraint with another AbstractConstraint, ignoring aliases in member
      * fields and tables.
      *
-     * @see AbstractConstraint#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractConstraint obj, Map tableMap, Map reverseTableMap) {
         return alterComparisonNotThis(con.compare(obj, tableMap, reverseTableMap));
