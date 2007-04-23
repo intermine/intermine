@@ -59,7 +59,7 @@ public class DirectDBReader implements DBReader
     }
     
     /**
-     * @see DBReader#sqlIterator
+     * {@inheritDoc}
      */
     public Iterator sqlIterator(String sql, String idField, String tableName) {
         queryNo++;
@@ -71,7 +71,7 @@ public class DirectDBReader implements DBReader
     }
 
     /**
-     * @see DBReader#execute
+     * {@inheritDoc}
      */
     public List execute(String sql) throws SQLException {
         long start = System.currentTimeMillis();
@@ -207,7 +207,7 @@ public class DirectDBReader implements DBReader
     }
 
     /**
-     * @see DBReader#close
+     * {@inheritDoc}
      */
     public void close() {
     }
@@ -236,7 +236,7 @@ public class DirectDBReader implements DBReader
         }
 
         /**
-         * @see Iterator#hasNext
+         * {@inheritDoc}
          */
         public boolean hasNext() {
             if (thisQueryNo != queryNo) {
@@ -260,7 +260,7 @@ public class DirectDBReader implements DBReader
         }
 
         /**
-         * @see Iterator#next
+         * {@inheritDoc}
          */
         public Object next() {
             if (hasNext()) {
@@ -271,7 +271,7 @@ public class DirectDBReader implements DBReader
         }
 
         /**
-         * @see Iterator#remove
+         * {@inheritDoc}
          */
         public void remove() {
             throw new UnsupportedOperationException();

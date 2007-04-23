@@ -153,7 +153,7 @@ public class ItemToObjectTranslator extends Translator
     }
 
     /**
-     * @see Translator#translateQuery
+     * {@inheritDoc}
      */
     public Query translateQuery(Query query) throws ObjectStoreException {
         if (query.getOrderBy().size() > 0 || query.getGroupBy().size() > 0) {
@@ -230,14 +230,14 @@ public class ItemToObjectTranslator extends Translator
     }
 
     /**
-     * @see Translator#translateToDbObject
+     * {@inheritDoc}
      */
     public InterMineObject translateToDbObject(InterMineObject o) {
         return o;
     }
 
     /**
-     * @see Translator#translateFromDbObject
+     * {@inheritDoc}
      */
     public InterMineObject translateFromDbObject(InterMineObject o)
         throws MetaDataException {

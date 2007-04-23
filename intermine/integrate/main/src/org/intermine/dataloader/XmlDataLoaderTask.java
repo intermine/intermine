@@ -67,7 +67,8 @@ public class XmlDataLoaderTask extends Task
     
     /**
      * Set XML resource name (to load data from classloader).
-     * @param resName classloader resource name
+     *
+     * @param xmlRes classloader resource name
      */
     public void setXmlResource(String xmlRes) {
         this.xmlRes = xmlRes;
@@ -92,7 +93,7 @@ public class XmlDataLoaderTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      * @throws BuildException
      */
     public void execute() throws BuildException {

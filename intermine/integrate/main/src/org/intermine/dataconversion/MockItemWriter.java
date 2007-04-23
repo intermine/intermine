@@ -37,14 +37,14 @@ public class MockItemWriter implements ItemWriter
     }
 
     /**
-     * @see ItemWriter#store
+     * {@inheritDoc}
      */
     public void store(Item item) {
         storedItems.put(item.getIdentifier(), item);
     }
 
     /**
-     * @see ItemWriter#storeAll
+     * {@inheritDoc}
      */
     public void storeAll(Collection items) {
         for (Iterator i = items.iterator(); i.hasNext();) {
@@ -53,7 +53,7 @@ public class MockItemWriter implements ItemWriter
     }
     
     /**
-     * @see ItemWriter#close
+     * {@inheritDoc}
      */
     public void close() {
     }

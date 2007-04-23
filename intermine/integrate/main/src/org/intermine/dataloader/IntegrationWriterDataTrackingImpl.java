@@ -131,14 +131,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriter#getMainSource
+     * {@inheritDoc}
      */
     public Source getMainSource(String name) {
         return dataTracker.stringToSource(name);
     }
 
     /**
-     * @see IntegrationWriter#getSkeletonSource
+     * {@inheritDoc}
      */
     public Source getSkeletonSource(String name) {
         return dataTracker.stringToSource("skel_" + name);
@@ -154,7 +154,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriterAbstractImpl#store(InterMineObject, Source, Source, int)
+     * {@inheritDoc}
      */
     protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
                                     int type) throws ObjectStoreException {
@@ -370,7 +370,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     }
 
     /**
-     * @see IntegrationWriterAbstractImpl#commitTransaction
+     * {@inheritDoc}
     public void commitTransaction() throws ObjectStoreException {
         osw.commitTransaction();
         dataTracker.flush();
@@ -378,7 +378,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      */
 
     /**
-     * @see IntegrationWriterAbstractImpl#close
+     * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
         super.close();

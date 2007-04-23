@@ -71,7 +71,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
 
 
     /**
-     * @see ItemReader#itemIterator
+     * {@inheritDoc}
      *
      */
     public Iterator itemIterator() {
@@ -138,7 +138,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
     }
 
     /**
-     * @see ItemReader#getItemById
+     * {@inheritDoc}
      */
     public Item getItemById(String objectId) throws ObjectStoreException {
         List results = getItemsByDescription(Collections.singleton(
@@ -156,7 +156,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
     }
 
     /**
-     * @see ItemReader#getItemsByDescription
+     * {@inheritDoc}
      */
     public List getItemsByDescription(Set constraints) throws ObjectStoreException {
         return os.getItemsByDescription(constraints);

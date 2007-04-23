@@ -57,7 +57,7 @@ public class Source
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return "<Source: name=\"" + getName() + "\", skeleton=" + getSkeleton() + ">";

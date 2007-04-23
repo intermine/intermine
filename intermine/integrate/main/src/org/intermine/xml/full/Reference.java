@@ -74,7 +74,7 @@ public class Reference
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof Reference) {
@@ -86,7 +86,7 @@ public class Reference
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return name.hashCode()

@@ -111,7 +111,7 @@ public class XmlConverter extends DataConverter
         ItemFactory itemFactory;
 
         /**
-         * @see DefaultHandler#DefaultHandler()
+         * {@inheritDoc}
          * @param model the Model to use when creating items
          */
         public XmlHandler(Model model) {
@@ -119,7 +119,7 @@ public class XmlConverter extends DataConverter
         }
 
         /**
-         * @see DefaultHandler#startElement
+         * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
@@ -278,7 +278,7 @@ public class XmlConverter extends DataConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) throws SAXException
         {
@@ -326,7 +326,7 @@ public class XmlConverter extends DataConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName) throws SAXException {
             // if qName is top of element stack and is item/ref/col

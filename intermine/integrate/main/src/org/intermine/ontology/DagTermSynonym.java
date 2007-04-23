@@ -38,21 +38,21 @@ public class DagTermSynonym
     }
     
     /**
-     * @see Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         return (o instanceof DagTermSynonym && ((DagTermSynonym) o).name.equals(name));
     }
 
     /**
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return name.hashCode();
     }
     
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return new ToStringBuilder(this).append("name", name).toString();

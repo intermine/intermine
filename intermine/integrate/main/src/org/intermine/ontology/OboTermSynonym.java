@@ -40,7 +40,7 @@ public class OboTermSynonym extends DagTermSynonym
     }
     
     /**
-     * @see Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         return (o instanceof OboTermSynonym && super.equals(o)
@@ -48,14 +48,14 @@ public class OboTermSynonym extends DagTermSynonym
     }
 
     /**
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return super.hashCode() + 3 * type.hashCode();
     }
     
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return new ToStringBuilder(this).append("name", getName()).append("type", type).toString();

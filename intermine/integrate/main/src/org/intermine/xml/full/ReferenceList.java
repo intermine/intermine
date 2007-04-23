@@ -99,7 +99,7 @@ public class ReferenceList
     }
     
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof ReferenceList) {
@@ -111,7 +111,7 @@ public class ReferenceList
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return name.hashCode()

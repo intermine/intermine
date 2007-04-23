@@ -58,7 +58,7 @@ public class BatchingDBReader extends DirectDBReader
     }
 
     /**
-     * @see DBReader#execute
+     * {@inheritDoc}
      */
     public List execute(String sql) throws SQLException {
         if (batch != null) {

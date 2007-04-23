@@ -72,7 +72,7 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof FieldNameAndValue) {
@@ -84,14 +84,14 @@ public class FieldNameAndValue implements ItemPrefetchConstraint
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 3 * fieldName.hashCode() + 5 * value.hashCode() + (reference ? 7 : 0);
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return (reference ? "(reference " : "(") + fieldName + " = " + value + ")";

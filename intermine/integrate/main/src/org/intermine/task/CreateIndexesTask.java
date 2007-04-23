@@ -76,6 +76,7 @@ public class CreateIndexesTask extends Task
 
     /**
      * Set the ObjectStore alias.  Currently the ObjectStore must be an ObjectStoreInterMineImpl.
+     *
      * @param alias the ObjectStore alias
      */
     public void setAlias(String alias) {
@@ -87,7 +88,8 @@ public class CreateIndexesTask extends Task
 
     /**
      * Set the ObjectStore to use.  Can be set instead of alias.
-     * @param objectStore
+     *
+     * @param objectStore ObjectStore to create indexes on
      */
     public void setObjectStore(ObjectStore objectStore) {
         if (alias != null) {
@@ -99,6 +101,7 @@ public class CreateIndexesTask extends Task
     /**
      * Set the attributeIndexes flag.  Index the attributes that are not part of the
      * primary key if and only if the flag is set.
+     *
      * @param attributeIndexes flag for attribute indexes
      */
     public void setAttributeIndexes(boolean attributeIndexes) {
@@ -146,9 +149,8 @@ public class CreateIndexesTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
-    @SuppressWarnings("null")
     public void execute() throws BuildException {
         setUp();
         Model m = schema.getModel();

@@ -539,7 +539,7 @@ public class Item implements Comparable
 
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof Item) {
@@ -557,7 +557,7 @@ public class Item implements Comparable
     /**
      * Compare items first by class, then by identifier, intended for creating
      * ordered output files.
-     * @see Comparable#compareTo
+     * {@inheritDoc}
      */ 
     public int compareTo(Object o) {
         if (!(o instanceof Item)) {
@@ -574,7 +574,7 @@ public class Item implements Comparable
     }
     
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return identifier.hashCode()
@@ -586,7 +586,7 @@ public class Item implements Comparable
     }
 
     /**
-    * @see Object#toString
+    * {@inheritDoc}
     */
     public String toString() {
         return XmlUtil.indentXmlSimple(FullRenderer.render(this));

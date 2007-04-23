@@ -51,7 +51,7 @@ public class FullXmlConverterTask extends ConverterTask
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (xmlFile == null && xmlRes == null) {
