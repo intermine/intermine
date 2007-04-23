@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
@@ -854,6 +855,7 @@ public class MainHelper
             q.addToSelect(count);
             pathToQueryNode.put(summaryPath, qf);
             pathToQueryNode.put("Occurrences", count);
+            q.addToOrderBy(new OrderDescending(count));
         } else {
             // Probably Date
             throw new IllegalArgumentException("Cannot summarise this column");

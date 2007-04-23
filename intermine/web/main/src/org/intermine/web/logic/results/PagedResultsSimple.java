@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class PagedResultsSimple extends PagedTable implements Serializable
 {
-    private WebResultsSimple results;
+    private transient WebResultsSimple results;
 
     public PagedResultsSimple(List columns, WebResultsSimple results) {
         super(columns);

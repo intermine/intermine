@@ -246,7 +246,7 @@ public class AjaxServices
         return description;
     }
     
-    public static PagedResultsSimple getColumnSummary(String summaryPath) throws Exception {
+    public static List getColumnSummary(String summaryPath) throws Exception {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -270,6 +270,6 @@ public class AjaxServices
 //            resultsArray[i] = new Object [] {resRow.get(0), resRow.get(1)};
 //            i++;
 //        }
-        return pagedTable;
+        return pagedTable.getRows();
     }
 }
