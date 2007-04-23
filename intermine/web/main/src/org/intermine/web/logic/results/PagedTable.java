@@ -94,7 +94,8 @@ public abstract class PagedTable
     public int getVisibleColumnCount() {
         int count = 0;
         for (Iterator i = columns.iterator(); i.hasNext();) {
-            if (((Column) i.next()).isVisible())  {
+            Object obj = (Object) i.next();
+            if ((obj instanceof Column && ((Column) obj).isVisible()) || obj instanceof String) {
                 count++;
             }
         }
@@ -330,4 +331,12 @@ public abstract class PagedTable
      * @return the maximum retrieved index
      */
     public abstract int getMaxRetrievableIndex();
+    
+    /**
+     * Set the column names
+     * @param columnNames a list of Strings
+     */
+    public void setColumnNames(List columnNames) {
+        this.columnNames = columnNames;
+    }
 }

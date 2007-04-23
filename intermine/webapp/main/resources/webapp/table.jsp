@@ -86,9 +86,25 @@
                     </html:form>
                 </td>
                 <td><img src="model/res_bar_right.gif"></td>
+                <td><img src="images/blank.gif" width="20px"></td>
+                <td style="padding:5px;font-size:10px;background-color:#EEEEEE;">
+                <strong>Legend: </strong>
+                <img style="vertical-align:text-bottom;" border="0" 
+	                             width="13" height="13" src="images/left_arrow.png" 
+	                             alt="${moveLeftString}"/> 
+	            &nbsp;&amp;&nbsp;<img style="vertical-align:text-bottom;" border="0" 
+	                             width="13" height="13" src="images/right_arrow.png" 
+	                             alt="${moveLeftString}"/> 
+	            Move columns - <img style="vertical-align:text-bottom;" border="0" 
+	                        src="images/close.png" title="${hideColumnTitle}" />
+	            Close column - 
+	            <img src="images/summary_maths.png" style="vertical-align:text-bottom;" alt="Column Summary">
+	            Get summary statistics for column
+	            </td>
             </tr>
         </table>
     </div>
+    
     
     <html:form action="/saveBag">
       <div class="body">
@@ -112,6 +128,55 @@
                   </c:if>
 
                   <th align="center" valign="top" >
+
+                    <%-- put in left, right, hide and show buttons --%>
+                    <div align="right" style="margin-right:0px;margin-top:0px;white-space:nowrap;">
+	                  <%-- left --%>
+	                    <c:if test="${not status.first}">
+	                      <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
+	                        <fmt:param value="${column.name}"/>
+	                      </fmt:message>
+	                      <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
+	                      <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
+	                                 title="${moveLeftTitle}">
+	                        <img style="vertical-align:top;" border="0" 
+	                             width="13" height="13" src="images/left_arrow.png" 
+	                             alt="${moveLeftString}"/>
+	                      </html:link>
+	                    </c:if>
+
+
+                    <a href="javascript:getColumnSummary('${column.name}')" title="Get column summary"><img src="images/summary_maths.png" alt="Column Summary"></a>
+
+                          <%-- right --%>
+	                    <c:if test="${not status.last}">
+	                      <fmt:message key="results.moveRightHelp" var="moveRightTitle">
+	                        <fmt:param value="${column.name}"/>
+	                      </fmt:message>
+	                      <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
+	                      <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
+	                                 title="${moveRightTitle}">
+	                        <img style="vertical-align:top;" border="0"
+	                             width="13" height="13"
+	                             src="images/right_arrow.png" alt="${moveRightString}"/>
+	                      </html:link>
+	                    </c:if>
+	                  
+	                  <%-- show/hide --%>
+	                  <c:if test="${fn:length(resultsTable.columns) > 1}">
+	                    <c:if test="${resultsTable.visibleColumnCount > 1}">
+	                      <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
+	                        <fmt:param value="${column.name}"/>
+	                      </fmt:message>
+	                      <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
+	                                 title="${hideColumnTitle}">
+	                        <img style="vertical-align:top;" border="0" 
+	                        src="images/close.png" title="${hideColumnTitle}" />
+	                      </html:link>
+	                    </c:if>
+	                  </c:if>
+
+	                  </div>
                     <div>
                       <c:set var="displayPath" value="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
                       <im:unqualify className="${column.name}" var="pathEnd"/>
@@ -128,78 +193,6 @@
                         </c:otherwise>
                       </c:choose>
                     </div>
-                    <%-- put in left, right, hide and show buttons --%>
-                    <table class="toolbox">
-                      <tr>
-                        <td>
-	                  <%-- left --%>
-	                  <c:choose>
-	                    <c:when test="${status.first}">
-	                      <%-- since this blank GIF is displayed only to balance
-	                           the right arrow at the other end of the div, it is
-	                           not needed if there is no arrow --%>
-	                      <c:if test="${not status.last}">
-	                        <img style="vertical-align:middle;" border="0" align="middle" 
-	                             src="images/blank13x13.gif" alt=" " width="13"
-	                             height="13"/>
-	                      </c:if>
-	                    </c:when>
-	                    <c:otherwise>
-	                      <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
-	                        <fmt:param value="${column.name}"/>
-	                      </fmt:message>
-	                      <fmt:message key="results.moveLeftSymbol" var="moveLeftString"/>
-	                      <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnLeft&amp;index=${status.index}&amp;trail=${param.trail}"
-	                                 title="${moveLeftTitle}">
-	                        <img style="vertical-align:middle;" border="0" align="middle"
-	                             width="13" height="13" src="images/left-arrow-simple.gif" 
-	                             alt="${moveLeftString}"/>
-	                      </html:link>
-	                    </c:otherwise>
-	                  </c:choose>
-                        </td>
-                        <td>
-	                  <%-- show/hide --%>
-	                  <c:if test="${fn:length(resultsTable.columns) > 1}">
-	                    <c:if test="${resultsTable.visibleColumnCount > 1}">
-	                      <fmt:message key="results.hideColumnHelp" var="hideColumnTitle">
-	                        <fmt:param value="${column.name}"/>
-	                      </fmt:message>
-	                      <html:link action="/changeTable?table=${param.table}&amp;method=hideColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-	                                 title="${hideColumnTitle}">
-	                        <img src="images/hide-column.gif" title="${hideColumnTitle}" align="left"/>
-	                      </html:link>
-	                    </c:if>
-	                  </c:if>
-                        </td>
-                        <td>
-                          <%-- right --%>
-                          <c:choose>
-	                    <c:when test="${status.last}">
-	                      <%-- since this blank GIF is displayed only to balance
-	                           the left arrow at the other end of the div, it is
-	                           not needed if there is no arrow --%>
-	                      <c:if test="${not status.last}">
-	                        <img style="vertical-align:middle;" border="0" align="middle" 
-		                     src="images/blank13x13.gif" alt=" " width="13" height="13"/>
-	                      </c:if>
-                            </c:when>
-	                    <c:otherwise>
-	                      <fmt:message key="results.moveRightHelp" var="moveRightTitle">
-	                        <fmt:param value="${column.name}"/>
-	                      </fmt:message>
-	                      <fmt:message key="results.moveRightSymbol" var="moveRightString"/>
-	                      <html:link action="/changeTable?table=${param.table}&amp;method=moveColumnRight&amp;index=${status.index}&amp;trail=${param.trail}"
-	                                 title="${moveRightTitle}">
-	                        <img style="vertical-align:middle;" border="0" align="middle" 
-	                             width="13" height="13"
-	                             src="images/right-arrow-simple.gif" alt="${moveRightString}"/>
-	                      </html:link>
-	                    </c:otherwise>
-	                  </c:choose>
-                        </td>
-                      </tr>
-                    </table>
                   </th>
                 </c:when>
                 <c:otherwise>
@@ -262,6 +255,18 @@
           </c:if>
         </table>
 
+        <%--  The Summary table --%>
+        <div id="summary" style="display:none;" >
+        <div>
+          <div align="right" ><img onclick="javascript:Effect.Fade('summary');" src="images/close.png" title="Close" 
+          onmouseout="this.style.cursor='normal';" onmouseover="this.style.cursor='pointer';"></div>
+          <p style="margin-top:5px;"><strong>Column Summary</strong></p>
+          <table class="results" cellpadding="0" cellspacing="0">
+            <thead id="summary_head"></thead>
+            <tbody id="summary_table"></tbody>
+          </table>
+       </div></div>
+       
         <c:if test="${resultsTable.size > 1}">
           <br/>
          <table cellpadding="0" cellspacing="0" > 

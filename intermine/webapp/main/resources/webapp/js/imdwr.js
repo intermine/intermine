@@ -69,3 +69,21 @@ function swapDivs(div1,div2){
 	document.getElementById(div1).style.display = 'none';
 	document.getElementById(div2).style.display = 'block';
 }
+
+function getColumnSummary(columnName) {
+	DWRUtil.removeAllRows('summary_table');
+	AjaxServices.getColumnSummary(columnName, function(str){
+	    var rows = str.rows;
+	    var cellFuncs = new Array();
+	    for (var i=0;i<rows[0].length;i++){
+	      cellFuncs[i] = eval('function(data) { return data['+i+']; }');
+	    }
+	    if(cellFuncs.length == 2){
+	      document.getElementById('summary_head').innerHTML = '<tr><th>Value</th><th>Count</th></tr>';
+	    } else if (cellFuncs.length == 4){
+	      document.getElementById('summary_head').innerHTML = '<tr><th>Min</th><th>Max</th><th>Average</th><th>Deviation</th></tr>';
+	    }
+		DWRUtil.addRows("summary_table", rows, cellFuncs);
+	    Effect.Appear('summary');
+	});
+}

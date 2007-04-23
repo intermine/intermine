@@ -952,3 +952,12 @@ img.objectDetailsAspectIcon {
 td.resBar {
     background-image:url('model/res_bar_middle.gif');
 }
+#summary {
+	position:absolute; 
+	background-color:#FFFFFF;
+	top:360px;
+	left:40%;
+	min-width:100px;
+	padding:5px;
+	border: solid black 1px;
+}
