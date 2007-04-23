@@ -28,6 +28,8 @@ public class ResultsRow extends ArrayList
 
     /**
      * @see ArrayList#ArrayList(Collection)
+     *
+     * @param c an existing Collection
      */
     public ResultsRow(Collection c) {
         super(c);

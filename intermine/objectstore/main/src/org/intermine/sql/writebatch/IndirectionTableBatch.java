@@ -136,7 +136,7 @@ public class IndirectionTableBatch implements Table
     }
 
     /**
-     * @see Table#getSize
+     * {@inheritDoc}
      */
     public int getSize() {
         return size;

@@ -72,13 +72,13 @@ public class IqlShell
         PrintStream out = System.out;
         try {
             Readline.load(ReadlineLibrary.GnuReadline);
-        } catch (UnsatisfiedLinkError ignore_me) {
+        } catch (UnsatisfiedLinkError ignoreMe) {
             try {
                 Readline.load(ReadlineLibrary.Editline);
-            } catch (UnsatisfiedLinkError ignore_me2) {
+            } catch (UnsatisfiedLinkError ignoreMe2) {
                 try {
                     Readline.load(ReadlineLibrary.Getline);
-                } catch (UnsatisfiedLinkError ignore_me3) {
+                } catch (UnsatisfiedLinkError ignoreMe3) {
                     out.println("couldn't load readline lib. Using simple stdin.");
                 }
             }

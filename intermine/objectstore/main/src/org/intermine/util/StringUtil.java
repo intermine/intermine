@@ -185,6 +185,12 @@ public class StringUtil
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
+    /**
+     * Reverses the capitalisation of the first character of the given String.
+     *
+     * @param str a String
+     * @return another String
+     */
     public static String reverseCapitalisation(String str) {
         if (str == null) {
             return null;

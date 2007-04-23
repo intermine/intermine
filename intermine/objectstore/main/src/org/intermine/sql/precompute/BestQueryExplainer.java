@@ -339,7 +339,7 @@ public class BestQueryExplainer extends BestQuery
         }
 
         /**
-         * @see Object#toString
+         * {@inheritDoc}
          */
         public String toString() {
             return "tables = " + tableCount + (query != null ? ", query = " + query

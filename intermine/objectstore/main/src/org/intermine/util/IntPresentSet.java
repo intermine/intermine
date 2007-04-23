@@ -143,7 +143,7 @@ public class IntPresentSet
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer retval = new StringBuffer("[");

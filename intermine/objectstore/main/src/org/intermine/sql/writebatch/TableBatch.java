@@ -196,7 +196,7 @@ public class TableBatch implements Table
     }
 
     /**
-     * @see Table#getSize
+     * {@inheritDoc}
      */
     public int getSize() {
         return size;

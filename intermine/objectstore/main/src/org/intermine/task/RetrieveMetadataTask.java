@@ -53,7 +53,7 @@ public class RetrieveMetadataTask extends Task
     }
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (destDir == null) {

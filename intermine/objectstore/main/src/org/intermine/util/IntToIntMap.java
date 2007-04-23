@@ -143,7 +143,7 @@ public class IntToIntMap
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         StringBuffer retval = new StringBuffer("{");

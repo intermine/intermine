@@ -79,7 +79,7 @@ public class QueryObjectPathExpression implements QueryPathExpression
     }
 
     /**
-     * @see QueryPathExpression#getType
+     * {@inheritDoc}
      */
     public Class getType() {
         return type;

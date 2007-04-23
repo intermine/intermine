@@ -32,7 +32,7 @@ public class FlushJobStatementBatchImpl implements FlushJob
     }
     
     /**
-     * @see FlushJob#flush
+     * {@inheritDoc}
      */
     public void flush() throws SQLException {
         batch.executeBatch();

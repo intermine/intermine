@@ -60,8 +60,7 @@ public class TorqueModelOutputTask extends Task
     }
 
     /**
-     * @see Task#execute
-     * @throws BuildException
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (this.destFile == null) {

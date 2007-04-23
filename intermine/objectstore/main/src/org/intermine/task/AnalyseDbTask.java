@@ -68,7 +68,7 @@ public class AnalyseDbTask extends Task
     }
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (database == null) {

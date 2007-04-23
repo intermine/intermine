@@ -242,8 +242,8 @@ public class Database implements Shutdownable
             // Get the first part of the string - this is the attribute we are taking about
             String attribute = propertyName;
             String subAttribute = "";
-            int index;
-            if ((index = propertyName.indexOf(".")) != -1) {
+            int index = propertyName.indexOf(".");
+            if (index != -1) {
                 attribute = propertyName.substring(0, index);
                 subAttribute = propertyName.substring(index + 1);
             }

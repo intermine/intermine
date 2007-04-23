@@ -83,7 +83,7 @@ public class PrecomputeTask extends Task
     }
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (alias == null) {

@@ -48,7 +48,7 @@ public class StoreMetadataTask extends Task
     }
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (modelName == null) {

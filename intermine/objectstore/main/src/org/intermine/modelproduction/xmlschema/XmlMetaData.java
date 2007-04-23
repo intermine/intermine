@@ -354,11 +354,13 @@ public class XmlMetaData
         if (xmlType != null && xmlType.isComplexType()) {
             Enumeration e1 = ((ComplexType) xmlType).getAttributeDecls();
             AttributeDecl attrib = null;
-            if (e1.hasMoreElements() && ((attrib = (AttributeDecl) e1.nextElement()) != null)
-                && !e1.hasMoreElements()
+            if (e1.hasMoreElements()) {
+                attrib = (AttributeDecl) e1.nextElement();
+                if (attrib != null && !e1.hasMoreElements()
                 /*&& xmlInfo.isReferenceField(path, attrib.getName())*/) {
-                // Add as candidate, these are checked at the end of the parse
-                referenceElements.put(path, attrib.getName());
+                    // Add as candidate, these are checked at the end of the parse
+                    referenceElements.put(path, attrib.getName());
+                }
             }
         }
 

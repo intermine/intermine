@@ -80,7 +80,7 @@ public class ProxyReference implements InterMineObject, Lazy
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return "<ProxyReference os: " + os + ", id: " + id + ", proxied class: " + clazz + ">";

@@ -40,7 +40,7 @@ public class FlushJobPostgresCopyImpl implements FlushJob
     }
     
     /**
-     * @see FlushJob#flush
+     * {@inheritDoc}
      */
     public void flush() throws SQLException {
         try {

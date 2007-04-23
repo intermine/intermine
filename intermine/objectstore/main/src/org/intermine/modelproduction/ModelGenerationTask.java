@@ -82,8 +82,7 @@ public class ModelGenerationTask extends Task
     }
 
     /**
-     * @see Task#execute
-     * @throws BuildException
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (this.destDir == null) {
