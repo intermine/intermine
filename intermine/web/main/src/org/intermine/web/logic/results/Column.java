@@ -50,7 +50,7 @@ public class Column
      */
     public Column(Path path, int index, Object type) {
         this.path = path;
-        this.name = path.toString();
+        this.name = path.toStringNoConstraints();
         this.index = index;
         this.type = type;
         setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
