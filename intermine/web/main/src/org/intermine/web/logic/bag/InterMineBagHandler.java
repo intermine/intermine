@@ -69,7 +69,7 @@ public class InterMineBagHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#startElement(String, String, String, Attributes)
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName,
             Attributes attrs) throws SAXException {
@@ -107,7 +107,7 @@ public class InterMineBagHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement(String, String, String)
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         try {

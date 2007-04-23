@@ -23,7 +23,7 @@ import org.intermine.web.logic.Constants;
 public class SessionListener implements HttpSessionListener
 {
     /**
-     * @see HttpSessionListener#sessionCreated
+     * {@inheritDoc}
      */
     public void sessionCreated(HttpSessionEvent se) {
         //System. out.println("sessionCreated");
@@ -33,7 +33,7 @@ public class SessionListener implements HttpSessionListener
     }
 
     /**
-     * @see HttpSessionListener#sessionDestroyed
+     * {@inheritDoc}
      */
     public void sessionDestroyed(HttpSessionEvent se) {
         //System. out.println("sessionDestroyed");

@@ -35,8 +35,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class ObjectDetailsTemplateController extends TilesAction
 {
     /**
-     * @see TilesAction#execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-     *                          HttpServletRequest request, HttpServletResponse response) 
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

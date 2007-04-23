@@ -32,7 +32,7 @@ import org.intermine.web.logic.results.DisplayObject;
 public class ObjectDetailsAspectController extends TilesAction
 {
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

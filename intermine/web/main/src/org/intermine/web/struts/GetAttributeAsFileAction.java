@@ -41,7 +41,7 @@ import org.intermine.web.logic.export.FieldExporter;
 public class GetAttributeAsFileAction extends Action
 {
     /**
-     * @see Action#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,

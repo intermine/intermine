@@ -40,14 +40,14 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#getAllRows()
+     * {@inheritDoc}
      */
     public WebResults getAllRows() {
         return results;
     }
 
     /**
-     * @see PagedTable#getSize()
+     * {@inheritDoc}
      */
     public int getSize() {
         try {
@@ -58,7 +58,7 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#isSizeEstimate()
+     * {@inheritDoc}
      */
     public boolean isSizeEstimate() {
         try {
@@ -69,7 +69,7 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#getExactSize()
+     * {@inheritDoc}
      */
     public int getExactSize() {
         return results.size();
@@ -86,14 +86,14 @@ public class PagedResults extends PagedTable implements Serializable
     }
 
     /**
-     * @see PagedTable#getMaxRetrievableIndex()
+     * {@inheritDoc}
      */
     public int getMaxRetrievableIndex() {
         return results.getMaxRetrievableIndex();
     }
 
     /**
-     * @see PagedTable#updateRows()
+     * {@inheritDoc}
      */
     public void updateRows() {
         List newRows = new ArrayList();

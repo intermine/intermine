@@ -59,7 +59,7 @@ public class MyMineController extends TilesAction
 {
     /**
      * Set up attributes for the myMine page.
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

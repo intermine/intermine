@@ -229,7 +229,7 @@ public class ObjectTrailController extends TilesAction
         }
 
         /**
-         * @see Object#toString()
+         * {@inheritDoc}
          */
         public String toString() {
             return new ToStringBuilder(this)

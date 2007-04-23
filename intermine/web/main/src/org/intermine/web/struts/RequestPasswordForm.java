@@ -42,7 +42,7 @@ public class RequestPasswordForm extends ActionForm
     }
 
     /**
-     * @see ActionForm#reset
+     * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         username = null;

@@ -77,7 +77,7 @@ public class Aspect
     /**
      * Get the AspectSources.
      * @return the AspectSources
-     * @see org.intermine.web.dataset.AspectSource
+     * {@inheritDoc}
      */
     public List getAspectSources() {
         return aspectSources;

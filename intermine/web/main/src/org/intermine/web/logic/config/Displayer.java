@@ -81,7 +81,7 @@ public class Displayer
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      *
      * @param obj the Object to compare with
      * @return true if this is equal to obj
@@ -95,7 +95,7 @@ public class Displayer
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      *
      * @return the hashCode for this Displayer object
      */

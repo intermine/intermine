@@ -482,7 +482,7 @@ public class PathQuery
     }
 
     /**
-     * @see Object#equals(Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         return (o instanceof PathQuery)
@@ -494,7 +494,7 @@ public class PathQuery
     }
 
     /**
-     * @see Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 2 * model.hashCode()
@@ -504,7 +504,7 @@ public class PathQuery
     }
 
     /**
-     * @see Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view

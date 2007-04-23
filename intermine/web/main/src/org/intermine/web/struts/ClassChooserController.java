@@ -35,8 +35,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class ClassChooserController extends TilesAction
 {
     /**
-     * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
-     *                          HttpServletResponse)
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

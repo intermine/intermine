@@ -58,7 +58,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                       });
     
     /**
-     * @see TilesRequestProcessor#processPreprocess
+     * {@inheritDoc}
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         
@@ -130,7 +130,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      * Overriden to copy errors and messages to session before performing
      * a redirecting forward.
      *
-     * @see TilesRequestProcessor#processForwardConfig
+     * {@inheritDoc}
      */
     protected void processForwardConfig(HttpServletRequest request,
                                         HttpServletResponse response,

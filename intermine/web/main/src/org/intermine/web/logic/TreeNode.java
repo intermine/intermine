@@ -90,7 +90,7 @@ public class TreeNode
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (!(obj instanceof TreeNode)) {
@@ -105,7 +105,7 @@ public class TreeNode
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return o.hashCode()
@@ -116,7 +116,7 @@ public class TreeNode
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return o + " " + text + " " + indentation + " " + selected + " " + leaf + " " + open;

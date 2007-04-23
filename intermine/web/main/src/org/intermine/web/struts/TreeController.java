@@ -44,7 +44,7 @@ import org.intermine.web.logic.TreeNode;
 public class TreeController extends TilesAction
 {
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

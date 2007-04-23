@@ -131,7 +131,7 @@ public class TemplateSettingsForm extends ActionForm
     /**
      * Reset the form bean taking initial state from current TemplateBuildState session
      * attribute.
-     * @see ActionForm#reset
+     * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         TemplateBuildState tbs =
@@ -145,7 +145,7 @@ public class TemplateSettingsForm extends ActionForm
     }
     
     /**
-     * @see ActionForm#validate
+     * {@inheritDoc}
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();

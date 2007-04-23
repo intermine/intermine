@@ -35,8 +35,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class TemplatesExportAction extends InterMineAction
 {
     /**
-     * @see InterMineAction#execute(ActionMapping, ActionForm, HttpServletRequest,
-     *  HttpServletResponse)
+     * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,

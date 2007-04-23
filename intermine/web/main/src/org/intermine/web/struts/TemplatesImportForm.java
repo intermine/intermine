@@ -75,7 +75,7 @@ public class TemplatesImportForm extends ValidatorForm
     }
     
     /**
-     * @see ActionForm#reset
+     * {@inheritDoc}
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
@@ -93,7 +93,7 @@ public class TemplatesImportForm extends ValidatorForm
     /**
      * Call inherited method then check whether xml is valid.
      *
-     * @see ValidatorForm#validate
+     * {@inheritDoc}
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();

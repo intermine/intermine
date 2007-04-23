@@ -146,14 +146,14 @@ public class WebResults extends AbstractList implements WebColumnTable
     }
 
     /**
-     * @see java.util.AbstractList#get(int)
+     * {@inheritDoc}
      */
     public Object get(int index) {
         return getElementsInternal(index, false);
     }
 
     /**
-     * @see java.util.AbstractCollection#size()
+     * {@inheritDoc}
      */
     public int size() {
        return getInterMineResults().size();

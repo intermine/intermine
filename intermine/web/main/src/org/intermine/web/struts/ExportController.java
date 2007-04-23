@@ -45,7 +45,7 @@ public class ExportController extends TilesAction
     private static final Logger LOG = Logger.getLogger(ExportController.class);
 
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

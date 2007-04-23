@@ -150,7 +150,7 @@ public class WebConfig
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      *
      * @param obj the Object to compare with
      * @return true if this is equal to obj
@@ -167,7 +167,7 @@ public class WebConfig
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      *
      * @return the hashCode for this WebConfig object
      */

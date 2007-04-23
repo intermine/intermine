@@ -59,7 +59,7 @@ public class ModifyTemplateForm extends ActionForm
     }
 
     /**
-     * @see ActionForm#validate
+     * {@inheritDoc}
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = null;

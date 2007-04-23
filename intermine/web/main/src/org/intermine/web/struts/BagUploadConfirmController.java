@@ -34,7 +34,7 @@ public class BagUploadConfirmController extends TilesAction
 {
     /**
      * Set up the bagUploadConfirm page.
-     * @see TilesAction#execute(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
             ActionMapping mapping, ActionForm form, HttpServletRequest request,

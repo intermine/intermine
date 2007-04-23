@@ -68,7 +68,7 @@ public class TemplateController extends TilesAction
      *    <li>shared? public?
      * </ol>
      *
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
             ActionMapping mapping, ActionForm form, HttpServletRequest request,

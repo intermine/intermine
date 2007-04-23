@@ -84,7 +84,7 @@ public class BagElement implements Serializable
     
     /**
      * (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         BagElement bagElt = (BagElement) obj;
@@ -94,7 +94,7 @@ public class BagElement implements Serializable
     
     /**
      * (non-Javadoc)
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     public int hashCode() {
         return  id.hashCode() + 3 * type.hashCode();

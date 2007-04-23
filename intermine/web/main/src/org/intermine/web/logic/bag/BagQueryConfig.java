@@ -43,7 +43,7 @@ public class BagQueryConfig
 
     /**
      * Set the class name of extra constraint to use in BagQuery objects using this config object.
-     * @see #getExtraConstraintClassName()
+     * {@inheritDoc}
      * @param extraConstraintClassName the class name
      */
     public void setExtraConstraintClassName(String extraConstraintClassName) {
@@ -52,7 +52,7 @@ public class BagQueryConfig
     
     /**
      * Return the connecting field.
-     * @see #getExtraConstraintClassName()
+     * {@inheritDoc}
      * @return the connecting field
      */
     public String getConnectField() {
@@ -61,7 +61,7 @@ public class BagQueryConfig
 
     /**
      * Set the connecting field for adding an extra constraint to bag queries.
-     * @see #getExtraConstraintClassName()
+     * {@inheritDoc}
      * @param connectField
      */
     public void setConnectField(String connectField) {
@@ -70,7 +70,7 @@ public class BagQueryConfig
 
     /**
      * Return the constrain field.
-     * @see #getExtraConstraintClassName()
+     * {@inheritDoc}
      * @return the constrain field
      */
     public String getConstrainField() {
@@ -79,7 +79,7 @@ public class BagQueryConfig
 
     /**
      * Set the field to constrain when making an extra constraint.
-     * @see #getExtraConstraintClassName()
+     * {@inheritDoc}
      * @param constrainField
      */
     public void setConstrainField(String constrainField) {

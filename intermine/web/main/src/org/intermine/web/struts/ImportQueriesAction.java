@@ -36,7 +36,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ImportQueriesAction extends InterMineAction
 {
     /**
-     * @see InterMineAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,

@@ -60,7 +60,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class QueryBuilderController extends TilesAction
 {
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
@@ -77,7 +77,7 @@ public class QueryBuilderController extends TilesAction
      *            the current request
      * @param response
      *            the current response
-     * @see QueryBuilderChange
+     * {@inheritDoc}
      */
     public static void populateRequest(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

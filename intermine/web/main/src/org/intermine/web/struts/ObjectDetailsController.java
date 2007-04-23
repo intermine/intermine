@@ -51,8 +51,7 @@ import org.intermine.web.logic.template.TemplateRepository;
 public class ObjectDetailsController extends InterMineAction
 {
     /**
-     * @see InterMineAction#execute(ActionMapping, ActionForm, HttpServletRequest,
-     *                                         HttpServletResponse)
+     * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
