@@ -32,7 +32,7 @@ public class DefaultDeserializerFactory extends BaseDeserializerFactory
     }
 
     /**
-     * @see BaseDeserializerFactory#getGeneralPurpose
+     * {@inheritDoc}
      */
     protected Deserializer getGeneralPurpose(String mechanismType) {
         if (javaType == null || xmlType == null) {

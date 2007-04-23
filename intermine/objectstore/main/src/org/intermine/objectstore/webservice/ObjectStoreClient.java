@@ -151,7 +151,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -177,21 +177,21 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     }
     
     /**
-     * @see ObjectStore#estimate
+     * {@inheritDoc}
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return (ResultsInfo) remoteMethod("estimate", new Object [] {getQueryId(q)});
     }
 
     /**
-     * @see ObjectStore#count
+     * {@inheritDoc}
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return ((Integer) remoteMethod("count", new Object [] {getQueryId(q)})).intValue();
     }
 
     /**
-     * @see ObjectStore#getObjectById
+     * {@inheritDoc}
      */
     public InterMineObject internalGetObjectById(Integer id) throws ObjectStoreException {
         return SerializationUtil.stringToObject((InterMineString)
@@ -217,21 +217,21 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#isMultiConnection
+     * {@inheritDoc}
      */
     public boolean isMultiConnection() {
         return true;
     }
 
     /**
-     * @see ObjectStore#getSequence
+     * {@inheritDoc}
      */
     public int getSequence() {
         return 0;
     }
 
     /**
-     * @see ObjectStore#getSerial
+     * {@inheritDoc}
      */
     public Integer getSerial() throws ObjectStoreException {
         throw new ObjectStoreException("Cannot getSerial() on an ObjectStoreClient");

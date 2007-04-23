@@ -35,35 +35,35 @@ public class AlwaysMap implements Map
     }
 
     /**
-     * @see Map#clear
+     * {@inheritDoc}
      */
     public void clear() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see Map#containsKey
+     * {@inheritDoc}
      */
     public boolean containsKey(Object key) {
         return true;
     }
 
     /**
-     * @see Map#containsValue
+     * {@inheritDoc}
      */
     public boolean containsValue(Object value) {
         return toReturn.equals(value);
     }
 
     /**
-     * @see Map#entrySet
+     * {@inheritDoc}
      */
     public Set entrySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see Map#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (o instanceof AlwaysMap) {
@@ -73,63 +73,63 @@ public class AlwaysMap implements Map
     }
 
     /**
-     * @see Map#get
+     * {@inheritDoc}
      */
     public Object get(Object key) {
         return toReturn;
     }
 
     /**
-     * @see Map#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return toReturn.hashCode();
     }
 
     /**
-     * @see Map#isEmpty
+     * {@inheritDoc}
      */
     public boolean isEmpty() {
         return false;
     }
 
     /**
-     * @see Map#keySet
+     * {@inheritDoc}
      */
     public Set keySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see Map#put
+     * {@inheritDoc}
      */
     public Object put(Object key, Object value) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see Map#putAll
+     * {@inheritDoc}
      */
     public void putAll(Map map) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see Map#remove
+     * {@inheritDoc}
      */
     public Object remove(Object key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see Map#size
+     * {@inheritDoc}
      */
     public int size() {
         return 1;
     }
 
     /**
-     * @see Map#values
+     * {@inheritDoc}
      */
     public Collection values() {
         return Collections.singleton(toReturn);

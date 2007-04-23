@@ -217,7 +217,7 @@ public class OptimiserCache
         }
 
         /**
-         * @see Comparable#compareTo
+         * {@inheritDoc}
          */
         public int compareTo(Object o) {
             if (o instanceof DateAndSequence) {

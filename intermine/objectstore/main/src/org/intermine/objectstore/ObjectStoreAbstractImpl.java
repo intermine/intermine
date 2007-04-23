@@ -93,14 +93,14 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectById(Integer)
+     * {@inheritDoc}
      */
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return getObjectById(id, InterMineObject.class);
     }
 
     /**
-     * @see ObjectStore#getObjectById(Integer, Class)
+     * {@inheritDoc}
      */
     public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
         getObjectOps++;
@@ -161,7 +161,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectsByIds(Collection)
+     * {@inheritDoc}
      */
     public List getObjectsByIds(Collection ids) throws ObjectStoreException {
         Results results = execute(QueryCreator.createQueryForIds(ids, InterMineObject.class));
@@ -194,7 +194,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#prefetchObjectById(Integer)
+     * {@inheritDoc}
      */
     public void prefetchObjectById(Integer id) {
         getObjectPrefetches++;
@@ -206,7 +206,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#invalidateObjectById(Integer)
+     * {@inheritDoc}
      */
     public void invalidateObjectById(Integer id) {
         synchronized (cache) {
@@ -216,7 +216,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#cacheObjectById(Integer, InterMineObject)
+     * {@inheritDoc}
      */
     public Object cacheObjectById(Integer id, InterMineObject obj) {
         synchronized (cache) {
@@ -226,7 +226,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#flushObjectById()
+     * {@inheritDoc}
      */
     public void flushObjectById() {
         synchronized (cache) {
@@ -236,7 +236,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#pilferObjectById(Integer)
+     * {@inheritDoc}
      */
     public InterMineObject pilferObjectById(Integer id) {
         synchronized (cache) {
@@ -270,14 +270,14 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getModel()
+     * {@inheritDoc}
      */
     public Model getModel() {
         return model;
     }
 
     /**
-     * @see ObjectStore#getObjectByExample(InterMineObject, Set)
+     * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
@@ -330,21 +330,21 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getMaxLimit
+     * {@inheritDoc}
      */
     public int getMaxLimit() {
         return maxLimit;
     }
 
     /**
-     * @see ObjectStore#getMaxOffset
+     * {@inheritDoc}
      */
     public int getMaxOffset() {
         return maxOffset;
     }
 
     /**
-     * @see ObjectStore#getMaxTime
+     * {@inheritDoc}
      */
     public long getMaxTime() {
         return maxTime;

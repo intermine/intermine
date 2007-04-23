@@ -30,105 +30,105 @@ public class AlwaysSet implements Set
     }
 
     /**
-     * @see Set#add
+     * {@inheritDoc}
      */
     public boolean add(Object o) {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#addAll
+     * {@inheritDoc}
      */
     public boolean addAll(Collection c) {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#clear
+     * {@inheritDoc}
      */
     public void clear() {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#contains
+     * {@inheritDoc}
      */
     public boolean contains(Object o) {
         return true;
     }
 
     /**
-     * @see Set#containsAll
+     * {@inheritDoc}
      */
     public boolean containsAll(Collection c) {
         return true;
     }
 
     /**
-     * @see Set#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         return o == this;
     }
 
     /**
-     * @see Set#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 8732342;
     }
 
     /**
-     * @see Set#isEmpty
+     * {@inheritDoc}
      */
     public boolean isEmpty() {
         return false;
     }
 
     /**
-     * @see Set#iterator
+     * {@inheritDoc}
      */
     public Iterator iterator() {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#remove
+     * {@inheritDoc}
      */
     public boolean remove(Object o) {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#removeAll
+     * {@inheritDoc}
      */
     public boolean removeAll(Collection c) {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#retainAll
+     * {@inheritDoc}
      */
     public boolean retainAll(Collection c) {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#size
+     * {@inheritDoc}
      */
     public int size() {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#toArray
+     * {@inheritDoc}
      */
     public Object[] toArray() {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
-     * @see Set#add
+     * {@inheritDoc}
      */
     public Object[] toArray(Object o[]) {
         throw new UnsupportedOperationException("Immutable virtual AlwaysSet");

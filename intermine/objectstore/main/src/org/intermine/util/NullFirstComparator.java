@@ -28,7 +28,7 @@ public class NullFirstComparator implements Comparator
     }
 
     /**
-     * @see Comparator#compare
+     * {@inheritDoc}
      */
     public int compare(Object o1, Object o2) {
         if (o1 == null) {

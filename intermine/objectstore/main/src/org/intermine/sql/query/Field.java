@@ -110,7 +110,7 @@ public class Field extends AbstractValue
     /**
      * Compare this field to another AbstractValue.
      *
-     * @see AbstractValue#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof Field) {

@@ -43,7 +43,7 @@ public class QueryCast implements QueryEvaluable
     }
 
     /**
-     * @see QueryEvaluable#getType
+     * {@inheritDoc}
      */
     public Class getType() {
         return type;
@@ -59,7 +59,7 @@ public class QueryCast implements QueryEvaluable
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof QueryCast) {
@@ -72,21 +72,21 @@ public class QueryCast implements QueryEvaluable
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 3 * value.hashCode() + 5 * type.hashCode();
     }
 
     /**
-     * @see QueryEvaluable#youAreType
+     * {@inheritDoc}
      */
     public void youAreType(Class cls) {
         throw new ClassCastException("youAreType called on a QueryCast");
     }
 
     /**
-     * @see QueryEvaluable#getApproximateType
+     * {@inheritDoc}
      */
     public int getApproximateType() {
         throw new ClassCastException("getApproximateType called on QueryCast");

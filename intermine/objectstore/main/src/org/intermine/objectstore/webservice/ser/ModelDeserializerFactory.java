@@ -27,14 +27,14 @@ public class ModelDeserializerFactory implements DeserializerFactory
     private ArrayList mechanisms;
 
     /**
-     * @see DeserializerFactory#getDeserializerAs
+     * {@inheritDoc}
      */
     public Deserializer getDeserializerAs(String mechanismType) {
         return new ModelDeserializer();
     }
 
     /**
-     * @see DeserializerFactory#getSupportedMechanismTypes
+     * {@inheritDoc}
      */
     public Iterator getSupportedMechanismTypes() {
         if (mechanisms == null) {

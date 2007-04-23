@@ -22,14 +22,17 @@ public class ObjectStoreBagCombination implements QuerySelectable
 {
     private final List<ObjectStoreBag> bags = new ArrayList<ObjectStoreBag>();
     private final int op;
+    /** Constant representing a UNION operation */
     public static final int UNION = 879234;
+    /** Constant representing an INTERSECTION operation */
     public static final int INTERSECT = 519552;
+    /** Constant representing an EXCEPT operation */
     public static final int EXCEPT = 281056;
 
     /**
      * Constructs a new ObjectStoreBagCombination.
      *
-     * @param type the type of combination, out of UNION, INTERSECT, and EXCEPT
+     * @param op the type of combination, out of UNION, INTERSECT, and EXCEPT
      */
     public ObjectStoreBagCombination(int op) {
         if ((op != UNION) && (op != INTERSECT) && (op != EXCEPT)) {
@@ -66,7 +69,7 @@ public class ObjectStoreBagCombination implements QuerySelectable
     }
 
     /**
-     * @see QuerySelectable#getType
+     * {@inheritDoc}
      */
     public Class getType() {
         return Integer.class;

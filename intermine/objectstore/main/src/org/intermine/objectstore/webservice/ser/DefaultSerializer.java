@@ -36,7 +36,7 @@ public class DefaultSerializer implements Serializer
     private static final Logger LOG = Logger.getLogger(DefaultSerializer.class);
 
     /**
-     * @see Serializer#serialize
+     * {@inheritDoc}
      */
     public void serialize(QName name, Attributes attributes, Object value,
                           SerializationContext context) throws IOException {
@@ -62,14 +62,14 @@ public class DefaultSerializer implements Serializer
     }
 
     /**
-     * @see Serializer#writeSchema
+     * {@inheritDoc}
      */
     public Element writeSchema(Class javaType, Types types) throws Exception {
         return null;
     }
 
     /**
-     * @see Serializer#getMechanismType
+     * {@inheritDoc}
      */
     public String getMechanismType() {
         return null;

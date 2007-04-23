@@ -61,7 +61,7 @@ public abstract class ReferenceMap implements Map
     }
     
     /**
-     * @see java.util.Map#size
+     * {@inheritDoc}
      */
     public int size() {
         expungeStaleEntries();
@@ -69,14 +69,14 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#isEmpty
+     * {@inheritDoc}
      */
     public boolean isEmpty() {
         return size() == 0;
     }
 
     /**
-     * @see java.util.Map#keySet
+     * {@inheritDoc}
      */
     public Set keySet() {
         expungeStaleEntries();
@@ -84,7 +84,7 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#clear
+     * {@inheritDoc}
      */
     public void clear() {
         expungeStaleEntries();
@@ -92,7 +92,7 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#get
+     * {@inheritDoc}
      */
     public Object get(Object key) {
         expungeStaleEntries();
@@ -108,7 +108,7 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#containsKey
+     * {@inheritDoc}
      */
     public boolean containsKey(Object key) {
         expungeStaleEntries();
@@ -116,7 +116,7 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#put
+     * {@inheritDoc}
      */
     public Object put(Object key, Object value) {
         expungeStaleEntries();
@@ -147,7 +147,7 @@ public abstract class ReferenceMap implements Map
     protected abstract ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key);
 
     /**
-     * @see java.util.Map.putAll
+     * {@inheritDoc}
      */
     public void putAll(Map t) {
         Iterator i = t.entrySet().iterator();
@@ -158,7 +158,7 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#remove
+     * {@inheritDoc}
      */
     public Object remove(Object key) {
         expungeStaleEntries();
@@ -174,42 +174,42 @@ public abstract class ReferenceMap implements Map
     }
 
     /**
-     * @see java.util.Map#containsValue
+     * {@inheritDoc}
      */
     public boolean containsValue(Object key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see java.util.Map#entrySet
+     * {@inheritDoc}
      */
     public Set entrySet() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see java.util.Map#values
+     * {@inheritDoc}
      */
     public Collection values() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see java.util.Map#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * @see java.util.Map#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
     
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return subMap.toString();

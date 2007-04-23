@@ -37,7 +37,7 @@ public class CombinedIterator implements Iterator
     }
 
     /**
-     * @see Iterator#hasNext
+     * {@inheritDoc}
      */
     public boolean hasNext() {
         while (((currentIterator == null) || (!currentIterator.hasNext()))
@@ -48,7 +48,7 @@ public class CombinedIterator implements Iterator
     }
 
     /**
-     * @see Iterator#next
+     * {@inheritDoc}
      */
     public Object next() {
         if (hasNext()) {
@@ -59,7 +59,7 @@ public class CombinedIterator implements Iterator
     }
 
     /**
-     * @see Iterator#remove
+     * {@inheritDoc}
      * This operation is not supported.
      */
     public void remove() {

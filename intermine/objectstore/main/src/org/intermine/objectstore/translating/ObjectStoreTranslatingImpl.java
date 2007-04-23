@@ -124,7 +124,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
     
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -160,14 +160,14 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#estimate
+     * {@inheritDoc}
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(translateQuery(q));
     }
 
     /**
-     * @see ObjectStore#count
+     * {@inheritDoc}
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return os.count(translateQuery(q), sequence);
@@ -183,7 +183,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
         throws ObjectStoreException {
@@ -192,14 +192,14 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#isMultiConnection
+     * {@inheritDoc}
      */
     public boolean isMultiConnection() {
         return os.isMultiConnection();
     }
 
     /**
-     * @see ObjectStore#getSequence
+     * {@inheritDoc}
      */
     public int getSequence() {
         return os.getSequence();
@@ -207,7 +207,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
 
     private int internalGetObjectByIdCount = 0;
     /**
-     * @see ObjectStoreAbstractImpl#internalGetObjectById
+     * {@inheritDoc}
      */
     public InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
@@ -237,7 +237,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * @see ObjectStore#getSerial
+     * {@inheritDoc}
      */
     public Integer getSerial() throws ObjectStoreException {
         return os.getSerial();

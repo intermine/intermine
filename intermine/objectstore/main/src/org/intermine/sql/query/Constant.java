@@ -74,7 +74,7 @@ public class Constant extends AbstractValue
      * This method is capable of spotting some situations when one Constant is strictly less or
      * greater than another.
      *
-     * @see AbstractValue#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
         if (obj instanceof Constant) {
@@ -144,7 +144,7 @@ public class Constant extends AbstractValue
     }
 
     /**
-     * @see Object#toString
+     * {@inheritDoc}
      */
     public String toString() {
         return value;

@@ -27,14 +27,14 @@ public class DefaultSerializerFactory implements SerializerFactory
     private ArrayList mechanisms;
 
     /**
-     * @see SerializerFactory#getSerializerAs
+     * {@inheritDoc}
      */
     public Serializer getSerializerAs(String mechanismType) {
         return new DefaultSerializer();
     }
 
     /**
-     * @see SerializerFactory#getSupportedMechanismTypes
+     * {@inheritDoc}
      */
     public Iterator getSupportedMechanismTypes() {
         if (mechanisms == null) {

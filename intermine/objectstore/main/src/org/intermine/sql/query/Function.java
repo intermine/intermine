@@ -280,7 +280,7 @@ public class Function extends AbstractValue
     }
 
     /**
-     * @see AbstractValue#compare
+     * {@inheritDoc}
      */
     public int compare(AbstractValue obj, Map tableMap, Map reverseTableMap) {
         if (tableMap instanceof IdentityMap) {

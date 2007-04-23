@@ -29,7 +29,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     private static final Logger LOG = Logger.getLogger(BatchWriterPreparedStatementImpl.class);
 
     /**
-     * @see BatchWriterSimpleImpl#doInserts
+     * {@inheritDoc}
      */
     protected int doInserts(String name, TableBatch table, List batches) throws SQLException {
         String colNames[] = table.getColNames();
@@ -79,7 +79,7 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
     }
 
     /**
-     * @see BatchWriterSimpleImpl#doIndirectionInserts
+     * {@inheritDoc}
      */
     protected int doIndirectionInserts(String name,
             IndirectionTableBatch table, List batches) throws SQLException {

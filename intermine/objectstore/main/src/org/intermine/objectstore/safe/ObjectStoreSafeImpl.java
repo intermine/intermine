@@ -38,14 +38,14 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     }
 
     /**
-     * @see ObjectStore#execute(Query)
+     * {@inheritDoc}
      */
     public Results execute(Query q) throws ObjectStoreException {
         return os.execute(QueryCloner.cloneQuery(q));
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -53,14 +53,14 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     }
 
     /**
-     * @see ObjectStore#estimate
+     * {@inheritDoc}
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(QueryCloner.cloneQuery(q));
     }
 
     /**
-     * @see ObjectStore#count
+     * {@inheritDoc}
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return os.count(QueryCloner.cloneQuery(q), sequence);

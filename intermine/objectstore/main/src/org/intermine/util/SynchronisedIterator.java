@@ -31,21 +31,21 @@ public class SynchronisedIterator implements Iterator
     }
 
     /**
-     * @see Iterator#hasNext
+     * {@inheritDoc}
      */
     public synchronized boolean hasNext() {
         return iterator.hasNext();
     }
 
     /**
-     * @see Iterator#next
+     * {@inheritDoc}
      */
     public synchronized Object next() {
         return iterator.next();
     }
 
     /**
-     * @see Iterator#remove
+     * {@inheritDoc}
      */
     public synchronized void remove() {
         iterator.remove();

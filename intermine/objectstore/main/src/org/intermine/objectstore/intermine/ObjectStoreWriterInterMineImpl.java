@@ -148,14 +148,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#getLogEverything()
+     * {@inheritDoc}
      */
     public boolean getLogEverything() {
         return os.getLogEverything();
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#dbLog(long, long, long, long, long, Query, String)
+     * {@inheritDoc}
      */
     protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
             Query q, String sql) {
@@ -202,7 +202,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#getConnection()
+     * {@inheritDoc}
      */
     public synchronized Connection getConnection() throws SQLException {
         int loops = 0;
@@ -248,7 +248,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#releaseConnection(Connection)
+     * {@inheritDoc}
      */
     public synchronized void releaseConnection(Connection c) {
         if ((conn == null) && (c != null)) {
@@ -303,7 +303,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#close()
+     * {@inheritDoc}
      */
     public synchronized void close() throws ObjectStoreException {
         if (conn == null) {
@@ -353,14 +353,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#getObjectStore()
+     * {@inheritDoc}
      */
     public ObjectStore getObjectStore() {
         return os;
     }
 
     /**
-     * @see ObjectStoreWriter#store(InterMineObject)
+     * {@inheritDoc}
      */
     public void store(InterMineObject o) throws ObjectStoreException {
         Connection c = null;
@@ -595,7 +595,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#addToCollection
+     * {@inheritDoc}
      */
     public void addToCollection(Integer hasId, Class clazz, String fieldName, Integer hadId)
         throws ObjectStoreException {
@@ -787,14 +787,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#addToBag
+     * {@inheritDoc}
      */
     public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
         addAllToBag(osb, Collections.singleton(element));
     }
 
     /**
-     * @see ObjectStoreWriter#addAllToBag
+     * {@inheritDoc}
      */
     public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
         try {
@@ -848,14 +848,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#removeFromBag
+     * {@inheritDoc}
      */
     public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
         removeAllFromBag(osb, Collections.singleton(element));
     }
 
     /**
-     * @see ObjectStoreWriter#removeAllFromBag
+     * {@inheritDoc}
      */
     public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
         try {
@@ -909,7 +909,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#addToBagFromQuery
+     * {@inheritDoc}
      */
     public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
         List select = query.getSelect();
@@ -1006,7 +1006,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#delete(InterMineObject)
+     * {@inheritDoc}
      */
     public void delete(InterMineObject o) throws ObjectStoreException {
         Connection c = null;
@@ -1069,7 +1069,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#isInTransaction
+     * {@inheritDoc}
      */
     public boolean isInTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -1099,7 +1099,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#beginTransaction
+     * {@inheritDoc}
      */
     public void beginTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -1132,7 +1132,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#commitTransaction
+     * {@inheritDoc}
      */
     public void commitTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -1168,7 +1168,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreWriter#abortTransaction
+     * {@inheritDoc}
      */
     public void abortTransaction() throws ObjectStoreException {
         Connection c = null;
@@ -1203,7 +1203,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      *
      * This method is overridden in order to flush batches properly before the read.
      */
@@ -1223,7 +1223,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#generateSql(Connection, Query, int, int)
+     * {@inheritDoc}
      *
      * Delegates to the parent ObjectStore
      */
@@ -1233,7 +1233,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#count(Query, int)
+     * {@inheritDoc}
      *
      * This method is overridden in order to flush batches properly before the read.
      */
@@ -1252,7 +1252,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStoreInterMineImpl#internalGetObjectById(Integer, Class)
+     * {@inheritDoc}
      *
      * This method is overridden in order to flush matches properly before the read.
      */
@@ -1292,7 +1292,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * @see ObjectStore#isMultiConnection()
+     * {@inheritDoc}
      */
     public boolean isMultiConnection() {
         return false;

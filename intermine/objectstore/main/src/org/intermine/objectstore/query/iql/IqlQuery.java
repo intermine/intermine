@@ -502,7 +502,7 @@ public class IqlQuery
     }
 
     /**
-     * @see Object#equals
+     * {@inheritDoc}
      */
     public boolean equals(Object o) {
         if (!(o instanceof IqlQuery)) {
@@ -515,7 +515,7 @@ public class IqlQuery
     }
 
     /**
-     * @see Object#hashCode
+     * {@inheritDoc}
      */
     public int hashCode() {
         return 2 * queryString.hashCode()

@@ -41,14 +41,14 @@ public class ObjectStorePassthruImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#execute(Query)
+     * {@inheritDoc}
      */
     public Results execute(Query q) throws ObjectStoreException {
         return os.execute(q);
     }
 
     /**
-     * @see ObjectStore#execute(Query, int, int, boolean, boolean, int)
+     * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             int sequence) throws ObjectStoreException {
@@ -56,84 +56,84 @@ public class ObjectStorePassthruImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#getObjectById(Integer)
+     * {@inheritDoc}
      */
     public InterMineObject getObjectById(Integer id) throws ObjectStoreException {
         return os.getObjectById(id);
     }
 
     /**
-     * @see ObjectStore#getObjectById(Integer, Class)
+     * {@inheritDoc}
      */
     public InterMineObject getObjectById(Integer id, Class clazz) throws ObjectStoreException {
         return os.getObjectById(id, clazz);
     }
 
     /**
-     * @see ObjectStore#getObjectsByIds(Integer)
+     * {@inheritDoc}
      */
     public List getObjectsByIds(Collection ids) throws ObjectStoreException {
         return os.getObjectsByIds(ids);
     }
 
     /**
-     * @see ObjectStore#prefetchObjectById
+     * {@inheritDoc}
      */
     public void prefetchObjectById(Integer id) {
         os.prefetchObjectById(id);
     }
 
     /**
-     * @see ObjectStore#invalidateObjectById
+     * {@inheritDoc}
      */
     public void invalidateObjectById(Integer id) {
         os.invalidateObjectById(id);
     }
 
     /**
-     * @see ObjectStore#cacheObjectById
+     * {@inheritDoc}
      */
     public Object cacheObjectById(Integer id, InterMineObject obj2) {
         return os.cacheObjectById(id, obj2);
     }
 
     /**
-     * @see ObjectStore#flushObjectById
+     * {@inheritDoc}
      */
     public void flushObjectById() {
         os.flushObjectById();
     }
 
     /**
-     * @see ObjectStore#pilferObjectById
+     * {@inheritDoc}
      */
     public InterMineObject pilferObjectById(Integer id) {
         return os.pilferObjectById(id);
     }
 
     /**
-     * @see ObjectStore#estimate
+     * {@inheritDoc}
      */
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(q);
     }
 
     /**
-     * @see ObjectStore#count
+     * {@inheritDoc}
      */
     public int count(Query q, int sequence) throws ObjectStoreException {
         return os.count(q, sequence);
     }
 
     /**
-     * @see ObjectStore#getModel
+     * {@inheritDoc}
      */
     public Model getModel() {
         return os.getModel();
     }
 
     /**
-     * @see ObjectStore#getObjectByExample
+     * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
             throws ObjectStoreException {
@@ -141,49 +141,49 @@ public class ObjectStorePassthruImpl implements ObjectStore
     }
 
     /**
-     * @see ObjectStore#isMultiConnection
+     * {@inheritDoc}
      */
     public boolean isMultiConnection() {
         return os.isMultiConnection();
     }
 
     /**
-     * @see ObjectStore#getSequence
+     * {@inheritDoc}
      */
     public int getSequence() {
         return os.getSequence();
     }
 
     /**
-     * @see ObjectStore#getMaxLimit
+     * {@inheritDoc}
      */
     public int getMaxLimit() {
         return os.getMaxLimit();
     }
 
     /**
-     * @see ObjectStore#getMaxOffset
+     * {@inheritDoc}
      */
     public int getMaxOffset() {
         return os.getMaxOffset();
     }
 
     /**
-     * @see ObjectStore#getMaxTime
+     * {@inheritDoc}
      */
     public long getMaxTime() {
         return os.getMaxTime();
     }
 
     /**
-     * @see ObjectStore#getSerial
+     * {@inheritDoc}
      */
     public Integer getSerial() throws ObjectStoreException {
         return os.getSerial();
     }
 
     /**
-     * @see ObjectStore#createObjectStoreBag
+     * {@inheritDoc}
      */
     public ObjectStoreBag createObjectStoreBag() throws ObjectStoreException {
         return os.createObjectStoreBag();
