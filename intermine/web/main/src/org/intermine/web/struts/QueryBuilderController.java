@@ -98,13 +98,10 @@ public class QueryBuilderController extends TilesAction
             for (Path sortOrderString: sortOrder) {
                 sortOrderStrings.add(sortOrderString.toStringNoConstraints());
             }
-            request.setAttribute("sortOrderStrings", sortOrderStrings);
-            request.setAttribute("sortOrderPaths", listToMap(sortOrderStrings));
-            //request.setAttribute("sortOrderPathOrder", createIndexMap(sortOrderStrings));
-            //request.setAttribute("sortOrderPathTypes", getPathTypes(sortOrderStrings, query));
         }
         
-        Integer sortByIndex = new Integer(0); // sort by field's index in the select list
+        Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
+        
         // select list
         List<String> viewStrings = new ArrayList<String>();
         for (Path viewPath: pathView) {
@@ -116,6 +113,17 @@ public class QueryBuilderController extends TilesAction
         }
         request.setAttribute("viewStrings", viewStrings);
         request.setAttribute("sortByIndex", sortByIndex);
+        
+        /* if sortOrderStrings are empty (probably a template), add first item in select */
+        if (sortOrderStrings.isEmpty()) {
+            sortOrderStrings.add(viewStrings.get(0));
+        }
+        
+        request.setAttribute("sortOrderStrings", sortOrderStrings);
+        request.setAttribute("sortOrderPaths", listToMap(sortOrderStrings));
+        //request.setAttribute("sortOrderPathOrder", createIndexMap(sortOrderStrings));
+        //request.setAttribute("sortOrderPathTypes", getPathTypes(sortOrderStrings, query));
+        
         List<String> errorPaths = new ArrayList<String>();
         Throwable[] messages = query.getProblems();
         for (Throwable thr: messages) {
