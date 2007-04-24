@@ -21,8 +21,6 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
-import org.intermine.path.Path;
-import org.intermine.path.PathError;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
@@ -84,8 +82,8 @@ public class PathQueryHandler extends DefaultHandler
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
                 
             }
-            if (attrs.getValue("sortOrder") != null) {
-                sortOrderStrings = StringUtil.tokenize(attrs.getValue("sortOrder"));
+            if (attrs.getValue("sortField") != null) {
+                sortOrderStrings = StringUtil.tokenize(attrs.getValue("sortField"));
                 
             }
             if (attrs.getValue("constraintLogic") != null) {
@@ -179,7 +177,7 @@ public class PathQueryHandler extends DefaultHandler
                 query.addPathStringToView(viewElement);
             }
             for (String sortOrderElement: sortOrderStrings) {
-                query.addPathStringToSortOrder(sortOrderElement);
+                query.addPathStringToSortOrder(sortOrderElement, "asc");
             }
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());

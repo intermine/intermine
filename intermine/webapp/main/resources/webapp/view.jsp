@@ -62,7 +62,7 @@
 <br clear="left"><br>
 
 	<!-- sort by -->
-    <c:if test="${!empty sortOrderStrings}">
+    <c:if test="${!empty viewStrings}">
 		<div class="sortorderBorder">
 	    	 <tiles:insert page="/sortOrderLine.jsp"/>
 	   	</div>
@@ -118,6 +118,22 @@
            asynchronous:true
          });
          recordCurrentOrder();
+       }
+
+	  // change from ascending to descending sort, or vice versa 
+      function reverseSortDirection() {
+        var img = document.getElementById('sortImg').src;
+      	var newDirection;
+      	if (img.match('desc.gif')) {
+      		newDirection = 'asc';
+        } else {
+        	newDirection = 'desc';
+        }
+         new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
+           parameters:'method=changeDirection&direction='+newDirection,
+           asynchronous:true
+         });
+         document.getElementById('sortImg').src = 'images/' + newDirection + '.gif';
        }
 
 	  // called from viewElement.jsp

@@ -32,6 +32,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.Node;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
@@ -459,7 +460,7 @@ public class QueryBuilderChange extends DispatchAction
         Model model = os.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = SessionMethods.getEditingView(session);
-        List<Path> sortOrder = SessionMethods.getEditingSortOrder(session);
+        List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
@@ -477,21 +478,23 @@ public class QueryBuilderChange extends DispatchAction
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                 Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
                 if (pathToAdd.getEndClassDescriptor() == null
-                    && !view.contains(pathToAdd)) {
+                                && !view.contains(pathToAdd)) {
                     view.add(pathToAdd);
                 }
-//              if sort order is empty, then add first element to sort order 
-               if (sortOrder.isEmpty()) {
-                    sortOrder.add(pathToAdd);
+                // if sort order is empty, then add first element to sort order 
+                if (sortOrder.isEmpty()) {
+                    OrderBy o = new OrderBy(pathToAdd, "asc");
+                    sortOrder.add(o);
                 }
             }
         } else {
             view.add(path);
-//         if sort order is empty, then add first element to sort order 
-         if (sortOrder.isEmpty()) {
-                sortOrder.add(path);
-         }
-      }
+            // if sort order is empty, then add first element to sort order 
+            if (sortOrder.isEmpty()) {
+                OrderBy o = new OrderBy(path, "asc");
+                sortOrder.add(o);
+            }
+        }
 
         ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));
         fp.addAnchor(pathName);

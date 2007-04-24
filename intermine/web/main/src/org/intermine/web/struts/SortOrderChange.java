@@ -10,8 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 
 import org.intermine.web.logic.Constants;
@@ -50,7 +49,7 @@ public class SortOrderChange extends DispatchAction
         String path = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         
-        query.removePathStringFromSortOrder(path);
+        query.removePathStringFromSortOrder();
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
@@ -72,14 +71,45 @@ public class SortOrderChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("pathString");
+        String direction = request.getParameter("direction");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         
-        query.addPathStringToSortOrder(path);
+        if (direction == null) {
+            direction = "asc";
+        }
+        query.addPathStringToSortOrder(path, direction);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
 
+    /**
+     * Change sort direction - asc or desc
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     */
+    public ActionForward changeDirection(ActionMapping mapping,
+                                         ActionForm form,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response)
+    throws Exception {
+        HttpSession session = request.getSession();      
+        String direction = request.getParameter("direction");
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+
+        if (direction == null) {
+            direction = "asc";
+        }
+        query.changeDirection(direction);
+
+        return new ForwardParameters(mapping.findForward("query"))
+        .addAnchor("showing").forward();
+    }
+    
     
     /**
      * Shift a Node left in the view

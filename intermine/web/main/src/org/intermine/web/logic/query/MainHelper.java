@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -51,6 +50,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -199,7 +199,7 @@ public class MainHelper
         PathQuery pathQuery = (PathQuery) pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
-        List<Path> sortOrder = pathQuery.getSortOrder();
+        List<OrderBy> sortOrder = pathQuery.getSortOrder();
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
         ConstraintSet rootcs = null;
@@ -431,24 +431,30 @@ public class MainHelper
         }
 
         // build ORDER BY list
-        for (Iterator<Path> i = sortOrder.iterator(); i.hasNext();) {
-            PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
+        for (Iterator<OrderBy> i = sortOrder.iterator(); i.hasNext();) {
+            OrderBy o = i.next();
+            PathNode pn = pathQuery.getNodes().get(o.getField().toStringNoConstraints());
+            System.out.println("field - " + o.getField());
+            System.out.println("path - " + pn.getFieldName());
+            System.out.println("path name - " + pn.toString());
             QueryNode qn = queryBits.get(pn.getPathString());
-            if (!q.getOrderBy().contains(qn)) {
-                q.addToOrderBy(qn);
+            
+            if (!q.getOrderBy().contains(qn)) {           
+                q.addToOrderBy(qn, o.getDirection());
             }
         }
-        
 
-        
+        // put rest of select list in order by 
         for (Iterator<Path> i = view.iterator(); i.hasNext();) {
-            PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
+            String ps = i.next().toStringNoConstraints();
+            PathNode pn = pathQuery.getNodes().get(ps);
             QueryNode selectNode = queryBits.get(pn.getPathString()); 
+            System.out.println("path string - " + ps);
+            System.out.println("path string - " + pn.getPathString());
             if (!q.getOrderBy().contains(selectNode)) { 
                 q.addToOrderBy(selectNode); 
             }
         }
-
             
         // caller might want path to query node map (e.g. PrecomputeTask)
         if (pathToQueryNode != null) {

@@ -9,12 +9,23 @@
 
 <div id="sortOrderDivs">
 
-  <c:forEach var="path" items="${sortOrderStrings}" varStatus="status">
-    <c:set var="pathString" value="${path}"/>
-    <im:sortableDiv path="${pathString}" sortOrderPaths="${sortOrderPaths}" idPrefix="sorting" idPostfix="_${status.index}">
-      <div id="querySortOrder">
-          ${fn:replace(pathString, ".", " > ")}       
-      </div>
+  <c:forEach var="results" items="${sortOrderMap}" varStatus="status">
+
+ 	<c:set var="sortField" value="${results.key}"/>
+  	<c:set var="sortDirection" value="${results.value}"/>
+	
+    <im:sortableDiv path="${sortField}" sortOrderPaths="${sortOrderMap}" idPrefix="sorting" idPostfix="_${status.index}">
+      
+      <div class="sortorderpath">
+      	<div id="querySortOrder">
+      	    ${fn:replace(sortField, ".", " > ")}       
+     	 </div>
+      
+      	<!-- down = asc, up = desc -->
+      	<img src="images/${sortDirection}.gif" id="sortImg" onclick="javascript:reverseSortDirection();">
+    
+	  </div>
+	
     </im:sortableDiv>
   </c:forEach>
 </div>

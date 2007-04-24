@@ -396,8 +396,6 @@ span.viewPathDescription {
 
 /* surrounds sort order section */
 div.sortorderBorder {
-  border: 1px solid #888;
-  background-color: #ccc;
   float: left;
   width: 250px;
   

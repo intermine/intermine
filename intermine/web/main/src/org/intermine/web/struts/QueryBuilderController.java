@@ -19,15 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.BagConstraint;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.TypeUtil;
@@ -38,9 +34,15 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.MetadataNode;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -91,12 +93,14 @@ public class QueryBuilderController extends TilesAction
         List<Path> pathView = SessionMethods.getEditingView(session);
         
         // sort order
-        List<Path> sortOrder = SessionMethods.getEditingSortOrder(session);
-        List<String> sortOrderStrings = new ArrayList<String>();
+        List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
+        //List<String> sortOrderStrings = new ArrayList<String>();
+        LinkedHashMap<String, String> sortOrderMap = new LinkedHashMap<String, String>();
         
+        // create a map of fields to direction 
         if (sortOrder != null) {
-            for (Path sortOrderString: sortOrder) {
-                sortOrderStrings.add(sortOrderString.toStringNoConstraints());
+            for (OrderBy o: sortOrder) {
+                sortOrderMap.put(o.getField().toStringNoConstraints(), o.getDirection());
             }
         }
         
@@ -107,7 +111,7 @@ public class QueryBuilderController extends TilesAction
         for (Path viewPath: pathView) {
             String viewPathString = viewPath.toStringNoConstraints();
             viewStrings.add(viewPathString);
-            if (sortOrderStrings.contains(viewPathString)) {
+            if (sortOrderMap.containsKey(viewPathString)) {
                 sortByIndex = new Integer(pathView.indexOf(viewPath));
             }
         }
@@ -115,14 +119,14 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("sortByIndex", sortByIndex);
         
         /* if sortOrderStrings are empty (probably a template), add first item in select */
-        if (sortOrderStrings.isEmpty() && !viewStrings.isEmpty()) {
-            sortOrderStrings.add(viewStrings.get(0));
+        if (sortOrderMap.isEmpty() && !viewStrings.isEmpty()) {
+            sortOrderMap.put(viewStrings.get(0), "asc");
         }
         
-        request.setAttribute("sortOrderStrings", sortOrderStrings);
-        request.setAttribute("sortOrderPaths", listToMap(sortOrderStrings));
-        //request.setAttribute("sortOrderPathOrder", createIndexMap(sortOrderStrings));
-        //request.setAttribute("sortOrderPathTypes", getPathTypes(sortOrderStrings, query));
+        request.setAttribute("sortOrderMap", sortOrderMap);
+        //request.setAttribute("sortOrderStrings", );
+        //request.setAttribute("sortOrderDirections", listToMap());
+
         
         List<String> errorPaths = new ArrayList<String>();
         Throwable[] messages = query.getProblems();
@@ -136,8 +140,6 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("viewPaths", listToMap(viewStrings));
         request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
         //request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
-
-
         
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
