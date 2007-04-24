@@ -7,83 +7,180 @@
 use strict;
 use warnings;
 
-use Net::FTP;
-
-use POSIX qw(tmpnam);
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
 
 my @files_to_get = qw(
                       uniprot.xsd.gz uniprot_sprot.xml.gz uniprot_trembl.xml.gz
                      );
 my $uniprot_address = "ftp.uniprot.org";
+my $username = "anonymous";
+my $password = "-anonymous\@";
 my $uniprot_base_path = "pub/databases/uniprot/current_release";
 my $uniprot_full_path = "$uniprot_base_path/knowledgebase/complete";
 my $release_notes_file = "relnotes.txt";
-my $local_xsd_filename = "uniprot.xsd";
+my $uniprot_main_dir = "/shared/data/uniprot";
 
+#### Access ftp server
+my $connection = &ftp_connect($uniprot_address,$username,$password);
 
-my $ftp = Net::FTP->new($uniprot_address, Passive => 1)
-            or die "Cannot connect to $uniprot_address: $@";
+$connection->cwd($uniprot_base_path)
+  or die "Cannot change working directory ", $connection->message;
 
-$ftp->login("anonymous",'-anonymous@')
-  or die "Cannot login ", $ftp->message;
+#download the release notes file
+my $local_release_notes_copy = "$uniprot_main_dir/$release_notes_file";
+&ftp_download($connection,$uniprot_main_dir,$release_notes_file);
 
-$ftp->cwd($uniprot_base_path)
-  or die "Cannot change working directory ", $ftp->message;
-
-$ftp->binary();
-
-my $local_release_notes_copy = tmpnam;
-
-my $release_notes;
-
-$ftp->get($release_notes_file, $local_release_notes_copy)
- or die "get failed ", $ftp->message;
-
+#get the uniprot version from the release notes file
+my $version;
 open F, $local_release_notes_copy
   or die "can't open local copy of relnotes.txt: $local_release_notes_copy\n";
-
-my $version;
-
 while (my $line = <F>) {
-  print $line;
   if ($line =~ /UniProt.*Release (\S+)/) {
+  	print "$line\n";
     $version = $1;
   }
 }
-
+close F;
 if (!defined $version) {
   die "can't find version number in release notes\n";
 }
+unlink $local_release_notes_copy;
 
-close F;
+#if there is a new release, download and unzip it, update the current link
+my $download_dir = "$uniprot_main_dir/$version";
+if(&checkdir_exists($download_dir)==1){
+	$connection->cwd("/$uniprot_full_path")
+		or die "Cannot change working directory ", $connection->message;
 
-my $download_dir = "uniprot/$version";
-
-if (-d $download_dir) {
-  die "$download_dir already exists - exiting\n";
-}
-
-print "creating $download_dir\n";
-
-mkdir $download_dir;
-
-$ftp->cwd("/$uniprot_full_path")
-  or die "Cannot change working directory ", $ftp->message;
-
-for my $file_to_get (@files_to_get) {
-  print "getting $file_to_get\n";
-  $ftp->get($file_to_get, "$download_dir/$file_to_get")
-    or die "can't get $file_to_get from $uniprot_address/$uniprot_full_path: $?";
-}
-
-print"gzip -dr $download_dir\n";
-
-if ((system "gzip -dr $download_dir") != 0) {
-  die qq|system "gzip -dr $download_dir" failed: $?\n|;
+	for my $file_to_get (@files_to_get) {
+	  &ftp_download($connection,$download_dir,$file_to_get);
+	}
+	&unzip_dir($download_dir);
+	my $current_link = "/shared/data/uniprot/current";
+	&make_link($version,$current_link);
+}else{ 
+	warn " current version up to date - skipping download\n";
 }
 
 system "chmod -R a+r,g+w $download_dir";
+$connection->quit;
 
-print "Setting uniprot/current link to $download_dir";
-system "ln -s $download_dir current"
-    or die "error setting uniprot/current link to $download_dir";
+#============================================================================
+
+#splits the uniprot xml files into separate files based on the ncbi taxon id. Reads the taxons of interest from a 
+#centrally stored file.
+
+my($start, $end, $buffer, $trigger) = ("<entry", "</entry>", '', 'type="NCBI Taxonomy"');
+my ($filename, $fname_end);
+my ($keep, $taxon) = ("false", '0000');
+my (@new_contents, @old_contents);
+
+#the xml declaration and root element for each output file			
+my $prolog = '<?xml version="1.0" encoding="UTF-8"?>
+<uniprot xmlns="http://uniprot.org/uniprot"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/support/docs/uniprot.xsd">';
+#define the last elements for each output file
+my $element_end = '<copyright>
+Copyrighted by the UniProt Consortium, see http://www.uniprot.org/terms
+Distributed under the Creative Commons Attribution-NoDerivs License
+</copyright>
+</uniprot>';
+
+my $split_dir = "/shared/data/uniprot/$version/split/";
+if(&checkdir_exists($split_dir)==0){
+	warn "Data already split.\n";
+}else{
+	#use hash to define output name for each source file
+	#comment out one of them to process the other file only
+	my %files = (
+	             'sprot'  => { 	'filename' => "$download_dir/uniprot_sprot.xml", 
+				 				'fname_end' => '_uniprot_sprot.xml'},
+	             'trembl'  => { 'filename' => "$download_dir/uniprot_trembl.xml",
+				 				'fname_end' => '_uniprot_trembl.xml'},
+	             );		
+
+	#open file to get taxonIDs from the config file
+	my $config_file = "/shared/data/taxonID.config";
+	my %taxons = &config_species($config_file,"uniprot");
+	
+	#open each uniprot file
+	foreach my $file_type(sort keys %files){
+		$filename = $files{$file_type}->{'filename'};
+		$fname_end = $files{$file_type}->{'fname_end'};
+			
+		#read a line at a time and identify the start/stop/taxon id
+		open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
+		while(my $newline = <F>){
+			if($newline && $newline =~ /$start/gi){
+				$keep = "true";
+			}elsif($newline && $newline =~ /$trigger/gi){
+				if($newline=~/id="(\d+)"/){
+				$taxon = $1;
+				}
+			}elsif($newline && $newline =~ /$end/gi){
+				$buffer .= $newline;
+				if(exists $taxons{$taxon}){
+					&writefile($buffer,$taxon,$fname_end);
+				}
+				$keep = "false";
+				$buffer = "";
+				$taxon = 0000;
+			}	
+			if($keep eq "true"){
+				$buffer .= $newline;
+			}
+		}
+	close(F) or die "$!";
+	}
+
+	#identify the output files
+	opendir(DIR,$split_dir) || die("Cannot open directory !\n");
+	@new_contents=grep(!/^\.\.?$/,readdir DIR);
+	closedir(DIR);
+
+	#add the copyright and close the root element to the output files
+	foreach my $file (@new_contents){
+		$file = $split_dir.$file;
+		open( FILE, ">>$file") or die "cannot open $file: $!";
+		print FILE "$element_end";
+		close(FILE);
+	}	
+}
+
+#creates files and adds elements as appropriate 
+sub writefile(){
+my ($xml,$species,$end) = @_;
+my $new_file = $split_dir.$species.$end;
+
+	if(!-e $new_file ){
+		open(FH, ">$new_file") || die "$!";
+		print FH "$prolog\n";
+		print FH "$xml";
+		close(FH);
+	}else{
+	open(FH, ">>$new_file") || die "$!";
+		print FH "$xml";
+		close(FH);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

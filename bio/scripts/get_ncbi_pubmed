@@ -35,16 +35,17 @@ my $ncbi_main_dir = "/shared/data/pubmed";
 my $download_dir = "$ncbi_main_dir/$date_string";
 
 #make sure that the necessary directories exist
+my $current_link = "/shared/data/pubmed/current";
 &checkdir_exists($ncbi_main_dir);
 if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$gene_info_file);
 	&ftp_download($connection,$download_dir,$pubmed_info_file);
 	&unzip_dir($download_dir);
+	&make_link($date_string,$current_link);
+
 }else{
-	die " current version up to date - skipping download\n";
+	warn " current version up to date - skipping download\n";
 }
-my $current_link = "/shared/data/pubmed/current";
-&make_link($date_string,$current_link);
 
 $connection->quit;
 
@@ -69,145 +70,146 @@ my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 my @items_to_write = ();
 
-
-#define organism ids to include
-my %ids=("4932",'S.cerevisiae',
-	 "6239",'C.elegans',
-	 "7227",'D.melanogaster',
-	 "180454",'A.gambiae str PEST'
-	 );
-
-##create gene/pubmed objects and associate pubmed objects to correct gene object 
-my (%organism, %genes, %pubID, %pubgene);
-my $gene2pubmed = "$current_link/gene2pubmed";
-my $gene_info = "$current_link/gene_info";
-
-#open gene2pubmed and get data
-open(F,"<$gene2pubmed") or die "$!";
-while(<F>){
-	my @f = split/\t/;
-	my $current_ID=$f[0];
-	#only use the organisms in %ids
-	if(exists $ids{$current_ID}){
-		chomp $f[2];
-		my ($geneID, $pubID) = ($f[1], $f[2]);
-		my ($org_item, $gene_item, $pub_item);
-		#print "Gene $geneID pub# $pubID\n";
-		
-		#check to see if the organism object has already been stored, if not create it
-		if(!exists $organism{$current_ID}){
-			$org_item = make_item('Organism');
-			$org_item->set('taxonId', $current_ID);
-			$organism{$current_ID}={'object' => $org_item};
-		}
-		#check to see if the gene object has already been stored, if not create it
-		if(!exists $genes{$geneID}){
-			$gene_item = make_item('Gene');
-			$gene_item->set('ncbiGeneNumber', $geneID);
-			$genes{$geneID}={'object' => $gene_item};
-		}
-		#check to see if the publication object has already been stored, if not create it
-		if(!exists $pubID{$pubID}){
-			$pub_item = make_item('Publication');
-			$pub_item->set('pubMedId', $pubID);	
-			$pubID{$pubID}={'object' => $pub_item};
-		}
-		#associate the publication with the gene in the hash 
-		$genes{$geneID}{'publications'}{$pubID} = $pubID;
-	}
-}	
-close(F) or die "$!";
-
-##add the gene identifier or organismDbId used by flymine to the ncbi number gene object
-my (%IDdata,%DBdata);
-
-#open gene_info
-open(F,"<$gene_info") or die "$!";
-while(<F>){
-	my @f = split/\t/;
-	my $current_ID=$f[0];
-	#only use the organisms in %ids
-	if(exists $ids{$current_ID}){
-  	  	my ($identifier,$dbID);
-		my $ncbigeneID = $f[1];
-		
-		#use taxonID to get correct type of data where available
-		if($current_ID==180454 && $f[3] ne "-"){
-			chomp $f[3];
-	  		$identifier = $f[3];
-			#remove excess characters
-			if($identifier=~ /^AgaP_/){
-				$identifier=substr $identifier,5;
-			}
-			#check for duplicates
-			if(exists $genes{$ncbigeneID}{$identifier}){
-				print "$identifier already found\n"
-			}elsif(exists $genes{$ncbigeneID}->{'object'}){
-				print "$identifier\t$ncbigeneID\tValid id\n";
-				$genes{$ncbigeneID}{$identifier}=$identifier;
-				my $gene_item = $genes{$ncbigeneID}->{'object'};
-				my $org_item = $organism{$current_ID}->{'object'};
-				$gene_item->set('identifier', $identifier);
-				$gene_item->set('organism', $org_item);
-				
-			}else{
-				print"$identifier\t$ncbigeneID\tInvalid ID\n";
-				delete $genes{$ncbigeneID};	
-			}
-		#use organismDbId where available	
-		}elsif($f[5] ne "-"){
-			chomp $f[5];
-			$dbID = $f[5];
-	    	#remove excess characters
-			if($dbID=~ /^SGD:/){
-				$dbID=substr $dbID,4;
-      		}elsif($dbID=~/^WormBase:/){
-				$dbID=substr $dbID,9;
-      		}elsif($dbID=~/^[Ff][Ll][Yy][Bb][Aa][Ss][Ee]:/){
-				$dbID=substr $dbID,8;
-      		}
-			
-			#check for duplicates
-			if(exists $genes{$ncbigeneID}{$dbID}){
-				print "$dbID already found\n"
-			}elsif(exists $genes{$ncbigeneID}->{'object'}){
-				print "$dbID\t$ncbigeneID\tValid id\n";
-				$genes{$ncbigeneID}{$dbID}=$dbID;
-				my $gene_item = $genes{$ncbigeneID}->{'object'};
-				$gene_item->set('organismDbId', $dbID);
-			}else{my $current_link = "/shared/data/pubmed/current";
-				print"$dbID\t$ncbigeneID\tInvalid ID\n";
-				delete $genes{$ncbigeneID};
-			}	
-    	}	
-	}
-}
-close(F) or die "$!";
-
-#for each gene, find which pubmedIds reference it, retrieve objects from the hash
-foreach my $gene (sort keys %genes){
-	my @pub_items;
-	print "Gene $gene has publications\n";
-	my $gene_item = $genes{$gene}->{'object'};
-	foreach my $pubID (sort keys %{$genes{$gene}->{publications}} ) {
-		print "$pubID\n";
-		my $pub_item = $pubID{$pubID}->{'object'};
-		push @pub_items,$pub_item;
-	}
-	$gene_item->set('publications', [@pub_items]);
-}	
-
-#write xml file
 my $outfile = "$download_dir/ncbiID_pubmedID.xml";
-my $output = new IO::File(">$outfile");
-my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
-$writer->startTag('items');
-for my $item (@items_to_write) {
-  $item->as_xml($writer);
+if(-e $outfile){
+	warn "XML already genereated\n";
+}else{
+	#define organism ids to include
+	my $config_file = "/shared/data/taxonID.config";
+	my %ids=&config_species($config_file,"pubmed");
+
+
+	##create gene/pubmed objects and associate pubmed objects to correct gene object 
+	my (%organism, %genes, %pubID, %pubgene);
+	my $gene2pubmed = "$current_link/gene2pubmed";
+	my $gene_info = "$current_link/gene_info";
+
+	#open gene2pubmed and get data
+	open(F,"<$gene2pubmed") or die "$!";
+	while(<F>){
+		my @f = split/\t/;
+		my $current_ID=$f[0];
+		#only use the organisms in %ids
+		if(exists $ids{$current_ID}){
+			chomp $f[2];
+			my ($geneID, $pubID) = ($f[1], $f[2]);
+			my ($org_item, $gene_item, $pub_item);
+			#print "Gene $geneID pub# $pubID\n";
+		
+			#check to see if the organism object has already been stored, if not create it
+			if(!exists $organism{$current_ID}){
+				$org_item = make_item('Organism');
+				$org_item->set('taxonId', $current_ID);
+				$organism{$current_ID}={'object' => $org_item};
+			}
+			#check to see if the gene object has already been stored, if not create it
+			if(!exists $genes{$geneID}){
+				$gene_item = make_item('Gene');
+				$gene_item->set('ncbiGeneNumber', $geneID);
+				$genes{$geneID}={'object' => $gene_item};
+			}
+			#check to see if the publication object has already been stored, if not create it
+			if(!exists $pubID{$pubID}){
+				$pub_item = make_item('Publication');
+				$pub_item->set('pubMedId', $pubID);	
+				$pubID{$pubID}={'object' => $pub_item};
+			}
+			#associate the publication with the gene in the hash 
+			$genes{$geneID}{'publications'}{$pubID} = $pubID;
+		}
+	}
+	close(F) or die "$!";
+
+	##add the gene identifier or organismDbId used by flymine to the ncbi number gene object
+	my (%IDdata,%DBdata);
+
+	#open gene_info
+	open(F,"<$gene_info") or die "$!";
+	while(<F>){
+		my @f = split/\t/;
+		my $current_ID=$f[0];
+		#only use the organisms in %ids
+		if(exists $ids{$current_ID}){
+	  	  	my ($identifier,$dbID);
+			my $ncbigeneID = $f[1];
+		
+			#use taxonID to get correct type of data where available
+			if($current_ID==180454 && $f[3] ne "-"){
+				chomp $f[3];
+		  		$identifier = $f[3];
+				#remove excess characters
+				if($identifier=~ /^AgaP_/){
+					$identifier=substr $identifier,5;
+				}
+				#check for duplicates
+				if(exists $genes{$ncbigeneID}{$identifier}){
+					print "$identifier already found\n"
+				}elsif(exists $genes{$ncbigeneID}->{'object'}){
+					print "$identifier\t$ncbigeneID\tValid id\n";
+					$genes{$ncbigeneID}{$identifier}=$identifier;
+					my $gene_item = $genes{$ncbigeneID}->{'object'};
+					my $org_item = $organism{$current_ID}->{'object'};
+					$gene_item->set('identifier', $identifier);
+					$gene_item->set('organism', $org_item);
+				
+				}else{
+					print"$identifier\t$ncbigeneID\tInvalid ID\n";
+					delete $genes{$ncbigeneID};	
+				}
+			#use organismDbId where available	
+			}elsif($f[5] ne "-"){
+				chomp $f[5];
+				$dbID = $f[5];
+		    	#remove excess characters
+				if($dbID=~ /^SGD:/){
+					$dbID=substr $dbID,4;
+	      		}elsif($dbID=~/^WormBase:/){
+					$dbID=substr $dbID,9;
+	      		}elsif($dbID=~/^[Ff][Ll][Yy][Bb][Aa][Ss][Ee]:/){
+					$dbID=substr $dbID,8;
+	      		}
+			
+				#check for duplicates
+				if(exists $genes{$ncbigeneID}{$dbID}){
+					print "$dbID already found\n"
+				}elsif(exists $genes{$ncbigeneID}->{'object'}){
+					print "$dbID\t$ncbigeneID\tValid id\n";
+					$genes{$ncbigeneID}{$dbID}=$dbID;
+					my $gene_item = $genes{$ncbigeneID}->{'object'};
+					$gene_item->set('organismDbId', $dbID);
+				}else{my $current_link = "/shared/data/pubmed/current";
+					print"$dbID\t$ncbigeneID\tInvalid ID\n";
+					delete $genes{$ncbigeneID};
+				}	
+	    	}	
+		}
+	}
+	close(F) or die "$!";
+
+	#for each gene, find which pubmedIds reference it, retrieve objects from the hash
+	foreach my $gene (sort keys %genes){
+		my @pub_items;
+		print "Gene $gene has publications\n";
+		my $gene_item = $genes{$gene}->{'object'};
+		foreach my $pubID (sort keys %{$genes{$gene}->{publications}} ) {
+			print "$pubID\n";
+			my $pub_item = $pubID{$pubID}->{'object'};
+			push @pub_items,$pub_item;
+		}
+		$gene_item->set('publications', [@pub_items]);
+	}	
+
+	#write xml file
+	my $output = new IO::File(">$outfile");
+	my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
+	$writer->startTag('items');
+	for my $item (@items_to_write) {
+	  $item->as_xml($writer);
+	}
+	$writer->endTag('items');
+	$writer->end();
+	$output->close();
 }
-$writer->endTag('items');
-$writer->end();
-$output->close();
 
 sub make_item
 {
