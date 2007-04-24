@@ -12,10 +12,12 @@ package org.intermine.web.task;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -59,6 +61,8 @@ public class PrecomputeTemplatesTask extends Task
     protected ObjectStoreWriter userProfileOS = null;
     protected String userProfileAlias;
     protected String username;
+    protected String ignore = "";
+    protected Set ignoreNames = new HashSet();
 
     /**
      * Set the ObjectStore alias
@@ -66,6 +70,14 @@ public class PrecomputeTemplatesTask extends Task
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    /**
+     * Set a comma separated list of template names to ignore - i.e. not precompute.
+     * @param alias the ObjectStore alias
+     */
+    public void setIgnore(String ignore) {
+        this.ignore = ignore;
     }
 
     /**
@@ -105,6 +117,12 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException("minRows attribute is not set");
         }
 
+        if (ignore != null && !ignore.equals("")) {
+            String[] bits = ignore.split(",");
+            for (int i = 0; i < bits.length; i++) {
+                ignoreNames.add(bits[i].trim());
+            }
+        }
         ObjectStore objectStore;
 
         try {
@@ -132,6 +150,12 @@ public class PrecomputeTemplatesTask extends Task
             Map.Entry entry = (Map.Entry) iter.next();
             TemplateQuery template = (TemplateQuery) entry.getValue();
 
+            // check if we should ignore this template (maybe it won't precompute)
+            if (ignoreNames.contains(template.getName())) {
+                LOG.warn("template was in ignore list: " + template.getName());
+                continue;
+            }
+            
             List indexes = new ArrayList();
             Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
