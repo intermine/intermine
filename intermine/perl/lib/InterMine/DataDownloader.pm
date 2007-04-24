@@ -8,7 +8,7 @@ use File::Compare;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_http_files checkdir_exists date_string_file unzip_dir convert_date);
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_http_files checkdir_exists date_string_file unzip_dir convert_date config_species);
 
 #connect to server
 sub ftp_connect(){
@@ -117,5 +117,32 @@ sub unzip_dir(){
 	if ((system "gzip -dr $dir") != 0) {
 	  die qq|system "gzip -dr $dir" failed: $?\n|;
 	}
+}
+
+#get taxon Ids from file
+sub config_species(){
+	my ($file,$trigger) = @_;
+	my %data;
+
+	open(F,"<$file") or die "$!";
+	while(<F>){
+		my @f = split/\t/;
+		if($f[0] =~ /^$trigger/g) {
+			#for 2 value configs i.e. get_go_annoatation
+			if($f[2]){
+				chomp $f[2];
+				$data{$f[1]}=$f[2];	
+			}
+			#for everything else
+			else{
+				chomp $f[1];
+				$data{$f[1]}=$f[1];
+			}
+		}	
+	}
+	close(F) or die "$!";
+
+return %data;
+
 }
 1;

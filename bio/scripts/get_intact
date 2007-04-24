@@ -18,14 +18,14 @@ my $species_dir = "psi1/species";
 my $username = "anonymous";
 my $password = "-anonymous\@";
 
-# list of organisms to get - this is the five letter abbreviation used as the
-# start of intact filenames.  Add more to this list to get more organisms
-#my @organisms = ("drome", "caeel", "yeast");
-my @organisms = ("human", "mouse", "rat", "bovin", "sheep");
+# get the list of organisms from the config file - this is the five letter
+# abbreviation used as the start of intact filenames. 
+my $file = "/shared/data/taxonID.config";
+my %organisms = &config_species($file,"intact");
 
 #### Access EBI ftp server
 my $connection = &ftp_connect($ebi_server,$username,$password);
-    
+
 $connection->cwd($intact_dir)
 	or die "Cannot change working directory ", $connection->message;
 
@@ -51,7 +51,7 @@ if(&checkdir_exists($download_dir)==1){
 
 	for my $psi_file (@psi_files) {
 	    my $start = substr($psi_file, 0, index($psi_file, "_"));
-	    if (grep {$start eq $_} @organisms) {
+		if (grep {$start eq $_} keys %organisms) {
 	        &ftp_download($connection,$download_dir,$psi_file);
 	    }
 	}
