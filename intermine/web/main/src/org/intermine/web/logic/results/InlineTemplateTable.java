@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 public class InlineTemplateTable implements Serializable
 {
     private int inlineSize = -1;
-    private ArrayList inlineResults;
+    private List<Object> inlineResults;
     private static final Logger LOG = Logger.getLogger(InlineTemplateTable.class);
     private final List columnNames;
     private int resultsSize = -1;
@@ -40,7 +40,6 @@ public class InlineTemplateTable implements Serializable
      */
     public InlineTemplateTable(PagedResults pagedResults, Map webProperties) {
         this.columnNames = pagedResults.getColumnNames();
-        resultsSize = pagedResults.getSize();
         
         String maxInlineTableSizeString =
             (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
@@ -54,15 +53,23 @@ public class InlineTemplateTable implements Serializable
         
         inlineSize = maxInlineTableSize;
 
+        inlineResults = new ArrayList<Object>(inlineSize);
+
+        for (int i = 0; i < inlineSize; i++) {
+            try {
+                inlineResults.add(pagedResults.getRows().get(i));
+            } catch (IndexOutOfBoundsException e) {
+                // getExactSize() will now be fast because the Results object knows the size
+                break;
+            }
+        }
+
+        // often fast because we have retreived the first batch
+        resultsSize = pagedResults.getExactSize();
+
         if (resultsSize < inlineSize) {
             inlineSize = resultsSize;
         }   
-
-        inlineResults = new ArrayList(inlineSize);
-
-        for (int i = 0; i < inlineSize; i++) {
-            inlineResults.add(pagedResults.getRows().get(i));
-        }
     }
 
     /**
