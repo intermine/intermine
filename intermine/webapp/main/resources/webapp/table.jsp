@@ -258,7 +258,7 @@
         <%--  The Summary table --%>
         <div id="summary" style="display:none;" >
         <div>
-          <div align="right" ><img onclick="javascript:Effect.Fade('summary');" src="images/close.png" title="Close" 
+          <div align="right" ><img onclick="javascript:Effect.Fade('summary', { duration: 0.30 });" src="images/close.png" title="Close" 
           onmouseout="this.style.cursor='normal';" onmouseover="this.style.cursor='pointer';"></div>
         <div id="summary_loading">Loading...</div>
         <div id="summary_loaded" style="display:none;" >
