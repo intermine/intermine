@@ -434,9 +434,6 @@ public class MainHelper
         for (Iterator<OrderBy> i = sortOrder.iterator(); i.hasNext();) {
             OrderBy o = i.next();
             PathNode pn = pathQuery.getNodes().get(o.getField().toStringNoConstraints());
-            System.out.println("field - " + o.getField());
-            System.out.println("path - " + pn.getFieldName());
-            System.out.println("path name - " + pn.toString());
             QueryNode qn = queryBits.get(pn.getPathString());
             
             if (!q.getOrderBy().contains(qn)) {           
@@ -449,8 +446,6 @@ public class MainHelper
             String ps = i.next().toStringNoConstraints();
             PathNode pn = pathQuery.getNodes().get(ps);
             QueryNode selectNode = queryBits.get(pn.getPathString()); 
-            System.out.println("path string - " + ps);
-            System.out.println("path string - " + pn.getPathString());
             if (!q.getOrderBy().contains(selectNode)) { 
                 q.addToOrderBy(selectNode); 
             }
