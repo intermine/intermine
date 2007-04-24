@@ -11,7 +11,6 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,7 +33,6 @@ import java.io.StringReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import sun.rmi.log.ReliableLog;
 
 /**
  * Class to represent a path-based query.
@@ -49,7 +47,7 @@ public class PathQuery
     private Model model;
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     private List<Path> view = new ArrayList<Path>();
-    private List<Path> sortOrder = new ArrayList<Path>();
+    private List<OrderBy> sortOrder = new ArrayList<OrderBy>();
     private ResultsInfo info;
     ArrayList<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
@@ -72,7 +70,7 @@ public class PathQuery
         this.model = query.model;
         this.nodes = new LinkedHashMap<String, PathNode>(query.nodes);
         this.view = new ArrayList<Path>(query.view);
-        this.sortOrder = new ArrayList<Path>(query.sortOrder);
+        this.sortOrder = new ArrayList<OrderBy>(query.sortOrder);
         this.info = query.info;
         this.problems = new ArrayList<Throwable>(query.problems);
         this.constraintLogic = query.constraintLogic;
@@ -211,7 +209,7 @@ public class PathQuery
      * Sets the sort order
      * @param sortOrder list of paths
      */
-    public void setSortOrder(List<Path> sortOrder) {
+    public void setSortOrder(List<OrderBy> sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -219,7 +217,7 @@ public class PathQuery
      * Gets the sort order
      * @return a List of paths
      */
-    public List<Path> getSortOrder() {
+    public List<OrderBy> getSortOrder() {
         return sortOrder;
     }
 
@@ -272,49 +270,60 @@ public class PathQuery
         return viewPath;
     }
 
-    private void addPathToSortOrder(Path sortOrderPath) {
+//    private void addPathToSortOrder(Path sortOrderPath, String direction) {
+//        try {
+//            sortOrder.clear(); // there can only be one sort column
+//            if (sortOrderPath != null) {
+//                OrderBy o = new OrderBy(sortOrderPath, direction);
+//                sortOrder.add(o);
+//            }
+//        } catch (PathError e) {
+//            problems.add(e);
+//        }
+//    }
+
+    /**
+     * @param direction New sorting direction - asc or desc
+     */
+    public void changeDirection(String direction) {
         try {
-            sortOrder.clear(); // there can only be one sort column
-            if (sortOrderPath != null) {
-                sortOrder.add(sortOrderPath);
-            }
+            sortOrder.get(0).setDirection(direction);
         } catch (PathError e) {
             problems.add(e);
         }
     }
-
+    
     /**
      * Add a path to the sort order
      * @param sortOrderString the String version of the path to add - should not include any class
      * constraints (ie. use "Departement.employee.name" not "Departement.employee[Contractor].name")
+     * @param direction asc or desc
      */
-    public void addPathStringToSortOrder(String sortOrderString) {
+    public void addPathStringToSortOrder(String sortOrderString, String direction) {
         try {
             sortOrder.clear(); // there can only be one sort column
-            sortOrder.add(MainHelper.makePath(model, this, sortOrderString));
+            Path p = MainHelper.makePath(model, this, sortOrderString);
+            OrderBy o = new OrderBy(p, direction);
+            sortOrder.add(o);
         } catch (PathError e) {
             problems.add(e);
         }
     }
-
+  
+    
     /**
-     * Remove the Path with the given String representation from the sort order.
-     * @param sortOrderString the path to remove
+     * Remove a path from the sort order.  Replace with first item on select list.
      */
-    public void removePathStringFromSortOrder(String sortOrderString) {
-        addPathToSortOrder(getFirstPathFromView());
-        Iterator<Path> iter = sortOrder.iterator();
-        while (iter.hasNext()) {
-            Path sortOrderPath = iter.next();
-            if (sortOrderPath.toStringNoConstraints().equals(sortOrderString)
-                || sortOrderPath.toString().equals(sortOrderString)) {
-                iter.remove();
-                return;
-            }
+    public void removePathStringFromSortOrder() {
+        try {
+            sortOrder.clear(); // there can only be one sort column
+            Path p = getFirstPathFromView();
+            OrderBy o = new OrderBy(p, "asc");
+            sortOrder.add(o);
+        } catch (PathError e) {
+            problems.add(e);
         }
     }
-
-
 
     /**
      * Return true if and only if the view contains a Path that has pathString as its String

@@ -11,8 +11,6 @@ package org.intermine.web.logic.session;
  */
 
 import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +36,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.SaveQueryHelper;
@@ -316,7 +315,7 @@ public class SessionMethods
      * @param session current session
      * @return sort by list
      */
-    public static List<Path> getEditingSortOrder(HttpSession session) {
+    public static List<OrderBy> getEditingSortOrder(HttpSession session) {
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query == null) {
             throw new IllegalStateException("No query on session");

@@ -163,6 +163,25 @@ public class Query implements FromElement
     }
 
     /**
+     * Add a QueryOrderable to the ORDER BY clause of this Query
+     *
+     * @param node the node to add
+     * @param direction ascending or descending
+     * @return the updated Query
+     */
+    public Query addToOrderBy(QueryOrderable node, String direction) {
+        if (direction.equals("desc")) {
+            OrderDescending o = new OrderDescending(node);
+            orderBy.add(o);
+        } else {
+            orderBy.add(node);
+        }
+
+        return this;
+    }
+
+    
+    /**
      * Remove a QueryOrderable from the ORDER BY clause
      *
      * @param node the node to remove
