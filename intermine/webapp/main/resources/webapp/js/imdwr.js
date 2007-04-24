@@ -70,6 +70,15 @@ function swapDivs(div1,div2){
 	document.getElementById(div2).style.display = 'block';
 }
 
+
+function roundToSignificantDecimal(n) {
+	var log10n = Math.log(Math.abs(n)) / Math.log(10);
+	if(log10n<1 && n!=0) {
+		var rf = 100*Math.pow(10,-Math.round(log10n));
+		return rf;
+	} else return 100;
+}
+
 function getColumnSummary(columnName) {
 	DWRUtil.removeAllRows('summary_table');
     document.getElementById('summary_loaded').style.display = "none";
@@ -79,7 +88,7 @@ function getColumnSummary(columnName) {
 	    var rows = str;
 	    var cellFuncs = new Array();
 	    for (var i=0;i<rows[0].length;i++){
-	      cellFuncs[i] = eval('function(data) { return data['+i+']; }');
+	      cellFuncs[i] = eval('function(data) {var cell = data['+i+']; if (! isNaN(cell)) {var rf = roundToSignificantDecimal(cell+0);return Math.round(cell*rf)/rf;} else return cell; }');
 	    }
 	    if(cellFuncs.length == 2){
 	      document.getElementById('summary_head').innerHTML = '<tr><th>Value</th><th>Count</th></tr>';
