@@ -83,7 +83,7 @@ function getColumnSummary(columnName) {
 	DWRUtil.removeAllRows('summary_table');
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
-    Effect.Appear('summary');
+    Effect.Appear('summary', { duration: 0.30 });
 	AjaxServices.getColumnSummary(columnName, function(str){
 	    var rows = str;
 	    var cellFuncs = new Array();
