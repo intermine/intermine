@@ -176,8 +176,10 @@ if(-e $outfile){
 					print "$dbID\t$ncbigeneID\tValid id\n";
 					$genes{$ncbigeneID}{$dbID}=$dbID;
 					my $gene_item = $genes{$ncbigeneID}->{'object'};
+					my $org_item = $organism{$current_ID}->{'object'};
 					$gene_item->set('organismDbId', $dbID);
-				}else{my $current_link = "/shared/data/pubmed/current";
+					$gene_item->set('organism', $org_item);
+				}else{
 					print"$dbID\t$ncbigeneID\tInvalid ID\n";
 					delete $genes{$ncbigeneID};
 				}	
