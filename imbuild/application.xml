@@ -151,7 +151,8 @@ Couldn't find ${build.properties.file}
   <target name="precompute-templates" depends="-init-build-db, -init-app-properties">
     <precompute-templates alias="${objectstore.name}" 
                           userProfileAlias="${userprofile.objectstorewriter.name}"
-                          minRows="0" username="${superuser.account}"/>
+                          minRows="0" username="${superuser.account}"
+                          ignore="${ignore}"/>
   </target>
 
   <!-- CONSOLE -->
