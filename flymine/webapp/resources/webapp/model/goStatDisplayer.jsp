@@ -76,7 +76,10 @@ Reference population: All genes from <c:out value='${goStatOrganisms}'/>.
 <table>	
 <tr>
 	<td valign="top" align="center">
-	<form action="<%=request.getContextPath()%>/initGoStatDisplayer.do" method="get" name="goStatForm">
+	
+	<!-- initGoStatDisplayer -->
+	
+	<form action="goStatDisplayer.do" method="get" name="goStatForm">
 	<table>
       <tr>
       	<td>Ontology</td>
