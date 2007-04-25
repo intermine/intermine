@@ -110,6 +110,7 @@ public abstract class FlymineUtil
             chromosomes.add("2R");
             chromosomes.add("3L");
             chromosomes.add("3R");
+            chromosomes.add("4");
             chromosomes.add("U");
             chromosomes.add("X");
             
