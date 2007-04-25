@@ -145,8 +145,8 @@
 	                      </html:link>
 	                    </c:if>
 
-
-                    <a href="javascript:getColumnSummary('${column.name}')" title="Get column summary"><img src="images/summary_maths.png" alt="Column Summary"></a>
+					<fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+                    <a href="javascript:getColumnSummary('${column.name}')" title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
 
                           <%-- right --%>
 	                    <c:if test="${not status.last}">
@@ -262,7 +262,8 @@
           onmouseout="this.style.cursor='normal';" onmouseover="this.style.cursor='pointer';"></div>
         <div id="summary_loading">Loading...</div>
         <div id="summary_loaded" style="display:none;" >
-          <p style="margin-top:5px;"><strong>Column Summary</strong></p>
+          <p style="margin-top:5px;"><strong><fmt:message key="columnsummary.name" /></strong></p>
+          <p><fmt:message key="columnsummary.message" /></p>
           <table class="results" cellpadding="0" cellspacing="0">
             <thead id="summary_head"></thead>
             <tbody id="summary_table"></tbody>
