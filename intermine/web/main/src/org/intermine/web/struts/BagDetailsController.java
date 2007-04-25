@@ -15,14 +15,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -56,7 +57,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.LayeredBarRenderer;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.util.SortOrder;
@@ -113,7 +114,7 @@ public class BagDetailsController extends TilesAction
                                            graphDisplayerArray, bagName);
                     /* regular bar chart */
                     } else {
-                        setLayeredBarGraph(session, graphDisplayer, graphDataSet, 
+                        setBarGraph(session, graphDisplayer, graphDataSet, 
                                     graphDisplayerArray, bagName, key);
                     } 
                 }
@@ -156,7 +157,7 @@ public class BagDetailsController extends TilesAction
     }
 
 
-    private void setLayeredBarGraph(HttpSession session, 
+    private void setBarGraph(HttpSession session, 
                              GraphDisplayer graphDisplayer, 
                              GraphDataSet graphDataSet,                          
                              ArrayList graphDisplayerArray,
@@ -183,16 +184,14 @@ public class BagDetailsController extends TilesAction
                 
         plot = chart.getCategoryPlot();
 
-        LayeredBarRenderer renderer = new LayeredBarRenderer();
+        BarRenderer renderer = new BarRenderer();
         renderer.setItemLabelsVisible(true);
+        renderer.setItemMargin(0);
         plot.setRenderer(renderer);
                 
         // integers only
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        
-        // first series last
-        plot.setRowRenderingOrder(SortOrder.DESCENDING);
                        
         bagGraphWidget = new BagGraphWidget(session, 
                          graphDataSet.getCategoryArray(),

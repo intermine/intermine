@@ -76,7 +76,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
                         
             // chromosome, count of genes
-            HashMap<String, int[]> resultsTable = new HashMap<String, int[]> (); 
+            LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]> (); 
             // chromosome --> list of genes
             HashMap<String, ArrayList> geneMap = new HashMap<String, ArrayList>();
             
