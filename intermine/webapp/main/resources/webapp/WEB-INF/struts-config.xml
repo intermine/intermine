@@ -360,6 +360,8 @@
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
     </action>
+    <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
+    <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

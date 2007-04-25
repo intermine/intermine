@@ -408,7 +408,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             Column column = (Column) columns.get(i);
             if (column.isVisible()) {
                 Path columnPath = column.getPath();
-                if (columnPath.endIsAttribute()) {
+                if (columnPath != null && columnPath.endIsAttribute()) {
                     ClassDescriptor columnCD = columnPath.getLastClassDescriptor();
                     if (validType(columnCD.getName())) {
                         if (returnColumn == null) {

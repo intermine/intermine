@@ -16,6 +16,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,16 +37,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.PagedCollection;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that creates a table of collection elements for display.
@@ -101,8 +103,9 @@ public class CollectionDetailsAction extends Action
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         String referencedClassName = TypeUtil.unqualifiedName(refDesc.getReferencedClassName());
         WebCollection webCollection = 
-            new WebCollection(os, referencedClassName, c, model, webConfig, classKeys);
-        PagedCollection pc = new PagedCollection(webCollection);
+            new WebCollection(os, new Path(model, referencedClassName), c, model, webConfig,
+                              classKeys);
+        PagedTable pc = new PagedTable(webCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         

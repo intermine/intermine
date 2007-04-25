@@ -38,7 +38,7 @@ public class InlineTemplateTable implements Serializable
      * @param pagedResults the Results of running the template query
      * @param webProperties the web properties from the session
      */
-    public InlineTemplateTable(PagedResults pagedResults, Map webProperties) {
+    public InlineTemplateTable(PagedTable pagedResults, Map webProperties) {
         this.columnNames = pagedResults.getColumnNames();
         
         String maxInlineTableSizeString =

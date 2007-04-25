@@ -16,19 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -37,12 +33,21 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.results.PagedResultsSimple;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import uk.ltd.getahead.dwr.WebContext;
 import uk.ltd.getahead.dwr.WebContextFactory;
@@ -257,12 +262,56 @@ public class AjaxServices
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Query query = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
-                                                  new HashMap(), summaryPath);
+                                                  new HashMap<String, QueryNode>(), summaryPath);
         
         Results results = os.execute(query);
         List columns = Arrays.asList(new String[] {"col1", "col2"});
         WebResultsSimple webResults = new WebResultsSimple(results, columns);
-        PagedResultsSimple pagedTable = new PagedResultsSimple(columns, webResults);
+        PagedTable pagedTable = new PagedTable(webResults);
         return pagedTable.getRows();
+    }
+    
+    /**
+     * Return the results from the query with the given query id.  If the results aren't yet
+     * available, return null.  The returned List is the visible rows from the PagedTable associated
+     * with the query id.
+     * @param qid the id
+     * @return the current rows from the table
+     */
+    public static List getResults(String qid) {
+        // results to return if there is an internal error
+        List<List<String>> unavailableListList = new ArrayList();
+        ArrayList<String> unavailableList = new ArrayList<String>();
+        unavailableList.add("results unavailable");
+        unavailableListList.add(unavailableList);
+
+        if (StringUtils.isEmpty(qid)) {
+            return unavailableListList;
+        }
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        QueryMonitorTimeout controller = (QueryMonitorTimeout)
+            SessionMethods.getRunningQueryController(qid, session);
+
+        // First tickle the controller to avoid timeout
+        controller.tickle();
+
+        if (controller.isCancelledWithError()) {
+            LOG.debug("query qid " + qid + " error");
+            
+            return unavailableListList;
+        } else if (controller.isCancelled()) {
+            LOG.debug("query qid " + qid + " cancelled");
+            return unavailableListList;
+        } else if (controller.isCompleted()) {
+            LOG.debug("query qid " + qid + " complete");
+            // Look at results, if only one result, go straight to object details page
+            PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
+            return pr.getRows();
+        } else {
+            // query still running
+            LOG.debug("query qid " + qid + " still running, making client wait");
+            return null;
+        }
     }
 }

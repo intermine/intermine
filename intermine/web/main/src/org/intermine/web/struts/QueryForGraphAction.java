@@ -14,16 +14,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -33,12 +23,25 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.iql.IqlQuery;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Action class to run an IQL query and constraint the results to
@@ -101,8 +104,9 @@ public class QueryForGraphAction extends InterMineAction
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         WebCollection webCollection = 
-            new WebCollection(os, bag.getType(), results, model, webConfig, classKeys);
-        PagedCollection pagedColl = new PagedCollection(webCollection);
+            new WebCollection(os, new Path(model, bag.getType()), results, model, webConfig, 
+                              classKeys);
+        PagedTable pagedColl = new PagedTable(webCollection);
         String identifier = "qid" + index++;
 
         SessionMethods.setResultsTable(session, identifier, pagedColl);

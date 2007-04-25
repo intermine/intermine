@@ -161,17 +161,9 @@ public class Column
      * {@inheritDoc}
      */
     public String toString() {
-        return "[Column " + getPath() + " " + (visible ? "visible" : "not visible") + "]";
+        return "[Column " + getName() + " " + (visible ? "visible" : "not visible") + "]";
     }
 
-    /**
-     * Set the Path that this column is displaying
-     * @param path the Path
-     */
-    public void setPath(Path path) {
-        this.path = path;
-    }
-    
     /**
      * Get the Path set by setPath().
      * @return the Path

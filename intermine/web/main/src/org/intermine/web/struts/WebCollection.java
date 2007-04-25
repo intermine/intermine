@@ -25,22 +25,22 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebColumnTable;
+import org.intermine.web.logic.results.WebTable;
 
 /**
  * A wrapper for a collection that makes for easier rendering in the webapp.
  * @author kmr
  */
-public class WebCollection extends AbstractList implements WebColumnTable
+public class WebCollection extends AbstractList implements WebTable
 {
     private List list;
     private Model model;
@@ -48,11 +48,12 @@ public class WebCollection extends AbstractList implements WebColumnTable
     private Map classKeys;
     private final String columnName;
     private final ObjectStore os;
+    private Path columnPath;
 
     /**
      * Create a new WebCollection object.
      * @param os the ObjectStore used to create ResultElement objects
-     * @param columnName the String to use when displaying this collection - used as the column name
+     * @param columnPath the Path to use when displaying this collection - used as the column name
      * for the single column of results
      * @param collection the Collection, which can be a List of objects or a List of List of
      * objects (like a Results object)
@@ -60,17 +61,18 @@ public class WebCollection extends AbstractList implements WebColumnTable
      * @param webConfig the WebConfig object the configures the columns in the view
      * @param classKeys map of classname to set of keys
      */
-    public WebCollection(ObjectStore os, String columnName, Collection collection, Model model, 
+    public WebCollection(ObjectStore os, Path columnPath, Collection collection, Model model, 
                          WebConfig webConfig, Map classKeys) {
         this.os = os;
         this.model = model;
         this.webConfig = webConfig;
-        this.columnName = columnName;
+        this.columnPath = columnPath;
+        this.columnName = columnPath.toStringNoConstraints();
         if (collection instanceof List) {
-              list = (List) collection;
-          } else {
-              list = new ArrayList(collection);
-          }
+            list = (List) collection;
+        } else {
+            list = new ArrayList(collection);
+        }
         this.classKeys = classKeys;
     }
 
@@ -105,7 +107,7 @@ public class WebCollection extends AbstractList implements WebColumnTable
         }
         ArrayList rowCells = new ArrayList();
         for (Iterator iterator = getColumns().iterator(); iterator.hasNext();) {
-            String newColumnName = ((Column) iterator.next()).getPath().toString();
+            String newColumnName = ((Column) iterator.next()).getName();
             Path path = new Path(model, newColumnName);
             Object fieldValue = path.resolve(o);
             if (makeResultElements) {
@@ -130,7 +132,16 @@ public class WebCollection extends AbstractList implements WebColumnTable
      * {@inheritDoc}
      */
     public int size() {
-        return list.size();
+        if (list instanceof LazyCollection) {
+            try {
+                return ((LazyCollection) list).getInfo().getRows();
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("unable to get size for collection named: "
+                                           + columnPath);
+            }
+        } else {
+            return list.size();
+        }
     }
 
     /**
@@ -139,46 +150,71 @@ public class WebCollection extends AbstractList implements WebColumnTable
      * @return the Column object List
      */
     public List getColumns() {
-        List columns = new ArrayList();
-        Path path = new Path(model, columnName);
-        List types = new ArrayList();
-        int i = 0;
-        if (path.getEndFieldDescriptor() == null || path.endIsReference()) {
-            ClassDescriptor cld = path.getEndClassDescriptor();
-            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-            Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
-            while (cldFieldConfigIter.hasNext()) {
-                FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-                if (!fc.getShowInResults()) {
-                    continue;
-                }
-                String fieldExpr = fc.getFieldExpr();
-                String newColumnName = columnName + "." + fieldExpr;
-                Path colPath = new Path(model, newColumnName);
-                String type = null;
-                if (colPath.getElements().size() >= 2) {
-                    Object pathElement =
-                        colPath.getElements().get(colPath.getElements().size() - 2);
-                    if (pathElement instanceof ReferenceDescriptor) {
-                        ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                        type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+        List<Column> columns = new ArrayList<Column>();
+        if (columnPath == null) {
+            // we are showing a random collection of objects
+            columns.add(new Column(columnName, 0, Object.class));
+        } else {
+            List<String> types = new ArrayList<String>();
+            int i = 0;
+            if (columnPath.getEndFieldDescriptor() == null || columnPath.endIsReference()) {
+                ClassDescriptor cld = columnPath.getEndClassDescriptor();
+                List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+                Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
+                while (cldFieldConfigIter.hasNext()) {
+                    FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+                    if (!fc.getShowInResults()) {
+                        continue;
                     }
-                } else {
-                    type = columnName;
-                }
-                Column column = new Column(colPath, i, type);
-                if (!types.contains(column.getColumnId())) {
-                    String fieldName = colPath.getEndFieldDescriptor().getName();
-                    boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
-                    if (isKeyField) {
-                        column.setSelectable(true);
-                        types.add(column.getColumnId());
+                    String fieldExpr = fc.getFieldExpr();
+                    String newColumnName = columnName + "." + fieldExpr;
+                    Path colPath = new Path(model, newColumnName);
+                    String type = null;
+                    if (colPath.getElements().size() >= 2) {
+                        Object pathElement =
+                            colPath.getElements().get(colPath.getElements().size() - 2);
+                        if (pathElement instanceof ReferenceDescriptor) {
+                            ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
+                            type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+                        }
+                    } else {
+                        type = columnName;
                     }
+                    Column column = new Column(colPath, i, type);
+                    if (!types.contains(column.getColumnId())) {
+                        String fieldName = colPath.getEndFieldDescriptor().getName();
+                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
+                        if (isKeyField) {
+                            column.setSelectable(true);
+                            types.add(column.getColumnId());
+                        }
+                    }
+                    columns.add(column);
+                    i++;
                 }
-                columns.add(column);
-                i++;
             }
         }
         return columns;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getExactSize() {
+        return list.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSizeEstimate() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.intermine.web.logic.results.WebTable#getMaxRetrievableIndex()
+     */
+    public int getMaxRetrievableIndex() {
+        return Integer.MAX_VALUE;
     }
 }

@@ -100,3 +100,20 @@ function getColumnSummary(columnName) {
 		document.getElementById('summary_loaded').style.display = "block";
 	});
 }
+
+function getResultsPoller(qid, timeout, userCallback) {
+    var callback = function(results) {
+        if (results == null) {
+            // try again
+            getResults(qid, timeout, userCallback);
+        } else {
+            userCallback(results);
+        }
+    }
+
+    AjaxServices.getResults(qid, callback);
+}
+
+function getResults(qid, timeout, userCallback) {
+    setTimeout("getResultsPoller(" + qid + ", " + timeout + ", " + userCallback + ")", timeout);
+}

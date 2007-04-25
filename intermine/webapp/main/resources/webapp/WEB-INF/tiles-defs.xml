@@ -167,6 +167,10 @@
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
   <definition name="bag.tile" path="/bag.jsp" controllerUrl="/initBag.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
+  <definition name="singleResult.tile" path="/singleResult.jsp" 
+              controllerUrl="/initSingleResult.do"/>
+  <definition name="tableCountEstimate.tile" path="/tableCountEstimate.jsp" 
+              controllerUrl="/initTableCountEstimate.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>

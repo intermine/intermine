@@ -23,42 +23,25 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
-public abstract class PagedTable
+public class PagedTable
 {
     private static final Logger LOG = Logger.getLogger(PagedTable.class);
 
-    private List columns = new ArrayList();
-    private List columnNames = null;
+    private WebTable webTable;
+    private List<String> columnNames = null;
     private List rows = null;
     private int startRow = 0;
     private int pageSize = 10;
-    private boolean summary = true;
+
+    private List<Column> columns;
 
     /**
      * Construct a PagedTable with a list of column names
-     * @param columns the column headings
+     * @param webTable the WebTable that this PagedTable will display
      */
-    public PagedTable(List columns) {
-        this.columns = columns;
-    }
-
-    /**
-     * Construct a PagedTable with a list of column names and a parameter indicating whether this
-     * table should display its cells in a summary or detailed format
-     * @param columns the column headings
-     * @param summary the format for displaying cells
-     */
-    public PagedTable(List columns, boolean summary) {
-        this(columns);
-        this.summary = summary;
-    }
-
-    /**
-     * Check the format for displaying cells
-     * @return true if this table should display its cells in a summary format
-     */
-    public boolean isSummary() {
-        return summary;
+    public PagedTable(WebTable webTable) {
+        super();
+        this.webTable = webTable;
     }
 
     /**
@@ -66,10 +49,16 @@ public abstract class PagedTable
      *
      * @return the List of columns in the order they are to be displayed
      */
-    public List getColumns() {
-        return Collections.unmodifiableList(columns);
+    public List<Column> getColumns() {
+        return Collections.unmodifiableList(getColumnsInternal());
     }
 
+    private List<Column> getColumnsInternal() {
+        if (columns == null) {
+            columns = webTable.getColumns();
+        }
+        return columns;
+    }
 
     /**
      * Return the column names
@@ -77,10 +66,10 @@ public abstract class PagedTable
      */
     public List getColumnNames() {
         if (columnNames == null) {
-            columnNames = new ArrayList();
-            Iterator iter = columns.iterator();
+            columnNames = new ArrayList<String>();
+            Iterator iter = getColumns().iterator();
             while (iter.hasNext()) {
-                String columnName = ((Column) iter.next()).getPath().toString();
+                String columnName = ((Column) iter.next()).getName();
                 columnNames.add(columnName);
             }
         }
@@ -93,9 +82,9 @@ public abstract class PagedTable
      */
     public int getVisibleColumnCount() {
         int count = 0;
-        for (Iterator i = columns.iterator(); i.hasNext();) {
-            Object obj = (Object) i.next();
-            if ((obj instanceof Column && ((Column) obj).isVisible()) || obj instanceof String) {
+        for (Iterator<Column> i = getColumnsInternal().iterator(); i.hasNext();) {
+            Column obj = i.next();
+            if (obj.isVisible()) {
                 count++;
             }
         }
@@ -108,8 +97,8 @@ public abstract class PagedTable
      * @param index the index of the column to move
      */
     public void moveColumnLeft(int index) {
-        if (index > 0 && index <= columns.size() - 1) {
-            columns.add(index - 1, columns.remove(index));
+        if (index > 0 && index <= getColumnsInternal().size() - 1) {
+            getColumnsInternal().add(index - 1, getColumnsInternal().remove(index));
         }
     }
     
@@ -119,8 +108,8 @@ public abstract class PagedTable
      * @param index the index of the column to move
      */
     public void moveColumnRight(int index) {
-        if (index >= 0 && index < columns.size() - 1) {
-            columns.add(index + 1, columns.remove(index));
+        if (index >= 0 && index < getColumnsInternal().size() - 1) {
+            getColumnsInternal().add(index + 1, getColumnsInternal().remove(index));
         }
     }
 
@@ -305,39 +294,61 @@ public abstract class PagedTable
      *
      * @return all the rows of the table
      */
-    public abstract WebColumnTable getAllRows();
+    public WebTable getAllRows() {
+        return webTable;
+    }
 
     /**
      * Get the (possibly estimated) number of rows of this table
      * @return the number of rows
      */
-    public abstract int getSize();
+    public int getSize() {
+        return webTable.size();
+    }
 
     /**
      * Check whether the result of getSize is an estimate
      * @return true if the size is an estimate
      */
-    public abstract boolean isSizeEstimate();
+    public boolean isSizeEstimate() {
+        return webTable.isSizeEstimate();
+    }
 
     /**
      * Get the exact number of rows of this table
      * @return the number of rows
      */
-    public abstract int getExactSize();
+    public int getExactSize() {
+        return webTable.getExactSize();
+    }
 
     /**
      * Update the internal row list
      * @throws PageOutOfRangeException if update is unable to get the page we want
      */
-    protected abstract void updateRows() throws PageOutOfRangeException;
+    public void updateRows() throws PageOutOfRangeException {
+        List newRows = new ArrayList();
+        for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
 
+            try {
+                List resultsRow = getAllRows().getResultElements(i);
+                newRows.add(resultsRow);
+            } catch (IndexOutOfBoundsException e) {
+                // we're probably at the end of the results object, so stop looping
+                break;
+            }
+        }
+        setRows(newRows);
+    }
     /**
      * Return the maximum retrievable index for this PagedTable.  This will only ever return less
      * than getExactSize() if the underlying data source has a restriction on the maximum index
      * that can be retrieved.
      * @return the maximum retrieved index
      */
-    public abstract int getMaxRetrievableIndex();
+    public int getMaxRetrievableIndex() {
+        return webTable.getMaxRetrievableIndex();
+    }
     
     /**
      * Set the column names

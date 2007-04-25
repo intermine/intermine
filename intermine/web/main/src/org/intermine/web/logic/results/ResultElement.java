@@ -71,6 +71,17 @@ public class ResultElement implements Serializable
     }
     
     /**
+     * Create a ResultElement that displays a single raw value.
+     * @param fieldValue
+     */
+    public ResultElement(Object fieldValue) {
+        this.field = fieldValue;
+        this.path = null;
+        this.os = null;
+        this.keyField = false;
+    }
+
+    /**
      * Get the field value
      * @return the value
      */

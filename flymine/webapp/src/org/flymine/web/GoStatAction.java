@@ -12,20 +12,6 @@ package org.flymine.web;
 
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -38,15 +24,33 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.WebCollection;
+
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 /**
  * Builds a query to get all the genes (in bag) associated with specified go term.
  * @author Julie Sullivan
@@ -144,8 +148,9 @@ public class GoStatAction extends InterMineAction
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         WebCollection webCollection =
-            new WebCollection(os, columnName, results, model, webConfig, classKeys);
-        PagedCollection pagedColl = new PagedCollection(webCollection);
+            new WebCollection(os, new Path(model, columnName), results, model, webConfig,
+                              classKeys);
+        PagedTable pagedColl = new PagedTable(webCollection);
 
         String identifier = "qid" + index++;
         SessionMethods.setResultsTable(session, identifier, pagedColl);
