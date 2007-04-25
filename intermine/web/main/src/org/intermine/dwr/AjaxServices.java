@@ -246,6 +246,12 @@ public class AjaxServices
         return description;
     }
     
+    /**
+     * Get the summary for the given column
+     * @param summaryPath the path for the column as a String
+     * @return a collection of rows
+     * @throws Exception an exception
+     */
     public static List getColumnSummary(String summaryPath) throws Exception {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
@@ -258,18 +264,9 @@ public class AjaxServices
                                                   new HashMap(), summaryPath);
         
         Results results = os.execute(query);
-//        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-//        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-//        Object [] resultsArray = new Object [results.size()];
         List columns = Arrays.asList(new String[] {"col1", "col2"});
         WebResultsSimple webResults = new WebResultsSimple(results, columns);
         PagedResultsSimple pagedTable = new PagedResultsSimple(columns, webResults);
-//        int i = 0;
-//        for (Iterator iter = results.iterator(); iter.hasNext();) {
-//            ResultsRow resRow = (ResultsRow) iter.next();
-//            resultsArray[i] = new Object [] {resRow.get(0), resRow.get(1)};
-//            i++;
-//        }
         return pagedTable.getRows();
     }
 }
