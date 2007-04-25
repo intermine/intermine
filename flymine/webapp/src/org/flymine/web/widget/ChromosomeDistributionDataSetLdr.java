@@ -67,8 +67,10 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         this.os = os;
         
         Collection organisms = FlymineUtil.getOrganisms(os, bag);
-        removePseudoObscura(organisms);
-
+    
+        organisms.remove("Drosophila pseudoobscura");
+        organisms.remove("Apis mellifera");
+        
         for (Iterator it = organisms.iterator(); it.hasNext();) {
             
             String organismName = (String) it.next();
@@ -108,8 +110,10 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 ResultsRow resRow = (ResultsRow) iter.next();
                 String chromosome = (String) resRow.get(0);     // chromosome
                 String geneIdentifier = (String) resRow.get(1); // gene
-                (resultsTable.get(chromosome))[0]++;    
-                (geneMap.get(chromosome)).add(geneIdentifier);
+                if (resultsTable.get(chromosome) != null) { 
+                    (resultsTable.get(chromosome))[0]++;    
+                    (geneMap.get(chromosome)).add(geneIdentifier);
+                }
             }
 
             // update results with expected results
@@ -151,25 +155,28 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         return dataSets;
     }
 
-
-    
     /* select count(*) from genes where chromosomeLocation != null; */
-    private int getTotal(ObjectStore os, String organismName) {
+    private long getTotal(ObjectStore os, String organismName) {
+
         Query q = createQuery(organismName, "total", null);        
-        results = new Results(q, os, os.getSequence());        
-        Iterator it = results.iterator();
-        ResultsRow rr =  (ResultsRow) it.next();
-        Long n = (java.lang.Long) rr.get(0);
-        return n.intValue();
+        results = new Results(q, os, os.getSequence());          
+        Iterator iter = results.iterator();
+        ResultsRow rr = (ResultsRow) iter.next();
+        return (Long) rr.get(0);
     }
 
     private void addExpected(ObjectStore os, HashMap resultsTable, 
                              int bagSize, String organismName) {
+        // totals
+        long total = getTotal(os, organismName);
         
-        int total = getTotal(os, organismName);
+        // get expected results
         Query q = createQuery(organismName, "expected", null);
         results = new Results(q, os, os.getSequence());
         Iterator iter = results.iterator();
+        int i = 0;
+        
+        // loop through, calc, and put in map
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
         
@@ -178,16 +185,16 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             
             double expectedValue = 0;
             double proportion = 0.0000000000; 
-            double count = geneCount.intValue();
+            double count = geneCount.intValue();            
             if (total > 0) { 
                 proportion = count / total;
             } 
             expectedValue = bagSize * proportion;
-
-            // if the chromosome isn't there, we aren't interested in it
+                      
             if (resultsTable.get(chromosome) != null) {  
                 ((int[]) resultsTable.get(chromosome))[1] = (int) expectedValue;             
             }
+            i++;
         }
     }    
     
@@ -208,7 +215,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             q.addToSelect(chromoQF);
             q.addToSelect(geneIdentifierQF);            
         } else if (resultsType.equals("expected")) {
-            q.addToSelect(chromoQF);        
+            q.addToSelect(chromoQF);
             q.addToSelect(countQF);
         } else if (resultsType.equals("total")) {
             q.addToSelect(countQF);
@@ -239,22 +246,15 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             cs.addConstraint(bagC);
         }
         
-
-        
-        
         q.setConstraint(cs);       
         
         if (resultsType.equals("expected")) {
             q.addToGroupBy(chromoQF);
         }
-        return q;
-    }
-    
-    private void removePseudoObscura(Collection organisms) {
-        String pseudo = "Drosophila pseudoobscura";
-        if (organisms.contains(pseudo)) {
-            organisms.remove(pseudo);
+        
+        if (!resultsType.equals("total")) {
+          q.addToOrderBy(chromoQF);
         }
-    }
-    
+        return q;
+    }    
 }
