@@ -45,7 +45,7 @@ public class SortOrderChangeTest extends MockStrutsTestCase
         query.getView().add(MainHelper.makePath(model, query, "Employee.age"));
         getSession().setAttribute(Constants.QUERY, query);
 
-        addRequestParameter("path", "Employee.age");
+        addRequestParameter("pathString", "Employee.age");
         addRequestParameter("method", "addToSortOrder");
 
         //necessary to work-round struts test case not invoking our SessionListener
@@ -61,7 +61,6 @@ public class SortOrderChangeTest extends MockStrutsTestCase
 
         ArrayList<Path> expected = new ArrayList<Path>();
         expected.add(MainHelper.makePath(model, query, "Employee.age"));
-        expected.add(MainHelper.makePath(model, query, "Employee.name"));
-        assertEquals(expected, ((PathQuery) getSession().getAttribute(Constants.QUERY)).getSortOrder());
+        assertEquals(expected.get(0), ((PathQuery) getSession().getAttribute(Constants.QUERY)).getSortOrder().get(0).getField());
     }
 }
