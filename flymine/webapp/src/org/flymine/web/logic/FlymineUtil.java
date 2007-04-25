@@ -102,6 +102,19 @@ public abstract class FlymineUtil
 //        org.flymine.model.genomic.Organism AS o 
 //        WHERE c.organism CONTAINS o 
             
+        /* TODO put this in a config file */
+        if (organism.equals("Drosophila melanogaster")) {
+            
+            ArrayList<String> chromosomes = new ArrayList<String>();
+            chromosomes.add("2L");
+            chromosomes.add("2R");
+            chromosomes.add("3L");
+            chromosomes.add("3R");
+            chromosomes.add("U");
+            chromosomes.add("X");
+            
+            return chromosomes;
+        }
         
         Query q = new Query();
 
@@ -131,13 +144,13 @@ public abstract class FlymineUtil
         
         Results r = new Results(q, os, os.getSequence());
         Iterator it = r.iterator();
-        Collection<String> chromsomes = new ArrayList<String>();
+        Collection<String> chromosomes = new ArrayList<String>();
         
         while (it.hasNext()) {
             ResultsRow rr =  (ResultsRow) it.next();
-            chromsomes.add((String) rr.get(0));
+            chromosomes.add((String) rr.get(0));
         }
-        return chromsomes;
+        return chromosomes;
     }   
     
 }
