@@ -41,14 +41,16 @@ open F, $local_release_notes_copy
   or die "can't open local copy of relnotes.txt: $local_release_notes_copy\n";
 while (my $line = <F>) {
   if ($line =~ /UniProt.*Release (\S+)/) {
-  	print "$line\n";
+  	#print "$line\n";
     $version = $1;
   }
 }
 close F;
+
 if (!defined $version) {
   die "can't find version number in release notes\n";
-}
+}else{print "Version $version found\n";}
+
 unlink $local_release_notes_copy;
 
 #if there is a new release, download and unzip it, update the current link
@@ -102,6 +104,7 @@ my $split_dir = "/shared/data/uniprot/$version/split/";
 if(&checkdir_exists($split_dir)==0){
 	warn "Data already split.\n";
 }else{
+	print "Splitting files by taxon Id\n";
 	#use hash to define output name for each source file
 	#comment out one of them to process the other file only
 	my %files = (
