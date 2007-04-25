@@ -147,7 +147,7 @@ public class PIUtil
             if (column.isVisible()) {
                 
                 Path columnPath = column.getPath();
-                if (columnPath.endIsAttribute()) {
+                if (columnPath != null && columnPath.endIsAttribute()) {
                     ClassDescriptor columnCD = columnPath.getLastClassDescriptor();
                     if (PIUtil.validType(columnCD.getType())) {
                         return true;

@@ -35,7 +35,7 @@
     <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
       <th align="center" valign="top">
         <div>
-          <c:out value="${fn:replace(column.path, '.', '&nbsp;> ')}" escapeXml="false"/>
+          <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
         </div>
       </th>
     </c:forEach>

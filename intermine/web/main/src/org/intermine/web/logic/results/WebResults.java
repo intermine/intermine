@@ -42,14 +42,14 @@ import org.intermine.web.logic.WebUtil;
  *
  * @author Kim Rutherford
  */
-public class WebResults extends AbstractList implements WebColumnTable
+public class WebResults extends AbstractList implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List columnPaths;
     protected LinkedHashMap pathToIndex;
     protected LinkedHashMap pathToType = new LinkedHashMap();
     protected Model model;
-    private final List columns = new ArrayList();
+    private final List<Column> columns = new ArrayList<Column>();
     private Results osResults;
     private List columnNames;
     private Map classKeys;
@@ -156,7 +156,29 @@ public class WebResults extends AbstractList implements WebColumnTable
      * {@inheritDoc}
      */
     public int size() {
-       return getInterMineResults().size();
+       try {
+           return getInfo().getRows();
+       } catch (ObjectStoreException e) {
+           throw new RuntimeException("failed to get a ResultsInfo object", e);
+       }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSizeEstimate() {
+        try {
+            return getInfo().getStatus() != ResultsInfo.SIZE;
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("failed to get a ResultsInfo object", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getExactSize() {
+        return getInterMineResults().size();
     }
 
     /**

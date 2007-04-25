@@ -20,7 +20,10 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
-
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -32,7 +35,7 @@ import org.intermine.web.logic.config.GraphDisplayer;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedCollection;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
@@ -145,9 +148,9 @@ public class BagDetailsController extends TilesAction
         q.setDistinct(false);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
-        WebCollection webCollection = new WebCollection(os, imBag.getType(), res, model,
-                webConfig, classKeys);
-        PagedCollection pagedColl = new PagedCollection(webCollection);
+        WebCollection webCollection = new WebCollection(os, new Path(model, imBag.getType()),
+                                                        res, model, webConfig, classKeys);
+        PagedTable pagedColl = new PagedTable(webCollection);
         request.setAttribute("bag", imBag);
         request.setAttribute("bagSize", imBag.size());
         request.setAttribute("pagedColl", pagedColl);

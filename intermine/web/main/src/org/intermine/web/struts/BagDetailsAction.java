@@ -12,6 +12,23 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,20 +38,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedCollection;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that builds a PagedCollection to view a bag. Redirects to results.do
@@ -69,7 +72,7 @@ public class BagDetailsAction extends Action
         InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
         
         String identifier = "bag." + bagName;
-        PagedCollection pc = (PagedCollection) SessionMethods.getResultsTable(session, identifier);
+        PagedTable pc = (PagedTable) SessionMethods.getResultsTable(session, identifier);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Query q = new Query();
@@ -81,10 +84,10 @@ public class BagDetailsAction extends Action
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
         WebCollection webCollection = 
-            new WebCollection(os, bag.getType(), res, model, webConfig, classKeys);
+            new WebCollection(os, new Path(model, bag.getType()), res, model, webConfig, classKeys);
 
         if (pc == null) {
-            pc = new PagedCollection(webCollection);
+            pc = new PagedTable(webCollection);
             SessionMethods.setResultsTable(session, identifier, pc);
         }
         

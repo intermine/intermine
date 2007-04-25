@@ -13,6 +13,7 @@ package org.intermine.web.logic.session;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.AbstractList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
@@ -51,16 +51,15 @@ import org.intermine.web.logic.query.QueryMonitor;
 import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.DisplayObjectFactory;
-import org.intermine.web.logic.results.PagedCollection;
-import org.intermine.web.logic.results.PagedResults;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
+import org.intermine.web.logic.results.WebCollectionSimple;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
-import org.intermine.web.struts.WebCollection;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -390,7 +389,8 @@ public class SessionMethods
     }
 
     /**
-     * {@inheritDoc}
+     * Record an error.
+     * @see SessionMethods#recordMessage(String, HttpSession)
      * @param error The error to store
      * @param session The Session object in which to store the message
      */
@@ -551,13 +551,13 @@ public class SessionMethods
                         WebResults webResults =
                             new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
                                            (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
-                        PagedResults pr = new PagedResults(webResults);
+                        PagedTable pr = new PagedTable(webResults);
                         SessionMethods.runQuery(session, messages, qid, pr);
 
                         if (saveQuery) {
                             String queryName = 
                                 SaveQueryHelper.findNewQueryName(profile.getHistory());
-                            pathQuery.setInfo(pr.getResultsInfo());
+                            pathQuery.setInfo(webResults.getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                             recordMessage(messages.getMessage("saveQuery.message", queryName),
                                           session);
@@ -592,18 +592,68 @@ public class SessionMethods
      *                about how the query concluded
      * @param session the current http session
      * @param messages messages resources (for messages and errors)
-     * @param query whether or not to automatically save the query
+     * @param query the query to count
      * @return the new query id created
      */
     public static String startQueryCount(final QueryMonitor monitor,
                                          final HttpSession session,
                                          final MessageResources messages,
                                          final Query query) {
+        final ServletContext servletContext = session.getServletContext();
+        final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        
+        // this List calls os.count() on the query and returns it as the first element
+        List countList = new AbstractList() {
+            private int count = -1;
+
+            public Object get(int index) {
+                if (index == 0) {
+                    return getCount();
+                } else {
+                    String message = "List contains only one element";
+                    throw new IndexOutOfBoundsException(message);
+                }
+            }
+
+            private Object getCount() {
+                if (count == -1) {
+                    try {
+                        count = os.count(query, os.getSequence());
+                    } catch (ObjectStoreException e) {
+                        String message = "object store exception while getting " 
+                            + "row count of query";
+                        throw new RuntimeException(message, e);
+                    }
+                }
+                return new Integer(count);
+            }
+
+            public int size() {
+                return 1;
+            }
+        };
+
+        return startCollectionQuery(monitor, session, messages, countList);
+    }
+    
+    /**
+     * Start a query running in the background that will return the row count of the collection.
+     * A new query id will be created and added to the RUNNING_QUERIES session attriute.
+     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to 
+     * update the QueryMonitor.
+     * @param monitor the monitor for this query - controls cancelling and receives feedback
+     *                about how the query concluded
+     * @param session the current http session
+     * @param messages messages resources (for messages and errors)
+     * @param collection the collection to count
+     * @return the new query id
+     */
+    public static String startCollectionCount(final QueryMonitor monitor, final HttpSession session,
+                                              final MessageResources messages, 
+                                              final Collection collection) {
         synchronized (session) {
             final ServletContext servletContext = session.getServletContext();
             final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            final Model model = os.getModel();
-            
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
             if (queries == null) {
                 queries = new HashMap();
@@ -612,49 +662,99 @@ public class SessionMethods
             final String qid = "" + topQueryId++;
             queries.put(qid, monitor);
 
+            // this List calls os.count() on the query and returns it as the first element
+            final List countList = new AbstractList() {
+                private int count = -1;
+
+                public Object get(int index) {
+                    if (index == 0) {
+                        return getCount();
+                    } else {
+                        String message = "List contains only one element";
+                        throw new IndexOutOfBoundsException(message);
+                    }
+                }
+
+                private Object getCount() {
+                    if (count == -1) {
+                        if (collection instanceof WebResults) {
+                            count = ((WebResults) collection).getExactSize();
+                        } else {
+                            count = collection.size();
+                        }
+                    }
+                    return new Integer(count);
+                }
+
+                public int size() {
+                    return 1;
+                }
+            };
+
+            
             new Thread(new Runnable() {
                 public void run () {
-                    final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
 
-                        List countList = new AbstractList() {
-                            private int count = -1;
+                        WebTable webTable = new WebCollectionSimple("count", countList);
+                        PagedTable pt = new PagedTable(webTable);
+                        SessionMethods.runQuery(session, messages, qid, pt);
 
-                            public Object get(int index) {
-                                if (index == 0) {
-                                    return getCount();
-                                } else {
-                                    String message = "List contains only one element";
-                                    throw new IndexOutOfBoundsException(message);
-                                }
-                            }
+                        // pause because we don't want to remove the monitor from the
+                        // session until client has retrieved it in order to work out
+                        // where to go next
+                        Thread.sleep(20000);
+                    } catch (Exception err) {
+                        StringWriter sw = new StringWriter();
+                        err.printStackTrace(new PrintWriter(sw));
+                        recordError(sw.toString(), session);
+                        LOG.error(sw.toString());
+                    } finally {
+                        LOG.debug("unregisterRunningQuery qid " + qid);
+                        ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);
+                    }
+                }
+            }).start();
 
-                            private Object getCount() {
-                                if (count == -1) {
-                                    try {
-                                        count = os.count(query, os.getSequence());
-                                    } catch (ObjectStoreException e) {
-                                        String message = "object store exception while getting " 
-                                            + "row count of query";
-                                        throw new RuntimeException(message, e);
-                                    }
-                                }
-                                return new Integer(count);
-                            }
+            return qid;
+        }
+        
+    }
 
-                            public int size() {
-                                return 1;
-                            }
-                        };
-                        
-                        WebConfig webConfig = 
-                            (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-                        WebCollection webCollection =
-                            new WebCollection(os, "count", countList, model, 
-                                              webConfig ,
-                                           (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
-                        PagedTable pt = new PagedCollection(webCollection);
+    /**
+     * Start a thread that will get the first row from the given collection.
+     * A new query id will be created and added to the RUNNING_QUERIES session attriute.
+     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to 
+     * update the QueryMonitor.
+     * @param monitor the monitor for this query - controls cancelling and receives feedback
+     *                about how the query concluded
+     * @param session the current http session
+     * @param messages messages resources (for messages and errors)
+     * @param collection the collection to query
+     * @return the new query id
+     */
+    public static String startCollectionQuery(final QueryMonitor monitor,
+                                              final HttpSession session,
+                                              final MessageResources messages,
+                                              final Collection collection) {
+        synchronized (session) {
+            final ServletContext servletContext = session.getServletContext();
+            Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
+            if (queries == null) {
+                queries = new HashMap();
+                session.setAttribute("RUNNING_QUERIES", queries);
+            }
+            final String qid = "" + topQueryId++;
+            queries.put(qid, monitor);
+            
+            new Thread(new Runnable() {
+                public void run () {
+                    try {
+                        LOG.debug("startQuery qid " + qid + " thread started");
+
+                        WebTable webTable = new WebCollectionSimple("collection", collection);
+                        PagedTable pt = new PagedTable(webTable);
                         SessionMethods.runQuery(session, messages, qid, pt);
 
                         // pause because we don't want to remove the monitor from the

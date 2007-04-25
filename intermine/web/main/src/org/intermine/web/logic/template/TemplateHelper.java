@@ -57,7 +57,8 @@ import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.InlineTemplateTable;
-import org.intermine.web.logic.results.PagedResults;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
@@ -397,7 +398,7 @@ public class TemplateHelper
             WebResults webResults =
                 new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
                                (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
-            PagedResults pagedResults = new PagedResults(webResults);
+            PagedTable pagedResults = new PagedTable(webResults);
 
             InlineTemplateTable itt =
                 new InlineTemplateTable(pagedResults, webProperties);

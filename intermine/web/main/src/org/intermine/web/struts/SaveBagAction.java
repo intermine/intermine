@@ -51,7 +51,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebColumnTable;
+import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -127,7 +127,7 @@ public class SaveBagAction extends InterMineAction
 
         InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
-        WebColumnTable allRows = pt.getAllRows();
+        WebTable allRows = pt.getAllRows();
         Set objectTypes = new HashSet();
         if (bag != null) {
             objectTypes.add(bag.getType());

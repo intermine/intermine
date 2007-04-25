@@ -14,13 +14,16 @@ import java.util.AbstractList;
 import java.util.List;
 
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * @author Xavier Watkins
  *
  */
-public class WebResultsSimple extends AbstractList implements WebColumnTable
+public class WebResultsSimple extends AbstractList implements WebTable
 {
     private Results results;
     private List columnNames;
@@ -44,7 +47,11 @@ public class WebResultsSimple extends AbstractList implements WebColumnTable
      *
      */
     public int size() {
-        return results.size();
+        try {
+            return results.getInfo().getRows();
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("failed to get a ResultsInfo object", e);
+        }
     }
 
     /**
@@ -62,6 +69,33 @@ public class WebResultsSimple extends AbstractList implements WebColumnTable
 //        }
 //        resRow.size()
 //        return results.get(index);
+    }
+
+    /**
+     * Returns the ObjectStore's maximum allowable offset.
+     *
+     * @return an int
+     */
+    public int getMaxRetrievableIndex() {
+        return results.getObjectStore().getMaxOffset();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSizeEstimate() {
+        try {
+            return results.getInfo().getStatus() != ResultsInfo.SIZE;
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getExactSize() {
+        return results.size();
     }
 
 }

@@ -74,7 +74,7 @@ public class PagedResultsTest extends TestCase
         classKeys.put("Company", defaultClassKeys);
     }
 
-    private PagedResults getEmptyResults() throws Exception {
+    private PagedTable getEmptyResults() throws Exception {
         os.setResultsSize(0);
         Results results = os.execute(fq.toQuery());
         try {
@@ -83,47 +83,47 @@ public class PagedResultsTest extends TestCase
         } catch (IndexOutOfBoundsException e) {
         }
         WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
-        return new PagedResults(webResults);
+        return new PagedTable(webResults);
     }
 
-    private PagedResults getExactResults() throws Exception {
+    private PagedTable getExactResults() throws Exception {
         Results results = os.execute(fq.toQuery());
         // Make sure we definitely know the end
         results.setBatchSize(20);
         results.get(0);
         WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
-        return new PagedResults(webResults);
+        return new PagedTable(webResults);
     }
 
-    private PagedResults getEstimateTooHighResults() throws Exception {
+    private PagedTable getEstimateTooHighResults() throws Exception {
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
         WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
-        return new PagedResults(webResults);
+        return new PagedTable(webResults);
     }
 
-    private PagedResults getEstimateTooLowResults() throws Exception {
+    private PagedTable getEstimateTooLowResults() throws Exception {
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
         WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
-        return new PagedResults(webResults);
+        return new PagedTable(webResults);
     }
 
     public void testConstructor() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         assertEquals(4, dr.getColumns().size());
     }
 
     public void testSizeExact() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         dr.setPageSize(10);
         assertEquals(15, dr.getSize());
     }
 
     public void testSizeHigh() throws Exception {
-        PagedResults dr = getEstimateTooHighResults();
+        PagedTable dr = getEstimateTooHighResults();
         dr.setPageSize(10);
         assertEquals(25, dr.getSize());
     }
@@ -194,9 +194,9 @@ public class PagedResultsTest extends TestCase
             Map pathToQueryNode = new HashMap();
             Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode);
             Results r = new DummyResults(os, q, (List) results.get(queryName));
-//            PagedResults pr = new PagedResults(pq.getView(), r, model, pathToQueryNode, null);
+//            PagedTable pr = new PagedTable(pq.getView(), r, model, pathToQueryNode, null);
             WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, classKeys);
-            PagedResults pr = new PagedResults(webResults);
+            PagedTable pr = new PagedTable(webResults);
             assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
          }
     }
@@ -236,7 +236,7 @@ public class PagedResultsTest extends TestCase
     }
     
 //     public void testSizeLow() throws Exception {
-//         PagedResults dr = getEstimateTooLowResults();
+//         PagedTable dr = getEstimateTooLowResults();
 //         dr.setPageSize(10);
 //         // Calling size() affects the estimate as it tries to fetch
 //         // more rows.  I think the best thing to do here is to check
@@ -247,14 +247,14 @@ public class PagedResultsTest extends TestCase
 //     }
 
      public void testSizeEmpty() throws Exception {
-         PagedResults dr = getEmptyResults();
+         PagedTable dr = getEmptyResults();
          dr.setPageSize(10);
          assertEquals(0, dr.getSize());
      }
 
 //     public void testEndExact() throws Exception {
 //         // At the beginning
-//         PagedResults dr = getExactResults();
+//         PagedTable dr = getExactResults();
 //         dr.setPageSize(10);
 //         dr.setStartIndex(0);
 //         assertEquals(9, dr.getEndIndex());
@@ -272,7 +272,7 @@ public class PagedResultsTest extends TestCase
 
 //     public void testEndHigh() throws Exception {
 //         // At the beginning
-//         PagedResults dr = getEstimateTooHighResults();
+//         PagedTable dr = getEstimateTooHighResults();
 //         dr.setPageSize(10);
 //         dr.setStartIndex(0);
 //         assertEquals(9, dr.getEndIndex());
@@ -290,7 +290,7 @@ public class PagedResultsTest extends TestCase
 
 //     public void testEndLow() throws Exception {
 //         // At the beginning
-//         PagedResults dr = getEstimateTooLowResults();
+//         PagedTable dr = getEstimateTooLowResults();
 //         dr.setPageSize(10);
 //         dr.setStartIndex(0);
 //         assertEquals(9, dr.getEndIndex());
@@ -307,15 +307,15 @@ public class PagedResultsTest extends TestCase
 //     }
 
     // For the moment the end is -1 if the underlying results is empty
-    // Anything using PagedResults should call getSize() first
+    // Anything using PagedTable should call getSize() first
 //     public void testEndEmpty() throws Exception {
-//         PagedResults dr = getEmptyResults();
+//         PagedTable dr = getEmptyResults();
 //         dr.setPageSize(10);
 //         assertEquals(-1, dr.getEndIndex());
 //     }
 
 //     public void testButtonsExact() throws Exception {
-//         PagedResults dr = getExactResults();
+//         PagedTable dr = getExactResults();
 //         dr.setPageSize(10);
 //         // At the beginning
 //         dr.setStartRow(0);
@@ -332,7 +332,7 @@ public class PagedResultsTest extends TestCase
 //     }
 
 //     public void testButtonsHigh() throws Exception {
-//         PagedResults dr = getEstimateTooHighResults();
+//         PagedTable dr = getEstimateTooHighResults();
 //         dr.setPageSize(10);
 //         // At the beginning
 //         dr.setStartRow(0);
@@ -349,7 +349,7 @@ public class PagedResultsTest extends TestCase
 //     }
 
 //     public void testButtonsLow() throws Exception {
-//         PagedResults dr = getEstimateTooLowResults();
+//         PagedTable dr = getEstimateTooLowResults();
 //         dr.setPageSize(10);
 //         // At the beginning (this abuts the estimated end)
 //         dr.setStartRow(0);
@@ -367,7 +367,7 @@ public class PagedResultsTest extends TestCase
 //     }
 
     public void testMoveColumnLeft1() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
@@ -383,7 +383,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnLeft2() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
@@ -399,7 +399,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnLeft3() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
@@ -415,7 +415,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnLeft4() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
@@ -432,7 +432,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnLeft5() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
@@ -448,7 +448,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnRight1() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Department.name"), 1, "Company");
         columns.add(col);
@@ -464,7 +464,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnRight2() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
@@ -480,7 +480,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnRight3() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
@@ -496,7 +496,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnRight4() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);
@@ -512,7 +512,7 @@ public class PagedResultsTest extends TestCase
     }
 
     public void testMoveColumnRight5() throws Exception {
-        PagedResults dr = getExactResults();
+        PagedTable dr = getExactResults();
         List columns = new LinkedList();
         Column col = new Column(new Path(model,"Company.name"), 0, "Company");
         columns.add(col);

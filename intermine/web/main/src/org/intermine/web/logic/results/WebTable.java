@@ -16,7 +16,7 @@ import java.util.List;
  * A List that can understand ResultElement objects.
  * @author Kim Rutherford
  */
-public interface WebColumnTable extends List
+public interface WebTable extends List
 {
     /**
      * Return a List containing a ResultElement object for each element given in the given row.
@@ -29,5 +29,26 @@ public interface WebColumnTable extends List
      * Returns the Column objects for this table.
      * @return the columns
      */
-    public List getColumns();
+    public List<Column> getColumns();
+    
+    /**
+     * Check whether the result of size() is an estimate
+     * @return true if the size is an estimate
+     */
+    public boolean isSizeEstimate();
+
+    /**
+     * Get the exact number of rows of this table
+     * @return the number of rows
+     */
+    public int getExactSize();
+    
+    /**
+     * Return the maximum retrievable index for this PagedTable.  This will only ever return less
+     * than getExactSize() if the underlying data source has a restriction on the maximum index
+     * that can be retrieved.
+     * @return the maximum retrieved index
+     */
+    public int getMaxRetrievableIndex();
+    
 }
