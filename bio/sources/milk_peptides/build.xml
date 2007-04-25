@@ -1,7 +1,0 @@
-<project name="milk_prots" default="default" basedir=".">
-  <description>build, test, package milk_prots</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-  
-</project>
-

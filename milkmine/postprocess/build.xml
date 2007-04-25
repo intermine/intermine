@@ -1,7 +1,0 @@
-<project name="milkmine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for milkmine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>
