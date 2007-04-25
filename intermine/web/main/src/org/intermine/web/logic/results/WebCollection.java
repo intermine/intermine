@@ -13,14 +13,13 @@ package org.intermine.web.logic.results;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * A wrapper for a collection that makes for easier rendering in the webapp.
  * @author kmr
  */
-public class WebCollectionSimple extends AbstractList implements WebTable
+public class WebCollection extends AbstractList implements WebTable
 {
     private List list = null;
     private List<Column> columns;
@@ -34,7 +33,7 @@ public class WebCollectionSimple extends AbstractList implements WebTable
      * objects (like a Results object)
      * @param webConfig the WebConfig object the configures the columns in the view
      */
-    public WebCollectionSimple(String columnName, Collection collection) {
+    public WebCollection(String columnName, Collection collection) {
         this.collection = collection;
         columns = new ArrayList<Column>();
         columns.add(new Column(columnName, 0, Object.class));

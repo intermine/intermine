@@ -53,7 +53,7 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.TableHelper;
-import org.intermine.web.logic.results.WebCollectionSimple;
+import org.intermine.web.logic.results.WebCollection;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.template.TemplateBuildState;
@@ -697,7 +697,7 @@ public class SessionMethods
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
 
-                        WebTable webTable = new WebCollectionSimple("count", countList);
+                        WebTable webTable = new WebCollection("count", countList);
                         PagedTable pt = new PagedTable(webTable);
                         SessionMethods.runQuery(session, messages, qid, pt);
 
@@ -753,7 +753,7 @@ public class SessionMethods
                     try {
                         LOG.debug("startQuery qid " + qid + " thread started");
 
-                        WebTable webTable = new WebCollectionSimple("collection", collection);
+                        WebTable webTable = new WebCollection("collection", collection);
                         PagedTable pt = new PagedTable(webTable);
                         SessionMethods.runQuery(session, messages, qid, pt);
 
