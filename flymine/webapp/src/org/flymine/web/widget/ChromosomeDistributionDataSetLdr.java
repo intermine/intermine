@@ -53,7 +53,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     private Results results;
     private Object[] geneCategoryArray;
     private LinkedHashMap dataSets = new LinkedHashMap();
-
+    private ObjectStore os;
+    
     /**
      * Creates a ChromosomeDistributionDataSetLdr used to retrieve, organise
      * and structure the data to create a graph
@@ -63,41 +64,52 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     
     public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os) {
         super();
+        this.os = os;
         
         Collection organisms = FlymineUtil.getOrganisms(os, bag);
-        
+        removePseudoObscura(organisms);
+
         for (Iterator it = organisms.iterator(); it.hasNext();) {
             
             String organismName = (String) it.next();
             DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
-            Query q = createQuery(organismName, "actual", bag);
+                        
+            // chromosome, count of genes
+            HashMap<String, int[]> resultsTable = new HashMap<String, int[]> (); 
+            // chromosome --> list of genes
+            HashMap<String, ArrayList> geneMap = new HashMap<String, ArrayList>();
             
+            // get all chromosomes for this organism 
+            ArrayList<String> chromosomes 
+                = (ArrayList<String>) FlymineUtil.getChromosomes(os, organismName);
+            Iterator iter = chromosomes.iterator();
+            
+            while (iter.hasNext()) {
+                int[] count = new int[2];
+                count[0] = 0;
+                String chromosome = (String) iter.next();
+                resultsTable.put(chromosome, count);
+                ArrayList<String> genesArray = new ArrayList<String>();
+                geneMap.put(chromosome, genesArray);
+            }
+            
+            // run query 
+            Query q = createQuery(organismName, "actual", bag);            
             results = new Results(q, os, os.getSequence());
             boolean hasResults = false;
             if (results.size() > 0) {
                 hasResults = true;
             }
-            Iterator iter = results.iterator();
-            HashMap resultsTable = new HashMap();               // chromosome, count of genes
-            HashMap geneMap = new HashMap();                    // chromosome --> list of genes
+            
+            // put results in maps
+            iter = results.iterator();
             while (iter.hasNext()) {
                 ResultsRow resRow = (ResultsRow) iter.next();
-
                 String chromosome = (String) resRow.get(0);     // chromosome
                 String geneIdentifier = (String) resRow.get(1); // gene
-
-                if (resultsTable.get(chromosome) != null) {  
-                    ((int[]) resultsTable.get(chromosome))[0]++;
-                    ((ArrayList) geneMap.get(chromosome)).add(geneIdentifier);
-                } else {
-                    ArrayList genesArray = new ArrayList();
-                    genesArray.add(geneIdentifier);
-                    geneMap.put(chromosome, genesArray);       
-                    int[] count = new int[2];
-                    count[0] = 1;
-                    resultsTable.put(chromosome, count);
-                }
+                (resultsTable.get(chromosome))[0]++;    
+                (geneMap.get(chromosome)).add(geneIdentifier);
             }
 
             // update results with expected results
@@ -114,12 +126,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             int i = 0;
             for (Iterator iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
                 String chromosome = (String) iterator.next();
-                dataSet.addValue(((int[]) resultsTable.get(chromosome))[0], "Actual", chromosome);
-                dataSet.addValue(((int[]) resultsTable.get(chromosome))[1], "Expected", chromosome);
+                dataSet.addValue((resultsTable.get(chromosome))[0], "Actual", chromosome);
+                dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
                 Object[] geneSeriesArray = new Object[2];
                 /* why are there two? */
-                geneSeriesArray[0] = geneMap.get(chromosome);
-                geneSeriesArray[1] = geneMap.get(chromosome);
+                geneSeriesArray[0] = geneMap.get(chromosome);   // actual
+                geneSeriesArray[1] = geneMap.get(chromosome);   // expected
                 geneCategoryArray[i] = geneSeriesArray;
 
                 i++;
@@ -201,7 +213,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         } else if (resultsType.equals("total")) {
             q.addToSelect(countQF);
         }
-                
+
         q.addFrom(chromosomeQC);
         q.addFrom(geneQC);
         q.addFrom(organismQC);
@@ -227,12 +239,22 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             cs.addConstraint(bagC);
         }
         
+
+        
+        
         q.setConstraint(cs);       
         
         if (resultsType.equals("expected")) {
             q.addToGroupBy(chromoQF);
         }
         return q;
+    }
+    
+    private void removePseudoObscura(Collection organisms) {
+        String pseudo = "Drosophila pseudoobscura";
+        if (organisms.contains(pseudo)) {
+            organisms.remove(pseudo);
+        }
     }
     
 }

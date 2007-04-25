@@ -23,12 +23,15 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 
+import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 
@@ -85,4 +88,56 @@ public abstract class FlymineUtil
         }
         return organismNames;
     }   
+    
+    /**
+     * Return a list of chromosomes for specified organism
+     * @param os ObjectStore
+     * @param organism Organism name
+     * @return collection of chromosome names
+     */
+    public static Collection getChromosomes(ObjectStore os, String organism) {
+
+//        SELECT DISTINCT o
+//        FROM org.flymine.model.genomic.Chromosome AS c, 
+//        org.flymine.model.genomic.Organism AS o 
+//        WHERE c.organism CONTAINS o 
+            
+        
+        Query q = new Query();
+
+        QueryClass qcChromosome = new QueryClass(Chromosome.class);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryField qfChromosome = new QueryField(qcChromosome, "identifier");
+        QueryField organismNameQF = new QueryField(qcOrganism, "name");
+        q.addFrom(qcChromosome);
+        q.addFrom(qcOrganism);
+
+        q.addToSelect(qfChromosome);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryObjectReference qr = new QueryObjectReference(qcChromosome, "organism");
+        ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
+        cs.addConstraint(cc);
+
+        SimpleConstraint sc = new SimpleConstraint(organismNameQF,
+                                                   ConstraintOp.EQUALS,
+                                                   new QueryValue(organism));
+        cs.addConstraint(sc); 
+        
+        q.setConstraint(cs);
+        
+        q.addToOrderBy(qfChromosome);
+        
+        Results r = new Results(q, os, os.getSequence());
+        Iterator it = r.iterator();
+        Collection<String> chromsomes = new ArrayList<String>();
+        
+        while (it.hasNext()) {
+            ResultsRow rr =  (ResultsRow) it.next();
+            chromsomes.add((String) rr.get(0));
+        }
+        return chromsomes;
+    }   
+    
 }
