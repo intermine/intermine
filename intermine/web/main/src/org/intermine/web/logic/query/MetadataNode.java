@@ -1,6 +1,5 @@
 package org.intermine.web.logic.query;
 
-
 /*
  * Copyright (C) 2002-2007 FlyMine
  *

@@ -87,7 +87,9 @@ public class ModifyBagDetailsAction extends InterMineAction
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
             for (int i = 0; i < mbdf.getSelectedElements().length; i++) {
-                osw.removeFromBag(interMineBag.getOsb(), new Integer(mbdf.getSelectedElements()[i]));
+                osw
+                    .removeFromBag(interMineBag.getOsb(),
+                                   new Integer(mbdf.getSelectedElements()[i]));
             }
         } finally {
             if (osw != null) {

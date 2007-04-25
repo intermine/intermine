@@ -25,7 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagElement;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;

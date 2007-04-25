@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
