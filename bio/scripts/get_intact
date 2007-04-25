@@ -1,8 +1,6 @@
 #!/usr/bin/perl
 
-# script to download PSI data from IntAct - currently has a list of accepted
-# organisms hard-coded, should be passed in as a list.
-# Will downoad to ./psi/intact/release_date
+# script to download PSI data from IntAct to ./psi/intact/release_date
 use strict;
 use warnings;
 
@@ -66,7 +64,7 @@ $connection->quit;
 
 #================================================================================
 #download psi-mi.obo from http://www.berkeleybop.org/ontologies/obo-all/psi-mi/
-#to /shared/psi/data/ontology/
+#to /shared/data/psi/ontology/
 #seems to be updated every week
 
 #NOTE: eventually the data might be moved to http://www.bioontology.org/ncbo/faces/index.xhtml
