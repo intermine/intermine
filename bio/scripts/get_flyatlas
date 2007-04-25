@@ -32,7 +32,7 @@ my $old_file = "$current_link/../orig/all.txt";
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
-my $result = &compare_http_files($old_file,$temp_file);
+my $result = &compare_files($old_file,$temp_file);
 if($result == 1){
 	print "Keeping downloaded files.\n";
 	&update_files($flyatlas_main_dir,$flyatlas_data_file,$temp_file,$current_link);

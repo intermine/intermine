@@ -8,7 +8,7 @@ use File::Compare;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_http_files checkdir_exists date_string_file unzip_dir convert_date config_species);
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files checkdir_exists date_string_file unzip_dir convert_date config_species);
 
 #connect to server
 sub ftp_connect(){
@@ -47,10 +47,10 @@ sub http_download(){
 	io($source) > io($destination);
 }
 
-#compare http files, return 1 if it is a new version or if
+#compare two files, return 1 if it is a new version or if
 #the current data link is missing. Otherwise return 0
-sub compare_http_files(){
-my ($old,$new,$main_dir,$filename,$link)=@_;
+sub compare_files(){
+my ($old,$new)=@_;
 
 	if(compare("$old","$new") == 1){
 		print "New version found.\n";
@@ -130,8 +130,8 @@ sub config_species(){
 		if($f[0] =~ /^$trigger/g) {
 			#for 2 value configs i.e. get_go_annoatation
 			if($f[2]){
-				chomp $f[2];
-				$data{$f[1]}=$f[2];	
+				chomp $f[3];
+				$data{$f[1]}{$f[2]}=$f[3];
 			}
 			#for everything else
 			else{
