@@ -10,6 +10,8 @@ package org.intermine.web.logic.session;
  *
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.AbstractList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,15 +22,22 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.map.LRUMap;
+import org.apache.log4j.Logger;
+import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
@@ -52,18 +61,6 @@ import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.struts.WebCollection;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
-import org.apache.struts.util.MessageResources;
 
 /**
  * Business logic that interacts with session data. These methods are generally

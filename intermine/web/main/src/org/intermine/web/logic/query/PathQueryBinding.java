@@ -120,7 +120,7 @@ public class PathQueryBinding
      */
     private static void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer) 
         throws XMLStreamException {
-        for (Map.Entry<Path, String> entry: query.getPathDescriptions().entrySet()) {
+        for (Map.Entry<Path, String> entry : query.getPathDescriptions().entrySet()) {
             Path path = entry.getKey();
             String description = entry.getValue();
             
