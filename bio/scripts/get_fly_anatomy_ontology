@@ -1,10 +1,7 @@
 #!/usr/bin/perl
 
-#download fly_anatomy.obo from http://www.berkeleybop.org/ontologies/obo-all/fly_anatomy/
+#download fly_anatomy.obo from http://obo.cvs.sourceforge.net/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly/
 #to /shared/data/ontologies/fly_anatomy/
-#seems to be updated every week
-
-#NOTE: eventually the data might be moved to http://www.bioontology.org/ncbo/faces/index.xhtml
 
 use strict;
 use warnings;
@@ -15,7 +12,7 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-my $server = "http://www.berkeleybop.org/ontologies/obo-all/fly_anatomy";
+my $server = "http://obo.cvs.sourceforge.net/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly";
 my $file = "fly_anatomy.obo";
 
 my $download_dir = "/shared/data/ontologies/fly_anatomy";
