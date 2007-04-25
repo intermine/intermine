@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-<class name="org.flymine.model.genomic.Protein" is-interface="true">
-  <attribute name="isMilk" type="java.lang.Boolean"/>
-  <attribute name="milkGroup" type="java.lang.String"/>
-  <attribute name="milkSubGroup" type="java.lang.String"/>
-</class>
-</classes>
