@@ -27,7 +27,7 @@ public class WebCollectionSimple extends AbstractList implements WebTable
     private final Collection collection;
  
     /**
-     * Create a new WebCollection object.
+     * Create a new WebPathCollection object.
      * @param columnName the String to use when displaying this collection - used as the column name
      * for the single column of results
      * @param collection the Collection, which can be a List of objects or a List of List of
@@ -90,7 +90,7 @@ public class WebCollectionSimple extends AbstractList implements WebTable
     }
 
     /**
-     * Return the List of Column objects for this WebCollection, configured by the WebConfig for
+     * Return the List of Column objects for this WebPathCollection, configured by the WebConfig for
      * the class of the collection we're showing
      * @return the Column object List
      */

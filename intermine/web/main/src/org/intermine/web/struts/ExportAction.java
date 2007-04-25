@@ -112,10 +112,10 @@ public class ExportAction extends InterMineAction
                 q.setDistinct(false);
                 SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
-                WebCollection webCollection = 
-                    new WebCollection(os, new Path(model, imBag.getType()), res, model, webConfig, 
+                WebPathCollection webPathCollection = 
+                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig, 
                                       classKeys);
-                pt = new PagedTable(webCollection);
+                pt = new PagedTable(webPathCollection);
                 
             } else {
                 pt = SessionMethods.getResultsTable(session, request.getParameter("table"));

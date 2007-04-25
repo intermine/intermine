@@ -102,10 +102,10 @@ public class CollectionDetailsAction extends Action
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         String referencedClassName = TypeUtil.unqualifiedName(refDesc.getReferencedClassName());
-        WebCollection webCollection = 
-            new WebCollection(os, new Path(model, referencedClassName), c, model, webConfig,
+        WebPathCollection webPathCollection = 
+            new WebPathCollection(os, new Path(model, referencedClassName), c, model, webConfig,
                               classKeys);
-        PagedTable pc = new PagedTable(webCollection);
+        PagedTable pc = new PagedTable(webPathCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         
